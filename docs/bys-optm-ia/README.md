@@ -1,6 +1,6 @@
 # 贝叶斯优化实战
 
-> 原文：[`zh.annas-archive.org/md5/5ea9246d4fedff957a1c887275e38f01`](https://zh.annas-archive.org/md5/5ea9246d4fedff957a1c887275e38f01)
+> 原文：[Bayesian Optimization in Action](https://zh.annas-archive.gl/md5/5ea9246d4fedff957a1c887275e38f01)
 > 
 > 译者：[飞龙](https://github.com/wizardforcel)
 > 

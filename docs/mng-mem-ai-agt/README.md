@@ -1,6 +1,6 @@
 # 人工智能智能体记忆管理指南
 
-> 原文：[`zh.annas-archive.org/md5/c6882294b742f436a2c262a078542fc2`](https://zh.annas-archive.org/md5/c6882294b742f436a2c262a078542fc2)
+> 原文：[Managing Memory for AI Agents (for Duc Ka)](https://zh.annas-archive.gl/md5/c6882294b742f436a2c262a078542fc2)
 > 
 > 译者：[飞龙](https://github.com/wizardforcel)
 > 

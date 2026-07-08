@@ -1,6 +1,6 @@
 # 人工智能原生的软件交付
 
-> 原文：[`zh.annas-archive.org/md5/0ec60844eeb6e523185b158e595009c8`](https://zh.annas-archive.org/md5/0ec60844eeb6e523185b158e595009c8)
+> 原文：[AI-Native Software Delivery (for True Epub)](https://zh.annas-archive.gl/md5/0ec60844eeb6e523185b158e595009c8)
 > 
 > 译者：[飞龙](https://github.com/wizardforcel)
 > 

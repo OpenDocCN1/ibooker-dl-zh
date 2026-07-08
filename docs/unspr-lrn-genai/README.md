@@ -1,6 +1,6 @@
 # 无监督学习与生成式人工智能（MEAP）
 
-> 原文：[`zh.annas-archive.org/md5/ef4ba0ae2a37f1fc608875bd4cfb7156`](https://zh.annas-archive.org/md5/ef4ba0ae2a37f1fc608875bd4cfb7156)
+> 原文：[Unsupervised Learning with Generative AI MEAP V07 livebook](https://zh.annas-archive.gl/md5/ef4ba0ae2a37f1fc608875bd4cfb7156)
 > 
 > 译者：[飞龙](https://github.com/wizardforcel)
 > 

@@ -1,6 +1,6 @@
 # 生成式人工智能的 SEO 使用指南
 
-> 原文：[`zh.annas-archive.org/md5/85390d15fc5d9320481598411281ca02`](https://zh.annas-archive.org/md5/85390d15fc5d9320481598411281ca02)
+> 原文：[Using Generative AI for SEO: AI-First Strategies to Improve Quality, Efficiency, and Costs](https://zh.annas-archive.gl/md5/85390d15fc5d9320481598411281ca02)
 > 
 > 译者：[飞龙](https://github.com/wizardforcel)
 > 

@@ -1,6 +1,6 @@
 # AWS 认证人工智能专业人员学习指南
 
-> 原文：[`zh.annas-archive.org/md5/abf734440d3ded89e69c75b9c4408255`](https://zh.annas-archive.org/md5/abf734440d3ded89e69c75b9c4408255)
+> 原文：[AWS Certified AI Practitioner (AIF-C01) Study Guide](https://zh.annas-archive.gl/md5/abf734440d3ded89e69c75b9c4408255)
 > 
 > 译者：[飞龙](https://github.com/wizardforcel)
 > 

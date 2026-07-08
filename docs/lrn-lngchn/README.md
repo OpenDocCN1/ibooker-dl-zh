@@ -1,6 +1,6 @@
 # LangChain 学习指南
 
-> 原文：[`zh.annas-archive.org/md5/f848fbd128f0631d687d40ef094b1a53`](https://zh.annas-archive.org/md5/f848fbd128f0631d687d40ef094b1a53)
+> 原文：[Learning LangChain Build AI Applications With LLMs](https://zh.annas-archive.gl/md5/f848fbd128f0631d687d40ef094b1a53)
 > 
 > 译者：[飞龙](https://github.com/wizardforcel)
 > 

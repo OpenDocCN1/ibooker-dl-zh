@@ -1,6 +1,6 @@
 # 深度学习的数学与架构
 
-> 原文：[`zh.annas-archive.org/md5/6630382191e0d18f8b988ff4aec86752`](https://zh.annas-archive.org/md5/6630382191e0d18f8b988ff4aec86752)
+> 原文：[Math and Architectures of Deep Learning](https://zh.annas-archive.gl/md5/6630382191e0d18f8b988ff4aec86752)
 > 
 > 译者：[飞龙](https://github.com/wizardforcel)
 > 

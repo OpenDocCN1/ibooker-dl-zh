@@ -1,6 +1,6 @@
 # 从零开始的大语言模型构建指南
 
-> 原文：[`zh.annas-archive.org/md5/50e5c3d523232e78df8d9d341a0eae11`](https://zh.annas-archive.org/md5/50e5c3d523232e78df8d9d341a0eae11)
+> 原文：[Build a Large Language Model (From Scratch)](https://zh.annas-archive.gl/md5/50e5c3d523232e78df8d9d341a0eae11)
 > 
 > 译者：[飞龙](https://github.com/wizardforcel)
 > 

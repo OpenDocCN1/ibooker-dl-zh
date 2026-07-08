@@ -1,6 +1,6 @@
 # 图检索增强生成（GraphRAG）精要
 
-> 原文：[`zh.annas-archive.org/md5/2c8245e0e83797ed40746ad357b9e3f5`](https://zh.annas-archive.org/md5/2c8245e0e83797ed40746ad357b9e3f5)
+> 原文：[Essential GraphRAG](https://zh.annas-archive.gl/md5/2c8245e0e83797ed40746ad357b9e3f5)
 > 
 > 译者：[飞龙](https://github.com/wizardforcel)
 > 

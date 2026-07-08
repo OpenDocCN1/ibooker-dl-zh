@@ -1,6 +1,6 @@
 # GPT3：使用大型语言模型构建创新的自然语言处理产品
 
-> 原文：[`zh.annas-archive.org/md5/2e1cd03e3bd6ec89040bbe656cecdba9`](https://zh.annas-archive.org/md5/2e1cd03e3bd6ec89040bbe656cecdba9)
+> 原文：[GPT-3 : building innovative NLP products using large language models](https://zh.annas-archive.gl/md5/2e1cd03e3bd6ec89040bbe656cecdba9)
 > 
 > 译者：[飞龙](https://github.com/wizardforcel)
 > 

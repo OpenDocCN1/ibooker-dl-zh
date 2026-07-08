@@ -1,6 +1,6 @@
 # LLMOps 指南
 
-> 原文：[`zh.annas-archive.org/md5/a6c58a8391cc34ab9762f124d94e9872`](https://zh.annas-archive.org/md5/a6c58a8391cc34ab9762f124d94e9872)
+> 原文：[LLMOps: Managing Large Language Models in Production](https://zh.annas-archive.gl/md5/a6c58a8391cc34ab9762f124d94e9872)
 > 
 > 译者：[飞龙](https://github.com/wizardforcel)
 > 

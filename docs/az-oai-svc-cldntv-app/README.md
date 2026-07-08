@@ -1,6 +1,6 @@
 # 云原生应用的 Azure OpenAI 服务指南
 
-> 原文：[`zh.annas-archive.org/md5/4d5a879dcbeace70713686b5a8a449a7`](https://zh.annas-archive.org/md5/4d5a879dcbeace70713686b5a8a449a7)
+> 原文：[Azure OpenAI Service for Cloud Native Applications: Designing, Planning, and Implementing Generative AI Solutions](https://zh.annas-archive.gl/md5/4d5a879dcbeace70713686b5a8a449a7)
 > 
 > 译者：[飞龙](https://github.com/wizardforcel)
 > 

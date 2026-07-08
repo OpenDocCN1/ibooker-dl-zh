@@ -1,6 +1,6 @@
 # 生成式人工智能的数据分析入门指南
 
-> 原文：[`zh.annas-archive.org/md5/955866ef77023c74320115121a7a1f89`](https://zh.annas-archive.org/md5/955866ef77023c74320115121a7a1f89)
+> 原文：[Starting Data Analytics with Generative AI and Python](https://zh.annas-archive.gl/md5/955866ef77023c74320115121a7a1f89)
 > 
 > 译者：[飞龙](https://github.com/wizardforcel)
 > 

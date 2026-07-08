@@ -1,6 +1,6 @@
 # Sklearn 和 PyTorch 机器学习实用指南
 
-> 原文：[`zh.annas-archive.org/md5/df49bc55d26e1ce9dd788648afcb9604`](https://zh.annas-archive.org/md5/df49bc55d26e1ce9dd788648afcb9604)
+> 原文：[Hands-On Machine Learning with Scikit-Learn and Pytorch Concepts, Tools, and Techniques to Build Intelligent Systems](https://zh.annas-archive.gl/md5/df49bc55d26e1ce9dd788648afcb9604)
 > 
 > 译者：[飞龙](https://github.com/wizardforcel)
 > 
