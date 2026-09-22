@@ -1,6 +1,4 @@
-# 
-
-Sutskever 清单
+# Sutskever 精选论文清单
 
 > 原文：[Sutskever's List]()
 > 

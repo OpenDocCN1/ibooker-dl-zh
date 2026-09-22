@@ -1,12 +1,3 @@
-# 
-
-Sutskever 清单
-
-
-
-
-
-
 
 
 
@@ -139,7 +130,7 @@ Manning 对读者的承诺是提供一个场所，让个人读者之间以及读
 
 在那些日子里，通过人们的穿着就可以很容易地判断他们居住在哪里以及他们的职业或社会地位。Manning 以基于几个世纪前区域文化丰富多样性的书封面来庆祝计算机业务的创造力和主动性，这些封面通过来自像这样的收藏的图片而复活。
 
-# 1  伊利亚看到了什么？
+<!-- split --># 1  伊利亚看到了什么？
 
 ## 本章涵盖
 
@@ -355,7 +346,7 @@ GPT-2 标志着 AI 社区首次公开面对创新与加速之间的张力，以�
 
 带着这种概念框架，让我们接下来转向 Sutskever 的列表。在残差网络、变换器和缩放定律之前，有 AlexNet。它标志着一个时代的结束和另一个时代的开始。
 
-# 2 AlexNet 时刻
+<!-- split --># 2 AlexNet 时刻
 
 ## 本章涵盖
 
@@ -616,7 +607,7 @@ AlexNet 整合了一系列优化感知的选择，包括用于防止梯度消失
 
 在 AlexNet（2012 年）之后，网络架构逐渐加深。VGGNet（2014 年）有 19 层。GoogLeNet（2014 年）有 22 层。然而，尝试训练更深的网络遇到了障碍。其中主要的是持续的梯度消失和模型退化问题。AlexNet 扭转了时代精神，但要可靠地训练更深的网络，仍然需要架构和优化的创新。
 
-# 3  ResNet 革命
+<!-- split --># 3  ResNet 革命
 
 ## 本章涵盖
 
@@ -763,46 +754,45 @@ ResNet v2 的核心创新（再次）看似简单。在每个残差块内重新�
 ### 3.4.2 消融研究
 
 
+#### 消融研究
 
-#### Ablation Studies
+消融研究系统地移除或修改模型的各个部分，以确定它们各自的贡献。作者使用消融研究来测试对跳跃连接的若干修改，并验证保留恒等映射的重要性。即使是很小的改动，例如将跳跃路径按常数缩放（例如 0.5），或在训练期间随机丢弃它，也会导致性能下降和收敛不佳。更复杂的调整——包括可学习门控，或在跳跃路径上添加卷积层——表现更差，常常提高错误率或导致优化完全失败。在这些深度下，微小的架构决策变得成败攸关。工程上的结论很明确：最简单、未经改动的恒等跳跃连接更优雅，也有效得多。
 
-Ablation studies systematically remove or modify parts of a model to determine their individual contributions. The authors used ablation studies to test several modifications to the skip connection and validate the importance of preserving identity mappings. Even minor changes, such as scaling the skip path by a constant (e.g., 0.5) or randomly dropping it during training, led to degraded performance and poor convergence. More sophisticated tweaks—including learnable gates or adding convolutional layers to the skip path—fared even worse, often increasing error rates or causing optimization to fail entirely. At these depths, minor architectural decisions became make-or-break. The engineering takeaway was clear: the simplest, unaltered identity skip connection was more elegant and far more effective.
+#### 操作的位置
 
-#### Position of Operations
+作者还评估了改变操作位置——例如激活函数（`ReLU`）和归一化步骤（批归一化）相对于跳跃连接的位置——如何影响性能。与原始方法（在合并路径后放置激活）相比，他们发现将批归一化直接放在相加之后会破坏跳跃路径并损害准确率。同样，在相加之前应用 `ReLU` 会将残差分支限制为仅正向调整，从而限制其有效性。在每个卷积之前单独使用 `ReLU`、不使用批归一化，也没有显著改善性能。最终，最有效的方法是完全预激活策略，即将批归一化和 `ReLU` 放在卷积之前，并在相加之后省略激活。
 
-The authors also evaluated how changing the position of operations, such as activation functions (`ReLU`) and normalization steps (batch normalization), relative to the skip connection affected performance. Compared to the original approach, which placed activations after combining the paths, they found that putting batch normalization directly after the addition disrupted the skip path and hurt accuracy. Similarly, applying `ReLU` before the addition restricted the residual branch to positive adjustments only, limiting its effectiveness. Using `ReLU` alone before each convolution, without batch normalization, did not meaningfully improve performance either. Ultimately, the most effective approach was the full pre-activation strategy, which places batch normalization and `ReLU` before convolutions and omits activations after the addition.
+#### 哲学
 
-#### Philosophy
+`ResNet` v2 对保留纯恒等映射的坚持，反映了一种更广泛的哲学：重视经验清晰性而非理论新颖性。作者没有发明全新的机制，而是通过系统实验严格测试现有假设，揭示出即使是细微偏差——例如缩放或门控跳跃连接——也可能使训练脱轨。这种实验心态呼应了 Sutskever 的信念：AI 的真正进步并非来自追逐概念性突破，而是来自深入理解已知思想、在规模上改进它们，并发现真正有效的东西。`ResNet` v2 论文体现了一种与 Sutskever 观点共鸣的精神：通过迭代进步，而非发明。
 
-The insistence on preserving pure identity mappings in `ResNet` v2 reflects a broader philosophy that values empirical clarity over theoretical novelty. Rather than inventing entirely new mechanisms, the authors rigorously tested existing assumptions through systematic experimentation, revealing that even subtle deviations, such as scaling or gating the skip connection, could derail training. This experimental mindset mirrors Sutskever’s belief that genuine progress in AI emerges not from chasing conceptual breakthroughs but from deeply understanding known ideas, refining them at scale, and uncovering what actually works. The `ResNet` v2 paper embodies an ethos that resonates with Sutskever’s view: progress through iteration, not invention.
+#### CIFAR-10 上的超深 `ResNet`
 
-#### Ultra-Deep `ResNet` on CIFAR-10
-
-Armed with pre-activation residual units, the authors successfully trained an ultra-deep 1,001-layer `ResNet` on the CIFAR-10 dataset—a benchmark dataset of 60,000 small (32 × 32) color images across 10 object classes. Interestingly, CIFAR-10 was introduced in 2009 by Alex Krizhevsky, the same “Alex” of `AlexNet` fame, underscoring his dual influence on both datasets and architectures [21]. Even so, the 1,001-layer `ResNet` achieved record-setting accuracy, reducing classification error to 4.62%. By comparison, the original (post-activation) 1,202-layer `ResNet` architecture achieved an error rate of 7.93%. At a time when training deep networks was still an ordeal, the authors demonstrated that extremely deep architectures could be stable if carefully designed. Depth was no longer the enemy, so long as the architecture respected the constraints imposed by optimization.
+借助预激活残差单元，作者成功在 CIFAR-10 数据集上训练了一个超深 1,001 层 `ResNet`——该基准数据集包含 10 个对象类别、60,000 张小型（32 × 32）彩色图像。有趣的是，CIFAR-10 由 Alex Krizhevsky 于 2009 年提出，他正是 `AlexNet` 名声中的那个“Alex”，这凸显了他对数据集和架构的双重影响 [21]。即便如此，1,001 层 `ResNet` 仍取得了创纪录的准确率，将分类误差降至 4.62%。相比之下，原始（后激活）1,202 层 `ResNet` 架构的错误率为 7.93%。在训练深度网络仍是一种磨难的时代，作者证明了如果精心设计，极深架构可以保持稳定。深度不再是敌人，只要架构遵守优化所施加的约束。
 
 #### ImageNet
 
-On the much larger ImageNet dataset, the authors trained a 200-layer pre-activation `ResNet` that achieved higher accuracy than the original 152-layer post-activation version. Extending the original post-activation design to 200 layers degraded performance, not because the model was too deep in principle but because the architecture couldn’t support stable optimization at that scale. This underscored that, at this depth, there is a strikingly razor-thin margin for success. The smallest thing can cause convergence to collapse.
+在更大的 ImageNet 数据集上，作者训练了一个 200 层预激活 `ResNet`，其准确率高于原始 152 层后激活版本。将原始后激活设计扩展到 200 层会降低性能，不是因为模型原则上太深，而是因为该架构无法在这种规模下支持稳定优化。这凸显出，在这种深度下，成功的余量惊人地极其微小。最小的事情都可能导致收敛崩溃。
 
-#### Theoretical Insights
+#### 理论洞见
 
-Subsequent theoretical work helped explain why this succeeded. Research showed that `ResNet`s behave like ensembles of many shallower networks of varying depths [22]. Gradient propagation in very deep networks often occurs through shorter, more direct pathways rather than traversing every layer sequentially. So, a 1,000-layer `ResNet` doesn’t function as a single chain of 1,000 layers; instead, it includes many shorter pathways for gradients and signals. These shorter pathways help prevent vanishing gradients, making training significantly more stable. As a result, additional layers can be added without harming performance because unused layers can be bypassed. The identity mappings allowed the network to select and use layers as needed, ignoring unhelpful ones.
+后续理论工作有助于解释为什么这能成功。研究表明，`ResNet` 的行为类似于许多不同深度较浅网络的集成 [22]。极深网络中的梯度传播通常通过更短、更直接的路径发生，而不是顺序遍历每一层。因此，1,000 层 `ResNet` 并不是作为一条 1,000 层的单一链起作用；相反，它包含许多用于梯度和信号的更短路径。这些更短路径有助于防止梯度消失，使训练显著更稳定。因此，可以添加额外层而不损害性能，因为未使用的层可以被绕过。恒等映射让网络能够按需选择和使用层，忽略无用的层。
 
-#### Layer Removal
+#### 层移除
 
-The authors supported this idea with experiments in which they systematically removed individual layers to observe the effect. They found that removing individual layers with residual connections caused only a modest increase in error rather than catastrophic failure. This suggests that the network can compensate by using other available paths. Their analysis showed that in a 110-layer `ResNet`, most effective gradient flow occurred along shorter subnetworks (approximately 10–34 layers), whereas very deep paths contributed minimally and essentially learned identity mappings. This interpretation suggests that `ResNet`’s success arises not merely from having one very deep model but from combining many simpler, overlapping models enabled by residual connections.
+作者通过系统移除单个层以观察效果的实验支持了这一想法。他们发现，移除带有残差连接的单个层只会导致误差适度增加，而不是灾难性失败。这表明网络可以通过使用其他可用路径来补偿。他们的分析显示，在 110 层 `ResNet` 中，最有效的梯度流动沿较短的子网络（大约 10–34 层）发生，而非常深的路径贡献极小，并且基本上学到了恒等映射。这一解释表明，`ResNet` 的成功不仅源于拥有一个非常深的模型，还源于结合了许多由残差连接实现的更简单、重叠的模型。
 
-#### Future Architectures
+#### 未来架构
 
-By 2025, purely convolutional networks will be complemented or partially replaced by transformer-based or hybrid architectures, particularly for modeling tasks with complex long-range dependencies. Still, even these advanced models rely on residual connections. The core `ResNet` philosophy encourages each layer to make minimal, incremental adjustments (“residuals”) rather than completely transforming the data. These minor refinements accumulate through the layers, progressively enhancing the representation. Given its foundational influence on how extremely deep neural networks are optimized and trained, it’s no wonder this paper earned a place on Sutskever’s List.
+到 2025 年，纯卷积网络将被基于 Transformer 或混合架构补充或部分取代，特别是在具有复杂长程依赖的建模任务中。尽管如此，即使这些先进模型也依赖残差连接。`ResNet` 的核心哲学鼓励每一层做出最小、增量的调整（“残差”），而不是完全转换数据。这些微小改进逐层累积，逐步增强表示。鉴于它对极深神经网络如何优化和训练的基础性影响，这篇论文在 Sutskever 的清单中占有一席之地也就不足为奇了。
 
-## 3.5 Extending `ResNet` with dense prediction
+## 3.5 用密集预测扩展 `ResNet`
 
-`ResNet` was built for image classification, where the goal is a single prediction (label) per image. This is called a *sparse prediction task*. Pooling aggregates local regions into a single value. Strided convolutions downsample images by skipping pixels. These strategies work well for sparse tasks because they compress spatial structure into a compact representation and discard fine detail that does not affect the global label [23][24].
+`ResNet` 是为图像分类而构建的，其目标是每张图像给出一个预测（标签）。这被称为 *稀疏预测任务*。池化将局部区域聚合成单个值。步长卷积通过跳过像素对图像进行下采样。这些策略对稀疏任务很有效，因为它们将空间结构压缩为紧凑表示，并丢弃不影响全局标签的精细细节 [23][24]。
 
-By contrast, *dense prediction tasks*—such as image segmentation—aim to partition an image and label each pixel. For example, image segmentation assigns a label to each pixel indicating whether it represents a road, a car, or a dog. Because the goal is a precise outline of objects and surfaces, rather than just a rough sense of what is in the image, these tasks demand high spatial fidelity. So techniques such as pooling and strided convolutions, which are commonly used for image classification, are less suitable. The same downsampling that improves global recognition erases edges and location cues on which segmentation relies.
+相比之下，*密集预测任务*——例如图像分割——旨在划分图像并为每个像素打标签。例如，图像分割为每个像素分配一个标签，指示它代表道路、汽车还是狗。因为目标是对象和表面的精确轮廓，而不仅仅是对图像内容的大致感觉，这些任务要求高空间保真度。因此，常用于图像分类的池化和步长卷积等技术就不太适合。那些改善全局识别的下采样，会抹去分割所依赖的边缘和位置线索。
 
-An alternative is to skip pooling and enlarge the convolutional kernel to widen the receptive field, which is the part of the image a model “sees.” Larger kernels do widen context, but they increase parameters sharply. For example, a 3 × 3 kernel has nine parameters, whereas a 15 × 15 kernel has 225. That’s a 25× increase. For this reason, architectures such as `AlexNet` and `VGGNet` use small kernels with pooling and stacked layers to expand the receptive field without increasing computational complexity. Still, this strategy hits limits for dense prediction, since pooling and large kernels tend to blur fine details and edges that pixel-wise labeling depends on.
+另一种方法是跳过池化，并扩大卷积核以拓宽感受野，即模型“看到”的图像部分。更大的卷积核确实能拓宽上下文，但它们会急剧增加参数。例如，3 × 3 卷积核有九个参数，而 15 × 15 卷积核有 225 个。这是 25 倍的增长。因此，`AlexNet` 和 `VGGNet` 等架构使用小卷积核，配合池化和堆叠层来扩展感受野，而不增加计算复杂度。尽管如此，这种策略在密集预测中仍会遇到限制，因为池化和大卷积核往往会模糊逐像素标注所依赖的精细细节和边缘。
 
 
 
@@ -913,7 +903,7 @@ ResNet 的出现是对模型退化的务实回应。随着深度增加，网络�
 
 然而，计算机视觉只是更广泛的深度学习革命中的一个前沿。随着模型扩展到序列、语音和语言，它们也变得更大、更复杂、更苛刻。这种扩展给该领域带来了新的压力，将进步从孤立的架构洞察转向训练、优化和部署大规模系统所需的工程规范。
 
-# 4  深度学习加速
+<!-- split --># 4  深度学习加速
 
 ## 本章涵盖
 
@@ -1283,7 +1273,7 @@ Sutskever 一直专注于实验，即使底层算法如 CNN、RNN 或 Transforme
 
 DS2 和选择性 Dropout 使循环网络取得了成功，Karpathy 和 Olah 使其变得可理解。然而，即使 RNN 被稳定、正则化和扩展，它们仍然通过一个脆弱的渠道将过去向前传递。下一章就从这个压力点开始。研究人员停止了试图将一切压缩到单一状态的努力，引入了注意力，使模型能够查看整个序列，而不是强行将其通过瓶颈。这是朝向一个更激进的问题迈出的第一步，即是否根本需要循环。
 
-# 5  注意力就是一切
+<!-- split --># 5  注意力就是一切
 
 ## 本章涵盖
 
@@ -1776,7 +1766,7 @@ Sutskever 列表中只有一篇论文排名比它高\[83\]。
 
 这些问题将是下一章的重点。
 
-# 6 超大规模的诞生
+<!-- split --># 6 超大规模的诞生
 
 ## 本章涵盖
 
@@ -2048,35 +2038,35 @@ ZeRO 还使得无需模型并行即可训练 130 亿参数的模型，这一壮�
 
 
 
-Taken together, pipeline staging, tensor slicing, and memory sharding translate scaling laws into practical engineering. GPipe showed how to stagger micro-batches through a pipeline; Megatron demonstrated how to hand-slice transformer layers efficiently, and Mesh-TensorFlow turned sharding into a layout problem over a mesh. ZeRO eliminated redundant storage and raised the memory ceiling. Each breakthrough extended the feasible boundary of model size and performance. Modern AI inherited all these ideas. Together, they turned aspiration into trillion-parameter training runs.
+综合来看，流水线分段、张量切片和内存分片将缩放定律转化为实际工程。GPipe 展示了如何让微批次在流水线中错峰流动；Megatron 展示了如何高效地手工切分 Transformer 层；Mesh-TensorFlow 则将分片变成了网格上的布局问题。ZeRO 消除了冗余存储，并提高了内存上限。每一项突破都扩展了模型规模和性能的可行边界。现代 AI 继承了所有这些思想。它们共同将愿景变成了万亿参数训练运行。
 
-Scaling laws themselves may be simple, but making them real wasn’t. Communication had to be carefully overlapped with computation to keep accelerators busy; collective operations needed to be tuned to the microsecond level; and jobs running for weeks had to survive inevitable hardware faults and network hiccups \[78\]. What appeared smooth in scaling-law plots was, in reality, the result of painstaking engineering that kept every device fed with data and resilient to failure.
+缩放定律本身可能很简单，但将其落地并不简单。通信必须与计算仔细重叠，以让加速器保持忙碌；集合操作需要调优到微秒级；而运行数周的作业必须经受住不可避免的硬件故障和网络抖动 \[78\]。缩放定律图表中看起来平滑的东西，实际上是艰苦工程的结果，这些工程让每台设备都持续获得数据并具备容错能力。
 
-The consensus is clear: pure pipeline parallelism has been demoted to a reluctant last resort. Modern large-scale training relies on hybrids: shallow pipelines to fit massive models across devices, while most of the heavy lifting is done by data and tensor parallelism. Pipelining is still used only because some models are too large to fit otherwise, and engineers generally avoid it when possible. This is the perspective captured in Sutskever’s remark. Pipeline parallelism was clever in its time and helped enable the leap to giant models, but it left behind brittle code, wasted compute, and endless engineering overhead. In hindsight, it was never truly wise, but it was necessary.
+共识很明确：纯流水线并行已被降格为不得已时的最后手段。现代大规模训练依赖混合方案：用浅层流水线将超大模型分布到各设备上，而大部分繁重工作由数据和张量并行完成。流水线仍然被使用，只是因为有些模型太大，不这样做就无法容纳，工程师通常尽可能避免使用它。这正是 Sutskever 那句话所捕捉到的观点。流水线并行在其时代是聪明的，帮助实现了向巨型模型的跨越，但它留下了脆弱的代码、浪费的算力和无尽的工程开销。事后看来，它从来都不是真正明智的，但它是必要的。
 
-## 6.4 Rounding errors
+## 6.4 舍入误差
 
-A 2024 study by Epoch AI estimated that two-thirds of recent gains in language model performance were due to scaling data and compute \[79\]. While this seems to justify “The Bitter Lesson,” we must also remember to ask, “Scale what?” Still, the case for scale was settled. Bigger models trained on more data with more compute reliably get better.
+Epoch AI 在 2024 年的一项研究估计，近期语言模型性能提升中有三分之二归因于数据和算力的扩展 \[79\]。虽然这似乎印证了“苦涩的教训”，但我们也必须记得问一句：“扩展什么？”尽管如此，规模化的理由已经确立。更大的模型、更多的数据、更多的算力，确实能可靠地带来更好的结果。
 
-Yet many have something to say about what this means, and scaling has become one of the noisiest conversations in AI. Gwern Branwen and Microsoft researchers reinterpreted it as a hypothesis (or spark) of intelligence, and many enthusiasts say, “This is the worst it will ever be” when it fails \[80\] \[81\]\[82\]\[83\]. Singularitarians say, “We are making God” \[84\]. Activists want to freeze systems larger than today’s \[85\]. Much of the noise stems from uneven performance. As a result, some round AI down to a “stochastic parrot” or up to a proto-person primed to replace human thinking \[86\] \[87\]. Some say it is merely a compressed version of the internet, though it sometimes generates content that was never on the internet \[88\]\[89\].
+然而，许多人对这意味着什么有话要说，而缩放已成为 AI 领域最嘈杂的讨论之一。Gwern Branwen 和微软的研究人员将其重新解释为智能的一种假设（或火花），许多热心者在其失败时说：“这已经是最差的时候了” \[80\] \[81\]\[82\]\[83\]。奇点主义者说：“我们正在创造上帝” \[84\]。活动人士希望冻结比当今更大的系统 \[85\]。大部分噪音源于表现的不均衡。结果，有些人将 AI 贬低为“随机鹦鹉”，或将其拔高为准备取代人类思维的原始人 \[86\] \[87\]。有人说它只是互联网的压缩版本，尽管它有时会生成从未出现在互联网上的内容 \[88\]\[89\]。
 
-Yet scale did not make God or a parrot. Scale provided the closest thing machine learning has ever had to a free lunch, delivering steady progress and turning progress into engineering problems. This aligned with two of Ilya’s deepest instincts: (1) pragmatic engineering and (2) doing more with less at scale. Scale is neither divine nor trivial, yet it enabled the most successful period in the field’s history. After seventy years, AI has finally gone mainstream, and it’s because of scale. Even so, scale did not produce dependable multistep reasoning or planning. That limitation set the stage for a shift away from scaling pretraining toward systems that promised reasoning. That shift is the focus of the next chapter.
+然而，规模化既没有造出上帝，也没有造出鹦鹉。规模化为机器学习提供了有史以来最接近免费午餐的东西，带来了稳定的进步，并将进步转化为工程问题。这与 Ilya 两个最深层的直觉一致：（1）务实的工程，以及（2）在规模上以更少做更多。规模化既非神圣也非琐碎，但它促成了该领域历史上最成功的时期。七十年后，AI 终于成为主流，而这一切都归功于规模化。即便如此，规模化并未产生可靠的多步推理或规划能力。这一局限为从扩展预训练转向承诺推理的系统奠定了基础。这一转向是下一章的重点。
 
-# 7  The pivot to reasoning
+<!-- split --># 7  转向推理
 
-## This chapter covers
+## 本章涵盖
 
-*   Variational lossy autoencoders
+*   变分有损自编码器
 
-*   Relation networks on CLEVR and bAbI
+*   CLEVR 和 bAbI 上的关系网络
 
-*   Message passing neural networks on QM9
+*   QM9 上的消息传递神经网络
 
-*   Relational memory core for sequential reasoning across benchmarks
+*   跨基准序列推理的关系记忆核心
 
-*   Paper versus living doubts
+*   论文与活生生的疑虑
 
-### Papers
+### 论文
 
 *   *Variational Lossy Autoencoder* (2016) Chen et al.
 
@@ -2086,19 +2076,19 @@ Yet scale did not make God or a parrot. Scale provided the closest thing machine
 
 *   *Relational Recurrent Neural Networks* (2018) Santoro et al.
 
-Rather than scaling to GPT-5 with trillions of parameters, OpenAI invested in techniques such as “test-time compute,” which involves models “thinking” more during inference \[1\]. This pivot reflected a broader realization across the field that scaling pretraining alone was yielding diminishing returns, particularly on tasks requiring reasoning. As a matter of fact, even the loudest champions of scale began discussing its limits. In 2024, Ilya said that “the 2010s were the age of scaling; now we’re back in the age of wonder and discovery once again.” Sutskever added, “Scaling the right thing matters more now than ever” \[2\].
+OpenAI 没有选择扩展到拥有数万亿参数的 GPT-5，而是投资于“测试时计算”等技术，即让模型在推理期间“思考”更多 \[1\]。这一转向反映了整个领域更广泛的认识：仅靠扩展预训练所带来的回报正在递减，尤其是在需要推理的任务上。事实上，即使是最响亮的规模化拥护者也开始讨论其局限性。2024 年，Ilya 表示“2010 年代是规模化的时代；现在我们又回到了惊奇与发现的时代。”Sutskever 补充道：“现在，扩展正确的东西比以往任何时候都更重要” \[2\]。
 
-This chapter is not about one architecture that “solved” reasoning. It is about bottlenecks, object pairs, graph messages, memory slots, and finally, test-time compute. These are all attempts to improve the computational structure of artificial neural networks. Variational lossy autoencoders (VLAEs) ask what information should be forced into a latent code. Relation networks ask how a model can compare objects. Message passing neural networks (MPNNs) ask how information should move across a graph. Relational memory cores (RMCs) ask how memories can interact over time. Modern reasoning models inherit this same theme: intelligence improves not only when models get larger, but when computation is organized so that comparison, constraint-checking, and abstraction become easier.
+本章不是关于某一个“解决”了推理的架构。它关乎瓶颈、对象对、图消息、记忆槽，以及最后的测试时计算。这些都是改进人工神经网络计算结构的尝试。变分有损自编码器（VLAE）追问应该将什么信息强制写入潜在编码。关系网络追问模型如何比较对象。消息传递神经网络（MPNN）追问信息应该如何沿图流动。关系记忆核心（RMC）追问记忆如何随时间交互。现代推理模型继承了同样的主题：智能的提升不仅在于模型变得更大，还在于计算被组织得使比较、约束检查和抽象变得更容易。
 
-## 7.1 Variational lossy autoencoder
+## 7.1 变分有损自编码器
 
-Sequence to sequence (seq2seq) models use an encoder-decoder architecture for machine translation (chapter 5). Recall that the encoder maps the input to a latent representation, which the decoder uses to generate a translated sentence. An *autoencoder* keeps the same architecture but changes the training goal. Instead of translating text, it learns to reconstruct its own input. The encoder maps the input data to a low-dimensional representation known as a *latent code*. This latent code could be a vector representation of an image that encodes colors and shapes or a fixed-length sentence embedding for text. The decoder uses that latent code to reconstruct the original input. See figure 7.1.
+序列到序列（seq2seq）模型使用编码器-解码器架构进行机器翻译（第 5 章）。回想一下，编码器将输入映射为潜在表示，解码器用它生成翻译后的句子。*自编码器*保持相同的架构，但改变了训练目标。它不翻译文本，而是学习重建自己的输入。编码器将输入数据映射为低维表示，称为*潜在编码*。这个潜在编码可以是图像的向量表示，编码了颜色和形状，也可以是文本的固定长度句子嵌入。解码器使用该潜在编码重建原始输入。见图 7.1。
 
 ![figure](img/CH07_F01_Heimann.png)
 
-### Figure 7.1 An autoencoder consists of an encoder that maps the message to a code and a decoder that reconstructs the message from the code.
+### 图 7.1 自编码器由编码器和解码器组成，编码器将消息映射为编码，解码器从编码重建消息。
 
-Since the input data passes through a low-dimensional bottleneck, the model cannot memorize idiosyncratic details. Instead, it must preserve the features needed to reconstruct the input accurately by minimizing a reconstruction objective, ![equation image](img/eq-chapter-7-17-1.png), where *x* is the original input and *![equation image](img/eq-chapter-7-17-2.png)* is the reconstruction produced by the decoder. By reducing the gap between the two, the model learns latent representations that retain the data’s essential structure. In the case of handwritten digits, it may learn features such as edges, loops, and stroke orientation, which later prove useful for downstream tasks like classification, even though classification was never part of the training objective.
+由于输入数据经过低维瓶颈，模型无法记住独特的细节。相反，它必须保留准确重建输入所需的特征，通过最小化重建目标 ![equation image](img/eq-chapter-7-17-1.png)，其中 *x* 是原始输入，*![equation image](img/eq-chapter-7-17-2.png)* 是解码器产生的重建。通过缩小两者之间的差距，模型学习到保留数据基本结构的潜在表示。以手写数字为例，它可能学习到边缘、环和笔画方向等特征，这些特征后来证明对分类等下游任务有用，尽管分类从来不是训练目标的一部分。
 
 
 
@@ -2498,7 +2488,7 @@ CoT 是向推理中注入更多推理的一种方式，但现代方法通常在�
 
 虽然苏茨克维尔的清单记录了有效的方法，但我们仍然难以确定我们能从中合法地理解什么。在接下来的章节中，我们超越工程学，直面这些成就意味着什么。这不是偏离苏茨克维尔的清单，而是它的顶点。
 
-# 8 简洁，隐藏在复杂性中
+<!-- split --># 8 简洁，隐藏在复杂性中
 
 ## 本章涵盖
 
@@ -2827,51 +2817,50 @@ Hinton 和 van Camp 在他们的 MDL 训练方法上在一个要求很高的肽�
 
 
 
+的确，正如 OpenAI 关于该论文的博客文章所指出的，研究人员常常会错过那个标志性的峰值，因为如果他们不越过插值点去看，它可能“很小，很容易被忽略” \[32\]。这表明，数十年来通过正则化和早停来避免过拟合的关注，使该领域忽视了双下降曲线。最终，双下降并没有完全否定偏差-方差权衡，但它确实表明后者是不完整的。同样能说明问题的是，Sutskever 的名字出现在那篇在全规模模型上复现双下降的论文上。毕竟，他亲历了卷积神经网络、循环神经网络和 Transformer 的扩展。他也在那些跨过插值阈值并报告另一侧情况的人之中，这恰如其分。
 
-Indeed, as the OpenAI blog post on the paper notes, researchers often miss the telltale peak because it can be “small and easy to miss” if they don’t look past the interpolation point \[32\]. This suggests that decades of focus on avoiding overfitting through regularization and early stopping led the field to overlook the double descent curve. Ultimately, double descent did not completely contradict the bias-variance tradeoff, but it did show that it is incomplete. It’s also telling that Sutskever’s name is on the paper that replicated double descent on full-scale models. After all, he was there scaling convolutional neural networks, recurrent neural networks, and Transformers. It’s fitting that he was also among those who crossed the interpolation threshold and reported what lay on the other side.
+## 8.6 模糊的 JPEG
 
-## 8.6 Blurry JPEG
+在与 NVIDIA CEO 黄仁勋的炉边谈话中，Ilya Sutskever 提到了 Ted Chiang 2023 年 *New Yorker* 文章“ChatGPT Is a Blurry JPEG of the Web” \[33\]。Sutskever 同意压缩隐喻，但通过不同的概念框架来解读它。Chiang 说，“当你拥有原件时，模糊的网络副本没有用处。”他的论证可追溯到柏拉图的洞穴寓言，该寓言勾勒了对象与其表征之间的关系。同一传统也以其他说法表达，如“地图不是疆域”（Alfred Korzybski）、“所有模型都是错的”（George Box）和“菜单不是饭菜”（Alan Watts）。
 
-In his fireside conversation with NVIDIA CEO Jensen Huang, Ilya Sutskever pointed to Ted Chiang’s 2023 *New Yorker* essay titled “ChatGPT Is a Blurry JPEG of the Web” \[33\]. Sutskever agrees with the compression metaphor but interprets it through a different conceptual frame. Chiang says there is no use for a “blurry copy of the web when you have the original.” His argument dates back to Plato’s allegory of the cave, which outlines the relationship between an object and its representation. The same tradition has been expressed in other terms, such as “the map is not the territory” (Alfred Korzybski), “all models are wrong” (George Box), and “the menu is not the meal” (Alan Watts).
+但 Chiang 的框架忽略了一些模型是有用的。并不是地图、模型和菜单无用；而是与疆域同样大小的地图在实践中没有用。地图不是它所表示的地域，但相似的结构使其有价值。内布拉斯加州大小的地图就是内布拉斯加州，那是不可处理的。但一张能放进你手套箱的内布拉斯加州地图，会帮你找到去林肯市的路。同样，网络是难以处理的，除非你确切知道想去哪里以及如何到达、偏好盲目探索，或者有一张地图，否则它不能直接提供帮助。
 
-But Chiang’s framing overlooks that some models are useful. It is not that maps, models, and menus are useless; rather, a map the size of the territory is not useful in practice. A map is not the territory it represents, but its similar structure makes it valuable. A map the size of Nebraska would be Nebraska, which is intractable. But a map of Nebraska that fits into your glovebox will help you find your way to Lincoln. Likewise, the web is intractable and not directly helpful unless you know exactly where you want to go and how to get there, prefer blind exploration, or have a map.
+然而 Chiang 误判了这是哪种地图——这是许多怀疑者落入的常见陷阱。他们似乎把“网络的模糊副本”视为有损备份，其中“损”意味着不可靠。但从我们一直在发展的柯尔莫哥洛夫和 MDL 视角看，“模糊的 JPEG”不是糟糕的档案，而是网络生成过程的短程序，其中损失意味着抽象。这些是不同的类别，将语言模型视为档案必然会导致低估其价值。
 
-Yet Chiang misclassifies the type of map this is a common trap that many skeptics fall into. They seem to treat a “blurry copy of the Web” as a lossy backup, where loss denotes unreliability. But from the Kolmogorov and MDL perspective we’ve been developing, the “blurry JPEG” is not a bad archive, but a short program for the web’s generative process, where loss means abstraction. These are different categories, and treating language models as archives inevitably leads to underestimating their value.
+从压缩角度看，模糊副本是一种新界面，将分散的文档转化为综合答案和行动。当模型被迫进行无依据生成时，对这种综合的信心应该更低，即使 MDL 式预测可以在工具上有用。最终，变得不那么相关的不是网络本身，而是人类导航它的方式以及我们围绕它建立的机器。搜索引擎、网站、浏览器，以及大部分“searchandstitch”软件开发——主要就是查东西并把片段粘在一起——今天都因为 AI 学习有效数据压缩的能力而价值降低。从 Chiang 的视角看，这种损失是缺陷，压缩是档案；从 Sutskever 的视角看，压缩是新界面而非副本。当我们驱动机器进行预测和压缩时，简单性在压倒性的复杂性中浮现。
 
-From a compression perspective, the blurry copy is a new interface that turns scattered documents into synthesized answers and actions. Confidence in this synthesis should be lower when a model is forced into ungrounded generation, even if MDL-style prediction can be instrumentally useful. Ultimately, what becomes less relevant is not the web itself but the way humans navigate it and the machinery we have built around it. Search engines, websites, browsers, and large swaths of “searchandstitch” software development that mainly consisted of looking things up and gluing snippets together are all less valuable today because of AI’s ability to learn effective data compression. From Chiang’s perspective, that loss is a defect, and compression is an archive; from Sutskever’s perspective, compression is a new interface rather than a copy. When we drive systems to predict and compress, simplicity emerges within overwhelming complexity.
+<!-- split --># 9  安全超级智能
 
-# 9  Safe superintelligence
+## 本章涵盖
 
-## This chapter covers
-
-*   The definition of intelligence
-*   Epicurus + Occam + Bayes + Solomonoff
+*   智能的定义
+*   伊壁鸠鲁 + 奥卡姆 + 贝叶斯 + 所罗门诺夫
 *   `AIXI`
-*   The superintelligence canon
-*   Mistaking definitions and benchmarks for explanations
-*   Intelligence as a public test
+*   超级智能经典
+*   将定义和基准误认为解释
+*   智能作为公共测试
 
-### Papers
+### 论文
 
-*   *Machine Super Intelligence* (2008) Shane Legg
+*   *Machine Super Intelligence*（2008）Shane Legg
 
-This chapter asks what “intelligence” means, how we should measure it, and what kinds of claims those measurements can (and cannot) justify. It begins with Shane Legg synthesizing dozens of competing definitions of intelligence into a performance-based view of AI. That view builds a universal intelligence measure grounded in a philosophical lineage that spans Epicurus’ tolerance for multiple explanations, Occam’s preference for simplicity, Bayes’ rule for updating beliefs, and Solomonoff’s idea of induction.
+本章追问“智能”意味着什么、我们应如何测量它，以及这些测量能够（和不能够）证明哪些主张。它从 Shane Legg 开始，他将数十种相互竞争的智能定义综合为一种基于性能的 AI 观点。该观点构建了一个通用智能度量，其哲学谱系涵盖伊壁鸠鲁对多种解释的宽容、奥卡姆对简单性的偏好、贝叶斯更新信念的规则，以及所罗门诺夫的归纳思想。
 
-The chapter also introduces `AIXI`, a proof of concept that, under Legg’s definition, is “maximally” intelligent. That formalism opens into safety questions, including reward hacking and wireheading, and into the broader superintelligence canon, tracing how speculative forecasts and AI control anxieties evolved alongside mainstream empirical AI research.
+本章还介绍了 `AIXI`，这是一个概念验证：在 Legg 的定义下，它具有“最大程度”的智能。这一形式化打开了安全问题，包括奖励黑客和 wireheading，并进入更广泛的超级智能经典，追溯推测性预测和 AI 控制焦虑如何与主流实证 AI 研究一同演变。
 
-The chapter concludes by analyzing definitions and benchmarks. It explores intelligence as something we attribute through public criteria and tests while remaining cautious of category mistakes. In the context of Sutskever’s List, Legg’s work serves as a unifying finale. It provides a formal attempt to define artificial intelligence that also exposes why the field remains caught between hype, skepticism, safety anxiety, and pragmatic engineering.
+本章最后分析定义和基准。它探讨智能作为我们通过公共标准和测试所归属的东西，同时对范畴错误保持警惕。在 Sutskever 的清单语境中，Legg 的工作充当统一性的终章。它提供了一种定义人工智能的形式化尝试，同时也揭示了该领域为何仍陷于炒作、怀疑、安全焦虑和务实工程之间。
 
-## 9.1 Machine superintelligence
+## 9.1 机器超级智能
 
-While Shane Legg is a cofounder of DeepMind, he is less well-known than cofounders Demis Hassabis and Mustafa Suleyman. But his research occupies a unique place in the canon of artificial general intelligence (AGI) literature. In his dissertation, Legg tries to make “general intelligence” mathematically tractable by presenting it as something that can be defined, measured, optimized, and, in principle, achieved.
+虽然 Shane Legg 是 DeepMind 的联合创始人，但他不如联合创始人 Demis Hassabis 和 Mustafa Suleyman 那么出名。但他的研究在人工通用智能（AGI）文献经典中占据独特位置。在他的博士论文中，Legg 试图使“通用智能”在数学上可处理，将其呈现为可以被定义、测量、优化，并且原则上可以实现的东西。
 
-This section has four steps. First, Legg defines intelligence as the ability to achieve goals across many environments. Second, he connects that definition to a theory of learning where an intelligent agent must infer what kind of world it is in. Third, he shows what a maximally intelligent agent (`AIXI`) would look like under this formal setup. Fourth, he exposes safety problems within that framework. For example, if the goal, reward signal, or environment is wrong, a capable agent can become dangerous. The following details are abstract, but the question is practical: “Once intelligence becomes a score, what exactly is that score rewarding?”
+本节有四个步骤。第一，Legg 将智能定义为在许多环境中实现目标的能力。第二，他将这一定义与一种学习理论联系起来，其中智能体必须推断自己处于何种世界。第三，他展示在这种形式化设置下，一个最大程度智能的智能体（`AIXI`）会是什么样子。第四，他揭示该框架内的安全问题。例如，如果目标、奖励信号或环境有误，一个有能力的智能体可能变得危险。以下细节是抽象的，但问题是实际的：“一旦智能变成一个分数，这个分数到底在奖励什么？”
 
-### 9.1.1 Defining intelligence
+### 9.1.1 定义智能
 
-Legg opens with what he calls the most fundamental question: “What is intelligence?” He acknowledges that no comprehensive survey of definitions has ever been published and notes that most textbooks and research papers skirt the question, offering only passing nods to the Turing test or vague remarks that “intelligence is poorly defined” before moving on to technical details. This suggests a lack of maturity in a field concerned with intelligence, where technical progress has outpaced conceptual clarity.
+Legg 以他所谓的最根本问题开篇：“什么是智能？”他承认，从未发表过关于定义的全面调查，并指出大多数教科书和研究论文都回避这个问题，只是顺便向图灵测试致意，或含糊地说“智能定义不清”，然后转向技术细节。这表明一个关心智能的领域缺乏成熟度，其中技术进步超过了概念清晰度。
 
-Legg’s opening section corrects that omission by giving the question of “what is intelligence?” the attention it seems to deserve. All told, he finds 70 formal and informal definitions, drawn from literature, psychology, and biology, which may constitute the most extensive and well-referenced collection on the subject. Still, using an assortment of literary definitions to define intelligence relies heavily on anthropocentric investigation. After all, literary and dictionary definitions focus on natural intelligence. There may be no other kind of intelligence, but even so, the goal risks becoming idealized rather than material.
+Legg 的开篇部分纠正了这一遗漏，给予“什么是智能？”这一问题它似乎应得的关注。总共，他找到 70 个正式和非正式定义，来自文学、心理学和生物学，这可能构成该主题上最广泛、参考文献最丰富的集合。尽管如此，使用各种文学定义来定义智能，严重依赖人类中心主义的研究。毕竟，文学和词典定义关注自然智能。也许不存在其他类型的智能，但即便如此，这一目标也有变得理想化而非物质化的风险。
 
 
 
@@ -3433,7 +3422,7 @@ GPT-2（第 1 章）标志着缩放与安全之间的第一次公开冲突，而
 
 保持性能声明可操作，而不是将它们转化为关于隐藏本质的声明。也就是说，不要让基准胜利转化为形而上学的声明。此外，忽视那些反对基准和现有基线成功的怀疑者，而支持关于“真正智能”的形而上学论点。AI 不是通过更好的定义合法化的，而是通过避免它们并关注经验胜利，这将是维持它的原因。
 
-## 参考文献
+<!-- split -->## 参考文献
 
 ### 第 1 章
 
