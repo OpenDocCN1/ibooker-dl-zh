@@ -95,6 +95,7 @@
 +   [人工智能平台的 Kubernetes 基础设施扩展指南](docs/scl-k8s-infra-ai-plat/README.md)
 +   [检索增强生成简易指南](docs/simgd-rag/README.md)
 +   [生成式人工智能的数据分析入门指南](docs/st-dtanls-genai-py/README.md)
++   [Sutskever 精选论文清单](docs/sutskevers-list/README.md)
 +   [生成式人工智能的软件测试](docs/sw-tst-genai/README.md)
 +   [Tensorflow 深度学习](docs/tf-dl/README.md)
 +   [TensorFlow 实战](docs/tf-ia/README.md)
