@@ -20,6 +20,7 @@
 +   [使用生成式 AI 的金融软件构建指南](docs/bd-fin-sw-genai/README.md)
 +   [FastAPI 生成式人工智能服务构建指南](docs/bd-genai-svc-fapi/README.md)
 +   [从零开始的大语言模型构建指南](docs/bd-llm-scr/README.md)
++   [推理模型构建指南（从零开始）](docs/build-a-reasoning-model-from-scratch/README.md)
 +   [超越氛围编程](docs/byd-vbcd/README.md)
 +   [贝叶斯优化实战](docs/bys-optm-ia/README.md)
 +   [生成式人工智能的完整过时指南（MEAP）](docs/cmpl-obs-gd-genai/README.md)
