@@ -9,6 +9,7 @@
 +   [AI 口袋手册](docs/ai-pktbk/README.md)
 +   [AI 驱动的开发者指南](docs/ai-pwr-dev/README.md)
 +   [AI 驱动的搜索指南](docs/ai-pwr-sch/README.md)
++   [AI 系统性能工程](docs/ai-systems-performance-engineering/README.md)
 +   [人工智能价值创造](docs/ai-val-crt/README.md)
 +   [人工智能即服务](docs/aiaas/README.md)
 +   [AWS 认证人工智能专业人员学习指南](docs/aws-cert-ao-prac-stdgd/README.md)
