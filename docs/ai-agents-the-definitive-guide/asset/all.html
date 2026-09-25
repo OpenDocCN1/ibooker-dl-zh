@@ -1,0 +1,3805 @@
+<p><img src="assets/ER_cover.png" /></p>
+<p><span id="cover.html"></span></p>
+<div id="cover.html_book-content">
+<div id="cover.html_sbo-rt-content">
+<figure data-type="cover">
+<img src="assets/ER_cover.png" width="1200" height="1574" />
+</figure>
+</div>
+</div>
+<p><span id="titlepage01.html"></span></p>
+<div id="titlepage01.html_book-content">
+<div id="titlepage01.html_sbo-rt-content">
+
+</div>
+</div>
+<p><span id="copyright-page01.html"></span></p>
+<div id="copyright-page01.html_book-content">
+<div id="copyright-page01.html_sbo-rt-content">
+<section class="copyright-page" data-type="copyright-page"
+data-pdf-bookmark="AI Agents: The Definitive Guide">
+<div id="copyright-page01.html_id21" class="preface">
+<h1>AI Agents: The Definitive Guide</h1>
+<p>by <span class="firstname">Nicole </span> <span
+class="surname">Koenigstein</span></p>
+<p>Copyright © 2027 Nicole Koenigstein. All rights reserved.</p>
+<p>Published by <span class="publishername">O’Reilly Media, Inc.</span>,
+141 Stony Circle, Suite 195, Santa Rosa, CA 95401.</p>
+<p>O’Reilly books may be purchased for educational, business, or sales
+promotional use. Online editions are also available for most titles (<a
+href="https://oreilly.com">https://oreilly.com</a>). For more
+information, contact our corporate/institutional sales department:
+800-998-9938 or <em>corporate@oreilly.com</em> .</p>
+<ul>
+<li><span class="staffrole">Acquisitions Editor:</span> Nicole
+Butterfield</li>
+<li><span class="staffrole">Development Editor:</span> Sarah Grey</li>
+<li><span class="staffrole">Production Editor:</span> Elizabeth
+Faerm</li>
+<li><span class="staffrole">Copyeditor:</span> TO COME</li>
+<li><span class="staffrole">Proofreader:</span> TO COME</li>
+<li><span class="staffrole">Indexer:</span> TO COME</li>
+<li><span class="staffrole">Cover Designer:</span> Susan Brown</li>
+<li><span class="staffrole">Cover Illustrator:</span> TO COME</li>
+<li><span class="staffrole">Interior Designer:</span> David Futato</li>
+<li><span class="staffrole">Interior Illustrator:</span> Kate
+Dullea</li>
+</ul>
+<ul>
+<li><span class="printedition">November 2026:</span> First Edition</li>
+</ul>
+<!--Add additional revdate spans below as needed.-->
+<h1 class="revisions">Revision History for the Early Release</h1>
+<ul>
+<li><span class="revdate">2025-09-12:</span> First Release</li>
+</ul>
+<p>See <a
+href="https://oreilly.com/catalog/errata.csp?isbn=9798341666931">https://oreilly.com/catalog/errata.csp?isbn=9798341666931</a>
+for release details.</p>
+<div class="legal">
+<p>The O’Reilly logo is a registered trademark of O’Reilly Media, Inc.
+<em>AI Agents: The Definitive Guide</em>, the cover image, and related
+trade dress are trademarks of O’Reilly Media, Inc.</p>
+<p>The views expressed in this work are those of the author and do not
+represent the publisher’s views. While the publisher and the author have
+used good faith efforts to ensure that the information and instructions
+contained in this work are accurate, the publisher and the author
+disclaim all responsibility for errors or omissions, including without
+limitation responsibility for damages resulting from the use of or
+reliance on this work. Use of the information and instructions contained
+in this work is at your own risk. If any code samples or other
+technology this work contains or describes is subject to open source
+licenses or the intellectual property rights of others, it is your
+responsibility to ensure that your use thereof complies with such
+licenses and/or rights.
+<!--PROD: Uncomment the following sentence if appropriate and add it to the 
+        above para:-->
+<!--This book is not intended as [legal/medical/financial; use the appropriate
+        reference] advice. Please consult a qualified professional if you 
+        require [legal/medical/financial] advice.--></p>
+</div>
+<div class="copyright-bottom">
+<p>979-8-341-66689-4</p>
+<p>[LSI]</p>
+</div>
+</div>
+</section>
+</div>
+</div>
+<p><span id="preface01.html"></span></p>
+<div id="preface01.html_book-content">
+<div id="preface01.html_sbo-rt-content">
+<section class="preface" data-type="preface"
+data-pdf-bookmark="Brief Table of Contents (Not Yet Final)">
+<section id="preface01.html_id23" class="preface">
+<h1>Brief Table of Contents (<em>Not Yet Final</em>)</h1>
+<p>Chapter 1: From LLMs to Agents: The Foundational Blueprint
+(available)</p>
+<p>Chapter 2: Architectures and Patterns: Planning, Reactivity, and
+Multi-Agent-Systems (available)</p>
+<p><em>Chapter 3: Advanced Paradigms: Advanced Planning and Reasoning
+and Scalable Execution in Agents</em> (unavailable)</p>
+<p><em>Chapter 4: The Models Behind the Agents: Capabilities and
+Optimization</em> (unavailable)</p>
+<p><em>Chapter 5: Interfaces and Tooling: System Integration and
+Execution</em> (unavailable)</p>
+<p><em>Chapter 6: Deploying Agents in Real Products</em>
+(unavailable)</p>
+<p><em>Chapter 7: Benchmarking LLMs and Agentic Systems for
+Production</em> (unavailable)</p>
+<p><em>Chapter 8: Multimodal and Domain-Specific Benchmarks</em>
+(unavailable)</p>
+<p><em>Chapter 9: Safety, Guardrails, and Risk Mitigation</em>
+(unavailable)</p>
+<p><em>Chapter 10: Memory, Autonomy, and Long-Horizon Use</em>
+(unavailable)</p>
+<p><em>Chapter 11: Cost Estimation and Efficiency Optimization</em>
+(unavailable)</p>
+<p><em>Chapter 12: Future Directions</em> (unavailable)</p>
+</section>
+</section>
+</div>
+</div>
+<p><span id="ch01.html"></span></p>
+<div id="ch01.html_book-content">
+<div id="ch01.html_sbo-rt-content">
+<div id="ch01.html_id24" class="chapter">
+<h1><span class="label">Chapter 1. </span>From LLMs to Agents: The
+Foundational Blueprint</h1>
+<aside data-type="sidebar" epub:type="sidebar">
+<section id="ch01.html_id46" class="sidebar">
+<h1>A Note for Early Release Readers</h1>
+<p>With Early Release ebooks, you get books in their earliest form—the
+author’s raw and unedited content as they write—so you can take
+advantage of these technologies long before the official release of
+these titles.</p>
+<p>This will be the 1st chapter of the final book. Please note that the
+GitHub repo will be made active later on.</p>
+<p>If you’d like to be actively involved in reviewing and commenting on
+this draft, please reach out to the editor at <a
+href="mailto:sgrey@oreilly.com">sgrey@oreilly.com</a>.</p>
+</section>
+</aside>
+<p>One of the defining traits of human intelligence is the way we
+combine inner reasoning with concrete actions, and this maps
+surprisingly well to how large language model (LLM) agents operate when
+paired with tools. Take the process of building a coding project. As a
+human developer you begin with a prompt, the client’s request. First
+comes reasoning, where you sketch out a plan of how to approach it. Then
+comes action, such as searching for documentation, writing functions, or
+debugging errors. Feedback enters the loop when tests fail, a peer
+review points out gaps, or the client tests the application. Each step
+is not static but iterative, with reasoning adapting to new insights and
+actions changing in response.</p>
+<p>The same applies to a single LLM agent. Given a task, the agent first
+reasons about what is missing or what step comes next, then takes
+actions by calling tools to retrieve data, run code, or check results.
+Like a developer’s feedback loop, the environment provides signals such
+as errors, gaps, or confirmations that guide the next iteration.
+External support, such as code libraries or documentation, maps to tools
+like retrieval systems or web searches, which refine the output beyond
+the model’s own raw ability.</p>
+<p>An LLM agent is a large language model embedded in a loop of
+reasoning, acting, and feedback, where it can call external tools and
+adapt its behavior based on results. Unlike a standalone LLM, which is
+limited to static text generation, an agent operates as a
+decision-making entity within a workflow. In this book, I will use AI
+agents, agents, and LLM agents interchangeably. Strictly speaking, an AI
+agent or agent does not need to involve a language model at all. For
+example, in pure reinforcement learning agents are trained directly
+through trial and error interaction with an environment. The benefit of
+using an LLM is that it brings strong generalization, reasoning, and
+natural language capabilities, which makes agent behavior more flexible
+and broadly applicable beyond narrowly defined environments.</p>
+<p>Just as individual skills eventually meet their limits, a single
+agent can only take a workflow so far before complexity demands
+coordination. If you think about it, in a small company, a single
+contributor might handle everything end-to-end: designing, coding,
+testing, and deploying. But as the project grows, the team needs to
+expand. One person might focus on backend, another on frontend, another
+on testing. To keep everything aligned, a tech lead or VP of engineering
+steps in, coordinating the workload, assigning tasks, and integrating
+results. The difference between a lone contributor and a coordinated
+team maps directly onto the difference between a single agent and a
+multi-agent system (MAS). Just as a tech lead coordinates multiple
+contributors, a supervisor agent can orchestrate multiple specialized
+agents to collaborate on solving a complex goal.</p>
+<p>It is also important to recognize that neither humans nor agents
+operate with complete autonomy. Developers are guided by coding
+standards, project requirements, and organizational processes, and their
+freedom is bounded by these structures. Agents are similarly constrained
+by their workflows, operating only within the scope of the tools,
+permissions, and safeguards they are provided. Far from being a
+weakness, this lack of full autonomy is what makes both systems viable.
+For humans, structure ensures code quality, maintainability, and client
+satisfaction. For agents, constraints ensure safety, reliability, and
+alignment with the goals set by their developers and users.</p>
+<p>This parallel highlights why extending pure LLMs with tools makes
+sense. A language model on its own is like a developer cut off from
+resources like StackOverflow, IDEs, or GitHub, capable of reasoning but
+unable to gather new data, verify results, or improve their task output
+without outside help. Just as software teams scale their capabilities by
+adding better tools, resources, and leadership, LLMs extend their
+capability when embedded in agentic workflows and even multiple
+specialized agents within a MAS. Without these upgrades, both remain
+confined to the limits of their initial training and quickly become
+overwhelmed when faced with complex tasks. With tools, feedback, and a
+divide and conquer approach, LLMs can iteratively refine, adapt, and
+solve complex tasks that would otherwise exceed their standalone
+capacity.</p>
+<p>I assume in this book that you have at least a fundamental knowledge
+of LLMs. Maybe you’ve read the book <a
+href="https://learning.oreilly.com/library/view/hands-on-large-language/9781098150952//">Hands-On
+Large Language Models</a>, or a similar work. You don’t need to know how
+to deploy LLMs to make your agents work, since I’ll guide you through
+those steps in later chapters. However, I expect you have solid coding
+skills in Python, meaning you know what classes and functions are, and
+that you are familiar with core ML and deep learning concepts such as
+neural networks, training loops, and backpropagation. A working
+knowledge of linear algebra and calculus is also helpful, since they
+underpin much of modern deep learning. It is also useful if you
+understand how transformers process sequences and have at least a basic
+sense of how embeddings work or vector stores support retrieval.</p>
+<p>If you haven’t touched these topics in a while, DON’T PANIC! Just
+like The Hitchhiker’s Guide to the Galaxy advises not to panic, I’ll say
+the same here in my guide. That said, every concept will be grounded in
+code, so your knowledge becomes usable again without requiring you to
+dust off old textbooks. And no, before you ask, the answer to everything
+about AI agents is not 42, but I promise you’ll get your answers
+throughout this book.</p>
+<section data-type="tip">
+<h1>Code for the book</h1>
+<p>All code examples from this book are available in the <a
+href="https://github.com/Nicolepcx/ai-agents-the-definitive-guide">GitHub
+accompanying repository</a>. The repository is organized by chapter, so
+you can easily find the code that belongs to each section.</p>
+</section>
+<p>If you would like a closer look at transformers across different
+domains and how embeddings are used for text and other modalities, my
+book <a
+href="https://learning.oreilly.com/library/view/transformers-the-definitive/9781098167004/">Transformers:
+The Definitive Guide</a> can serve as a complementary source. It also
+explains the fundamentals of reinforcement learning, which will help you
+build a stronger foundation for understanding the advanced agent
+concepts introduced later in this book.</p>
+<p>Therefore, this book is written for readers who want to go beyond
+curiosity, which is why understanding these fundamentals is important.
+This includes data scientists, software and ML engineers who are
+building real systems in production, and technical leaders who need to
+understand the trade-offs, costs, and guardrails involved. This book is
+not about explaining LLMs from scratch, nor is it about abstract
+promises, or thought experiments. It is about the practical realities of
+building and running AI agents that can perform and be useful outside a
+PowerPoint presentation or a lab demo.</p>
+<p>This chapter explains how LLMs evolve from static prompts to dynamic
+agentic systems, why tool use is essential, and what being stateful and
+autonomous truly means in the design of modern AI agents.</p>
+<section data-type="sect1"
+data-pdf-bookmark="Finite and Hierarchical State Machines: The Base Paradigm of Agents">
+<section id="ch01.html_id27" class="sect1">
+<h1>Finite and Hierarchical State Machines: The Base Paradigm of
+Agents</h1>
+<p><a
+href="https://langchain-ai.github.io/langgraph/concepts/why-langgraph/">LangGraph</a>,
+<a href="https://www.crewai.com/">CrewAI</a>, and similar frameworks
+build on the concept of state machines. At a high level, a <em>state
+machine</em> is a computational model that exists in one of a finite
+number of states at any given time. It transitions between states in
+response to specific events or inputs, with the next state determined by
+the current state and the input.</p>
+<p>This section is meant to help you build a mental model of agents by
+showing how state machines form the foundation of modern AI agent
+frameworks. In simple terms, think of it as structured transitions, a
+pattern long used in compilers, GUIs, embedded systems, and networking
+protocols, now applied to reasoning and tool use in LLM-based
+agents.</p>
+<p>My intention in grounding your understanding first in finite state
+machines (FSMs) and hierarchical state machines (HSMs) is more than a
+loose analogy. I want to give you a blueprint for building LLM agents
+that are robust, reliable, and adaptable. It will empower you to not
+only understand the concepts but to apply them effectively as you learn
+about more complex topics later in the book. However, if you haven’t
+worked with state machines recently, don’t worry. You’ll see how the
+patterns translate directly in the code examples.</p>
+<section data-type="sect2" data-pdf-bookmark="Finite State Machines">
+<section id="ch01.html_id28" class="sect2">
+<h2>Finite State Machines</h2>
+<p>A <em>finite state machine</em> has a small vocabulary in which it
+can act upon and modes your system can be in, and the allowed moves
+between them. Each move is triggered by an event, optionally guarded by
+a predicate, and may perform actions that update a state. Start and end
+are distinguished states with special meaning. The core vocabulary
+is:</p>
+<dl>
+<dt>State</dt>
+<dd>
+<p>A compact snapshot that captures what the system knows at a given
+moment. For an agent, this might be the message list, routing hints, or
+progress markers.</p>
+</dd>
+<dt>Event</dt>
+<dd>
+<p>Something that happens since the last decision, such as a tool being
+invoked or returning a result.</p>
+</dd>
+<dt>Guard</dt>
+<dd>
+<p>A check that decides which transition to take, based on the current
+state and latest event.</p>
+</dd>
+<dt>Action</dt>
+<dd>
+<p>Work performed during a transition, like invoking a tool, appending a
+message, saving a checkpoint, or requesting human input.</p>
+</dd>
+<dt>Termination</dt>
+<dd>
+<p>A condition that signals the process has reached the end.</p>
+</dd>
+</dl>
+<p><a href="#ch01.html_fsm_toolcall" data-type="xref">Figure 1-1</a>
+illustrates a finite state machine for tool use. Each transition is
+defined by an event, a guard, and an action.</p>
+<figure>
+<div id="ch01.html_fsm_toolcall" class="figure">
+<img src="assets/ch01_fsm_toolcall_vocab.png" width="600" height="333"
+alt="ch01 fsm toolcall vocab" />
+<h6><span class="label">Figure 1-1. </span>High level overview of a
+finite state machine for tool use.</h6>
+</div>
+</figure>
+<p>An FSM is ideal when behavior alternates among a few stable modes and
+when recoverability matters, since you can checkpoint on every node and
+resume after a crash from the last completed state.</p>
+<p>Thinking in terms of states lets you decompose a complex task into
+distinct steps. For example, instead of a single prompt for “write a
+blog post”, you might define states such as topic ideation, outline
+generation, drafting, editing, and SEO optimization. Each state can link
+to specific tools your agent will use.</p>
+<p><em>Transitions</em> make you specify the conditions under which one
+task hands off to the next. For instance, what output from the outline
+generation state triggers the drafting state. This structure counters
+unstructured, one-shot prompts that often lead to inconsistent results
+with LLMs alone.</p>
+<p>As soon as you add more modes, such as planning, reflection, approval
+gates, and retries, an FSM can force duplication or create spaghetti
+routing. You need to keep control of the edges, since they are decision
+points: each one encodes the event, guard, and action that drives
+functionality. This is where hierarchy helps.</p>
+</section>
+</section>
+<section data-type="sect2"
+data-pdf-bookmark="Hierarchical State Machines">
+<section id="ch01.html_id29" class="sect2">
+<h2>Hierarchical State Machines</h2>
+<p><em>Hierarchical state machines</em> let states contain other states.
+Superstates capture shared entry/exit behavior and shared guards.
+Substates inherit those rules and add their own. History nodes remember
+which substate you were in when you left, so you can resume exactly
+there later. These new additions to the state machine are explained
+below.</p>
+<dl>
+<dt>Superstate</dt>
+<dd>
+<p>A state that groups a set of child states and their common policies.
+Entering the superstate runs shared logic once; exiting it runs shared
+cleanup once.</p>
+</dd>
+<dt>Substate</dt>
+<dd>
+<p>A concrete mode that lives inside a superstate. It has its own edges
+but inherits the superstate’s guards and actions.</p>
+</dd>
+<dt>History</dt>
+<dd>
+<p>A “remember where I was” marker. Shallow history resumes at the last
+active child; deep history resumes inside nested grandchildren. In agent
+terms, this is a checkpoint for a portion of the graph.</p>
+</dd>
+<dt>Parallel region</dt>
+<dd>
+<p>Two or more child regions of a superstate that advance independently.
+Useful for fanning out tool calls or agent roles and then joining.</p>
+</dd>
+</dl>
+<p><a href="#ch01.html_hsm_agent" data-type="xref">Figure 1-2</a> shows
+a hierarchical state machine with a <code translate="no">WORKING</code>
+superstate. <code translate="no">PLAN</code>, <code
+translate="no">ACT</code>, and <code translate="no">REFLECT</code> are
+substates. <code translate="no">H</code> is a shallow history marker
+that records the last active substate so execution can resume there if
+the superstate is re-entered.</p>
+<figure>
+<div id="ch01.html_hsm_agent" class="figure">
+<img src="assets/ch01_hsm_agent.png" width="600" height="300"
+alt="ch01 hsm agent" />
+<h6><span class="label">Figure 1-2. </span>Overview of a hierarchical
+state machine with history marker hat records the last active
+substate.</h6>
+</div>
+</figure>
+<p>HSMs are particularly relevant to more advanced MAS. An HSM allows
+for “states within states”, which reduces duplication and makes policies
+obvious. For example, you can attach rate limits, safety filters, or
+circuit breakers to a <code translate="no">WORKING</code> superstate, so
+planning, acting, and reflecting all inherit the same safeguards. You
+define a guard or router once and reuse it across nodes. Consider a
+research agent. Instead of treating research as a single monolithic
+step, you can break it into a sub-machine with states such as searching
+for keywords, gathering URLs, scraping data, and summarizing findings.
+Each of these states can even map to a dedicated agent with its own
+capabilities, contributing to the larger team of agents. This nested
+structure helps manage complexity, keeps policies consistent, and makes
+the overall system easier to reason about and maintain.</p>
+</section>
+</section>
+<section data-type="sect2"
+data-pdf-bookmark="Mapping FSM/HSM to Agent Frameworks">
+<section id="ch01.html_router_section" class="sect2">
+<h2>Mapping FSM/HSM to Agent Frameworks</h2>
+<p>LangGraph already speaks the language of state machines and
+hierarchy. You implement it with subgraphs and shared keys. The router
+or decision-making agent that selects the next action (such as calling
+the next agent or tool) is analogous to the event handler in a classic
+state machine. It’s the part of the system that takes the current state
+and the LLM’s output (the event or payload) and determines the next
+logical step. The direct mapping is shown below.</p>
+<dl>
+<dt>State schema</dt>
+<dd>
+<p>The parent graph’s TypedDict defines the shared “bus”. Subgraphs
+declare which keys they read and write. Overlapping keys are the
+superstate’s interface.</p>
+</dd>
+</dl>
+<pre translate="no" data-type="programlisting"
+data-code-language="python"><code>class State(TypedDict):
+messages: List[BaseMessage]  
+working_last: str | None </code></pre>
+<dl>
+<dt><a
+href="#ch01.html_co_from_llms_to_agents__the_foundational_blueprint_CO1-1"
+id="ch01.html_callout_from_llms_to_agents__the_foundational_blueprint_CO1-1"
+class="co"><img src="assets/1.png" width="12" height="12"
+alt="1" /></a></dt>
+<dd>
+<p>Shared bus across parent and subgraphs.</p>
+</dd>
+<dt><a
+href="#ch01.html_co_from_llms_to_agents__the_foundational_blueprint_CO1-2"
+id="ch01.html_callout_from_llms_to_agents__the_foundational_blueprint_CO1-2"
+class="co"><img src="assets/2.png" width="12" height="12"
+alt="2" /></a></dt>
+<dd>
+<p>Optional shallow history marker.</p>
+<dl>
+<dt>Nodes and subgraphs</dt>
+<dd>
+<p>A subgraph is an HSM superstate. Its internal nodes are substates.
+Entering the subgraph runs its entry node; leaving it runs its exit edge
+back to the parent.</p>
+</dd>
+</dl>
+</dd>
+</dl>
+<pre translate="no" data-type="programlisting"><code>def plan_node(state: State) -&gt; State:
+    ai = AIMessage(content=&quot;Plan next step&quot;)
+    return {&quot;messages&quot;: [ai], &quot;working_last&quot;: &quot;plan&quot;}
+
+def act_node(state: State) -&gt; State:
+    ai = AIMessage(content=&quot;Act on plan&quot;)
+    return {&quot;messages&quot;: [ai], &quot;working_last&quot;: &quot;act&quot;}
+
+subgraph_builder = StateGraph(State)
+subgraph_builder.add_node(&quot;PLAN&quot;, plan_node)
+subgraph_builder.add_node(&quot;ACT&quot;, act_node)
+subgraph_builder.add_edge(START, &quot;PLAN&quot;)
+subgraph = subgraph_builder.compile() </code></pre>
+<dl>
+<dt><a
+href="#ch01.html_co_from_llms_to_agents__the_foundational_blueprint_CO2-1"
+id="ch01.html_callout_from_llms_to_agents__the_foundational_blueprint_CO2-1"
+class="co"><img src="assets/1.png" width="12" height="12"
+alt="1" /></a></dt>
+<dd>
+<p>Subgraph is the superstate.</p>
+<dl>
+<dt>Guards and conditional edges</dt>
+<dd>
+<p>Parent-level guards enforce global policy (budget, safety).
+Child-level guards route among PLAN/ACT/REFLECT. Because guards are
+plain Python, they remain deterministic and auditable.</p>
+</dd>
+</dl>
+</dd>
+</dl>
+<pre translate="no" data-type="programlisting"><code>def route_within_working(state: State):
+    last = state.get(&quot;working_last&quot;)
+    return &quot;ACT&quot; if last == &quot;plan&quot; else END
+
+subgraph_builder.add_conditional_edges(&quot;PLAN&quot;,
+                route_within_working, {&quot;ACT&quot;: &quot;ACT&quot;, END: END}) 
+
+
+parent = StateGraph(State) 
+parent.add_node(&quot;WORKING&quot;, subgraph)
+
+def global_guard(state: State):
+    tail = &quot;&quot;.join([
+            getattr(m, &quot;content&quot;, &quot;&quot;) for m in state[&quot;messages&quot;][-3:]
+            ]).lower() 
+    return END if &quot;stop&quot; in tail else &quot;WORKING&quot;
+
+parent.add_edge(START, &quot;WORKING&quot;)
+parent.add_conditional_edges(&quot;WORKING&quot;, global_guard,
+                            {&quot;WORKING&quot;: &quot;WORKING&quot;, END: END})</code></pre>
+<dl>
+<dt><a
+href="#ch01.html_co_from_llms_to_agents__the_foundational_blueprint_CO3-1"
+id="ch01.html_callout_from_llms_to_agents__the_foundational_blueprint_CO3-1"
+class="co"><img src="assets/1.png" width="12" height="12"
+alt="1" /></a></dt>
+<dd>
+<p>Add conditional edge inside subgraph.</p>
+</dd>
+<dt><a
+href="#ch01.html_co_from_llms_to_agents__the_foundational_blueprint_CO3-2"
+id="ch01.html_callout_from_llms_to_agents__the_foundational_blueprint_CO3-2"
+class="co"><img src="assets/2.png" width="12" height="12"
+alt="2" /></a></dt>
+<dd>
+<p>Parent graph with a global guard.</p>
+</dd>
+<dt><a
+href="#ch01.html_co_from_llms_to_agents__the_foundational_blueprint_CO3-3"
+id="ch01.html_callout_from_llms_to_agents__the_foundational_blueprint_CO3-3"
+class="co"><img src="assets/3.png" width="12" height="12"
+alt="3" /></a></dt>
+<dd>
+<p>Example policy: end if user said stop.</p>
+<dl>
+<dt>History and checkpointing</dt>
+<dd>
+<p>MemorySaver gives you shallow and deep history for free: resuming a
+thread recreates the subgraph at the last completed node. If you want
+explicit “return to where I was inside WORKING,” persist a small marker
+(for example, state["working_last"] = “reflect”) and branch on it when
+re-entering.</p>
+</dd>
+</dl>
+</dd>
+</dl>
+<pre translate="no" data-type="programlisting"><code>def reflect_node(state: State) -&gt; State: 
+    ai = AIMessage(content=&quot;Reflect on result&quot;)
+    return {&quot;messages&quot;: [ai], &quot;working_last&quot;: &quot;reflect&quot;}
+
+checkpointer = MemorySaver() 
+app = parent.compile(checkpointer=checkpointer)
+
+cfg = {&quot;configurable&quot;: {&quot;thread_id&quot;: &quot;session-1&quot;}} 
+app.invoke({&quot;messages&quot;: [HumanMessage(content=&quot;start&quot;)],
+                        &quot;working_last&quot;: None}, config=cfg)</code></pre>
+<dl>
+<dt><a
+href="#ch01.html_co_from_llms_to_agents__the_foundational_blueprint_CO4-1"
+id="ch01.html_callout_from_llms_to_agents__the_foundational_blueprint_CO4-1"
+class="co"><img src="assets/1.png" width="12" height="12"
+alt="1" /></a></dt>
+<dd>
+<p>Substates set working_last on exit.</p>
+</dd>
+<dt><a
+href="#ch01.html_co_from_llms_to_agents__the_foundational_blueprint_CO4-2"
+id="ch01.html_callout_from_llms_to_agents__the_foundational_blueprint_CO4-2"
+class="co"><img src="assets/2.png" width="12" height="12"
+alt="2" /></a></dt>
+<dd>
+<p>Compile with checkpointing.</p>
+</dd>
+<dt><a
+href="#ch01.html_co_from_llms_to_agents__the_foundational_blueprint_CO4-3"
+id="ch01.html_callout_from_llms_to_agents__the_foundational_blueprint_CO4-3"
+class="co"><img src="assets/3.png" width="12" height="12"
+alt="3" /></a></dt>
+<dd>
+<p>Run in a thread. MemorySaver restores last completed node on
+resume.</p>
+</dd>
+</dl>
+<p>FSMs give you a way to structure tasks into stable, recoverable
+steps. HSMs extend this by reducing duplication and centralizing policy
+when workflows grow more complex. Both patterns prepare you for the next
+step: turning static LLM predictions into dynamic, stateful agents.</p>
+</section>
+</section>
+</section>
+</section>
+<section data-type="sect1"
+data-pdf-bookmark="Foundations: From Static Models to Dynamic Agents">
+<div id="ch01.html_id31" class="sect1">
+<h1>Foundations: From Static Models to Dynamic Agents</h1>
+<p>As you saw in the previous section, adding states and control flows
+is essential for automation. The same principle applies to agents. To
+move from static LLM usage to agentic systems, you need explicit state
+and control flow. State turns one off tool calls into a memory bearing
+process. Control flow adds guards and transitions that govern when to
+plan, when to act, and when to stop.</p>
+<p>The reason to add this to LLMs is simple: LLMs are static predictors.
+They generate the next token given a prompt, drawing only on patterns
+encoded in their training data. This makes them powerful reasoners but
+leaves them confined to what they already know. They cannot update
+knowledge, verify claims, or interact with an environment.</p>
+<p><em>Agency</em> emerges when reasoning is coupled with action.
+<em>Reasoning</em> is the internal process of planning or deciding the
+next step. <em>Action</em> extends this by invoking tools, retrieving
+data, executing code, or calling external services. Together they form
+an iterative loop: reason, act, receive feedback, and adjust. This loop
+is the foundation of agentic behavior.</p>
+<p><a href="#ch01.html_trad_vs_agents" data-type="xref">Table 1-1</a>
+compares static LLMs to agentic systems. These contrasts show not only
+why agents are necessary, but also how their design shifts traditional
+machine learning workflows into dynamic, tool augmented systems.</p>
+<table id="trad_vs_agents">
+<caption><span class="label">Table 1-1. </span>Comparison of Static LLMs
+and Agentic Systems</caption>
+<thead>
+<tr>
+<th>Static LLM (Traditional Use)</th>
+<th>Agentic System</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><p>Single-pass token generator</p></td>
+<td><p>Iterative reasoning–action–feedback system</p></td>
+</tr>
+<tr>
+<td><p>Confined to training data</p></td>
+<td><p>Can retrieve, verify, and update knowledge</p></td>
+</tr>
+<tr>
+<td><p>No memory, stateless</p></td>
+<td><p>Stateful with short- and long-term memory</p></td>
+</tr>
+<tr>
+<td><p>Linear prompt–response</p></td>
+<td><p>Iterative and adaptive workflow</p></td>
+</tr>
+<tr>
+<td><p>No tool use</p></td>
+<td><p>Tool-augmented (retrieval, code, APIs)</p></td>
+</tr>
+<tr>
+<td><p>Fixed interpretation of prompt</p></td>
+<td><p>Can refine or reinterpret goals dynamically</p></td>
+</tr>
+<tr>
+<td><p>No external validation</p></td>
+<td><p>Actively checks, corrects, and improves output</p></td>
+</tr>
+</tbody>
+</table>
+<p><a href="#ch01.html_agent_core_diagram"
+data-type="xref">Figure 1-3</a> illustrates how modules turn a static
+LLM into a dynamic agent. The user request enters the core, planning and
+memory shape its reasoning, and tools enable concrete action. The cycle
+of reasoning, acting, and adapting emerges from the coordination of
+these elements.</p>
+<figure>
+<div id="ch01.html_agent_core_diagram" class="figure">
+<img src="assets/ch01_agent_core.png" width="600" height="236"
+alt="ch01 agent core" />
+<h6><span class="label">Figure 1-3. </span>Baseline agent architecture:
+an LLM alone can only predict text, but with planning, memory, and tools
+it becomes a usable agentic system.</h6>
+</div>
+</figure>
+<p>Planning modules guide the agent’s reasoning, ranging from simple
+chain-of-thought <sup><a href="#ch01.html_id47"
+id="ch01.html_id47-marker" data-type="noteref">1</a></sup> traces to
+more advanced approaches such as trees of thought <sup><a
+href="#ch01.html_id48" id="ch01.html_id48-marker"
+data-type="noteref">2</a></sup> or self-critique. Memory modules provide
+continuity, allowing the agent to recall past steps, reuse prior
+knowledge, or persist information across sessions. Tools connect the
+agent to its environment, whether through search, retrieval, code
+execution, or custom APIs.</p>
+<p>Moreover, a key difference between traditional LLM usage and agentic
+systems is whether the workflow is stateless or stateful. A
+<em>stateless call</em> treats the model like a black box: it takes a
+prompt, predicts the next tokens, and returns a result. Nothing is
+remembered, no actions are taken, and no feedback loop exists. <a
+href="#ch01.html_SimpleLLM" data-type="xref">Example 1-1</a> illustrates
+a stateless LLM call.</p>
+<section id="ch01.html_SimpleLLM" data-type="example">
+<h5><span class="label">Example 1-1. </span>Stateless LLM call with
+LangChain</h5>
+<pre translate="no" data-type="programlisting"
+data-code-language="python"><code>llm = ChatOpenAI(model=&quot;gpt-5-mini&quot;)
+response = llm.invoke(&quot;What are AI agents?&quot;)
+print(response.content)</code></pre>
+</section>
+<p>In addition, the moment you need facts from outside training data, or
+you want the model to act (search, compute), you introduce tools.</p>
+<p>In the following code (<a href="#ch01.html_createTools"
+data-type="xref">Example 1-2</a> - <a href="#ch01.html_statelessRun"
+data-type="xref">Example 1-4</a>) is a minimal stateless tool-using run:
+first you bind two tools to the LLM, and then run a tiny loop that
+executes any tool calls the model needs to fulfill its task. First, you
+need to define your tools. <a href="#ch01.html_createTools"
+data-type="xref">Example 1-2</a> shows an implementation of tools.</p>
+<section id="ch01.html_createTools" data-type="example">
+<h5><span class="label">Example 1-2. </span>Defining tools for a
+stateless run</h5>
+<pre translate="no" data-type="programlisting"
+data-code-language="python"><code>@tool(&quot;internet_search&quot;) 
+def internet_search(query: str) -&gt; str:
+    &quot;&quot;&quot;Search Google via SerpAPI for up to date information.&quot;&quot;&quot; 
+    serp_api_key = os.environ[&quot;SERPAPI_API_KEY&quot;]
+    params = {&quot;engine&quot;: &quot;google&quot;, &quot;gl&quot;: &quot;us&quot;, &quot;hl&quot;: &quot;en&quot;}
+    search = SerpAPIWrapper(params=params, serpapi_api_key=serp_api_key)
+    return search.run(query)
+
+@tool(&quot;calculator&quot;)
+def calculator(expression: str) -&gt; str:
+    &quot;&quot;&quot;Evaluate a single line mathematical expression with numexpr.&quot;&quot;&quot;
+    local_dict = {&quot;pi&quot;: math.pi, &quot;e&quot;: math.e}
+    out = numexpr.evaluate( 
+        expression.strip(),
+        global_dict={},
+        local_dict=local_dict,
+    )
+    return str(out)
+
+tools = [internet_search, calculator]
+tool_map: Dict[str, Any] = {t.name: t for t in tools}</code></pre>
+</section>
+<dl>
+<dt><a
+href="#ch01.html_co_from_llms_to_agents__the_foundational_blueprint_CO5-1"
+id="ch01.html_callout_from_llms_to_agents__the_foundational_blueprint_CO5-1"
+class="co"><img src="assets/1.png" width="12" height="12"
+alt="1" /></a></dt>
+<dd>
+<p>LangChain’s <code translate="no">@tool</code> decorator uses the
+function name, typed signature, and docstring to build the schema the
+model sees.</p>
+</dd>
+<dt><a
+href="#ch01.html_co_from_llms_to_agents__the_foundational_blueprint_CO5-2"
+id="ch01.html_callout_from_llms_to_agents__the_foundational_blueprint_CO5-2"
+class="co"><img src="assets/2.png" width="12" height="12"
+alt="2" /></a></dt>
+<dd>
+<p>The docstring is mandatory: if it is missing, LangChain will raise an
+error when constructing the tool schema or binding tools to the
+model.</p>
+</dd>
+<dt><a
+href="#ch01.html_co_from_llms_to_agents__the_foundational_blueprint_CO5-3"
+id="ch01.html_callout_from_llms_to_agents__the_foundational_blueprint_CO5-3"
+class="co"><img src="assets/3.png" width="12" height="12"
+alt="3" /></a></dt>
+<dd>
+<p>Constrain evaluation: deny globals and expose only the constants you
+want. This keeps the calculator deterministic and safe.</p>
+</dd>
+</dl>
+<p>With LangChain’s <code translate="no">@tool</code> decorator, the
+function signature and docstring are used to build the schema the model
+sees. You need to keep these precise, consistent and as explanatory as
+possible for the task-to-be-done efficiently. The docstring acts as the
+tool description and is a hard requirement from LangChain, if it’s
+missing, you get an error. In addition, if the docstring is vague the
+model is more likely to produce invalid calls.</p>
+<p>Now, to give the LLM access to the tool, you just bind the tools to
+the LLM as shown in <a href="#ch01.html_bindTools"
+data-type="xref">Example 1-3</a>.</p>
+<section id="ch01.html_bindTools" data-type="example">
+<h5><span class="label">Example 1-3. </span>Bind tools to LLM</h5>
+<pre translate="no" data-type="programlisting"
+data-code-language="python"><code>llm = ChatOpenAI(model=&quot;gpt-4o&quot;, temperature=0,
+                max_tokens=800).bind_tools(tools, tool_choice=&quot;auto&quot;) </code></pre>
+</section>
+<dl>
+<dt><a
+href="#ch01.html_co_from_llms_to_agents__the_foundational_blueprint_CO6-1"
+id="ch01.html_callout_from_llms_to_agents__the_foundational_blueprint_CO6-1"
+class="co"><img src="assets/1.png" width="12" height="12"
+alt="1" /></a></dt>
+<dd>
+<p>Bind tools to the model. tool_choice="auto” lets the model decide
+whether and which tool to call.</p>
+</dd>
+</dl>
+<section class="note" data-type="note">
+<h1>Modern LLMs are built for agentic tasks</h1>
+<p>Modern LLMs are not only capable of calling tools, they are
+increasingly trained and optimized specifically for agentic tasks. For
+example, models such as <a
+href="https://moonshotai.github.io/Kimi-K2/">Kimi K2</a> and <a
+href="https://www.llama.com/docs/model-cards-and-prompt-formats/llama4/">Llama
+4</a> are explicitly tuned for coding, tool use, and powering agentic
+systems. These models go beyond answering questions in a chat window.
+They are instruction tuned to act, invoking APIs, running code, or
+retrieving data as part of their core design.</p>
+</section>
+<p>With tools bound, you can run a minimal stateless tool loop. The code
+in <a href="#ch01.html_statelessRun" data-type="xref">Example 1-4</a>
+executes any tool calls the model requests, feeds observations back, and
+forces a short wrap up to ensure the final answer is returned even if
+the last step ended on a tool observation.</p>
+<section id="ch01.html_statelessRun" data-type="example">
+<h5><span class="label">Example 1-4. </span>Stateless single run with
+tool loop</h5>
+<pre translate="no" data-type="programlisting"
+data-code-language="python"><code>def run_once(prompt: str, max_steps: int = 8) -&gt; str:
+    messages: List[HumanMessage | AIMessage | ToolMessage] = [
+    HumanMessage(content=prompt)] 
+    last_ai: AIMessage | None = None
+
+    for _ in range(max_steps): 
+        ai: AIMessage = llm.invoke(messages) 
+        messages.append(ai)
+        last_ai = ai
+
+        calls = getattr(ai, &quot;tool_calls&quot;, None) or [] 
+        if not calls:
+            return messages[-1].content
+
+        for call in calls:
+            name = call[&quot;name&quot;]
+            args = call.get(&quot;args&quot;, {}) or {}
+            result = tool_map[name].invoke(args)
+            messages.append(ToolMessage(
+                content=str(result),
+                name=name,
+                tool_call_id=call.get(&quot;id&quot;) 
+            ))
+
+    messages.append(HumanMessage(content=&quot;&quot;&quot;
+Finish now. Give a short final answer in this exact format:
+
+Current temperature:
+Square of current temperature:
+&quot;&quot;&quot;.strip())) 
+    final_ai: AIMessage = llm.invoke(messages)
+    return final_ai.content
+
+print(run_once(&quot;&quot;&quot;Two step task.
+
+Step 1: Use internet_search to get the current air temperature in New York City
+today. Show the exact query you used, the top source title and snippet, and
+extract a numeric temperature in Celsius. Return this temperature as feedback
+for Step 2.
+
+Step 2: Using the Celsius value from Step 1, compute its square with calculator.
+Show the exact expression you used and the numeric result.
+
+Important: Give a short final answer in this format:
+Current temperature:
+Square of current temperature:&quot;&quot;&quot;))</code></pre>
+</section>
+<dl>
+<dt><a
+href="#ch01.html_co_from_llms_to_agents__the_foundational_blueprint_CO7-1"
+id="ch01.html_callout_from_llms_to_agents__the_foundational_blueprint_CO7-1"
+class="co"><img src="assets/1.png" width="12" height="12"
+alt="1" /></a></dt>
+<dd>
+<p>Local short term memory for this run only. This makes the workflow
+stateless across runs.</p>
+</dd>
+<dt><a
+href="#ch01.html_co_from_llms_to_agents__the_foundational_blueprint_CO7-2"
+id="ch01.html_callout_from_llms_to_agents__the_foundational_blueprint_CO7-2"
+class="co"><img src="assets/2.png" width="12" height="12"
+alt="2" /></a></dt>
+<dd>
+<p>A simple step bound protects against runaway loops: LLMs cycling with
+no termination.</p>
+</dd>
+<dt><a
+href="#ch01.html_co_from_llms_to_agents__the_foundational_blueprint_CO7-3"
+id="ch01.html_callout_from_llms_to_agents__the_foundational_blueprint_CO7-3"
+class="co"><img src="assets/3.png" width="12" height="12"
+alt="3" /></a></dt>
+<dd>
+<p>One model step. The assistant may choose to call tools.</p>
+</dd>
+<dt><a
+href="#ch01.html_co_from_llms_to_agents__the_foundational_blueprint_CO7-4"
+id="ch01.html_callout_from_llms_to_agents__the_foundational_blueprint_CO7-4"
+class="co"><img src="assets/4.png" width="12" height="12"
+alt="4" /></a></dt>
+<dd>
+<p>Read structured tool calls.</p>
+</dd>
+<dt><a
+href="#ch01.html_co_from_llms_to_agents__the_foundational_blueprint_CO7-5"
+id="ch01.html_callout_from_llms_to_agents__the_foundational_blueprint_CO7-5"
+class="co"><img src="assets/5.png" width="12" height="12"
+alt="5" /></a></dt>
+<dd>
+<p>Attach the observation with the matching tool_call_id so the model
+can correlate results to calls.</p>
+</dd>
+<dt><a
+href="#ch01.html_co_from_llms_to_agents__the_foundational_blueprint_CO7-6"
+id="ch01.html_callout_from_llms_to_agents__the_foundational_blueprint_CO7-6"
+class="co"><img src="assets/6.png" width="12" height="12"
+alt="6" /></a></dt>
+<dd>
+<p>Tool cycles can end on an observation. This final instruction
+guarantees a closing assistant message in your requested format.</p>
+</dd>
+</dl>
+<section data-type="sect2" data-pdf-bookmark="Giving the LLM a State">
+<section id="ch01.html_id32" class="sect2">
+<h2>Giving the LLM a State</h2>
+<p>The first step in turning an LLM into an agent is to make it
+stateful. Give your LLM a state that records where it’s in the workflow.
+Based on input and logic, it transitions to the next state, and each
+state has an associated function or behavior. In LangGraph, this can be
+any Python type, but is typically a <code
+translate="no">TypedDict</code> or <a
+href="https://docs.pydantic.dev/latest/api/base_model/">Pydantic</a>
+<code translate="no">BaseModel</code>. The following outlines
+LangGraph’s key concepts to build stateful, adaptable AI agents.</p>
+<dl>
+<dt>State</dt>
+<dd>
+<p>A shared data structure that represents the current snapshot of an
+application. It can be any Python type, but is typically a TypedDict or
+Pydantic BaseModel.</p>
+</dd>
+<dt>Nodes</dt>
+<dd>
+<p>Functions that encode the agent’s logic. They take the current state,
+perform computation or side effects, and return an updated state.</p>
+</dd>
+<dt>Edges</dt>
+<dd>
+<p>Rules that select the next node based on the current state. They can
+be conditional branches or fixed transitions and should also detect when
+a finish condition is met.</p>
+</dd>
+<dt>Command</dt>
+<dd>
+<p>An object that combines control flow and state updates to support
+multi-actor communication. A node can both update the state and choose
+the next node by returning a <code translate="no">Command</code>.</p>
+</dd>
+</dl>
+<p>So far, the tools you created earlier have only been used in
+<em>stateless loops</em>. Each run was independent: the model could call
+tools, get answers, and wrap up, but as soon as the run ended, all
+context was lost. Now, if you want to combine LangGraph’s concepts to
+build stateful agents, you need to embed the tools into a stateful
+workflow. Instead of discarding messages after each turn, you keep them
+in a structured state. This makes the system agentic:</p>
+<ul>
+<li><p>The LLM node reasons about the next step.</p></li>
+<li><p>The tool node executes external actions.</p></li>
+<li><p>Edges route control flow based on whether tools were
+requested.</p></li>
+<li><p>Memory checkpoints persist the conversation, so the agent can
+reuse earlier results in later turns.</p></li>
+</ul>
+<p>This transforms tool use from being a one-off helper into a
+continuous reasoning–acting–adapting cycle. In the next code listings
+(<a href="#ch01.html_stateGraphSetup" data-type="xref">Example 1-5</a> –
+<a href="#ch01.html_memoryViews" data-type="xref">Example 1-13</a>),
+you’ll build such a stateful agent with LangGraph, starting from the
+same tools and LLM binding introduced in <a href="#ch01.html_bindTools"
+data-type="xref">Example 1-3</a> - <a href="#ch01.html_statelessRun"
+data-type="xref">Example 1-4</a>.</p>
+<p><a href="#ch01.html_stateGraphSetup" data-type="xref">Example 1-5</a>
+shows how a state object can be implemented in LangGraph to carry the
+conversation and coordinate control flow. You can reuse the tools and
+the bound llm from <a href="#ch01.html_bindTools"
+data-type="xref">Example 1-3</a> and add only what is new: a typed
+state, an LLM node that appends assistant messages, a tool node that
+executes calls, and a router that decides whether to continue or stop
+based on tool calls.</p>
+<section id="ch01.html_stateGraphSetup" data-type="example">
+<h5><span class="label">Example 1-5. </span>Build a minimal LangGraph
+with state, nodes, and routing</h5>
+<pre translate="no" data-type="programlisting"
+data-code-language="python"><code>class AgentState(TypedDict):
+    messages: Annotated[List[BaseMessage], add_messages] 
+
+def llm_node(state: AgentState) -&gt; AgentState: 
+    ai = llm.invoke(state[&quot;messages&quot;])
+    return {&quot;messages&quot;: [ai]}
+
+tool_node = ToolNode(tools=tools) 
+
+graph = StateGraph(AgentState) 
+graph.add_node(&quot;llm&quot;, llm_node)
+graph.add_node(&quot;tools&quot;, tool_node)
+graph.add_edge(START, &quot;llm&quot;)
+
+def route(state: AgentState): 
+    last = state[&quot;messages&quot;][-1]
+    calls = getattr(last, &quot;tool_calls&quot;, None) or []
+    return &quot;tools&quot; if calls else END
+
+graph.add_conditional_edges(&quot;llm&quot;, route, {&quot;tools&quot;: &quot;tools&quot;, END: END})
+graph.add_edge(&quot;tools&quot;, &quot;llm&quot;)</code></pre>
+</section>
+<dl>
+<dt><a
+href="#ch01.html_co_from_llms_to_agents__the_foundational_blueprint_CO8-1"
+id="ch01.html_callout_from_llms_to_agents__the_foundational_blueprint_CO8-1"
+class="co"><img src="assets/1.png" width="12" height="12"
+alt="1" /></a></dt>
+<dd>
+<p>The state carries the conversation as a message list. <code
+translate="no">add_messages</code> handles safe merging across node
+updates.</p>
+</dd>
+<dt><a
+href="#ch01.html_co_from_llms_to_agents__the_foundational_blueprint_CO8-2"
+id="ch01.html_callout_from_llms_to_agents__the_foundational_blueprint_CO8-2"
+class="co"><img src="assets/2.png" width="12" height="12"
+alt="2" /></a></dt>
+<dd>
+<p>Core reasoning node. It takes the current state and returns a new
+assistant message.</p>
+</dd>
+<dt><a
+href="#ch01.html_co_from_llms_to_agents__the_foundational_blueprint_CO8-3"
+id="ch01.html_callout_from_llms_to_agents__the_foundational_blueprint_CO8-3"
+class="co"><img src="assets/3.png" width="12" height="12"
+alt="3" /></a></dt>
+<dd>
+<p>Prebuilt node to execute tool calls emitted by the assistant.</p>
+</dd>
+<dt><a
+href="#ch01.html_co_from_llms_to_agents__the_foundational_blueprint_CO8-4"
+id="ch01.html_callout_from_llms_to_agents__the_foundational_blueprint_CO8-4"
+class="co"><img src="assets/4.png" width="12" height="12"
+alt="4" /></a></dt>
+<dd>
+<p>Graph container for nodes and edges.</p>
+</dd>
+<dt><a
+href="#ch01.html_co_from_llms_to_agents__the_foundational_blueprint_CO8-5"
+id="ch01.html_callout_from_llms_to_agents__the_foundational_blueprint_CO8-5"
+class="co"><img src="assets/5.png" width="12" height="12"
+alt="5" /></a></dt>
+<dd>
+<p>Router. If the last assistant turn requested tools, go to tools,
+otherwise finish.</p>
+</dd>
+</dl>
+<p>With the graph defined, you need to make it runnable and persistent.
+<a href="#ch01.html_compileGraph" data-type="xref">Example 1-6</a>
+compiles the graph with an in-memory checkpointer and assigns a thread
+id. The checkpointer restores prior messages on each turn so the agent
+can reuse earlier results. The thread id separates branches, so you can
+run parallel conversations without interference.</p>
+<section id="ch01.html_compileGraph" data-type="example">
+<h5><span class="label">Example 1-6. </span>Compile with in-memory
+checkpoints and configure a thread</h5>
+<pre translate="no" data-type="programlisting"
+data-code-language="python"><code>checkpointer = MemorySaver() 
+app = graph.compile(checkpointer=checkpointer) 
+
+cfg = {&quot;configurable&quot;: {&quot;thread_id&quot;: &quot;nyc-weather-session&quot;}} </code></pre>
+</section>
+<dl>
+<dt><a
+href="#ch01.html_co_from_llms_to_agents__the_foundational_blueprint_CO9-1"
+id="ch01.html_callout_from_llms_to_agents__the_foundational_blueprint_CO9-1"
+class="co"><img src="assets/1.png" width="12" height="12"
+alt="1" /></a></dt>
+<dd>
+<p>Lightweight, per-thread checkpointing that persists state across
+turns.</p>
+</dd>
+<dt><a
+href="#ch01.html_co_from_llms_to_agents__the_foundational_blueprint_CO9-2"
+id="ch01.html_callout_from_llms_to_agents__the_foundational_blueprint_CO9-2"
+class="co"><img src="assets/2.png" width="12" height="12"
+alt="2" /></a></dt>
+<dd>
+<p>Produces a runnable app that knows how to save and load state.</p>
+</dd>
+<dt><a
+href="#ch01.html_co_from_llms_to_agents__the_foundational_blueprint_CO9-3"
+id="ch01.html_callout_from_llms_to_agents__the_foundational_blueprint_CO9-3"
+class="co"><img src="assets/3.png" width="12" height="12"
+alt="3" /></a></dt>
+<dd>
+<p>A thread id identifies one conversation branch. New ids create new
+branches.</p>
+</dd>
+</dl>
+<p>Once you have a runnable app and checkpoints in place, the next step
+is to make its execution observable. You want to see what the graph is
+doing, which messages are flowing, and how tool outputs attach. <a
+href="#ch01.html_inspectState" data-type="xref">Example 1-7</a>
+introduces a compact helper that formats messages into a single readable
+line, making it easier to follow traces without overwhelming logs.</p>
+<section id="ch01.html_inspectState" data-type="example">
+<h5><span class="label">Example 1-7. </span>Trace execution and inspect
+state and memory</h5>
+<pre translate="no" data-type="programlisting"
+data-code-language="python"><code>def _short(msg: BaseMessage, max_len: int = 140) -&gt; str:
+    &quot;&quot;&quot;Compact one-line view of a message.&quot;&quot;&quot;
+    role = type(msg).__name__.replace(&quot;Message&quot;, &quot;&quot;).lower()
+    content = getattr(msg, &quot;content&quot;, &quot;&quot;)
+    if isinstance(content, list):
+        # some tool outputs can be list payloads
+        try:
+            content = json.dumps(content)
+        except Exception:
+            content = str(content)
+    text = str(content).replace(&quot;\n&quot;, &quot; &quot;).strip()
+    if len(text) &gt; max_len:
+        text = text[: max_len - 3] + &quot;...&quot;
+    if hasattr(msg, &quot;tool_calls&quot;) and getattr(msg, &quot;tool_calls&quot;): 
+        tnames = [tc.get(&quot;name&quot;, &quot;tool&quot;) for tc in msg.tool_calls]
+        return f&quot;{role}: tool_calls -&gt; {tnames}&quot;
+    if isinstance(msg, ToolMessage):
+        return f&quot;{role}({msg.name}): {text}&quot;
+    return f&quot;{role}: {text}&quot;</code></pre>
+</section>
+<dl>
+<dt><a
+href="#ch01.html_co_from_llms_to_agents__the_foundational_blueprint_CO10-1"
+id="ch01.html_callout_from_llms_to_agents__the_foundational_blueprint_CO10-1"
+class="co"><img src="assets/1.png" width="12" height="12"
+alt="1" /></a></dt>
+<dd>
+<p>Include tool name or function call info when available.</p>
+</dd>
+</dl>
+<p><a href="#ch01.html_print_state_snapshot"
+data-type="xref">Example 1-8</a> prints a concise view of messages and
+routing hints. Together they let you verify that tool outputs are
+attached correctly and that state transitions behave as intended.</p>
+<section id="ch01.html_print_state_snapshot" data-type="example">
+<h5><span class="label">Example 1-8. </span>Trace execution and inspect
+state and memory</h5>
+<pre translate="no" data-type="programlisting"
+data-code-language="python"><code>def print_state_snapshot(app, config, title: str):
+    &quot;&quot;&quot;Print current graph state and memory for a given thread.&quot;&quot;&quot;
+    snap = app.get_state(config) 
+    values = snap.values or {}
+    msgs: List[BaseMessage] = values.get(&quot;messages&quot;, [])
+    print(f&quot;\n=== {title} | state snapshot ===&quot;)
+    print(f&quot;messages: {len(msgs)} total&quot;)
+    for i, m in enumerate(msgs[-5:], start=max(0, len(msgs)-5) + 1): 
+        print(f&quot;  {i:&gt;3}: {_short(m)}&quot;)
+
+    nxt = getattr(snap, &quot;next&quot;, None) 
+    tasks = getattr(snap, &quot;tasks&quot;, None)
+    if nxt:
+        print(f&quot;next nodes: {list(nxt)}&quot;)
+    if tasks:
+        print(f&quot;queued tasks: {tasks}&quot;)
+    print(&quot;memory: in-memory checkpoint present for this thread&quot;)</code></pre>
+</section>
+<dl>
+<dt><a
+href="#ch01.html_co_from_llms_to_agents__the_foundational_blueprint_CO11-1"
+id="ch01.html_callout_from_llms_to_agents__the_foundational_blueprint_CO11-1"
+class="co"><img src="assets/1.png" width="12" height="12"
+alt="1" /></a></dt>
+<dd>
+<p>Read the latest state for a thread.</p>
+</dd>
+<dt><a
+href="#ch01.html_co_from_llms_to_agents__the_foundational_blueprint_CO11-2"
+id="ch01.html_callout_from_llms_to_agents__the_foundational_blueprint_CO11-2"
+class="co"><img src="assets/2.png" width="12" height="12"
+alt="2" /></a></dt>
+<dd>
+<p>Print a concise tail of messages to keep logs readable.</p>
+</dd>
+<dt><a
+href="#ch01.html_co_from_llms_to_agents__the_foundational_blueprint_CO11-3"
+id="ch01.html_callout_from_llms_to_agents__the_foundational_blueprint_CO11-3"
+class="co"><img src="assets/3.png" width="12" height="12"
+alt="3" /></a></dt>
+<dd>
+<p>Show routing info and queued tasks if present.</p>
+</dd>
+</dl>
+<p><a href="#ch01.html_run_with_tracing"
+data-type="xref">Example 1-9</a> streams node updates, so you can see
+each step the graph takes.</p>
+<section id="ch01.html_run_with_tracing" data-type="example">
+<h5><span class="label">Example 1-9. </span>Trace execution and inspect
+state and memory</h5>
+<pre translate="no" data-type="programlisting"
+data-code-language="python"><code>def run_with_tracing(app, input_state: AgentState, config, title: str):
+    &quot;&quot;&quot;Run the graph while printing per-node updates and final memory.&quot;&quot;&quot;
+    print(f&quot;\n=== {title} | execution trace ===&quot;)
+    final = None
+    for event in app.stream(input_state, config=config, stream_mode=&quot;updates&quot;): 
+        for node, upd in event.items():
+            keys = list(upd.keys()) 
+            print(f&quot;[enter {node}] updated: {keys}&quot;)
+            # if messages updated, print the last one briefly
+            msgs = upd.get(&quot;messages&quot;) or []
+            if msgs:
+                print(f&quot;  {_short(msgs[-1])}&quot;)
+            print(f&quot;[leave {node}]&quot;)
+            final = upd
+    print_state_snapshot(app, config, title=f&quot;{title} | after run&quot;) 
+    snap = app.get_state(config)
+    msgs = snap.values.get(&quot;messages&quot;, [])
+    return msgs[-1].content if msgs else &quot;&quot;</code></pre>
+</section>
+<dl>
+<dt><a
+href="#ch01.html_co_from_llms_to_agents__the_foundational_blueprint_CO12-1"
+id="ch01.html_callout_from_llms_to_agents__the_foundational_blueprint_CO12-1"
+class="co"><img src="assets/1.png" width="12" height="12"
+alt="1" /></a></dt>
+<dd>
+<p>Stream node updates to see the exact flow through the graph.</p>
+</dd>
+<dt><a
+href="#ch01.html_co_from_llms_to_agents__the_foundational_blueprint_CO12-2"
+id="ch01.html_callout_from_llms_to_agents__the_foundational_blueprint_CO12-2"
+class="co"><img src="assets/2.png" width="12" height="12"
+alt="2" /></a></dt>
+<dd>
+<p><code translate="no">upd</code> is a dict like <code
+translate="no">{"messages": [&lt;new msg&gt;]}</code> or tool
+results.</p>
+</dd>
+<dt><a
+href="#ch01.html_co_from_llms_to_agents__the_foundational_blueprint_CO12-3"
+id="ch01.html_callout_from_llms_to_agents__the_foundational_blueprint_CO12-3"
+class="co"><img src="assets/3.png" width="12" height="12"
+alt="3" /></a></dt>
+<dd>
+<p>Show final assistant message from <code
+translate="no">app.get_state</code>.</p>
+</dd>
+</dl>
+<p><a href="#ch01.html_firstTurn" data-type="xref">Example 1-10</a> asks
+for the current air temperature in New York City in Celsius. The trace
+shows the graph entering the LLM node, initiating a tool call if needed,
+and returning a final assistant message. The state snapshot confirms
+that the result is saved in memory for this thread.</p>
+<section id="ch01.html_firstTurn" data-type="example">
+<h5><span class="label">Example 1-10. </span>Turn 1: get the current NYC
+air temperature in Celsius</h5>
+<pre translate="no" data-type="programlisting"
+data-code-language="python"><code>turn1_answer = run_with_tracing(
+    app,
+    {&quot;messages&quot;: [HumanMessage(content=&quot;Get the current air temperature in New York
+    City in Celsius.&quot;)]},
+    config={**cfg, &quot;recursion_limit&quot;: 20},
+    title=&quot;TURN 1&quot;,
+)
+print(&quot;\nTURN 1 (final assistant):\n&quot;, turn1_answer)</code></pre>
+</section>
+<p>This results in this model output:</p>
+<pre translate="no" data-type="programlisting"><code>TURN 1 (final assistant):
+The current air temperature in New York City is 18°C.</code></pre>
+<p>You continue in the same thread. <a href="#ch01.html_secondTurn"
+data-type="xref">Example 1-11</a> asks to square the previously
+retrieved temperature. Because the thread id is unchanged, the app
+restores the earlier messages, allowing the assistant to use the prior
+result without you repeating it in the prompt.</p>
+<section id="ch01.html_secondTurn" data-type="example">
+<h5><span class="label">Example 1-11. </span>Turn 2: square that
+temperature in the same thread</h5>
+<pre translate="no" data-type="programlisting"
+data-code-language="python"><code>turn2_answer = run_with_tracing(
+    app,
+    {&quot;messages&quot;: [HumanMessage(content=&quot;Now compute the square of that
+    temperature.&quot;)]},
+    config={**cfg, &quot;recursion_limit&quot;: 20},
+    title=&quot;TURN 2&quot;,
+)
+print(&quot;\nTURN 2 (final assistant):\n&quot;, turn2_answer)</code></pre>
+</section>
+<p>Now the square will be computed and the model returns:</p>
+<pre translate="no" data-type="programlisting"><code>TURN 2 (final assistant):
+The square of the temperature, 18°C, is 324.</code></pre>
+<p>Agents often need to explore alternatives without losing progress. <a
+href="#ch01.html_branchThread" data-type="xref">Example 1-12</a> starts
+a separate branch by using a different thread id and requests a
+different follow-up. This creates an isolated conversation that can
+diverge from the main path while preserving the main thread’s memory
+intact.</p>
+<section id="ch01.html_branchThread" data-type="example">
+<h5><span class="label">Example 1-12. </span>Branch a parallel thread
+for a different follow-up</h5>
+<pre translate="no" data-type="programlisting"
+data-code-language="python"><code>branch_answer = run_with_tracing(
+    app,
+    {&quot;messages&quot;: [HumanMessage(content=&quot;Instead of squaring, convert it to
+    Fahrenheit and report both.&quot;)]},
+    config=cfg_branch,
+    title=&quot;BRANCH&quot;,
+)
+print(&quot;\nBRANCH (final assistant):\n&quot;, branch_answer)</code></pre>
+</section>
+<p>Finally, you can inspect what each branch remembers. <a
+href="#ch01.html_memoryViews" data-type="xref">Example 1-13</a> prints
+compact snapshots for the main thread and the branch. Comparing them
+side by side confirms that state is persisted within a thread and
+isolated across threads, which is the foundation for reliable multi-step
+and multi-branch agent workflows.</p>
+<section id="ch01.html_memoryViews" data-type="example">
+<h5><span class="label">Example 1-13. </span>View snapshots for both
+threads</h5>
+<pre translate="no" data-type="programlisting"
+data-code-language="python"><code>print_state_snapshot(app, cfg, title=&quot;MAIN THREAD memory view&quot;)
+print_state_snapshot(app, cfg_branch, title=&quot;BRANCH THREAD memory view&quot;)</code></pre>
+</section>
+<p>With this small implementation, you now see exactly what the graph
+remembers, how it routed, and what the latest assistant state is for
+each branch.</p>
+</section>
+</section>
+</div>
+</section>
+<section data-type="sect1"
+data-pdf-bookmark="Deus Ex Machina: What is Possibly Right Now?">
+<div id="ch01.html_id33" class="sect1">
+<h1>Deus Ex Machina: What is Possibly Right Now?</h1>
+<p>Once you view agents as HSMs with states, the autonomy spectrum
+becomes a matter of how much choice you place inside a superstate.
+Routers are one-edge FSMs with a single guard. Tool-calling agents are
+HSMs with a WORKING superstate that loops among PLAN, ACT, and REFLECT.
+MAS compose multiple subgraphs under a supervisor superstate, sometimes
+with parallel regions. The system still runs inside explicit states and
+guards, perceived “autonomy” is just a richer choice inside well-bounded
+regions.</p>
+<p>In ancient Greek theater, a <em>deus ex machina</em> was the sudden
+appearance of a god to resolve an unsolvable conflict or problem. It is
+tempting to imagine AI agents in the same way: a machine that suddenly
+acts with full autonomy and intelligence solving all your problems. But
+that’s not what’s possible today, agents are engineered systems. Their
+strength comes not from hidden magic, but from carefully designed
+workflows, well-defined tools, and the boundaries that keep them safe
+and usable. That said, agents are still constrained by the tools you
+give them, by safeguards you enforce, and by the workflows you allow
+them to operate within. These constraints are what make agents viable
+today: safe to deploy, predictable in behavior, and aligned with their
+intended goals.</p>
+<p>What current systems demonstrate is a form of orchestrated autonomy.
+As you saw in the LangGraph examples earlier (<a
+href="#ch01.html_stateGraphSetup" data-type="xref">Example 1-5</a>),
+agents can branch conditionally, call tools, or decide whether to
+continue a workflow. This already looks very different from a static
+prompt–response call, but it is still bounded. The orchestration logic
+is fixed; within it, the LLM can make choices, but it cannot redefine
+its architecture. <a href="#ch01.html_autonomy_limits"
+data-type="xref">Table 1-2</a> gives a short overview what agents can do
+so far.</p>
+<table id="autonomy_limits">
+<caption><span class="label">Table 1-2. </span>Current autonomy in
+agents: what’s possible vs. what remains out of reach</caption>
+<thead>
+<tr>
+<th>What agents can do</th>
+<th>What agents can’t do yet</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><p>Route between predefined paths (e.g., router node)</p></td>
+<td><p>Redesign or rewire their own control graph</p></td>
+</tr>
+<tr>
+<td><p>Select which tools or sub-agents to call</p></td>
+<td><p>Generate and validate new graph topologies dynamically</p></td>
+</tr>
+<tr>
+<td><p>Decide if more steps are needed before completion</p></td>
+<td><p>Continuously assess tool effectiveness or create new tools
+autonomously</p></td>
+</tr>
+<tr>
+<td><p>Revise their own prompt or toolset within bounds</p></td>
+<td><p>Guarantee alignment and coherence when shifting strategies
+mid-execution</p></td>
+</tr>
+<tr>
+<td><p>Write and run small pieces of code to determine next
+steps</p></td>
+<td><p>Operate as fully self-directed systems independent of
+orchestration frameworks</p></td>
+</tr>
+</tbody>
+</table>
+<p>The agent adapts at runtime, but only within the framework you
+design. It helps to see this as a spectrum. At one end are routers that
+make a single decision from a fixed set of options. In the middle are
+tool-calling agents that support multi-step reasoning, reflection, and
+memory. At the far end are MAS, where specialized agents collaborate
+under a supervisor, distributing decision-making across roles. <a
+href="#ch01.html_router_vs_autonomy" data-type="xref">Figure 1-4</a>
+shows the spectrum of autonomy, from simple routing decisions to the
+idea of fully self-directed execution. In practice, nearly all
+real-world systems fall into the middle: they are agentic systems, not
+truly autonomous agents. Their autonomy is orchestrated rather than
+self-evolving, decisions happen within a framework of predefined states,
+transitions, and toolsets, even if the agent can adaptively choose among
+them at runtime.</p>
+<figure>
+<div id="ch01.html_router_vs_autonomy" class="figure">
+<img src="assets/ch01_autonomy_graphic.png" width="600" height="231"
+alt="ch01 autonomy graphic" />
+<h6><span class="label">Figure 1-4. </span>In orchestrated autonomy,
+decision points are predefined in the workflow. In full autonomy, the
+LLM could generate new tools, actions, or decision paths to reach its
+goal.</h6>
+</div>
+</figure>
+<p>Agents can simulate flexibility within frameworks such as LangGraph
+using reflection, planning, and structured outputs. However, we do not
+yet have systems that can freely redefine their own architecture or
+reason about their goals in a robust, and general way.</p>
+<aside data-type="sidebar" epub:type="sidebar">
+<section id="ch01.html_id49" class="sidebar">
+<h1>The AI Scientist: What Limited Autonomy Can Already Do</h1>
+<p>The AI Scientist v2 <sup><a href="#ch01.html_id50"
+id="ch01.html_id50-marker" data-type="noteref">3</a></sup> is an example
+of what orchestrated autonomy already makes possible. Built on a
+multi-agent workflow that integrates tree search, experiment management,
+and vision–language feedback, it can generate research hypotheses, write
+code to test them, run experiments in parallel while debugging and
+refining, visualize results, and ultimately draft a scientific
+manuscript. In 2025 the system submitted three papers to an <a
+href="https://iclr.cc/About">ICLR</a> workshop, one of which passed peer
+review and was formally accepted, the first known case of a fully AI
+generated scientific paper hitting that bar.</p>
+<p>Yet the achievement came with clear limitations. The accepted paper
+was at workshop level, not a main conference track. From the three
+submissions, two were rejected, and even the accepted work showed
+methodological gaps, unclear justifications, shallow analysis, and
+dataset limitations. Although reviewers praised its clarity and rigor,
+they stressed that it lacked the depth and innovation required for top
+tier publication. The system also stumbled on well known LLM pitfalls,
+including citation errors and misleading figure descriptions. So, while
+impressive, that the system can refine and debug autonomously, it
+doesn’t generate fundamentally new scientific paradigms autonomously
+yet.</p>
+<p>This case shows both sides of current autonomy. Within the boundaries
+of engineered orchestration, agentic systems can already close the loop
+from idea to experiment to code and even peer reviewed publication.
+Beyond those boundaries, toward consistently producing groundbreaking
+science or operating with unconstrained creativity, today’s agents
+remain limited and human oversight remains important.</p>
+</section>
+</aside>
+<p>As you now understand, today’s agents are not deus ex machina
+solutions but carefully orchestrated systems that extend LLMs with
+structure, tools, and feedback loops. Their autonomy is bounded by
+design, which is precisely what makes them practical, safe, and
+deployable. While still limited, they are already impressive and capable
+of reasoning, acting, and adapting in ways that go far beyond static
+LLMs.</p>
+</div>
+</section>
+<section data-type="sect1" data-pdf-bookmark="Conclusion">
+<section id="ch01.html_id34" class="sect1">
+<h1>Conclusion</h1>
+<p>In this chapter, you learned how LLMs evolve from static predictors
+into dynamic agents through the addition of state, control flow, and
+tool use. By embedding reasoning in a loop of action and feedback, LLMs
+gain the ability to adapt to results and extend their capabilities far
+beyond what is possible with prompt–response interactions alone.</p>
+<p>Finite and hierarchical state machines provided the conceptual
+foundation for agent design. FSMs let you structure workflows into
+recoverable steps, while HSMs reduced duplication and centralized
+policies for complex, multi-step tasks. These abstractions map directly
+to modern frameworks such as LangGraph, where state, nodes, and routing
+rules define how agents reason and act over time.</p>
+<p>You now can also place autonomy in a better context. You understand
+that today’s agents operate within well-bounded workflows, choosing
+among predefined paths, invoking tools, and reflecting on results, don’t
+redesign their own architecture. This orchestrated autonomy is not a
+weakness but a strength, since constraints make agents safe,
+predictable, and practical to deploy. The example of the AI Scientist v2
+showed both the promise and the limitations of this approach,
+demonstrating how agents can already generate and test hypotheses but
+still require oversight to ensure rigor and depth.</p>
+<p>With this foundation in place, you are ready to move into the next
+chapter, where you’ll explore the architectures and patterns that bring
+planning, reactivity, reflection, and human–agent interaction to
+life.</p>
+</section>
+</section>
+<div data-type="footnotes">
+<p><sup><a href="#ch01.html_id47-marker">1</a></sup> Jason Wei et al. <a
+href="https://arxiv.org/abs/2201.11903">“Chain-of-Thought Prompting
+Elicits Reasoning in Large Language Models.”</a>, (2023).</p>
+<p><sup><a href="#ch01.html_id48-marker">2</a></sup> Shunyu Yao et al.
+<a href="https://arxiv.org/abs/2305.10601">“Tree of Thoughts: Deliberate
+Problem Solving with Large Language Models.”</a>, (2023).</p>
+<p><sup><a href="#ch01.html_id50-marker">3</a></sup> Yutaro Yamada et
+al. <a href="https://arxiv.org/abs/2504.08066">“The AI Scientist-v2:
+Workshop-Level Automated Scientific Discovery via Agentic Tree
+Search.”</a>, (2025).</p>
+</div>
+</div>
+</div>
+</div>
+<p><span id="ch02.html"></span></p>
+<div id="ch02.html_book-content">
+<div id="ch02.html_sbo-rt-content">
+<div id="ch02.html_id25" class="chapter">
+<h1><span class="label">Chapter 2. </span>Architectures and Patterns:
+Planning, Reactivity, and Multi-Agent-Systems</h1>
+<aside data-type="sidebar" epub:type="sidebar">
+<section id="ch02.html_id51" class="sidebar">
+<h1>A Note for Early Release Readers</h1>
+<p>With Early Release ebooks, you get books in their earliest form—the
+author’s raw and unedited content as they write—so you can take
+advantage of these technologies long before the official release of
+these titles.</p>
+<p>This will be the 2nd chapter of the final book. Please note that the
+GitHub repo will be made active later on.</p>
+<p>If you’d like to be actively involved in reviewing and commenting on
+this draft, please reach out to the editor at <a
+href="mailto:sgrey@oreilly.com">sgrey@oreilly.com</a>.</p>
+</section>
+</aside>
+<p>You know by now that AI agents are not magic. They are engineered
+systems whose power comes from the strategic configuration of their
+architecture. By combining reasoning loops, tools, stateful design, and
+adaptive control, LLMs can move beyond static prompts and evolve into
+MAS that plan, react, and reflect in real time. This chapter explores
+the architectures that make this possible, from structured reasoning
+methods such as chain of thought, tree of thought, and ReAct to
+architectural paradigms like supervisor and hierarchical agents. Along
+the way you will gain a deeper understanding of reasoning flows and see
+how human-in-the-loop mechanisms including approval gates, corrections,
+and interruptions keep these systems reliable, aligned, and secure.</p>
+<p>The importance of an agent’s architecture becomes obvious when you
+compare how a simple single-step agent handles a task versus how a
+multi-step agent does. A single-step agent receives the request, plans
+everything internally, executes in one go, and returns the result
+without ever revisiting intermediate steps. A multi-step agent, in
+contrast, alternates between reasoning and action in an iterative loop,
+adapting its plan based on partial results or new observations as it
+works. This flexibility is what allows agents to refine outputs
+dynamically and cope with uncertainty or feedback from their
+environment. The contrast is illustrated in <a
+href="#ch02.html_single_vs_multi_step" data-type="xref">Figure 2-1</a>,
+with <a href="#ch02.html_single_vs_multi_step_table"
+data-type="xref">Table 2-1</a> showing how each approach unfolds step by
+step on the same task.</p>
+<table id="single_vs_multi_step_table">
+<caption><span class="label">Table 2-1. </span>Example: Single-step vs.
+Multi-step (ReAct) execution for the task “Summarize the document and
+create a bar chart of key statistics”</caption>
+<thead>
+<tr>
+<th>Step</th>
+<th>Single-step agent</th>
+<th>Multi-step (ReAct) agent</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><p>1</p></td>
+<td><p>Reads the request once</p></td>
+<td><p>Reads the request and forms an initial thought on the first
+action (extract statistics)</p></td>
+</tr>
+<tr>
+<td><p>2</p></td>
+<td><p>Plans the entire sequence internally</p></td>
+<td><p>Action: execute extraction; observation: store extracted data in
+memory</p></td>
+</tr>
+<tr>
+<td><p>3</p></td>
+<td><p>Generates summary and chart in a single pass</p></td>
+<td><p>Thought: plan next action to generate the summary from extracted
+data</p></td>
+</tr>
+<tr>
+<td><p>4</p></td>
+<td><p>Returns outputs without revisiting intermediate results</p></td>
+<td><p>Action: generate summary; Observation: store output in
+memory</p></td>
+</tr>
+<tr>
+<td><p>5</p></td>
+<td><p>No mid-execution adjustments</p></td>
+<td><p>Thought: plan final action to create the bar chart; action:
+create chart; observation: review output</p></td>
+</tr>
+<tr>
+<td><p>6</p></td>
+<td><p>—</p></td>
+<td><p>If intermediate results are incomplete, repeat the loop until
+satisfied, then return final outputs</p></td>
+</tr>
+</tbody>
+</table>
+<p>While the table shows the difference step by step, <a
+href="#ch02.html_single_vs_multi_step" data-type="xref">Figure 2-1</a>
+illustrates the overall workflows side by side. The single-step agent
+follows a linear pipeline from prompt to result, whereas the multi-step
+agent embeds reasoning, actions, and memory into an iterative loop that
+continues until the problem is solved or the computational budget is
+exhausted.</p>
+<figure>
+<div id="ch02.html_single_vs_multi_step" class="figure">
+<img src="assets/ch01_single_vs_multi_step.png" width="600" height="502"
+alt="ch01 single vs multi step" />
+<h6><span class="label">Figure 2-1. </span>Single-step (left) versus
+ReAct (right) agent workflows.</h6>
+</div>
+</figure>
+<section data-type="sect1"
+data-pdf-bookmark="Structured Reasoning and Action">
+<section id="ch02.html_id35" class="sect1">
+<h1>Structured Reasoning and Action</h1>
+<p>Giving agents distinct personas, sometimes called anthropomorphizing,
+can sharpen their reasoning and make their contributions more focused. A
+planner agent framed as a methodical strategist will approach problems
+differently than a critic agent framed as an evaluator. When each agent
+is given a clear role and mindset, their reasoning chains tend to be
+more coherent and their interactions in MAS more purposeful. This
+alignment improves collaboration, since each agent knows what kind of
+knowledge it’s expected to contribute.</p>
+<p>Yet defining a role is only half the picture. To make agents more
+effective you might also need to shape how the agent thinks. This is
+where structured reasoning methods such as chain of thought, tree of
+thought and ReAct come into play.</p>
+<section data-type="sect2"
+data-pdf-bookmark="Letting Your AI Agents Think Out Loud">
+<section id="ch02.html_id36" class="sect2">
+<h2>Letting Your AI Agents Think Out Loud</h2>
+<p><em>Chain-of-thought prompting</em> (CoT) <sup><a
+href="#ch02.html_id52" id="ch02.html_id52-marker"
+data-type="noteref">1</a></sup> is inspired by the human thought
+process, this technique first solves intermediate steps before getting
+to the final answer. While CoT gets often introduced as prompting trick,
+in the context of AI agents CoT can serve as added reasoning steps that
+guides control flow. By forcing the model to generate intermediate
+steps, you gain better transparency over the reasoning process. It often
+improves reliability and can help smaller models perform tasks that
+would otherwise require a larger model. This keeps cost lower while
+providing clearer insights into how the agent arrives at its decisions.
+<a href="#ch02.html_cot_prompt_examples" data-type="xref">Table 2-2</a>
+provides you ideas for prompts for common scenarios that you can adapt
+to your needs.</p>
+<table id="cot_prompt_examples">
+<caption><span class="label">Table 2-2. </span>Examples: Chain of
+Thought prompts by scenario</caption>
+<thead>
+<tr>
+<th>Scenario</th>
+<th>CoT prompt example</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><p>Planning</p></td>
+<td><p>“Plan step by step to create a one-week blog schedule. Explain
+the reasoning behind each choice.”</p></td>
+</tr>
+<tr>
+<td><p>Data analysis</p></td>
+<td><p>“Begin by describing the dataset. Next highlight patterns or
+trends. Conclude with a clear summary of insights.”</p></td>
+</tr>
+<tr>
+<td><p>Math problem</p></td>
+<td><p>“Break the problem into smaller pieces. Solve each piece with
+explanation. Then combine the results for the final answer.”</p></td>
+</tr>
+<tr>
+<td><p>Research task</p></td>
+<td><p>“List the central questions first. Investigate them one by one.
+Conclude with a synthesized summary.”</p></td>
+</tr>
+<tr>
+<td><p>Debugging</p></td>
+<td><p>“Start by listing possible causes. Test each cause in turn.
+Eliminate what does not fit and explain why until you reach the
+fix.”</p></td>
+</tr>
+<tr>
+<td><p>Decision-making</p></td>
+<td><p>“List all available options. Consider pros and cons step by step.
+Choose the option that best fits the criteria and explain why.”</p></td>
+</tr>
+</tbody>
+</table>
+<p>To make this more explicit how you might want to implement this into
+your workflow, let’s look at an agent for data analysis. Since the core
+of a CoT agent is its ability to reason in a series of logical,
+intermediate steps, this is the perfect example. You can instruct the
+agent to think step by step, and have it begin by describing first the
+dataset and next have it highlight patterns or trends. <a
+href="#ch02.html_CoTPrompt" data-type="xref">Example 2-1</a> shows a
+generic system prompt you could use for such an agent. I omit the rest
+of the code for brevity, but you can find the complete working
+implementation in the <a
+href="https://github.com/Nicolepcx/ai-agents-the-definitive-guide">book’s
+repository</a>.</p>
+<section id="ch02.html_CoTPrompt" data-type="example">
+<h5><span class="label">Example 2-1. </span>CoT prompt</h5>
+<pre translate="no" data-type="programlisting"
+data-code-language="python"><code>SYSTEM_INSTRUCTIONS = &quot;&quot;&quot;You are a careful data analysis assistant. Think step by
+step and be explicit.
+Begin by describing the dataset.
+Next highlight patterns or trends.
+Conclude with a clear summary of insights.
+When you need to compute metrics or create a chart, call the python_repl tool with
+code that:
+1. Loads the CSV from the dataset path
+2. Prints descriptive statistics
+3. If a target column exists, creates one bar chart of mean values grouped by the
+target and saves it to a file
+4. Prints key results
+Return FINAL ANSWER only after you have executed your analysis.&quot;&quot;&quot;</code></pre>
+</section>
+<p>Now to use the prompt with your agent, you just need to create a
+single agent as show in <a href="#ch02.html_CoTAgent"
+data-type="xref">Example 2-2</a>. Note that I use the <code
+translate="no">AgentExecutor</code> from LangChain together with
+LangGraph for brevity in <a href="#ch02.html_CoTAgent"
+data-type="xref">Example 2-2</a>. But in the accompanying notebook
+you’ll also find a more granular LangGraph wiring, where the routing
+between the model and tools is made explicit.</p>
+<p>Both approaches yield the same result. However, using the <code
+translate="no">AgentExecutor</code> is often preferable in production,
+since it keeps your code concise, while the granular graph is valuable
+for debugging and for understanding how messages, tool calls, and
+control flow work under the hood.</p>
+<section id="ch02.html_CoTAgent" data-type="example">
+<h5><span class="label">Example 2-2. </span>CoT Agent</h5>
+<pre translate="no" data-type="programlisting"
+data-code-language="python"><code>def create_agent(llm: ChatOpenAI, tools: list, system_prompt: str) -&gt; AgentExecutor:
+    prompt = ChatPromptTemplate.from_messages(
+        [
+            (&quot;system&quot;, system_prompt + &quot;&quot;&quot;Work autonomously using the available
+            tools.&quot;&quot;&quot;),
+            MessagesPlaceholder(variable_name=&quot;messages&quot;),
+            MessagesPlaceholder(variable_name=&quot;agent_scratchpad&quot;),
+        ]
+    )
+    agent = create_openai_functions_agent(llm, tools, prompt)
+    executor = AgentExecutor(
+        agent=agent,
+        tools=tools,
+        return_intermediate_steps=True,
+        handle_parsing_errors=True,
+        verbose=False,
+    )
+    return executor</code></pre>
+</section>
+<p>When I ran the code, the agent produced a correct description of the
+demo dataset, an accurate analysis of the patterns and trends, as well
+as a bar chart and a summary of its insights. In addition, with the
+provided code, you can inspect the intermediate tool steps, for
+example:</p>
+<pre translate="no" data-type="programlisting"><code>(AgentActionMessageLog(tool=&#39;python_repl&#39;, tool_input={&#39;code&#39;: &quot;import pandas
+as pd\n\ndf = pd.read_csv(&#39;demo.csv&#39;)\n\ndf.describe()&quot;})</code></pre>
+<p>or</p>
+<pre translate="no" data-type="programlisting"><code>AgentActionMessageLog(tool=&#39;python_repl&#39;, tool_input={&#39;code&#39;: &#39;df.describe()&#39;})</code></pre>
+<p>This example illustrates how CoT enables the agent to make its
+reasoning process visible and verifiable. If you use the code from this
+example, you basically force the agent to externalize its intermediate
+steps, and with that you not only gain confidence in the results but
+also create a transparent audit trail of how conclusions are
+reached.</p>
+</section>
+</section>
+<section data-type="sect2"
+data-pdf-bookmark="Generating a Tree of Possibilities">
+<div id="ch02.html_id37" class="sect2">
+<h2>Generating a Tree of Possibilities</h2>
+<p>Now think of a scenario where you have a more complex task, but you
+don’t want to use a reasoning model or a full multi-agent architecture.
+Still, a more exploratory and strategic approach is needed. In such
+cases, you can use <em>tree of thoughts prompting</em> (ToT) <sup><a
+href="#ch02.html_id53" id="ch02.html_id53-marker"
+data-type="noteref">2</a></sup>. ToT expands CoT reasoning into a
+branching search process, where multiple reasoning paths are explored
+and evaluated before deciding on the best next step.</p>
+<p>In the code examples (<a href="#ch02.html_thought_generation"
+data-type="xref">Example 2-3</a> - <a href="#ch02.html_ToTGraph"
+data-type="xref">Example 2-5</a>), I’ll show you how to implement ToT.
+The key idea is to let a smaller, single AI agent generate multiple
+potential paths (a “tree”), have another agent evaluate and select the
+best one, and then execute that chosen path with yet another model. The
+simplified ToT method offers a pragmatic middle ground between a simple
+ReAct loop (see <a href="#ch02.html_React_section" data-type="xref">“How
+to Make Your Agent Take Action and Reflect”</a>) and the full
+computational complexity of more tree-search-based algorithms, which I
+will cover in the next chapter.</p>
+<section data-type="tip">
+<h1>ToT as an engineering shortcut</h1>
+<p>A lightweight ToT setup where a smaller model proposes branches and a
+stronger model evaluates can sometimes replace the need for a full
+multi-agent architecture. This simplifies design and saves both money
+and time by avoiding repeated calls to large reasoning models when a
+smaller setup already provides reliable results.</p>
+</section>
+<p>You begin by creating a “tree” of possibilities. The <code
+translate="no">propose_options</code> node in <a
+href="#ch02.html_thought_generation" data-type="xref">Example 2-3</a> is
+the first step. Instead of producing a single, linear output, it uses a
+smaller LLM to generate three distinct approaches for a blog post. These
+three options represent branching paths, or “thoughts,” that the agent
+can explore. This is the core principle of ToT: moving beyond a
+single-chain process toward multi-path exploration.</p>
+<section id="ch02.html_thought_generation" data-type="example">
+<h5><span class="label">Example 2-3. </span>Thought Generation</h5>
+<pre translate="no" data-type="programlisting"
+data-code-language="python"><code>def propose_options(state: BlogState) -&gt; BlogState:
+    &quot;&quot;&quot;Generator (small): propose 3 creative approaches (ToT-style branching).&quot;&quot;&quot;
+    proposer = gen_llm.with_structured_output(OptionsPayload)
+    prompt = (
+        &quot;Generate exactly 3 distinct approaches for a developer-focused blog on:\n&quot;
+        f&quot;{state[&#39;topic&#39;]}\n\nFor each option, provide: title, audience, angle, &quot;
+        &quot;a 5-bullet outline, and a concise rationale.&quot;
+    )
+    payload: OptionsPayload = proposer.invoke(prompt)
+    state[&quot;options_json&quot;] = payload.model_dump_json()
+    state[&quot;messages&quot;].append(AIMessage(content=state[&quot;options_json&quot;]))
+    return state</code></pre>
+</section>
+<p>You can then introduce the agent to reflect and select (<a
+href="#ch02.html_pruning_node" data-type="xref">Example 2-4</a>), which
+prunes the tree. Here, a more powerful LLM evaluates the three proposed
+options. The model can be instructed to critique each option based on
+criteria such as clarity and originality, and then select the best one.
+This step is crucial in ToT, as it ensures the agent does not simply
+proceed with the first idea but instead critically assesses the
+alternatives and chooses the most promising path to pursue.</p>
+<section id="ch02.html_pruning_node" data-type="example">
+<h5><span class="label">Example 2-4. </span>Pruning Node</h5>
+<pre translate="no" data-type="programlisting"
+data-code-language="python"><code>def reflect_and_select(state: BlogState) -&gt; BlogState:
+    &quot;&quot;&quot;Judge (stronger): critique options and select best one.&quot;&quot;&quot;
+    chooser = judge_llm.with_structured_output(ChoicePayload)
+    eval_prompt = (
+        &quot;Evaluate the 3 approaches for clarity, originality, developer relevance, &quot;
+        &quot;and feasibility under time constraints. Pick ONE by index 0..2 and justify.&quot;
+        f&quot;Options JSON:\n{state[&#39;options_json&#39;]}&quot;
+    )
+    choice: ChoicePayload = chooser.invoke(eval_prompt)
+    opts = json.loads(state[&quot;options_json&quot;])[&quot;options&quot;]
+    idx = max(0, min(choice.choice_index, len(opts)-1))
+    choice.choice_index = idx
+    state[&quot;choice_json&quot;] = choice.model_dump_json()
+    state[&quot;messages&quot;].append(AIMessage(content=state[&quot;choice_json&quot;]))
+    return state</code></pre>
+</section>
+<p>As before, I omit the rest of the code for the other nodes for
+brevity, but you can find the complete implementation in the <a
+href="https://github.com/Nicolepcx/ai-agents-the-definitive-guide">book’s
+repository</a>. What I want to show here is how to tie everything
+together in LangGraph and which types of LLMs I suggest using. One
+important paradigm here is the handoff. A <em>handoff</em> defines how
+control shifts between agents: who speaks next, who acts next, and under
+what conditions. In LangGraph, nodes encode the logic of the agents, and
+edges represent the handoffs. By wiring multiple nodes together, you are
+effectively building a MAS within a single graph. The shared state is
+the memory and context that all nodes operate on. How this wiring looks
+in practice for ToT is illustrated in <a href="#ch02.html_ToTGraph"
+data-type="xref">Example 2-5</a>.</p>
+<section id="ch02.html_ToTGraph" data-type="example">
+<h5><span class="label">Example 2-5. </span>Creating the graph for
+ToT</h5>
+<pre translate="no" data-type="programlisting"
+data-code-language="python"><code>graph = StateGraph(BlogState)
+graph.add_node(&quot;propose&quot;, propose_options) 
+graph.add_node(&quot;reflect&quot;, reflect_and_select) 
+graph.add_node(&quot;research&quot;, research_with_tools) 
+graph.add_node(&quot;draft&quot;, draft_outline_and_intro) 
+
+graph.add_edge(START, &quot;propose&quot;)
+graph.add_edge(&quot;propose&quot;, &quot;reflect&quot;)
+graph.add_edge(&quot;reflect&quot;, &quot;research&quot;)
+graph.add_edge(&quot;research&quot;, &quot;draft&quot;)
+graph.add_edge(&quot;draft&quot;, END)
+
+checkpointer = MemorySaver()
+app = graph.compile(checkpointer=checkpointer)</code></pre>
+</section>
+<dl>
+<dt><a
+href="#ch02.html_co_architectures_and_patterns__planning__reactivity__and_multi_agent_systems_CO1-1"
+id="ch02.html_callout_architectures_and_patterns__planning__reactivity__and_multi_agent_systems_CO1-1"
+class="co"><img src="assets/1.png" width="12" height="12"
+alt="1" /></a></dt>
+<dd>
+<p>Small creative generator LLM.</p>
+</dd>
+<dt><a
+href="#ch02.html_co_architectures_and_patterns__planning__reactivity__and_multi_agent_systems_CO1-2"
+id="ch02.html_callout_architectures_and_patterns__planning__reactivity__and_multi_agent_systems_CO1-2"
+class="co"><img src="assets/2.png" width="12" height="12"
+alt="2" /></a></dt>
+<dd>
+<p>Stronger judge/reflector LLM.</p>
+</dd>
+<dt><a
+href="#ch02.html_co_architectures_and_patterns__planning__reactivity__and_multi_agent_systems_CO1-3"
+id="ch02.html_callout_architectures_and_patterns__planning__reactivity__and_multi_agent_systems_CO1-3"
+class="co"><img src="assets/3.png" width="12" height="12"
+alt="3" /></a></dt>
+<dd>
+<p>Tool-using researcher.</p>
+</dd>
+<dt><a
+href="#ch02.html_co_architectures_and_patterns__planning__reactivity__and_multi_agent_systems_CO1-4"
+id="ch02.html_callout_architectures_and_patterns__planning__reactivity__and_multi_agent_systems_CO1-4"
+class="co"><img src="assets/4.png" width="12" height="12"
+alt="4" /></a></dt>
+<dd>
+<p>Small writer model.</p>
+</dd>
+</dl>
+<p>When you run the code, you’ll see different topics proposed,
+including reference links. To optimize the results further, you could
+implement a human-in-the-loop (<a href="#ch02.html_HITL_section"
+data-type="xref">“Designing Human-in-the-Loop Workflows”</a>)
+interaction to review and approve the actions.</p>
+<p>It’s tempting to think of CoT and ToT as just clever prompting hacks,
+but you’ve seen they can be powerful engineering tools. <a
+href="#ch02.html_cot_tot_examples_compared"
+data-type="xref">Figure 2-2</a> contrasts both approaches: on the left a
+single agent reasoning with CoT, on the right a multi-agent setup where
+different roles collaborate to explore, reflect, and refine mimicking
+ToT.</p>
+<figure>
+<div id="ch02.html_cot_tot_examples_compared" class="figure">
+<img src="assets/ch02_cot_tot_examples_compared.png" width="600"
+height="364" alt="ch02 cot tot examples compared" />
+<h6><span class="label">Figure 2-2. </span>Control-flow diagram
+comparing CoT and ToT.</h6>
+</div>
+</figure>
+<p>Together, they show how structured reasoning can range from a linear
+chain of intermediate steps to a branching process of exploration and
+selection. Both highlight that when agents are guided to think in
+stages, whether as a single voice or as a coordinated team, the outcome
+is more deliberate and reliable.</p>
+</div>
+</section>
+<section data-type="sect2"
+data-pdf-bookmark="How to Make Your Agent Take Action and Reflect">
+<section id="ch02.html_React_section" class="sect2">
+<h2>How to Make Your Agent Take Action and Reflect</h2>
+<p>You’ve seen in the previous section that CoT and ToT can be helpful
+for reasoning, but reasoning alone isn’t enough. An agent that only
+reasons never leaves the page, and an agent that only acts can’t learn
+from its decisions. To combine the two, you need ReAct, which stands for
+reasoning and action.</p>
+<p>Mathematically, you can think of this as mapping a context <span
+class="math inline"><em>c</em><sub><em>t</em></sub></span> to an action
+<span class="math inline"><em>a</em><sub><em>t</em></sub></span> within
+an action space <span
+class="math inline"><em>Â</em> = <em>A</em> ∪ <em>L</em></span>. Here
+<span class="math inline"><em>A</em></span> is the set of task-specific
+actions that impact the environment, while <span
+class="math inline"><em>L</em></span> is the set of language-based
+reasoning traces or thoughts. Each action step therefore produces not
+just a task action <span
+class="math inline"><em>a</em><sub><em>t</em></sub></span>, but also a
+reasoning trace <span
+class="math inline"><em>â</em><sub><em>t</em></sub></span>.</p>
+<p>These traces are folded back into the agent’s state so that the
+context evolves as:</p>
+<div data-type="equation">
+<span
+class="math display"><em>c</em><sub><em>t</em> + 1</sub> = (<em>c</em><sub><em>t</em></sub>, <em>â</em><sub><em>t</em></sub>)</span>
+</div>
+<p>In addition, you follow the policy:</p>
+<div data-type="equation">
+<span
+class="math display"><em>π</em>(<em>a</em><sub><em>t</em></sub>|<em>c</em><sub><em>t</em></sub>)</span>
+</div>
+<p>Here, <span
+class="math inline"><em>c</em><sub><em>t</em></sub> = (<em>o</em><sub>1</sub>, <em>a</em><sub>1</sub>, ..., <em>o</em><sub><em>t</em> − 1</sub>, <em>a</em><sub><em>t</em> − 1</sub>, <em>o</em><sub><em>t</em></sub>)</span>.
+In other words, the agent carries forward not only what it has done, but
+also why it chose that path. This recursive structure is what enables
+reflection: the agent’s future decisions are informed by both its
+history of actions and the reasoning it has accumulated. The flow
+diagram in <a href="#ch02.html_diagramReAct"
+data-type="xref">Figure 2-3</a> illustrates a minimal agent loop
+implemented in LangGraph.</p>
+<figure>
+<div id="ch02.html_diagramReAct" class="figure">
+<img src="assets/CH_02_ReAct.png" width="600" height="204"
+alt="CH 02 ReAct" />
+<h6><span class="label">Figure 2-3. </span>Control-flow diagram of a
+ReAct agent. This loop is the operational form of the policy <span
+class="math inline"><em>π</em>(<em>a</em><sub><em>t</em></sub>|<em>c</em><sub><em>t</em></sub>)</span>.</h6>
+</div>
+</figure>
+<p>The process begins at <code translate="no">__start__</code>, this
+hands control to the agent, and then branches depending on the
+outcome:</p>
+<ul>
+<li><p>If the agent decides it has reached a conclusion, it produces an
+end signal and moves to <code translate="no">__end__</code>.</p></li>
+<li><p>If more reasoning or action is required, the agent issues a
+continue signal, possibly calling tools to gather additional information
+or perform actions.</p></li>
+<li><p>After interacting with tools, control flows back to the agent,
+allowing it to integrate results and reflect before deciding whether to
+continue or stop.</p></li>
+</ul>
+<p>This loop is the essence of ReAct: combining reasoning, action, and
+reflection in an iterative cycle. ReAct is more than “the model thinks
+and then acts”. The reasoning trace itself becomes part of the evolving
+state. That is, the ReAct agent alternates between reasoning traces and
+tool outputs, and those traces feed back into context.</p>
+<p>While this example is in the context of a single agent, the same
+structure extends naturally into larger MAS. Each agent can maintain its
+own cycle of reasoning and acting, with reasoning traces shared or
+exchanged across agents. This makes ReAct not only a tool for individual
+decision-making, but also a foundation for collaboration and reflection
+in more complex agentic setups.</p>
+<p>Let’s make the math and the diagram concrete, and let me show you how
+this actually maps into code. The following listings turn the ReAct
+equations into code. Note, as before, I’ll just show the important parts
+here, but the full running implementation will be in the accompanying
+notebook.</p>
+<p>Before we jump into the listings, remember the intent: we carry a
+growing conversation state <span
+class="math inline"><em>c</em><sub><em>t</em></sub></span> while the
+model alternates between language traces <span
+class="math inline"><em>L</em></span> and task actions <span
+class="math inline"><em>A</em></span>. Each step appends either a
+thought, an action, or a tool observation back into the state. The code
+mirrors this loop. Therefore, you first create the state for the graph
+as in <a href="#ch02.html_reactstate"
+data-type="xref">Example 2-6</a>.</p>
+<section id="ch02.html_reactstate" data-type="example">
+<h5><span class="label">Example 2-6. </span>Create ReAct state</h5>
+<pre translate="no" data-type="programlisting"
+data-code-language="python"><code>class AgentState(TypedDict): 
+    messages: Annotated[Sequence[BaseMessage], add_messages] </code></pre>
+</section>
+<dl>
+<dt><a
+href="#ch02.html_co_architectures_and_patterns__planning__reactivity__and_multi_agent_systems_CO2-1"
+id="ch02.html_callout_architectures_and_patterns__planning__reactivity__and_multi_agent_systems_CO2-1"
+class="co"><img src="assets/1.png" width="12" height="12"
+alt="1" /></a></dt>
+<dd>
+<p>The state of the agent.</p>
+</dd>
+<dt><a
+href="#ch02.html_co_architectures_and_patterns__planning__reactivity__and_multi_agent_systems_CO2-2"
+id="ch02.html_callout_architectures_and_patterns__planning__reactivity__and_multi_agent_systems_CO2-2"
+class="co"><img src="assets/2.png" width="12" height="12"
+alt="2" /></a></dt>
+<dd>
+<p>Context <span
+class="math inline"><em>c</em><sub><em>t</em></sub></span> is the
+message stream.</p>
+</dd>
+</dl>
+<p>Now you give the model two powers in <a
+href="#ch02.html_initReactModel" data-type="xref">Example 2-7</a>. It
+can produce language tokens that act as thoughts <span
+class="math inline"><em>L</em></span>, and it can request structured
+tool calls <span class="math inline"><em>A</em></span>. Binding the
+tools makes these actions first-class outputs that the runtime can
+dispatch.</p>
+<section id="ch02.html_initReactModel" data-type="example">
+<h5><span class="label">Example 2-7. </span>Init LLM</h5>
+<pre translate="no" data-type="programlisting"><code>model = ChatOpenAI(model=&quot;gpt-4o-mini&quot;, temperature=0)
+model = model.bind_tools(TOOLS) </code></pre>
+</section>
+<dl>
+<dt><a
+href="#ch02.html_co_architectures_and_patterns__planning__reactivity__and_multi_agent_systems_CO3-1"
+id="ch02.html_callout_architectures_and_patterns__planning__reactivity__and_multi_agent_systems_CO3-1"
+class="co"><img src="assets/1.png" width="12" height="12"
+alt="1" /></a></dt>
+<dd>
+<p>Binding tools to the model augments the action space to <span
+class="math inline"><em>Â</em> = <em>A</em> ∪ <em>L</em></span>.</p>
+</dd>
+</dl>
+<p><a href="#ch02.html_CallingModel" data-type="xref">Example 2-8</a> is
+the policy step. It reads the entire message history, applies the system
+rules, and produces exactly one thing: either a thought, or a tool call
+request, or both. You don’t branch here, you simply return what the
+model decided.</p>
+<section id="ch02.html_CallingModel" data-type="example">
+<h5><span class="label">Example 2-8. </span>Call the model</h5>
+<pre translate="no" data-type="programlisting"
+data-code-language="python"><code>def call_model(state: AgentState, config: RunnableConfig) -&gt; Dict[str, Any]:
+    response = model.invoke([SYSTEM_PROMPT] + state[&quot;messages&quot;], config) 
+    return {&quot;messages&quot;: [response]} </code></pre>
+</section>
+<dl>
+<dt><a
+href="#ch02.html_co_architectures_and_patterns__planning__reactivity__and_multi_agent_systems_CO4-1"
+id="ch02.html_callout_architectures_and_patterns__planning__reactivity__and_multi_agent_systems_CO4-1"
+class="co"><img src="assets/1.png" width="12" height="12"
+alt="1" /></a></dt>
+<dd>
+<p>Policy <span
+class="math inline"><em>π</em>(<em>c</em><sub><em>t</em></sub>) → <em>â</em><sub><em>t</em></sub></span>
+is <code translate="no">model.invoke</code> on the current context.</p>
+</dd>
+<dt><a
+href="#ch02.html_co_architectures_and_patterns__planning__reactivity__and_multi_agent_systems_CO4-2"
+id="ch02.html_callout_architectures_and_patterns__planning__reactivity__and_multi_agent_systems_CO4-2"
+class="co"><img src="assets/2.png" width="12" height="12"
+alt="2" /></a></dt>
+<dd>
+<p>The reducer appends new messages, implementing <span
+class="math inline"><em>c</em><sub><em>t</em> + 1</sub> = (<em>c</em><sub><em>t</em></sub>, <em>â</em><sub><em>t</em></sub>)</span>.</p>
+</dd>
+</dl>
+<p>In <a href="#ch02.html_tool_calls" data-type="xref">Example 2-9</a>
+you translate intent into effect. Every requested tool call is executed
+deterministically, and its result is wrapped as a message. By pushing
+the observation into the same message stream, you let the next policy
+step reason over fresh evidence without special cases.</p>
+<section id="ch02.html_tool_calls" data-type="example">
+<h5><span class="label">Example 2-9. </span>Execute tool calls</h5>
+<pre translate="no" data-type="programlisting"
+data-code-language="python"><code>def tool_node(state: AgentState) -&gt; Dict[str, Any]:
+
+    last = state[&quot;messages&quot;][-1]
+    outputs: list[ToolMessage] = []
+    for tc in getattr(last, &quot;tool_calls&quot;, []) or []: 
+        name = tc.get(&quot;name&quot;)
+        args = tc.get(&quot;args&quot;) or {}
+        tool_fn = TOOLS_BY_NAME.get(name)
+        if not tool_fn:
+            result = json.dumps({&quot;error&quot;: f&quot;Unknown tool {name}&quot;})
+        else:
+            result = tool_fn.invoke(args)
+        outputs.append(
+            ToolMessage(
+                content=result, 
+                name=name,
+                tool_call_id=tc.get(&quot;id&quot;),
+            )
+        )
+    return {&quot;messages&quot;: outputs}</code></pre>
+</section>
+<dl>
+<dt><a
+href="#ch02.html_co_architectures_and_patterns__planning__reactivity__and_multi_agent_systems_CO5-1"
+id="ch02.html_callout_architectures_and_patterns__planning__reactivity__and_multi_agent_systems_CO5-1"
+class="co"><img src="assets/1.png" width="12" height="12"
+alt="1" /></a></dt>
+<dd>
+<p>If the model chose an action <span
+class="math inline"><em>a</em><sub><em>t</em></sub> ∈ <em>A</em></span>,
+execute the tool.</p>
+</dd>
+<dt><a
+href="#ch02.html_co_architectures_and_patterns__planning__reactivity__and_multi_agent_systems_CO5-2"
+id="ch02.html_callout_architectures_and_patterns__planning__reactivity__and_multi_agent_systems_CO5-2"
+class="co"><img src="assets/2.png" width="12" height="12"
+alt="2" /></a></dt>
+<dd>
+<p>Tool output is the observation that informs the next step.</p>
+</dd>
+</dl>
+<p>The stopping rule in <a href="#ch02.html_tot_halting"
+data-type="xref">Example 2-10</a> is simple. If the model asked for a
+tool, it must complete that effect before asking it again. If it didn’t,
+you’d assume it produced a final answer. This keeps the loop predictable
+and avoids orphaned actions.</p>
+<section id="ch02.html_tot_halting" data-type="example">
+<h5><span class="label">Example 2-10. </span>Halting condition</h5>
+<pre translate="no" data-type="programlisting"
+data-code-language="python"><code>def should_continue(state: AgentState) -&gt; str:
+    last = state[&quot;messages&quot;][-1]
+    if getattr(last, &quot;tool_calls&quot;, None): 
+        return &quot;continue&quot;
+    return &quot;end&quot;</code></pre>
+</section>
+<dl>
+<dt><a
+href="#ch02.html_co_architectures_and_patterns__planning__reactivity__and_multi_agent_systems_CO6-1"
+id="ch02.html_callout_architectures_and_patterns__planning__reactivity__and_multi_agent_systems_CO6-1"
+class="co"><img src="assets/1.png" width="12" height="12"
+alt="1" /></a></dt>
+<dd>
+<p>Halting test reads the last AI message to decide continue or end.</p>
+</dd>
+</dl>
+<p>Now you connect the pieces into a small state machine, as shown in <a
+href="#ch02.html_Build_ToT_graph" data-type="xref">Example 2-11</a>. The
+edges encode the control flow that mirrors the ReAct diagram. The policy
+node runs first. If it emits an action, we route to the tools node and
+then back to policy. If it emits only a thought or a final answer, we
+terminate.</p>
+<section id="ch02.html_Build_ToT_graph" data-type="example">
+<h5><span class="label">Example 2-11. </span>Build workflow graph</h5>
+<pre translate="no" data-type="programlisting"
+data-code-language="python"><code>workflow = StateGraph(AgentState)
+workflow.add_node(&quot;agent&quot;, call_model)
+workflow.add_node(&quot;tools&quot;, tool_node)
+workflow.set_entry_point(&quot;agent&quot;)
+
+workflow.add_conditional_edges(
+    &quot;agent&quot;,
+    should_continue,
+    {&quot;continue&quot;: &quot;tools&quot;, &quot;end&quot;: END},
+)
+
+workflow.add_edge(&quot;tools&quot;, &quot;agent&quot;)
+graph = workflow.compile()</code></pre>
+</section>
+<p>At runtime, the graph advances one edge at a time. The conditional
+edge decides whether the next hop is <code translate="no">tools</code>
+or <code translate="no">END</code>. The fixed edge from tools back to
+agent completes the think-act loop.</p>
+<p>To see this in action, you prompt a question, I asked how the weather
+will be in Zurich. The LLM first decides which tool to call to answer
+best, then the tool returns evidence, and the model writes a final
+answer grounded in that evidence. Because every step is recorded in the
+message stream, the reasoning is retrievable:</p>
+<pre translate="no" data-type="programlisting"><code>&gt; Entering new ReAct trace...
+Question: What is the weather in Zurich today?
+
+Final Answer: What is the weather in Zurich today?
+
+&gt; Finished trace.
+
+Reasoning Summary: selecting a tool based on the query
+Action:
+```
+{
+  &quot;action&quot;: &quot;internet_search&quot;,
+  &quot;action_input&quot;: {
+    &quot;query&quot;: &quot;Zurich weather today&quot;
+  }
+}
+```
+
+Observation:
+```
+{
+  &quot;title&quot;: &quot;Zurich, Zurich, Switzerland Weather Forecast&quot;,
+  &quot;snippet&quot;: &quot;Hourly Weather \u00b7 1 PM 74\u00b0. rain drop 0% \u00b7 2 PM
+  80\u00b0. rain drop 0% \u00b7 3 PM 82\u00b0. rain drop 0% \u00b7 4 PM
+  83\u00b0. rain drop 0% \u00b7 5 PM 84\u00b0. rain drop 0% \u00b7 6 PM ...
+```
+
+Final Answer: Today in Zurich, the weather is mostly sunny with a high
+of 82°F (about 28°C) and a low of 62°F (about 17°C). Winds are light
+from the southwest at 6 mph.
+
+For more details, you can check the full forecast
+[here](https://www.accuweather.com/en/ch/zurich/316622/weather-forecast/316622).
+
+&gt; Finished trace.</code></pre>
+<p>Now you understand how powerful ReAct can be. It’s not just that the
+agent alternates between thinking and acting, but that the reasoning
+itself becomes part of the state. This recursive process enables agents
+to adapt, refine their strategies, and explain their choices. In
+practice, it allows even relatively small models to perform complex
+tasks more reliably, while making their decision-making process
+transparent.</p>
+<p>Together, CoT, ToT, and ReAct illustrate how different reasoning
+strategies can shape the intelligence of your agents. Each approach has
+its strengths: CoT offers transparency and reliability, ToT explores
+multiple alternatives before committing, and ReAct closes the loop by
+combining reasoning with tool use. <a
+href="#ch02.html_pattern_summary_reasoning"
+data-type="xref">Table 2-3</a> gives you a consolidated overview of
+these reasoning patterns along with tips for when they are most
+useful.</p>
+<table id="pattern_summary_reasoning">
+<caption><span class="label">Table 2-3. </span>Pattern summary:
+Structured reasoning methods (CoT, ToT, ReAct)</caption>
+<thead>
+<tr>
+<th>Method</th>
+<th>Use Case</th>
+<th>Benefits</th>
+<th>Tradeoffs</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><p>Chain of Thought (CoT)</p></td>
+<td><p>Step-by-step reasoning for math, planning, analysis</p></td>
+<td><p>Improves reliability and transparency; enables smaller models on
+harder tasks</p></td>
+<td><p>Slower, verbose outputs; sometimes redundant</p></td>
+</tr>
+<tr>
+<td><p>Tree of Thought (ToT)</p></td>
+<td><p>Exploratory tasks with multiple solution paths (creative writing,
+strategy search)</p></td>
+<td><p>Explores alternatives; reduces “first-answer bias”</p></td>
+<td><p>Higher compute cost; requires orchestration (selection and
+pruning)</p></td>
+</tr>
+<tr>
+<td><p>ReAct</p></td>
+<td><p>Tasks needing both reasoning and tool use (research, coding,
+APIs)</p></td>
+<td><p>Integrates reasoning + action; creates audit trail; adaptive to
+feedback</p></td>
+<td><p>More complex state management; risk of over-calling
+tools</p></td>
+</tr>
+</tbody>
+</table>
+<p>This highlights how these methods can become powerful building blocks
+once you integrate them into your overall agentic workflow.</p>
+</section>
+</section>
+</section>
+</section>
+<section data-type="sect1"
+data-pdf-bookmark="Surely You’re Joking, AI Agent!">
+<section id="ch02.html_id39" class="sect1">
+<h1>Surely You’re Joking, AI Agent!</h1>
+<p>Sometimes an agent’s behavior can be entertaining. It might call the
+wrong tool, loop endlessly, or produce an oddly creative response. In
+those moments you might laugh and say to yourself addressing the AI
+agent: “You’re joking, right?” But when the same unpredictability
+reaches into access control, financial operations, or customer data,
+it’s no longer a joke. An action taken at the wrong moment or on the
+wrong system can have serious consequences. This is why
+<em>human-in-the-loop</em> (HITL) exists. HITL allows the agent to pause
+at critical points, ask for your approval, and continue only once it’s
+safe to proceed.</p>
+<p>HITL is not only about catching errors before they happen. It also
+provides accountability and transparency. By inserting checkpoints into
+an agent’s workflow, you make sure irreversible actions are reviewed,
+decisions are traceable, and sensitive operations stay under human
+control. Far from slowing the system down, this oversight makes agents
+more trustworthy and easier to adopt in production settings.</p>
+<section data-type="sect2"
+data-pdf-bookmark="Designing Human-in-the-Loop Workflows">
+<div id="ch02.html_HITL_section" class="sect2">
+<h2>Designing Human-in-the-Loop Workflows</h2>
+<p>There are a couple of different interruptions that you can perform
+with a HITL workflow. The most common ones are shown below.</p>
+<dl>
+<dt>Approve or reject</dt>
+<dd>
+<p>Pause the graph before a critical step, such as an API call, to
+review and approve the action. If the action is rejected, you can
+prevent the graph from executing the step, and potentially take an
+alternative action. This pattern often involve routing the graph based
+on the human’s input.</p>
+</dd>
+<dt>Review and edit</dt>
+<dd>
+<p>Pause the graph to review and edit the graph state. This is useful
+for correcting mistakes or updating the state with additional
+information.</p>
+</dd>
+<dt>Review tool calls</dt>
+<dd>
+<p>If a tool call could affect external systems, inspect its arguments
+before execution. For example, you might confirm booking details before
+a travel reservation is made.</p>
+</dd>
+<dt>Validate human input</dt>
+<dd>
+<p>Explicitly request human input at a particular step in the graph.
+This is useful for collecting additional information or context to
+inform the agent’s decision-making process or for supporting multi-turn
+conversations.</p>
+</dd>
+</dl>
+<p>LangGraph offers an <a
+href="https://langchain-ai.github.io/langgraph/how-tos/human_in_the_loop/add-human-in-the-loop/">extensive
+documentation</a> on how to apply these patterns in your own
+applications. In addition, the <a
+href="https://github.com/Nicolepcx/ai-agents-the-definitive-guide">book’s
+repository</a> includes complete, runnable examples of six different
+patterns. You can select among them through a <code
+translate="no">main()</code> function, as shown in <a
+href="#ch02.html_main_choice" data-type="xref">Example 2-12</a>.</p>
+<section id="ch02.html_main_choice" data-type="example">
+<h5><span class="label">Example 2-12. </span>Main function for HITL
+pattern demos</h5>
+<pre translate="no" data-type="programlisting"
+data-code-language="python"><code>def main():
+    menu = &quot;&quot;&quot;
+Pick a demo
+1. Human feedback loop for writing
+2. Approval gate before API call
+3. Review and edit state
+4. Parallel interrupts with resume map
+5. Tool call review in a tiny ReAct loop
+6. Static interrupts for debugging
+q. Quit
+&gt; &quot;&quot;&quot;</code></pre>
+</section>
+<p>In the following code examples (<a href="#ch02.html_b_propose"
+data-type="xref">Example 2-13</a> - <a
+href="#ch02.html_wait_for_interrupt_and_prompt"
+data-type="xref">Example 2-20</a>) I’ll explain how to implement the
+patterns covered above and also cover the main points you’d want to
+watch out for when you implement them.</p>
+<section class="note" data-type="note">
+<h1>Command in LangGraph</h1>
+<p>Combines control flow (edges) and state updates (nodes). It
+facilitates multi-actor (or multi-agent) communication. For example, a
+node can update its state and decide the next node to visit. LangGraph
+enables this by returning a Command object from node functions.</p>
+</section>
+<p>Use approve or reject when you want to gate a side-effecting step
+like an HTTP call.</p>
+<p><a href="#ch02.html_b_propose" data-type="xref">Example 2-13</a> asks
+the LLM to produce a request plan and stores it in <code
+translate="no">proposed_request</code>.</p>
+<section id="ch02.html_b_propose" data-type="example">
+<h5><span class="label">Example 2-13. </span>Propose request with
+LLM</h5>
+<pre translate="no" data-type="programlisting"
+data-code-language="python"><code>def b_propose(state: BState) -&gt; BState:
+    prompt = &quot;Return only JSON with keys url and params for GET to
+              https://httpbin.org/get using q and limit.&quot;
+    text = LLM.invoke(prompt).content 
+    m = re.search(r&quot;\{.*\}&quot;, text, re.S)
+    data = {&quot;url&quot;: &quot;https://httpbin.org/get&quot;, &quot;params&quot;:
+           {&quot;q&quot;: &quot;fallback&quot;, &quot;limit&quot;: 1}} 
+    if m:
+        try:
+            data = json.loads(m.group(0)) 
+        except Exception:
+            pass
+    return {&quot;proposed_request&quot;: data} </code></pre>
+</section>
+<dl>
+<dt><a
+href="#ch02.html_co_architectures_and_patterns__planning__reactivity__and_multi_agent_systems_CO7-1"
+id="ch02.html_callout_architectures_and_patterns__planning__reactivity__and_multi_agent_systems_CO7-1"
+class="co"><img src="assets/1.png" width="12" height="12"
+alt="1" /></a></dt>
+<dd>
+<p>Ask the LLM to generate a structured plan.</p>
+</dd>
+<dt><a
+href="#ch02.html_co_architectures_and_patterns__planning__reactivity__and_multi_agent_systems_CO7-2"
+id="ch02.html_callout_architectures_and_patterns__planning__reactivity__and_multi_agent_systems_CO7-2"
+class="co"><img src="assets/2.png" width="12" height="12"
+alt="2" /></a></dt>
+<dd>
+<p>Fallback default request if parsing fails.</p>
+</dd>
+<dt><a
+href="#ch02.html_co_architectures_and_patterns__planning__reactivity__and_multi_agent_systems_CO7-3"
+id="ch02.html_callout_architectures_and_patterns__planning__reactivity__and_multi_agent_systems_CO7-3"
+class="co"><img src="assets/3.png" width="12" height="12"
+alt="3" /></a></dt>
+<dd>
+<p>Try to parse JSON out of the model’s output.</p>
+</dd>
+<dt><a
+href="#ch02.html_co_architectures_and_patterns__planning__reactivity__and_multi_agent_systems_CO7-4"
+id="ch02.html_callout_architectures_and_patterns__planning__reactivity__and_multi_agent_systems_CO7-4"
+class="co"><img src="assets/4.png" width="12" height="12"
+alt="4" /></a></dt>
+<dd>
+<p>Store result in state under proposed_request.</p>
+</dd>
+</dl>
+<p><a href="#ch02.html_b_gate" data-type="xref">Example 2-14</a> calls
+interrupt(…​) to pause and request human approval or a revision.</p>
+<section id="ch02.html_b_gate" data-type="example">
+<h5><span class="label">Example 2-14. </span>Approval gate for
+request</h5>
+<pre translate="no" data-type="programlisting"
+data-code-language="python"><code>def b_gate(state: BState) -&gt; Command[Literal[&quot;b_call&quot;, &quot;b_propose&quot;]]:
+    v = interrupt({ 
+        &quot;question&quot;: &quot;Approve or revise request&quot;,
+        &quot;proposed_request&quot;: state[&quot;proposed_request&quot;], 
+        &quot;schema&quot;: {
+            &quot;type&quot;: &quot;object&quot;,
+            &quot;properties&quot;: {
+                &quot;action&quot;: {&quot;enum&quot;: [&quot;approve&quot;, &quot;revise&quot;]}, 
+                &quot;update&quot;: {&quot;type&quot;: &quot;object&quot;}
+            },
+            &quot;required&quot;: [&quot;action&quot;]
+        }
+    })
+    action = v.get(&quot;action&quot;)
+    if action == &quot;approve&quot;:
+        return Command(goto=&quot;b_call&quot;, update={&quot;decision&quot;: &quot;approved&quot;}) 
+    upd = v.get(&quot;update&quot;) or {}
+    new_req = state[&quot;proposed_request&quot;].copy()
+    if &quot;url&quot; in upd:
+        new_req[&quot;url&quot;] = upd[&quot;url&quot;]
+    if isinstance(upd.get(&quot;params&quot;), dict):
+        new_req.setdefault(&quot;params&quot;, {}).update(upd[&quot;params&quot;])
+    return Command(goto=&quot;b_gate&quot;, update={&quot;proposed_request&quot;: new_req,
+    &quot;decision&quot;: &quot;revised&quot;}) </code></pre>
+</section>
+<dl>
+<dt><a
+href="#ch02.html_co_architectures_and_patterns__planning__reactivity__and_multi_agent_systems_CO8-1"
+id="ch02.html_callout_architectures_and_patterns__planning__reactivity__and_multi_agent_systems_CO8-1"
+class="co"><img src="assets/1.png" width="12" height="12"
+alt="1" /></a></dt>
+<dd>
+<p>Pause execution and wait for human decision.</p>
+</dd>
+<dt><a
+href="#ch02.html_co_architectures_and_patterns__planning__reactivity__and_multi_agent_systems_CO8-2"
+id="ch02.html_callout_architectures_and_patterns__planning__reactivity__and_multi_agent_systems_CO8-2"
+class="co"><img src="assets/2.png" width="12" height="12"
+alt="2" /></a></dt>
+<dd>
+<p>Present the proposed request for inspection.</p>
+</dd>
+<dt><a
+href="#ch02.html_co_architectures_and_patterns__planning__reactivity__and_multi_agent_systems_CO8-3"
+id="ch02.html_callout_architectures_and_patterns__planning__reactivity__and_multi_agent_systems_CO8-3"
+class="co"><img src="assets/3.png" width="12" height="12"
+alt="3" /></a></dt>
+<dd>
+<p>Enforce structured approval/revision schema.</p>
+</dd>
+<dt><a
+href="#ch02.html_co_architectures_and_patterns__planning__reactivity__and_multi_agent_systems_CO8-4"
+id="ch02.html_callout_architectures_and_patterns__planning__reactivity__and_multi_agent_systems_CO8-4"
+class="co"><img src="assets/4.png" width="12" height="12"
+alt="4" /></a></dt>
+<dd>
+<p>On approval, route to the call step.</p>
+</dd>
+<dt><a
+href="#ch02.html_co_architectures_and_patterns__planning__reactivity__and_multi_agent_systems_CO8-5"
+id="ch02.html_callout_architectures_and_patterns__planning__reactivity__and_multi_agent_systems_CO8-5"
+class="co"><img src="assets/5.png" width="12" height="12"
+alt="5" /></a></dt>
+<dd>
+<p>On revision, loop back to the gate with updated request.</p>
+</dd>
+</dl>
+<p>On <code translate="no">resume</code> you pass <code
+translate="no">Command(resume={"action": "approve"})</code> to continue,
+or <code translate="no">{"action": "revise", "update": {...}}</code> to
+merge edits and loop back to the gate.</p>
+<p><a href="#ch02.html_b_call" data-type="xref">Example 2-15</a> runs
+the HTTP call only after approval and stores <code
+translate="no">api_result</code>. You can reject to prevent execution,
+and routing depends on human input.</p>
+<section id="ch02.html_b_call" data-type="example">
+<h5><span class="label">Example 2-15. </span>Execute approved HTTP
+call</h5>
+<pre translate="no" data-type="programlisting"
+data-code-language="python"><code>def b_call(state: BState) -&gt; BState:
+    import requests
+    r = requests.get(state[&quot;proposed_request&quot;][&quot;url&quot;],
+    params=state[&quot;proposed_request&quot;][&quot;params&quot;], timeout=10) 
+    return {&quot;api_result&quot;: {&quot;status_code&quot;: r.status_code, &quot;url&quot;: r.url}} </code></pre>
+</section>
+<dl>
+<dt><a
+href="#ch02.html_co_architectures_and_patterns__planning__reactivity__and_multi_agent_systems_CO9-1"
+id="ch02.html_callout_architectures_and_patterns__planning__reactivity__and_multi_agent_systems_CO9-1"
+class="co"><img src="assets/1.png" width="12" height="12"
+alt="1" /></a></dt>
+<dd>
+<p>Run the external request only after approval.</p>
+</dd>
+<dt><a
+href="#ch02.html_co_architectures_and_patterns__planning__reactivity__and_multi_agent_systems_CO9-2"
+id="ch02.html_callout_architectures_and_patterns__planning__reactivity__and_multi_agent_systems_CO9-2"
+class="co"><img src="assets/2.png" width="12" height="12"
+alt="2" /></a></dt>
+<dd>
+<p>Store result under <code translate="no">api_result</code> in
+state.</p>
+</dd>
+</dl>
+<p>You use review and edit to correct or improve model output by writing
+directly to the state. Here, <a href="#ch02.html_c_write"
+data-type="xref">Example 2-16</a> generates a short summary with the LLM
+and stores it in <code translate="no">summary</code>.</p>
+<section id="ch02.html_c_write" data-type="example">
+<h5><span class="label">Example 2-16. </span>Generate summary text</h5>
+<pre translate="no" data-type="programlisting"
+data-code-language="python"><code>def c_write(state: CState) -&gt; CState:
+    text = LLM.invoke(&quot;Write 2 sentences about why human
+                     in the loop matters for agents&quot;).content 
+    return {&quot;summary&quot;: text} </code></pre>
+</section>
+<dl>
+<dt><a
+href="#ch02.html_co_architectures_and_patterns__planning__reactivity__and_multi_agent_systems_CO10-1"
+id="ch02.html_callout_architectures_and_patterns__planning__reactivity__and_multi_agent_systems_CO10-1"
+class="co"><img src="assets/1.png" width="12" height="12"
+alt="1" /></a></dt>
+<dd>
+<p>Ask the LLM to produce a candidate summary.</p>
+</dd>
+<dt><a
+href="#ch02.html_co_architectures_and_patterns__planning__reactivity__and_multi_agent_systems_CO10-2"
+id="ch02.html_callout_architectures_and_patterns__planning__reactivity__and_multi_agent_systems_CO10-2"
+class="co"><img src="assets/2.png" width="12" height="12"
+alt="2" /></a></dt>
+<dd>
+<p>Store summary in state for later review.</p>
+</dd>
+</dl>
+<p><a href="#ch02.html_c_edit" data-type="xref">Example 2-17</a> pauses
+with <code translate="no">interrupt(...)</code> that includes a JSON
+schema asking for <code translate="no">edited_text</code>.</p>
+<section id="ch02.html_c_edit" data-type="example">
+<h5><span class="label">Example 2-17. </span>Interrupt for human
+edit</h5>
+<pre translate="no" data-type="programlisting"
+data-code-language="python"><code>def c_edit(state: CState) -&gt; CState:
+    res = interrupt({ 
+        &quot;task&quot;: &quot;Edit the summary text&quot;,
+        &quot;summary&quot;: state[&quot;summary&quot;], 
+        &quot;schema&quot;: {
+            &quot;type&quot;: &quot;object&quot;,
+            &quot;properties&quot;: {&quot;edited_text&quot;: {&quot;type&quot;: &quot;string&quot;}}, 
+            &quot;required&quot;: [&quot;edited_text&quot;]
+        }
+    })
+    return {&quot;summary&quot;: res[&quot;edited_text&quot;]} </code></pre>
+</section>
+<dl>
+<dt><a
+href="#ch02.html_co_architectures_and_patterns__planning__reactivity__and_multi_agent_systems_CO11-1"
+id="ch02.html_callout_architectures_and_patterns__planning__reactivity__and_multi_agent_systems_CO11-1"
+class="co"><img src="assets/1.png" width="12" height="12"
+alt="1" /></a></dt>
+<dd>
+<p>Pause and request edit input from human.</p>
+</dd>
+<dt><a
+href="#ch02.html_co_architectures_and_patterns__planning__reactivity__and_multi_agent_systems_CO11-2"
+id="ch02.html_callout_architectures_and_patterns__planning__reactivity__and_multi_agent_systems_CO11-2"
+class="co"><img src="assets/2.png" width="12" height="12"
+alt="2" /></a></dt>
+<dd>
+<p>Provide the generated summary for inspection.</p>
+</dd>
+<dt><a
+href="#ch02.html_co_architectures_and_patterns__planning__reactivity__and_multi_agent_systems_CO11-3"
+id="ch02.html_callout_architectures_and_patterns__planning__reactivity__and_multi_agent_systems_CO11-3"
+class="co"><img src="assets/3.png" width="12" height="12"
+alt="3" /></a></dt>
+<dd>
+<p>Restrict edits to a string field.</p>
+</dd>
+<dt><a
+href="#ch02.html_co_architectures_and_patterns__planning__reactivity__and_multi_agent_systems_CO11-4"
+id="ch02.html_callout_architectures_and_patterns__planning__reactivity__and_multi_agent_systems_CO11-4"
+class="co"><img src="assets/4.png" width="12" height="12"
+alt="4" /></a></dt>
+<dd>
+<p>Overwrite summary with human revision.</p>
+</dd>
+</dl>
+<p>You resume with <code
+translate="no">Command(resume={"edited_text": "your revision"})</code>.
+The node restarts and returns your edit instead of pausing, then the
+graph updates summary with the human version. Meaning, you literally
+pause to review then overwrite the graph state with the edited
+content.</p>
+<p>You use review tool calls when a tool may affect external systems and
+needs inspection of arguments. <a href="#ch02.html_add_hitl"
+data-type="xref">Example 2-18</a> wraps any tool with an <code
+translate="no">interrupt([...])</code>. The interrupt payload asks for
+accept, edit, or respond.</p>
+<section id="ch02.html_add_hitl" data-type="example">
+<h5><span class="label">Example 2-18. </span>Wrap tool with review
+gate</h5>
+<pre translate="no" data-type="programlisting"
+data-code-language="python"><code>def add_hitl(tool_obj: BaseTool | Any) -&gt; BaseTool:
+    if not isinstance(tool_obj, BaseTool):
+        tool_obj = tool(tool_obj)
+
+    @tool(tool_obj.name,description=tool_obj.description,
+    args_schema=tool_obj.args_schema)
+    def wrapped(**tool_input):
+        request = [{ 
+            &quot;action_request&quot;: {&quot;action&quot;: tool_obj.name, &quot;args&quot;: tool_input}, 
+            &quot;config&quot;: {&quot;allow_accept&quot;: True, &quot;allow_edit&quot;:
+                       True, &quot;allow_respond&quot;: True}, 
+            &quot;description&quot;: &quot;Review this tool call&quot;
+        }]
+        response = interrupt(request)[0] 
+        if response[&quot;type&quot;] == &quot;accept&quot;:
+            return tool_obj.invoke(tool_input) 
+        if response[&quot;type&quot;] == &quot;edit&quot;:
+            new_args = response[&quot;args&quot;][&quot;args&quot;]
+            return tool_obj.invoke(new_args) 
+        if response[&quot;type&quot;] == &quot;response&quot;:
+            return response[&quot;args&quot;] 
+        raise ValueError(&quot;Unsupported interrupt response type&quot;)
+    return wrapped</code></pre>
+</section>
+<dl>
+<dt><a
+href="#ch02.html_co_architectures_and_patterns__planning__reactivity__and_multi_agent_systems_CO12-1"
+id="ch02.html_callout_architectures_and_patterns__planning__reactivity__and_multi_agent_systems_CO12-1"
+class="co"><img src="assets/1.png" width="12" height="12"
+alt="1" /></a></dt>
+<dd>
+<p>Wrap original tool call in a review request.</p>
+</dd>
+<dt><a
+href="#ch02.html_co_architectures_and_patterns__planning__reactivity__and_multi_agent_systems_CO12-2"
+id="ch02.html_callout_architectures_and_patterns__planning__reactivity__and_multi_agent_systems_CO12-2"
+class="co"><img src="assets/2.png" width="12" height="12"
+alt="2" /></a></dt>
+<dd>
+<p>Pass tool name and arguments for inspection.</p>
+</dd>
+<dt><a
+href="#ch02.html_co_architectures_and_patterns__planning__reactivity__and_multi_agent_systems_CO12-3"
+id="ch02.html_callout_architectures_and_patterns__planning__reactivity__and_multi_agent_systems_CO12-3"
+class="co"><img src="assets/3.png" width="12" height="12"
+alt="3" /></a></dt>
+<dd>
+<p>Allow human to accept, edit, or respond.</p>
+</dd>
+<dt><a
+href="#ch02.html_co_architectures_and_patterns__planning__reactivity__and_multi_agent_systems_CO12-4"
+id="ch02.html_callout_architectures_and_patterns__planning__reactivity__and_multi_agent_systems_CO12-4"
+class="co"><img src="assets/4.png" width="12" height="12"
+alt="4" /></a></dt>
+<dd>
+<p>Pause until decision is received.</p>
+</dd>
+<dt><a
+href="#ch02.html_co_architectures_and_patterns__planning__reactivity__and_multi_agent_systems_CO12-5"
+id="ch02.html_callout_architectures_and_patterns__planning__reactivity__and_multi_agent_systems_CO12-5"
+class="co"><img src="assets/5.png" width="12" height="12"
+alt="5" /></a></dt>
+<dd>
+<p>Execute original tool call if accepted.</p>
+</dd>
+<dt><a
+href="#ch02.html_co_architectures_and_patterns__planning__reactivity__and_multi_agent_systems_CO12-6"
+id="ch02.html_callout_architectures_and_patterns__planning__reactivity__and_multi_agent_systems_CO12-6"
+class="co"><img src="assets/6.png" width="12" height="12"
+alt="6" /></a></dt>
+<dd>
+<p>Execute tool with revised arguments.</p>
+</dd>
+<dt><a
+href="#ch02.html_co_architectures_and_patterns__planning__reactivity__and_multi_agent_systems_CO12-7"
+id="ch02.html_callout_architectures_and_patterns__planning__reactivity__and_multi_agent_systems_CO12-7"
+class="co"><img src="assets/7.png" width="12" height="12"
+alt="7" /></a></dt>
+<dd>
+<p>Replace tool output with human response.</p>
+</dd>
+</dl>
+<p>You can resume with on of:</p>
+<pre translate="no" data-type="programlisting"
+data-code-language="python"><code>{&quot;type&quot;: &quot;accept&quot;}
+{&quot;type&quot;: &quot;edit&quot;, &quot;args&quot;: {&quot;args&quot;: {&quot;query&quot;: &quot;weather in NY&quot;}}}
+{&quot;type&quot;: &quot;response&quot;, &quot;args&quot;: &quot;Skip the tool right now&quot;}</code></pre>
+<p>The wrapper either executes the original tool call, executes with
+edited args, or returns a human message instead of calling the tool.
+With that, you inspect and approve tool calls before they hit the
+outside world.</p>
+<section class="warning" data-type="warning">
+<h1>Interrupts and side effects</h1>
+<p>Never put side-effecting code (API calls, DB writes) in the same node
+as <code translate="no">interrupt(...)</code>. Always pause first, then
+execute effects only after explicit approval to avoid repeats when
+resuming.</p>
+</section>
+<p>There might be also the occasion, that you’d like to get parallel
+inputs with a single resume. In <a href="#ch02.html_parallel_interrupts"
+data-type="xref">Example 2-19</a> you see how you can implement
+this.</p>
+<section id="ch02.html_parallel_interrupts" data-type="example">
+<h5><span class="label">Example 2-19. </span>Parallel human
+interrupts</h5>
+<pre translate="no" data-type="programlisting"
+data-code-language="python"><code>class DState(TypedDict, total=False):
+    text_1: str
+    text_2: str
+
+def d_h1(state: DState):
+    v = interrupt({&quot;text_to_revise&quot;: state[&quot;text_1&quot;]}) 
+    return {&quot;text_1&quot;: v} 
+
+def d_h2(state: DState): 
+    v = interrupt({&quot;text_to_revise&quot;: state[&quot;text_2&quot;]})
+    return {&quot;text_2&quot;: v} 
+
+def build_graph_D():
+    g = StateGraph(DState)
+    g.add_node(&quot;d_h1&quot;, d_h1) 
+    g.add_node(&quot;d_h2&quot;, d_h2)
+    g.add_edge(START, &quot;d_h1&quot;) 
+    g.add_edge(START, &quot;d_h2&quot;)
+    g.add_edge(&quot;d_h1&quot;, END)
+    g.add_edge(&quot;d_h2&quot;, END)
+    return g.compile(checkpointer=CHECKPOINTER) </code></pre>
+</section>
+<dl>
+<dt><a
+href="#ch02.html_co_architectures_and_patterns__planning__reactivity__and_multi_agent_systems_CO13-1"
+id="ch02.html_callout_architectures_and_patterns__planning__reactivity__and_multi_agent_systems_CO13-1"
+class="co"><img src="assets/1.png" width="12" height="12"
+alt="1" /></a></dt>
+<dd>
+<p>Interrupt for first text input.</p>
+</dd>
+<dt><a
+href="#ch02.html_co_architectures_and_patterns__planning__reactivity__and_multi_agent_systems_CO13-2"
+id="ch02.html_callout_architectures_and_patterns__planning__reactivity__and_multi_agent_systems_CO13-2"
+class="co"><img src="assets/2.png" width="12" height="12"
+alt="2" /></a></dt>
+<dd>
+<p>Update state with revised <code translate="no">text_1</code>.</p>
+</dd>
+<dt><a
+href="#ch02.html_co_architectures_and_patterns__planning__reactivity__and_multi_agent_systems_CO13-3"
+id="ch02.html_callout_architectures_and_patterns__planning__reactivity__and_multi_agent_systems_CO13-3"
+class="co"><img src="assets/3.png" width="12" height="12"
+alt="3" /></a></dt>
+<dd>
+<p>Interrupt for second text input.</p>
+</dd>
+<dt><a
+href="#ch02.html_co_architectures_and_patterns__planning__reactivity__and_multi_agent_systems_CO13-4"
+id="ch02.html_callout_architectures_and_patterns__planning__reactivity__and_multi_agent_systems_CO13-4"
+class="co"><img src="assets/4.png" width="12" height="12"
+alt="4" /></a></dt>
+<dd>
+<p>Update state with revised <code translate="no">text_2</code>.</p>
+</dd>
+<dt><a
+href="#ch02.html_co_architectures_and_patterns__planning__reactivity__and_multi_agent_systems_CO13-5"
+id="ch02.html_callout_architectures_and_patterns__planning__reactivity__and_multi_agent_systems_CO13-5"
+class="co"><img src="assets/5.png" width="12" height="12"
+alt="5" /></a></dt>
+<dd>
+<p>Add both nodes to the graph.</p>
+</dd>
+<dt><a
+href="#ch02.html_co_architectures_and_patterns__planning__reactivity__and_multi_agent_systems_CO13-6"
+id="ch02.html_callout_architectures_and_patterns__planning__reactivity__and_multi_agent_systems_CO13-6"
+class="co"><img src="assets/6.png" width="12" height="12"
+alt="6" /></a></dt>
+<dd>
+<p>Both nodes branch directly from START.</p>
+</dd>
+<dt><a
+href="#ch02.html_co_architectures_and_patterns__planning__reactivity__and_multi_agent_systems_CO13-7"
+id="ch02.html_callout_architectures_and_patterns__planning__reactivity__and_multi_agent_systems_CO13-7"
+class="co"><img src="assets/7.png" width="12" height="12"
+alt="7" /></a></dt>
+<dd>
+<p>Compile with checkpointer so both interrupts can resume.</p>
+</dd>
+</dl>
+<p>Here, both nodes start from <code translate="no">START</code> and
+each calls <code translate="no">interrupt(...)</code>. You use <a
+href="#ch02.html_wait_for_interrupt_and_prompt"
+data-type="xref">Example 2-20</a> to build a dictionary that maps <code
+translate="no">interrupt_id</code> to its value, and then resume with
+<code translate="no">Command(resume=that_map)</code>.</p>
+<section id="ch02.html_wait_for_interrupt_and_prompt"
+data-type="example">
+<h5><span class="label">Example 2-20. </span>Resume multiple
+interrupts</h5>
+<pre translate="no" data-type="programlisting"
+data-code-language="python"><code>def wait_for_interrupt_and_prompt(app, cfg):
+    state = app.get_state(cfg)
+    ints = getattr(state, &quot;interrupts&quot;, []) or [] 
+    if not ints:
+        print(&quot;No interrupts pending&quot;)
+        return None
+
+    if len(ints) &gt; 1: 
+        print(&quot;\nMultiple interrupts pending:&quot;)
+        for i, it in enumerate(ints, 1):
+            print(f&quot;[{i}] id={it.interrupt_id} value={jdump(it.value)}&quot;) 
+        print(&quot;Enter values per interrupt. Leave blank to echo original.&quot;)
+        resume_map = {}
+        for it in ints:
+            val = input(f&quot;Value for {it.interrupt_id}: &quot;).strip() 
+            if val:
+                try:
+                    resume_map[it.interrupt_id] = json.loads(val) 
+                except Exception:
+                    resume_map[it.interrupt_id] = val
+            else:
+                resume_map[it.interrupt_id] = it.value 
+        return Command(resume=resume_map) </code></pre>
+</section>
+<dl>
+<dt><a
+href="#ch02.html_co_architectures_and_patterns__planning__reactivity__and_multi_agent_systems_CO14-1"
+id="ch02.html_callout_architectures_and_patterns__planning__reactivity__and_multi_agent_systems_CO14-1"
+class="co"><img src="assets/1.png" width="12" height="12"
+alt="1" /></a></dt>
+<dd>
+<p>Collect any pending interrupts from state.</p>
+</dd>
+<dt><a
+href="#ch02.html_co_architectures_and_patterns__planning__reactivity__and_multi_agent_systems_CO14-2"
+id="ch02.html_callout_architectures_and_patterns__planning__reactivity__and_multi_agent_systems_CO14-2"
+class="co"><img src="assets/2.png" width="12" height="12"
+alt="2" /></a></dt>
+<dd>
+<p>Handle multiple interruptions at once.</p>
+</dd>
+<dt><a
+href="#ch02.html_co_architectures_and_patterns__planning__reactivity__and_multi_agent_systems_CO14-3"
+id="ch02.html_callout_architectures_and_patterns__planning__reactivity__and_multi_agent_systems_CO14-3"
+class="co"><img src="assets/3.png" width="12" height="12"
+alt="3" /></a></dt>
+<dd>
+<p>Print each interrupt ID and its current value.</p>
+</dd>
+<dt><a
+href="#ch02.html_co_architectures_and_patterns__planning__reactivity__and_multi_agent_systems_CO14-4"
+id="ch02.html_callout_architectures_and_patterns__planning__reactivity__and_multi_agent_systems_CO14-4"
+class="co"><img src="assets/4.png" width="12" height="12"
+alt="4" /></a></dt>
+<dd>
+<p>Ask the human for a new value per interrupt.</p>
+</dd>
+<dt><a
+href="#ch02.html_co_architectures_and_patterns__planning__reactivity__and_multi_agent_systems_CO14-5"
+id="ch02.html_callout_architectures_and_patterns__planning__reactivity__and_multi_agent_systems_CO14-5"
+class="co"><img src="assets/5.png" width="12" height="12"
+alt="5" /></a></dt>
+<dd>
+<p>Try to parse as JSON for structured edits.</p>
+</dd>
+<dt><a
+href="#ch02.html_co_architectures_and_patterns__planning__reactivity__and_multi_agent_systems_CO14-6"
+id="ch02.html_callout_architectures_and_patterns__planning__reactivity__and_multi_agent_systems_CO14-6"
+class="co"><img src="assets/6.png" width="12" height="12"
+alt="6" /></a></dt>
+<dd>
+<p>Keep the original value if no input is given.</p>
+</dd>
+<dt><a
+href="#ch02.html_co_architectures_and_patterns__planning__reactivity__and_multi_agent_systems_CO14-7"
+id="ch02.html_callout_architectures_and_patterns__planning__reactivity__and_multi_agent_systems_CO14-7"
+class="co"><img src="assets/7.png" width="12" height="12"
+alt="7" /></a></dt>
+<dd>
+<p>Resume execution with a full map of updated values.</p>
+</dd>
+</dl>
+<p>As you’ve seen, there isn’t a single “right” way to add human
+oversight. You can choose from different patterns depending on the
+sensitivity of the task and the amount of control you want to keep. I
+encourage you to experiment with these patterns in the provided
+notebook, as this makes it easier to see how human oversight can evolve
+from simple approval gates into richer collaborations between human and
+agents.</p>
+</div>
+</section>
+</section>
+</section>
+<section data-type="sect1"
+data-pdf-bookmark="Advanced Agent Paradigms: Supervisor and Hierarchical Agents">
+<section id="ch02.html_id41" class="sect1">
+<h1>Advanced Agent Paradigms: Supervisor and Hierarchical Agents</h1>
+<p>If your tasks start getting more complex than the ones you’ve seen so
+far, or if you notice your agent struggling, it can help to break the
+task into smaller subtasks. Think of it like building a team: each
+person brings a different skill to the table, and together they solve
+the larger challenge.</p>
+<p>In the same way, you can introduce smaller, independent agents that
+form a MAS. One common setup is the <em>supervisor architecture</em>,
+where every agent reports to a single supervisor that decides who should
+act next. A more advanced version is the <em>hierarchical
+architecture</em>, where you don’t just have one supervisor, but
+supervisors of supervisors. This generalization allows for more flexible
+control flows.</p>
+<p>The diagram in <a
+href="#ch02.html_single_vs_supervisor_vs_hierarchical"
+data-type="xref">Figure 2-4</a> shows how a single-agent setup compares
+to these two multi-agent patterns.</p>
+<figure>
+<div id="ch02.html_single_vs_supervisor_vs_hierarchical" class="figure">
+<img src="assets/ch02_single_vs_supervisor_vs_hierarchical.png"
+width="600" height="193"
+alt="ch02 single vs supervisor vs hierarchical" />
+<h6><span class="label">Figure 2-4. </span>Comparison of single,
+supervisor, and hierarchical agent architectures.</h6>
+</div>
+</figure>
+<p>The primary benefits of using a MAS are its modularity,
+specialization, and control. By separating functionality across agents,
+you make the overall system easier to develop, test, and maintain. Each
+agent can be designed as a domain expert, which boosts the system’s
+performance as a whole. And unlike simple function calling, a
+multi-agent setup also gives you explicit control over how agents
+communicate with one another.</p>
+<section data-type="sect2"
+data-pdf-bookmark="Building a Hierarchical Research Team">
+<section id="ch02.html_id42" class="sect2">
+<h2>Building a Hierarchical Research Team</h2>
+<p>To make the idea of supervisors and sub-agents concrete, let’s walk
+through an example where you build a hierarchical research team. I’ll
+use LangGraph’s prebuilt, reusable <code
+translate="no">create_react_agent</code> component to fast-track the
+implementation of a ReAct agent. Each worker agent then gets a clear
+role: some focus on web search, others scrape pages, query <a
+href="https://exa.ai/">Exa</a> for more structured search results, or
+even look up patents on Google. A supervisor agent sits on top,
+coordinating the specialists and deciding who should act next. The end
+goal is to assemble a market research team. <a
+href="#ch02.html_hierarchical_architecture_graph"
+data-type="xref">Figure 2-5</a> shows the final application you’re
+building.</p>
+<figure>
+<div id="ch02.html_hierarchical_architecture_graph" class="figure">
+<img src="assets/ch02_market_research_team_graph.png" width="600"
+height="186" alt="ch02 market research team graph" />
+<h6><span class="label">Figure 2-5. </span>Final application with a
+hierarchical architecture.</h6>
+</div>
+</figure>
+<p>But before you get there, you’ll start smaller by building your first
+supervisor setup: the research team. You see the overview of the team
+you create in <a href="#ch02.html_Flow_diagram_research_team"
+data-type="xref">Figure 2-6</a>. Once that’s in place, the second step
+is to add a writing team. This group will take the output from the
+research team and save it to your file system as a simple text file.</p>
+<figure>
+<div id="ch02.html_Flow_diagram_research_team" class="figure">
+<img src="assets/ch02_research_team_graph.png" width="600" height="196"
+alt="ch02 research team graph" />
+<h6><span class="label">Figure 2-6. </span>Flow diagram for the research
+team.</h6>
+</div>
+</figure>
+<p>I’ll leave out the details of how to create tools, since you already
+learned this in chapter one (<a href="#ch01.html_createTools"
+data-type="xref">Example 1-2</a>).</p>
+<p>The first thing you need is a helper (<a
+href="#ch02.html_helper_supervisor" data-type="xref">Example 2-21</a>)
+to create your supervisor. This function acts as a router (see <a
+href="#ch01.html_router_section" data-type="xref">“Mapping FSM/HSM to
+Agent Frameworks”</a>) that decides which worker should take the next
+step, or whether the process should finish.</p>
+<section id="ch02.html_helper_supervisor" data-type="example">
+<h5><span class="label">Example 2-21. </span>Helper function for
+supervisor</h5>
+<pre translate="no" data-type="programlisting"
+data-code-language="python"><code>class State(MessagesState): 
+    next: str
+
+def make_supervisor_node(llm: BaseChatModel, members: list[str]) -&gt; str: 
+    options = [&quot;FINISH&quot;] + members
+    system_prompt = ( 
+        &quot;You are a supervisor tasked with managing a conversation between the&quot;
+        f&quot; following workers: {members}. Given the following user request,&quot;
+        &quot; respond with the worker to act next. Each worker will perform a&quot;
+        &quot; task and respond with their results and status. When finished,&quot;
+        &quot; respond with FINISH.&quot;
+    )
+
+    class Router(TypedDict):
+        &quot;&quot;&quot;Worker to route to next. If no workers needed, route to FINISH.&quot;&quot;&quot;
+
+        next: Literal[*options]
+
+    def supervisor_node(state: State) -&gt; Command[Literal[*members, &quot;__end__&quot;]]:
+        &quot;&quot;&quot;An LLM-based router.&quot;&quot;&quot;
+        messages = [
+            {&quot;role&quot;: &quot;system&quot;, &quot;content&quot;: system_prompt},
+        ] + state[&quot;messages&quot;]
+        response = llm.with_structured_output(Router).invoke(messages) 
+        goto = response[&quot;next&quot;]
+        if goto == &quot;FINISH&quot;: 
+            goto = END
+
+        return Command(goto=goto, update={&quot;next&quot;: goto})
+
+    return supervisor_node</code></pre>
+</section>
+<dl>
+<dt><a
+href="#ch02.html_co_architectures_and_patterns__planning__reactivity__and_multi_agent_systems_CO15-1"
+id="ch02.html_callout_architectures_and_patterns__planning__reactivity__and_multi_agent_systems_CO15-1"
+class="co"><img src="assets/1.png" width="12" height="12"
+alt="1" /></a></dt>
+<dd>
+<p>Create the state to keep track of the next worker.</p>
+</dd>
+<dt><a
+href="#ch02.html_co_architectures_and_patterns__planning__reactivity__and_multi_agent_systems_CO15-2"
+id="ch02.html_callout_architectures_and_patterns__planning__reactivity__and_multi_agent_systems_CO15-2"
+class="co"><img src="assets/2.png" width="12" height="12"
+alt="2" /></a></dt>
+<dd>
+<p>Define a helper that builds a supervisor node for any set of
+agents.</p>
+</dd>
+<dt><a
+href="#ch02.html_co_architectures_and_patterns__planning__reactivity__and_multi_agent_systems_CO15-3"
+id="ch02.html_callout_architectures_and_patterns__planning__reactivity__and_multi_agent_systems_CO15-3"
+class="co"><img src="assets/3.png" width="12" height="12"
+alt="3" /></a></dt>
+<dd>
+<p>Provide a system prompt that tells the LLM how to act as the
+supervisor.</p>
+</dd>
+<dt><a
+href="#ch02.html_co_architectures_and_patterns__planning__reactivity__and_multi_agent_systems_CO15-4"
+id="ch02.html_callout_architectures_and_patterns__planning__reactivity__and_multi_agent_systems_CO15-4"
+class="co"><img src="assets/4.png" width="12" height="12"
+alt="4" /></a></dt>
+<dd>
+<p>Use structured output to reliably decide which worker to call
+next.</p>
+</dd>
+<dt><a
+href="#ch02.html_co_architectures_and_patterns__planning__reactivity__and_multi_agent_systems_CO15-5"
+id="ch02.html_callout_architectures_and_patterns__planning__reactivity__and_multi_agent_systems_CO15-5"
+class="co"><img src="assets/5.png" width="12" height="12"
+alt="5" /></a></dt>
+<dd>
+<p>Allow the workflow to terminate cleanly when the supervisor says
+<code translate="no">FINISH</code>.</p>
+</dd>
+</dl>
+<p>Next, you need a helper to create your worker nodes, how to implement
+this is shown in <a href="#ch02.html_helper_node_creation"
+data-type="xref">Example 2-22</a>. This makes the setup concise and
+reusable, so you don’t have to repeat the same boilerplate each time you
+add a new agent.</p>
+<section id="ch02.html_helper_node_creation" data-type="example">
+<h5><span class="label">Example 2-22. </span>Helper function for node
+creation</h5>
+<pre translate="no" data-type="programlisting"
+data-code-language="python"><code>def make_react_worker_node(
+    *,
+    llm: ChatOpenAI,
+    name: str,
+    tools: list,
+    prompt: str | None = None,
+    goto: str = &quot;supervisor&quot;,
+):
+    agent = create_react_agent(llm, tools=tools, prompt=prompt) 
+
+    def node(state: State) -&gt; Command[Literal[&quot;supervisor&quot;]]:
+        result: Dict[str, Any] = agent.invoke(state) 
+        msgs: Sequence[BaseMessage] = result.get(&quot;messages&quot;, [])
+        content = getattr(msgs[-1], &quot;content&quot;, &quot;&quot;) if msgs else &quot;&quot;
+        return Command( 
+            update={&quot;messages&quot;: [HumanMessage(content=content, name=name)]},
+            goto=goto,
+        )
+
+    return node</code></pre>
+</section>
+<dl>
+<dt><a
+href="#ch02.html_co_architectures_and_patterns__planning__reactivity__and_multi_agent_systems_CO16-1"
+id="ch02.html_callout_architectures_and_patterns__planning__reactivity__and_multi_agent_systems_CO16-1"
+class="co"><img src="assets/1.png" width="12" height="12"
+alt="1" /></a></dt>
+<dd>
+<p>Create a specialized ReAct agent with its tools and role prompt.</p>
+</dd>
+<dt><a
+href="#ch02.html_co_architectures_and_patterns__planning__reactivity__and_multi_agent_systems_CO16-2"
+id="ch02.html_callout_architectures_and_patterns__planning__reactivity__and_multi_agent_systems_CO16-2"
+class="co"><img src="assets/2.png" width="12" height="12"
+alt="2" /></a></dt>
+<dd>
+<p>Invoke the agent with the current state.</p>
+</dd>
+<dt><a
+href="#ch02.html_co_architectures_and_patterns__planning__reactivity__and_multi_agent_systems_CO16-3"
+id="ch02.html_callout_architectures_and_patterns__planning__reactivity__and_multi_agent_systems_CO16-3"
+class="co"><img src="assets/3.png" width="12" height="12"
+alt="3" /></a></dt>
+<dd>
+<p>Pass the agent’s latest output back into the state and return to the
+supervisor.</p>
+</dd>
+</dl>
+<p>Once you have these helpers, you can move on to defining your agents.
+It’s helpful to give each agent a specific role. Since the goal here is
+to build a market research team, the roles should be very targeted. My
+role prompts are shown in <a href="#ch02.html_roles_research_agents"
+data-type="xref">Example 2-23</a>.</p>
+<section id="ch02.html_roles_research_agents" data-type="example">
+<h5><span class="label">Example 2-23. </span>Assign roles to research
+agents</h5>
+<pre translate="no" data-type="programlisting"
+data-code-language="python"><code>SEARCH_PROMPT = &quot;&quot;&quot;Role: Web researcher. Use the search tool and return a
+concise research note with sources. No follow-up questions.&quot;&quot;&quot;
+
+SCRAPER_PROMPT = &quot;&quot;&quot;Role: Web scraper. Use the scraping tool to fetch details
+from given URLs and summarize key findings. No follow-up questions.&quot;&quot;&quot;
+
+EXA_PROMPT = &quot;&quot;&quot;Role: Research assistant. You can search for all recent info
+on Exa Search. Your response should clearly articulate the key points you found.&quot;&quot;&quot;
+
+PATENT_PROMPT = &quot;&quot;&quot;Role: Market researcher with 20 years of experience.
+You are very knowledgeable in patent research and in finding up-to-date info
+about patents using the Google Patents API.&quot;&quot;&quot;</code></pre>
+</section>
+<p>Now, let’s create the agents. Using the helper from <a
+href="#ch02.html_helper_node_creation"
+data-type="xref">Example 2-22</a>, you can instantiate each worker and
+assign it the appropriate role and tool. The implementation is shown in
+<a href="#ch02.html_create_research_agents"
+data-type="xref">Example 2-24</a>.</p>
+<section id="ch02.html_create_research_agents" data-type="example">
+<h5><span class="label">Example 2-24. </span>Create research agents</h5>
+<pre translate="no" data-type="programlisting"
+data-code-language="python"><code>specs = [
+    dict(
+        name=&quot;search&quot;,
+        tools=[tavily_tool],
+        prompt=SEARCH_PROMPT,
+    ), 
+    dict(
+        name=&quot;web_scraper&quot;,
+        tools=[scrape_webpages],
+        prompt=SCRAPER_PROMPT,
+    ),
+    dict(
+        name=&quot;exa_search&quot;,
+        tools=[exa_search_tool],
+        prompt=EXA_PROMPT,
+    ),
+    dict(
+        name=&quot;patent_research&quot;,
+        tools=[patent_search],
+        prompt=PATENT_PROMPT,
+    ),
+]
+
+nodes = {s[&quot;name&quot;]: make_react_worker_node(llm=llm, **s) for s in specs} 
+
+search_node = nodes[&quot;search&quot;]
+web_scraper_node = nodes[&quot;web_scraper&quot;]
+exa_search_node = nodes[&quot;exa_search&quot;]
+patent_research_node = nodes[&quot;patent_research&quot;]</code></pre>
+</section>
+<dl>
+<dt><a
+href="#ch02.html_co_architectures_and_patterns__planning__reactivity__and_multi_agent_systems_CO17-1"
+id="ch02.html_callout_architectures_and_patterns__planning__reactivity__and_multi_agent_systems_CO17-1"
+class="co"><img src="assets/1.png" width="12" height="12"
+alt="1" /></a></dt>
+<dd>
+<p>Define each worker with its tools and role.</p>
+</dd>
+<dt><a
+href="#ch02.html_co_architectures_and_patterns__planning__reactivity__and_multi_agent_systems_CO17-2"
+id="ch02.html_callout_architectures_and_patterns__planning__reactivity__and_multi_agent_systems_CO17-2"
+class="co"><img src="assets/2.png" width="12" height="12"
+alt="2" /></a></dt>
+<dd>
+<p>Use the helper to instantiate all workers without repeating
+boilerplate.</p>
+</dd>
+</dl>
+<p>To complete the supervisor architecture, we need to set up a
+supervisor that can coordinate across all four research agents. This
+ensures the workflow doesn’t stall and that each agent contributes at
+the right time. See <a href="#ch02.html_research_supervisor_node"
+data-type="xref">Example 2-25</a> for the implementation.</p>
+<section id="ch02.html_research_supervisor_node" data-type="example">
+<h5><span class="label">Example 2-25. </span>Create research supervisor
+node</h5>
+<pre translate="no" data-type="programlisting"
+data-code-language="python"><code>research_supervisor_node = make_supervisor_node(
+    llm, [&quot;search&quot;, &quot;web_scraper&quot;, &quot;exa_search&quot;, &quot;patent_research&quot;]
+) </code></pre>
+</section>
+<dl>
+<dt><a
+href="#ch02.html_co_architectures_and_patterns__planning__reactivity__and_multi_agent_systems_CO18-1"
+id="ch02.html_callout_architectures_and_patterns__planning__reactivity__and_multi_agent_systems_CO18-1"
+class="co"><img src="assets/1.png" width="12" height="12"
+alt="1" /></a></dt>
+<dd>
+<p>Create a supervisor that coordinates across all four research
+agents.</p>
+</dd>
+</dl>
+<p>Finally, we need to build the actual graph by registering nodes and
+connecting the edges that define how control flows between them. This
+results in a fully functioning research team graph, as shown in <a
+href="#ch02.html_research_team_graph"
+data-type="xref">Example 2-26</a>.</p>
+<section id="ch02.html_research_team_graph" data-type="example">
+<h5><span class="label">Example 2-26. </span>Build research team
+graph</h5>
+<pre translate="no" data-type="programlisting"
+data-code-language="python"><code>research_builder = StateGraph(State)
+
+research_builder.add_node(&quot;supervisor&quot;, research_supervisor_node) 
+research_builder.add_node(&quot;search&quot;, search_node)
+research_builder.add_node(&quot;web_scraper&quot;, web_scraper_node)
+research_builder.add_node(&quot;exa_search&quot;, exa_search_node)
+research_builder.add_node(&quot;patent_research&quot;, patent_research_node)
+
+research_builder.add_edge(START, &quot;supervisor&quot;) 
+research_builder.add_edge(&quot;search&quot;, &quot;supervisor&quot;)
+research_builder.add_edge(&quot;web_scraper&quot;, &quot;supervisor&quot;)
+research_builder.add_edge(&quot;exa_search&quot;, &quot;supervisor&quot;)
+research_builder.add_edge(&quot;patent_research&quot;, &quot;supervisor&quot;)
+
+research_graph = research_builder.compile() </code></pre>
+</section>
+<dl>
+<dt><a
+href="#ch02.html_co_architectures_and_patterns__planning__reactivity__and_multi_agent_systems_CO19-1"
+id="ch02.html_callout_architectures_and_patterns__planning__reactivity__and_multi_agent_systems_CO19-1"
+class="co"><img src="assets/1.png" width="12" height="12"
+alt="1" /></a></dt>
+<dd>
+<p>Register supervisor and worker nodes.</p>
+</dd>
+<dt><a
+href="#ch02.html_co_architectures_and_patterns__planning__reactivity__and_multi_agent_systems_CO19-2"
+id="ch02.html_callout_architectures_and_patterns__planning__reactivity__and_multi_agent_systems_CO19-2"
+class="co"><img src="assets/2.png" width="12" height="12"
+alt="2" /></a></dt>
+<dd>
+<p>Connect edges so all workers route back to the supervisor.</p>
+</dd>
+<dt><a
+href="#ch02.html_co_architectures_and_patterns__planning__reactivity__and_multi_agent_systems_CO19-3"
+id="ch02.html_callout_architectures_and_patterns__planning__reactivity__and_multi_agent_systems_CO19-3"
+class="co"><img src="assets/3.png" width="12" height="12"
+alt="3" /></a></dt>
+<dd>
+<p>Compile the graph into an executable workflow.</p>
+</dd>
+</dl>
+<p>To test this setup, you can run the code from <a
+href="#ch02.html_run_research_team_prompt"
+data-type="xref">Example 2-27</a>.</p>
+<section id="ch02.html_run_research_team_prompt" data-type="example">
+<h5><span class="label">Example 2-27. </span>Run research team with
+prompt</h5>
+<pre translate="no" data-type="programlisting"
+data-code-language="python"><code>for s in research_graph.stream(
+    {&quot;messages&quot;: [(&quot;user&quot;, &quot;&quot;&quot;What are AI agents? Are there any patents out there
+                              about LLM agents?&quot;&quot;&quot;)]}, 
+    {&quot;recursion_limit&quot;: 100},
+):
+    print(s)
+    print(&quot;---&quot;)</code></pre>
+</section>
+<dl>
+<dt><a
+href="#ch02.html_co_architectures_and_patterns__planning__reactivity__and_multi_agent_systems_CO20-1"
+id="ch02.html_callout_architectures_and_patterns__planning__reactivity__and_multi_agent_systems_CO20-1"
+class="co"><img src="assets/1.png" width="12" height="12"
+alt="1" /></a></dt>
+<dd>
+<p>Run the research graph on a query; the supervisor orchestrates which
+agents act.</p>
+</dd>
+</dl>
+<p>This returns a short description AI agents and then uses the patent
+tool to check for recent patents. The steps look like this (I’ve left
+out the actual messages between agents for brevity):</p>
+<pre translate="no" data-type="programlisting"><code>{&#39;supervisor&#39;: {&#39;next&#39;: &#39;search&#39;}}
+{&#39;supervisor&#39;: {&#39;next&#39;: &#39;patent_research&#39;}}
+{&#39;supervisor&#39;: {&#39;next&#39;: &#39;__end__&#39;}}</code></pre>
+<p>You can set up your writing team in the same way. The notebook for
+this section includes the full working code, but <a
+href="#ch02.html_writing_team_flow_diagram"
+data-type="xref">Figure 2-7</a> gives you a quick overview of what the
+writing team looks like.</p>
+<figure>
+<div id="ch02.html_writing_team_flow_diagram" class="figure">
+<img src="assets/ch02_writing_team_graph.png" width="600" height="186"
+alt="ch02 writing team graph" />
+<h6><span class="label">Figure 2-7. </span>Flow-chart for writing
+team.</h6>
+</div>
+</figure>
+<p>This modular approach makes it easy to compose increasingly capable
+MAS step by step: first by wiring up specialized workers, then by
+combining entire teams into larger graphs. In practice, this means you
+can start small—say with search, scraping, and patent lookup in a
+research team, and then plug that into a writing team to form a full
+end-to-end pipeline, or extend it even further with internal data and
+chart writing and plotting agents.</p>
+<p>To move from individual teams to a proper hierarchy, you’ll need to
+build another graph that ties everything together. Think of this as your
+“super graph,” shown in <a href="#ch02.html_hierarchical_structure"
+data-type="xref">Example 2-28</a>.</p>
+<section id="ch02.html_hierarchical_structure" data-type="example">
+<h5><span class="label">Example 2-28. </span>Build hierarchical
+architecture</h5>
+<pre translate="no" data-type="programlisting"
+data-code-language="python"><code>super_builder = StateGraph(State)
+super_builder.add_node(&quot;supervisor&quot;, teams_supervisor_node)
+super_builder.add_node(&quot;research_team&quot;, call_research_team)
+super_builder.add_node(&quot;writing_team&quot;, call_paper_writing_team)
+
+super_builder.add_edge(START, &quot;supervisor&quot;)
+super_graph = super_builder.compile()</code></pre>
+</section>
+<p>Once that’s in place, you can prompt your hierarchical MAS as shown
+in <a href="#ch02.html_hierarchical_MAS_run"
+data-type="xref">Example 2-29</a>.</p>
+<section id="ch02.html_hierarchical_MAS_run" data-type="example">
+<h5><span class="label">Example 2-29. </span>Run hierarchical MAS</h5>
+<pre translate="no" data-type="programlisting"
+data-code-language="python"><code>TARGET_FILE = &quot;semiconductor_whitepaper.txt&quot;
+
+TASK_MSG = f&quot;&quot;&quot;
+Write an 800-word research report white paper on semiconductor development.
+Start with an executive summary of your findings.
+Search for relevant recent patents and include links to them.
+IMPORTANT: Provide links to all your sources.
+Finally, save the full report to disk as a .txt file using the write_document tool.
+Use file_name=&quot;{TARGET_FILE}&quot;.
+&quot;&quot;&quot;
+
+for step in super_graph.stream(
+    {
+        &quot;messages&quot;: [
+            (&quot;user&quot;, TASK_MSG.strip())
+        ],
+    },
+    {&quot;recursion_limit&quot;: 150},
+):
+    print(step)
+    print(&quot;---&quot;)</code></pre>
+</section>
+<p>Running this setup will result in the following sequence of
+supervisor decisions (messages again omitted):</p>
+<pre translate="no" data-type="programlisting"><code>{&#39;supervisor&#39;: {&#39;next&#39;: &#39;research_team&#39;}}
+{&#39;supervisor&#39;: {&#39;next&#39;: &#39;writing_team&#39;}}
+{&#39;supervisor&#39;: {&#39;next&#39;: &#39;writing_team&#39;}}
+{&#39;supervisor&#39;: {&#39;next&#39;: &#39;__end__&#39;}}</code></pre>
+<p>At the end of the run, the report is successfully saved to <code
+translate="no">semiconductor_whitepaper.txt</code>. In practice, this
+workflow takes only about two minutes to gather the research, generate
+the text, and write everything to file.</p>
+</section>
+</section>
+<section data-type="sect2"
+data-pdf-bookmark="Developing a Swarm of Agents">
+<section id="ch02.html_id43" class="sect2">
+<h2>Developing a Swarm of Agents</h2>
+<p>Another important paradigm is the swarm architecture. Here, agents
+handoff control to one another dynamically based on their
+specializations. Unlike a strict hierarchy, swarms emphasize
+peer-to-peer collaboration. The system keeps track of which agent was
+last active so that subsequent interactions continue seamlessly with the
+right one. This back-and-forth exchange allows work to bounce naturally
+between agents, such as when a researcher gathers sources and then hands
+them to a writer, who may in turn request more data before finishing the
+synthesis. <a href="#ch02.html_agent_swarm"
+data-type="xref">Figure 2-8</a> illustrates this continuous flow.</p>
+<figure>
+<div id="ch02.html_agent_swarm" class="figure">
+<img src="assets/ch02_agent_swarm.png" width="600" height="213"
+alt="ch02 agent swarm" />
+<h6><span class="label">Figure 2-8. </span>Handoff flow between a swarm
+of agents.</h6>
+</div>
+</figure>
+<p>LangGraph provides an <a
+href="https://github.com/langchain-ai/langgraph-swarm-py">open-source
+library</a> to fast track the development of swarms of agents. By
+default, the agents in the swarm use handoff tools created with the
+prebuilt <code translate="no">create_handoff_tool</code>. You can also
+create your own custom handoff tools to better fit your workflow. For
+example, you might:</p>
+<ul>
+<li><p>Change the tool name or description to make the handoff purpose
+clearer.</p></li>
+<li><p>Add tool call arguments for the LLM to populate, such as a
+specific task description for the next agent.</p></li>
+<li><p>Control what data is passed to the next agent. By default, <code
+translate="no">create_handoff_tool</code> passes the full message
+history (all prior agent messages) and a tool message confirming the
+handoff, but you may choose to send only a filtered subset of
+context.</p></li>
+</ul>
+<p>Before wiring up a full swarm, you first need to define the handoff
+helpers as shown in <a href="#ch02.html_handoff_helper"
+data-type="xref">Example 2-30</a>. These tools act as signals that let
+one agent pass control to another. In the example below, the research
+assistant can handoff to the writer once enough sources are collected,
+and the writer can hand control back if more evidence is needed.</p>
+<section id="ch02.html_handoff_helper" data-type="example">
+<h5><span class="label">Example 2-30. </span>Create handoff tools</h5>
+<pre translate="no" data-type="programlisting"
+data-code-language="python"><code>to_writer = create_handoff_tool( 
+    agent_name=&quot;writer_assistant&quot;,
+    description=&quot;&quot;&quot;Transfer to the writing assistant to synthesize sources into
+                an answer.&quot;&quot;&quot;,
+)
+to_research = create_handoff_tool( 
+    agent_name=&quot;research_assistant&quot;,
+    description=&quot;&quot;&quot;Return to the research assistant to fetch or scrape more
+                sources.&quot;&quot;&quot;,
+)</code></pre>
+</section>
+<dl>
+<dt><a
+href="#ch02.html_co_architectures_and_patterns__planning__reactivity__and_multi_agent_systems_CO21-1"
+id="ch02.html_callout_architectures_and_patterns__planning__reactivity__and_multi_agent_systems_CO21-1"
+class="co"><img src="assets/1.png" width="12" height="12"
+alt="1" /></a></dt>
+<dd>
+<p>Defines a tool that lets the research assistant handoff to the
+writing assistant.</p>
+</dd>
+<dt><a
+href="#ch02.html_co_architectures_and_patterns__planning__reactivity__and_multi_agent_systems_CO21-2"
+id="ch02.html_callout_architectures_and_patterns__planning__reactivity__and_multi_agent_systems_CO21-2"
+class="co"><img src="assets/2.png" width="12" height="12"
+alt="2" /></a></dt>
+<dd>
+<p>Defines the reverse tool so the writer can send control back to the
+research assistant.</p>
+</dd>
+</dl>
+<p>Once you have the handoff helpers in place, you can move on to
+defining your agents. It’s helpful to keep the roles very distinct. In
+this setup you want one agent focused purely on research, and the other
+focused on writing. The handoff tools ensure the workflow can bounce
+back and forth when more sources are needed or when it’s time to
+synthesize. The roles are shown in <a
+href="#ch02.html_roles_research_writer"
+data-type="xref">Example 2-31</a>.</p>
+<section id="ch02.html_roles_research_writer" data-type="example">
+<h5><span class="label">Example 2-31. </span>Assign roles to research
+and writing assistants</h5>
+<pre translate="no" data-type="programlisting"
+data-code-language="python"><code>research_assistant = create_react_agent( 
+    model=llm,
+    tools=[tavily_tool, scrape_webpages, to_writer], 
+    prompt=(
+        &quot;&quot;&quot;You are a research assistant. Search the web with Tavily.
+        When you have 3 to 5 solid sources, scrape key pages for details,
+        then hand off to the writer assistant.&quot;&quot;&quot;
+    ),
+    name=&quot;research_assistant&quot;,
+)
+
+writer_assistant = create_react_agent( 
+    model=llm,
+    tools=[to_research], 
+    prompt=(
+        &quot;&quot;&quot;You are a writing assistant. Read the provided Documents and messages.
+        Synthesize a concise answer with citations by site name in brackets. If
+        sources are thin or unclear, hand back to research with a short request.&quot;&quot;&quot;
+    ),
+    name=&quot;writer_assistant&quot;,
+)</code></pre>
+</section>
+<dl>
+<dt><a
+href="#ch02.html_co_architectures_and_patterns__planning__reactivity__and_multi_agent_systems_CO22-1"
+id="ch02.html_callout_architectures_and_patterns__planning__reactivity__and_multi_agent_systems_CO22-1"
+class="co"><img src="assets/1.png" width="12" height="12"
+alt="1" /></a></dt>
+<dd>
+<p>Defines the research assistant, responsible for web search and
+scraping.</p>
+</dd>
+<dt><a
+href="#ch02.html_co_architectures_and_patterns__planning__reactivity__and_multi_agent_systems_CO22-2"
+id="ch02.html_callout_architectures_and_patterns__planning__reactivity__and_multi_agent_systems_CO22-2"
+class="co"><img src="assets/2.png" width="12" height="12"
+alt="2" /></a></dt>
+<dd>
+<p>Grants the research assistant access to its tools, including the
+handoff to the writer.</p>
+</dd>
+<dt><a
+href="#ch02.html_co_architectures_and_patterns__planning__reactivity__and_multi_agent_systems_CO22-3"
+id="ch02.html_callout_architectures_and_patterns__planning__reactivity__and_multi_agent_systems_CO22-3"
+class="co"><img src="assets/3.png" width="12" height="12"
+alt="3" /></a></dt>
+<dd>
+<p>Defines the writing assistant, responsible for synthesis and
+citation.</p>
+</dd>
+<dt><a
+href="#ch02.html_co_architectures_and_patterns__planning__reactivity__and_multi_agent_systems_CO22-4"
+id="ch02.html_callout_architectures_and_patterns__planning__reactivity__and_multi_agent_systems_CO22-4"
+class="co"><img src="assets/4.png" width="12" height="12"
+alt="4" /></a></dt>
+<dd>
+<p>Allows the writer to hand control back to the research assistant if
+more evidence is needed.</p>
+</dd>
+</dl>
+<p>Now that both roles are defined, we can wire them into a swarm. The
+swarm provides the coordination mechanism: it starts with the research
+assistant by default, but allows handoff to the writer and back again
+until the task is complete. The implementation is shown in <a
+href="#ch02.html_research_writer_swarm"
+data-type="xref">Example 2-32</a>.</p>
+<section id="ch02.html_research_writer_swarm" data-type="example">
+<h5><span class="label">Example 2-32. </span>Build research–writer
+swarm</h5>
+<pre translate="no" data-type="programlisting"
+data-code-language="python"><code>swarm = create_swarm(
+    agents=[research_assistant, writer_assistant],
+    default_active_agent=&quot;research_assistant&quot;,
+).compile()</code></pre>
+</section>
+<p>To test the system, you can run the following example prompt. Here, I
+requested a summary of fintech licensing in Switzerland. The swarm first
+searches for sources, then hands off to the writing assistant for
+synthesis, and if needed returns to research for more data. See <a
+href="#ch02.html_research_writer_run" data-type="xref">Example 2-33</a>
+for the prompt.</p>
+<section id="ch02.html_research_writer_run" data-type="example">
+<h5><span class="label">Example 2-33. </span>Run research–writer
+swarm</h5>
+<pre translate="no" data-type="programlisting"
+data-code-language="python"><code>user_request = { 
+    &quot;messages&quot;: [
+        {
+            &quot;role&quot;: &quot;user&quot;,
+            &quot;content&quot;: (
+                &quot;&quot;&quot;Find the current Swiss fintech licensing options for small
+                 startups. Gather authoritative sources and produce a short
+                 summary with three bullet points and references.&quot;&quot;&quot;
+            ),
+        }
+    ]
+}
+
+for chunk in swarm.stream(user_request): 
+    print(chunk)
+    print()</code></pre>
+</section>
+<dl>
+<dt><a
+href="#ch02.html_co_architectures_and_patterns__planning__reactivity__and_multi_agent_systems_CO23-1"
+id="ch02.html_callout_architectures_and_patterns__planning__reactivity__and_multi_agent_systems_CO23-1"
+class="co"><img src="assets/1.png" width="12" height="12"
+alt="1" /></a></dt>
+<dd>
+<p>Defines a user prompt asking for fintech licensing details in
+Switzerland.</p>
+</dd>
+<dt><a
+href="#ch02.html_co_architectures_and_patterns__planning__reactivity__and_multi_agent_systems_CO23-2"
+id="ch02.html_callout_architectures_and_patterns__planning__reactivity__and_multi_agent_systems_CO23-2"
+class="co"><img src="assets/2.png" width="12" height="12"
+alt="2" /></a></dt>
+<dd>
+<p>Streams the results from the swarm, showing the handoff-driven
+workflow in action.</p>
+</dd>
+</dl>
+<p>The run produces three clean bullet points with references, citing
+official Swiss regulator pages and trusted financial sources. However,
+if the writer finds the evidence too thin, it can trigger a return
+handoff to research. The full cycle takes just about 30 seconds to
+gather the information and generate the final structured output.</p>
+<p>The supervisor, hierarchical, and swarm architectures from this
+section show how different coordination strategies affect MAS.
+Supervisors provide centralized control, hierarchies allow scalable
+organization into teams of teams, and swarms emphasize flexible
+peer-to-peer collaboration. <a
+href="#ch02.html_pattern_summary_coordination"
+data-type="xref">Table 2-4</a> compares these patterns and highlights
+when to use each one.</p>
+<table id="pattern_summary_coordination">
+<caption><span class="label">Table 2-4. </span>Pattern summary:
+Multi-agent coordination strategies</caption>
+<thead>
+<tr>
+<th>Architecture</th>
+<th>When to Use</th>
+<th>Benefits</th>
+<th>Tradeoffs</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><p>Supervisor</p></td>
+<td><p>Small teams of agents with clear task boundaries</p></td>
+<td><p>Simple setup; strong control; avoids deadlocks</p></td>
+<td><p>Central bottleneck; single point of failure</p></td>
+</tr>
+<tr>
+<td><p>Hierarchical</p></td>
+<td><p>Larger, multi-team workflows requiring scalability</p></td>
+<td><p>Modular; scalable; mirrors organizational structures</p></td>
+<td><p>Harder to debug; requires careful design</p></td>
+</tr>
+<tr>
+<td><p>Swarm</p></td>
+<td><p>Dynamic collaboration between peers (e.g., research ↔︎
+writer)</p></td>
+<td><p>Flexible; natural back-and-forth flow</p></td>
+<td><p>Less predictable; requires robust handoff design</p></td>
+</tr>
+</tbody>
+</table>
+<p>This shows how each coordination pattern supports different scales
+and styles of agent collaboration. By mixing and matching them, you can
+shape agent workflows that balance control, scalability, and
+adaptability within your overall MAS design.</p>
+</section>
+</section>
+</section>
+</section>
+<section data-type="sect1" data-pdf-bookmark="Conclusion">
+<section id="ch02.html_id44" class="sect1">
+<h1>Conclusion</h1>
+<p>The big takeaway from this chapter is that an AI agent’s intelligence
+comes also from its architecture, not just from the LLM it uses. In
+light of this, you explored how architectural patterns shape the
+intelligence and reliability of AI agents. By moving beyond single-step
+execution, you saw how reasoning loops like CoT, ToT, and ReAct embed
+structure into the agent’s thought process, making outputs more
+deliberate and transparent.</p>
+<p>Equally important, you saw how human-in-the-loop can make your agents
+more secure. Interrupts, approval gates, and review steps demonstrated
+how guardrails make agents trustworthy in real-world settings where
+errors carry real consequences. The balance between autonomy and
+oversight is a defining theme of modern agent design.</p>
+<p>You also learned how these reasoning methods extend into MAS.
+Supervisor and hierarchical architectures distribute tasks across
+specialized workers, while swarm setups enable flexible handoffs between
+peers. Together, these paradigms show that agent intelligence is not
+just about stronger models, but about how those models are orchestrated
+into systems that can plan, act, and reflect.</p>
+<p>With these foundations in place, you are ready to move to the next
+level. In the following chapter, you will explore advanced paradigms
+that extend these architectures toward scalable execution, deeper
+planning strategies, and more sophisticated reasoning methods. This will
+show you how to design agents that can not only react and reflect, but
+also plan at scale and coordinate complex workflows across larger
+systems.</p>
+</section>
+</section>
+<div data-type="footnotes">
+<p><sup><a href="#ch02.html_id52-marker">1</a></sup> Jason Wei et al.
+“Chain-of-Thought Prompting Elicits Reasoning in Large Language Models”,
+<a href="https://arxiv.org/abs/2201.11903"
+class="bare"><em>https://arxiv.org/abs/2201.11903</em></a> (2023).</p>
+<p><sup><a href="#ch02.html_id53-marker">2</a></sup> Shunyu Yao et al.
+“Tree of Thoughts: Deliberate Problem Solving with Large Language
+Models.”, <a href="https://arxiv.org/abs/2305.10601"
+class="bare"><em>https://arxiv.org/abs/2305.10601</em></a> (2023).</p>
+</div>
+</div>
+</div>
+</div>
+<p><span id="colophon01.html"></span></p>
+<div id="colophon01.html_book-content">
+<div id="colophon01.html_sbo-rt-content">
+<section class="abouttheauthor colophon" data-type="colophon"
+data-pdf-bookmark="About the Author">
+<section id="colophon01.html_id26" class="colophon">
+<h1>About the Author</h1>
+<p><strong>Nicole Koenigstein</strong> is the Founder, CEO, and Co-Chief
+AI Officer of a deep-tech company specializing in large language model
+(LLM) systems and complex multiagent architectures. She is a globally
+recognized thought leader in LLMs and agentic architectures, with a
+particular focus on their transformative applications in quantitative
+finance. Nicole has served as an external expert for the European
+Commission on LLM research funding and for the International
+Organization of Securities Commissions (IOSCO), advising on GenAI
+adoption in regulated industries. She also serves as an advisory board
+member for QuantMinds International and QuantStrats, two of the world’s
+largest and most influential fintech, AI and quant strategy conferences.
+Over the past 2.5 years, Nicole has delivered more than 50 invited
+talks, keynotes, and technical workshops globally—including at Oxford
+University, Cornell University, Bank of America, J.P. Morgan, and the
+International Faculty of Finance—as well as at international events such
+as European Women in Technology, ACM Tech Talk, and ODSC Europe.</p>
+<p>Nicole is a faculty member at the Artificial Intelligence in Finance
+Institute in New York, where she teaches coding sessions on Python,
+machine learning, deep learning, large language models and agentic AI.
+She is the author of <em>Math for Machine Learning</em> and
+<em>Transformers in Action</em> (Manning Publications), and her
+forthcoming title <em>Transformers: The Definitive Guide</em> will be
+published by O’Reilly Media.</p>
+</section>
+</section>
+</div>
+</div>

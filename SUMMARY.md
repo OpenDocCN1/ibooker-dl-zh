@@ -1,3 +1,4 @@
++   [AI智能体权威指南](docs/ai-agents-the-definitive-guide/README.md)
 +   [AI 智能体实战](docs/ai-agt-act/README.md)
 +   [人工智能辅助的编程指南](docs/ai-ass-prog/README.md)
 +   [人工智能工程指南](docs/ai-engi/README.md)
