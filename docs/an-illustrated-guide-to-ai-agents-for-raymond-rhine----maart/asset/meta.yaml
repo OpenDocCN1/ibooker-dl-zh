@@ -1,0 +1,110 @@
+name: An Illustrated Guide to AI Agents (for Raymond Rhine) -- Maarten Grootendorst
+  and Jay Alammar -- 2025 -- O'Reilly Media, Inc_ -- c6f8db8584e46a1370fcc5f429be5894
+  -- Anna’s Archive
+slug: an-illustrated-guide-to-ai-agents-for-raymond-rhine----maart
+name_cn: AI智能体图解指南（献给Raymond Rhine）
+toc:
+- - '####'
+  - 短期记忆
+- - '####'
+  - 长期记忆
+- - '###'
+  - 检索增强生成（RAG）
+- - '###'
+  - 代理式 RAG（Agentic RAG）
+- - '####'
+  - A-MEM
+- - '####'
+  - Search-o1
+- - '###'
+  - 具有推理能力的代理式 RAG
+- - '####'
+  - 文档内推理
+- - '####'
+  - 迭代检索
+- - '###'
+  - 上下文工程
+- - '####'
+  - 上下文的形式
+- - '####'
+  - 优化上下文
+- - '####'
+  - 定义上下文工程
+- - '####'
+  - 长上下文基准与局限
+- - '####'
+  - 管理上下文窗口
+- - '####'
+  - 上下文中包含什么？
+- - '####'
+  - Creating the system prompt
+- - '#####'
+  - 1. Create a plan
+- - '#####'
+  - 2. Reflect on the plan
+- - '#####'
+  - 3. Crop context
+- - '#####'
+  - 4. Search on ArXiv
+- - '####'
+  - 多智能体系统的上下文工程
+- - '####'
+  - 优化上下文
+- - '#####'
+  - 上下文跟踪与存储
+- - '#####'
+  - 上下文选择
+- - '#####'
+  - 上下文压缩
+- - '#####'
+  - 上下文排序
+- - '####'
+  - 上下文即规格说明
+- - '###'
+  - 总结
+- - '###'
+  - 工具使用
+- - '####'
+  - 工具创建
+- - '###'
+  - 工具定义
+- - '####'
+  - Tool Definition
+- - '####'
+  - Tool Usage
+- - '####'
+  - Tool JSON Schema put into the system prompt
+- - '####'
+  - Tools
+- - '###'
+  - 工具选择
+- - '###'
+  - 工具调用
+- - '###'
+  - HuggingGPT
+- - '####'
+  - 任务规划
+- - '####'
+  - 模型选择
+- - '####'
+  - 任务执行
+- - '####'
+  - 响应生成
+- - '####'
+  - 4 Response Generation Stage
+- - '###'
+  - 监督微调
+- - '####'
+  - ToolFormer
+- - '###'
+  - 强化学习
+- - '###'
+  - 模型上下文协议（MCP）
+- - '####'
+  - 核心组件
+- - '####'
+  - MCP 流程
+- - '###'
+  - 小结
+- - '##'
+  - 关于作者

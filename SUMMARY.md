@@ -12,6 +12,7 @@
 +   [AI 系统性能工程](docs/ai-systems-performance-engineering/README.md)
 +   [人工智能价值创造](docs/ai-val-crt/README.md)
 +   [人工智能即服务](docs/aiaas/README.md)
++   [AI智能体图解指南](docs/an-illustrated-guide-to-ai-agents-for-raymond-rhine----maart/README.md)
 +   [AWS 认证人工智能专业人员学习指南](docs/aws-cert-ao-prac-stdgd/README.md)
 +   [Azure 人工智能基础知识学习指南](docs/az-ai-fund-stdgd/README.md)
 +   [云原生应用的 Azure OpenAI 服务指南](docs/az-oai-svc-cldntv-app/README.md)
