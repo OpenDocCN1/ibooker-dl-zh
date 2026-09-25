@@ -50,6 +50,7 @@
 +   [对话式人工智能高效指南](docs/eff-cvrs-ai/README.md)
 +   [图检索增强生成（GraphRAG）精要](docs/ess-grag/README.md)
 +   [演化式深度学习](docs/evo-dl/README.md)
++   [AI 微调指南](docs/fine-tuning-ai/README.md)
 +   [深度学习基础第二版](docs/fund-dl/README.md)
 +   [生成对抗网络实战](docs/gan-ia/README.md)
 +   [生成式深度学习](docs/gen-dl/README.md)

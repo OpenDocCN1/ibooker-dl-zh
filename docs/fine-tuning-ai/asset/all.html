@@ -1,0 +1,2707 @@
+<p><img src="assets/cover.png" /></p>
+<p><span id="cover.html"></span></p>
+<div id="cover.html_book-content">
+<div id="cover.html_sbo-rt-content">
+<figure data-type="cover">
+<img src="assets/cover.png" width="1200" height="1574" />
+</figure>
+</div>
+</div>
+<p><span id="titlepage01.html"></span></p>
+<div id="titlepage01.html_book-content">
+<div id="titlepage01.html_sbo-rt-content">
+
+</div>
+</div>
+<p><span id="copyright-page01.html"></span></p>
+<div id="copyright-page01.html_book-content">
+<div id="copyright-page01.html_sbo-rt-content">
+<section class="copyright-page" data-type="copyright-page"
+data-pdf-bookmark="Fine-Tuning AI">
+<div id="copyright-page01.html_id20" class="preface">
+<h1>Fine-Tuning AI</h1>
+<p>by <span class="firstname">Laurence </span><span
+class="surname">Moroney</span></p>
+<p>Copyright © 2027 Laurence Moroney. All rights reserved.</p>
+<p>Published by <span class="publishername">O’Reilly Media, Inc.</span>,
+141 Stony Circle, Suite 195, Santa Rosa, CA 95401.</p>
+<p>O’Reilly books may be purchased for educational, business, or sales
+promotional use. Online editions are also available for most titles (<a
+href="https://oreilly.com">https://oreilly.com</a>). For more
+information, contact our corporate/institutional sales department:
+800-998-9938 or <em>corporate@oreilly.com</em>.</p>
+<ul>
+<li><span class="staffrole">Acquisitions Editor:</span> Nicole
+Butterfield</li>
+<li><span class="staffrole">Development Editor:</span> Michele
+Cronin</li>
+<li><span class="staffrole">Production Editor:</span> Katherine
+Tozer</li>
+<li><span class="staffrole">Interior Designer:</span> David Futato</li>
+<li><span class="staffrole">Interior Illustrator:</span> Kate
+Dullea</li>
+</ul>
+<ul>
+<li><span class="printedition">July 2027:</span> First Edition</li>
+</ul>
+<section class="revisions-header revisions">
+<h1 class="revisions-header">Revision History for the Early Release</h1>
+<ul>
+<li><span class="revdate">2026-03-06:</span> First Release</li>
+</ul>
+</section>
+<p>See <a
+href="https://oreilly.com/catalog/errata.csp?isbn=9798341673373">https://oreilly.com/catalog/errata.csp?isbn=9798341673373</a>
+for release details.</p>
+<div class="legal">
+<p>The O’Reilly logo is a registered trademark of O’Reilly Media, Inc.
+<em>Fine-Tuning AI</em>, the cover image, and related trade dress are
+trademarks of O’Reilly Media, Inc.</p>
+<p>The views expressed in this work are those of the author and do not
+represent the publisher’s views. While the publisher and the author have
+used good faith efforts to ensure that the information and instructions
+contained in this work are accurate, the publisher and the author
+disclaim all responsibility for errors or omissions, including without
+limitation responsibility for damages resulting from the use of or
+reliance on this work. Use of the information and instructions contained
+in this work is at your own risk. If any code samples or other
+technology this work contains or describes is subject to open source
+licenses or the intellectual property rights of others, it is your
+responsibility to ensure that your use thereof complies with such
+licenses and/or rights.</p>
+<!--PROD: Uncomment the following sentence if appropriate and add it to the above para:-->
+<!--This book is not intended as [legal/medical/financial; use the appropriate reference] advice. Please consult a qualified professional if you require [legal/medical/financial] advice.-->
+</div>
+<div class="copyright-bottom">
+<p>979-8-341-67333-5</p>
+<p>[LSI]</p>
+</div>
+</div>
+</section>
+</div>
+</div>
+<p><span id="preface01.html"></span></p>
+<div id="preface01.html_book-content">
+<div id="preface01.html_sbo-rt-content">
+<section class="preface" data-type="preface"
+data-pdf-bookmark="Brief Table of Contents (Not Yet Final)">
+<section id="preface01.html_id22" class="preface">
+<h1>Brief Table of Contents (<em>Not Yet Final</em>)</h1>
+<p>Chapter 1: From Generalist to Specialist (available)</p>
+<p>Chapter 2: Model Architectures: The DNA of AI (available)</p>
+<p>Chapter 3: The Fine-Tuner’s Workshop (available)</p>
+<p><em>Chapter 4: Excavating Data</em> (unavailable)</p>
+<p><em>Chapter 5: Synthetic Data</em> (unavailable)</p>
+<p><em>Chapter 6: Formatting for Thought</em> (unavailable)</p>
+<p><em>Chapter 7: The Mechanics of Adaptation</em> (unavailable)</p>
+<p><em>Chapter 8: The Training Loop</em> (unavailable)</p>
+<p><em>Chapter 9: Alignment</em> (unavailable)</p>
+<p><em>Chapter 10: Case Study</em> (unavailable)</p>
+<p><em>Chapter 11: Vision Language Models</em> (unavailable)</p>
+<p><em>Chapter 12: Controlling the Canvas</em> (unavailable)</p>
+<p><em>Chapter 13: Style Injection</em> (unavailable)</p>
+<p><em>Chapter 14: Evaluation</em> (unavailable)</p>
+<p><em>Chapter 15: Optimization and Quantization</em> (unavailable)</p>
+<p><em>Chapter 16: Serving the Expert</em> (unavailable)</p>
+<!-- italicize any chapter titles that are not yet available in ER -->
+</section>
+</section>
+</div>
+</div>
+<p><span id="ch01.html"></span></p>
+<div id="ch01.html_book-content">
+<div id="ch01.html_sbo-rt-content">
+<div id="ch01.html_ch01_from_generalist_to_specialist_1772730610561549"
+class="chapter">
+<h1><span class="label">Chapter 1. </span>From Generalist to
+Specialist</h1>
+<aside data-type="sidebar" epub:type="sidebar">
+<section id="ch01.html_id85" class="sidebar">
+<h1>A Note for Early Release Readers</h1>
+<p>With Early Release ebooks, you get books in their earliest form—the
+author’s raw and unedited content as they write—so you can take
+advantage of these technologies long before the official release of
+these titles.</p>
+<p>This will be the 1st chapter of the final book. Please note that the
+GitHub repo will be made active later on.</p>
+<p>If you’d like to be actively involved in reviewing and commenting on
+this draft, please reach out to the editor at
+<em>mcronin@oreilly.com</em>.</p>
+</section>
+</aside>
+<p>The honeymoon is over.</p>
+<p>LIke me, you’ve probably already built prototypes using Large
+Language Models (LLMs) as the backend. You’ve felt that initial rush
+when your complex query, expressed as a prompt, returns a perfect,
+coherent response. Design that ‘surprises and delights’ is a desirable
+goal, and the response from the LLM attains that. For a moment, you feel
+that the future of software is infinite, and that prompting is the new
+programming language. You just need clever ones.</p>
+<p>Since the emergence of LLMs, popularized by ChatGPT, we’ve been in
+the era of the <em>generalist.</em> We’ve been awed by large language
+models that have been trained on the entire Internet and beyond. They
+can do everything from writing Haiku poetry to optimizing RUST
+functions. They are technological marvels.</p>
+<p>But what if you want to ship a <em>real</em> product? When using
+these models, you’ll often find that, for various reasons, despite the
+initial euphoria, they could be the wrong tool for the job. While its
+ability to rhyme is impressive, you really want it not to hallucinate
+non-existent tables while querying your legacy SQL database!</p>
+<p>And this is what’s emerging as the “API Wall”. It’s that invisible
+barrier that separates a cool hackathon demo from a profitable business,
+and that separates successful startups from buzzworthy ones. There are
+hard realities in overcoming that wall: the potentially crushing cost of
+scale, unpredictable latency, and, of course, the terrified look on your
+CISO’s face when you mention that you’ll be sharing customer data with a
+third-party.</p>
+<p>This book is ultimately about breaking through that wall. It’s about
+moving from <em>renting</em> intelligence to <em>owning</em> it. It will
+have you replace the massive generalists with agile, hyper-competent
+specialists: Fine-Tuned AI that knows your business better than any
+trillion-parameter giant ever could.</p>
+<p>You’re going to dismantle the ‘prompt engineering’ paradigm. In this
+chapter, we’ll look at the brutal ‘Unit Economics’ that has killed many
+AI startups. And we’ll see why a small, open-source model running on a
+single GPU can—and should—beat the world’s smartest AI in <em>your</em>
+specific domain.</p>
+<section data-type="sect1"
+data-pdf-bookmark="The Cost of Renting Intelligence">
+<section
+id="ch01.html_ch01_the_cost_of_renting_intelligence_1772730610561748"
+class="sect1">
+<h1>The Cost of Renting Intelligence</h1>
+<p>Every project starts innocently. You get an API key and start coding.
+You craft a system prompt honed from lots of experimentation. It works.
+You deploy to beta.</p>
+<p>And then you look at the costs. Your eyes go wide. You think about
+what it would look like. They go oven wider!</p>
+<section data-type="sect2" data-pdf-bookmark="The Token Tax">
+<section id="ch01.html_ch01_the_token_tax_1772730610561808"
+class="sect2">
+<h2>The Token Tax</h2>
+<p>In the prototyping phase, inference costs feel negligible. A fraction
+of a cent per request is basically free. But when you move from
+“chatting” to automation, the math turns against you.</p>
+<p>Most providers charge by the token (roughly 0.75 words). For a
+high-end reasoning model, you might pay $0.01 to $0.03 per 1,000 input
+tokens.</p>
+<p>Let’s play that out with a scenario. Consider a ‘Legal Contract
+Analyzer’ app. Your users upload documents, and your app will extract
+summaries of potential issues or risks in the contract.</p>
+<p>The architecture might look like <a
+href="#ch01.html_ch01_figure_1_1772730610555180"
+data-type="xref">Figure 1-1</a>.</p>
+<figure>
+<div id="ch01.html_ch01_figure_1_1772730610555180" class="figure">
+<img src="assets/ch01_figure_1_1772730610555180.png" width="970"
+height="249"
+alt="A blue rectangle with a blue gear and white text AI-generated content may be incorrect." />
+<h6><span class="label">Figure 1-1. </span>A Simple LLM-based
+architecture for a Legal Contract Analyzer</h6>
+</div>
+</figure>
+<p>Your input is your prompt plus the contract. A typical contract—with
+lots of legalese—can be about 15,000 tokens. Your system prompt is
+something you’ve carefully crafted with lots of instructions to avoid
+hallucinations, and to structure your output exactly the way the rest of
+the system needs it—maybe as JSON or other structured files. This takes
+tokens. And of course your output is yet more tokens.</p>
+<p>So 17,000 tokens in, and 1,000 tokens out. Given the costs outlined
+above, that could be 20 cents per document. If you have 1,000 users each
+analysing 5 documents per day, that’s $1000 per day, or $365,000 per
+year.</p>
+<p>That’s the money you have to spend just to operate this system. And
+you own <em>nothing</em> at the end of it. You’re <em>renting</em>
+intelligence. And if you charge your users a monthly fee—say $20 per
+month, they become a net loss very quickly. You have very risky
+margins.</p>
+</section>
+</section>
+<section data-type="sect2" data-pdf-bookmark="The Agentic Multiplier">
+<section id="ch01.html_ch01_the_agentic_multiplier_1772730610561860"
+class="sect2">
+<h2>The Agentic Multiplier</h2>
+<p>Now consider the impact of Agents. They’ve been the darling of the
+tech industry since about mid 2024, and for good reason—they’re an
+excellent design pattern to get the most out of LLMs by moving beyond
+just getting an answer for a question. I usually like to think of agents
+as following the pattern shown in <a
+href="#ch01.html_ch01_figure_2_1772730610555218"
+data-type="xref">Figure 1-2</a>.</p>
+<figure>
+<div id="ch01.html_ch01_figure_2_1772730610555218" class="figure">
+<img src="assets/ch01_figure_2_1772730610555218.png" width="1412"
+height="167" />
+<h6><span class="label">Figure 1-2. </span>An Agentic Workflow</h6>
+</div>
+</figure>
+<p>Ultimately, the goal here is to follow these steps:</p>
+<ol>
+<li><p><em>Understand the user’s intent</em>. For example, if the agent
+is designed to help with restaurant selection, and the user says they
+would like to eat <em>okonomiyaki</em>, the agent will be smart enough
+to understand that this is a branch of Japanese cuisine. The user
+doesn’t need to specify this.</p></li>
+<li><p><em>Make a plan</em> <em>using available tools.</em> If the agent
+knows that its tools are Google Search, Map Search, and Browse websites,
+it can make a plan to search for Japanese restaurants near the current
+location. For each of these, it can then browse their web sites to find
+their menus. It can then search the menus for
+<em>okonomiyaki</em>.</p></li>
+<li><p><em>Execute the plan using the tools.</em> It then follows the
+plan, using LLMs as appropriate—for example, generating code to call the
+Map Search APIs, or parsing downloaded HTML to find the desired
+dish</p></li>
+<li><p><em>Reflect on the results.</em> After it’s done all this, it
+should then match its results with the user’s requirements. Did it find
+restaurants serving this dish? Or just generic Japanese ones. Stuff like
+that. If it did, great, it can move onto step 5—the solution. Otherwise,
+it’ll have to go back to steps 1 and 2.</p></li>
+<li><p><em>The Solution</em>. Present the solution to the user, and
+possibly flow to other agents, such as one that can handle making a
+reservation at the desired restaurant!</p></li>
+</ol>
+<p>This workflow, with a dedicated chain of thought, is the simplest DNA
+of an agent. But when it comes to token usage, you can see that it can
+use significantly more tokens than a simple prompt-&gt;result like you
+saw in the earlier section. That $1000 a day that we speculated about
+earlier will more likely be close to $5000 a day when using an agentic
+workflow like this.</p>
+<p>No wonder companies are investing billions of dollars in data
+centers!</p>
+<section data-type="sect3"
+data-pdf-bookmark="Another hidden cost: The instruction tax">
+<section
+id="ch01.html_ch01_another_hidden_cost_the_instruction_tax_1772730610561912"
+class="sect3">
+<h3>Another hidden cost: The instruction tax</h3>
+<p>There’s also a more subtle inefficiency here. The Generalist model
+doesn’t understand anything about your specific task until you tell it.
+To make it useful, you have to paste your rules, formatting guides, and
+how to handle edge cases into the System Prompt on <em>every single
+request</em>!</p>
+<p>“You are an expert at understanding a variety of dishes and where to
+find them. Understand the user’s request, and map it to one or more
+popular cuisines. If there isn’t a direct match, find other restaurant
+types that might serve this dish. Output your results as JSON structured
+in this way {...}”</p>
+<p>You’re paying to send this instruction manual, and all of its tokens,
+to the server over and over again. It’s extremely wasteful.</p>
+<p>And, Context Window Pollution is something to consider. Research has
+shown that as you stuff the context window with instructions, the
+model’s performance will degrade (the ‘Lost in the Middle’ phenomenon).
+I’ve seen so many examples where strict instructions (usually in ALL
+CAPS for emphasis) have to be entered to get the model to pay attention
+to a particular part of the prompt. And this, of course, consumes more
+tokens.</p>
+<p>Fine-tuning moves these instructions from the Context Window (which
+you pay for) into the Model Weights (which are permanent). The model
+doesn’t need to be told how to behave, it’s already baked in.</p>
+</section>
+</section>
+</section>
+</section>
+</section>
+</section>
+<section data-type="sect1" data-pdf-bookmark="The Latency Killer">
+<section id="ch01.html_ch01_the_latency_killer_1772730610561960"
+class="sect1">
+<h1>The Latency Killer</h1>
+<p>Costs are a business problem. Latency is a user experience problem.
+And if your users have a poor experience, they won’t pay the costs!</p>
+<p>Consider a massive Foundation Model with hundreds of billions of
+parameters. The physics of inference on this model is inescapable. Even
+with state of the art GPUs, moving terabytes of weights through memory
+takes time and power. An important metric: Time to First Token (TTFT)
+can sit anywhere from 500ms to several seconds. The next metric, Tokens
+Per Second (TPS), then measures how frequently tokens appear after the
+first one.</p>
+<p>Think of this as you build a chatbot. If it takes 500ms to produce
+the first token (TTFT) and then 50 tokens per second (TPS) your user
+experience will be fine. Your tolerance to higher TTFT and less TPS is
+probably okay—because you are used to people thinking before they
+respond.</p>
+<p>But what about other scenarios? For example coding with intelligent
+autocomplete. Developers typically need suggestions <em>quickly</em>. If
+the TTFT is very high, they can probably just type it quicker
+themselves. Or with <em>voice</em> applications? If there’s a
+multi-second lag, then conversations might feel broken. As such,
+depending on your application type, the quality of response is
+important.</p>
+<p>And moving tokens through a behemoth is slower due to the size of the
+model. Faster, better, machines, with dedicated hardware are at best a
+patch for this problem.</p>
+<p>And, of course, if that machine is shared with millions of other
+customers, you face the possibility of different TTFT and TPS, because
+your query just has to get in line alongside others.</p>
+<p>It’s not a good look if your Enterprise customer’s dashboard is slow,
+because your system is competing with high schoolers using ChatGPT to
+write their essays!</p>
+<p>Thus, if you consider an on-premise model that’s fine tuned to the
+specific need, you’ll see that it’s generally smaller—so it doesn’t need
+the dedicated high cost hardware to manage synching the model across
+many machines. There’s less latency—no round tripping to the cloud or
+getting in line behind other models. You can scale your hardware
+investments to your needs. And, of course, you can tune the model
+yourself to optimize it for your particular workload.</p>
+<p>I’ve seen applications that were sluggish and brittle on a hosted
+model, but they become instant and snappy when moved to a local model.
+The problem then shifts from mitigating failures due to others hosting
+the model, towards adding business value by fine tuning the local one.
+Ultimately this adds to the value of your business, instead of flowing
+operating expenses to a third party.</p>
+</section>
+</section>
+<section data-type="sect1" data-pdf-bookmark="The Data Firewall">
+<section id="ch01.html_ch01_the_data_firewall_1772730610562007"
+class="sect1">
+<h1>The Data Firewall</h1>
+<p>If cost and latency weren’t enough to make you rethink, the
+Enterprise sales cycle, and necessary compliance when working with them
+should!</p>
+<p>True story: I once sat in on a potential investment on a very hot
+startup that was pitching AI to solve a common problem in hospitals. It
+used computer vision with vision language models. I can’t go into the
+specifics, of course, but ultimately it would save hospitals a lot of
+time and money, as well as helping them improve quality of care. But,
+being vision-based, it involved putting cameras in common places,
+including the hospital ward.</p>
+<p>Given the requirements for <em>flexibility</em>, where one day they
+might want to be able to spot a particular issue, but another day they
+might want to see something different, the idea of vision language
+models (VLM) was appealing. One can train a non-transformer based model
+for computer vision, but then it becomes static. It’s good at spotting X
+or Y, but if you then want to see Z, you need a whole new model. With a
+VLM, it’s just a prompt. “What’s in this picture?” or “Tell me if you
+see violation (X) in this image” etc.</p>
+<p>The startup demonstrated how they would do this. The demo was
+amazing. It did everything that the customers thought hospitals would
+need. There was a lot of excitement. Then, someone asked about the
+architecture. The VLM was a hosted giant model.</p>
+<p>“Wait,” the CISO asked. “You’re sending images to &lt;Company
+Name&gt;?”</p>
+<p>The CEO of the startup nodded slowly. “Yes,” she replied. She then
+held up documents showing how &lt;Company Name&gt; manages privacy,
+guarantees anonymity, and everything else to ensure that their system
+had integrity.</p>
+<p>But that wasn’t enough. They would have to go to the hospital with a
+‘trust me bro’ attitude around a very large third party, who themselves
+weren’t at the table.</p>
+<p>Naturally, despite the optimism, the deal died at that table.
+Hospitals aren’t nearly as secure as they might be as a result.</p>
+<p>And that’s a good thing.</p>
+<p>At least until now. Now there’s an alternative path forward. I hope
+that the startup has moved into the space of local VLMs so they can get
+to the best of both worlds. If you’re them, and you’re reading this,
+please reach out and let me know!</p>
+<section data-type="sect2" data-pdf-bookmark="The Metadata Leak">
+<section id="ch01.html_ch01_the_metadata_leak_1772730610562060"
+class="sect2">
+<h2>The Metadata Leak</h2>
+<p>The above story is an example of where the <em>data</em> that belongs
+to the customer was a showstopper when designing a product that shares
+it with a third party.</p>
+<p>But it’s not just the data or the prompt content that can be a risk.
+It’s also the metadata. Do note that an API provider, even if they don’t
+look at or leak your data, still knows who you are, when you send
+requests, how big the requests are, and what you might be working
+on.</p>
+<p>In high-stakes businesses like financial investment, a leak about the
+things you are researching can tip the hands of your competition. For
+example, in businesses that are considering mergers and acquisition (M
+&amp; A), if it leaked that Company A is spending a lot of time looking
+at the fundamentals of Company B, it could be inferred that they’re
+considering acquiring them. Knowledge of this could lead third parties
+to purchase shares in B and drive up the eventual acquisition price.
+This can easily become a new form of ‘insider trading.</p>
+</section>
+</section>
+<section data-type="sect2" data-pdf-bookmark="Compliance Issues">
+<section id="ch01.html_ch01_compliance_issues_1772730610562106"
+class="sect2">
+<h2>Compliance Issues</h2>
+<p>Frameworks like GDPR can also make this much stickier. If a user
+demands their data to be deleted, you can remove it from your
+infrastructure—but what if you used it to prompt a third party model?
+How can you guarantee that it’s deleted from their servers?</p>
+<p>When you own the model, you have full provenance. You can show
+exactly what data you used to fine tune. You can keep logs of all data
+that’s passed into your model for inference—and delete as necessary. You
+can retrain from a clean dataset if you need to.</p>
+<p>Ultimately—you have control.</p>
+</section>
+</section>
+<section data-type="sect2" data-pdf-bookmark="Model Drift">
+<section id="ch01.html_ch01_model_drift_1772730610562151" class="sect2">
+<h2>Model Drift</h2>
+<p>I’ve personally been very surprised by how many times I’ve spoken
+with companies that had a ‘It worked yesterday, it fails today’ problem.
+They didn’t understand why. And the explanation was simple: API
+providers update their models constantly. So, all the effort that goes
+into prompt engineering—in particular injecting commands into the
+context window—can evaporate overnight. The only solution—to re-engineer
+the prompts and hope the vendor doesn’t introduce breaking changes to
+<em>your</em> prompt-- isn’t exactly the most inspiring!</p>
+<p>But, of course, owning your own fine-tuned model creates that static
+artifact that you control. It won’t change unless you want it to. And if
+you do change it, you still hold the older versions, so you can
+introduce regression and gradually update your apps that use it!</p>
+</section>
+</section>
+</section>
+</section>
+<section data-type="sect1"
+data-pdf-bookmark="The Specialist Revolution">
+<section id="ch01.html_ch01_the_specialist_revolution_1772730610562197"
+class="sect1">
+<h1>The Specialist Revolution</h1>
+<p>For a long time Scaling Laws were the vectors that pointed to a
+better future. Bigger—more data, more layers, more transformers, more
+parameters was always better. The direction of innovation followed
+this.</p>
+<p>Once models reached a certain size, it became infeasible to host them
+yourself, and you had to depend on the giants with the billion dollar
+data centers to host them for you, and you pay by the token.</p>
+<p>But that’s no longer strictly true. We are well into the transition
+towards a bifurcation with the era of LLMs being small enough to
+self-host, licenses that allow for this, and open pre-trained models
+being freely shared. With the ability to further fine tune those models
+on your downstream tasks, and your particular data, you now have a
+viable alternative.</p>
+<p>In early 2023, the release of LLaMA started this ball rolling. And,
+it proved that well-engineered models, despite their much smaller size,
+could punch way above their weight. It also started massive innovation
+in research where new optimizations drove better quality of model,
+instead of just throwing scale at the problem.</p>
+<p>And that’s the spirit of this book. The Generalist is still alive and
+well and able to do amazing work with its vast knowledge.</p>
+<p>But maybe it’s time for more specialists in our lives. And that’s
+what I think is a very bright future for developers like you: building
+specialists.</p>
+</section>
+</section>
+<section data-type="sect1"
+data-pdf-bookmark="Hardware is no longer the blocker">
+<section
+id="ch01.html_ch01_hardware_is_no_longer_the_blocker_1772730610562245"
+class="sect1">
+<h1>Hardware is no longer the blocker</h1>
+<p>I once spoke at a conference in Wales. The speaker before me was a
+medical researcher using AI to detect brain disease. Over a beer later,
+I asked him what his biggest bottleneck was. I expected him to say
+data.</p>
+<p>“Compute,” he said. “We have ten researchers and only enough budget
+for one GPU. My slot is Tuesday afternoon. The rest of the week, I just
+have to theorize.”</p>
+<p>That was only a few years ago. Today, the laptop I’m writing this
+on—a standard MacBook Pro—can fine-tune a model that is orders of
+magnitude more powerful than what he was using.</p>
+<p>The shift to <em>Unified Memory</em> (in Apple Silicon and newer
+chips) means we don’t need massive industrial server farms to build AI.
+We can load 70B parameter models into system RAM. We can build and test
+locally. The AI R&amp;D lab now fits in a backpack.</p>
+</section>
+</section>
+<section data-type="sect1"
+data-pdf-bookmark="The Spectrum of Customization">
+<section
+id="ch01.html_ch01_the_spectrum_of_customization_1772730610562293"
+class="sect1">
+<h1>The Spectrum of Customization</h1>
+<p>There are many ways that you can customize your model, which fall
+into three broad areas:</p>
+<dl>
+<dt>Using prompts</dt>
+<dd>
+<p>Within the prompt you can ‘teach’ the model how to do things by
+sharing examples. This can include more advanced stuff such as
+soft-prompting</p>
+</dd>
+<dt>Using RAG</dt>
+<dd>
+<p>Retrieval Augmented Generation is a way of embedding ‘new’ knowledge
+by having an automated system add related content to your prompt to give
+your model extra context</p>
+</dd>
+<dt>Fine Tuning</dt>
+<dd>
+<p>Here’s where you will burn new patterns into the model’s brain so it
+does them without extra prompting. It’s the hardest to do, but the most
+valuable in the long run.</p>
+</dd>
+</dl>
+<p>I’m not going to cover the first two in this book, as they’ve
+extensively been covered, and ultimately don’t change the model—they are
+just smarter ways of prompting.</p>
+<p>Instead, this book is for the hard part—the fine tuning of models—we
+won’t just talk theory. We’re going to calculate VRAM requirements,
+scrape and clean messy data, and debug training loops that refuse to
+converge.</p>
+<p>The API wall is very high, but now, more than ever there’s an
+alternative. And I do believe the high-value skill of tomorrow lies with
+the developers that can overcome that, and build an AI that you own
+completely.</p>
+<p>In <a
+href="#ch02.html_ch02_model_architectures_the_dna_of_ai_1772730611468542"
+data-type="xref">Chapter 2</a>, you’ll begin that journey by looking at
+a few of the more popular models and how they’re built. That will
+hopefully help you choose the best one for your task!</p>
+</section>
+</section>
+</div>
+</div>
+</div>
+<p><span id="ch02.html"></span></p>
+<div id="ch02.html_book-content">
+<div id="ch02.html_sbo-rt-content">
+<div
+id="ch02.html_ch02_model_architectures_the_dna_of_ai_1772730611468542"
+class="chapter">
+<h1><span class="label">Chapter 2. </span>Model Architectures: The DNA
+of AI</h1>
+<aside data-type="sidebar" epub:type="sidebar">
+<section id="ch02.html_id86" class="sidebar">
+<h1>A Note for Early Release Readers</h1>
+<p>With Early Release ebooks, you get books in their earliest form—the
+author’s raw and unedited content as they write—so you can take
+advantage of these technologies long before the official release of
+these titles.</p>
+<p>This will be the 2nd chapter of the final book. Please note that the
+GitHub repo will be made active later on.</p>
+<p>If you’d like to be actively involved in reviewing and commenting on
+this draft, please reach out to the editor at
+<em>mcronin@oreilly.com</em>.</p>
+</section>
+</aside>
+<p>In <a
+href="#ch01.html_ch01_from_generalist_to_specialist_1772730610561549"
+data-type="xref">Chapter 1</a>, we explored that the era of ‘one giant
+model fits all’ is evolving, and why fine tuning smaller, more
+specialised models represents a strong future of practical AI
+deployment. The opportunity is in front of you to expand your skills to
+be a model customizer. But before you can do this, you need to
+understand <em>what</em> you are customizing. To use an analogy—a
+mechanic who doesn’t understand how an engine works is able to change
+the oil, but they cannot rebuild the transmission. Similarly, if you’re
+a fine tuning practitioner—you need to grasp the fundamentals of how
+transformer models work. That way you won’t be limited to surface-level
+adjustments, and you’ll be able to make the deep, strategic decisions
+that separate a mediocre fine-tuned model from an exceptional one.</p>
+<p>So, in this chapter, we’re going to do an anatomy lesson. The goal is
+to dissect the architecture that powers every major language model
+today. You’ll examine the key innovations that differentiate the leading
+open source model families, and understand how they convert raw text
+into the mathematical representations that make ‘understanding’
+possible. It will be a very high-level look, as one could write several
+whole books on how transformers work under-the-hood, so we’ll just be
+hitting the highlights.</p>
+<p>By the end, you’ll have the foundation you need to make informed
+decisions about which base model to choose for your specific fine-tuning
+project.</p>
+<section data-type="sect1"
+data-pdf-bookmark="The Flow of Information: How transformers work">
+<section
+id="ch02.html_ch02_the_flow_of_information_how_transformers_work_1772730611468695"
+class="sect1">
+<h1>The Flow of Information: How transformers work</h1>
+<p>Before going into the details, it’s good to get a high-level mental
+model for how a transformer-based language model deals with text. It
+would take several books to go into this in detail, so I’m just going to
+look into the highlights.</p>
+<p>You can see this in Figure 2-1.</p>
+<figure>
+<div id="ch02.html_ch02_figure_1_1772730611456644" class="figure">
+<img src="assets/ch02_figure_1_1772730611456644.png" width="828"
+height="922"
+alt="A diagram of a block diagram AI-generated content may be incorrect." />
+<h6><span class="label">Figure 2-1. </span>High Level Transformers
+Architecture</h6>
+</div>
+</figure>
+<p>The key insight is that text enters the model as a sequence of
+discrete symbols. Usually these are character encodings like ASCII or
+Unicode for ‘T’, ‘h’, and ‘e’. Those character encodings are grouped
+into words by separating based on punctuation. The words are then
+converted into tokens using a tokenizer. These tokens are mere numerical
+representations of words or subwords.</p>
+<p>There’s no inherent ‘meaning’ or ‘positional’ ideas encoded within
+them. That’s where the second box—the embeddings—comes in. An embedding
+is a vector that represents the meaning of the word. Think of an
+embedding as an arrow in a higher-dimensional space. The direction it
+points in represents the meaning. Words that are similar—like ‘King’ or
+‘Prince’ would point in roughly the same direction.</p>
+<p>In a transformer, positional encoding is also added to the vector.
+This positional encoding represents the location of the word in the
+expression, on the theory that word location can impact its semantics. A
+particular example of this is the use of adjectives. For example, ‘the
+big dog ate meat,’—we can see that the adjective ‘big’ directly applies
+to the dog, but it can also directly apply to the ‘meat’ indirectly—as
+it’s more likely that a big dog will eat a lot of meat!</p>
+<p>All this happens <em>before</em> the tokens flow into the transformer
+blocks, and here is where the innovation that led to the current
+explosion in AI technology lies.</p>
+<section data-type="sect2" data-pdf-bookmark="Attention Mechanisms">
+<section id="ch02.html_ch02_attention_mechanisms_1772730611468755"
+class="sect2">
+<h2>Attention Mechanisms</h2>
+<p>This is the heart of the transformer. I like to think of them using
+this analogy: imagine you are reading a document with a highlighter in
+your hand. As you read each paragraph, you might highlight certain words
+or phrases because they’ll help you understand the current sentence.
+Maybe it’s a piece of fiction, and the character is eating a certain
+food that you’ve never heard of. You look back and you see that the
+events take place in a particular location. This can help you
+understand, or at least make an educated guess, about the piece of
+food.</p>
+<p>The attention mechanism artificially does the same type of process.
+For each position in the sequence, it will calculate how much
+‘attention’ should be paid to every other position.</p>
+<p>Let’s consider this sentence: “The cat sat on the mat because it was
+tired.”</p>
+<p>When processing the word ‘it,’ you would need to refer to what ‘it’
+refers to. As a human, reading that passage, you know it refers to the
+cat. But when you think about it a moment, it could also refer to the
+mat. And with strict grammatical rules, and not semantics, one might
+argue that it does!</p>
+<p>The attention mechanism calculates attention scores for the word
+‘it’, to see what it refers to. Ultimately, based on lots of training
+data, it likely makes a stronger connection between the word ‘it’ and
+‘cat’, instead of ‘it’ and ‘mat’!</p>
+<p>This works through an elegant mathematical operation. It does this
+through calculation of three vectors:</p>
+<ul>
+<li><p>The Query (Q): “What am I looking for?”</p></li>
+<li><p>The Key (K): “What do I contain?”</p></li>
+<li><p>The Value (V): “What information do I provide?”</p></li>
+</ul>
+<p>They are calculated by multiplying the embedding vector for the word
+(as discussed earlier in this chapter) with weight matrices that will be
+learned over time.</p>
+<p>You can see this in <a
+href="#ch02.html_ch02_figure_2_1772730611456682"
+data-type="xref">Figure 2-2</a>.</p>
+<figure>
+<div id="ch02.html_ch02_figure_2_1772730611456682" class="figure">
+<img src="assets/ch02_figure_2_1772730611456682.png" width="2048"
+height="1152"
+alt="A white paper with black lines AI-generated content may be incorrect." />
+<h6><span class="label">Figure 2-2. </span>Understanding the attention
+mechanism</h6>
+</div>
+</figure>
+<p>In this case, we explore the input tokens, and focus on the token for
+‘it’, which is at position 8.</p>
+<p>Then, we look at the Keys for each of the words, and examine their
+values. They have a score, and we multiply the Q for ‘it’ by the K for
+each of these words. We’ll take the results and softmax them to get
+probabilities to have a resulting set of attention weights.</p>
+<p>These weights are the probabilities of attention that should be
+applied to the word. So, for the word ‘it’, the highest probability word
+that is closest associated with it is ‘cat’. To calculate the output,
+and the final attention, we then multiply out the weights by the
+values.</p>
+<p>The beauty of this mechanism is that it is entirely <em>learned</em>.
+You might wonder where those values in the diagram come from, and
+without a good set of K values to begin with, all this will be nonsense.
+Realize the vast amounts of text that models are trained on—and from
+these, over time, with trial and error, and the classic ‘Machine
+Learning’ paradigm, the useful patterns get learned.</p>
+<p>These ‘chunks’ of Q, K, V to learn attention on text embedding
+vectors are often referred to ‘heads’, and when multiple heads are used,
+we’ve learned that some will end up tracking semantic relationships,
+some grammatical, and some will capture relationship patterns for words
+that we don’t even have names for.</p>
+<p>Typically, when there are multiple layers of heads, then the earlier
+heads in the sequence will learn the more obvious connections like
+syntax or grammar, and the later heads will capture the more complex,
+semantic relationships.</p>
+</section>
+</section>
+<section data-type="sect2" data-pdf-bookmark="Multi Head Attention">
+<section id="ch02.html_ch02_multi_head_attention_1772730611468807"
+class="sect2">
+<h2>Multi Head Attention</h2>
+<p>A single attention operation captures one type of relationship type
+between the tokens. Language is rich with multiple, simultaneous
+relationship types. And different languages can have different relation
+types that don’t exist in English. To capture this richness, the idea of
+Mullti-Head attention, which runs multiple attention operations in
+parallel, each with their own learned Q, K , V matrices is useful.</p>
+<p>You can see this in <a
+href="#ch02.html_ch02_figure_3_1772730611456705"
+data-type="xref">Figure 2-3</a>.</p>
+<figure>
+<div id="ch02.html_ch02_figure_3_1772730611456705" class="figure">
+<img src="assets/ch02_figure_3_1772730611456705.png" width="725"
+height="726"
+alt="A diagram of a multi-head attention AI-generated content may be incorrect." />
+<h6><span class="label">Figure 2-3. </span>Multi Head Attention</h6>
+</div>
+</figure>
+<p>Models like Llama 3 8B, for example, will use 32 attention heads per
+layer, across 32 layers.</p>
+<p>Each layer’s heads will operate at different levels of
+abstraction—early layers tend to learn syntactic patterns, while later
+ones get into semantics.</p>
+<section data-type="sect3"
+data-pdf-bookmark="Reducing dimensions in MHA">
+<section id="ch02.html_ch02_reducing_dimensions_in_mha_1772730611468857"
+class="sect3">
+<h3>Reducing dimensions in MHA</h3>
+<p>These layers will reduce dimensions per head in order to save
+computation costs.</p>
+<p>The <em>hidden</em> dimension is 4,096—the size of the vector
+representing each token as it flows through the network. Rather than
+running the attention operation on all 4,096 dimensions, the model will
+split this into the 32 parallel heads, where each will work on 128
+dimensions (4096 / 32 = 128).</p>
+<p>Thus, each head will compute its own attention scores and produce
+output in 128 dimensions. These 32 outputs will then be concatenated
+back together and passed through one more learned weight matrix—often
+called the ‘output projection’. This serves an important purpose: it
+allows the model to mix information across heads. Without it, the heads
+would be completely independent (i.e. head 1 has the first 128
+dimensions, head 2 has the next 128 and so on). With this output
+projection, the model learns how to combine the different perspectives
+from different heads into a unified representation for the next
+layer.</p>
+<p>This keeps the total computation roughly similar to a single large
+attention operation, but it gives the model much more flexibility to
+learn diverse patterns.</p>
+<section class="note" data-type="note">
+<h6>Note</h6>
+<p>It’s tempting to imagine that different heads neatly divide labor,
+and visualizations like <a
+href="#ch02.html_ch02_figure_3_1772730611456705"
+data-type="xref">Figure 2-3</a> tend to represent this because it’s
+easier for us to grasp things like ‘Head 1 does grammar, Head 2 does
+semantics etc’, but reality is much messier. Research into transformer
+interpretability has shown that specialization tends to happen more
+<em>across</em> layers than <em>within</em> them. Earlier layers—closer
+to the input—tend to capture local syntactic patterns: which words are
+adjacent, basic grammatical relationships, positional information etc.
+Deeper layers progressively build more abstract, semantic relationships:
+what the sentence means, how concepts relate, what an appropriate
+response to a question might be, and stuff like that!</p>
+</section>
+<p>Within any single layer, multiple heads do learn different patterns,
+but in reality they do not map to human-interpretable categories. The
+power of multi head attention comes from this redundancy and
+diversity—the model figures out what’s useful for its corpus while
+training, and not through an engineered direction by a human.</p>
+</section>
+</section>
+<section data-type="sect3"
+data-pdf-bookmark="Self-Attention vs Cross-Attention">
+<section
+id="ch02.html_ch02_self_attention_vs_cross_attention_1772730611468906"
+class="sect3">
+<h3>Self-Attention vs Cross-Attention</h3>
+<p>There are two main types of attention in transformer architectures
+you should consider.</p>
+<p>What we’ve been discussing so far is <em>self-attention</em>, where a
+sequence attends to itself. The queries, keys, values, all come from the
+same sentence. In our hypothetical scenario of reading a fiction book,
+and we have a paragraph with a location mentioned and a food type
+mentioned, our attention is <em>only</em> on that paragraph.</p>
+<p><em>Cross-attention</em> extends on this, and considers where one
+sequence can attend to a different one. In the hypothetical example, we
+might have learned in an earlier chapter that the character is
+vegetarian, which would give us a clue about what the unknown food might
+be. In ML terms—ultimately what’s happening here is that the Q values
+could come from one sequence, while the K and V come from another.</p>
+<p>For <em>most</em> attention models, including all the ones you’re
+likely to fine-tune, self-attention is the dominant mechanism. Cross
+attention appears in encoder-decoder type architectures, and in
+multi-modal models, where the model might need to attend to image
+features as well as text.</p>
+</section>
+</section>
+</section>
+</section>
+<section data-type="sect2" data-pdf-bookmark="The Feed Forward Network">
+<section id="ch02.html_ch02_the_feed_forward_network_1772730611468954"
+class="sect2">
+<h2>The Feed Forward Network</h2>
+<p>Once the attention mechanism has done its thing, and allowed tokens
+to gather context from other ones, each position will pass through a
+feed forward network (FFN). This is a simple, but powerful two-layer
+neural network that is applied independently to each position.</p>
+<p>You can see it in <a href="#ch02.html_ch02_figure_4_1772730611456723"
+data-type="xref">Figure 2-4</a>.</p>
+<figure>
+<div id="ch02.html_ch02_figure_4_1772730611456723" class="figure">
+<img src="assets/ch02_figure_4_1772730611456723.png" width="827"
+height="935"
+alt="A diagram of a algorithm AI-generated content may be incorrect." />
+<h6><span class="label">Figure 2-4. </span>The Feed Forward Network</h6>
+</div>
+</figure>
+<p>Its purpose is ultimately to store the ‘knowledge’ of the model.
+Think of the attention mechanism as gathering <em>context,</em> where
+after attention is applied, each token’s representation is enriched with
+information for other tokens that it attended to. The FFN will then
+process this contextualized representation, extract useful features, and
+transform it for the next layer.</p>
+<p>This expand-then-contract structure is ultimately the key. The first
+layer will expand the dimensionality of the embedding from 4,096 to
+14,336 dimensions. This larger space allows the network to represent
+more complex patterns. It does this with that number of neurons, and
+each could be thought of as a ‘pattern detector’. When the input matches
+a pattern that the neuron has learned to recognize, it will activate
+strongly.</p>
+<p>Once you’ve heightened the dimension then the <em>non linear</em>
+activation function, such as SiLU or SwiGLU, is applied. I’m emphasising
+non linear, because if you think about a linear transformation—it’s just
+a matrix multiplication that scales or rotates vectors, but doesn’t
+handle curves or thresholds. SO, if you stack two linear layers—you’re
+effectively multiplying by Matrix A and then again by B, but that’s
+mathematically equivalent to multiplying by a single matrix BA. No
+matter how many you stack, they still effectively collapse into one—you
+get nothing from the additional depth.</p>
+<p>But if you use a non linear activation function, the neurons get more
+selective. Imagine one of them, where its weights in the first layer
+compute a high value when the input looks like ‘question about cuisine,’
+and a low or negative one otherwise. The activation function, if non
+linear, will be curved—thus strengthening the activation for cuisine
+questions, and staying near zero for everything else. Without the
+non-linearity, the neuron would respond proportionally for
+<em>everything</em>, and wouldn’t learn to trigger on specific relevant
+patterns, and ignore the others.</p>
+<p>The second linear layer then projects this back down to 4,096
+dimensions. Each neuron in layer 1 now has a corresponding one in layer
+2. Often this is considered to be the ‘knowledge’ associated with the
+input pattern, and what the model should output when that pattern is
+detected. This is why researchers often describe FFN layers as
+functioning like key-value <em>memory</em>. The first layer’s weights
+are the keys that match input values, and the second layer’s are values
+that get retrieved when a key matches.</p>
+<p>For example, a neuron on the first layer might activate when the
+input represents ‘Food from Nagasaki’, and the corresponding output one
+might push the representation towards the tokens for ‘Okonomiyaki’. This
+is an oversimplified abstraction—the real ones don’t map nearly as
+closely to human-understandable concepts as this, but it does capture
+how the basic mechanism of how factual knowledge from the text corpus
+gets encoded.</p>
+<p>For fine tuning this really matters—the FFN layers capture a
+significant portion of the model’s deep knowledge. In techniques like
+LoRA (which we’ll explore in Chapter 7), we can inject knowledge to this
+layer. Ultimately, if you can build the mental model of the attention
+layers focusing on ‘what to look at’, while the FFN handles ‘what to do
+with it’, you’ll have a huge headstart in understanding how and where to
+apply custom adaptation.</p>
+</section>
+</section>
+<section data-type="sect2"
+data-pdf-bookmark="Layer Normalization and Residual Connections">
+<section
+id="ch02.html_ch02_layer_normalization_and_residual_connections_1772730611469003"
+class="sect2">
+<h2>Layer Normalization and Residual Connections</h2>
+<p>Two additional components that are crucial but often overlooked, but
+you may see in any discussion of the transformer are <em>Layer
+Normalization</em> and <em>Residual Connections.</em> These enable
+stable training of deep networks:</p>
+<p><em>Residual connections</em> (also called skip connections) add the
+input of each sub-layer to its output. This allows gradients to flow
+more easily during training and lets the model learn to make incremental
+refinements at each layer rather than complete transformations. They
+also help prevent gradients exploding (growing too large as to be
+meaningless) or vanishing (approaching zero, so they lose
+information)</p>
+<p><em>Layer normalization</em> normalizes the activations across the
+feature dimension, stabilizing the distribution of values as they pass
+through the network. Noting that the ultimate value of a vector is
+relatively meaningless, and that its distributions for probabilities can
+be more important, the idea of normalization means that values are
+generally distributed between 0 and 1, avoiding clustering of values and
+loss of information. Modern models like Llama use “RMSNorm” (Root Mean
+Square Normalization), which is computationally simpler.</p>
+</section>
+</section>
+</section>
+</section>
+<section data-type="sect1" data-pdf-bookmark="Decoder-Only Dominance">
+<section id="ch02.html_ch02_decoder_only_dominance_1772730611469051"
+class="sect1">
+<h1>Decoder-Only Dominance</h1>
+<p>The original transformer paper described an <em>encoder-decoder</em>
+architecture designed for machine translation. The encoder processes the
+input sequence (source language), and the decoder generates the output
+sequence (target language), attending to the encoder’s representations
+via cross-attention.</p>
+<figure>
+<div id="ch02.html_ch02_figure_5_1772730611456741" class="figure">
+<img src="assets/ch02_figure_5_1772730611456741.png" width="829"
+height="822"
+alt="A diagram of a process AI-generated content may be incorrect." />
+<h6><span class="label">Figure 2-5. </span>Encoder-Decoder
+Transformer</h6>
+</div>
+</figure>
+<p>For <em>language translation</em> this was essential, because when
+translating one language to another, one needs to look ahead and behind
+in a sentence to be able to translate it effectively.</p>
+<p>But for <em>generation</em> purposes, one cannot pay attention to
+words that are ‘ahead’, because they don’t exist yet. If you have a
+sequence of tokens like ‘The cat sat’, then you can only look back for
+attention. This process is called ‘causal’ attention, where each
+position will only attend to previous positions in the sequence. This is
+achieved using a mask on the tokens to prevent lookahead, as shown in <a
+href="#ch02.html_ch02_figure_6_1772730611456757"
+data-type="xref">Figure 2-6</a>.</p>
+<figure>
+<div id="ch02.html_ch02_figure_6_1772730611456757" class="figure">
+<p><strong></strong></p>
+<img src="assets/ch02_figure_6_1772730611456757.png" width="806"
+height="935"
+alt="A sheet of paper with text AI-generated content may be incorrect." />
+<h6><span class="label">Figure 2-6. </span>Decoder and Causal
+Attention</h6>
+</div>
+</figure>
+<p>As such, an encoder isn’t needed with its bidirectional self
+attention, and only the decoder is necessary.</p>
+<p>The decoder-only architecture became very popular with open source
+models like Llama or Mistral.</p>
+<p>It’s relatively simple! It has one architecture, and one training
+objective (next token prediction), which makes it easier to scale. It
+also has unified input and output. Ultimately, the same architecture
+handles both “understanding” the prompt and “generating” the response.
+There’s no artificial boundary between input and output.</p>
+<p>Researchers discovered that decoder-only models, when scaled
+sufficiently, develop remarkable capabilities, including in-context
+learning, chain-of-thought reasoning, and instruction following, without
+being explicitly trained for these tasks.</p>
+<p>For training and fine-tuning, every position in the sequence provides
+a training signal (predicting the next token), making training data
+highly efficient.</p>
+<p>When you fine-tune these models, you will most likely work with this
+decoder-only architecture. The training process adjusts the model’s
+weights so that given your specific prompts and contexts, it can predict
+the next token in a way that matches your desired outputs.</p>
+</section>
+</section>
+<section data-type="sect1"
+data-pdf-bookmark="Grouped Query Attention (GQA)">
+<section
+id="ch02.html_ch02_grouped_query_attention_gqa_1772730611469099"
+class="sect1">
+<h1>Grouped Query Attention (GQA)</h1>
+<p>To understand Grouped Query Attention (GQA), it’s good to look at the
+early history of Llama.</p>
+<p>Open, tunable, models are pretty much synonymous with this model.
+While the term ‘open source’ is typically used to describe them, I
+generally resist this because we don’t have the source, or the data.
+What we do have is the pre-trained weights of the model under various
+open source licenses so we can modify it, and papers describing the
+architecture.</p>
+<p>The first version of this was released in February 2023 with a
+relatively standard transformers implementation. Its overall
+significance was to demonstrate that smaller, well-trained models were
+in the game–at least when comparing with larger models using standard
+benchmarks. It should be noted that many benchmarks were invented with
+larger models in mind, so the idea of benchmarks will need to evolve as
+more smaller models come online. Similarly, while the performance
+against benchmarks might have been equivalent, the context window size
+was the biggest notable difference between smaller and larger models.
+Llama had a context window of only 2,048 tokens.</p>
+<p>A few months later, version 2 was introduced that doubled the context
+window size (to 4,096 tokens), as well as a new innovation called
+‘Grouped Query Attention (GQA), which was a crucial optimization for
+performance. You’ll also see that it’s the constraints of going smaller
+that has driven innovation, and GQA is an excellent example of that.</p>
+<p>A little over a year after the first release, LLama 3 doubled the
+context window size again—to 8,192 tokens in the small model, as well as
+a family of larger ones with up to 128k tokens. It also improved the
+vocabulary, with 128k tokens, a 4x improvement, as well as updates to
+their implementation of GQA.</p>
+<p>So let’s explore what GQA is, and why it’s so important.</p>
+<p>Grouped Query Attention is one of the most important optimizations in
+modern LLMs, and understanding it will help you make better decisions
+about which model to choose in solving your problem.</p>
+<p>In standard multi-head attention, as you saw earlier in this chapter,
+each head has its own Query, Key, and Value projections. During
+inference, the Key and Value tensors for all previous tokens must be
+cached (this is the “KV cache”) to avoid recomputing them at each
+generation step.</p>
+<p>For long sequences, this cache becomes a significant memory
+bottleneck.</p>
+<p>You can see this in <a
+href="#ch02.html_ch02_figure_7_1772730611456773"
+data-type="xref">Figure 2-7</a>.</p>
+<figure>
+<div id="ch02.html_ch02_figure_7_1772730611456773" class="figure">
+<img src="assets/ch02_figure_7_1772730611456773.png" width="892"
+height="351"
+alt="A diagram of a diagram AI-generated content may be incorrect." />
+<h6><span class="label">Figure 2-7. </span>Multi-Head Attention and KV
+Cache Size</h6>
+</div>
+</figure>
+<p>The idea of GQA is to strike a balance here by grouping Query heads,
+with each group sharing K and V projections. You can see this in <a
+href="#ch02.html_ch02_figure_8_1772730611456788"
+data-type="xref">Figure 2-8</a>.</p>
+<figure>
+<div id="ch02.html_ch02_figure_8_1772730611456788" class="figure">
+<img src="assets/ch02_figure_8_1772730611456788.png" width="864"
+height="581"
+alt="A diagram of a number of questions AI-generated content may be incorrect." />
+<h6><span class="label">Figure 2-8. </span>Grouped Query Attention</h6>
+</div>
+</figure>
+<p>In this simple example, where there are 6 heads, instead of each Q
+having its own dedicated KV, we have a situation where Q1 and Q2 share a
+KV, Q3 and Q4 share one etc. This gives us a 50% reduction in KV Cache
+size.</p>
+<p>In LLama 3 8B, there are 32 query heads grouped into 8 groups of 4,
+and each shares 8 key-value heads.</p>
+<p>This reduces the KV cache by 75% compared to standard multi-head
+attention, dramatically improving inference speed and reducing memory
+requirements—especially for long contexts.</p>
+<p>So, when it comes to fine tuning, it’s good to consider models that
+use GQA because they can give you better inference performance without
+sacrificing much quality.</p>
+</section>
+</section>
+<section data-type="sect1"
+data-pdf-bookmark="Continued Innovation: Mistral and Mixtral">
+<section
+id="ch02.html_ch02_continued_innovation_mistral_and_mixtral_1772730611469148"
+class="sect1">
+<h1>Continued Innovation: Mistral and Mixtral</h1>
+<p>Continuing the story of innovation being driven by smaller models,
+and the needs for efficiency that can be generally forgotten in larger
+models, let’s now explore Mistral and Mixtral.</p>
+<p>Mistral 7B, introduced in September 2023 demonstrated that a
+relatively small model—only 7B—could compete with much larger models on
+benchmarks. It did with several key innovations.</p>
+<section data-type="sect2" data-pdf-bookmark="Sliding Window Attention">
+<section id="ch02.html_ch02_sliding_window_attention_1772730611469197"
+class="sect2">
+<h2>Sliding Window Attention</h2>
+<p>As we pay attention to previous tokens, the longer the sequence of
+tokens, the more the scale of being able to manage it explodes in size.
+So, if every token has to look at every other token, including itself,
+we end up with a quadratic number of lookups. For 2 tokens, there would
+be 2 comparisons of 2 tokens each, so 4 lookups. With 10 tokens, this
+becomes 100. With 1,000 tokens we now have 1 Million lookups! How large
+would this get for a context window of 128k tokens?</p>
+<p>Mistral introduced a sliding window, where each token only directly
+attends to the previous 4,096 tokens. Your initial thoughts on this
+might be that information outside the context window might be lost, but
+think about it a little.</p>
+<p>If the context is 128k tokens, and you are using a sliding window of
+only 4k, it may feel like the majority of tokens are ignored.</p>
+<p>But in a multi-layer model, this isn’t necessarily true. Let’s
+explore this.</p>
+<figure>
+<div id="ch02.html_ch02_figure_9_1772730611456804" class="figure">
+<p><strong></strong></p>
+<img src="assets/ch02_figure_9_1772730611456804.png" width="935"
+height="598"
+alt="A diagram of a diagram AI-generated content may be incorrect." />
+<h6><span class="label">Figure 2-9. </span>Sliding Window Context
+movement.</h6>
+</div>
+</figure>
+<p>Imagine 10 tokens, with a 4 token context window. So, for example for
+tokens 7 through 10, the output of our sliding window will be the
+‘rightmost’ token in Layer 2. Similarly, the window of tokens 4 through
+7 will have an output at an equivalent position for token 7.</p>
+<p>You can see that 5 through 8 will output at position 8, and 6 through
+9 will output at position 9, though these aren’t drawn in <a
+href="#ch02.html_ch02_figure_9_1772730611456804"
+data-type="xref">Figure 2-9</a>.</p>
+<p>Then, when you get to layer 3, the token at position 10 is actually
+receiving context from all the way at position 4 because of the
+‘pyramid’ effect with the context being fed through the layers.</p>
+<p>The receptive field grows linearly with depth, and the result is that
+the amount of processing required for tokens loses the quadratic
+explosion of processing. Amazingly enough, the model performed
+equivalently to many larger models that didn’t innovate on managing the
+processing of the attention! They simply brute forced it!</p>
+</section>
+</section>
+<section data-type="sect2"
+data-pdf-bookmark="Sparse Mixture of Experts">
+<section id="ch02.html_ch02_sparse_mixture_of_experts_1772730611469245"
+class="sect2">
+<h2>Sparse Mixture of Experts</h2>
+<p>While Llama 4 may have been the famous model to broadly use Mixture
+of Experts, Mixtral introduced a transformative version of this—a Sparse
+Mixture of Experts. It’s a fundamentally different approach to
+scaling.</p>
+<p>In a standard transformer, every token passes through every parameter
+of the model as shown in <a
+href="#ch02.html_ch02_figure_10_1772730611456819"
+data-type="xref">Figure 2-10</a>.</p>
+<figure>
+<div id="ch02.html_ch02_figure_10_1772730611456819" class="figure">
+<img src="assets/ch02_figure_10_1772730611456819.png" width="554"
+height="118"
+alt="A diagram of a single person AI-generated content may be incorrect." />
+<h6><span class="label">Figure 2-10. </span>Feed Forward in a Standard
+transformer</h6>
+</div>
+</figure>
+<p>In a Mixture of Experts model, the feed-forward network (FFN) layer
+is replaced by multiple “expert” FFNs, and a routing/gating network
+decides which experts to use for each token. You can see this in <a
+href="#ch02.html_ch02_figure_11_1772730611456834"
+data-type="xref">Figure 2-11</a>.</p>
+<figure>
+<div id="ch02.html_ch02_figure_11_1772730611456834" class="figure">
+<p><strong></strong></p>
+<img src="assets/ch02_figure_11_1772730611456834.png" width="760"
+height="745"
+alt="A diagram of a algorithm AI-generated content may be incorrect." />
+<h6><span class="label">Figure 2-11. </span>Sparse Mixture of
+Experts</h6>
+</div>
+</figure>
+<p>In this case, the input is passed through the attention layers, and
+the router/gate chooses which feed forward network to use. So, for
+example if the token is ‘code’, the top 2 experts that are appropriate
+may be one that’s dedicated to coding, and another that’s dedicated to
+math. The data is routed to these FFNs, and a weighted combination forms
+the output.</p>
+<p>This is what makes the Mixtral model a ‘Sparse’ Mixture of experts.
+Instead of passing the tokens through <em>every</em> expert, and then
+weighting the output, it simply selects 2 and then weights the
+output.</p>
+<p>With a model like Mixtral 8x7B, the name may suggest it’s a 7B model,
+but it isn’t—the 8x7 refers to 8 experts, each of which are close to 7B
+parameters!</p>
+<p>For each token, the router will select the top 2 experts as
+shown.</p>
+<p>So, for this model, the total parameters are 46.7B—used to store all
+experts. But for any given inference, only 2 experts are used, so 12.9B
+parameters are used. So, you get the capacity of a much larger model,
+while paying the computational cost of a smaller one at inference
+time.</p>
+<p>When it comes to fine-tuning, MoE models are tricker to deal with.
+You might want to only fine tune selected experts, or perhaps the
+routing model. The training dynamics are far more complex, and you need
+much more VRAM to hold all the parameters even if the inference is
+efficient. For many fine tuning projects, a non MoE may be an easier
+approach!</p>
+</section>
+</section>
+</section>
+</section>
+<section data-type="sect1"
+data-pdf-bookmark="Gemma: Google’s Open Approach">
+<section
+id="ch02.html_ch02_gemma_google_s_open_approach_1772730611469297"
+class="sect1">
+<h1>Gemma: Google’s Open Approach</h1>
+<p>Google entered the open-weights space with a variety of models over
+the years, but the most recent, at time of writing, is called
+<em>Gemma</em>. Based on the same research that powers Google giant
+hosted Gemini models, Gemma comes in a variety of sizes. The most recent
+version at time of writing, Gemma 3, comes in variations from 270M
+parameters up to 27B.</p>
+<p>One key characteristic of Gemma is that many of the variations of
+Gemma are <em>instruction tuned</em> from the start. This means that
+they are already aligned to follow instructions, making them ready for
+many tasks out of the box. When you inspect the list of Gemma models on
+a hub like huggingface (<a
+href="https://huggingface.co/collections/google/gemma-3-release">Gemma 3
+release</a>) you’ll see all of them listed, and for Gemma 3 it looks
+like <a href="#ch02.html_ch02_figure_12_1772730611456848"
+data-type="xref">Figure 2-12</a>.</p>
+<figure>
+<div id="ch02.html_ch02_figure_12_1772730611456848" class="figure">
+<img src="assets/ch02_figure_12_1772730611456848.png" width="852"
+height="619"
+alt="A screenshot of a computer AI-generated content may be incorrect." />
+<h6><span class="label">Figure 2-12. </span>Gemma on HuggingFace</h6>
+</div>
+</figure>
+<p>You’ll see some models with the prefix ‘-it’ for ‘Instruction Tuned’,
+and ‘-pt’ for ‘Pre Trained’. The latter hasn’t had additional alignment
+to make it useful for chat scenarios, and instead is just raw tokens in
+and tokens out. This is pretty powerful for you to be able to create
+your own instruction tuning, without needing to work around Google’s
+work here.</p>
+<p>Given the variety of sizes, there are slightly different
+architectures with Gemma 3 when it comes to managing the KV cache.</p>
+<p>The <em>Standard</em> size lineup (4B, 12B, and 27B sizes) all use
+Grouped Query Attention (GQA) as outlined above. This is the secret to
+how small models like these can support a <em>128K Context Window</em>
+without the memory requirements for the KV cache exploding.</p>
+<p>The <em>Smaller</em> size lineup (1B and 270M) are optimized for
+on-device speed. They use a new attention type called <em>Multi Query
+Attention</em> (MQA) which is a very aggressive GQA where <em>all</em>
+attention heads share a single key/value head. This makes it very fast,
+but it loses nuance. It does keep the model small enough to perform on
+basic hardware.</p>
+<section class="note" data-type="note">
+<h6>Note</h6>
+<p>Gemma 3 has a unique twist on GQA with something called an
+<em>attention ratio</em>. The goal here is to mix the use of the sliding
+window. 5 out of every 6 layers use a sliding window of 1024 tokens as
+we discussed earlier, but 1 out of every 6 will look at the full 128k
+context!</p>
+</section>
+</section>
+</section>
+<section data-type="sect1"
+data-pdf-bookmark="Tokenizers and Embeddings">
+<section id="ch02.html_ch02_tokenizers_and_embeddings_1772730611469351"
+class="sect1">
+<h1>Tokenizers and Embeddings</h1>
+<p>In the discussion on architectures, it’s also important to think
+about different methods for tokenization (conversion of the
+human-language words into numbers that represent them,) and embeddings
+(giving a high dimensional vector representation for a token to try to
+capture context), and methodologies to use these efficiently.</p>
+<section data-type="sect2" data-pdf-bookmark="Tokenization">
+<section id="ch02.html_ch02_tokenization_1772730611469401"
+class="sect2">
+<h2>Tokenization</h2>
+<p>When we look in detail at tokenization, and define it as the process
+of breaking text into discrete units that the model can process, we can
+see that it will be more complex that simply splitting on words.</p>
+<p>Some reasons for this may be situations like:</p>
+<ul>
+<li><p>Rare words would require enormous vocabularies. Is it worth
+having a token dedicated to the word
+‘antidisestablishmentarianism’?</p></li>
+<li><p>Non-English Languages may handle spacing between words
+differently</p></li>
+<li><p>Typos, new words, and code would be very difficult to
+handle</p></li>
+<li><p>Variants of a word (‘run’,’ running’, ‘runs’) would be completely
+separate from each other, potentially losing their semantic
+similarity.</p></li>
+</ul>
+<p>To overcome this, most modern LLMs use <em>subword</em> tokenization,
+where the vocabulary consists of common words, or pieces of them. It
+gives a balance—common words like ‘the’ will be single tokens, which is
+efficient, while more rare words will be broken down into multiple
+tokens like ‘anti’, ‘dis’, ‘esta’, ‘blish’ etc.</p>
+<p>The tokenizer choice matters because different models use different
+tokenizers, trained on different data! The tokenizer will have a
+vocabulary of tokens that it works with, and this affects efficiency.
+Models like Llama 2 have 32,000 tokens, and LLama 3 has over 128,000. A
+larger vocab means common words and phrases are more likely to be single
+tokens—which will reduce sequence length, giving you more information
+within the context window. But it also means bigger embedding matrices,
+giving you a tradeoff.</p>
+<section data-type="sect3"
+data-pdf-bookmark="Understanding Language and Tokenization">
+<section
+id="ch02.html_ch02_understanding_language_and_tokenization_1772730611469465"
+class="sect3">
+<h3>Understanding Language and Tokenization</h3>
+<p>If you are working with models for code or special characters, the
+tokenizers will vary widely. Many are trained primarily on
+<em>English</em> text, and won’t be optimized for code. Others will have
+programming languages in their training data—and most notably, the
+tokenizers used will be ‘code friendly’ in their vocab.</p>
+<p>Additionally, when it comes to multilingual coverage, a tokenizer
+that is trained on English will likely fragment non-English text into
+many smaller tokens.</p>
+<p>Consider the phrase ‘你好世界’ which is ‘Hello World’ in Chinese. If
+this uses a tokenizer trained on English text, it will encode this into
+4 separate tokens, representing the Unicode characters for the Chinese
+text [你][好][世][界]</p>
+<p>A multi-lingual tokenizer that understands Chinese characters, and
+how they are grouped into words would be more efficient, and paid it
+appropriately into the ‘words’ for ‘Hello’ and ‘World’ [你好][世界]</p>
+<p>This, as you can see, will greatly affect both efficiency and
+quality. More tokens means longer sequences that are slower and carry
+less context, and the performance can be negatively impacted.</p>
+<section class="warning" data-type="warning">
+<h6>Warning</h6>
+<p>Ultimately you need to consider the tokenizer when fine tuning. You
+cannot change a model’s tokenizer without retraining from scratch. When
+selecting a base model, check that its tokenizer handles your domain’s
+text efficiently. If you are fine tuning for a specific programming
+language or a non-English language, you have to verify that the
+tokenizer doesn’t produce excessively long sequences.</p>
+</section>
+</section>
+</section>
+</section>
+</section>
+<section data-type="sect2" data-pdf-bookmark="Byte Pair Encoding (BPE)">
+<section id="ch02.html_ch02_byte_pair_encoding_bpe_1772730611469514"
+class="sect2">
+<h2>Byte Pair Encoding (BPE)</h2>
+<p>The most common algorithm to perform tokenization is byte pair
+encoding, a methodology that was originally developed for data
+compression!</p>
+<p>It works like this:</p>
+<ul>
+<li><p>Start with a vocabulary of individual characters, each
+represented by a byte</p></li>
+<li><p>Count all adjacent pairs in the training corpus</p></li>
+<li><p>Merge the most frequent pair into a new token</p></li>
+<li><p>Repeat the process until the vocab reaches the desired
+size</p></li>
+</ul>
+<p>For example, imagine a corpus of only 3 words ‘low’, ‘lower’, and
+‘lowest’.</p>
+<p>We would start with the full vocab of individual characters
+<code>[l]</code>, <code>[o]</code>, <code>[w]</code>, <code>[e]</code>,
+<code>[r]</code>, <code>[s]</code>, <code>[t]</code>, <code>[]</code>
+where I am representing a space with the <code>[*]</code>.</p>
+<p>Then, we would look at the tokenization of each word:</p>
+<pre data-type="programlisting"><code>[l], [o], [w], [*], [l], [o], [w], [e], [r], [*], [l], [o], [w], [e], [s], [t]</code></pre>
+<p>From this we can see that <code>[l]</code> followed by
+<code>[o]</code> is the most frequent pairing, so we re-encode to have
+an <code>[lo]</code> character instead of <code>[l]</code> and
+<code>[o]</code>.</p>
+<pre data-type="programlisting"><code>[lo], [w], [*], [lo], [w], [e], [r], [*], [lo], [w], [e], [s], [t]</code></pre>
+<p>Now we can see that [lo] followed by [w] is the most common, so we
+re-encode to:</p>
+<pre data-type="programlisting"><code>[low], [*], [low], [e], [r], [*], [low], [e], [s], [t]</code></pre>
+<p>…and we would continue until we have the desired number of
+tokens.</p>
+</section>
+</section>
+<section data-type="sect2" data-pdf-bookmark="Embeddings">
+<section id="ch02.html_ch02_embeddings_1772730611469561" class="sect2">
+<h2>Embeddings</h2>
+<p>Once text is tokenized, each token ID is mapped to an embedding
+vector. This is a representation of the token in a higher dimensional
+space. Let’s explore what that means. Let’s use Llama 3 8B, where the
+embedding dimension is 4,096. In other words—the vector representing the
+semantics for a token is a direction in a space of 4,096 dimensions.</p>
+<p>While this is hard to visualize, consider that the goal here is to
+encode semantic relationships. Tokens with similar meanings tend to have
+similar embeddings after training. Similar embeddings are close together
+in vector space, where their vectors are ‘pointing’ in similar
+directions.</p>
+<p>A good way to understand this is to consider it in only 2 dimensions.
+For example, suppose we were to look at characters from the Jane Austen
+novel <em>Pride and Prejudice</em>, considering the dimensions of gender
+and nobility. We could plot the former on the x-axis and the latter on
+the y-axis, with the length of the vector denoting each character’s
+wealth (Figure 2-13).</p>
+<table id="ch02_table_1_1772730611461254">
+<colgroup>
+<col style="width: 100%" />
+</colgroup>
+<tbody>
+<tr>
+<td><figure>
+<div id="ch02.html_ch02_figure_13_1772730611456863" class="figure">
+<img src="assets/ch02_figure_13_1772730611456863.png" width="1290"
+height="712" alt="Characters in Pride and Prejudice as vectors" />
+<h6><span class="label">Figure 2-13. </span>Characters in Pride and
+Prejudice as vectors</h6>
+</div>
+</figure></td>
+</tr>
+</tbody>
+</table>
+<p>From an inspection of the graph, you can derive a fair amount of
+information about each character. Three of them are male. Mr. Darcy is
+extremely wealthy, but his nobility isn’t clear (he’s called “Mister,”
+unlike the less wealthy but apparently more noble Sir William Lucas).
+The other “Mister,” Mr. Bennet, is clearly not nobility and is
+struggling financially. Elizabeth Bennet, his daughter, is similar to
+him, but female. Lady Catherine, the other female character in our
+example, is nobility and incredibly wealthy. The romance between Mr.
+Darcy and Elizabeth causes tension—<em>prejudice</em> coming from the
+noble side of the vectors toward the less-noble.</p>
+<p>As this example shows, by considering multiple dimensions we can
+begin to see real meaning in the words (here, character names). Again,
+we’re not talking about concrete definitions, but more a
+<em>relative</em> meaning based on the axes and the relation between the
+vector for one word and the other vectors.</p>
+<section data-type="sect3"
+data-pdf-bookmark="Understanding Positional Embeddings with RoPE">
+<section
+id="ch02.html_ch02_understanding_positional_embeddings_with_rope_1772730611469614"
+class="sect3">
+<h3>Understanding Positional Embeddings with RoPE</h3>
+<p>Transformers process all tokens in parallel, so they have no inherent
+sense of order. To inject positional information, we add positional
+embeddings to the token embeddings.</p>
+<p>Modern models like Llama use Rotary Position Embeddings (RoPE), which
+encode position through an innovative technique involving rotation in
+the embedding space. The key advantage of RoPE is that it allows the
+model to generalize to longer sequences than it saw during training
+while minimizing quality degradation.</p>
+<p>Consider the sentence “The cat ate the mouse”. Without positional
+information, the model would find the sentences “The cat ate the mouse”
+and “The mouse ate the cat” to be <em>mathematically</em> identical.</p>
+<p>Rotary Positional Embedding (RoPE) solves this by treating word
+embeddings not just as static points in space, but as vectors that can
+be <em>rotated</em>.</p>
+<p>To encode position, instead of adding a fixed value to the embedding
+representing the position, RoPE does it by rotating the embedding
+vector. So, for each step forward in a sequence, the idea is to rotate
+the vector for that word by a specific angle. If we call that angle
+‘theta’ θ, then the first embedding is rotated by θ, the second by 2θ,
+the third by 3θ and so on. As we move further down the sequence, the
+embedding vector ‘spins’ further away from the origin in a predictable,
+calculable way.</p>
+<p>The idea now is that as well as the semantics of the words being
+encoded in the embedding, as we saw in the previous section, the
+<em>position</em> of the word can also be encoded, so when the model
+calculates the attention scores it can keep both in mind. So, recalling
+that the embeddings are vectors, and the relative <em>meanings</em>
+between words (like we saw with characters in Pride and Prejudice) can
+be encoded in the relationships between those vectors, we can evaluate
+this in mathematics using a dot product. When words are semantically
+similar, their dot product is high because their vectors are similar.
+Otherwise the dot product is low. Models use this to pay attention based
+on relevance.</p>
+<p>But without positional encoding, the model may think that the word
+“cat” at the beginning of a book is the exact same ‘cat’ that shows up
+at the end of the book. It can see the meaning of a cat, but is blind to
+the order in which the cat appears.</p>
+<p>Using RoPE, you don’t destroy this semantic: you just twist it by
+rotating it through an angle. Now, words that are closer together in a
+sentence have similar rotations, and as such a similarity of
+<em>position</em> is encoded into the vector also. It’s complex math
+that gives a simple solution.</p>
+</section>
+</section>
+</section>
+</section>
+</section>
+</section>
+<section data-type="sect1" data-pdf-bookmark="Other Considerations">
+<section id="ch02.html_ch02_other_considerations_1772730611469661"
+class="sect1">
+<h1>Other Considerations</h1>
+<p>Beyond the architecture, there are several other model capabilities
+you should keep in mind. We’ll discuss them in this section.</p>
+<section data-type="sect2" data-pdf-bookmark="Instruction Following">
+<section id="ch02.html_ch02_instruction_following_1772730611469706"
+class="sect2">
+<h2>Instruction Following</h2>
+<p>Some models are better at following complex, multi-step instructions.
+This emerges from instruction-tuning during pretraining. This means that
+the training data for the model was explicitly done as question-answer
+pairs to look more like real world usage. This makes the model better at
+generalizing for conversations where the user typically asks a question,
+and the model answers. Models labeled “Instruct” or “Chat” have been
+specifically trained for this. We saw this when looking at Gemma, when
+the models are helpfully named with an '-it’ at the end when
+instruction-tuned. Do note that if your task requires precise
+instruction following, starting from an instruction-tuned base is
+usually better than starting from a base model.</p>
+</section>
+</section>
+<section data-type="sect2" data-pdf-bookmark="Reasoning Depth">
+<section id="ch02.html_ch02_reasoning_depth_1772730611469749"
+class="sect2">
+<h2>Reasoning Depth</h2>
+<p>Often reasoning is just the model ‘talking to itself’. It looks at
+the user’s query, then looks at its answer, and then uses that to try to
+drive a better answer. Larger models generally show better multi-step
+reasoning, but architectural choices, particularly in smaller models
+also matter greatly. MoE models like Mixtral can route different
+reasoning steps through different experts, potentially improving complex
+reasoning, and giving you a generalized overview of the solution. While
+this is usually a ‘plus', it’s not always necessarily the case. For
+example, a single step through the code expert for a code solution, may
+work better than multiple steps through other experts! For tasks
+requiring deep reasoning (mathematical proofs, complex analysis), you
+may need a larger model or accept multiple inference calls with
+chain-of-thought prompting where, instead of relying on the model to
+internally reason, you can just prompt it again (and again, and again)
+to force it to reason. This can be very difficult to fine tune, so
+manage your expectations accordingly!</p>
+</section>
+</section>
+<section data-type="sect2"
+data-pdf-bookmark="Context Windows and the ‘Lost in the Middle’ problem">
+<section
+id="ch02.html_ch02_context_windows_and_the_lost_in_the_middle_probl_1772730611469798"
+class="sect2">
+<h2>Context Windows and the ‘Lost in the Middle’ problem</h2>
+<p>Just because a model has a large context window doesn’t mean it uses
+long contexts effectively. “Lost in the middle” is a known phenomenon
+where models attend strongly to the beginning and end of the context but
+miss information in the middle. This can be particularly dangerous in
+the case of a sliding window to drive longer contexts. When fine tuning
+in particular, you should test the base model’s ability to recall
+information from various positions in the document to see if it has this
+problem, before committing to the significant investment of fine tuning
+it!</p>
+</section>
+</section>
+</section>
+</section>
+<section data-type="sect1" data-pdf-bookmark="Summary">
+<section id="ch02.html_ch02_summary_1772730611469844" class="sect1">
+<h1>Summary</h1>
+<p>As you can see, deciding which model to use relies on a variety of
+factors. Personally, I like to use the following questions, in no
+particular order of priority.</p>
+<ol>
+<li><p>What tokenizer does the model use? Will it encode <em>my</em>
+data accurately and meaningfully?</p></li>
+<li><p>How large is the context window? How large is it in reality, and
+how large is it because of neat tricks in the KV cache? Does the context
+window meet the expected demands of my users?</p></li>
+<li><p>How big is the model? Will it fit into the available memory I
+have in order to host it where I want? Can it be quantized? What will
+the impact of quantizing be?</p></li>
+<li><p>If I am retraining, what are the memory constraints of my
+training system? Will it work with the number of parameters, the context
+window size, and the memory available to me?</p></li>
+</ol>
+<p>Also note the following findings:</p>
+<ol>
+<li><p>When it comes to Attention Type, models that use GQA generally
+offer high inference efficiency, but MQA offers much better efficiency
+as a cost of quality</p></li>
+<li><p>Dense models like Llama and Mistral are usually easier to
+fine-tune. MoE models offer more capacity but are more difficult to
+change.</p></li>
+<li><p>Tokenizer efficiency can have a huge impact on the time it takes
+to retrain or fine tune a model</p></li>
+<li><p>The Conext window size should accommodate your longest training
+examples and expected inference inputs.</p></li>
+<li><p>Typically Base Models are better to give you the control you want
+over the final behavior, but if your scenario is an instruction-based
+one (like chat,) you might be better off using an instruction tuned
+variant of the model.</p></li>
+<li><p>Hardware. Remember that <em>training</em> takes significantly
+more resources than inference. Make sure that your model isn’t just
+suited to your end users inference needs, but also that you can think
+about the training needs and costs, which can be significant!</p></li>
+</ol>
+<p>The number of models available to you is growing all the time. But I
+think these questions give you a great starting point!</p>
+<p>Understanding these architectural foundations will serve you
+throughout your fine-tuning journey. In the next chapter, we’ll
+translate this theoretical knowledge into practical hardware and
+software setup—the fine-tuner’s workshop where you’ll start building
+your expert models.</p>
+</section>
+</section>
+</div>
+</div>
+</div>
+<p><span id="ch03.html"></span></p>
+<div id="ch03.html_book-content">
+<div id="ch03.html_sbo-rt-content">
+<div id="ch03.html_ch03_the_fine_tuner_s_workshop_1772730612423234"
+class="chapter">
+<h1><span class="label">Chapter 3. </span>The Fine-Tuner’s Workshop</h1>
+<aside data-type="sidebar" epub:type="sidebar">
+<section id="ch03.html_id87" class="sidebar">
+<h1>A Note for Early Release Readers</h1>
+<p>With Early Release ebooks, you get books in their earliest form—the
+author’s raw and unedited content as they write—so you can take
+advantage of these technologies long before the official release of
+these titles.</p>
+<p>This will be the 3rd chapter of the final book. Please note that the
+GitHub repo will be made active later on.</p>
+<p>If you’d like to be actively involved in reviewing and commenting on
+this draft, please reach out to the editor at
+<em>mcronin@oreilly.com</em>.</p>
+</section>
+</aside>
+<p>Have you ever tried to build furniture with the wrong tools?
+Thankfully the Ikea’s of the world include the necessary allen keys and
+screwdrivers. But before they started providing those, you usually, at
+best, ended up with a wobbly desk. And that’s <em>after</em> fighting
+with your equipment before you actually built anything.</p>
+<p>Fine tuning a model is no different. The right hardware and software
+setup is everything, and the perfect investment to prevent frustrating
+long nights full of cryptic error messages.</p>
+<p>In this chapter, we’ll talk about that workbench. The search space
+for the correct hardware is near infinite, so I’ll be opinionated about
+what I think is a good set to begin with! You don’t have to go with my
+suggestions, of course, but I <em>will</em> be using them through all
+the examples in this book.</p>
+<section data-type="sect1" data-pdf-bookmark="Why Setup Matters">
+<section id="ch03.html_ch03_why_setup_matters_1772730612423374"
+class="sect1">
+<h1>Why Setup Matters</h1>
+<p>When you run inference on a model, feed a prompt and get a response,
+you’re doing relatively lightweight work. The model’s weights sit in
+memory, data flows through the network and causes a bunch of
+calculations. The tensors get collapsed into output tokens that get
+decoded into words. A decent laptop can handle inference on a 7B sized
+model.</p>
+<p>But fine tuning is fundamentally different. You’re not just running
+data through the model—you’re updating the parameters within the model
+itself. So, every training step requires you not just to store the
+weights and biases, but also the gradients—the direction each weight
+should move to get your desired goals. Additionally the optimizer keeps
+states, which is momentum and variance history that is tracked for every
+parameter. Some optimizers like Adam may have double the storage than
+the weights and biases.</p>
+<p>A rough calculation is that a 7B parameter with 16-bit precision
+takes about 14Gb of memory. But there’s much more to it than just the
+parameters—Add the gradients, optimizer states, activations, etc and
+you’re pushing 70-80Gb, which is way beyond consumer GPUs at reasonable
+price points, likely setting you back five figures for a workstation.
+You’ll see that calculation in more detail later in this chapter.</p>
+<p>If you’ve tried doing anything with fine tuning models you’ve
+probably seen a ‘Cuda Out of Memory’ message. It worked yesterday when
+you did inference, but now you’re asking a lot more of that memory!</p>
+<p>So, if you get nothing else from this chapter, please realize that
+measuring the size of the model is just the first step in understanding
+your needs for tuning that model.</p>
+<p>After memory, the next important thing to consider is your software
+environment. For fine tuning, the ecosystem is constantly evolving, but
+consider it to sit at the intersection of PyTorch, CUDA, Hugging Face,
+and quantization tools. Each has their own version requirements and
+interdependencies. For example, version mismatching between CUDA and
+PyTorch will often give you a silent failure—your code works, but it
+doesn’t take advantage of the GPU exploding the time it takes to do
+anything! A mismatch between bitsandbytes and your CUDA version can give
+you a load failure or a compilation error that sends you down a Stack
+Overflow rabbit hole or a very long conversation with your LLM of
+choice.</p>
+<section class="note" data-type="note">
+<h6>Note</h6>
+<p><em>Vibe coding</em> is awesome, but it is prone to issues like this.
+Training sets used to train models to understand and generate code don’t
+have errors like this—they’re based on reference implementations that
+just work. So the code the LLM spits out might be factually correct, but
+they still have problems because your environment isn’t correctly set up
+for it. And when you ask the LLM to fix the problem, it will likely try
+to fix the code, but the code wasn’t broken to begin with! The bottom
+line: You have to understand your environment, and you have to ensure
+that it works!</p>
+</section>
+<p>The good news: These problems aren’t insurmountable. When you know
+what to look for, you’ll know how to solve them. This chapter will give
+you the map to that hidden treasure.</p>
+<p>One thing to keep in mind is that there are many options for the
+environment, not least the GPU—AMD and ROCm, or Apple and Metal are
+valid competitors to NVidia and CUDA. For the most part, in this book,
+I’ll follow the most common path (NVidia and CUDA).</p>
+</section>
+</section>
+<section data-type="sect1"
+data-pdf-bookmark="The GPU: Your First Decision">
+<section
+id="ch03.html_ch03_the_gpu_your_first_decision_1772730612423440"
+class="sect1">
+<h1>The GPU: Your First Decision</h1>
+<p>Modern language models are typically built on transformer, or
+transformer-derivative architecture– these function primarily using
+matrix multiplications. A single forward pass through a model will
+involve many thousands of large matrix operations. We saw in <a
+href="#ch02.html_ch02_model_architectures_the_dna_of_ai_1772730611468542"
+data-type="xref">Chapter 2</a> how we multiply weight matrices against
+input vectors, computing attention scores across sequences of tokens,
+and projecting values through feed forward layers.</p>
+<p>A CPU is designed for sequential logic–branching decisions, routing
+control flow, and threading output. Generally it has a handful of very
+powerful cores, each of which can do one thing very very fast.</p>
+<p>A GPU, on the other hand, can have many thousands of smaller cores.
+For example, an NVidia A100 has almost 7,000 of them! And they are
+designed to do the same operation on many pieces of data simultaneously.
+Despite being designed for graphics (that’s the ‘G’ in GPU!), this also
+perfectly suits AI’s hunger for matrix multiplication. The architecture
+of the GPU allows you to do thousands of them <em>in parallel</em>.</p>
+<p>The result is that AI workloads can be orders of magnitude faster on
+a GPU than on a CPU. So they’re not optional. Don’t worry if you don’t
+own them—many cloud platforms offer access to GPUs by-the-hour, or tools
+like Google’s Colab will give you GPU access for free. We’ll explore
+those later.</p>
+<section data-type="sect2"
+data-pdf-bookmark="VRAM: One Number to Rule Them All">
+<section
+id="ch03.html_ch03_vram_one_number_to_rule_them_all_1772730612423516"
+class="sect2">
+<h2>VRAM: One Number to Rule Them All</h2>
+<p>Given that GPUs aren’t optional, we now have to explore the memory
+that’s available to the GPU, and that’s VRAM, or Video RAM. Why Video?
+Well—it’s another holdover from video games and GPUs. In our case it has
+nothing to do with video or games, but the important point is that it’s
+the memory that is <em>directly</em> accessible to the GPU. Many
+computers have a motherboard and a CPU with RAM, and then a card with
+the GPU on it as a separate plug-in device. As the GPU needs to work
+with numbers, those numbers have to be in memory—and transferring to and
+from the system RAM through the card slot slows things down. The obvious
+solution—give the GPU Card its own dedicated memory. And that’s
+VRAM.</p>
+<p>It is a hard constraint that determines what you can and cannot
+fine-tune effectively. If the combined footprint of your model,
+gradients, optimizer states, activations and other overhead exceeds the
+available VRAM, training will at best be very slow (because of all the
+memory swapping across the card interface and the motherboard), or at
+worst crash completely. My experience has been that if it doesn’t fit in
+VRAM, don’t bother—you’ll be setting yourself up for a world of
+pain.</p>
+<p>A drawback: VRAM is very expensive. It’s rare to find GPUs with more
+than 32Gb of VRAM without breaking several banks. The solution is
+<em>distributed</em> training, where multiple GPUs work in tandem
+<em>sharing</em> their VRAM. 2 GPUs with 32Gb each are a lot cheaper
+than 1 GPU with 64Gb.</p>
+<p>Let’s now get a little deeper into VRAM requirements and take a look
+at how it can and will impact your decisions.</p>
+<section data-type="sect3"
+data-pdf-bookmark="Calculating VRAM requirements for a 7B model">
+<section
+id="ch03.html_ch03_calculating_vram_requirements_for_a_7b_model_1772730612423582"
+class="sect3">
+<h3>Calculating VRAM requirements for a 7B model</h3>
+<p>To fine tune a 7B model, we need to calculate how much VRAM we will
+use during training, and this will start with the <em>model
+weights</em>. As there are 7 billion of them, they’ll have an immediate
+impact. The first thing we need to figure out is how much they store
+based on their precision. You’ll see several methods of precision in
+technical documentation, but the most common four are:</p>
+<ul>
+<li><p>FP32: (32-bit Floating point) - 4 bytes per parameter, so 28B
+Bytes</p></li>
+<li><p>FP16: (16-bit Floating point) - 2 bytes per parameter, so 14B
+Bytes</p></li>
+<li><p>INT8: (8-bit quantized) - 1 byte per parameter, so 7B
+Bytes</p></li>
+<li><p>INT4: (4-bit quantized) - 0.5 bytes per parameter, so 3.5B
+Bytes</p></li>
+</ul>
+<p>There are other areas in research looking at different levels of
+precisions—FP8 is becoming popular, for example, as are much smaller
+ones like 2-bit encoding. As you can probably guess, the lower the
+memory, the lower the precision, but often we have discovered for tasks
+like language models, you really don’t need 32-bit precision. Think
+about it, when predicting the next token, you don’t gain anything from
+being 99.0000234023523% accurate as opposed to 99.00002% accurate!</p>
+<p>So ultimately there’s a tradeoff, but fine tuners will typically
+begin with FP16, costing 14B bytes off the bat. You can experiment with
+INT8 and INT4, which I would definitely recommend at least to begin
+with, if you’re hitting memory constraints.</p>
+<p>Next up is the <em>gradients</em>. While this book won’t go into
+depth on the Machine Learning process, an important part of it is called
+<em>backpropagation</em>, where, in order to adjust parameters, and by
+definition ‘learn’, the algorithm has a gradient that it calculates for
+the <em>direction</em> in which it should adjust a parameter. In
+simplistic terms, that means ‘up’ or ‘down’ and by ‘how much’. Each
+gradient is the <em>same size</em> as its associated parameter. The
+calculations above hold true, effectively doubling the amount of memory.
+So at 16 bit precision, you need 14B Bytes for the parameters, and
+another 14B Bytes for the gradients.</p>
+<section class="note" data-type="note">
+<h6>Note</h6>
+<p>A fine-tuning technique called <em>LoRA</em> which we will explore in
+Chapter X doesn’t use <em>all</em> the parameters, just a very small
+subset of them. So for example, if it only uses 1% of the parameters,
+that’s 0.14B for the parameters and another 0.14B for the gradients.
+That’s very little, and possible to do on a GPU with only 8Gb of memory!
+As a result, you can see why it’s very popular!</p>
+</section>
+<p>A necessary part of Machine Learning and fine-tuning is to use an
+<em>Optimizer</em>. A very common one in fine-tuning is called Adam. The
+goal of the optimizer is to compute the gradients we mentioned
+above—determining direction and quantity that parameters need to move in
+in order to become more effective at their job (aka ‘learning’). The
+Adam optimizer needs <em>two</em> additional values per parameter—a
+running mean, and a running variance. These need to be <em>highly</em>
+accurate, so they are typically stored in FP32 regardless of how the
+weights are encoded. As a result, they take up 8 bytes per trainable
+parameter. So, for a full fine tune of a 7B model, that’s 56Gb extra
+just for the optimizer! Again, if using LoRA, this might be 1% of that,
+or 0.56GB, much more palatable!</p>
+<p>One part of Machine Learning that is often forgotten about
+storage-wise is <em>Activations<em>,</em></em> where the output of each
+layer is stored, so it can be used in the backward pass to compute the
+gradients. The memory here depends on the model architecture for things
+like batch size, sequence length etc. For a 7B model with a batch size
+of 1, and a sequence of 2048 tokens, the activations might consume
+2-4Gb. Again it depends very much on the model architecture, but it’s
+important to note that it will scale linearly with batch size, so that
+will double for a batch size of 2 and so on. So when it comes to fine
+tuning, the memory requirements might constrain your batch sizes. Less
+memory, and you can only do the smallest batch (1), more memory and you
+can do more batches. Another reason why VRAM is important—because the
+more data you can move in a single pass by batching it, the faster your
+training or retraining will move!</p>
+<p>So let’s add these numbers up.</p>
+<p>For full fine tuning at FP16 (Table 3-1):</p>
+<table id="ch03_table_1_1772730612415817">
+<thead>
+<tr>
+<th>Component</th>
+<th>Memory (approximate)</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Model Weights (FP16)</td>
+<td>14Gb</td>
+</tr>
+<tr>
+<td>Gradients (FP16)</td>
+<td>14Gb</td>
+</tr>
+<tr>
+<td>Optimizer States (FP32)</td>
+<td>56Gb</td>
+</tr>
+<tr>
+<td>Activations</td>
+<td>2Gb</td>
+</tr>
+<tr>
+<td>Total</td>
+<td>84Gb</td>
+</tr>
+</tbody>
+</table>
+<p>That’s more than any single consumer GPU can hold. Even the
+superpowered 80GB A100, the superstar workhorse for machine learning
+would struggle without aggressive optimization. At time of writing,
+these GPUs cost ~ $14,000 each</p>
+<p>If, instead of full fine-tuning, you were to do a LoRA at FP16, it
+would look like Table 3-2:</p>
+<table id="ch03_table_2_1772730612415843">
+<thead>
+<tr>
+<th>Component</th>
+<th>Memory (approximate)</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Model Weights (FP16)</td>
+<td>14Gb</td>
+</tr>
+<tr>
+<td>LoRA Adapter Weights</td>
+<td>0.14Gb</td>
+</tr>
+<tr>
+<td>Gradients (FP16)</td>
+<td>0.14Gb</td>
+</tr>
+<tr>
+<td>Optimizer States (FP32)</td>
+<td>0.56Gb</td>
+</tr>
+<tr>
+<td>Activations</td>
+<td>2Gb</td>
+</tr>
+<tr>
+<td>Total</td>
+<td>17Gb</td>
+</tr>
+</tbody>
+</table>
+<p>Now we’re in the territory of a consumer grade GPU, like an RTX 4090
+with 24Gb of VRAM, which costs about 1/10th of the A100.</p>
+<p>Finally, if we look at QLoRA (we’ll explore it in detail in Chapter
+X), we can see that it gets even smaller (Table 3-3):</p>
+<table id="ch03_table_3_1772730612415855">
+<thead>
+<tr>
+<th>Component</th>
+<th>Memory (approximate)</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Model Weights (4-Bit Quantized)</td>
+<td>3.5Gb</td>
+</tr>
+<tr>
+<td>LoRA Adapter Weights</td>
+<td>0.14Gb</td>
+</tr>
+<tr>
+<td>Gradients (FP16)</td>
+<td>0.14Gb</td>
+</tr>
+<tr>
+<td>Optimizer States (FP32)</td>
+<td>0.56Gb</td>
+</tr>
+<tr>
+<td>Activations</td>
+<td>2Gb</td>
+</tr>
+<tr>
+<td>Total</td>
+<td>7Gb</td>
+</tr>
+</tbody>
+</table>
+<p>This will fit in only 8Gb of VRAM. GPUs with 8Gb of will typically
+cost 1/10th of a 24GB Variant like the RTX 4090 mentioned above. I’ve
+seen them in stores for $100-$200. Much more manageable, and also
+available on the free tier of Google Colab—with the T4 GPU that has 16Gb
+VRAM.</p>
+<p>This was just for a 7B model. Use Table 3-4 to explore what you would
+need for other common sizes:</p>
+<table id="ch03_table_4_1772730612415864">
+<thead>
+<tr>
+<th>Size</th>
+<th>Full FT (FP16)</th>
+<th>LoRA (FP16)</th>
+<th>QLoRA(4-bit)</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>3B</td>
+<td>~36Gb (A100 40Gb)</td>
+<td>~8 Gb (RTX 3060)</td>
+<td>~4Gb (RTX 3060)</td>
+</tr>
+<tr>
+<td>7B</td>
+<td>~86Gb (A100 80Gb)</td>
+<td>~17Gb (RTX 4090)</td>
+<td>~7Gb (T4/ RTX 4070)</td>
+</tr>
+<tr>
+<td>13B</td>
+<td>~160Gb (multi GPU)</td>
+<td>~ 32Gb (A100 40Gb)</td>
+<td>~12Gb (RTX 4080)</td>
+</tr>
+<tr>
+<td>70B</td>
+<td>~800Gb (multi node)</td>
+<td>~160Gb (multi GPU)</td>
+<td>~40Gb (A100 40Gb)</td>
+</tr>
+</tbody>
+</table>
+<p>Here’s a comparison of each of these (Table 3-5):</p>
+<table id="ch03_table_5_1772730612415873">
+<thead>
+<tr>
+<th>Component</th>
+<th>FP16 Full Tune</th>
+<th>LoRA (1% Rank)</th>
+<th>QLoRA (4-bit)</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Model weights</td>
+<td>14 GB</td>
+<td>14 GB</td>
+<td>3.5 GB</td>
+</tr>
+<tr>
+<td>Gradients</td>
+<td>14 GB</td>
+<td>0.14 GB</td>
+<td>0.14 GB</td>
+</tr>
+<tr>
+<td>Optimizer states</td>
+<td>56 GB</td>
+<td>0.56 GB</td>
+<td>0.56 GB</td>
+</tr>
+<tr>
+<td>Total (approx)</td>
+<td>84+ GB</td>
+<td>~17 GB</td>
+<td>~7 GB</td>
+</tr>
+</tbody>
+</table>
+<p>The takeaway: to get started on fine tuning without taking on
+excessive GPU expense, work with LoRA or QLora. It’s a sweet spot, it’s
+highly effective, and it’s accessible on consumer hardware!</p>
+</section>
+</section>
+</section>
+</section>
+<section data-type="sect2" data-pdf-bookmark="Understanding GPUs">
+<section id="ch03.html_ch03_understanding_gpus_1772730612423642"
+class="sect2">
+<h2>Understanding GPUs</h2>
+<p>In the previous section, I noted a lot about GPUs with names like
+RTX, A100, and so on. If you aren’t familiar with them, don’t worry! But
+let’s take a quick look at the variety of GPUs that are out there, and
+which ones to consider.</p>
+<section data-type="sect3" data-pdf-bookmark="Consumer GPUs">
+<section id="ch03.html_ch03_consumer_gpus_1772730612423691"
+class="sect3">
+<h3>Consumer GPUs</h3>
+<p>I’ll define consumer grade GPUs as ones that are readily available to
+purchase in retail, and which use standard card interfaces in PCs to
+use. The flagship of these at time of writing is the NVIDIA RTX 4090
+with 24Gb of VRAM. Their MSRP is about $1400, but they can often be
+found on secondary markets selling for much more because of rarity! With
+one of these LoRA or QLoRA on 7B models is a snap. And while it’s a lot
+of money, consider that it’s more powerful than the data center
+dedicated GPUs of just a few years ago. Failing that, the previous
+generation RTX 3090, with 24Gb is also perfectly serviceable, and
+usually can be found at a significant discount. Ultimately, the amount
+of VRAM is the better indicator for you of performance. While 40x0 class
+machines have better performance metrics, if they don’t have 24Gb,
+you’ll be limited.</p>
+<p>AMD also provide excellent devices that are unlocked by the ROCm
+platform. The Radeon RX 7900 XTX has 24Gb VRam and competitive specs to
+the RTX 4090 generally available at a steep discount from its NVidia
+counterpart. However, the fine tuning ecosystem for AMD-based chips
+isn’t as mature as for NVidia. Technologies like Flash Attention,
+bitsandbytes, and parts of the Hugging Face stack were built to be
+NVidia first. This puts you at a significant disadvantage.</p>
+<p>If you’re on a Mac with <em>Apple Silicon</em> (M-series chips), you
+have an interesting option that’s worth understanding. Apple’s unified
+memory architecture means the GPU and CPU share the same RAM, so the
+need for dedicated VRAM on other systems goes away. This is ultimately
+because the CPU and the GPU are the same chip—as opposed to the GPU
+being on a card that’s plugged into the motherboard.</p>
+<p>When a framework reports available “VRAM,” it’s reporting your system
+RAM—and that can be substantial. An M4 Max with 128 GB of unified memory
+technically has more “VRAM” than an A100.</p>
+<p>The catch is throughput. Apple’s GPU cores are very capable but not
+as numerous or as fast for matrix operations as NVIDIA’s data center
+GPUs. A training run that takes 1 hour on an A100 might take 4-6 hours
+on an M4 Max. The memory is there, but the compute takes longer to chew
+through it. And, similar to working with any other non-Nvidia chip, the
+ecosystem that has grown around NVidia is a significant moat, so you may
+have compatibility issues.</p>
+</section>
+</section>
+<section data-type="sect3" data-pdf-bookmark="Data center GPUs">
+<section id="ch03.html_ch03_data_center_gpus_1772730612423738"
+class="sect3">
+<h3>Data center GPUs</h3>
+<p>The NVIDIA A100 is the industry standard for many AI workloads,
+including fine-tuning.</p>
+<p>It’s not often clear when using it in hosted environments like Google
+Colab, but it comes in 40 GB and 80 GB variants, with the 80 GB version
+being the more common offering on cloud platforms, but you should check
+before use if you need more than 40GB before you pay for it!</p>
+<p>An A100 can handle LoRA on 70B models and full fine-tuning on models
+up to about 7B. Its memory bandwidth (2 TB/s on the 80 GB version) means
+it doesn’t just have more VRAM—it moves data through the GPU faster,
+which translates to much shorter training times.</p>
+<p>The NVIDIA H100 is the current flagship. I don’t know why they choose
+these names, with the ‘A’ looking very similar to the ‘H’ in many fonts.
+So be sure when you’re selecting which one you’re getting! It’s faster
+than the A100 in every dimension—more memory bandwidth, better tensor
+core performance, support for FP8 precision—and cloud providers charge a
+premium for it. For most fine-tuning workloads covered in this book, an
+A100 is more than sufficient, and the cost savings are meaningful.</p>
+<p>Newer options like the NVIDIA L4 (24 GB) and L40S (48 GB) are showing
+up on cloud platforms as cost-effective mid-tier options. The L4 in
+particular is positioned as a fine-tuning and inference GPU, and its
+pricing on platforms like Google Cloud makes it attractive for sustained
+workloads.</p>
+<p>Indeed, when you look at Google Colab, you can see the GPUs available
+for you to use. Please note that this list can change over time—and the
+ones available at time of writing are shown in <a
+href="#ch03.html_ch03_figure_1_1772730612412203"
+data-type="xref">Figure 3-1</a>.</p>
+<figure>
+<div id="ch03.html_ch03_figure_1_1772730612412203" class="figure">
+<img src="assets/ch03_figure_1_1772730612412203.png" width="565"
+height="502"
+alt="A screenshot of a computer program AI-generated content may be incorrect." />
+<h6><span class="label">Figure 3-1. </span>Data Center GPUs in Google
+Colab</h6>
+</div>
+</figure>
+<p>As you can see, the H100 and the A100 are available, as are L4 and
+T4. There’s also a switch for ‘High-RAM,’ where for machines like the
+A100 that have different VRAM configurations you can switch between the
+two.</p>
+<p>Once you start an instance, there’s a small ‘RAM/DISK’ button at the
+top right, and selecting that will give you your current machine specs
+(<a href="#ch03.html_ch03_figure_2_1772730612412233"
+data-type="xref">Figure 3-2</a>).</p>
+<figure>
+<div id="ch03.html_ch03_figure_2_1772730612412233" class="figure">
+<img src="assets/ch03_figure_2_1772730612412233.png" width="725"
+height="439"
+alt="A screenshot of a computer AI-generated content may be incorrect." />
+<h6><span class="label">Figure 3-2. </span>System Specs for a T4 High
+Ram</h6>
+</div>
+</figure>
+<p>In this case I selected a T4 with High Ram, and you can see that the
+GPU VRam available is 15.0Gb. Good for LoRA or QLora on smaller models,
+but not much else. Still—it’s cheap, at 1.41 units per hour, where 100
+units cost me $10, so about 14 cents per hour to use. This is a great
+alternative to paying hundreds, or thousands for your own GPU that would
+take many hours before it pays for itself!</p>
+</section>
+</section>
+<section data-type="sect3"
+data-pdf-bookmark="Distributed training with multiple GPUs">
+<section
+id="ch03.html_ch03_distributed_training_with_multiple_gpus_1772730612423787"
+class="sect3">
+<h3>Distributed training with multiple GPUs</h3>
+<p>There will come a point—maybe not in this book, but hopefully
+sometime in your fine-tuning career—when a single GPU isn’t enough.</p>
+<p>Maybe you need to train a 70B model that doesn’t fit on one card even
+with QLoRA. Maybe you have a production deadline and need to train
+faster. Or maybe new model innovations have grown so far that they’ve
+outpaced the readily available VRAM sizes. So you can combine CPUs and
+pool their VRAM, but that comes with overhead.</p>
+<p>There are two fundamental strategies to work with multiple GPUs to
+solve this problem:</p>
+<p><em>Data parallelism</em> copies the <em>entire</em> model onto
+<em>each</em> GPU, then splits each training batch across the GPUs. Each
+GPU processes its slice of the batch independently, computes gradients,
+and then the gradients are averaged across GPUs before updating the
+model. The <em>model</em> must fit on each individual GPU, but training
+is faster because you’re effectively multiplying your batch throughput
+by the number of GPUs. So, when it comes to VRAM size, you have to take
+into account how much the model takes up, and that will be replicated
+across each GPU, eating multiples of the available VRAM. The rest of the
+available VRAM headspace will be used for everything else, and that can
+typically be shared.</p>
+<p><em>Model parallelism</em> (sometimes also called tensor parallelism
+or pipeline parallelism, depending on the approach) splits the
+<em>model</em> itself across multiple GPUs. Different layers—or even
+different parts of the same layer—live on different cards. This lets you
+train models that are too large to fit on any single GPU. It’s more
+complex to set up and has significant communication overhead, but it’s
+the only way to handle truly large models on limited hardware.</p>
+<p>Frankly, you’ll typically have to use model parallelism, because
+while data parallelism is better for speeding up training, the
+replication of the model across different GPUs means that things like
+the optimizer weights become very difficult to manage without eating
+excess VRAM.</p>
+<p>Fortunately the HuggingFace ‘accelerate’ library makes handling this
+very approachable.</p>
+<p>You can start it by calling the following code:</p>
+<pre data-type="programlisting"><code>accelerate config</code></pre>
+<p>This will walk you through an interactive setup where you can specify
+your GPU system—how many you have, what type of parallelism you want,
+and how to use precision. Once you’ve got that then you can start your
+training with code like this:</p>
+<pre data-type="programlisting"><code>accelerate launch train.py</code></pre>
+<p>This will use the configuration and span your training load across
+available GPUs as specified.</p>
+<p>That said, for the models and techniques covered in this book, I will
+focus on using a single low VRAM GPU with LoRA and QLoRA .</p>
+<p>Multi-GPU is a “nice to have” for speed, or if you are working with
+larger models, but it is not a prerequisite for capability. If you have
+access to multiple GPUs (say, through a cloud instance with 4× A100s),
+`accelerate` makes it easy to take advantage of them. If you don’t, the
+good news is that you won’t be left behind when skilling up!</p>
+</section>
+</section>
+</section>
+</section>
+</section>
+</section>
+<section data-type="sect1" data-pdf-bookmark="The Software Stack">
+<section id="ch03.html_ch03_the_software_stack_1772730612423841"
+class="sect1">
+<h1>The Software Stack</h1>
+<p>Now that you understand the hardware requirements, choosing your
+software stack is probably a bit easier. In this section, we’ll talk
+through the stack, starting with the operating system.</p>
+<section data-type="sect2"
+data-pdf-bookmark="Choosing Your Operating System">
+<section
+id="ch03.html_ch03_choosing_your_operating_system_1772730612423894"
+class="sect2">
+<h2>Choosing Your Operating System</h2>
+<p>Ultimately, you want an OS that supports your hardware! Or, if you
+are choosing cloud-based hardware, you at least need to understand the
+software stack that the cloud service provider gives you.</p>
+<section data-type="sect3" data-pdf-bookmark="Using Linux">
+<section id="ch03.html_ch03_using_linux_1772730612423940" class="sect3">
+<h3>Using Linux</h3>
+<p>The default choice is generally some form of Linux. If you’re
+creating your own rig, Ubuntu is the best flavor of this because of its
+support. For example NVidia drivers and CUDA have first-class Ubuntu
+support, and virtually every tutorial, Docker image, or Cloud template
+you’ll see likely assumes you are using it.</p>
+<p>If you aren’t familiar with Linux, I’d encourage you to set up a
+Linux machine using the LTS (Long Term Support) version of Ubuntu. At
+time of writing, this is Ubuntu 22.04 LTS.</p>
+</section>
+</section>
+<section data-type="sect3" data-pdf-bookmark="Using Windows">
+<section id="ch03.html_ch03_using_windows_1772730612424001"
+class="sect3">
+<h3>Using Windows</h3>
+<p>Windows is an interesting operating system, to be sure! Once the
+stalwart of the Web and Server business, it kinda lost its way to
+Linux-based systems thanks to the LAMP (Linux, Apache, Php, MySql)
+stack. As the cloud evolved, this only accelerated. On the Desktop,
+Windows is still quite popular, but that popularity has massively waned
+with the popularity of Apple desktop and laptop computers running
+MacOS.</p>
+<p>To that end, Microsoft introduced WSL2 (Windows Subsystem for Linux
+2) which is surprisingly good. It runs a real Linux kernel, and has
+native CUDA passthrough where your Windows NVidia drivers are shared
+directly with the WSL2 environment, meaning you don’t need separate
+installations of them inside of WSL. Given that Windows is still the
+primary desktop operating system used for <em>gaming</em>, NVidia will
+continue to support Windows as a first class system.</p>
+<p>It’s not a <em>bad</em> option, and it’s worth considering if you are
+already using Windows. But directly using Linux instead of a ‘subsystem’
+is likely to introduce less complexity.</p>
+</section>
+</section>
+<section data-type="sect3" data-pdf-bookmark="Using macOS">
+<section id="ch03.html_ch03_using_macos_1772730612424045" class="sect3">
+<h3>Using macOS</h3>
+<p>For macOS users on Apple Silicon, the situation is continually
+evolving. PyTorch’s MPS backend works for basic training, and MLX (<a
+href="https://opensource.apple.com/projects/mlx/"><em>https://opensource.apple.com/projects/mlx/</em></a>)
+provides a more native experience. Apple has clearly invested heavily in
+Machine Learning, and are building the software stack to match.</p>
+<p>The primary limitation is ecosystem breadth: libraries like
+bitsandbytes have limited macOS support, and most troubleshooting
+resources assume NVIDIA hardware.</p>
+<p>My primary system is a Mac Mini, and I use it for many ML tasks, but
+for fine tuning anything but the smallest models, it can be a bit of a
+stretch. That being said, it’s nice to be able to use your primary
+system, and not have to build a dedicated one. So, if you, like me, are
+a Mac person—don’t rush out to buy a Linux box with an Nvidia GPU
+<em>just</em> yet. You may be able to do enough with your Mac!</p>
+<p>And when it doesn’t have the power, using your Mac as a thin client
+to a cloud GPU is a valid way forward—SSH into a cloud instance and run
+your training there. Or, of course, using something like Colab within
+your browser.</p>
+</section>
+</section>
+</section>
+</section>
+<section data-type="sect2"
+data-pdf-bookmark="Your Programming Environment">
+<section
+id="ch03.html_ch03_your_programming_environment_1772730612424092"
+class="sect2">
+<h2>Your Programming Environment</h2>
+<p>Let’s start with your programming language. While there are many
+options with various levels of maturity, there’s really only one you
+should start with—and that’s Python. It has the best support in terms of
+libraries for all ML and FT tasks, as well as an enormous support
+ecosystem. It’s hard to think about being effective in any way with ML
+and FT without first using Python. Later, you might start thinking about
+low-level efficiency and running code closer to the metal than you would
+with a high level interpreted language like Python, but don’t get
+distracted by those! Solidify your base with Python first.</p>
+<p>That comes with a drawback. With such a variety of ecosystems,
+there’s massive drift in version support, not just of Python, but also
+adjacent technologies like CUDA. To get around this, understanding
+Virtual environments is a massive prerequisite.</p>
+<p>There are two main approaches to this: <em>Conda</em> or
+<em>Venv</em>.</p>
+<p><em>Conda</em> is the more comprehensive choice. Conda manages not
+just Python packages but also system-level dependencies like CUDA
+toolkit versions. This means you can have one environment with CUDA 11.8
+and another with CUDA 12.1, switching between them seamlessly. For
+beginners or anyone who wants their CUDA management handled
+automatically, I would encourage time and effort investing in Conda!</p>
+<p><em>Venv (with pip)</em> is a much lighter weight option. It works
+really well if CUDA is already installed system-wide, is faster to set
+up, and pretty easy to manage. I personally like the control I get with
+multiple Venv setups, and in particular working with a Mac where I don’t
+have to worry about CUDA, it makes my ML life a lot easier!</p>
+<p>Whichever you choose—you will of course need to run Python within it,
+and with that, you’ll also need PyTorch. The next step would be to
+install PyTorch with GPU support, so if you are using an NVidia chip and
+need CUDA, you have to <em>really</em> pay attention. I have found that
+this is the step where most environmental problems begin—so keep a close
+eye on the details.</p>
+<p>The PyTorch foundation has done a great job in simplifying this if
+you start at: <a
+href="https://pytorch.org/get-started/locally/"><em>https://pytorch.org/get-started/locally/</em></a>,
+but it’s still easy to make a mistake.</p>
+<p>You can see this in <a
+href="#ch03.html_ch03_figure_3_1772730612412252"
+data-type="xref">Figure 3-3</a>.</p>
+<figure>
+<div id="ch03.html_ch03_figure_3_1772730612412252" class="figure">
+<img src="assets/ch03_figure_3_1772730612412252.png" width="977"
+height="393"
+alt="A screen shot of a computer AI-generated content may be incorrect." />
+<h6><span class="label">Figure 3-3. </span>Starting with PyTorch</h6>
+</div>
+</figure>
+<p>Note that, by default, when you click ‘Linux’ as your machine type,
+PyTorch will have the CPU type loaded. That’s all very well, but if
+you’re using a GPU, then PyTorch will effectively ignore it! So, you
+have to look at the Compute Platform column, and <em>before</em> you
+start with PyTorch make sure you are using the <em>exact</em> version
+that is listed. Intra-version compatibility often leads to problems, and
+I have found that CUDA releases in particular may be later than
+supported ones. The old adage of ‘use the latest version,’ which is
+typically good advice may not apply here. For example, at time of
+writing, the Compute Platform supports CUDA 12.6, 12.8 and 13.0, but the
+<em>latest</em> CUDA is 13.1. While it’s great to have the latest
+drivers for the best support of your machine should you be using it also
+for gaming or other activities, I strongly recommend you
+<em>strictly</em> follow the platform that PyTorch supports. In this
+case, you would use 13.0.</p>
+<p>Once you’ve installed it, you’re still not oout of the woods! I would
+encourage double checking that it’s working as recommended with code
+like this:</p>
+<pre data-type="programlisting"><code>import torch
+print(f&quot;PyTorch version: {torch.__version__}&quot;)
+print(f&quot;CUDA available: {torch.cuda.is_available()}&quot;)
+if torch.cuda.is_available():
+    print(f&quot;GPU: {torch.cuda.get_device_name(0)}&quot;)
+    print(f&quot;VRAM: {torch.cuda.get_device_properties(0).total_mem / 1e9:.1f} GB&quot;)</code></pre>
+<p>If the CUDA available line prints ‘false’, something went wrong. You
+might have CUDA installed, and there’s a mismatch with the PyTorch
+version, or you accidentally installed the CPU version of PyTorch. I
+hold my hand up as guilty there—did it too many times!</p>
+<p>Another thing you can investigate is the version that your machine or
+environment is using by issuing the nvidia-smi command. Make sure it
+matches the one for which you selected a PyTorch environment. If it
+doesn’t get new drivers that match one of the options, clean your
+system, and start again!</p>
+<p>It’s a lot of hassle up front, but it can save you a world of hurt
+down the line.</p>
+</section>
+</section>
+<section data-type="sect2" data-pdf-bookmark="The Core Library Stack">
+<section id="ch03.html_ch03_the_core_library_stack_1772730612424141"
+class="sect2">
+<h2>The Core Library Stack</h2>
+<p>Now that we have PyTorch verified, and it’s working with the GPU,
+you’ll next install the libraries you’ll use throughout this book. Each
+serves a specific role, and understanding what each one does will help
+you understand and debug issues later.</p>
+<p><em>PyTorch</em>, of course, is the deep learning framework
+everything else is built on. It provides the tensor operations,
+automatic differentiation (autograd), and GPU acceleration that power
+model training. You installed this in the previous step. Check out my
+O’Reilly book “AI and Machine Learning for Coders in PyTorch” if you
+want to learn more.</p>
+<p><em>Hugging Face Transformers</em> is the library that provides
+access to thousands of pre-trained models through a consistent API. When
+you write code like
+`AutoModelForCausalLM.from_pretrained(“meta-llama/Llama-3.2-3B”)`, where
+models are specified with a namespace, Transformers downloads the model
+architecture and weights from the Hugging Face Hub and turns them into
+PyTorch model that’s ready to use. It handles the differences between
+architectures—Llama, Mistral, Gemma, Phi, Qwen—behind a unified
+interface, so your training code doesn’t need to change when you switch
+models.</p>
+<p><em>Hugging Face PEFT</em> (Parameter-Efficient Fine-Tuning)
+implements the adapter methods that make fine-tuning practical on
+consumer hardware. LoRA, QLoRA, and other techniques are all provided
+through PEFT. When you apply a LoRA adapter to a model, PEFT injects
+small trainable matrices into the model’s layers while freezing the
+original weights. We’ll explore PEFT in depth in Chapter X.</p>
+<p><em>BitsAndBytes</em> is the quantization library that enables QLoRA
+specifically. As we saw earlier in this Chapter, in order to work on
+smaller grade GPUs, quantization is necessary, and bitsandbytes is your
+friend for this. It provides 4-bit and 8-bit quantization for model
+weights, allowing you to load a 14 GB model into 3.5 GB of VRAM. It’s
+developed by Tim Dettmers and is tightly integrated with Hugging Face
+Transformers—you can load a model in 4-bit precision with a single
+argument: `load_in_4bit=True`. This library, at time of writing, is
+<em>highly</em> optimized for NVidia. Support for other environments
+(Mac and AMD) is being added all the time, but you may hit walls here if
+you aren’t using an NVidia/CUDA stack.</p>
+<p><em>TRL</em> (Transformer Reinforcement Learning) provides high-level
+training APIs. Its `SFTTrainer` (Supervised Fine-Tuning Trainer) wraps
+PyTorch’s training loop with sensible defaults for fine-tuning language
+models. It handles data collation, gradient accumulation, logging,
+checkpointing, and evaluation. TRL also provides `DPOTrainer` for direct
+preference optimization, which we’ll cover in Chapter X.</p>
+<p><em>Hugging Face Accelerate</em> manages the details of running
+training across different hardware configurations. It handles
+mixed-precision training (using FP16 or BF16 to speed up computation),
+device placement (making sure tensors end up on the right GPU), and
+distributed training (splitting work across multiple GPUs). In most
+cases, you won’t interact with Accelerate directly—TRL uses it behind
+the scenes—but it’s there if you need to customize your training
+setup.</p>
+<p><em>Hugging Face Datasets</em> provides efficient data loading. It
+uses memory-mapped files and a framework called Apache Arrow under the
+hood, giving you the means to work with datasets much larger than your
+RAM. It integrates with the Hugging Face Hub, so loading a public
+dataset is a one-liner: `load_dataset(“tatsu-lab/alpaca”)`.</p>
+<p><em>Weights &amp; Biases (wandb)</em> is an experiment tracking
+platform. Every training run generates metrics—loss curves, learning
+rates, gradient norms—and you need somewhere to store and visualize
+them. Wandb integrates with TRL’s `SFTTrainer` with a single
+configuration parameter, and its free tier is generous enough for
+individual practitioners.</p>
+<p>All of these can be installed with a single pip command:</p>
+<pre data-type="programlisting"><code>pip install transformers peft bitsandbytes trl accelerate datasets 
+            wandb sentencepiece protobuf</code></pre>
+<p>The eagle-eyed among you might have spotted
+<code>sentencepiece</code> and <code>protobuf</code> at the end. These
+are tokenizer dependencies that some models require. Including them
+pre-emptively so you don’t hit a confusing error when you use those
+models, and wonder if there was something missing in your stack!</p>
+<p>You can test this with the code I’ve provided in the GitHub as a
+notebook called Chapter3.ipynb.</p>
+<p>When run on colab with an A100 NVidia GPU, you should see output like
+this. Note that inference worked, as did a very simple fine-tune using
+LoRA</p>
+<pre data-type="programlisting"><code>==================================================
+STEP 1: GPU Check
+==================================================
+GPU: NVIDIA A100-SXM4-40GB
+VRAM: 42.4 GB
+ 
+==================================================
+STEP 2: Loading model in 4-bit
+==================================================
+...
+Model loaded: TinyLlama/TinyLlama-1.1B-Chat-v1.0
+Model memory footprint: 0.75 GB
+ 
+==================================================
+STEP 3: Running inference
+==================================================
+Prompt: The capital of France is
+Response: The capital of France is Paris.
+What is the capital of France? Paris.
+ 
+==================================================
+STEP 4: Applying LoRA adapter
+==================================================
+trainable params: 1,126,400 || all params: 1,101,174,784 || trainable%: 0.1023
+ 
+==================================================
+STEP 5: Single training step
+==================================================
+Loss: 3.4863
+Gradient computed successfully!
+ 
+==================================================
+ALL CHECKS PASSED—Your environment is ready!
+==================================================</code></pre>
+<p>If you don’t get these results, these are some common errors:</p>
+<ul>
+<li><p>“CUDA is Not available” - You have a CPU-only PyTorch. That’s not
+the case in Colab, unless, of course, you select a CPU backend!</p></li>
+<li><p>“RuntimeError: CUDA out of memory” - The provided code downloads
+a tiny model of less than 1Gb. If you’re getting this error you either
+have a tiny GPU, or, more likely another model loaded and ate most of
+the memory and wasn’t cleared before this run!</p></li>
+<li><p>The ‘bitsandbytes’ library is compiled against your CUDA
+installation. I’ve seen lots of compilation errors because of mismatches
+between it and the CUDA toolkit. Check your versions carefully!</p></li>
+<li><p>Model Download failures. The HuggingFace APIs provide a nice
+visualization of the fragmented download. Keep an eye on these to check
+for any failure. Models get downloaded to a hidden cache directory
+(~/.cache/huggingface/)—and if there isn’t sufficient space here, you
+can have problems.</p></li>
+</ul>
+</section>
+</section>
+<section data-type="sect2" data-pdf-bookmark="Experiment Tracking">
+<section id="ch03.html_ch03_experiment_tracking_1772730612424190"
+class="sect2">
+<h2>Experiment Tracking</h2>
+<p>Beyond directory organization, you need a way to track what happened
+during each training run. What was the loss at step 1,000? How did the
+learning rate decay? At which step did the model start overfitting?
+These questions are nearly impossible to answer from log files alone,
+but trivial with a proper experiment tracker.</p>
+<section data-type="sect3"
+data-pdf-bookmark="Weights and Biases (wandb)">
+<section id="ch03.html_ch03_weights_and_biases_wandb_1772730612424238"
+class="sect3">
+<h3>Weights and Biases (wandb)</h3>
+<p>We previously saw Weights &amp; Biases (wandb), and this is the
+standard tool for experiment tracking for most of the ML community. It’s
+free for individual use, integrates easily with your code, and provides
+a web dashboard where you can visualize loss curves, compare runs side
+by side, and annotate your results.</p>
+<p>Setting it up is straightforward:</p>
+<pre data-type="programlisting"><code># Create a free account at wandb.ai, then
+wandb login
+# Paste your API key when prompted</code></pre>
+<p>Once authenticated, the transformers library gives you an API to
+automatically log into wandb. You can also configure it explicitly in
+your training arguments:</p>
+<pre data-type="programlisting"><code>from transformers import TrainingArguments
+ 
+training_args = TrainingArguments(
+    output_dir=&quot;./outputs/checkpoints&quot;,
+    report_to=&quot;wandb&quot;,
+    run_name=&quot;...&quot;,
+    # ... other arguments
+)</code></pre>
+<p>Every training run becomes a dashboard showing loss curves, learning
+rate schedules, gradient norms, and GPU memory usage. You can track them
+in real time as training progresses, which is useful for a manual early
+stop if things aren’t going well!</p>
+</section>
+</section>
+<section data-type="sect3" data-pdf-bookmark="TensorBoard">
+<section id="ch03.html_ch03_tensorboard_1772730612424283" class="sect3">
+<h3>TensorBoard</h3>
+<p>Part of the TensorFlow ecosystem, is an open source alternative that
+runs entirely locally, and can easily be used in environments like
+Colab.</p>
+<pre data-type="programlisting"><code>pip install tensorboard
+ 
+# In your TrainingArguments:
+# report_to=&quot;tensorboard&quot;
+ 
+# After training, launch the viewer:
+tensorboard --logdir ./logs</code></pre>
+<p>Even if you don’t use these tools, I strongly recommend that you keep
+a simple experiment log—even a spreadsheet or notepad—that records the
+date, model name, dataset version, key hyperparameters (LoRA rank,
+learning rate, epochs), final training loss, and evaluation score for
+each run.</p>
+<p>When you’ve run thirty experiments and need to find the best one,
+you’ll be grateful for this discipline. You’ll also find that it gets
+you into a routine of naming your checkpoints according to entries in
+this sheet or notepad, making them easier to find later, too!</p>
+</section>
+</section>
+</section>
+</section>
+</section>
+</section>
+<section data-type="sect1" data-pdf-bookmark="Cloud and Pay-as-You-Go">
+<section id="ch03.html_ch03_cloud_and_pay_as_you_go_1772730612424330"
+class="sect1">
+<h1>Cloud and Pay-as-You-Go</h1>
+<p>In the previous section, I used Colab as the environment for the
+model with an A100 backend. It’s a really good option if you don’t want
+to manage ownership of a GPU <em>or</em> build your own environment, the
+host does that for you. It’s a great example of Pay-as-you-Go making
+sense.</p>
+<p>But Colab isn’t the only option, of course. I’d like to introduce
+some others so you can see what’s available.</p>
+<p><em>Kaggle Notebooks</em> offer a similar experience to Colab. They
+typically have free GPU access (I have recently seen T4 and P100
+available) that have a 30-hour-per-week quota. That’s really generous.
+The interface is similar to Colab, albeit a little more vanilla
+notebook. One added bonus is for datasets—many are hosted on Kaggle
+already, so the integration is a little easier.</p>
+<p><em>Lambda Labs</em> takes it in a different direction. Instead of a
+notebook, you get a full Linux machine via SSH.</p>
+<p>They offer A100 and H100 instances and a carte blanche to install
+your own software, manage your own files, and have complete control over
+the environment.</p>
+<p>It’s really useful if you want to poke around in the underlying
+software stack and not have it fully managed for you, and feels more
+like your own machine in the cloud.</p>
+<p><em>RunPod</em> is an interesting alternative, operating as a GPU
+marketplace with both “Community Cloud” (cheaper, less reliable) and
+“Secure Cloud” (more expensive, more reliable) options. They offer
+spot/interruptible instances at lower prices—but the tradeoff is that
+your instance might be pre-empted by others—which is not ideal for long
+training runs. One nice thing is that ML software stacks are usually
+preinstalled which helps your setup time.</p>
+<p>Another interesting option is <a href="http://vast.ai">Vast.ai</a>,
+which is kind of like the Uber of GPU rental. It’s where individual GPU
+owners can rent out their hardware! Of course reliability and security
+can vary.</p>
+<p>Amd also offers <em>Digital Ocean</em>, a cloud service with ROCm
+powered AMD chips available to use.</p>
+</section>
+</section>
+<section data-type="sect1"
+data-pdf-bookmark="Local or Cloud—How to Decide">
+<section
+id="ch03.html_ch03_local_or_cloud_how_to_decide_1772730612424379"
+class="sect1">
+<h1>Local or Cloud—How to Decide</h1>
+<p>While every situation is different, I generally follow the following
+framework to help me decide where and how to do any tuning or
+fine-tuning of a model.</p>
+<p>You now understand the hardware options and the software stack. The
+remaining question is: where do I run this? The answer depends on your
+specific situation, and there’s no universally right choice. Here’s a
+decision framework to help you think through it.</p>
+<p>The first question is simple: Do you have a GPU with 16 GB or more of
+VRAM? If yes, your local machine can handle QLoRA on models up to 7B
+(with 16 GB). More VRAM, bigger models. This covers most of what we’ll
+do in this book. If no, cloud is your primary option.</p>
+<p>Then I would ask you: Is this a one-time experiment or ongoing work?
+If you’re working through this book and plan to fine-tune models as part
+of your regular work, investing in a local GPU pays for itself within a
+few months. If this is a one-off exploration, cloud gives you access
+without commitment, and typically with much lower outlay.</p>
+<p>Do you have data sovereignty requirements? Some
+organizations—particularly in healthcare, finance, and government—have
+strict rules about where data can be processed. If your training data
+can’t leave your premises, local training (or a private cloud
+deployment) is mandatory. This is one of the strongest arguments for
+local hardware: your data never leaves your building.</p>
+<p>Are you training models larger than 13B parameters? For 70B models,
+even QLoRA needs roughly 40 GB of VRAM—beyond any consumer GPU. You need
+an A100 (cloud) or a multi-GPU setup. For models up to 13B, a single RTX
+4090 with QLoRA is likely enough.</p>
+<p>The approach that most practitioners settle into is a hybrid
+workflow: develop and debug locally (or on free Colab) with a small
+model and a subset of data, then run the full training job on a cloud
+GPU when everything is working.</p>
+<p>Local is for iteration speed—you can restart a training run in
+seconds, tweak a hyperparameter, and try again without provisioning
+anything. Cloud is for the final training run where you need a bigger
+GPU or longer runtime.</p>
+<p>The examples in this book are designed to work across three
+tiers:</p>
+<dl>
+<dt>Google Colab Free (T4, 16 GB VRAM)</dt>
+<dd>
+<p>Qlora on models up to 7B parameters. This is the minimum requirement.
+If you have access to nothing else, you can still follow every
+example.</p>
+</dd>
+<dt>Local RTX 4090 or Colab Pro A100 (24-40 GB VRAM)</dt>
+<dd>
+<p>Qlora on models up to 13B, or LoRA (without quantization) on 7B
+models. More flexibility, faster training.</p>
+</dd>
+<dt>Cloud A100 80 GB</dt>
+<dd>
+<p>For the adventurous—LoRA on 70B models, full fine-tuning on 7B
+models, or any experiment where VRAM is the bottleneck.</p>
+</dd>
+</dl>
+<p>Ultimately, when you’ve finished with the book, my advice would be to
+pick the tier that matches your resources and don’t worry about the
+rest. The techniques are the same regardless of which GPU you’re using;
+only the model size and training speed change.</p>
+</section>
+</section>
+<section data-type="sect1" data-pdf-bookmark="Summary">
+<section id="ch03.html_ch03_summary_1772730612424425" class="sect1">
+<h1>Summary</h1>
+<p>In this Chapter you walked through setting up your fine-tuning
+workbench—the hardware, software, and environment decisions that
+underpin everything else in this book. We explored why GPU memory (VRAM)
+is the single most important constraint you’ll face, and how techniques
+like LoRA and QLoRA make fine-tuning accessible on hardware you can
+actually afford. You surveyed the software stack—from PyTorch and
+Hugging Face through to experiment tracking—and compared local and cloud
+options so you can pick the setup that fits your situation and
+budget.</p>
+<p>With your environment verified and a model downloaded, you now have a
+solid, working foundation. The tools are in place, the math makes sense,
+and you’re ready to focus on what actually matters: your data, your
+training strategy, and building expert models that are truly your
+own.</p>
+</section>
+</section>
+</div>
+</div>
+</div>
+<p><span id="colophon01.html"></span></p>
+<div id="colophon01.html_book-content">
+<div id="colophon01.html_sbo-rt-content">
+<section class="abouttheauthor colophon" data-type="colophon"
+data-pdf-bookmark="About the Author">
+<section id="colophon01.html_id26" class="colophon">
+<h1>About the Author</h1>
+<p><strong>Laurence Moroney</strong> is an award-winning researcher and
+best-selling author. A veteran in the programming and machine learning
+industry, Laurence has authored over 20 books, including top selling
+programming books, science fiction novels, and even movie-related comic
+books. He teaches popular AI specializations on Coursera with Andrew Ng
+of deeplearning.ai. A recognized speaker all over the world, Laurence is
+passionate about demystifying AI and ML for software developers.</p>
+</section>
+</section>
+</div>
+</div>
