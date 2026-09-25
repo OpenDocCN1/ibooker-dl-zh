@@ -57,6 +57,7 @@
 +   [生成式深度学习](docs/gen-dl/README.md)
 +   [生成式人工智能实战](docs/genai-act/README.md)
 +   [生成式人工智能软件开发指南](docs/genai-sw-dev/README.md)
++   [Kubernetes 生成式 AI](docs/generative-ai-on-kubernetes/README.md)
 +   [图神经网络实战](docs/gnn-act/README.md)
 +   [GPT3：使用大型语言模型构建创新的自然语言处理产品](docs/gpt3-bd-invt-nlp-prod-llm/README.md)
 +   [深度学习探索指南](docs/grok-dl/README.md)
