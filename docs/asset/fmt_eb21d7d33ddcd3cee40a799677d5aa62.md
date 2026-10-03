@@ -1,0 +1,409 @@
+
+# 索引
+
+## C
+
+- `DCGM Exporter`，164
+- `DDP`（分布式数据并行；`PyTorch`），254
+
+## D
+
+- 推理的解码阶段，xxxii
+  - 自回归特性，xxxii
+  - 在线信息，xxxiii
+  - 内存受限，xxx，xxxii
+  - `GPU` 用于解码阶段工作，xxxiii
+  - 投机解码，xxxii
+  - 推理的两个阶段，xxx
+- 解码器模型，xxvi
+- `Transformer` 的解码与编码阶段，xxvi
+- `DeepSeekV3` 技术论文，179
+- `DeepSpeed`，191，201-202
+  - 集合通信模式，236
+- 委托身份，318-321
+- 部署模型
+  - 关于部署模型，4
+  - 在本地机器上部署，4-6
+    - `Ollama` 和 `Ramalama`，14
+  - 手动方式，16-18
+  - 模型服务器控制器，19-30
+    - 关于控制器的必要性，18
+    - 容器镜像，19
+    - 自定义资源定义，19
+    - `KServe` 方法，20
+    - `KServe LLMInferenceService CRD`，24
+    - `Ray Serve` 与 `KubeRay` 方法，27-30
+  - 模型服务器，6-16
+    - （另见模型服务器）
+    - 暴露 `AI` 模型的 `API`，7
+    - 描述，6-8
+    - 实现，8-16
+    - 推理后端支持，11，14
+    - `KServe`（见 `KServe`）
+    - `KubeRay`，28-30，202
+    - 作为 `CRD` 的 `KubeRay Ray API`，29
+    - 指标，160-164
+    - 多节点分布式服务，11
+    - 使用 `OCI` 镜像卷挂载来服务模型，74-76
+- `Deployment` 工作负载类型，262
+- `descheduler`（`Kubernetes`），209-212
+  - 作业中断风险，211
+- `Kubernetes` 中的设备插件，81，86
+  - `GPU` 设备插件，86
+  - 局限性，87
+  - 时间切片，98
+  - 供应商特有插件，87
+- 基于扩散的多模态架构，8
+  - 本书假设 `LLM` 基于 `Transformer`，8
+- 直接偏好优化（`DPO`），189
+- 分离式预填充，148，150
+  - `LLM` 感知路由，140
+  - `Mooncake` 项目，151
+- 分离式服务，148-151
+  - 分布式 `KV` 缓存，148，149
+- 为优化而蒸馏模型，10
+- 分布式数据并行（`DDP`；`PyTorch`），254
+- 分布式文件系统，249
+- 分布式训练
+  - 自动扩缩容挑战，132
+  - 通信模式
+    - 集合通信，236
+    - 数据并行，222
+    - 完全分片数据并行，222
+    - 张量并行，222
+  - `DeepSpeed`，201
+  - `gang` 调度，205，212-220
+    - 实现，213-220
+  - 互连要求，221
+  - `Kubeflow Trainer`，193，200
+  - 网络优化，235-249
+    - 东西向与南北向流量，237
+    - 实现，238-243
+    - 为并行化选择的实现，242-243
+    - 辅助网络接口，243-248
+    - 辅助网络优化与故障排查，247
+  - 训练作业的可观测性，254-257
+    - 指标收集，255
+  - `PyTorch`，192
+  - 训练作业的安全性，250-255
+  - 训练存储，249
+    - 实现，249
+- `Docker OCI` 镜像分层格式，65，66
+- 用于创建包含模型的容器镜像的 `Dockerfile`，58
+- 记录智能体与代码库的交互，302
+- `DPO`（直接偏好优化），189
+- 用于 `GPU` 工作负载的动态资源分配（`DRA`），92-95
+  - `ResourceClaimTemplate`，92-94
+
+## E
+
+- 东西向与南北向网络流量，237
+- `EDA`（事件驱动架构），299
+- `EleutherAI`
+  - 关于内存需求的博客文章，130
+  - `lm-evaluation-harness`，121
+- 嵌入，xxviii
+  - 嵌入层的训练，xxviii，xxix
+  - 在线信息，xxix
+  - 多模态，xxix
+  - 推理的预填充阶段，xxx，xxxi
+  - 反向嵌入器，xxxiii
+- `emptyDir` 卷，61
+  - 在线信息，61
+  - 承载 `LLM` 的 `OCI` 镜像，66
+- 编码器模型，xxvi
+- 编码器-解码器模型，xxvi
+- `Transformer` 的编码与解码阶段，xxvi
+- `Envoy AI` 网关
+  - `MCP` 网关，327
+  - 基于 `Token` 的速率限制，144
+
+## E
+
+- 语言模型评估，121-123
+  - 模型质量监控，165-167
+  - `Language Model Evaluation Harness`，166
+  - `LLM` 即评委技术，166
+  - 为生产优化模型，123
+  - 过程，121-122
+  - `TrustyAI LM-Eval` 文档，122
+- 事件驱动架构（`EDA`），299
+- 可解释性，167
+- 解释器实现，168
+
+## F
+
+- 互连结构，221
+- `Infinity Fabric`，238
+- 公平性，168
+- `fastsafetensor`，137
+- `Feast` 特征存储，47
+- 特征存储，47
+- `Feast`，47
+- 特征，47
+- 现场可编程门阵列（`FPGA`），81
+- 访问另一个容器的文件系统，69
+  - `Unix` 权限，71
+- 微调模型，185
+  - （另见微调）
+  - `RAG` 与微调的对比，274
+- `Flash Attention`，xxxii
+- `LLM` 推理优化，10
+- 运行微调任务，190
+- `FMS Guardrails Orchestrator`，172
+- `Foster, David`，xvi
+- 基础模型
+  - 创建 `LLM`，179-181
+  - 对齐，180
+  - 作为后训练的自定义，180
+  - 预训练，179
+  - 在基础模型之上堆叠 `OCI` 镜像，65
+  - 资源需求图表，xxxiv
+  - 微调，xxxv
+  - （另见微调）
+  - 使用现有基础模型，xiv, 1, 177
+- `FPGA`（现场可编程门阵列），81
+- 全分片数据并行库（`FSDP2`；`PyTorch`），192
+- 全分片数据并行（`FSDP`；`PyTorch`）
+  - 集合通信模式，236
+  - 分布式训练，222
+  - 互连要求，221
+- 函数调用
+  - 智能体工作流，287-289
+  - `Kubernetes` 上的智能体，292-295
+  - 环境智能体，298
+  - 框架和运行时，290
+  - 人在回路，299
+  - 多智能体系统，295-298
+  - `OpenAI Responses API`，291
+  - `AI` 编排器，267, 276
+  - 后端 `AI` 服务，266-273
+  - 批处理 `worker` 作业，269
+  - 持续控制循环，270
+  - 多步骤工具自动化，271-273
+  - 定时批处理作业，268-270
+  - 协议
+    - `Agent-to-Agent`（另见 `Agent-to-Agent (A2A)` 协议）
+    - `Model Context`（另见 `Model Context Protocol (MCP)`）
+
+## G
+
+- 组调度，212-220
+  - 实现，213-220
+- `GAN`（生成对抗网络），xiii
+- `garak` 漏洞扫描器（`NVIDIA`），122
+- `Gateway` 和 `Ingress` 工作负载类型，263
+- `Gateway API`（`Kubernetes`），143
+  - 在线信息，143
+- `Gateway API` 推理扩展（`GIE`），142
+  - `LLM` 感知路由，145-148
+- 用于 `MCP` 安全性的网关，327
+- 生成对抗网络（`GAN`），xiii
+- 生成式 `AI`（`GenAI`）
+  - 历史，xiii
+  - 将工作负载投入生产，xiv
+  - “`LLM`”和“生成式 `AI`”可互换，xxiii
+  - 模型服务与预测 `AI` 的对比，7
+    - 公开 `AI` 模型的 `API`，7
+    - 多模态模型，8
+  - 将工作负载投入生产
+    - `AI` 驱动的应用，xxxvi
+    - 规模化运行的挑战，xxiii-xxiv
+    - `LLM` 的初次体验，xxii
+    - 生成式 `AI` 的历史，xiv
+    - 推理，xxxiv
+    - `Kubernetes`，xxv
+    - 本地获取模型，9
+    - 生产就绪，xxxiv
+    - 微调，xxxv
+- `Generative Deep Learning`（`Foster`），xvi
+- `Gerganov, Georgi`，44
+- `GFD`（另见 `GPU Feature Discovery (GFD; NVIDIA)`）
+- `GGML` 文件格式，39, 44-45
+  - `llama.cpp`，44
+  - 最常用于 `LLM` 部署，40
+- `GGUF` 文件格式，39, 44-45
+  - 向后兼容性，44
+  - `llama.cpp`，13, 44
+  - 最常用于 `LLM` 部署，40
+  - 大多是自包含的存储格式，35, 38, 44
+  - `Safetensors` 对比，44
+  - 专门用于 `LLM` 推理，44
+- `GitOps` 和 `Kubernetes`，xii
+- `Goodfellow, Ian`，xiii
+- `goose`，302
+- `GPT` 生成的模型语言（另见 `GGML` 文件格式）
+- `GPT` 生成的统一格式（另见 `GGUF` 文件格式）
+- `GPU` 即服务（`GPUaaS`），229
+- `GPU Feature Discovery`（`GFD`；`NVIDIA`），84-86
+  - 添加的标签，84
+  - 依赖的 `nodeAffinity`，88
+- `GPU` 内核，138
+- `GPU Operator`（`NVIDIA`），95-96
+  - 使用 `ClusterPolicy` 进行配置，97
+  - 使用 `Helm` 安装，97
+  - `GPU` 子资源分配，98-103
+- `GPUaaS`（`GPU` 即服务），229
+- `GPUDirect`（`NVIDIA`）
+  - `RDMA`，241
+  - 存储，137
+- `GPU`
+  - `AI` 与 `GPU`，81
+  - 规模化运行 `GenAI` 的挑战，xxiii-xxiv
+  - 通过 `nvidia-smi` 进行诊断，103
+  - `GPU` 资源优化，114-116
+  - 健康监控，116
+  - 生成式 `AI` 的历史，xxi
+  - `Kubernetes`
+    - `GPU` 发现，82-86
+    - `GPU` 设备插件，86
+    - `GPU Feature Discovery`，82, 84-86
+    - `Node Feature Discovery`，82-84
+    - 工作负载调度，87-95
+  - 在笔记本电脑上部署模型，4
+  - 市场领先的 `GPU`，81
+  - 多 `GPU` 推理，104-116
+    - 数据并行，104
+    - `GPU` 资源优化，114-116
+    - 模型并行，104, 106-110
+    - `NCCL`，112
+    - `Pod` 发现其他 `Pod`，111, 113
+    - `Pod` 放置，109, 113
+    - `RDMA`，112
+    - 单节点与多节点对比，110-114
+  - `NVIDIA GPU Operator`，95-96, 164
+    - 使用 `ClusterPolicy` 进行配置，97
+    - 使用 `Helm` 安装，97
+    - `GPU` 子资源分配，98-103
+  - 指定模型所需数量，18
+  - 使用监控，164
+- `Grafana Loki`，154
+- `Granite Guardian`，170
+- `GRPO`（组相对策略优化），189
+- 护栏，170-175
+  - 依赖 `LLM` 作为评委的技术，174
+- `Guardrails AI`，173
+- `Guardrails Hub`，173
+- `GuideLLM`，126
+
+## H
+
+- 幻觉，165
+  - 思维链推理减少，287
+- 来自 `DCGM` 导出器的 `Helm Chart`，164
+- `GPU Operator` 的 `Helm` 安装，97
+- 高性能计算（`HPC`），248
+  - `Slinky`，248
+  - `Slurm`，248
+- 水平 `Pod` 自动缩放器（`HPA`），133
+- `HPC`（另见高性能计算（`HPC`））
+- `Hugging Face`
+  - `config.json`，39
+  - 模型选择的排行榜，121
+  - `Llama Guard` 和 `Granite Guardian`，170
+  - `Model Hub`，48
+  - `Model Cards`，48
+  - `REST API`，49
+  - `Red Hat AI` 预压缩模型，125
+  - `Safetensors` 文件格式，42-44
+    - 最常用于 `LLM` 部署，40
+    - 大多是自包含的存储格式，35, 38, 43
+    - 支持分片，42
+  - `SFTTrainer` 库，185
+    - 示例，186
+  - 模型、数据集和库的来源，3, 11, 48
+  - 文本生成推理模型服务器，11
+    - 支持的推理后端，11
+    - 启动并调用模型，11
+  - `tokenizer` 信息在线，xxviii
+  - `tokenizer` 库，xxviii
+  - `tokenizer.json`，39
+  - `Transformer` 强化学习库，185
+  - `Transformers` 库
+    - 在本地部署模型，4
+    - 运行微调任务，191
+  - `Transformers` 打包约定，39
+  - `tokenizer.json` 和 `config.json`，39
+  - 微调库，191
+- 人在回路，299
+- `Huß, Roland`，xvi
+- 混合并行，109
+
+## I
+
+- `IBM ContextForge`，327
+- `IBM Research InstructLAB`，189
+- `Ibryam, Bilgin`，xvi
+- 镜像卷挂载
+  - 比较数据访问策略的图表，76
+  - `KServe` 直接镜像挂载，71-74
+  - `modelcars`，68-74
+  - `OCI` 镜像，74-76
+- 推理
+  - 模型服务器对后端的支持，11, 14
+  - 部署模型（另见部署模型）
+  - 描述，xxxiv
+  - `AI` 采用的入口点，1
+  - 模型服务器（另见模型服务器）
+  - 多 `GPU` 推理，104-116
+    - 数据并行，104
+    - `GPU` 资源优化，114-116
+    - 模型并行，104, 106-110
+    - `NCCL`，112
+    - `Pod` 发现其他 `Pod`，111, 113
+    - `Pod` 放置，109, 113
+    - 单节点与多节点对比，110-114
+  - `LLM` 推理优化，10
+  - 阶段，xxx-xxxiii
+    - （另见推理的解码阶段；推理的预填充阶段）
+  - 请求延迟挑战，xxiv
+  - 与训练所用的 `tokenizer` 相同，xxviii
+- `Inference Gateway`，142
+- 用于本地解释器的 `Inference Logger`，168
+- `Inference Perf`，128
+- `InferencePool`，146
+- `InferenceService`（`KServe`），23
+  - 访问模型数据，59-61
+  - 拆分 `InferenceService` 和 `ServingRuntime` 的好处，24
+  - 用于负责任 `AI` 的解释器，168
+  - `Kubeflow` 模型注册表，56
+  - 日志记录，154
+  - 从创建 `InferenceService` 得到的 `Pod` 定义，72
+  - 使用 `PersistentVolumes` 的共享存储，61-64
+    - `KServe`，63-64
+- `InfiniBand`，238, 240
+  - `IP` 示例，244
+- 基础设施
+  - 规模化运行 `GenAI` 的挑战，xxiii-xxiv
+  - 互连结构定义，221
+  - 基础模型资源需求图表，xxxiv
+  - 生成式 `AI` 的历史，xxii
+  - 在笔记本电脑上部署模型，4
+  - `Ollama` 和 `Ramalama`，14
+- `Ingress` 和 `Gateway` 工作负载类型，263
+- `init` 容器，60
+  - 比较数据访问策略的图表，76
+  - `emptyDir` 卷，61
+  - 在线信息，60
+  - 承载 `LLM` 的 `OCI` 镜像，66
+- `InstructLAB`（`IBM Research`），189
+- `Intel Prometheus Metric Explorer`，165
+- 令牌间延迟（`ITL`）
+  - 也称为每个输出令牌的时间，161
+  - 终端用户延迟，132
+  - 模型服务器指标，161
+- `IP over InfiniBand`（`IPoIB`），244
+
+## I
+
+- `ITL` (参见 `Inter-Token Latency (ITL)`)
+
+## J
+
+- `Jaeger` 用于追踪，159
+- `Job` 和 `CronJob` 工作负载类型，263
+- 作业调度优化
+  - 关于模型定制工作负载，205
+  - 组调度，212-220
+    - 实现，213-220
+    - 组合实现，220
