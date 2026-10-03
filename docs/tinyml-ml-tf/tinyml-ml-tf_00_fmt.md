@@ -1,0 +1,64 @@
+
+# 前言
+
+长久以来，电子产品一直吸引着我的想象力。我们学会了从地球中挖掘岩石，以神秘的方式对其进行精炼，并生产出令人眼花缭乱的微小组件，我们根据神秘的法则将它们组合在一起，赋予它们一些生命的本质。
+
+在我八岁的时候，电池、开关和灯丝灯已经足够迷人了，更不用说我家里家用电脑内部的处理器了。随着岁月的流逝，我对电子和软件原理有了一些了解，使这些发明能够运行。但总让我印象深刻的是，一系列简单的元素如何组合在一起创造出一个微妙而复杂的东西，而深度学习真的将这一点推向了新的高度。
+
+这本书的一个例子是一个深度学习网络，从某种意义上说，它懂得如何看。它由成千上万个虚拟的“神经元”组成，每个神经元都遵循一些简单的规则并输出一个数字。单独来看，每个神经元并不能做太多事情，但是结合起来，并且通过训练，给予一点人类知识，它们可以理解我们复杂的世界。
+
+这个想法中有一些魔力：简单的算法在由沙子、金属和塑料制成的微型计算机上运行，可以体现出人类理解的一部分。这就是 TinyML 的本质，这是 Pete 创造的一个术语，将在第一章中介绍。在本书的页面中，您将找到构建这些东西所需的工具。
+
+感谢您成为我们的读者。这是一个复杂的主题，但我们努力保持简单并解释您需要的所有概念。我们希望您喜欢我们所写的内容，我们很期待看到您创造的东西！
+
+Daniel Situnayake
+
+# 本书中使用的约定
+
+本书中使用了以下排版约定：
+
+*斜体*
+
+指示新术语、URL、电子邮件地址、文件名和文件扩展名。
+
+`常量宽度`
+
+用于程序清单，以及在段落中引用程序元素，如变量或函数名称、数据库、数据类型、环境变量、语句和关键字。
+
+**`常量宽度粗体`**
+
+显示用户应该按原样输入的命令或其他文本。
+
+*`常量宽度斜体`*
+
+显示应该用用户提供的值或由上下文确定的值替换的文本。
+
+###### 提示
+
+这个元素表示提示或建议。
+
+###### 注意
+
+这个元素表示一般注释。
+
+###### 警告
+
+这个元素表示警告或注意。
+
+# 使用代码示例
+
+补充材料（代码示例、练习等）可在[*https://tinymlbook.com/supplemental*](https://tinymlbook.com/supplemental)下载。
+
+如果您有技术问题或在使用代码示例时遇到问题，请发送电子邮件至*bookquestions@oreilly.com*。
+
+这本书旨在帮助您完成工作。一般来说，如果本书提供了示例代码，您可以在您的程序和文档中使用它。除非您复制了大量代码的部分，否则无需联系我们请求许可。例如，编写一个使用本书中几个代码块的程序不需要许可。销售或分发 O’Reilly 书籍中的示例需要许可。通过引用本书回答问题并引用示例代码不需要许可。将本书中大量示例代码合并到产品文档中需要许可。
+
+我们感谢，但通常不要求署名。署名通常包括标题、作者、出版商和 ISBN。例如：“*TinyML* by Pete Warden and Daniel Situnayake (O’Reilly). Copyright Pete Warden and Daniel Situnayake, 978-1-492-05204-3.”
+
+如果您觉得您对代码示例的使用超出了合理使用范围或上述给出的许可，请随时联系我们，邮箱为*permissions@oreilly.com*。
+
+# 致谢
+
+我们要特别感谢 Nicole Tache 出色的编辑工作，Jennifer Wang 的启发性魔杖示例，以及 Neil Tan 在 uTensor 库中进行的开创性嵌入式 ML 工作。没有 Rajat Monga 和 Sarah Sirajuddin 的专业支持，我们无法完成这本书的写作。我们还要感谢我们的合作伙伴 Joanne Ladolcetta 和 Lauren Ward 的耐心。
+
+这本书是来自硬件、软件和研究领域数百人的努力成果，特别是来自 TensorFlow 团队。虽然我们只能提及一部分人，对于我们遗漏的每个人表示歉意，我们要感谢：Mehmet Ali Anil，Alasdair Allan，Raziel Alvarez，Paige Bailey，Massimo Banzi，Raj Batra，Mary Bennion，Jeff Bier，Lukas Biewald，Ian Bratt，Laurence Campbell，Andrew Cavanaugh，Lawrence Chan，Vikas Chandra，Marcus Chang，Tony Chiang，Aakanksha Chowdhery，Rod Crawford，Robert David，Tim Davis，Hongyang Deng，Wolff Dobson，Jared Duke，Jens Elofsson，Johan Euphrosine，Martino Facchin，Limor Fried，Nupur Garg，Nicholas Gillian，Evgeni Gousev，Alessandro Grande，Song Han，Justin Hong，Sara Hooker，Andrew Howard，Magnus Hyttsten，Advait Jain，Nat Jeffries，Michael Jones，Mat Kelcey，Kurt Keutzer，Fredrik Knutsson，Nick Kreeger，Nic Lane，Shuangfeng Li，Mike Liang，Yu-Cheng Ling，Renjie Liu，Mike Loukides，Owen Lyke，Cristian Maglie，Bill Mark，Matthew Mattina，Sandeep Mistry，Amit Mittra，Laurence Moroney，Boris Murmann，Ian Nappier，Meghna Natraj，Ben Nuttall，Dominic Pajak，Dave Patterson，Dario Pennisi，Jahnell Pereira，Raaj Prasad，Frederic Rechtenstein，Vikas Reddi，Rocky Rhodes，David Rim，Kazunori Sato，Nathan Seidle，Andrew Selle，Arpit Shah，Marcus Shawcroft，Zach Shelby，Suharsh Sivakumar，Ravishankar Sivalingam，Rex St. John，Dominic Symes，Olivier Temam，Phillip Torrone，Stephan Uphoff，Eben Upton，Lu Wang，Tiezhen Wang，Paul Whatmough，Tom White，Edd Wilder-James 和 Wei Xiao。
