@@ -1,16 +1,13 @@
+
 # 12 RNNs 的 12 种网络设计替代方案
 
-本章涵盖
+## 本章涵盖
 
-+   克服 RNNs 的限制
-
-+   使用位置编码向模型添加时间
-
-+   将 CNN 适应基于序列的问题
-
-+   将注意力扩展到多头注意力
-
-+   理解 Transformer
++ 克服 RNNs 的限制
++ 使用位置编码向模型添加时间
++ 将 CNN 适应基于序列的问题
++ 将注意力扩展到多头注意力
++ 理解 Transformer
 
 循环神经网络——特别是 LSTMs——已经用于分类和解决序列问题超过二十年。虽然它们长期以来一直是可靠的工具，但它们有几个不希望的特性。首先，RNNs 非常慢。它们需要很长时间来训练，这意味着需要等待结果。其次，它们在更多层（难以提高模型精度）或更多 GPU（难以使它们训练更快）的情况下扩展得不好。通过跳过连接和残差层，我们已经了解了许多使全连接和卷积网络通过更多层来获得更好结果的方法。但 RNNs 似乎不喜欢深度。你可以添加更多层和跳过连接，但它们并不显示出与提高精度相同的程度的好处。
 
@@ -41,12 +38,12 @@
 import torchtext 
 from torchtext.datasets import AG_NEWS
 
-train_iter, test_iter = AG_NEWS(root=’./data’, split=(’train’, ’test’)) 
+train_iter, test_iter = AG_NEWS(root='./data', split=('train', 'test')) 
 train_dataset = list(train_iter) 
 test_dataset = list(test_iter)
 ```
 
-现在我们已经加载了 AG News 数据集，该数据集为每个文档提供了四个可能的主题类别：世界、体育、商业和科技。以下代码块打印出该数据集的一个示例。我们有一个表示输入 x 的单词 `string` 和表示类 y 的标签。不幸的是，`torchtext` 违背了通常按数据/输入顺序首先返回，然后是标签的常规趋势（**x**, *y*），而是交换了顺序为 (*y*,**x**）：
+现在我们已经加载了 AG News 数据集，该数据集为每个文档提供了四个可能的主题类别：世界、体育、商业和科技。以下代码块打印出该数据集的一个示例。我们有一个表示输入 `x` 的单词 `string` 和表示类 `y` 的标签。不幸的是，`torchtext` 违背了通常按数据/输入顺序首先返回，然后是标签的常规趋势（`x`, `y`），而是交换了顺序为（`y`, `x`）：
 
 ```
 print(train_dataset[0])
@@ -60,7 +57,7 @@ ultra-cynics, are seeing green again.")
 
 ```
 from torchtext.data.utils import get_tokenizer          ❶
-tokenizer = get_tokenizer(’basic_english’)              ❷ 
+tokenizer = get_tokenizer('basic_english')              ❷ 
 
 from collections import Counter                         ❸
 from torchtext.vocab import Vocab                       ❹ 
@@ -69,10 +66,10 @@ counter = Counter()
 for (label, line) in train_dataset:                     ❺
      counter.update(tokenizer(line))                    ❻ 
 vocab = Vocab(counter, min_freq=10,                     ❼ 
-➥ specials=(’<unk>’, ’<SOS>’, ’<EOS>’, ’<PAD>’))
+➥ specials=('<unk>', '<SOS>', '<EOS>', '<PAD>'))
 ```
 
-❶ 分词器将“this is a string”这样的字符串分解成标记列表，如 [‘this’，‘is’，‘a’，‘string’]。
+❶ 分词器将“this is a string”这样的字符串分解成标记列表，如 `['this', 'is', 'a', 'string']`。
 
 ❷ 我们对默认的英语风格分词器没有问题。
 
@@ -90,8 +87,8 @@ vocab = Vocab(counter, min_freq=10,                     ❼
 
 ```
 def text_transform(x):                        ❶ 
-return [vocab[’<SOS>’]] + [vocab[token]       ❷ 
-for token in tokenizer(x)] + [vocab[’<EOS>’]]
+return [vocab['<SOS>']] + [vocab[token]       ❷ 
+for token in tokenizer(x)] + [vocab['<EOS>']]
 
 def label_transform(x): 
     return x-1                                ❸
@@ -106,7 +103,7 @@ print(text_transform(train_dataset[0][1]))    ❹
 
 ❷ 词汇表就像一个字典，处理未知标记。我们可以分别用开始和结束标记进行前缀和后缀。
 
-❸ 标签最初是 [1, 2, 3, 4]，但我们需要 [0, 1, 2, 3]。
+❸ 标签最初是 `[1, 2, 3, 4]`，但我们需要 `[0, 1, 2, 3]`。
 
 ❹ 将第一个数据点的文本转换为标记列表
 
@@ -128,13 +125,13 @@ Vocab:  20647
 Num Classes:  4
 ```
 
-我们还定义了用于 PyTorch 的 `DataLoader` 类的 `collate_fn` 函数。`collate_fn` 通常是最好的实现填充的地方，因为它允许你根据当前批次数据所需的最小量进行填充。它也是一个方便的地方，可以反转标签和输入顺序，以匹配我们期望的标准 `(input, label)` 模式。这样，我们返回的批次将遵循（**x**，*y*）的模式，就像我们的其他代码所期望的那样，我们可以重用我们迄今为止所做的一切。
+我们还定义了用于 PyTorch 的 `DataLoader` 类的 `collate_fn` 函数。`collate_fn` 通常是最好的实现填充的地方，因为它允许你根据当前批次数据所需的最小量进行填充。它也是一个方便的地方，可以反转标签和输入顺序，以匹配我们期望的标准 `(input, label)` 模式。这样，我们返回的批次将遵循（`x`, `y`）的模式，就像我们的其他代码所期望的那样，我们可以重用我们迄今为止所做的一切。
 
 所有这些都在 `pad_batch` 函数中完成，它遵循正常的填充方法。我们首先确定批次中所有项的最长序列，并将其值存储在 `max_len` 变量中。然后我们使用 `F.pad` 函数将每个批次中的项向右填充。这使得所有项具有相同的长度，我们可以将它们 `stack` 成一个单一的张量。注意，我们确保使用 `padding_idx` 作为填充的值：
 
 ```
 def pad_batch(batch): 
-""" 
+"""
 Pad items in the batch to the length of the longest item in the batch. 
 Also, re-order so that the values are returned (input, label) 
 """
@@ -159,7 +156,7 @@ return x, y
 
 ❹ 使用 whatever amount makes it max_len 对每个文本张量进行填充
 
-❺ 将 x 和 y 合并为一个单一的张量
+❺ 将 `x` 和 `y` 合并为一个单一的张量
 
 现在，我们可以像以前多次做的那样构建我们的 `DataLoader`，以向我们的模型提供数据。多亏了 `Dataset` 抽象，我们不需要知道 `torchtext` 实现其加载器的细节，我们可以看到，通过设置 `collate_fn` = `pad_batch`，我们可以通过数据集返回数据的方式解决任何数据集可能存在的怪癖。我们不需要重写数据集，我们选择的 `collate_fn` 简单地以我们想要的方式清理 `Dataset` 的输出：
 
@@ -187,24 +184,24 @@ gru = nn.Sequential(
 
 loss_func = nn.CrossEntropyLoss() 
 gru_results = train_network(gru, loss_func, train_loader, 
-➥ val_loader=test_loader, score_funcs={’Accuracy’: accuracy_score}, 
+➥ val_loader=test_loader, score_funcs={'Accuracy': accuracy_score}, 
 ➥ device=device, epochs=epochs)
 ```
 
-❶ (B, T) -> (B, T, D)
+❶ `(B, T) -> (B, T, D)`
 
-❷ (B, T, D) -> ( (B,T,D) , (S, B, D) )
+❷ `(B, T, D) -> ((B,T,D), (S, B, D))`
 
-❸ 我们需要将 RNN 输出减少到一个项目，(B, 2*D)。
+❸ 我们需要将 RNN 输出减少到一个项目，`(B, 2*D)`。
 
-❹ (B, D) -> (B, classes)
+❹ `(B, D) -> (B, classes)`
 
 我们第一次尝试的结果显示在下面，看起来做得相当不错，在前几个时期后有一些过拟合，但稳定在约 91.5% 的准确率。在本章的其余部分，随着我们开发新的替代方案，我们将它们绘制在同一个图上以进行整体比较。例如，我们想要考虑最大准确率（如果我们更好地正则化，我们可能能够实现什么），稳定准确率（我们可以用很少的努力得到什么），以及达到某些准确率水平的时期（我们需要训练多长时间）。
 
 下面是代码：
 
 ```
-    sns.lineplot(x=’epoch’, y=’val Accuracy’, data=gru_results, label=’GRU’)
+    sns.lineplot(x='epoch', y='val Accuracy', data=gru_results, label='GRU')
 
 [16]: <AxesSubplot:xlabel='epoch', ylabel='val Accuracy'>
 ```
@@ -213,17 +210,19 @@ gru_results = train_network(gru, loss_func, train_loader,
 
 ## 12.2 时间上平均嵌入
 
-GRU 基准已经准备好供我们比较，所以让我们学习处理可变长度序列分类问题的第一个新方法。我们不是在时间序列上执行复杂的 RNN 操作，而是对序列中的所有项目进行*平均*。所以如果我们有一个形状为 (*B*,*T*,*D*) 的输入，我们计算第二个轴上的平均值，创建一个新的形状为 (*B*,*D*) 的张量。它有易于实现的优点；速度快；并且*消除了时间维度*，允许我们在那个点之后应用我们想要的任何方法（例如残差连接）。图 12.1 展示了这看起来是什么样子。
+GRU 基准已经准备好供我们比较，所以让我们学习处理可变长度序列分类问题的第一个新方法。我们不是在时间序列上执行复杂的 RNN 操作，而是对序列中的所有项目进行*平均*。所以如果我们有一个形状为`(B, T, D)`的输入，我们计算第二个轴上的平均值，创建一个新的形状为`(B, D)`的张量。它有易于实现的优点；速度快；并且*消除了时间维度*，允许我们在那个点之后应用我们想要的任何方法（例如残差连接）。图 12.1 展示了这看起来是什么样子。
 
 ![图片](img/CH12_F01_Raff.png)
 
-图 12.1 时间上平均嵌入的示例。时间上的 T 个输入通过权重共享由相同的神经网络处理。因为*没有*跨时间的连接，模型不知道它们有顺序。时间维度通过简单地平均所有表示来解析，这样就可以在之后运行一个常规的全连接网络来生成输出。
+图 12.1 时间上平均嵌入的示例。时间上的 `T` 个输入通过权重共享由相同的神经网络处理。因为*没有*跨时间的连接，模型不知道它们有顺序。时间维度通过简单地平均所有表示来解析，这样就可以在之后运行一个常规的全连接网络来生成输出。
 
 由于我们在时间维度上平均，我们忽略了数据有顺序的事实。另一种说法是我们*忽略了数据的结构*以简化我们的模型。我们*可能*想这样做以使我们的训练和预测更快，但这也可能适得其反，导致结果质量更差。
 
-我们可以采用的一种简单的时间平均实现方法是使用我们在第八章中学到的自适应池化。自适应池化通过取*期望输出大小*并调整池化大小来强制输出达到期望的大小来实现。Faster R-CNN 使用自适应池化将任何输入缩小到 7 × 7 的网格。相反，我们将稍微利用一下自适应池化是如何工作的。如果我们的输入形状为(*B*,*T*,*D*)，我们想要在最后两个维度上执行自适应池化，因此我们使用自适应 2D 池化。我们使池化的目标形状非对称，形状为(1,*D*)。我们的输入在最后一个维度上已经具有 D 的形状，所以最后一个维度不会被改变。时间维度缩小到 1，强制它进行时间平均。由于其自适应池化，即使 T 在批次之间发生变化，此代码也能正常工作。我们可以在下面的代码中非常快速地定义并尝试此模型。
+我们可以采用的一种简单的时间平均实现方法是使用我们在第八章中学到的自适应池化。自适应池化通过取*期望输出大小*并调整池化大小来强制输出达到期望的大小来实现。Faster R-CNN 使用自适应池化将任何输入缩小到 7 × 7 的网格。相反，我们将稍微利用一下自适应池化是如何工作的。如果我们的输入形状为`(B, T, D)`，我们想要在最后两个维度上执行自适应池化，因此我们使用自适应 2D 池化。我们使池化的目标形状非对称，形状为`(1, D)`。我们的输入在最后一个维度上已经具有 `D` 的形状，所以最后一个维度不会被改变。时间维度缩小到 1，强制它进行时间平均。由于其自适应池化，即使 `T` 在批次之间发生变化，此代码也能正常工作。我们可以在下面的代码中非常快速地定义并尝试此模型。
 
-如前所述，此代码依赖于这样一个事实：如果你给 PyTorch `nn.Linear`层一个形状为(*B*,*T*,*D*)的张量，它将独立地对所有 T 个不同的输入应用线性层，从而在单个调用中有效地执行权重共享。我们使用具有显式目标形状(1,*D*)的`nn.AdaptiveAvgPool2d`，将输入张量从(*B*,*T*,*D*)减少到(*B*,1,*D*)。然后我们可以用一个隐藏层和一个`nn.Linear`来预测类别：
+
+
+如前所述，此代码依赖于这样一个事实：如果你给 PyTorch `nn.Linear`层一个形状为`(*B*,*T*,*D*)`的张量，它将独立地对所有 T 个不同的输入应用线性层，从而在单个调用中有效地执行权重共享。我们使用具有显式目标形状`(1,*D*)`的`nn.AdaptiveAvgPool2d`，将输入张量从`(*B*,*T*,*D*)`减少到`(*B*,1,*D*)`。然后我们可以用一个隐藏层和一个`nn.Linear`来预测类别：
 
 ```
 simpleEmbdAvg = nn.Sequential( 
@@ -246,13 +245,13 @@ simpleEmbdAvg_results = train_network(simpleEmbdAvg, loss_func, train_loader,
 ➥ device=device, epochs=epochs)
 ```
 
-❶ (B, T) -> (B, T, D)
+❶ `(B, T) -> (B, T, D)`
 
-❷ (B, T, D) -> (B, 1, D)
+❷ `(B, T, D) -> (B, 1, D)`
 
-❸ (B, 1, D) -> (B, D)
+❸ `(B, 1, D) -> (B, D)`
 
-下面的两行代码绘制了结果。查看这两种方法的准确率，我们发现 GRU 表现更好。如果你多次运行，你可能会发现平均嵌入方法有时开始对数据进行过拟合。所以，**乍一看**，这种替代方案并不值得：
+下面的两行代码绘制了结果。查看这两种方法的准确率，我们发现 GRU 表现更好。如果你多次运行，你可能会发现平均嵌入方法有时开始对数据进行过拟合。所以，乍一看，这种替代方案并不值得：
 
 ```
     sns.lineplot(x=’epoch’, y=’val Accuracy’, data=gru_results, label=’GRU’)   
@@ -264,7 +263,7 @@ simpleEmbdAvg_results = train_network(simpleEmbdAvg, loss_func, train_loader,
 
 ![](img/CH12_UN02_Raff.png)
 
-但我们应该问为什么平均嵌入方法能起作用。我们通过*忽略*关于数据我们知道的一些真实情况来实现这种方法：它有一个顺序，并且顺序很重要。你不能只是重新排列句子中的单词，就能得到一个可理解的结果。
+但我们应该问为什么平均嵌入方法能起作用。我们通过忽略关于数据我们知道的一些真实情况来实现这种方法：它有一个顺序，并且顺序很重要。你不能只是重新排列句子中的单词，就能得到一个可理解的结果。
 
 平均嵌入方法可以得到合理的准确率，因为通常有办法在问题中作弊。例如，AG 新闻的四个类别是世界、体育、商业和科技。所以如果你的模型看到包含“NFL”、“touchdown”和“win”这些单词的句子，这些单词出现的顺序实际上并不重要。你仅从这些单词的存在就能猜测这可能是一篇体育文章。同样，如果你看到“banking”和“acquisition”这些单词，你就可以判断有很高的可能性这是一篇商业文章，而不需要了解句子的其他内容。
 
@@ -290,9 +289,9 @@ simpleEmbdAvg_results = train_network(simpleEmbdAvg, loss_func, train_loader,
 
 信息泄露是如何发生的？
 
-当你在构建数据时，如果数据中存在与你的标签 y 强*相关*的某些内容，但相关性并不自然存在，信息泄露就可能以无限可能的方式发生。相反，它是创建和组织数据过程中产生的错误，通常是由于数据准备中的错误。人们经常无意中将标签 y*放置在输入特征 x 中*，模型很快就会学会利用这一点！
+当你在构建数据时，如果数据中存在与你的标签 y 强相关（`y`）的某些内容，但相关性并不自然存在，信息泄露就可能以无限可能的方式发生。相反，它是创建和组织数据过程中产生的错误，通常是由于数据准备中的错误。人们经常无意中将标签`y`放置在输入特征`x`中，模型很快就会学会利用这一点！
 
-我将从我在构建恶意软件检测模型方面发表的一些工作中举一个例子。^a 许多人使用微软 Windows 干净安装的数据来表示良性或安全数据。然后他们在网上找到了一些恶意软件，并构建了一个看起来*几乎完美*的准确率的分类器。当我们深入研究数据时，我们发现几乎微软发布的所有内容都带有“版权所有 微软公司”的字符串。这个字符串最终*泄露*了标签是“良性”的信息，因为它只出现在良性数据中，从未出现在恶意软件数据中。但在现实中，“版权所有 微软公司”的字符串与文件是否为恶意软件无关，因此模型在新数据上表现不佳。
+我将从我在构建恶意软件检测模型方面发表的一些工作中举一个例子。^a 许多人使用微软 Windows 干净安装的数据来表示良性或安全数据。然后他们在网上找到了一些恶意软件，并构建了一个看起来几乎完美的准确率的分类器。当我们深入研究数据时，我们发现几乎微软发布的所有内容都带有“版权所有 微软公司”的字符串。这个字符串最终泄露了标签是“良性”的信息，因为它只出现在良性数据中，从未出现在恶意软件数据中。但在现实中，“版权所有 微软公司”的字符串与文件是否为恶意软件无关，因此模型在新数据上表现不佳。
 
 信息泄露也可能以愚蠢或微妙的方式发生。有一个关于军事想要在 1960 年至 2000 年之间某个时间检测图像中是否存在坦克的 ML 模型的轶事([`www.gwern.net/Tanks`](https://www.gwern.net/Tanks))。故事是这样的（我第一次听到时是这样的）：他们收集了大量坦克和空地的图片，并训练了一个网络，该网络获得了完美的准确率。但每张坦克的图片都有太阳，而非坦克的图片没有太阳。模型学会了检测太阳而不是坦克，因为识别太阳更容易。这从未真正发生过，但这个故事是一个关于信息如何以意想不到的方式泄露的有趣故事。
 
@@ -302,7 +301,7 @@ simpleEmbdAvg_results = train_network(simpleEmbdAvg, loss_func, train_loader,
 
 ### 12.2.1  时间加权平均与注意力
 
-虽然我们之前实现的代码是可行的，但它*稍微*有些不正确。为什么？因为`nn.AdaptiveAvgPool2d`对填充输入一无所知，这导致嵌入的值为 0。这会影响到较短的序列的幅度。让我们看看这是如何发生的。为了简单起见，假设我们将标记嵌入到一维中。那么我们可能有三组看起来像这样的数据点：
+虽然我们之前实现的代码是可行的，但它稍微有些不正确。为什么？因为`nn.AdaptiveAvgPool2d`对填充输入一无所知，这导致嵌入的值为 0。这会影响到较短的序列的幅度。让我们看看这是如何发生的。为了简单起见，假设我们将标记嵌入到一维中。那么我们可能有三组看起来像这样的数据点：
 
 ![](img/CH12_F01_EQ01.png)
 
@@ -314,11 +313,11 @@ simpleEmbdAvg_results = train_network(simpleEmbdAvg, loss_func, train_loader,
 
 ![](img/CH12_F01_EQ03.png)
 
-这显著改变了*x̄*[1]和*x̄*[3]的值！为了解决这个问题，我们需要像在上一章中计算注意力机制的上下文向量一样，我们自己实现平均。
+这显著改变了`*x̄*[1]`和`*x̄*[3]`的值！为了解决这个问题，我们需要像在上一章中计算注意力机制的上下文向量一样，我们自己实现平均。
 
 但如果我们计算那个上下文向量，为什么不应用注意力机制呢？注意力将学习所有输入词的加权平均，并且理论上可以学习根据所有可用信息忽略某些词。
 
-为了尝试这个，我们将实现一个新的`Module`，它执行嵌入并基于哪些值被填充或未填充来计算一个掩码。由于掩码的形状为(*B*,*T*)，我们可以通过对第二个时间维度求和来知道每个批次中有多少有效项。然后我们可以对时间上的所有项求和，除以适当的值，并得到传递给之前定义的注意力机制的上下文向量。
+为了尝试这个，我们将实现一个新的`Module`，它执行嵌入并基于哪些值被填充或未填充来计算一个掩码。由于掩码的形状为`(*B*,*T*)`，我们可以通过对第二个时间维度求和来知道每个批次中有多少有效项。然后我们可以对时间上的所有项求和，除以适当的值，并得到传递给之前定义的注意力机制的上下文向量。
 
 以下代码实现了一个`EmbeddingAttentionBad`类，该类负责将每个输入标记通过嵌入层，运行一些具有时间共享权重的隐藏层，然后应用第十章中我们的一种注意力机制来计算加权平均结果。它需要知道`vocab_size`和嵌入维度`D`作为参数，可选的`embd_layers`用于更改隐藏层的数量，以及`padding_idx`来告知它用于表示填充的值：
 
@@ -355,19 +354,19 @@ class EmbeddingAttentionBag(nn.Module):
         return self.attn(x, context, mask=mask)                    ❼
 ```
 
-❶ (B, T, D) -> (B, T, D)
+❶ `(B, T, D) -> (B, T, D)`
 
 ❷ 第十章中定义的函数
 
-❸ 所有条目都是 True。掩码的形状为(B, T)。
+❸ 所有条目都是 True。掩码的形状为`(B, T)`。
 
-❹ (B, T, D)
+❹ `(B, T, D)`
 
-❺ (B, T, D)
+❺ `(B, T, D)`
 
-❻ 对时间进行平均。(B, T, D) -> (B, D)。
+❻ 对时间进行平均。`(B, T, D) -> (B, D)`。
 
-❼ 如果我们想要进行正常平均，我们现在就可以返回上下文变量了！((B, T, D), (B, D)) -> (B, D)。
+❼ 如果我们想要进行正常平均，我们现在就可以返回上下文变量了！`((B, T, D), (B, D)) -> (B, D)`。
 
 使用这个新模块，我们可以在以下代码块中构建一个简单的新的网络。它从计算嵌入、时间共享的隐藏层和注意力的`EmbeddingAttentionBag`开始。然后我们跟随一个隐藏层和`nn.Linear`来生成预测：
 
@@ -387,7 +386,7 @@ attnEmbd_results = train_network(attnEmbd, loss_func, train_loader,
 
 ❶ 现在我们可以定义一个简单的模型了！
 
-❷ (B, T) -> (B, D)
+❷ `(B, T) -> (B, D)`
 
 现在我们可以绘制结果。基于注意力的嵌入训练时间稍长，但仍然比 RNN 快 2 倍以上。这是有道理的，因为注意力版本执行了更多的操作。我们还可以看到，注意力提高了我们模型的准确性，接近 GRU。随着注意力嵌入的准确性随着更新次数的增加而急剧下降，它更容易过拟合：
 
@@ -403,11 +402,11 @@ attnEmbd_results = train_network(attnEmbd, loss_func, train_loader,
 
 ![](img/CH12_UN04_Raff.png)
 
-注意力嵌入的最大问题*仍然*是它对句子中单词的顺序没有任何感知。这是模型中缺失的时间成分。为了进一步强调这一点，让我们展示另一种看待问题的方法。考虑输入句子“红色的狐狸追逐蓝色的狗。”我们的模型将每个单词嵌入到其向量表示中，我们最终在嵌入（加权或未加权，取决于你是否使用了注意力）上执行某种平均。让我们看看如果嵌入维度为*D* = 1 且该维度的值设置为整数时，这个句子是如何工作的。这给我们以下设置：
+注意力嵌入的最大问题仍然是它对句子中单词的顺序没有任何感知。这是模型中缺失的时间成分。为了进一步强调这一点，让我们展示另一种看待问题的方法。考虑输入句子“红色的狐狸追逐蓝色的狗。”我们的模型将每个单词嵌入到其向量表示中，我们最终在嵌入（加权或未加权，取决于你是否使用了注意力）上执行某种平均。让我们看看如果嵌入维度为`*D* = 1`且该维度的值设置为整数时，这个句子是如何工作的。这给我们以下设置：
 
 ![图片](img/CH12_F01_EQ04.png)
 
-这个等式展示了一个未加权的平均值，但将其变为加权平均值只会改变最终的结果——不理解数据顺序性的基本缺陷仍然存在。因此，例如，如果我们交换句子中的“狐狸”和“狗”，意义就会改变——但嵌入方法将*返回相同的结果*。这在下述等式中得到体现，并展示了网络无法检测到意义的微妙变化：
+这个等式展示了一个未加权的平均值，但将其变为加权平均值只会改变最终的结果——不理解数据顺序性的基本缺陷仍然存在。因此，例如，如果我们交换句子中的“狐狸”和“狗”，意义就会改变——但嵌入方法将返回相同的结果。这在下述等式中得到体现，并展示了网络无法检测到意义的微妙变化：
 
 ![图片](img/CH12_F01_EQ05.png)
 
@@ -415,9 +414,11 @@ attnEmbd_results = train_network(attnEmbd, loss_func, train_loader,
 
 ![图片](img/CH12_F01_EQ06.png)
 
-对于解决问题来说，序列顺序越重要，当前平均向量的方法就越难以做出正确的分类。这也适用于基于注意力的版本，因为它没有意识到顺序。每个单词**h**[i]根据上下文![图片](img/bar_h.png)分配一个权重*α*[i]，因此它看不到缺失的信息！这使得平均方法在复杂问题上的实用性非常特定于问题。想想看，在句子中使用否定语言，如“不”、“不是”或“没有”的任何情况。有了否定，语言顺序至关重要。这些都是你应该考虑的事情，作为使用嵌入方法获得更快的训练时间的代价。
+对于解决问题来说，序列顺序越重要，当前平均向量的方法就越难以做出正确的分类。这也适用于基于注意力的版本，因为它没有意识到顺序。每个单词`**h**[i]`根据上下文`![图片](img/bar_h.png)`分配一个权重`*α*[i]`，因此它看不到缺失的信息！这使得平均方法在复杂问题上的实用性非常特定于问题。想想看，在句子中使用否定语言，如“不”、“不是”或“没有”的任何情况。有了否定，语言顺序至关重要。这些都是你应该考虑的事情，作为使用嵌入方法获得更快的训练时间的代价。
 
-注意：由于我在谈论缺点，仍然值得指出的是，基于注意力的嵌入与 GRU 的准确性非常接近。这意味着什么？如果我在数据集上看到这些结果，我会有两个初步假设：(1)我的数据顺序对于当前问题并不像我想象的那么重要，或者(2)我需要一个更大的 RNN，有更多的层或更多的隐藏神经元来捕捉数据顺序中存在的复杂信息。我会首先通过训练更大的模型来调查假设#2，因为这只需要计算时间。调查假设#1 需要我个人的时间来深入挖掘数据，而我通常更重视我的时间而不是电脑的时间。如果有一种通过运行新模型来回答问题的方法，我更喜欢这样做。
+
+
+注意：由于我在谈论缺点，仍然值得指出的是，基于注意力的嵌入与 GRU 的准确性非常接近。这意味着什么？如果我在数据集上看到这些结果，我会有两个初步假设：(1) 我的数据顺序对于当前问题并不像我想象的那么重要，或者 (2) 我需要一个更大的 RNN，有更多的层或更多的隐藏神经元来捕捉数据顺序中存在的复杂信息。我会首先通过训练更大的模型来调查假设 #2，因为这只需要计算时间。调查假设 #1 需要我个人的时间来深入挖掘数据，而我通常更重视我的时间而不是电脑的时间。如果有一种通过运行新模型来回答问题的方法，我更喜欢这样做。
 
 ## 12.3 时间上的池化和一维 CNN
 
@@ -596,10 +597,14 @@ div = np.exp(np.arange(0, dimensions*2, 2) *
 
 其次，我们在结果向量上添加了 dropout，这样我们就不会学习到对位置编码 *P*(*t*) 固定值的过拟合。现在让我们定义一个新的 PyTorch `Module`，它为我们应用这个位置编码。当前实现需要提前知道最大序列长度 T，使用构造函数中的`max_len`参数。我从 PyTorch 示例[`mng.bz/B1Wl`](http://mng.bz/B1Wl)² 中借用了这个位置编码的代码，并稍作修改：
 
-```
+
+
+# 12.4.2 定义位置编码模型
+
+```python
 class PositionalEncoding(nn.Module): 
     def __init__(self, d_model, dropout=0.1, max_len=5000, batch_first=False): 
-    super(PositionalEncoding, self).__init__() 
+        super(PositionalEncoding, self).__init__() 
         self.dropout = nn.Dropout(p=dropout) 
         self.d_model = d_model
 
@@ -610,13 +615,13 @@ class PositionalEncoding(nn.Module):
         pe[:, 0::2] = torch.sin(position * div_term) 
         pe[:, 1::2] = torch.cos(position * div_term) 
         pe = pe.unsqueeze(0).transpose(0, 1) 
-        self.register_buffer(’pe’, pe)                        ❶ 
+        self.register_buffer('pe', pe)                        ❶ 
         self.batch_first = batch_first
 
     def forward(self, x): 
         if self.batch_first:                                  ❷ 
             x = x.permute(1, 0, 2) 
-        x = x *np.sqrt(self.d_model) + self.pe[:x.size(0), :] ❸ 
+        x = x * np.sqrt(self.d_model) + self.pe[:x.size(0), :] ❸ 
         x = self.dropout(x)                                   ❹
 
         if self.batch_first:                                  ❺ 
@@ -624,21 +629,15 @@ class PositionalEncoding(nn.Module):
         return x
 ```
 
-❶ 这样做是为了当我们调用 `.to(device)` 时，这个数组将移动到它那里。
-
-❷ 此代码适用于 (T, B, D) 数据，因此如果输入是 (B, T, D)，则需要重新排序。
-
-❸ 混合输入和位置信息
-
-❹ 正则化以避免过拟合
-
-❺ 返回到 (B, T, D) 形状
-
-### 12.4.2 定义位置编码模型
+❶ 这样做是为了当我们调用`.to(device)`时，这个数组将移动到它那里。  
+❷ 此代码适用于`(T, B, D)`数据，因此如果输入是`(B, T, D)`，则需要重新排序。  
+❸ 混合输入和位置信息。  
+❹ 正则化以避免过拟合。  
+❺ 返回到`(B, T, D)`形状。
 
 使用我们新的位置编码，我们可以重新定义之前简单的平均方法，通过在`nn.Embedding`层之后直接插入我们的`PositionalEncoding`类。它以任何方式都不会影响张量的形状，因此其他所有内容都可以保持不变。它只是用我们新的位置编码 *P*(*t*) 改变了张量中的值：
 
-```
+```python
 simplePosEmbdAvg = nn.Sequential( 
     nn.Embedding(VOCAB_SIZE, embed_dim, padding_idx=padding_idx), ❶ 
     PositionalEncoding(embed_dim, batch_first=True), 
@@ -657,25 +656,23 @@ simplePosEmbdAvg = nn.Sequential(
 )
 ```
 
-❶ (B, T) -> (B, T, D)
+❶ `(B, T) -> (B, T, D)`  
+❷ `(B, T, D) -> (B, 1, D)`  
+❸ `(B, 1, D) -> (B, D)`
 
-❷ (B, T, D) -> (B, 1, D)
+适应基于注意力的嵌入也很简单。当我们定义`EmbeddingAttentionBag`时，我们添加了可选参数`embd_layers`。如果`embd_layers`是一个 PyTorch `Module`，它将使用该网络在`(B, T, D)`项的批次上运行一个隐藏层。我们定义这个`Module`，它将从`PositionalEncoding`模块开始，因为`embd_layers`的输入已经嵌入。这在以下代码中分为两部分完成。首先，我们将`embd_layers`定义为位置编码，然后是三轮隐藏层，然后我们定义`attnPosEmbd`为一个具有位置编码的基于注意力的网络。现在我们可以训练这两个新的平均网络，并将它们与原始的平均和基于注意力的版本进行比较。如果准确率有所提高，那么我们就知道信息顺序确实很重要：
 
-❸ (B, 1, D) -> (B, D)
-
-适应基于注意力的嵌入也很简单。当我们定义`EmbeddingAttentionBag`时，我们添加了可选参数`embd_layers`。如果`embd_layers`是一个 PyTorch `Module`，它将使用该网络在 (*B*,*T*,*D*) 项的批次上运行一个隐藏层。我们定义这个`Module`，它将从`PositionalEncoding`模块开始，因为`embd_layers`的输入已经嵌入。这在以下代码中分为两部分完成。首先，我们将`embd_layers`定义为位置编码，然后是三轮隐藏层，然后我们定义`attnPosEmbd`为一个具有位置编码的基于注意力的网络。现在我们可以训练这两个新的平均网络，并将它们与原始的平均和基于注意力的版本进行比较。如果准确率有所提高，那么我们就知道信息顺序确实很重要：
-
-```
+```python
 embd_layers = nn.Sequential(      ❶ 
     *([PositionalEncoding(embed_dim, batch_first=True)]+ 
     [nn.Sequential(nn.Linear(embed_dim, embed_dim), nn.LeakyReLU()) 
-    ➥ for _ in range(3)]) 
+    for _ in range(3)]) 
 )
 
 attnPosEmbd = nn.Sequential( 
-    ➥ EmbeddingAttentionBag(VOCAB_SIZE, embed_dim, 
-    ➥ padding_idx=padding_idx, 
-    ➥ embd_layers=embd_layers),  ❷
+    EmbeddingAttentionBag(VOCAB_SIZE, embed_dim, 
+    padding_idx=padding_idx, 
+    embd_layers=embd_layers),  ❷
     nn.Linear(embed_dim, embed_dim), 
     nn.LeakyReLU(), 
     nn.BatchNorm1d(embed_dim), 
@@ -683,33 +680,32 @@ attnPosEmbd = nn.Sequential(
 )
 
 posEmbdAvg_results = train_network(simplePosEmbdAvg, loss_func, 
-➥ train_loader, val_loader=test_loader, score_funcs={’Accuracy’: 
-➥ accuracy_score}, device=device, epochs=epochs) 
+    train_loader, val_loader=test_loader, score_funcs={'Accuracy': 
+    accuracy_score}, device=device, epochs=epochs) 
 attnPosEmbd_results = train_network(attnPosEmbd, loss_func, train_loader, 
-➥ val_loader=test_loader, score_funcs={’Accuracy’: accuracy_score}, 
-➥ device=device, epochs=epochs)
+    val_loader=test_loader, score_funcs={'Accuracy': accuracy_score}, 
+    device=device, epochs=epochs)
 ```
 
-❶ (B, T, D) -> (B, T, D)
+❶ `(B, T, D) -> (B, T, D)`  
+❷ `(B, T) -> (B, D)`
 
-❷ (B, T) -> (B, D)
-
-位置编码结果
+## 位置编码结果
 
 以下代码绘制了所有嵌入模型的成果，包括带位置编码和不带位置编码的情况。我们的位置编码提供了显著的好处，整体准确率得到提升，且准确率下降幅度较小，这表明过拟合程度较低。对训练时间的影响也微乎其微——模型训练时间仅比原始模型多几秒钟：
 
+```python
+sns.lineplot(x='total time', y='val Accuracy', data=simpleEmbdAvg_results, 
+    label='Average Embedding') 
+sns.lineplot(x='total time', y='val Accuracy', data=posEmbdAvg_results, 
+    label='Average Positional Embedding') 
+sns.lineplot(x='total time', y='val Accuracy', data=attnEmbd_results, 
+    label='Attention Embedding') 
+sns.lineplot(x='total time', y='val Accuracy', data=attnPosEmbd_results, 
+    label='Attention Positional Embedding')
 ```
-    sns.lineplot(x=’total time’, y=’val Accuracy’, data=simpleEmbdAvg_results, 
-    ➥ label=’Average Embedding’) 
-    sns.lineplot(x=’total time’, y=’val Accuracy’, data=posEmbdAvg_results, 
-    ➥ label=’Average Positional Embedding’) 
-    sns.lineplot(x=’total time’, y=’val Accuracy’, data=attnEmbd_results, 
-    ➥ label=’Attention Embedding’) 
-    sns.lineplot(x=’total time’, y=’val Accuracy’, data=attnPosEmbd_results, 
-    ➥ label=’Attention Positional Embedding’)
 
-[31]: <AxesSubplot:xlabel='total time', ylabel='val Accuracy'>
-```
+[31]: `<AxesSubplot:xlabel='total time', ylabel='val Accuracy'>`
 
 ![图片](img/CH12_UN14_Raff.png)
 
@@ -717,25 +713,25 @@ attnPosEmbd_results = train_network(attnPosEmbd, loss_func, train_loader,
 
 我们基于注意力的嵌入绝对是一个更好的想法：让我们仅比较这一点与早期的 GRU 结果。使用这种组合，我们在准确率方面开始与基于 GRU 的 RNN 相匹配，甚至超越，而且训练速度要快两倍以上！这是一个相当不错的组合。以下是代码：
 
+```python
+sns.lineplot(x='total time', y='val Accuracy', data=gru_results, label='GRU') 
+sns.lineplot(x='total time', y='val Accuracy', data=attnEmbd_results, 
+    label='Attention Embedding') 
+sns.lineplot(x='total time', y='val Accuracy', data=attnPosEmbd_results, 
+    label='Attention Positional Embedding')
 ```
-    sns.lineplot(x=’total time’, y=’val Accuracy’, data=gru_results, label=’GRU’) 
-    sns.lineplot(x=’total time’, y=’val Accuracy’, data=attnEmbd_results, 
-    ➥label=’Attention Embedding’) 
-    sns.lineplot(x=’total time’, y=’val Accuracy’, data=attnPosEmbd_results, 
-    ➥label=’Attention Positional Embedding’
 
-[32]: <AxesSubplot:xlabel='total time', ylabel='val Accuracy'>
-```
+[32]: `<AxesSubplot:xlabel='total time', ylabel='val Accuracy'>`
 
 ![图片](img/CH12_UN15_Raff.png)
 
 可以得出的结论是，位置编码是将序列信息编码到我们的网络中的一种便宜、快速且有效的方法。令人惊讶的是，位置编码并非独立发明，而是在本章下一节的主题——转换器（transformers）——的背景下共同发明的。因此，在大多数当前的深度学习中，你不会看到在转换器之外使用位置编码，但我发现它们在转换器之外也非常有用，作为一种快速简单的方法，可以赋予模型时间/有序数据的概念。
 
-## 12.5 转换器：大数据的大模型
+# 12.5 转换器：大数据的大模型
 
-我们将要学习的最后一个 RNN 的替代方案是转换器架构。它由两个主要子组件组成：位置编码（我们刚刚学习过）和**多头注意力**。转换器是一个非常新的发展，由于一些优点而变得极其流行。然而，它们最适合处理大数据（至少 50 GB，根据我的经验）和大量计算（你需要 4+个 GPU）的大问题，所以我们在这个章节中不会看到全部的好处。尽管如此，了解转换器仍然很重要，它是当前深度学习一些重大进步的基础。最新的、最优秀的机器翻译、问答、少样本学习和数十个 NLP 任务的模型都是用不同的转换器变体构建的。本节的目标是帮助你理解标准的、原始的、无特殊添加的转换器。在本章之后，我建议阅读 Jay Alammar 的博客文章“Illustrated Transformer”（[`jalammar.github.io/illustrated-transformer/`](http://jalammar.github.io/illustrated-transformer/))，以详细了解转换器的逐步解析。
+我们将要学习的最后一个 RNN 的替代方案是转换器架构。它由两个主要子组件组成：位置编码（我们刚刚学习过）和**多头注意力**。转换器是一个非常新的发展，由于一些优点而变得极其流行。然而，它们最适合处理大数据（至少 50 GB，根据我的经验）和大量计算（你需要 4+ 个 GPU）的大问题，所以我们在这个章节中不会看到全部的好处。尽管如此，了解转换器仍然很重要，它是当前深度学习一些重大进步的基础。最新的、最优秀的机器翻译、问答、少样本学习和数十个 NLP 任务的模型都是用不同的转换器变体构建的。本节的目标是帮助你理解标准的、原始的、无特殊添加的转换器。在本章之后，我建议阅读 Jay Alammar 的博客文章“Illustrated Transformer”（[`jalammar.github.io/illustrated-transformer/`](http://jalammar.github.io/illustrated-transformer/)），以详细了解转换器的逐步解析。
 
-### 12.5.1 多头注意力
+## 12.5.1 多头注意力
 
 要理解 transformer 的工作原理，我们需要了解*多头注意力*（MHA），它是我们在第十章中学到的注意力机制的扩展。像正常注意力一样，MHA 涉及使用 softmax 函数和`nn.Linear`层来学习有选择地忽略或关注输入的不同部分。我们原始的注意力机制有一个上下文，这使得它可以寻找一种类型的模式。但如果你想要同时寻找多种不同的事物（比如一个由否定陈述“not” precede 的正陈述“good”）呢？这就是多头注意力发挥作用的地方。每个“头”的多头注意力可以学习寻找不同类型的模式，类似于卷积层中的每个滤波器可以学习寻找不同的模式。MHA 如何工作的总体策略如图 12.5 所示。
 
@@ -743,11 +739,11 @@ attnPosEmbd_results = train_network(attnPosEmbd, loss_func, train_loader,
 
 图 12.5 多头注意力模块的概述。有三个序列作为输入：查询 Q 和键值 K, V，它们是配对的。MHA 返回一个 D 维向量，回答每个查询**q**[i] ∈ *Q*。
 
-在直观层面上，你可以将 MHA 视为回答关于键值对的字典的问题或查询。由于这是一个神经网络，键和值都是向量。因为每个键都有自己的值，所以键张量 K 和值张量 V 必须具有相同的项目数 T。因此，它们都具有(*T*,*D*)的形状，其中 D 表示特征数。
+在直观层面上，你可以将 MHA 视为回答关于键值对的字典的问题或查询。由于这是一个神经网络，键和值都是向量。因为每个键都有自己的值，所以键张量 K 和值张量 V 必须具有相同的项目数 T。因此，它们都具有`(T, D)`的形状，其中 D 表示特征数。
 
 按照这个高级类比，你可以对键值字典提出尽可能多或尽可能少的问题。查询列表 Q 是其自身的张量，长度为*T*′。
 
-MHA 的输出对每个查询都有一个响应，并且具有相同的维度，因此 MHA 的输出形状为(*T*′,*D*)。MHA 的总头数不会以改变卷积层输出通道数的方式改变其输出的尺寸。这只是 MHA 设计中的一个奇特之处。相反，MHA 试图将所有答案混合成一个单一的输出。
+MHA 的输出对每个查询都有一个响应，并且具有相同的维度，因此 MHA 的输出形状为`(T′, D)`。MHA 的总头数不会以改变卷积层输出通道数的方式改变其输出的尺寸。这只是 MHA 设计中的一个奇特之处。相反，MHA 试图将所有答案混合成一个单一的输出。
 
 为了解释这个类比，我们可以将 MHA 视为一种深度学习替代品，类似于标准的 Python 字典对象。字典`d = {key : value}`代表一组键，每个键都有一个特定的值。你可以用类似`d[query]`的方式查询这个字典。如果`query in d`，你将得到其关联的值，如果没有，你将得到`None`。MHA 层有相同的目标，但不需要查询和键之间像字典那样完美的匹配。相反，它稍微宽松一些，多个相似的键可以响应单个查询，如图 12.6 所示。
 
@@ -757,13 +753,13 @@ MHA 的输出对每个查询都有一个响应，并且具有相同的维度，�
 
 你的直觉反应可能是担心当没有任何东西看起来与查询相似时给出答案：返回一个乱码答案/值不是坏事吗？这实际上是一件好事，因为 MHA 可以在训练过程中学习需要调整一些键/值。记得在第三章中我们看到了如何手动指定有用的卷积，但我们没有这样做，而是让神经网络学习应该使用哪些卷积。MHA 也是这样工作的：它开始时使用随机初始化且无意义的键和值，但在训练过程中学会了调整它们以变得有用。
 
-联想记忆
+### 联想记忆
 
 查询一个模糊的神经元云并从中检索特定表示的想法相当古老。这是所谓的联想记忆的合理描述，你可以在[`thegradient.pub/dont-forget-about-associative-memories`](https://thegradient.pub/dont-forget-about-associative-memories)上阅读其历史的简要总结。
 
 简而言之，与联想记忆相关的想法可以追溯到 20 世纪 60 年代，这对于那些没有意识到人工智能作为一个领域有多古老的人来说很有趣。虽然它们目前在从业者中并不流行，但仍然有现代研究在使用它们。我认为了解这些内容也有助于你自己拓宽对问题和人工智能/机器学习的思考。许多领域，如认知科学、心理学、神经学和电气工程，都帮助塑造了早期和基础性的工作，但遗憾的是，联想记忆并没有得到它们应得的认可。
 
-从注意力到 MHA
+### 从注意力到 MHA
 
 当我们单独描述 MHA 时，它可能看起来过于复杂和晦涩；相反，让我们使用第十章中我们了解到的注意力机制来描述它。这与大多数讨论 MHA 的方式不同，需要更长的时间，但我认为这更容易理解。
 
@@ -777,21 +773,23 @@ MHA 的输出对每个查询都有一个响应，并且具有相同的维度，�
 
 ![图片](img/CH12_UN17_Raff.png)
 
-我们到目前为止真正所做的一切就是将我们的得分函数进行**泛化**，使其更加灵活。我们可以将搜索（**q**，**K**，**V**）视为“给定查询 q，根据其键 K 从字典中给出平均值 V。”这是一个泛化，因为如果我们调用得分（1/*T* Σ*[i]^T*[=1] ***h**[i]*, [..., ***h**[i]*, ...] ,[..., ***h**[i]*, ...])，我们会得到与之前相同的结果！
 
-这为我们提供了一个查询的结果。为了将此扩展到多个查询，我们多次调用三个参数的得分函数。这为我们提供了一个 MHA 的一个头的输出结果，通常用名为 `Attention` 的函数表示：
+
+我们到目前为止真正所做的一切就是将我们的得分函数进行**泛化**，使其更加灵活。我们可以将搜索（`q`，`K`，`V`）视为“给定查询`q`，根据其键`K`从字典中给出平均值`V`。”这是一个泛化，因为如果我们调用`score(1/T * Σ[i]^T[=1] h[i], [..., h[i], ...], [..., h[i], ...])`，我们会得到与之前相同的结果！
+
+这为我们提供了一个查询的结果。为了将此扩展到多个查询，我们多次调用三个参数的得分函数。这为我们提供了一个 MHA 的一个头的输出结果，通常用名为`Attention`的函数表示：
 
 ![图片](img/CH12_UN18_Raff.png)
 
-这个方程式是我们刚才所做内容的直接改编。我们现在有多个查询 *Q* = [**q**[1],**q**[2],…,**q**[*T*′]]，因此我们多次调用 `score` 并将 *T*′ 个结果堆叠成一个更大的矩阵。
+这个方程式是我们刚才所做内容的直接改编。我们现在有多个查询`Q = [q[1], q[2], ..., q[T']]`，因此我们多次调用`score`并将`T'`个结果堆叠成一个更大的矩阵。
 
-有了这些，我们最终可以定义 MHA 函数。如果我们有 z 个头，你可能已经猜对了，我们调用 `Attention` 函数 z 次！但输入仍然是 Q，K 和 V。为了使每个头学会寻找不同的事物，每个头都有三个 `nn.Linear` 层 *W*^Q，*W*^K 和 *W*^V。这些线性层的任务是防止所有调用都计算完全相同的事情，因为那将是愚蠢的。然后我们将所有 z 个结果连接成一个大的向量，并以一个最终输出 `nn.Linear` 层 *W*^O 结尾，这个层的唯一任务是确保 MHA 的输出有 D 维。所有这些都像以下方程式所示：
+有了这些，我们最终可以定义 MHA 函数。如果我们有`z`个头，你可能已经猜对了，我们调用`Attention`函数`z`次！但输入仍然是`Q`，`K`和`V`。为了使每个头学会寻找不同的事物，每个头都有三个`nn.Linear`层`W^Q`，`W^K`和`W^V`。这些线性层的任务是防止所有调用都计算完全相同的事情，因为那将是愚蠢的。然后我们将所有`z`个结果连接成一个大的向量，并以一个最终输出`nn.Linear`层`W^O`结尾，这个层的唯一任务是确保 MHA 的输出有`D`维。所有这些都像以下方程式所示：
 
 ![图片](img/CH12_UN19_Raff.png)
 
-这使我们从原始的注意力机制过渡到更复杂的 MHA。因为 MHA 相当复杂并且有多个层，所以它不需要像卷积层需要的过滤器 C 那样多的头 z。而通常我们希望有 32 到 512 个过滤器（基于什么能得到最佳结果），对于 MFA，我们通常希望不超过*z* = 8 或*z* = 16 个头。
+这使我们从原始的注意力机制过渡到更复杂的 MHA。因为 MHA 相当复杂并且有多个层，所以它不需要像卷积层需要的过滤器`C`那样多的头`z`。而通常我们希望有 32 到 512 个过滤器（基于什么能得到最佳结果），对于 MFA，我们通常希望不超过`z = 8`或`z = 16`个头。
 
-我们不会实现 MHA 函数，因为 PyTorch 为我们提供了一个很好的实现。但让我们快速看一下一些伪 Python 代码，以了解它是如何进行的。首先，我们创建*W*[i]^Q、*W*[i]^K、*W*[i]^V 层和输出*W*^O。这发生在构造函数中，我们可以使用 PyTorch 的`ModuleList`来存储我们稍后想要使用的模块列表：
+我们不会实现 MHA 函数，因为 PyTorch 为我们提供了一个很好的实现。但让我们快速看一下一些伪 Python 代码，以了解它是如何进行的。首先，我们创建`W[i]^Q`、`W[i]^K`、`W[i]^V`层和输出`W^O`。这发生在构造函数中，我们可以使用 PyTorch 的`ModuleList`来存储我们稍后想要使用的模块列表：
 
 ```
 self.wqs = nn.ModuleList([nn.Linear(D, D) for _ in range(z)]) 
@@ -800,7 +798,7 @@ self.wvs = nn.ModuleList([nn.Linear(D, D) for _ in range(z)])
 self.wo = nn.Linear(z*D, D)
 ```
 
-然后我们可以进入`forward`函数。为了简单起见，我们假设已经存在一个`Attention`函数。我们基本上只需要反复调用这个`Attention`函数，应用构造函数中定义的线性层。可以使用`zip`命令使这个过程更加简洁，给我们一个包含*W*[i]^Q、*W*[i]^K 和*W*[i]^V 的元组，并将结果附加到`heads`列表中。它们在最后通过连接组合，并应用最终的*W*^O 层：
+然后我们可以进入`forward`函数。为了简单起见，我们假设已经存在一个`Attention`函数。我们基本上只需要反复调用这个`Attention`函数，应用构造函数中定义的线性层。可以使用`zip`命令使这个过程更加简洁，给我们一个包含`W[i]^Q`、`W[i]^K`和`W[i]^V`的元组，并将结果附加到`heads`列表中。它们在最后通过连接组合，并应用最终的`W^O`层：
 
 ```
 def forward(Q, K, V): 
@@ -810,7 +808,7 @@ def forward(Q, K, V):
     return self.wo(torch.cat(heads, dim=2) )
 ```
 
-多头注意力标准方程
+## 多头注意力标准方程
 
 我们使用了上一章中的得分函数来展示 MHA 实际上只是我们已学内容的扩展。我认为这次旅程有助于巩固我们对 MHA 的理解。MHA 也可以用更少的方程来表示：我发现它们更难以理解，但展示它们是值得的，因为这是大多数人写作的方式！
 
@@ -820,13 +818,13 @@ def forward(Q, K, V):
 
 这与我之前展示的等价，但在我看来，这种方式进行注意力的过程并不明显。这个版本是实现 MHA 的首选方式，因为它运行得更快。
 
-### 12.5.2  Transformer 块
+### 12.5.2 Transformer 块
 
 现在我们知道了 MHA 块的样子，我们可以描述 transformer 了！有两种类型的 transformer 块：编码器和解码器。它们在图 12.7 中展示，并使用了熟悉的残差连接概念。
 
 ![图片](img/CH12_F07_Raff.png)
 
-图 12.7 两种类型的 transformer 块：编码器（左）和解码器（右）。它们都使用了层归一化、残差连接和 MHA 层。每个中的第一个 MHA 被称为自注意力，因为 Q、K 和 V 使用了相同的输入。
+图 12.7 两种类型的 transformer 块：编码器（左）和解码器（右）。它们都使用了层归一化、残差连接和 MHA 层。每个中的第一个 MHA 被称为自注意力，因为`Q`、`K`和`V`使用了相同的输入。
 
 编码器块可以用于几乎任何基于序列的网络架构（例如，情感分类）；它不需要与解码器配对。它从与 MHA 的残差连接开始；查询、键和值使用相同的输入序列，因此这被描述为自注意力层，因为没有外部上下文或输入。然后发生第二个残差连接，它只使用线性层。你可以多次重复这个编码器块来创建一个更深更强的网络：原始论文³使用了六个这样的块，因此这已成为一个常见的默认值。
 
@@ -836,7 +834,7 @@ def forward(Q, K, V):
 
 警告：编码器和解码器同时查看和处理所有时间步。这对于你试图预测下一个项目的自回归模型来说可能是个问题。天真地使用 transformer 进行自回归模型意味着 transformer 可以查看未来的输入，这在目标是预测未来时是一种作弊行为！对于此类应用，你需要使用特殊的掩码来防止 transformer 查看未来。这个掩码具有三角形形状，因此时间上的交互受到限制，由`Transformer`类的`generate_square_subsequent_mask()`方法提供。
 
-以下代码块实现了一个使用 transformer 对序列进行分类的简单方法。它从一个`Embedding`层开始，接着是`PositionalEncoding`，然后是三个`TransformerEncoder`层。理想情况下，我们在这里会使用六个层；但是 transformer 比 RNN 更昂贵，所以我们必须对模型进行限制以使这个示例快速运行。transformer 运行后，我们仍然得到一个形状为(*B*,*T*,*D*)的输出：我们使用正常的注意力机制将其降低到形状为(*B*,*D*)的单个向量，以便进行预测。注意在这段代码中，transformer 需要它们的张量以(*T*,*B*,*D*)的顺序组织，因此我们需要重新排列几次轴才能使一切正常工作：
+以下代码块实现了一个使用 transformer 对序列进行分类的简单方法。它从一个`Embedding`层开始，接着是`PositionalEncoding`，然后是三个`TransformerEncoder`层。理想情况下，我们在这里会使用六个层；但是 transformer 比 RNN 更昂贵，所以我们必须对模型进行限制以使这个示例快速运行。transformer 运行后，我们仍然得到一个形状为(`B`,`T`,`D`)的输出：我们使用正常的注意力机制将其降低到形状为(`B`,`D`)的单个向量，以便进行预测。注意在这段代码中，transformer 需要它们的张量以(`T`,`B`,`D`)的顺序组织，因此我们需要重新排列几次轴才能使一切正常工作：
 
 ```
 class SimpleTransformerClassifier(nn.Module):
@@ -872,23 +870,23 @@ class SimpleTransformerClassifier(nn.Module):
 simpleTransformer = SimpleTransformerClassifier(            ❾ 
 ➥ VOCAB_SIZE, embed_dim, padding_idx=padding_idx) 
 transformer_results = train_network(simpleTransformer, loss_func, 
-➥ train_loader, val_loader=test_loader, score_funcs={’Accuracy’: 
+➥ train_loader, val_loader=test_loader, score_funcs={'Accuracy': 
 ➥ accuracy_score}, device=device, epochs=epochs)
 ```
 
 ❶ 我们 transformer 实现的主要工作
 
-❷ (B, 1, D) -> (B, D)
+❷ (`B`, 1, `D`) -> (`B`, `D`)
 
 ❸ 所有条目都是 True。
 
-❹ (B, T, D)
+❹ (`B`, `T`, `D`)
 
-❺ (B, T, D)
+❺ (`B`, `T`, `D`)
 
-❻ 因为我们的其余代码是 (B, T, D)，但变压器以 (T, B, D) 作为输入，我们必须在前后改变维度的顺序。
+❻ 因为我们的其余代码是 (`B`, `T`, `D`)，但变压器以 (`T`, `B`, `D`) 作为输入，我们必须在前后改变维度的顺序。
 
-❼ (B, T, D)
+❼ (`B`, `T`, `D`)
 
 ❽ 平均时间
 
@@ -897,15 +895,15 @@ transformer_results = train_network(simpleTransformer, loss_func,
 现在，我们可以绘制我们所有方法的成果。变压器在所有方法中达到了最高的准确率，并且在我们持续训练的过程中仍在提高。如果我们进行更多的迭代并使用更多的层，它们可能会进一步提高！但这会增加训练时间，而变压器已经比 GRU 模型慢：
 
 ```
-    sns.lineplot(x=’total time’, y=’val Accuracy’, data=gru_results, label=’GRU’) 
-    sns.lineplot(x=’total time’, y=’val Accuracy’, data=attnEmbd_results, 
-    ➥ label=’Attention Embedding’) 
-    sns.lineplot(x=’total time’, y=’val Accuracy’, data=attnPosEmbd_results, 
-    ➥ label=’Attention Positional Embedding’) 
-    sns.lineplot(x=’total time’, y=’val Accuracy’, data=cnn_results, 
-    ➥ label=’CNN Adaptive Pooling’) 
-    sns.lineplot(x=’total time’, y=’val Accuracy’, data=transformer_results, 
-    ➥ label=’Transformer’)
+    sns.lineplot(x='total time', y='val Accuracy', data=gru_results, label='GRU') 
+    sns.lineplot(x='total time', y='val Accuracy', data=attnEmbd_results, 
+    ➥ label='Attention Embedding') 
+    sns.lineplot(x='total time', y='val Accuracy', data=attnPosEmbd_results, 
+    ➥ label='Attention Positional Embedding') 
+    sns.lineplot(x='total time', y='val Accuracy', data=cnn_results, 
+    ➥ label='CNN Adaptive Pooling') 
+    sns.lineplot(x='total time', y='val Accuracy', data=transformer_results, 
+    ➥ label='Transformer')
 
 [34]: <AxesSubplot:xlabel='total time', ylabel='val Accuracy'>
 ```
@@ -916,7 +914,7 @@ transformer_results = train_network(simpleTransformer, loss_func,
 
 当您需要尽可能高的准确率并且有大量的 GPU（和数据）可用以支付其高昂的价格时，变压器是您会使用的工具。RNNs 有一个坏习惯，就是在三到六层后准确率会达到平台期，这与深度学习趋势相反，即更多的层可以得到更强大的模型和更好的结果。总的来说，变压器通常有 24+层，并且随着层数的增加而提高准确率。但话虽如此，当您在处理需要使用多个 GPU 的庞大数据集时，变压器可以更准确 *并且* 更快。
 
-这是因为变压器会同时处理序列中的所有 T 个项，而 RNNs 需要逐个处理它们。以这种方式进行工作使得变压器更适合扩展到多个 GPU，因为可以分割和同时运行的工作更多。使用 RNN 时，您不能分割工作，因为每一步都依赖于前一步，所以您必须等待。尽管如此，研究人员和公司正在使用 *数百到数千个 GPU* 来在数百 GB 或更多的数据上训练单个模型。这告诉您，要真正看到变压器的优势，需要多大的规模。
+这是因为变压器会同时处理序列中的所有`T`个项，而 RNNs 需要逐个处理它们。以这种方式进行工作使得变压器更适合扩展到多个 GPU，因为可以分割和同时运行的工作更多。使用 RNN 时，您不能分割工作，因为每一步都依赖于前一步，所以您必须等待。尽管如此，研究人员和公司正在使用 *数百到数千个 GPU* 来在数百 GB 或更多的数据上训练单个模型。这告诉您，要真正看到变压器的优势，需要多大的规模。
 
 虽然变压器尚未准备好取代循环神经网络（RNNs），但它们是另一种可以使用的方案。当您拥有大量数据和计算资源时，它们目前是最大化准确率的首选。在下一章中，我们将学习如何在不需要一千个 GPU 的情况下，为您的自身问题提取变压器的优势 *而不* 需要一千个 GPU！
 
@@ -924,15 +922,15 @@ transformer_results = train_network(simpleTransformer, loss_func,
 
 在 Manning 在线平台 Inside Deep Learning Exercises 上分享和讨论您的解决方案（[`liveproject.manning.com/project/945`](https://liveproject.manning.com/project/945)）。一旦您提交了自己的答案，您将能够看到其他读者提交的解决方案，并看到作者认为哪些是最佳的。
 
-1.  使用 Optuna 尝试优化基于注意力的平均嵌入分类器。尝试调整 `nn.Embedding` 层使用的初始维度、所有后续层中的隐藏神经元数量、总隐藏层数量，以及要在 AG News 语料库上使用的评分函数（点积、通用、加法）。你能将精度提高多少？
+1.  使用 Optuna 尝试优化基于注意力的平均嵌入分类器。尝试调整`nn.Embedding`层使用的初始维度、所有后续层中的隐藏神经元数量、总隐藏层数量，以及要在 AG News 语料库上使用的评分函数（点积、通用、加法）。你能将精度提高多少？
 
-1.  回到第六章，将 `ResidualBlockE` 和 `ResidualBottleNeck` 层转换为它们的 1D 对应层 `ResidualBlockE1D` 和 `ResidualBottleNeck1D`。然后使用它们尝试改进本章在 AG News 语料库上的 1D CNN。你能将精度提高到多高？
+2.  回到第六章，将`ResidualBlockE`和`ResidualBottleNeck`层转换为它们的 1D 对应层`ResidualBlockE1D`和`ResidualBottleNeck1D`。然后使用它们尝试改进本章在 AG News 语料库上的 1D CNN。你能将精度提高到多高？
 
-1.  使用你最好的 1D CNN 对 AG News 进行处理，尝试向网络中添加位置编码。这对你的结果有何影响？
+3.  使用你最好的 1D CNN 对 AG News 进行处理，尝试向网络中添加位置编码。这对你的结果有何影响？
 
-1.  PyTorch 提供了一个 `nn.MultiheadAttention` 模块，实现了 MHA 方法。为基于注意力的平均嵌入分类器提出自己的修改，以使用 MHA，并尝试使其具有更高的精度。
+4.  PyTorch 提供了一个`nn.MultiheadAttention`模块，实现了 MHA 方法。为基于注意力的平均嵌入分类器提出自己的修改，以使用 MHA，并尝试使其具有更高的精度。
 
-1.  Transformer 通常与学习率计划配合使用效果最佳。尝试第五章中我们学习到的计划，看看你是否可以减少 `SimpleTransformerClassifier` 学习所需的周期数或提高其最终精度。
+5.  Transformer 通常与学习率计划配合使用效果最佳。尝试第五章中我们学习到的计划，看看你是否可以减少`SimpleTransformerClassifier`学习所需的周期数或提高其最终精度。
 
 ## 摘要
 

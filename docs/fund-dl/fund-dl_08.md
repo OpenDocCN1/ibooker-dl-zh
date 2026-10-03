@@ -1,6 +1,7 @@
+
 # 第八章：嵌入和表示学习
 
-# 学习低维表示
+## 学习低维表示
 
 在上一章中，我们用一个简单的论点来激励卷积架构。我们的输入向量越大，我们的模型就越大。具有大量参数的大型模型具有表现力，但它们也越来越需要数据。这意味着如果没有足够大量的训练数据，我们很可能会过拟合。卷积架构通过减少模型中的参数数量而不一定减少表现力来帮助我们应对维度灾难。
 
@@ -14,7 +15,7 @@
 
 在下一节中，我们将介绍*主成分分析*（PCA），这是一种经典的降维方法。在接下来的章节中，我们将探索更强大的神经方法来学习压缩嵌入。
 
-# 主成分分析
+## 主成分分析
 
 PCA 的基本概念是找到一组轴，这些轴传达了关于我们数据集的最多信息。更具体地说，如果我们有*d*维数据，我们希望找到一个新的 <math alttext="m 小于 d"><mrow><mi>m</mi> <mo><</mo> <mi>d</mi></mrow></math> 维度的集合，尽可能保留原始数据集中的有价值信息。为简单起见，让我们选择 <math alttext="d 等于 2，m 等于 1"><mrow><mi>d</mi> <mo>=</mo> <mn>2</mn> <mo>,</mo> <mi>m</mi> <mo>=</mo> <mn>1</mn></mrow></math>。假设方差对应于信息，我们可以通过迭代过程执行这种转换。首先，我们找到一个沿着数据集具有最大方差的单位向量。因为这个方向包含最多信息，我们选择这个方向作为我们的第一个轴。然后从与这个第一个选择正交的向量集中，我们选择一个沿着数据集具有最大方差的新单位向量。这是我们的第二个轴。
 
@@ -32,11 +33,11 @@ PCA 的基本概念是找到一组轴，这些轴传达了关于我们数据集�
 
 图 8-3 突出了像 PCA 这样的方法在捕捉复杂数据集中重要关系方面的缺点。因为我们在现实中可能遇到的大多数数据集（图像、文本等）都具有非线性关系，所以我们必须开发一种能够进行非线性降维的理论。深度学习从业者通过使用神经模型来弥补这一差距，我们将在下一节中介绍。
 
-！[](Images/fdl2_0803.png)
+![](img/fdl2_0803.png)
 
 ###### 图 8-3。PCA 在数据降维方面无法进行最佳转换的情况
 
-# 激励自动编码器架构
+## 激励自动编码器架构
 
 当我们谈论前馈网络时，我们讨论了每一层如何逐渐学习更相关的输入表示。事实上，在第七章中，我们取出了最终卷积层的输出，并将其用作输入图像的低维表示。暂且不谈我们希望以无监督的方式生成这些低维表示，总体上这些方法存在根本问题。具体来说，虽然所选层确实包含来自输入的信息，但网络已经被训练为关注解决手头任务关键的输入方面。因此，与输入的一些可能对其他分类任务重要但可能比当前任务不太重要的元素相关的信息丢失是相当显著的。
 
@@ -48,7 +49,7 @@ PCA 的基本概念是找到一组轴，这些轴传达了关于我们数据集�
 
 为了展示自动编码器的惊人有效性，我们将构建并可视化自动编码器架构，如图 8-4 所示。具体来说，我们将突出其与 PCA 相比更好地分离 MNIST 数字的能力。
 
-# 在 PyTorch 中实现自动编码器
+## 在 PyTorch 中实现自动编码器
 
 2006 年 Hinton 和 Salakhutdinov 撰写的开创性论文“使用神经网络降低数据的维度”描述了自动编码器。他们的假设是，神经模型提供的非线性复杂性将使他们能够捕捉线性方法（如 PCA）所忽略的结构。为了证明这一点，他们在 MNIST 上进行了一个实验，使用自动编码器和 PCA 将数据集减少为 2D 数据点。在本节中，我们将重新创建他们的实验设置，以验证这一假设，并进一步探索前馈自动编码器的架构和属性。
 
@@ -56,33 +57,32 @@ PCA 的基本概念是找到一组轴，这些轴传达了关于我们数据集�
 
 ```py
 class Decoder(nn.Module):
-  def __init__(self, n_in, n_hidden_1, n_hidden_2, n_hidden_3, n_out):
-    super(Decoder, self).__init__()
-    self.layer1 = nn.Sequential(
-        nn.Linear(n_in, n_hidden_1, bias=True),
-        nn.BatchNorm1d(n_hidden_1),
-        nn.Sigmoid())
-    self.layer2 = nn.Sequential(
-        nn.Linear(n_hidden_1, n_hidden_2, bias=True),
-        nn.BatchNorm1d(n_hidden_2),
-        nn.Sigmoid())
-    self.layer3 = nn.Sequential(
-        nn.Linear(n_hidden_2, n_hidden_3, bias=True),
-        nn.BatchNorm1d(n_hidden_3),
-        nn.Sigmoid())
-    n_size = math.floor(math.sqrt(n_out))
-    self.layer4 = nn.Sequential(
-        nn.Linear(n_hidden_3, n_out, bias=True),
-        nn.BatchNorm1d(n_out),
-        nn.Sigmoid(),
-        nn.Unflatten(1, torch.Size([1, n_size,n_size])))
+  def __init__(self, n_in, n_hidden_1, n_hidden_2, n_hidden_3, n_out):
+    super(Decoder, self).__init__()
+    self.layer1 = nn.Sequential(
+        nn.Linear(n_in, n_hidden_1, bias=True),
+        nn.BatchNorm1d(n_hidden_1),
+        nn.Sigmoid())
+    self.layer2 = nn.Sequential(
+        nn.Linear(n_hidden_1, n_hidden_2, bias=True),
+        nn.BatchNorm1d(n_hidden_2),
+        nn.Sigmoid())
+    self.layer3 = nn.Sequential(
+        nn.Linear(n_hidden_2, n_hidden_3, bias=True),
+        nn.BatchNorm1d(n_hidden_3),
+        nn.Sigmoid())
+    n_size = math.floor(math.sqrt(n_out))
+    self.layer4 = nn.Sequential(
+        nn.Linear(n_hidden_3, n_out, bias=True),
+        nn.BatchNorm1d(n_out),
+        nn.Sigmoid(),
+        nn.Unflatten(1, torch.Size([1, n_size,n_size])))
 
-  def forward(self, x):
-    x = self.layer1(x)
-    x = self.layer2(x)
-    x = self.layer3(x)
-    return self.layer4(x)
-
+  def forward(self, x):
+    x = self.layer1(x)
+    x = self.layer2(x)
+    x = self.layer3(x)
+    return self.layer4(x)
 ```
 
 ![](img/fdl2_0805.png)
@@ -93,7 +93,6 @@ class Decoder(nn.Module):
 
 ```py
 decoder = Decoder(2,250,500,1000,784)
-
 ```
 
 最后，我们需要构建一个描述我们模型功能如何的度量（或目标函数）。具体来说，我们想要衡量重构与原始图像之间的接近程度。我们可以通过简单地计算原始 784 维输入和重构的 784 维输出之间的距离来衡量这一点。更具体地说，给定一个输入向量 I 和一个重构 O，我们希望最小化 I 和 O 之间的差值的值，也称为两个向量之间的 L2 范数。我们将这个函数平均到整个小批次上以生成我们的最终目标函数。最后，我们将使用 Adam 优化器训练网络，使用`torch.utils.tensorboard.SummaryWriter`在每个小批次记录所产生的错误的标量摘要。在 PyTorch 中，我们可以简洁地表示损失和训练操作如下：
@@ -101,29 +100,28 @@ decoder = Decoder(2,250,500,1000,784)
 ```py
 loss_fn = nn.MSELoss()
 optimizer = optim.Adam(decoder.parameters(),
-                       lr = 0.001,
-                       betas=(0.9,0.999),
-                       eps=1e-08)
+                       lr = 0.001,
+                       betas=(0.9,0.999),
+                       eps=1e-08)
 
 trainset = datasets.MNIST('.',
-                          train=True,
-                          transform=transforms.ToTensor(),
-                          download=True)
+                          train=True,
+                          transform=transforms.ToTensor(),
+                          download=True)
 trainloader = DataLoader(trainset,
-                         batch_size=32,
-                         shuffle=True)
+                         batch_size=32,
+                         shuffle=True)
 # Training Loop
 NUM_EPOCHS = 5
 for epoch in range(NUM_EPOCHS):
-  for input, labels in trainloader:
-    optimizer.zero_grad()
-    code = encoder(input)
-    output = decoder(code)
-    #print(input.shape, output.shape)
-    loss = loss_fn(output, input)
-    optimizer.step()
-  print(f"Epoch: {epoch} Loss: {loss}")
-
+  for input, labels in trainloader:
+    optimizer.zero_grad()
+    code = encoder(input)
+    output = decoder(code)
+    #print(input.shape, output.shape)
+    loss = loss_fn(output, input)
+    optimizer.step()
+  print(f"Epoch: {epoch} Loss: {loss}")
 ```
 
 最后，我们需要一种方法来评估我们模型的泛化能力。像往常一样，我们将使用一个验证数据集，并计算相同的 L2 范数测量来评估模型。此外，我们将收集图像摘要，以便我们可以比较输入图像和重构图像：
@@ -131,28 +129,26 @@ for epoch in range(NUM_EPOCHS):
 ```py
 i = 0
 with torch.no_grad():
-  for images, labels in trainloader:
-    if i == 3:
-      break
-    grid = utils.make_grid(images)
-    plt.figure()
-    plt.imshow(grid.permute(1,2,0))
+  for images, labels in trainloader:
+    if i == 3:
+      break
+    grid = utils.make_grid(images)
+    plt.figure()
+    plt.imshow(grid.permute(1,2,0))
 
-    code = encoder(images)
-    output = decoder(code)
+    code = encoder(images)
+    output = decoder(code)
 
-    grid = utils.make_grid(output)
-    plt.figure()
-    plt.imshow(grid.permute(1,2,0))
-    i += 1
-
+    grid = utils.make_grid(output)
+    plt.figure()
+    plt.imshow(grid.permute(1,2,0))
+    i += 1
 ```
 
 我们可以使用 TensorBoard 可视化模型图、训练和验证成本以及图像摘要。只需运行以下命令：
 
 ```py
 $ tensorboard --logdir ~/path/to/mnist_autoencoder_hidden=2_logs
-
 ```
 
 然后将浏览器导航到*http://localhost:6006/*。 “Graph”选项卡的结果显示在图 8-6 中。
@@ -195,10 +191,11 @@ mnist = input_data.read_data_sets("data/", one_hot=False)
 pca = decomposition.PCA(n_components=2)
 pca.fit(mnist.train.images)
 pca_codes = pca.transform(mnist.test.images)
-
 ```
 
-首先我们拉取 MNIST 数据集。我们设置了标志`one_hot=False`，因为我们希望标签以整数形式提供，而不是作为 one-hot 向量（简单提醒一下，表示 MNIST 标签的 one-hot 向量将是一个大小为 10 的向量，其中第 i 个分量设置为 1 以表示数字 i，其余分量设置为零）。我们使用常用的机器学习库*scikit-learn*执行 PCA，设置`n_components=2`参数，以便 scikit-learn 知道生成 2D 代码。我们还可以从 2D 代码重构原始图像并可视化重构结果：
+首先我们拉取 MNIST 数据集。我们设置了标志`one_hot=False`，因为我们希望标签以整数形式提供，而不是作为 one-hot 向量（简单提醒一下，表示 MNIST 标签的 one-hot 向量将是一个大小为 10 的向量，其中第 i 个分量设置为 1 以表示数字 i，其余分量设置为零）。我们使用常用的机器学习库*scikit-learn*执行 PCA，设置`n_components=2`参数，以便 scikit-learn 知道生成 2D 代码。我们还可以从 2D 代码重构原始图像并可视化重构结果。
+
+
 
 ```py
 from matplotlib import pyplot as plt
@@ -248,9 +245,9 @@ plt.show()
 
 ```py
 def corrupt_input(x):
-    corrupting_matrix = 2.0*torch.rand_like(x)
+    corrupting_matrix = 2.0*torch.rand_like(x)
 
-    return x * corrupting_matrix
+    return x * corrupting_matrix
 
 # x = mnist data image of shape 28*28=784
 x = torch.rand((28,28))
@@ -333,7 +330,9 @@ Word2Vec 的第二种模型是 Skip-Gram 模型，由 Mikolov 等人介绍。Ski
 
 考虑句子“the boy went to the bank.”如果我们将这个句子分解成一系列的（上下文，目标）对，我们将得到[([the, went], boy), ([boy, to], went), ([went, the], to), ([to, bank], the)]。进一步地，我们必须将每个（上下文，目标）对拆分成（输入，输出）对，其中输入是目标，输出是上下文中的一个词。从第一个对([the, went], boy)开始，我们将生成两对(boy, the)和(boy, went)。我们继续将这个操作应用到每个（上下文，目标）对，以构建我们的数据集。最后，我们用词汇表中的索引替换每个单词的唯一索引 <math alttext="i element-of StartSet 0 comma 1 comma ellipsis comma StartAbsoluteValue upper V EndAbsoluteValue minus 1 EndSet"><mrow><mi>i</mi> <mo>∈</mo> <mo>{</mo> <mn>0</mn> <mo>,</mo> <mn>1</mn> <mo>,</mo> <mo>...</mo> <mo>,</mo> <mo>|</mo> <mi>V</mi> <mo>|</mo> <mo>-</mo> <mn>1</mn> <mo>}</mo></mrow></math>。
 
-编码器的结构非常简单。它本质上是一个查找表，有<math alttext="StartAbsoluteValue upper V EndAbsoluteValue"><mrow><mo>|</mo> <mi>V</mi> <mo>|</mo></mrow></math>行，其中第<math alttext="i Superscript t h"><msup><mi>i</mi> <mrow><mi>t</mi><mi>h</mi></mrow></msup></math>行是对应于第<math alttext="i Superscript t h"><msup><mi>i</mi> <mrow><mi>t</mi><mi>h</mi></mrow></msup></math>个词汇的嵌入。编码器所需做的就是获取输入单词的索引，并输出查找表中的适当行。这是一个高效的操作，因为在 GPU 上，这个操作可以表示为查找表的转置和表示输入单词的独热向量的乘积。我们可以在 PyTorch 中简单实现这一点，使用以下 PyTorch 函数：
+
+
+编码器的结构非常简单。它本质上是一个查找表，有`|V|`行，其中第`i^th`行是对应于第`i^th`个词汇的嵌入。编码器所需做的就是获取输入单词的索引，并输出查找表中的适当行。这是一个高效的操作，因为在 GPU 上，这个操作可以表示为查找表的转置和表示输入单词的独热向量的乘积。我们可以在 PyTorch 中简单实现这一点，使用以下 PyTorch 函数：
 
 ```py
 emb = nn.Embedding(10, 100)
@@ -370,8 +369,7 @@ vocab_size = 500
 emb_vector_len = 128
 
 embedding = nn.Embedding(num_embeddings = vocab_size,
-                         embedding_dim = emb_vector_len)
-
+                         embedding_dim = emb_vector_len)
 ```
 
 PyTorch 目前没有内置的 NCE 损失函数。但是，互联网上有一些实现。一个例子是*info-nce-pytorch*库：
@@ -388,23 +386,21 @@ batch_size, embedding_size = 32, 128
 query = embedding(outputs)
 positive_key = embedding(targets)
 output = loss(query, positive_key)
-
 ```
 
 现在我们已经将我们的目标函数表达为 NCE 成本的平均值，我们像往常一样设置训练。在这里，我们跟随 Mikolov 等人的脚步，使用学习率为 0.1 的随机梯度下降：
 
 ```py
 optimizer = optim.SGD(embedding.parameters(),
-                      lr = 0.1)
+                      lr = 0.1)
 def train(inputs, targets, embedding):
-  optimizer.zero_grad()
-  input_emb = embedding(inputs)
-  target_emb = embedding(targets)
-  loss = loss_fn(input_emb, target_emb)
-  loss.backward()
-  optimizer.step()
-  return loss
-
+  optimizer.zero_grad()
+  input_emb = embedding(inputs)
+  target_emb = embedding(targets)
+  loss = loss_fn(input_emb, target_emb)
+  loss.backward()
+  optimizer.step()
+  return loss
 ```
 
 我们还定期使用验证函数检查模型，该函数将查找表中的嵌入归一化，并使用余弦相似度计算一组验证单词与词汇表中所有其他单词之间的距离：
@@ -413,14 +409,13 @@ def train(inputs, targets, embedding):
 cosine_similarity = nn.CosineSimilarity()
 
 def evaluate(inputs, targets, embedding):
-  with torch.no_grad():
-    input_emb = embedding(inputs)
-    target_emb = embedding(targets)
-    norm = torch.sum(input_emb, dim=1)
-    normalized = input_emb/norm
-    score = cosine_similarity(normalized, target_emb)
-    return normalized, score
-
+  with torch.no_grad():
+    input_emb = embedding(inputs)
+    target_emb = embedding(targets)
+    norm = torch.sum(input_emb, dim=1)
+    normalized = input_emb/norm
+    score = cosine_similarity(normalized, target_emb)
+    return normalized, score
 ```
 
 将所有这些组件放在一起，我们终于准备好运行 Skip-Gram 模型。我们略过这部分代码，因为它与我们过去构建模型的方式非常相似。唯一的区别是在检查步骤中的额外代码。我们从我们的词汇表中最常见的 500 个单词中随机选择 20 个验证单词。对于这些单词中的每一个，我们使用我们构建的余弦相似度函数找到最近的邻居：
@@ -428,23 +423,22 @@ def evaluate(inputs, targets, embedding):
 ```py
 n_epochs=1
 for epoch in range(n_epochs):
-  # Train
-  running_loss = 0.0
-  for inputs, targets in trainloader:
-    loss = train(inputs, targets)
-    running_loss += loss.item()
+  # Train
+  running_loss = 0.0
+  for inputs, targets in trainloader:
+    loss = train(inputs, targets)
+    running_loss += loss.item()
 
-  writer.add_scalar('Train Loss',
-                    running_loss/len(trainloader), epoch)
-  #Validate
-  running_score = 0.0
-  for inputs, targets in valloader:
-    _, score = evaluate(inputs, targets)
-    running_score += score
+  writer.add_scalar('Train Loss',
+                    running_loss/len(trainloader), epoch)
+  #Validate
+  running_score = 0.0
+  for inputs, targets in valloader:
+    _, score = evaluate(inputs, targets)
+    running_score += score
 
-  writer.add_scalar('Val Score',
-                    running_score/len(valloader), epoch)
-
+  writer.add_scalar('Val Score',
+                    running_score/len(valloader), epoch)
 ```
 
 代码开始运行，我们可以开始看到模型随时间的演变。在开始时，模型在嵌入方面表现不佳（从检查步骤中可以看出）。然而，当训练完成时，模型显然已经找到了有效捕捉单词含义的表示：
@@ -503,7 +497,6 @@ belgian
 
 written: translated, inspired, poetry, alphabet, hebrew, 
 letters, words, read
-
 ```
 
 虽然不完美，但这里捕捉到了一些引人注目的有意义的聚类。数字、国家和文化被紧密聚集在一起。代词“I”与其他代词聚集在一起。单词“world”有趣地接近“championship”和“war”。而单词“written”被发现与“translated”、“poetry”、“alphabet”、“letters”和“words”相似。
@@ -520,7 +513,6 @@ plot_embeddings = np.asfarray(final_embeddings[:plot_num,:],
 low_dim_embs = tsne.fit_transform(plot_embeddings)
 labels = [reverse_dictionary[i] for i in xrange(plot_only)]
 data.plot_with_labels(low_dim_embs, labels)
-
 ```
 
 在图 8-21 中，我们注意到相似的概念比不同的概念更接近，表明我们的嵌入对于单词的功能和定义编码了有意义的信息。

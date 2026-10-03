@@ -1,12 +1,11 @@
+
 # 5 将人工智能界面添加到 Web 应用程序
 
 本章涵盖
 
-+   使用 Transcribe 说话音符
-
-+   使用 Polly 回读日程
-
-+   使用 Lex 添加聊天机器人界面
++ 使用 Transcribe 说话音符
++ 使用 Polly 回读日程
++ 使用 Lex 添加聊天机器人界面
 
 在本章中，我们将基于第四章的待办事项应用程序进行构建，向系统中添加现成的 AI 功能。我们将添加自然语言语音接口来记录和转录文本，并让系统从我们的待办事项列表中告诉我们日常日程。最后，我们将向系统中添加一个对话界面，使我们能够完全通过自然语言界面进行交互。正如我们将看到的，这可以通过利用云 AI 服务来完成，从而快速构建。
 
@@ -240,24 +239,23 @@ function pollNote (noteId) {
 
 在这里，有几个更好的选项可以用来代替轮询，例如
 
-+   使用 AWS API Gateway 和 WebSockets——[`mng.bz/yr2e`](http://mng.bz/yr2e)。
-
-+   使用第三方服务，如 Fanout——[`fanout.io/`](https://fanout.io/)。
++ 使用 AWS API Gateway 和 WebSockets——[`mng.bz/yr2e`](http://mng.bz/yr2e)。
++ 使用第三方服务，如 Fanout——[`fanout.io/`](https://fanout.io/)。
 
 当然，最佳方法将取决于具体的系统。这些方法的描述超出了本书的范围，这就是为什么我们为笔记服务使用了简单的基于轮询的方法。
 
 ### 5.1.4 部署步骤 3
 
-让我们部署笔记功能。首先，我们需要设置我们的环境。为此，只需将`step-2-cognito-login`中的`.env`文件复制到`step-3-note-service`。
+让我们部署笔记功能。首先，我们需要设置我们的环境。为此，只需将 `step-2-cognito-login` 中的 `.env` 文件复制到 `step-3-note-service`。
 
-接下来，我们将部署我们的新笔记服务。在`step-3-note-service/note-service`目录下使用`cd`命令，然后运行
+接下来，我们将部署我们的新笔记服务。在 `step-3-note-service/note-service` 目录下使用 `cd` 命令，然后运行
 
 ```
 $ npm install
 $ serverless deploy
 ```
 
-这将在 API Gateway 中创建我们的笔记服务端点并安装我们的两个 Lambda 函数。接下来，部署前端更新。在`step-3-note-service/frontend`目录下使用`cd`命令并运行
+这将在 API Gateway 中创建我们的笔记服务端点并安装我们的两个 Lambda 函数。接下来，部署前端更新。在 `step-3-note-service/frontend` 目录下使用 `cd` 命令并运行
 
 ```
 $ source ../.env
@@ -290,19 +288,21 @@ $ aws s3 sync dist/ s3://$CHAPTER4_BUCKET
 
 ### 5.2.1 获取代码
 
-此步骤的代码位于`chapter5/step-4-schedule-service`目录中。此目录包含步骤 3 的所有代码以及我们的调度服务。与之前一样，我们将依次介绍更新，然后部署更改。
+此步骤的代码位于 `chapter5/step-4-schedule-service` 目录中。此目录包含步骤 3 的所有代码以及我们的调度服务。与之前一样，我们将依次介绍更新，然后部署更改。
 
 ### 5.2.2 调度服务
 
 我们的调度服务与笔记服务类似，因为它使用与之前相同的域管理器结构提供两个 API 端点：
 
-`/schedule/day`--为今天创建日程并提交文本到语音任务给 Polly
+`/schedule/day`——为今天创建日程并提交文本到语音任务给 Polly
 
-`/schedule/poll`--检查作业状态，一旦完成返回音频文件的引用
+`/schedule/poll`——检查作业状态，一旦完成返回音频文件的引用
 
-这种结构反映在`serverless.yml`配置中，在这个阶段应该非常熟悉。这两个端点`day`和`poll`的实现位于`handler.js`中。首先，让我们看看`day`处理程序使用的`buildSchedule`函数。如下列表所示。
+这种结构反映在 `serverless.yml` 配置中，在这个阶段应该非常熟悉。这两个端点 `day` 和 `poll` 的实现位于 `handler.js` 中。首先，让我们看看 `day` 处理程序使用的 `buildSchedule` 函数。如下列表所示。
 
-列表 5.7 调度服务`day`处理程序中的`buildSchedule`函数
+
+
+# 列表 5.7 调度服务`day`处理程序中的`buildSchedule`函数
 
 ```
 const dynamoDb = new AWS.DynamoDB.DocumentClient()
@@ -342,7 +342,7 @@ function buildSchedule (date, speakDate, cb) {               ❸
 
 我们已经看到`buildSchedule`函数如何读取给定日期的待办事项并创建 SSML。这被调度服务中的`day`处理程序使用。下一列表显示了此处理程序的代码。
 
-列表 5.8 调度服务`day`处理程序
+# 列表 5.8 调度服务`day`处理程序
 
 ```
 module.exports.day = (event, context, cb) => {
@@ -376,7 +376,7 @@ module.exports.day = (event, context, cb) => {
 
 `buildSchedule`函数创建了一个 SSML 块，传递给 Polly，Polly 将将其转换为输出`mp3`文件。我们的`day`函数设置了一个参数块，指定输出格式，以及 Polly 应将输出放置的 S3 存储桶。下一列表中的代码显示了`poll`处理程序。
 
-列表 5.9 调度服务的`poll`处理程序
+# 列表 5.9 调度服务的`poll`处理程序
 
 ```
 module.exports.poll = (event, context, cb) => {
@@ -394,7 +394,7 @@ module.exports.poll = (event, context, cb) => {
 
 检查处理器代码显示了 Lambda 函数调用 Polly 服务以检索语音合成任务。这包含在 API 响应中。
 
-SSML
+## SSML
 
 *语音合成标记语言 (SSML)* 是一种用于文本到语音任务的 XML 方言。虽然 Polly 可以处理纯文本，但 SSML 可以用于为语音合成任务提供额外的上下文。例如，以下 SSML 使用了耳语效果：
 
@@ -420,7 +420,7 @@ SSML
 
 这与文件 `frontend/src/schedule.js` 中的前端处理器相连，如下所示。
 
-列表 5.10 `schedule.js`
+# 列表 5.10 `schedule.js`
 
 ```
 import $ from 'jquery'
@@ -520,7 +520,7 @@ $ aws s3 sync dist/ s3://$CHAPTER4_BUCKET
 
 我们已经创建了一个用于创建我们的 `todo` 机器人的命令行脚本。此代码位于 `chapter5/step-5-chat-bot/bot` 目录中。文件 `create.sh` 使用 AWS 命令行设置机器人，如下所示。
 
-列表 5.11 创建聊天机器人的脚本
+# 列表 5.11 创建聊天机器人的脚本
 
 ```
 #!/bin/bash
@@ -629,7 +629,13 @@ Lex 将使用插槽类型作为帮助理解响应的手段。例如，当 Lex �
 
 现在我们已经有一个工作的机器人，是时候将其集成到我们的应用程序中了。更新前端的代码位于 `chapter5/step-5-chat-bot/frontend` 目录中。主要的机器人集成在 `src/bot.js` 中。首先，让我们看看以下列表中所示的 `activate` 函数。
 
-列表 5.12 `bot.js` activate 函数
+# 列表 5.12 `bot.js` activate 函数
+
+
+
+# 5.3.3 前端聊天机器人
+
+以下代码展示了前端聊天机器人的实现。它使用 AWS SDK 的 `LexRuntime` 接口与 Lex 服务交互，并将用户输入发送到 Lex 以获取响应。
 
 ```
 import $ from 'jquery'
@@ -674,11 +680,11 @@ function activate (authObj, todoObj) {
 
 ❸ 获取输入的文本。
 
-❹ 使用输入的文本调用 pushChat。
+❹ 使用输入的文本调用 `pushChat`。
 
 `LexRuntime` 是 AWS SDK 服务的接口，用于处理 Lex 聊天机器人服务。它有两个方法用于将用户输入发送到 Lex。一个方法 `postContent` 支持音频和文本流。更简单的方法 `postText` 仅支持发送文本形式的用户输入。在这个应用程序中，我们将使用 `postText`。下一个列表显示了将前端捕获的输入文本传递给 Lex 的代码。
 
-列表 5.13 `bot.js` pushChat 函数
+**列表 5.13** `bot.js` pushChat 函数
 
 ```
 function pushChat () {
@@ -738,7 +744,7 @@ function pushChat () {
 
 由于我们已经部署了我们的机器人，我们只需要更新前端。像以前一样，将步骤 4 中的 `.env` 文件复制到步骤 5 目录中，并运行以下列表中的命令以部署新版本。
 
-列表 5.14 将部署命令更新前端
+**列表 5.14** 将部署命令更新前端
 
 ```
 $ cd step-5-chat-bot/frontend

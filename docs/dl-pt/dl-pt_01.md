@@ -1,14 +1,12 @@
+
 # 一、介绍深度学习和 PyTorch 库
 
 本章涵盖
 
-+   深度学习如何改变我们对机器学习的方法
-
-+   了解为什么 PyTorch 非常适合深度学习
-
-+   检查典型的深度学习项目
-
-+   您需要的硬件来跟随示例
++ 深度学习如何改变我们对机器学习的方法
++ 了解为什么 PyTorch 非常适合深度学习
++ 检查典型的深度学习项目
++ 您需要的硬件来跟随示例
 
 术语*人工智能*的定义模糊，涵盖了一系列经历了大量研究、审查、混乱、夸张和科幻恐慌的学科。现实当然要乐观得多。断言今天的机器在任何人类意义上都在“思考”是不诚实的。相反，我们发现了一类能够非常有效地逼近复杂非线性过程的算法，我们可以利用这些算法来自动化以前仅限于人类的任务。
 
@@ -36,11 +34,9 @@
 
 从图 1.1 的右侧开始，我们已经可以看到我们需要执行成功的深度学习所需的一瞥：
 
-+   我们需要一种方法来摄取手头的任何数据。
-
-+   我们以某种方式需要定义深度学习机器。
-
-+   我们必须有一种自动化的方式，*训练*，来获得有用的表示并使机器产生期望的输出。
++ 我们需要一种方法来摄取手头的任何数据。
++ 我们以某种方式需要定义深度学习机器。
++ 我们必须有一种自动化的方式，*训练*，来获得有用的表示并使机器产生期望的输出。
 
 这使我们不得不更仔细地看看我们一直在谈论的这个训练问题。在训练过程中，我们使用一个*标准*，这是模型输出和参考数据的实值函数，为我们的模型期望输出与实际输出之间的差异提供一个数值分数（按照惯例，较低的分数通常更好）。训练包括通过逐步修改我们的深度学习机器来将标准驱向更低的分数，直到它在训练过程中未见的数据上也能获得低分数。
 
@@ -90,39 +86,25 @@ PyTorch 在从研究和开发转向生产方面也有引人注目的故事。虽
 
 在 PyTorch 首个 beta 版本发布时：
 
-+   Theano 和 TensorFlow 是首屈一指的低级库，使用用户定义计算图然后执行它。
-
-+   Lasagne 和 Keras 是围绕 Theano 的高级封装，Keras 也封装了 TensorFlow 和 CNTK。
-
-+   Caffe、Chainer、DyNet、Torch（PyTorch 的 Lua 前身）、MXNet、CNTK、DL4J 等填补了生态系统中的各种领域。
++ Theano 和 TensorFlow 是首屈一指的低级库，使用用户定义计算图然后执行它。
++ Lasagne 和 Keras 是围绕 Theano 的高级封装，Keras 也封装了 TensorFlow 和 CNTK。
++ Caffe、Chainer、DyNet、Torch（PyTorch 的 Lua 前身）、MXNet、CNTK、DL4J 等填补了生态系统中的各种领域。
 
 在接下来的大约两年时间里，情况发生了巨大变化。社区在 PyTorch 或 TensorFlow 之间大多数集中，其他库的采用量减少，除了填补特定领域的库。简而言之：
 
-+   Theano，第一个深度学习框架之一，已经停止了活跃开发。
-
-+   TensorFlow：
-
-    +   完全消化了 Keras，将其提升为一流的 API
-
-    +   提供了一个立即执行的“急切模式”，与 PyTorch 处理计算方式有些相似
-
-    +   发布了默认启用急切模式的 TF 2.0
-
-+   JAX 是 Google 开发的一个独立于 TensorFlow 的库，已经开始获得与 GPU、自动微分和 JIT 功能相当的 NumPy 等价物。
-
-+   PyTorch：
-
-+   +   消化了 Caffe2 作为其后端
-
-    +   替换了大部分从基于 Lua 的 Torch 项目中重复使用的低级代码
-
-    +   添加了对 ONNX 的支持，这是一个供应商中立的模型描述和交换格式
-
-    +   添加了一个延迟执行的“图模式”运行时称为*TorchScript*
-
-    +   发布了 1.0 版本
-
-    +   分别由各自公司的赞助商替换了 CNTK 和 Chainer 作为首选框架
++ Theano，第一个深度学习框架之一，已经停止了活跃开发。
++ TensorFlow：
+  + 完全消化了 Keras，将其提升为一流的 API
+  + 提供了一个立即执行的“急切模式”，与 PyTorch 处理计算方式有些相似
+  + 发布了默认启用急切模式的 TF 2.0
++ JAX 是 Google 开发的一个独立于 TensorFlow 的库，已经开始获得与 GPU、自动微分和 JIT 功能相当的 NumPy 等价物。
++ PyTorch：
+  + 消化了 Caffe2 作为其后端
+  + 替换了大部分从基于 Lua 的 Torch 项目中重复使用的低级代码
+  + 添加了对 ONNX 的支持，这是一个供应商中立的模型描述和交换格式
+  + 添加了一个延迟执行的“图模式”运行时称为*TorchScript*
+  + 发布了 1.0 版本
+  + 分别由各自公司的赞助商替换了 CNTK 和 Chainer 作为首选框架
 
 TensorFlow 拥有强大的生产流水线、广泛的行业社区和巨大的知名度。PyTorch 在研究和教学社区中取得了巨大进展，得益于其易用性，并自那时起一直在增长，因为研究人员和毕业生培训学生并转向工业。它在生产解决方案方面也积累了动力。有趣的是，随着 TorchScript 和急切模式的出现，PyTorch 和 TensorFlow 的功能集开始收敛，尽管这些功能的展示和整体体验在两者之间仍然有很大的不同。
 
@@ -152,13 +134,15 @@ TensorFlow 拥有强大的生产流水线、广泛的行业社区和巨大的知
 
 在训练循环的每一步中，我们使用从数据加载器中获取的样本评估我们的模型。然后，我们使用一些*标准*或*损失函数*将我们模型的输出与期望输出（目标）进行比较。正如它提供了构建模型的组件一样，PyTorch 还提供了各种损失函数供我们使用。它们也是在`torch.nn`中提供的。在我们用损失函数比较了实际输出和理想输出之后，我们需要稍微推动模型，使其输出更好地类似于目标。正如前面提到的，这就是 PyTorch 自动求导引擎的作用所在；但我们还需要一个*优化器*来进行更新，这就是 PyTorch 在`torch.optim`中为我们提供的。我们将在第五章开始研究带有损失函数和优化器的训练循环，然后在第 6 至 8 章中磨练我们的技能，然后开始我们的大型项目。
 
-越来越普遍的是使用更复杂的硬件，如多个 GPU 或多台机器共同为训练大型模型提供资源，如图 1.2 底部中心所示。在这些情况下，可以使用`torch.nn.parallel.Distributed-DataParallel`和`torch.distributed`子模块来利用额外的硬件。
+
+
+越来越普遍的是使用更复杂的硬件，如多个 GPU 或多台机器共同为训练大型模型提供资源，如图 1.2 底部中心所示。在这些情况下，可以使用`torch.nn.parallel.DistributedDataParallel`和`torch.distributed`子模块来利用额外的硬件。
 
 训练循环可能是深度学习项目中最不令人兴奋但最耗时的部分。在此之后，我们将获得一个在我们的任务上经过优化的模型参数：图中训练循环右侧所示的*训练模型*。拥有一个能解决问题的模型很棒，但为了让它有用，我们必须将其放在需要工作的地方。这个过程的*部署*部分在图 1.2 右侧描述，可能涉及将模型放在服务器上或将其导出以加载到云引擎中，如图所示。或者我们可以将其集成到更大的应用程序中，或在手机上运行。
 
-部署练习的一个特定步骤可以是导出模型。如前所述，PyTorch 默认为即时执行模式（急切模式）。每当涉及 PyTorch 的指令被 Python 解释器执行时，相应的操作立即由底层 C++或 CUDA 实现执行。随着更多指令操作张量，更多操作由后端实现执行。
+部署练习的一个特定步骤可以是导出模型。如前所述，PyTorch 默认为即时执行模式（急切模式）。每当涉及 PyTorch 的指令被 Python 解释器执行时，相应的操作立即由底层 C++ 或 CUDA 实现执行。随着更多指令操作张量，更多操作由后端实现执行。
 
-PyTorch 还提供了一种通过*TorchScript*提前编译模型的方法。使用 TorchScript，PyTorch 可以将模型序列化为一组指令，可以独立于 Python 调用：比如，从 C++程序或移动设备上。我们可以将其视为具有有限指令集的虚拟机，特定于张量操作。这使我们能够导出我们的模型，无论是作为可与 PyTorch 运行时一起使用的 TorchScript，还是作为一种称为*ONNX*的标准化格式。这些功能是 PyTorch 生产部署能力的基础。我们将在第十五章中介绍这一点。
+PyTorch 还提供了一种通过*TorchScript*提前编译模型的方法。使用 TorchScript，PyTorch 可以将模型序列化为一组指令，可以独立于 Python 调用：比如，从 C++ 程序或移动设备上。我们可以将其视为具有有限指令集的虚拟机，特定于张量操作。这使我们能够导出我们的模型，无论是作为可与 PyTorch 运行时一起使用的 TorchScript，还是作为一种称为*ONNX*的标准化格式。这些功能是 PyTorch 生产部署能力的基础。我们将在第十五章中介绍这一点。
 
 ## 1.5 硬件和软件要求
 
@@ -172,7 +156,7 @@ PyTorch 还提供了一种通过*TorchScript*提前编译模型的方法。使�
 
 最后考虑的是操作系统（OS）。PyTorch 从首次发布开始就支持 Linux 和 macOS，并于 2018 年获得了 Windows 支持。由于当前的苹果笔记本不包含支持 CUDA 的 GPU，PyTorch 的预编译 macOS 包仅支持 CPU。在本书中，我们会尽量避免假设您正在运行特定的操作系统，尽管第 2 部分中的一些脚本显示为在 Linux 下的 Bash 提示符下运行。这些脚本的命令行应该很容易转换为兼容 Windows 的形式。为了方便起见，尽可能地，代码将被列为从 Jupyter Notebook 运行时的形式。
 
-有关安装信息，请参阅官方 PyTorch 网站上的入门指南（[`pytorch.org/get-started/locally`](https://pytorch.org/get-started/locally)）。我们建议 Windows 用户使用 Anaconda 或 Miniconda 进行安装（[`www.anaconda.com/distribution`](https://www.anaconda.com/distribution)或[`docs.conda.io/en/latest/miniconda.html`](https://docs.conda.io/en/latest/miniconda.html)）。像 Linux 这样的其他操作系统通常有更多可行的选项，Pip 是 Python 最常见的包管理器。我们提供一个 requirements.txt 文件，pip 可以使用它来安装依赖项。当然，有经验的用户可以自由选择最符合您首选开发环境的方式来安装软件包。
+有关安装信息，请参阅官方 PyTorch 网站上的入门指南（[`pytorch.org/get-started/locally`](https://pytorch.org/get-started/locally)）。我们建议 Windows 用户使用 Anaconda 或 Miniconda 进行安装（[`www.anaconda.com/distribution`](https://www.anaconda.com/distribution)或[`docs.conda.io/en/latest/miniconda.html`](https://docs.conda.io/en/latest/miniconda.html)）。像 Linux 这样的其他操作系统通常有更多可行的选项，Pip 是 Python 最常见的包管理器。我们提供一个 `requirements.txt` 文件，`pip` 可以使用它来安装依赖项。当然，有经验的用户可以自由选择最符合您首选开发环境的方式来安装软件包。
 
 第 2 部分还有一些不容忽视的下载带宽和磁盘空间要求。第 2 部分癌症检测项目所需的原始数据约为 60 GB，解压后需要约 120 GB 的空间。解压缩后的数据可以在解压缩后删除。此外，由于为了性能原因缓存了一些数据，训练时还需要另外 80 GB。您需要在用于训练的系统上至少有 200 GB 的空闲磁盘空间。虽然可以使用网络存储进行此操作，但如果网络访问速度慢于本地磁盘，则可能会导致训练速度下降。最好在本地 SSD 上有空间存储数据以便快速检索。
 
@@ -182,48 +166,33 @@ PyTorch 还提供了一种通过*TorchScript*提前编译模型的方法。使�
 
 此时，您需要从 GitHub 代码检出的根目录启动笔记本服务器。启动服务器的确切方式取决于您的操作系统的细节以及您安装 Jupyter 的方式和位置。如果您有问题，请随时在书的论坛上提问。⁵ 一旦启动，您的默认浏览器将弹出，显示本地笔记本文件列表。
 
-*注意* Jupyter Notebooks 是通过代码表达和探索想法的强大工具。虽然我们认为它们非常适合本书的用例，但并非人人都适用。我们认为专注于消除摩擦和最小化认知负担很重要，对每个人来说都会有所不同。在使用 PyTorch 进行实验时，请使用您喜欢的工具。
+*注意* Jupyter Notebooks 是通过代码表达和探索想法的强大工具。虽然我们认为它们非常适合本书的用例，但并非人人适用。我们认为专注于消除摩擦和最小化认知负担很重要，对每个人来说都会有所不同。在使用 PyTorch 进行实验时，请使用您喜欢的工具。
 
-书中所有示例的完整工作代码可以在书的网站([www.manning.com/books/deep-learning-with-pytorch](https://www.manning.com/books/deep-learning-with-pytorch))和我们在 GitHub 上的存储库中找到([`github.com/deep-learning-with-pytorch/dlwpt-code`](https://github.com/deep-learning-with-pytorch/dlwpt-code))。
+书中所有示例的完整工作代码可以在书的网站（[www.manning.com/books/deep-learning-with-pytorch](https://www.manning.com/books/deep-learning-with-pytorch)）和我们在 GitHub 上的存储库中找到（[`github.com/deep-learning-with-pytorch/dlwpt-code`](https://github.com/deep-learning-with-pytorch/dlwpt-code)）。
 
 ## 1.6 练习
 
-1.  启动 Python 以获得交互式提示符。
-
-    1.  您正在使用哪个 Python 版本？我们希望至少是 3.6！
-
-    1.  您能够`import torch`吗？您得到了哪个 PyTorch 版本？
-
-    1.  `torch.cuda.is_available()`的结果是什么？它是否符合您基于所使用硬件的期望？
-
-1.  启动 Jupyter 笔记本服务器。
-
-    1.  Jupyter 使用的 Python 版本是多少？
-
-    1.  Jupyter 使用的`torch`库的位置与您从交互式提示符导入的位置相同吗？
+1. 启动 Python 以获得交互式提示符。
+   1. 您正在使用哪个 Python 版本？我们希望至少是 3.6！
+   1. 您能够`import torch`吗？您得到了哪个 PyTorch 版本？
+   1. `torch.cuda.is_available()`的结果是什么？它是否符合您基于所使用硬件的期望？
+1. 启动 Jupyter 笔记本服务器。
+   1. Jupyter 使用的 Python 版本是多少？
+   1. Jupyter 使用的`torch`库的位置与您从交互式提示符导入的位置相同吗？
 
 ## 1.7 总结
 
-+   深度学习模型会自动从示例中学习将输入和期望输出关联起来。
-
-+   像 PyTorch 这样的库允许您高效地构建和训练神经网络模型。
-
-+   PyTorch 专注于灵活性和速度，同时最大限度地减少认知负担。它还默认立即执行操作。
-
-+   TorchScript 允许我们预编译模型，并不仅可以从 Python 中调用它们，还可以从 C++程序和移动设备中调用。
-
-+   自 2017 年初发布 PyTorch 以来，深度学习工具生态系统已经显著巩固。
-
-+   PyTorch 提供了许多实用库，以便促进深度学习项目。
++ 深度学习模型会自动从示例中学习将输入和期望输出关联起来。
++ 像 PyTorch 这样的库允许您高效地构建和训练神经网络模型。
++ PyTorch 专注于灵活性和速度，同时最大限度地减少认知负担。它还默认立即执行操作。
++ TorchScript 允许我们预编译模型，并不仅可以从 Python 中调用它们，还可以从 C++ 程序和移动设备中调用。
++ 自 2017 年初发布 PyTorch 以来，深度学习工具生态系统已经显著巩固。
++ PyTorch 提供了许多实用库，以便促进深度学习项目。
 
 * * *
 
-¹Edsger W. Dijkstra，“计算科学的威胁”，[`mng.bz/nPJ5`](http://mng.bz/nPJ5)。
-
+¹ Edsger W. Dijkstra，“计算科学的威胁”，[`mng.bz/nPJ5`](http://mng.bz/nPJ5)。
 ² 我们还推荐[www.arxiv-sanity.com](http://www.arxiv-sanity.com/)来帮助组织感兴趣的研究论文。
-
 ³ 在 2019 年的国际学习表示会议（ICLR）上，PyTorch 在 252 篇论文中被引用，比前一年的 87 篇增加了很多，并且与 TensorFlow 的水平相同，后者在 266 篇论文中被引用。
-
 ⁴ 这只是在运行时进行的数据准备，而不是预处理，后者在实际项目中可能占据相当大的部分。
-
-⁵[`forums.manning.com/forums/deep-learning-with-pytorch`](https://forums.manning.com/forums/deep-learning-with-pytorch)
+⁵ [`forums.manning.com/forums/deep-learning-with-pytorch`](https://forums.manning.com/forums/deep-learning-with-pytorch)

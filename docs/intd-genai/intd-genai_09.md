@@ -1,3 +1,4 @@
+
 # 第十章：参考文献
 
 ## 第一章
@@ -84,6 +85,10 @@
 
 [41] B. Lemoine, “LaMDA 是否有感知？——一次访谈,” Medium, 2022 年 6 月 11 日. [`cajundiscordian.medium.com/is-lamda-sentient-an-interview-ea64d916d917`](https://cajundiscordian.medium.com/is-lamda-sentient-an-interview-ea64d916d917)
 
+
+
+## 参考文献
+
 [42] R. Luscombe, “谷歌工程师因称 AI 聊天机器人已具有感知而被停职,” *《卫报》, 2022 年 6 月 12 日\. [www.theguardian.com/technology/2022/jun/12/google-engineer-ai-bot-sentient-blake-lemoine](https://www.theguardian.com/technology/2022/jun/12/google-engineer-ai-bot-sentient-blake-lemoine)
 
 [43] S. Pichai, “我们 AI 之旅的重要一步,” *谷歌：关键词*, 2023 年 2 月 6 日\. [`blog.google/technology/ai/bard-google-ai-search-updates/`](https://blog.google/technology/ai/bard-google-ai-search-updates/)
@@ -138,61 +143,63 @@
 
 [10] M. Twyman et al., “Black Lives Matter in Wikipedia: Collaboration and Collective Memory around Online Social Movements,” Feb. 25, 2017\. [`dl.acm.org/doi/pdf/10.1145/2998181.2998232`](https://dl.acm.org/doi/pdf/10.1145/2998181.2998232)
 
-[11]   T. Bolukbasi 等人，“人像计算机程序员，女性像家庭主妇？消除词嵌入中的偏差，”2016 年 7 月 21 日。[`arxiv.org/pdf/1607.06520.pdf`](https://arxiv.org/pdf/1607.06520.pdf)
+[11] T. Bolukbasi 等人，“人像计算机程序员，女性像家庭主妇？消除词嵌入中的偏差，”2016 年 7 月 21 日。[`arxiv.org/pdf/1607.06520.pdf`](https://arxiv.org/pdf/1607.06520.pdf)
 
-[12]   N. Meade 等人，“对预训练语言模型中偏差消除技术有效性的实证调查，”2022 年 4 月 3 日。[`arxiv.org/pdf/2110.08527.pdf`](https://arxiv.org/pdf/2110.08527.pdf)
+[12] N. Meade 等人，“对预训练语言模型中偏差消除技术有效性的实证调查，”2022 年 4 月 3 日。[`arxiv.org/pdf/2110.08527.pdf`](https://arxiv.org/pdf/2110.08527.pdf)
 
-[13]   “Hugging Face 数据集卡片，”*Hugging Face。[`huggingface.co/docs/hub/datasets-cards`](https://huggingface.co/docs/hub/datasets-cards)
+[13] “Hugging Face 数据集卡片，”*Hugging Face。[`huggingface.co/docs/hub/datasets-cards`](https://huggingface.co/docs/hub/datasets-cards)
 
-[14]   A. Piktus 等人，“The ROOTS 搜索工具：LLM 的数据透明度，”2023 年 2 月 27 日。[`arxiv.org/pdf/2302.14035.pdf`](https://arxiv.org/pdf/2302.14035.pdf)
+[14] A. Piktus 等人，“The ROOTS 搜索工具：LLM 的数据透明度，”2023 年 2 月 27 日。[`arxiv.org/pdf/2302.14035.pdf`](https://arxiv.org/pdf/2302.14035.pdf)
 
-[15]   N. Carlini 等人，“从大型语言模型中提取训练数据，”2021 年 6 月 15 日。[`arxiv.org/pdf/2012.07805.pdf`](https://arxiv.org/pdf/2012.07805.pdf)
+[15] N. Carlini 等人，“从大型语言模型中提取训练数据，”2021 年 6 月 15 日。[`arxiv.org/pdf/2012.07805.pdf`](https://arxiv.org/pdf/2012.07805.pdf)
 
-[16]   N. Carlini 等人，“《秘密的分享者》：评估和测试神经网络中的意外记忆化，”2019 年 7 月 16 日。[`arxiv.org/pdf/1802.08232.pdf`](https://arxiv.org/pdf/1802.08232.pdf)
+[16] N. Carlini 等人，“《秘密的分享者》：评估和测试神经网络中的意外记忆化，”2019 年 7 月 16 日。[`arxiv.org/pdf/1802.08232.pdf`](https://arxiv.org/pdf/1802.08232.pdf)
 
-[17]   “实践中保护隐私：数据分析中隐私增强技术的当前使用、发展和限制，”*皇家学会，2019 年 3 月。[`royalsociety.org/-/media/policy/projects/privacy-enhancing-technologies/Protecting-privacy-in-practice.pdf`](https://royalsociety.org/-/media/policy/projects/privacy-enhancing-technologies/Protecting-privacy-in-practice.pdf)
+[17] “实践中保护隐私：数据分析中隐私增强技术的当前使用、发展和限制，”*皇家学会，2019 年 3 月。[`royalsociety.org/-/media/policy/projects/privacy-enhancing-technologies/Protecting-privacy-in-practice.pdf`](https://royalsociety.org/-/media/policy/projects/privacy-enhancing-technologies/Protecting-privacy-in-practice.pdf)
 
-[18]   E. M. Renieris，“超越数据：元宇宙黎明时的人权恢复，”麻省理工学院出版社，2023 年。[`books.google.com/books/about/Beyond_Data.xhtml?hl=&id=zJZuEAAAQBAJ`](https://books.google.com/books/about/Beyond_Data.xhtml?hl=&id=zJZuEAAAQBAJ)
+[18] E. M. Renieris，“超越数据：元宇宙黎明时的人权恢复，”麻省理工学院出版社，2023 年。[`books.google.com/books/about/Beyond_Data.xhtml?hl=&id=zJZuEAAAQBAJ`](https://books.google.com/books/about/Beyond_Data.xhtml?hl=&id=zJZuEAAAQBAJ)
 
 ## 第三章
 
-[1]   D. Alba，“尽管有护栏，OpenAI 聊天机器人仍然吐出有偏见的沉思，”*彭博社，2022 年 12 月 8 日。[www.bloomberg.com/news/newsletters/2022-12-08/ChatGPT-open-ai-s-chatbot-is-spitting-out-biased-sexist-results](https://www.bloomberg.com/news/newsletters/2022-12-08/ChatGPT-open-ai-s-chatbot-is-spitting-out-biased-sexist-results)
+[1] D. Alba，“尽管有护栏，OpenAI 聊天机器人仍然吐出有偏见的沉思，”*彭博社，2022 年 12 月 8 日。[www.bloomberg.com/news/newsletters/2022-12-08/ChatGPT-open-ai-s-chatbot-is-spitting-out-biased-sexist-results](https://www.bloomberg.com/news/newsletters/2022-12-08/ChatGPT-open-ai-s-chatbot-is-spitting-out-biased-sexist-results)
 
-[2]   A. Askell 等人，“通用语言助手作为对齐的实验室，”2021 年 12 月 1 日。[`arxiv.org/abs/2112.00861`](http://arxiv.org/abs/2112.00861)
+[2] A. Askell 等人，“通用语言助手作为对齐的实验室，”2021 年 12 月 1 日。[`arxiv.org/abs/2112.00861`](http://arxiv.org/abs/2112.00861)
 
-[3]   H. Ngo 等人，“使用条件似然滤波减轻语言模型中的损害，”2021 年 8 月 4 日。[`arxiv.org/abs/2108.07790`](http://arxiv.org/abs/2108.07790)
+[3] H. Ngo 等人，“使用条件似然滤波减轻语言模型中的损害，”2021 年 8 月 4 日。[`arxiv.org/abs/2108.07790`](http://arxiv.org/abs/2108.07790)
 
-[4]   T. Korbak 等人，“使用人类偏好预训练语言模型，”2023 年 2 月 16 日。[`arxiv.org/abs/2302.08582`](http://arxiv.org/abs/2302.08582)
 
-[5]   P. Christiano，J. Leike，T. B. Brown，M. Martic，S. Legg，和 D. Amodei，“从人类偏好中进行深度强化学习，”2017 年 6 月 12 日。[`arxiv.org/abs/1706.03741`](http://arxiv.org/abs/1706.03741)
 
-[6]   B. Perrigo, “独家：OpenAI 以每小时不到 2 美元的工资雇佣肯尼亚工人以使 ChatGPT 更少毒性，” *《时代》*，2023 年 1 月 18 日。[`time.com/6247678/openai-ChatGPT-kenya-workers/`](https://time.com/6247678/openai-ChatGPT-kenya-workers/)
+[4] T. Korbak 等人，“使用人类偏好预训练语言模型，”2023 年 2 月 16 日。[`arxiv.org/abs/2302.08582`](http://arxiv.org/abs/2302.08582)
 
-[7]   Y. Bai 等人， “从 AI 反馈中实现 AI 的无害性：宪法 AI，” 2022 年 12 月 15 日。[`arxiv.org/abs/2212.08073`](http://arxiv.org/abs/2212.08073)
+[5] P. Christiano，J. Leike，T. B. Brown，M. Martic，S. Legg，和 D. Amodei，“从人类偏好中进行深度强化学习，”2017 年 6 月 12 日。[`arxiv.org/abs/1706.03741`](http://arxiv.org/abs/1706.03741)
 
-[8]   P. B. C. Anthropic， “Claude 的宪法，” *Anthropic*，2023 年 5 月 9 日。[www.anthropic.com/index/claudes-constitution](https://www.anthropic.com/index/claudes-constitution)
+[6] B. Perrigo, “独家：OpenAI 以每小时不到 2 美元的工资雇佣肯尼亚工人以使 ChatGPT 更少毒性，” *《时代》*，2023 年 1 月 18 日。[`time.com/6247678/openai-ChatGPT-kenya-workers/`](https://time.com/6247678/openai-ChatGPT-kenya-workers/)
 
-[9]   C. Xiang， “‘他本可以在这里的’：一名男子在与 AI 聊天机器人交谈后自杀，遗孀说，” *《VICE》*，2023 年 3 月 30 日。[www.vice.com/en/article/pkadgm/man-dies-by-suicide-after-talking-with-ai-chatbot-widow-says](https://www.vice.com/en/article/pkadgm/man-dies-by-suicide-after-talking-with-ai-chatbot-widow-says)
+[7] Y. Bai 等人， “从 AI 反馈中实现 AI 的无害性：宪法 AI，” 2022 年 12 月 15 日。[`arxiv.org/abs/2212.08073`](http://arxiv.org/abs/2212.08073)
 
-[10]   D. Kundaliya， “微软员工可以阅读 Bing 聊天机器人的消息，” 计算机新闻，2023 年 2 月 28 日。[www.computing.co.uk/news/4076705/microsoft-staff-read-bing-chatbot-messages](https://www.computing.co.uk/news/4076705/microsoft-staff-read-bing-chatbot-messages)
+[8] P. B. C. Anthropic， “Claude 的宪法，” *Anthropic*，2023 年 5 月 9 日。[www.anthropic.com/index/claudes-constitution](https://www.anthropic.com/index/claudes-constitution)
 
-[11]   OpenAI， “什么是 ChatGPT？” OpenAI 帮助中心。[`help.openai.com/en/articles/6783457-what-is-ChatGPT`](https://help.openai.com/en/articles/6783457-what-is-ChatGPT)
+[9] C. Xiang， “‘他本可以在这里的’：一名男子在与 AI 聊天机器人交谈后自杀，遗孀说，” *《VICE》*，2023 年 3 月 30 日。[www.vice.com/en/article/pkadgm/man-dies-by-suicide-after-talking-with-ai-chatbot-widow-says](https://www.vice.com/en/article/pkadgm/man-dies-by-suicide-after-talking-with-ai-chatbot-widow-says)
 
-[12]   OpenAI， “在 ChatGPT 中管理您数据的新方法，” OpenAI，2023 年 4 月 25 日。[`openai.com/blog/new-ways-to-manage-your-data-in-ChatGPT`](https://openai.com/blog/new-ways-to-manage-your-data-in-ChatGPT)
+[10] D. Kundaliya， “微软员工可以阅读 Bing 聊天机器人的消息，” 计算机新闻，2023 年 2 月 28 日。[www.computing.co.uk/news/4076705/microsoft-staff-read-bing-chatbot-messages](https://www.computing.co.uk/news/4076705/microsoft-staff-read-bing-chatbot-messages)
 
-[13]   “Bard 常见问题解答，” Google。[`bard.google.com/faq`](https://bard.google.com/faq)
+[11] OpenAI， “什么是 ChatGPT？” OpenAI 帮助中心。[`help.openai.com/en/articles/6783457-what-is-ChatGPT`](https://help.openai.com/en/articles/6783457-what-is-ChatGPT)
 
-[14]   Google Inc.， “管理并删除您的 Bard 活动，” Google Bard 帮助。[`support.google.com/bard/answer/13278892`](https://support.google.com/bard/answer/13278892)
+[12] OpenAI， “在 ChatGPT 中管理您数据的新方法，” OpenAI，2023 年 4 月 25 日。[`openai.com/blog/new-ways-to-manage-your-data-in-ChatGPT`](https://openai.com/blog/new-ways-to-manage-your-data-in-ChatGPT)
 
-[15]   OpenAI， “OpenAI 的隐私政策。” [`openai.com/policies/privacy-policy`](https://openai.com/policies/privacy-policy)
+[13] “Bard 常见问题解答，” Google。[`bard.google.com/faq`](https://bard.google.com/faq)
 
-[16]   E. Dreibelbis， “三星软件工程师因将专有代码粘贴到 ChatGPT 而被捕，” *《PCMag》*，2023 年 4 月 7 日。[www.pcmag.com/news/samsung-software-engineers-busted-for-pasting-proprietary-code-into-ChatGPT](https://www.pcmag.com/news/samsung-software-engineers-busted-for-pasting-proprietary-code-into-ChatGPT)
+[14] Google Inc.， “管理并删除您的 Bard 活动，” Google Bard 帮助。[`support.google.com/bard/answer/13278892`](https://support.google.com/bard/answer/13278892)
 
-[17]   B. Wodecki， “摩根大通加入其他公司禁止员工使用 ChatGPT 的行列，” *《AI 商业》*，2023 年 2 月 24 日。[`aibusiness.com/verticals/some-big-companie-banning-staff-use-of-ChatGPT`](https://aibusiness.com/verticals/some-big-companies-banning-staff-use-of-ChatGPT)
+[15] OpenAI， “OpenAI 的隐私政策。” [`openai.com/policies/privacy-policy`](https://openai.com/policies/privacy-policy)
 
-[18]   OpenAI， “3 月 20 日 ChatGPT 停电：这是发生的事情，” OpenAI，2023 年 3 月 24 日。[`openai.com/blog/march-20-ChatGPT-outage`](https://openai.com/blog/march-20-ChatGPT-outage)
+[16] E. Dreibelbis， “三星软件工程师因将专有代码粘贴到 ChatGPT 而被捕，” *《PCMag》*，2023 年 4 月 7 日。[www.pcmag.com/news/samsung-software-engineers-busted-for-pasting-proprietary-code-into-ChatGPT](https://www.pcmag.com/news/samsung-software-engineers-busted-for-pasting-proprietary-code-into-ChatGPT)
 
-[19]   “2023 年 3 月 30 日 [9870832] 的决定，” GPDP，2023 年 3 月 30 日。www.gpdp.it/web/guest/home/docweb/-/docweb-display/docweb/9870832
+[17] B. Wodecki， “摩根大通加入其他公司禁止员工使用 ChatGPT 的行列，” *《AI 商业》*，2023 年 2 月 24 日。[`aibusiness.com/verticals/some-big-companie-banning-staff-use-of-ChatGPT`](https://aibusiness.com/verticals/some-big-companies-banning-staff-use-of-ChatGPT)
+
+[18] OpenAI， “3 月 20 日 ChatGPT 停电：这是发生的事情，” OpenAI，2023 年 3 月 24 日。[`openai.com/blog/march-20-ChatGPT-outage`](https://openai.com/blog/march-20-ChatGPT-outage)
+
+[19] “2023 年 3 月 30 日 [9870832] 的决定，” GPDP，2023 年 3 月 30 日。www.gpdp.it/web/guest/home/docweb/-/docweb-display/docweb/9870832
 
 [20] T. Dalenius, “瑞典数据保护立法：统计学家视角，” *皇家统计学会杂志*，第 142 卷，第 3 期，第 285–298 页，1979 年 3 月，doi: https://doi.org/10.2307/2982482
 
@@ -218,47 +225,51 @@
 
 [31] M. Burgess, “ChatGPT 存在重大隐私问题，” *WIRED*，2023 年 4 月 4 日\. [www.wired.com/story/italy-ban-ChatGPT-privacy-gdpr/](https://www.wired.com/story/italy-ban-ChatGPT-privacy-gdpr/)
 
-[32]   M. Heikkilä, “OpenAI 对数据的渴望将再次反噬自身，” *麻省理工学院技术评论*，Apr. 19, 2023\. [www.technologyreview.com/2023/04/19/1071789/openais-hunger-for-data-is-coming-back-to-bite-it/](https://www.technologyreview.com/2023/04/19/1071789/openais-hunger-for-data-is-coming-back-to-bite-it/)
+[32] M. Heikkilä, “OpenAI 对数据的渴望将再次反噬自身，” *麻省理工学院技术评论*，Apr. 19, 2023\. [www.technologyreview.com/2023/04/19/1071789/openais-hunger-for-data-is-coming-back-to-bite-it/](https://www.technologyreview.com/2023/04/19/1071789/openais-hunger-for-data-is-coming-back-to-bite-it/)
 
-[33]   K. Chan, “OpenAI: ChatGPT 在满足监管机构要求后重返意大利，” *华盛顿邮报*，Apr. 28, 2023\. [www.washingtonpost.com/politics/2023/04/28/ChatGPT-openai-data-privacy-italy/9f77378a-e5e8-11ed-9696-8e874fd710b8_story.xhtml](https://www.washingtonpost.com/politics/2023/04/28/ChatGPT-openai-data-privacy-italy/9f77378a-e5e8-11ed-9696-8e874fd710b8_story.xhtml)
+[33] K. Chan, “OpenAI: ChatGPT 在满足监管机构要求后重返意大利，” *华盛顿邮报*，Apr. 28, 2023\. [www.washingtonpost.com/politics/2023/04/28/ChatGPT-openai-data-privacy-italy/9f77378a-e5e8-11ed-9696-8e874fd710b8_story.xhtml](https://www.washingtonpost.com/politics/2023/04/28/ChatGPT-openai-data-privacy-italy/9f77378a-e5e8-11ed-9696-8e874fd710b8_story.xhtml)
 
-[34]   N. Lomas, “‘虚拟友谊’AI 聊天机器人 Replika 在意大利因儿童安全被禁止处理数据，” TechCrunch，Feb. 03, 2023\. [`techcrunch.com/2023/02/03/replika-italy-data-processing-ban/`](https://techcrunch.com/2023/02/03/replika-italy-data-processing-ban/)
+[34] N. Lomas, “‘虚拟友谊’AI 聊天机器人 Replika 在意大利因儿童安全被禁止处理数据，” TechCrunch，Feb. 03, 2023\. [`techcrunch.com/2023/02/03/replika-italy-data-processing-ban/`](https://techcrunch.com/2023/02/03/replika-italy-data-processing-ban/)
 
-[35]   “欧洲数据保护委员会解决 Meta 的数据传输争议，并成立 ChatGPT 工作组，” 欧洲数据保护委员会，April 13, 2023\. [`edpb.europa.eu/news/news/2023/edpb-resolves-dispute-transfers-meta-and-creates-task-force-chat-gpt_en`](https://edpb.europa.eu/news/news/2023/edpb-resolves-dispute-transfers-meta-and-creates-task-force-chat-gpt_en)
+[35] “欧洲数据保护委员会解决 Meta 的数据传输争议，并成立 ChatGPT 工作组，” 欧洲数据保护委员会，April 13, 2023\. [`edpb.europa.eu/news/news/2023/edpb-resolves-dispute-transfers-meta-and-creates-task-force-chat-gpt_en`](https://edpb.europa.eu/news/news/2023/edpb-resolves-dispute-transfers-meta-and-creates-task-force-chat-gpt_en)
 
-[36]   E. Renieris (@hackylawyER), “在 #GenerativeAI 的情况下，我怀疑这些决定将无法执行，因为数据供应链现在如此复杂且不连贯，难以在‘数据主体、控制者与处理者’之间保持清晰的界限’（@OpenAI 可能会试图利用这一点）”，Twitter. [`twitter.com/lilianedwards/status/1643027497615859716`](https://twitter.com/lilianedwards/status/1643027497615859716)
+[36] E. Renieris (@hackylawyER), “在 #GenerativeAI 的情况下，我怀疑这些决定将无法执行，因为数据供应链现在如此复杂且不连贯，难以在‘数据主体、控制者与处理者’之间保持清晰的界限’（@OpenAI 可能会试图利用这一点）”，Twitter. [`twitter.com/lilianedwards/status/1643027497615859716`](https://twitter.com/lilianedwards/status/1643027497615859716)
 
-[37]   A. Merod 和 K. Arundel, “Ed Tech Experts Urge Caution on ChatGPT’s Student Data Privacy,” K-12 Dive, March 29, 2023\. [www.k12dive.com/news/ChatGPT-student-data-privacy-concern/646297/](https://www.k12dive.com/news/ChatGPT-student-data-privacy-concern/646297/)
+[37] A. Merod 和 K. Arundel, “Ed Tech Experts Urge Caution on ChatGPT’s Student Data Privacy,” K-12 Dive, March 29, 2023\. [www.k12dive.com/news/ChatGPT-student-data-privacy-concern/646297/](https://www.k12dive.com/news/ChatGPT-student-data-privacy-concern/646297/)
 
-[38]   L. Rocher, J. M. Hendrickx, 和 Y.-A. de Montjoye, “使用生成模型估计不完整数据集中重新识别的成功率，” *自然* *通讯*，第 10 卷，第 1 期，第 1-9 页，2019 年 7 月，doi: [`doi.org/10.1038/s41467-019-10933-3`](https://doi.org/10.1038/s41467-019-10933-3)
+[38] L. Rocher, J. M. Hendrickx, 和 Y.-A. de Montjoye, “使用生成模型估计不完整数据集中重新识别的成功率，” *自然* *通讯*，第 10 卷，第 1 期，第 1-9 页，2019 年 7 月，doi: [`doi.org/10.1038/s41467-019-10933-3`](https://doi.org/10.1038/s41467-019-10933-3)
 
-[39]   OpenAI， “我们的人工智能安全方法，” [`openai.com/blog/our-approach-to-ai-safety`](https://openai.com/blog/our-approach-to-ai-safety)
+[39] OpenAI， “我们的人工智能安全方法，” [`openai.com/blog/our-approach-to-ai-safety`](https://openai.com/blog/our-approach-to-ai-safety)
 
-[40]   C. Thorbecke, “不要向想要保密的聊天机器人透露任何信息，” CNN，Apr. 06, 2023\. [www.cnn.com/2023/04/06/tech/ChatGPT-ai-privacy-concerns/index.xhtml](https://www.cnn.com/2023/04/06/tech/ChatGPT-ai-privacy-concerns/index.xhtml)
+[40] C. Thorbecke, “不要向想要保密的聊天机器人透露任何信息，” CNN，Apr. 06, 2023\. [www.cnn.com/2023/04/06/tech/ChatGPT-ai-privacy-concerns/index.xhtml](https://www.cnn.com/2023/04/06/tech/ChatGPT-ai-privacy-concerns/index.xhtml)
 
-[41]   “生成式 AI 附加服务条款，” [`policies.google.com/terms/generative-ai`](https://policies.google.com/terms/generative-ai)
+[41] “生成式 AI 附加服务条款，” [`policies.google.com/terms/generative-ai`](https://policies.google.com/terms/generative-ai)
 
 [42] E. Kim, “Amazon Warns Employees Not to Share Confidential Information with ChatGPT after Seeing Cases Where Its Answer ‘Closely Matches Existing Material’ from Inside the Company,” *Insider*, Jan. 24, 2023\. [www.businessinsider.com/amazon-ChatGPT-openai-warns-employees-not-share-confidential-information-microsoft-2023-1](https://www.businessinsider.com/amazon-ChatGPT-openai-warns-employees-not-share-confidential-information-microsoft-2023-1)
 
-[43] S. Ray, “JPMorgan Chase Restricts Staffers’ Use of ChatGPT,” *Forbes*, Feb. 22, 2023\. [www.forbes.com/sites/siladityaray/2023/02/22/jpmorgan-chase-restricts-staffers-use-of-ChatGPT/](https://www.forbes.com/sites/siladityaray/2023/02/22/jpmorgan-chase-restricts-staffers-use-of-ChatGPT/)
+
+
+# 参考文献
+
+[43] S. Ray, “JPMorgan Chase Restricts Staffers’ Use of ChatGPT,” *Forbes*, Feb. 22, 2023. [www.forbes.com/sites/siladityaray/2023/02/22/jpmorgan-chase-restricts-staffers-use-of-ChatGPT/](https://www.forbes.com/sites/siladityaray/2023/02/22/jpmorgan-chase-restricts-staffers-use-of-ChatGPT/)
 
 ## 第四章
 
-[1] C. Stokel-Walker, “We Spoke to the Guy Who Created the Viral AI Image of the Pope That Fooled the World,” BuzzFeed News, March 27, 2023\. [www.buzzfeednews.com/article/chrisstokelwalker/pope-puffy-jacket-ai-midjourney-image-creator-interview](https://www.buzzfeednews.com/article/chrisstokelwalker/pope-puffy-jacket-ai-midjourney-image-creator-interview)
+[1] C. Stokel-Walker, “We Spoke to the Guy Who Created the Viral AI Image of the Pope That Fooled the World,” BuzzFeed News, March 27, 2023. [www.buzzfeednews.com/article/chrisstokelwalker/pope-puffy-jacket-ai-midjourney-image-creator-interview](https://www.buzzfeednews.com/article/chrisstokelwalker/pope-puffy-jacket-ai-midjourney-image-creator-interview)
 
 [2] C. Teigen (@chrissyteigen), “I thought the pope’s puffer jacket was real and didnt give it a second thought. no way am I surviving the future of technology.” Twitter. [`twitter.com/chrissyteigen/status/1639802312632975360`](https://twitter.com/chrissyteigen/status/1639802312632975360)
 
-[3] M. Somers, “Deepfakes, Explained,” *MIT Sloan*, July 21, 2020\. [`mitsloan.mit.edu/ideas-made-to-matter/deepfakes-explained`](https://mitsloan.mit.edu/ideas-made-to-matter/deepfakes-explained)
+[3] M. Somers, “Deepfakes, Explained,” *MIT Sloan*, July 21, 2020. [`mitsloan.mit.edu/ideas-made-to-matter/deepfakes-explained`](https://mitsloan.mit.edu/ideas-made-to-matter/deepfakes-explained)
 
-[4] J. Tammekänd, J. Thomas, and K. Peterson, “Deepfakes 2020: The Tipping Point,” Sentinel, October 2020\. [`thesentinel.ai/media/Deepfakes%202020:%20The%20Tipping%20Point,%20Sentinel.pdf`](https://thesentinel.ai/media/Deepfakes%202020:%20The%20Tipping%20Point,%20Sentinel.pdf)
+[4] J. Tammekänd, J. Thomas, and K. Peterson, “Deepfakes 2020: The Tipping Point,” Sentinel, October 2020. [`thesentinel.ai/media/Deepfakes%202020:%20The%20Tipping%20Point,%20Sentinel.pdf`](https://thesentinel.ai/media/Deepfakes%202020:%20The%20Tipping%20Point,%20Sentinel.pdf)
 
 [5] “Synthetic Media Landscape,” [www.syntheticmedialandscape.com/](https://www.syntheticmedialandscape.com/)
 
-[6] J. Rothkopf, “Deepfake Technology Enters the Documentary World,” *New York Times*, July 01, 2020\. [www.nytimes.com/2020/07/01/movies/deepfakes-documentary-welcome-to-chechnya.xhtml](https://www.nytimes.com/2020/07/01/movies/deepfakes-documentary-welcome-to-chechnya.xhtml)
+[6] J. Rothkopf, “Deepfake Technology Enters the Documentary World,” *New York Times*, July 01, 2020. [www.nytimes.com/2020/07/01/movies/deepfakes-documentary-welcome-to-chechnya.xhtml](https://www.nytimes.com/2020/07/01/movies/deepfakes-documentary-welcome-to-chechnya.xhtml)
 
 [7] R. Chesney and D. K. Citron, “Deep Fakes: A Looming Challenge for Privacy, Democracy, and National Security,” July 2018, doi: [`doi.org/10.2139/ssrn.3213954`](https://doi.org/10.2139/ssrn.3213954)
 
-[8] OpenAI, “New AI Classifier for Indicating AI-written Text,” OpenAI, Jan. 31, 2023\. [`openai.com/blog/new-ai-classifier-for-indicating-ai-written-text`](https://openai.com/blog/new-ai-classifier-for-indicating-ai-written-text)
+[8] OpenAI, “New AI Classifier for Indicating AI-written Text,” OpenAI, Jan. 31, 2023. [`openai.com/blog/new-ai-classifier-for-indicating-ai-written-text`](https://openai.com/blog/new-ai-classifier-for-indicating-ai-written-text)
 
 [9] “Media Forensics (MediFor),” DARPA. [www.darpa.mil/program/media-forensics](https://www.darpa.mil/program/media-forensics)
 
@@ -288,55 +299,57 @@
 
 [22] 海因茨， “海因茨人工智能番茄酱，” 2022 年 7 月 26 日，YouTube 视频，[www.youtube.com/watch?v=LFmpVy6eGXs](https://www.youtube.com/watch?v=LFmpVy6eGXs)
 
-[23] B. Kiefer, “雀巢品牌是最新进入 AI 艺术指导新世界的品牌，” *Adweek*, Sep. 21, 2022\. [www.adweek.com/creativity/nestle-brand-is-latest-to-venture-into-brave-new-world-of-ai-art-direction/](https://www.adweek.com/creativity/nestle-brand-is-latest-to-venture-into-brave-new-world-of-ai-art-direction/)
+[23] B. Kiefer, “雀巢品牌是最新进入 AI 艺术指导新世界的品牌，” *Adweek*, Sep. 21, 2022. [www.adweek.com/creativity/nestle-brand-is-latest-to-venture-into-brave-new-world-of-ai-art-direction/](https://www.adweek.com/creativity/nestle-brand-is-latest-to-venture-into-brave-new-world-of-ai-art-direction/)
 
-[24] J. Beer, “瑞恩·雷诺兹利用 ChatGPT 制作 Mint Mobile 广告，结果‘有些令人震惊’，” Fast Company, Jan. 10, 2023\. [www.fastcompany.com/90833253/ryan-reynolds-used-ChatGPT-to-make-a-mint-mobile-ad-and-the-results-were-mildly-terrifying](https://www.fastcompany.com/90833253/ryan-reynolds-used-ChatGPT-to-make-a-mint-mobile-ad-and-the-results-were-mildly-terrifying)
+[24] J. Beer, “瑞恩·雷诺兹利用 ChatGPT 制作 Mint Mobile 广告，结果‘有些令人震惊’，” Fast Company, Jan. 10, 2023. [www.fastcompany.com/90833253/ryan-reynolds-used-ChatGPT-to-make-a-mint-mobile-ad-and-the-results-were-mildly-terrifying](https://www.fastcompany.com/90833253/ryan-reynolds-used-ChatGPT-to-make-a-mint-mobile-ad-and-the-results-were-mildly-terrifying)
 
-[25] D. Murray, “贝拉·哈迪德的新 Calvin Klein 广告中，她亲吻了数字机器人 Lil Miquela，” *ELLE*, May 16, 2019\. [www.elle.com/uk/fashion/a27492073/bella-hadid-calvin-klein-lil-miquela/](https://www.elle.com/uk/fashion/a27492073/bella-hadid-calvin-klein-lil-miquela/)
+[25] D. Murray, “贝拉·哈迪德的新 Calvin Klein 广告中，她亲吻了数字机器人 Lil Miquela，” *ELLE*, May 16, 2019. [www.elle.com/uk/fashion/a27492073/bella-hadid-calvin-klein-lil-miquela/](https://www.elle.com/uk/fashion/a27492073/bella-hadid-calvin-klein-lil-miquela/)
 
-[26] J. Shieber, “更多投资者正在押注像 Lil Miquela 这样的虚拟网红，” TechCrunch, Jan. 14, 2019\. [`techcrunch.com/2019/01/14/more-investors-are-betting-on-virtual-influencers-like-lil-miquela/`](https://techcrunch.com/2019/01/14/more-investors-are-betting-on-virtual-influencers-like-lil-miquela/)
+[26] J. Shieber, “更多投资者正在押注像 Lil Miquela 这样的虚拟网红，” TechCrunch, Jan. 14, 2019. [`techcrunch.com/2019/01/14/more-investors-are-betting-on-virtual-influencers-like-lil-miquela/`](https://techcrunch.com/2019/01/14/more-investors-are-betting-on-virtual-influencers-like-lil-miquela/)
 
-[27] F. Sobande, “黑人及其黑人身份的数字（再）表现被夸大和品牌化，” Feb. 2021\. [`journals.sagepub.com/doi/full/10.1177/1527476420983745`](https://journals.sagepub.com/doi/full/10.1177/1527476420983745)
+[27] F. Sobande, “黑人及其黑人身份的数字（再）表现被夸大和品牌化，” Feb. 2021. [`journals.sagepub.com/doi/full/10.1177/1527476420983745`](https://journals.sagepub.com/doi/full/10.1177/1527476420983745)
 
-[28] L. M. Jackson, “Shudu Gram 是白人对现实生活中黑人女性的一种数字投射，” *New Yorker*, May 04, 2018\. [www.newyorker.com/culture/culture-desk/shudu-gram-is-a-white-mans-digital-projection-of-real-life-black-womanhood](https://www.newyorker.com/culture/culture-desk/shudu-gram-is-a-white-mans-digital-projection-of-real-life-black-womanhood)
+[28] L. M. Jackson, “Shudu Gram 是白人对现实生活中黑人女性的一种数字投射，” *New Yorker*, May 04, 2018. [www.newyorker.com/culture/culture-desk/shudu-gram-is-a-white-mans-digital-projection-of-real-life-black-womanhood](https://www.newyorker.com/culture/culture-desk/shudu-gram-is-a-white-mans-digital-projection-of-real-life-black-womanhood)
 
-[29] E. Kinsella, “史上第一幅在拍卖会上出售的人工智能生成肖像画打破预期，成交价为 43.25 万美元——是其估价的 43 倍，” Artnet News, Oct. 25, 2018\. [`news.artnet.com/market/first-ever-artificial-intelligence-portrait-painting-sells-at-christies-1379902`](https://news.artnet.com/market/first-ever-artificial-intelligence-portrait-painting-sells-at-christies-1379902)
+[29] E. Kinsella, “史上第一幅在拍卖会上出售的人工智能生成肖像画打破预期，成交价为 43.25 万美元——是其估价的 43 倍，” Artnet News, Oct. 25, 2018. [`news.artnet.com/market/first-ever-artificial-intelligence-portrait-painting-sells-at-christies-1379902`](https://news.artnet.com/market/first-ever-artificial-intelligence-portrait-painting-sells-at-christies-1379902)
 
-[30] A. Daudrich, “算法艺术及其艺术史关系，” November 2016\. [www.researchgate.net/publication/311104742_Algorithmic_Art_and_Its_Art-Historical_Relationships](https://www.researchgate.net/publication/311104742_Algorithmic_Art_and_Its_Art-Historical_Relationships)
+[30] A. Daudrich, “算法艺术及其艺术史关系，” November 2016. [www.researchgate.net/publication/311104742_Algorithmic_Art_and_Its_Art-Historical_Relationships](https://www.researchgate.net/publication/311104742_Algorithmic_Art_and_Its_Art-Historical_Relationships)
 
 [31] S. Altman (@sama). “与 dalle 一起设计了这些鞋子，现在我想把它们变成现实——有人知道一个相对简单的方法来制作它们吗？谢谢！” Twitter. [`twitter.com/sama/status/1539670012536844289`](https://twitter.com/sama/status/1539670012536844289)
 
-[32] W. D. Heaven, “Generative AI Is Changing Everything. But What’s Left When the Hype Is Gone?” *MIT Technology Review*, Dec. 16, 2022\. [www.technologyreview.com/2022/12/16/1065005/generative-ai-revolution-art/](https://www.technologyreview.com/2022/12/16/1065005/generative-ai-revolution-art/)
+[32] W. D. Heaven, “Generative AI Is Changing Everything. But What’s Left When the Hype Is Gone?” *MIT Technology Review*, Dec. 16, 2022. [www.technologyreview.com/2022/12/16/1065005/generative-ai-revolution-art/](https://www.technologyreview.com/2022/12/16/1065005/generative-ai-revolution-art/)
 
-[33] A. Cullins, “As Writers Strike, AI Could Covertly Cross the Picket Line,” *Hollywood Reporter*, May 03, 2023\. [www.hollywoodreporter.com/business/business-news/writers-strike-ai-ChatGPT-1235478681/](https://www.hollywoodreporter.com/business/business-news/writers-strike-ai-ChatGPT-1235478681/)
+[33] A. Cullins, “As Writers Strike, AI Could Covertly Cross the Picket Line,” *Hollywood Reporter*, May 03, 2023. [www.hollywoodreporter.com/business/business-news/writers-strike-ai-ChatGPT-1235478681/](https://www.hollywoodreporter.com/business/business-news/writers-strike-ai-ChatGPT-1235478681/)
 
-[34] S. Sarkar, “Rogue One Filmmakers Explain How They Digitally Recreated Two Characters,” *Polygon*, Dec. 27, 2016\. [www.polygon.com/2016/12/27/14092060/rogue-one-star-wars-grand-moff-tarkin-princess-leia](https://www.polygon.com/2016/12/27/14092060/rogue-one-star-wars-grand-moff-tarkin-princess-leia)
+[34] S. Sarkar, “Rogue One Filmmakers Explain How They Digitally Recreated Two Characters,” *Polygon*, Dec. 27, 2016. [www.polygon.com/2016/12/27/14092060/rogue-one-star-wars-grand-moff-tarkin-princess-leia](https://www.polygon.com/2016/12/27/14092060/rogue-one-star-wars-grand-moff-tarkin-princess-leia)
 
-[35] A. Pulver, “Rogue One VFX head: ‘We Didn’t Do Anything Peter Cushing Would’ve Objected To’,” *Guardian*, Jan. 16, 2017\. [www.theguardian.com/film/2017/jan/16/rogue-one-vfx-jon-knoll-peter-cushing-ethics-of-digital-resurrections](https://www.theguardian.com/film/2017/jan/16/rogue-one-vfx-jon-knoll-peter-cushing-ethics-of-digital-resurrections)
 
-[36] A. Fixsen, “The Room That Designed Itself,” *ELLE Decor*, Feb. 01, 2023\. [www.elledecor.com/life-culture/a42711299/generative-ai-design-architecture/](https://www.elledecor.com/life-culture/a42711299/generative-ai-design-architecture/)
+
+[35] A. Pulver, “Rogue One VFX head: ‘We Didn’t Do Anything Peter Cushing Would’ve Objected To’,” *Guardian*, Jan. 16, 2017. [www.theguardian.com/film/2017/jan/16/rogue-one-vfx-jon-knoll-peter-cushing-ethics-of-digital-resurrections](https://www.theguardian.com/film/2017/jan/16/rogue-one-vfx-jon-knoll-peter-cushing-ethics-of-digital-resurrections)
+
+[36] A. Fixsen, “The Room That Designed Itself,” *ELLE Decor*, Feb. 01, 2023. [www.elledecor.com/life-culture/a42711299/generative-ai-design-architecture/](https://www.elledecor.com/life-culture/a42711299/generative-ai-design-architecture/)
 
 [37] O. Ben Tal, “Joint Improvisation between Human and AI,” Dec. 01, 2022, YouTube video, [www.youtube.com/watch?v=sIFbvgmYBA0](https://www.youtube.com/watch?v=sIFbvgmYBA0)
 
-[38] W. Bedingfield, “Musicians, Machines, and the AI-Powered Future of Sound,” *WIRED UK*, March 16, 2023\. [www.wired.co.uk/article/generative-ai-music](https://www.wired.co.uk/article/generative-ai-music)
+[38] W. Bedingfield, “Musicians, Machines, and the AI-Powered Future of Sound,” *WIRED UK*, March 16, 2023. [www.wired.co.uk/article/generative-ai-music](https://www.wired.co.uk/article/generative-ai-music)
 
 [39] H. Herndon, “What If You Could Sing in Your Favorite Musician’s Voice? TED, Sep. 08, 2022, YouTube video, [www.youtube.com/watch?v=5cbCYwgQkTE](https://www.youtube.com/watch?v=5cbCYwgQkTE)
 
-[40] L. R. France, “Paul McCartney Says ‘Final’ Beatles Song Coming Thanks to Artificial Intelligence,” CNN, June 13, 2023\. [www.cnn.com/2023/06/13/entertainment/paul-mccartney-ai-beatles-song/index.xhtml](https://www.cnn.com/2023/06/13/entertainment/paul-mccartney-ai-beatles-song/index.xhtml)
+[40] L. R. France, “Paul McCartney Says ‘Final’ Beatles Song Coming Thanks to Artificial Intelligence,” CNN, June 13, 2023. [www.cnn.com/2023/06/13/entertainment/paul-mccartney-ai-beatles-song/index.xhtml](https://www.cnn.com/2023/06/13/entertainment/paul-mccartney-ai-beatles-song/index.xhtml)
 
-[41] A. Nicolaou, “Streaming Services Urged to Clamp Down on AI-Generated Music,” *Financial Times*, Apr. 12, 2023\. [www.ft.com/content/aec1679b-5a34-4dad-9fc9-f4d8cdd124b9](https://www.ft.com/content/aec1679b-5a34-4dad-9fc9-f4d8cdd124b9)
+[41] A. Nicolaou, “Streaming Services Urged to Clamp Down on AI-Generated Music,” *Financial Times*, Apr. 12, 2023. [www.ft.com/content/aec1679b-5a34-4dad-9fc9-f4d8cdd124b9](https://www.ft.com/content/aec1679b-5a34-4dad-9fc9-f4d8cdd124b9)
 
-[42] L. Clarke, “When AI Can Make Art – What Does It Mean for Creativity?” *Guardian*, Nov. 12, 2022\. [www.theguardian.com/technology/2022/nov/12/when-ai-can-make-art-what-does-it-mean-for-creativity-dall-e-midjourney](https://www.theguardian.com/technology/2022/nov/12/when-ai-can-make-art-what-does-it-mean-for-creativity-dall-e-midjourney)
+[42] L. Clarke, “When AI Can Make Art – What Does It Mean for Creativity?” *Guardian*, Nov. 12, 2022. [www.theguardian.com/technology/2022/nov/12/when-ai-can-make-art-what-does-it-mean-for-creativity-dall-e-midjourney](https://www.theguardian.com/technology/2022/nov/12/when-ai-can-make-art-what-does-it-mean-for-creativity-dall-e-midjourney)
 
-[43] J. Farago, “‘Good Artists Copy, Great Artists Steal,’” BBC News, Nov. 12, 2014\. [www.bbc.com/culture/article/20141112-great-artists-steal](https://www.bbc.com/culture/article/20141112-great-artists-steal)
+[43] J. Farago, “‘Good Artists Copy, Great Artists Steal,’” BBC News, Nov. 12, 2014. [www.bbc.com/culture/article/20141112-great-artists-steal](https://www.bbc.com/culture/article/20141112-great-artists-steal)
 
-[44] “Intellectual Property: The Term,” Electronic Frontier Foundation, May 21, 2010\. [www.eff.org/issues/intellectual-property/the-term](https://www.eff.org/issues/intellectual-property/the-term)
+[44] “Intellectual Property: The Term,” Electronic Frontier Foundation, May 21, 2010. [www.eff.org/issues/intellectual-property/the-term](https://www.eff.org/issues/intellectual-property/the-term)
 
-[45] “The Constitution of the United States: A Transcription,” National Archives, Nov. 04, 2015\. [www.archives.gov/founding-docs/constitution-transcript](https://www.archives.gov/founding-docs/constitution-transcript)
+[45] “The Constitution of the United States: A Transcription,” National Archives, Nov. 04, 2015. [www.archives.gov/founding-docs/constitution-transcript](https://www.archives.gov/founding-docs/constitution-transcript)
 
 [46] US Copyright Office, “How Long Does Copyright Protection Last? (FAQ),” [www.copyright.gov/help/faq/faq-duration.xhtml](https://www.copyright.gov/help/faq/faq-duration.xhtml)
 
-[47] US Copyright Office, “Copyright Registration Guidance: Works Containing Material Generated by Artificial Intelligence,” Federal Register, March 16, 2023\. [www.federalregister.gov/documents/2023/03/16/2023-05321/copyright-registration-guidance-works-containing-material-generated-by-artificial-intelligence](https://www.federalregister.gov/documents/2023/03/16/2023-05321/copyright-registration-guidance-works-containing-material-generated-by-artificial-intelligence)
+[47] US Copyright Office, “Copyright Registration Guidance: Works Containing Material Generated by Artificial Intelligence,” Federal Register, March 16, 2023. [www.federalregister.gov/documents/2023/03/16/2023-05321/copyright-registration-guidance-works-containing-material-generated-by-artificial-intelligence](https://www.federalregister.gov/documents/2023/03/16/2023-05321/copyright-registration-guidance-works-containing-material-generated-by-artificial-intelligence)
 
 [48] US Copyright Office, “US Copyright Office Fair Use Index,” [www.copyright.gov/fair-use/](https://www.copyright.gov/fair-use/)
 
@@ -346,9 +359,9 @@
 
 [51] “Authors Guild, Inc. v. Google Inc., No. 13-4829-cv (2d Cir. Oct. 16, 2015),” [www.copyright.gov/fair-use/summaries/authorsguild-google-2dcir2015.pdf](https://www.copyright.gov/fair-use/summaries/authorsguild-google-2dcir2015.pdf)
 
-[52] C. Xiang, “A Photographer Tried to Get His Photos Removed from an AI Dataset. He Got an Invoice Instead,” VICE, Apr. 28, 2023\. [www.vice.com/en/article/pkapb7/a-photographer-tried-to-get-his-photos-removed-from-an-ai-dataset-he-got-an-invoice-instead](https://www.vice.com/en/article/pkapb7/a-photographer-tried-to-get-his-photos-removed-from-an-ai-dataset-he-got-an-invoice-instead)
+[52] C. Xiang, “A Photographer Tried to Get His Photos Removed from an AI Dataset. He Got an Invoice Instead,” VICE, Apr. 28, 2023. [www.vice.com/en/article/pkapb7/a-photographer-tried-to-get-his-photos-removed-from-an-ai-dataset-he-got-an-invoice-instead](https://www.vice.com/en/article/pkapb7/a-photographer-tried-to-get-his-photos-removed-from-an-ai-dataset-he-got-an-invoice-instead)
 
-[53] B. Edwards, “Stability AI Plans to Let Artists Opt Out of Stable Diffusion 3 Image Training,” *Ars Technica*, Dec. 15, 2022\. [`arstechnica.com/information-technology/2022/12/stability-ai-plans-to-let-artists-opt-out-of-stable-diffusion-3-image-training/`](https://arstechnica.com/information-technology/2022/12/stability-ai-plans-to-let-artists-opt-out-of-stable-diffusion-3-image-training/)
+[53] B. Edwards, “Stability AI Plans to Let Artists Opt Out of Stable Diffusion 3 Image Training,” *Ars Technica*, Dec. 15, 2022. [`arstechnica.com/information-technology/2022/12/stability-ai-plans-to-let-artists-opt-out-of-stable-diffusion-3-image-training/`](https://arstechnica.com/information-technology/2022/12/stability-ai-plans-to-let-artists-opt-out-of-stable-diffusion-3-image-training/)
 
 [54] “案件 1:23-cv-00135-UNA 提交于 02/02/23，” [`fingfx.thomsonreuters.com/gfx/legaldocs/byvrlkmwnve/GETTY%20IMAGES%20AI%20LAWSUIT%20complaint.pdf`](https://fingfx.thomsonreuters.com/gfx/legaldocs/byvrlkmwnve/GETTY%20IMAGES%20AI%20LAWSUIT%20complaint.pdf)
 
@@ -377,6 +390,8 @@
 [66] E. Silva, “摄影如何开创了对艺术的新理解，” TheCollector，2022 年 6 月 4 日。[www.thecollector.com/how-photography-transformed-art/](https://www.thecollector.com/how-photography-transformed-art/)
 
 ## 第五章
+
+
 
 [1] J. Haidt 和 E. Schmidt, “AI 即将让社交媒体（更加）有毒，” *大西洋*，2023 年 5 月 5 日。[www.theatlantic.com/technology/archive/2023/05/generative-ai-social-media-integration-dangers-disinformation-addiction/673940/](https://www.theatlantic.com/technology/archive/2023/05/generative-ai-social-media-integration-dangers-disinformation-addiction/673940/)
 
@@ -446,141 +461,153 @@
 
 [34] S. I. Observatory，“与古巴、互联网研究机构、沙特阿拉伯和泰国有关的 Twitter 封禁分析，”斯坦福互联网观察站，2020 年 10 月 8 日。[`cyber.fsi.stanford.edu/io/news/twitter-takedown-october-2020`](https://cyber.fsi.stanford.edu/io/news/twitter-takedown-october-2020)
 
+
+
 [35] B. Nimmo 等人，“IRA 再次行动：不幸的十三人，”Graphika，2020 年 9 月。[`public-assets.graphika.com/reports/graphika_report_ira_again_unlucky_thirteen.pdf`](https://public-assets.graphika.com/reports/graphika_report_ira_again_unlucky_thirteen.pdf)
 
-[36] B. Strick，“西巴布亚：新的在线影响力操作试图影响独立辩论，”bellingcat，2020 年 11 月 11 日。[www.bellingcat.com/news/2020/11/11/west-papua-new-online-influence-operation-attempts-to-sway-independence-debate/](https://www.bellingcat.com/news/2020/11/11/west-papua-new-online-influence-operation-attempts-to-sway-independence-debate/)
+[36] B. Strick，“西巴布亚：新的在线影响力操作试图影响独立辩论，”bellingcat，2020 年 11 月 11 日。[`www.bellingcat.com/news/2020/11/11/west-papua-new-online-influence-operation-attempts-to-sway-independence-debate/`](https://www.bellingcat.com/news/2020/11/11/west-papua-new-online-influence-operation-attempts-to-sway-independence-debate/)
 
-[37] N. Deen，“CHI 2023：虚假信息检测模型易受 ChatGPT 和其他大型语言模型的影响，”乔治亚理工学院计算机学院，2023 年 4 月 11 日。[www.cc.gatech.edu/news/chi-2023-misinformation-detection-models-are-vulnerable-ChatGPT-and-other-llms](https://www.cc.gatech.edu/news/chi-2023-misinformation-detection-models-are-vulnerable-ChatGPT-and-other-llms)
+[37] N. Deen，“CHI 2023：虚假信息检测模型易受 ChatGPT 和其他大型语言模型的影响，”乔治亚理工学院计算机学院，2023 年 4 月 11 日。[`www.cc.gatech.edu/news/chi-2023-misinformation-detection-models-are-vulnerable-ChatGPT-and-other-llms`](https://www.cc.gatech.edu/news/chi-2023-misinformation-detection-models-are-vulnerable-ChatGPT-and-other-llms)
 
 [38] Pan 等人，“关于大型语言模型信息污染风险的研究，”2023 年 10 月 26 日。[`arxiv.org/pdf/2305.13661.pdf`](https://arxiv.org/pdf/2305.13661.pdf)
 
 [39] “乌克兰战争虚假信息特别工作组提出的 10 项建议，”EDMO，2022 年 6 月 29 日。[`edmo.eu/2022/06/29/10-recommendations-by-the-taskforce-on-disinformation-and-the-war-in-ukraine/`](https://edmo.eu/2022/06/29/10-recommendations-by-the-taskforce-on-disinformation-and-the-war-in-ukraine/)
 
-[40]   “新研究显示在教授‘横向阅读’技术方面取得成功，” *《知情公众中心》*，2021 年 12 月 7 日。[www.cip.uw.edu/2021/12/07/lateral-reading-canada-civix-study/](https://www.cip.uw.edu/2021/12/07/lateral-reading-canada-civix-study/)
+[40] “新研究显示在教授‘横向阅读’技术方面取得成功，” *《知情公众中心》*，2021 年 12 月 7 日。[`www.cip.uw.edu/2021/12/07/lateral-reading-canada-civix-study/`](https://www.cip.uw.edu/2021/12/07/lateral-reading-canada-civix-study/)
 
-[41]   “SIFT (四种方法)，” *《Hapgood》*，2019 年 6 月 19 日。[`hapgood.us/2019/06/19/sift-the-four-moves/`](https://hapgood.us/2019/06/19/sift-the-four-moves/)
+[41] “SIFT (四种方法)，” *《Hapgood》*，2019 年 6 月 19 日。[`hapgood.us/2019/06/19/sift-the-four-moves/`](https://hapgood.us/2019/06/19/sift-the-four-moves/)
 
-[42]   S. Jeong，"观点：政治家们想改变互联网最重要的法律。他们应该先阅读它，” *《纽约时报》*，2019 年 7 月 26 日。[www.nytimes.com/2019/07/26/opinion/section-230-political-neutrality.xhtml](https://www.nytimes.com/2019/07/26/opinion/section-230-political-neutrality.xhtml)
+[42] S. Jeong，"观点：政治家们想改变互联网最重要的法律。他们应该先阅读它，” *《纽约时报》*，2019 年 7 月 26 日。[`www.nytimes.com/2019/07/26/opinion/section-230-political-neutrality.xhtml`](https://www.nytimes.com/2019/07/26/opinion/section-230-political-neutrality.xhtml)
 
-[43]   “47 美国法典 § 230 - 对私人屏蔽和筛选攻击性材料的保护，” LII / 法律信息研究所。[www.law.cornell.edu/uscode/text/47/230](https://www.law.cornell.edu/uscode/text/47/230)
+[43] “47 美国法典 § 230 - 对私人屏蔽和筛选攻击性材料的保护，” LII / 法律信息研究所。[`www.law.cornell.edu/uscode/text/47/230`](https://www.law.cornell.edu/uscode/text/47/230)
 
-[44]   S. Goldman，"大型科技公司可能因生成式 AI 输出而承担责任吗？最高法院大法官假设性地表示‘是的’，” VentureBeat，2023 年 2 月 21 日。[`venturebeat.com/ai/could-big-tech-be-liable-for-generative-ai-output-hypothetically-yes-says-supreme-court-justice/`](https://venturebeat.com/ai/could-big-tech-be-liable-for-generative-ai-output-hypothetically-yes-says-supreme-court-justice/)
+[44] S. Goldman，"大型科技公司可能因生成式 AI 输出而承担责任吗？最高法院大法官假设性地表示‘是的’，” VentureBeat，2023 年 2 月 21 日。[`venturebeat.com/ai/could-big-tech-be-liable-for-generative-ai-output-hypothetically-yes-says-supreme-court-justice/`](https://venturebeat.com/ai/could-big-tech-be-liable-for-generative-ai-output-hypothetically-yes-says-supreme-court-justice/)
 
-[45]   C. Lima 和 D. DiMolfetta，"AI 聊天机器人不会享受科技的法律盾牌，230 条款的作者表示"，*《华盛顿邮报》*，2023 年 3 月 17 日。[www.washingtonpost.com/politics/2023/03/17/ai-chatbots-wont-enjoy-techs-legal-shield-section-230-authors-say/](https://www.washingtonpost.com/politics/2023/03/17/ai-chatbots-wont-enjoy-techs-legal-shield-section-230-authors-say/)
+[45] C. Lima 和 D. DiMolfetta，"AI 聊天机器人不会享受科技的法律盾牌，230 条款的作者表示"，*《华盛顿邮报》*，2023 年 3 月 17 日。[`www.washingtonpost.com/politics/2023/03/17/ai-chatbots-wont-enjoy-techs-legal-shield-section-230-authors-say/`](https://www.washingtonpost.com/politics/2023/03/17/ai-chatbots-wont-enjoy-techs-legal-shield-section-230-authors-say/)
 
-[46]   D. Ippolito 和 D. Duckworth 等人，"当人类被愚弄时，自动检测生成文本最容易"，2020 年 5 月 7 日。[`arxiv.org/pdf/1911.00650.pdf`](https://arxiv.org/pdf/1911.00650.pdf)
+[46] D. Ippolito 和 D. Duckworth 等人，"当人类被愚弄时，自动检测生成文本最容易"，2020 年 5 月 7 日。[`arxiv.org/pdf/1911.00650.pdf`](https://arxiv.org/pdf/1911.00650.pdf)
 
-[47]   M. Gallé 等人，"无监督和分布式检测机器生成文本"，2021 年 11 月 4 日。[`arxiv.org/pdf/2111.02878.pdf`](https://arxiv.org/pdf/2111.02878.pdf)
+[47] M. Gallé 等人，"无监督和分布式检测机器生成文本"，2021 年 11 月 4 日。[`arxiv.org/pdf/2111.02878.pdf`](https://arxiv.org/pdf/2111.02878.pdf)
 
-[48]   W. Zhong 等人，"基于文本事实结构的神经深度伪造检测"，载于 *《2020 年自然语言处理实证方法会议论文集》(EMNLP)*，2020 年 11 月，第 2461–2470 页，doi: [`doi.org/10.18653/v1/2020.emnlp-main.193`](https://doi.org/10.18653/v1/2020.emnlp-main.193)
+[48] W. Zhong 等人，"基于文本事实结构的神经深度伪造检测"，载于 *《2020 年自然语言处理实证方法会议论文集》(EMNLP)*，2020 年 11 月，第 2461–2470 页，doi: [`doi.org/10.18653/v1/2020.emnlp-main.193`](https://doi.org/10.18653/v1/2020.emnlp-main.193)
 
-[49]   L. Hu，S. Wei，Z. Zhao 和 B. Wu。 "深度学习在虚假新闻检测中的应用：全面综述，” *《AI Open》*，第 3 卷，第 133–155 页，2022 年 1 月，doi: [`doi.org/10.1016/j.aiopen.2022.09.001`](https://doi.org/10.1016/j.aiopen.2022.09.001)
+[49] L. Hu，S. Wei，Z. Zhao 和 B. Wu。 "深度学习在虚假新闻检测中的应用：全面综述，” *《AI Open》*，第 3 卷，第 133–155 页，2022 年 1 月，doi: [`doi.org/10.1016/j.aiopen.2022.09.001`](https://doi.org/10.1016/j.aiopen.2022.09.001)
 
-[50]   C. Whitehouse，T. Weyde，P. Madhyastha 和 N. Komninos。 "使用知识增强语言模型评估虚假新闻检测，” 2023 年 2 月 13 日。[`arxiv.org/pdf/2204.00458.pdf`](https://arxiv.org/pdf/2204.00458.pdf)
+[50] C. Whitehouse，T. Weyde，P. Madhyastha 和 N. Komninos。 "使用知识增强语言模型评估虚假新闻检测，” 2023 年 2 月 13 日。[`arxiv.org/pdf/2204.00458.pdf`](https://arxiv.org/pdf/2204.00458.pdf)
 
 [51] 欧洲委员会, “2022 年虚假信息行为准则,” 欧洲数字未来塑造. [`digital-strategy.ec.europa.eu/en/policies/code-practice-disinformation`](https://digital-strategy.ec.europa.eu/en/policies/code-practice-disinformation)
 
-[52] J. Vincent, “As Conservatives Criticize ‘Woke AI,’ Here Are ChatGPT’s Rules for Answering Culture War Queries,” The Verge, Feb. 17, 2023\. [www.theverge.com/2023/2/17/23603906/openai-ChatGPT-woke-criticism-culture-war-rules](https://www.theverge.com/2023/2/17/23603906/openai-ChatGPT-woke-criticism-culture-war-rules)
+[52] J. Vincent, “As Conservatives Criticize ‘Woke AI,’ Here Are ChatGPT’s Rules for Answering Culture War Queries,” The Verge, Feb. 17, 2023\. [`www.theverge.com/2023/2/17/23603906/openai-ChatGPT-woke-criticism-culture-war-rules`](https://www.theverge.com/2023/2/17/23603906/openai-ChatGPT-woke-criticism-culture-war-rules)
 
-[53] D. Robertson, “AI’s Political Bias Problem,” POLITICO, Feb. 15, 2023\. [www.politico.com/newsletters/digital-future-daily/2023/02/15/ais-political-bias-problem-00083095](https://www.politico.com/newsletters/digital-future-daily/2023/02/15/ais-political-bias-problem-00083095)
+[53] D. Robertson, “AI’s Political Bias Problem,” POLITICO, Feb. 15, 2023\. [`www.politico.com/newsletters/digital-future-daily/2023/02/15/ais-political-bias-problem-00083095`](https://www.politico.com/newsletters/digital-future-daily/2023/02/15/ais-political-bias-problem-00083095)
 
-[54] J. Baum and J. Villasenor, “The Politics of AI: ChatGPT and Political Bias,” *Brookings*, May 08, 2023\. [www.brookings.edu/blog/techtank/2023/05/08/the-politics-of-ai-ChatGPT-and-political-bias/](http://www.brookings.edu/blog/techtank/2023/05/08/the-politics-of-ai-ChatGPT-and-political-bias/)
+[54] J. Baum and J. Villasenor, “The Politics of AI: ChatGPT and Political Bias,” *Brookings*, May 08, 2023\. [`www.brookings.edu/blog/techtank/2023/05/08/the-politics-of-ai-ChatGPT-and-political-bias/`](http://www.brookings.edu/blog/techtank/2023/05/08/the-politics-of-ai-ChatGPT-and-political-bias/)
 
-[55] W. Knight, “Meet ChatGPT’s Right-Wing Alter Ego,” *Wired, April 27, 2023.* [www.wired.com/story/fast-forward-meet-ChatGPTs-right-wing-alter-ego/](https://www.wired.com/story/fast-forward-meet-ChatGPTs-right-wing-alter-ego/)
+[55] W. Knight, “Meet ChatGPT’s Right-Wing Alter Ego,” *Wired, April 27, 2023.* [`www.wired.com/story/fast-forward-meet-ChatGPTs-right-wing-alter-ego/`](https://www.wired.com/story/fast-forward-meet-ChatGPTs-right-wing-alter-ego/)
 
-[56] C. Mims, “Help! My Political Beliefs Were Altered by a Chatbot!” *Wall Street Journal*, May 13, 2023\. [www.wsj.com/articles/ChatGPT-bard-bing-ai-political-beliefs-151a0fe4](https://www.wsj.com/articles/ChatGPT-bard-bing-ai-political-beliefs-151a0fe4)
+[56] C. Mims, “Help! My Political Beliefs Were Altered by a Chatbot!” *Wall Street Journal*, May 13, 2023\. [`www.wsj.com/articles/ChatGPT-bard-bing-ai-political-beliefs-151a0fe4`](https://www.wsj.com/articles/ChatGPT-bard-bing-ai-political-beliefs-151a0fe4)
 
 [57] J. Hendrix, “Transcript: Senate Judiciary Subcommittee Hearing on Oversight of AI,” Tech Policy Press, May 16, 2023\. [`techpolicy.press/transcript-senate-judiciary-subcommittee-hearing-on-oversight-of-ai/`](https://techpolicy.press/transcript-senate-judiciary-subcommittee-hearing-on-oversight-of-ai/)
 
-[58] R. Albergotti, “The Secret History of Elon Musk, Sam Altman, and OpenAI,” *Semafor, March 23, 2023.* [www.semafor.com/article/03/24/2023/the-secret-history-of-elon-musk-sam-altman-and-openai](https://www.semafor.com/article/03/24/2023/the-secret-history-of-elon-musk-sam-altman-and-openai)
+[58] R. Albergotti, “The Secret History of Elon Musk, Sam Altman, and OpenAI,” *Semafor, March 23, 2023.* [`www.semafor.com/article/03/24/2023/the-secret-history-of-elon-musk-sam-altman-and-openai`](https://www.semafor.com/article/03/24/2023/the-secret-history-of-elon-musk-sam-altman-and-openai)
 
-[59] J. Narayan, K. Hu, M. Coulter, and S. Mukherjee, “Elon Musk and Others Urge AI Pause, Citing ‘Risks to Society,’” Reuters, Apr. 05, 2023\. [www.reuters.com/technology/musk-experts-urge-pause-training-ai-systems-that-can-outperform-gpt-4-2023-03-29/](https://www.reuters.com/technology/musk-experts-urge-pause-training-ai-systems-that-can-outperform-gpt-4-2023-03-29/)
+[59] J. Narayan, K. Hu, M. Coulter, and S. Mukherjee, “Elon Musk and Others Urge AI Pause, Citing ‘Risks to Society,’” Reuters, Apr. 05, 2023\. [`www.reuters.com/technology/musk-experts-urge-pause-training-ai-systems-that-can-outperform-gpt-4-2023-03-29/`](https://www.reuters.com/technology/musk-experts-urge-pause-training-ai-systems-that-can-outperform-gpt-4-2023-03-29/)
 
-[60] E. Roth, “Elon Musk Claims to be Working on ‘TruthGPT’ — a ‘Maximum Truth-Seeking AI,’” The Verge, Apr. 18, 2023\. [www.theverge.com/2023/4/17/23687440/elon-musk-truthgpt-ai-ChatGPT](https://www.theverge.com/2023/4/17/23687440/elon-musk-truthgpt-ai-ChatGPT)
+[60] E. Roth, “Elon Musk Claims to be Working on ‘TruthGPT’ — a ‘Maximum Truth-Seeking AI,’” The Verge, Apr. 18, 2023\. [`www.theverge.com/2023/4/17/23687440/elon-musk-truthgpt-ai-ChatGPT`](https://www.theverge.com/2023/4/17/23687440/elon-musk-truthgpt-ai-ChatGPT)
 
-[61]   加州大学伯克利分校, “伯克利论坛转录：ChatGPT 开发者约翰·舒尔曼关于使 AI 更真实，” *《伯克利新闻》*, 2023 年 4 月 24 日\. [`news.berkeley.edu/2023/04/24/berkeley-talks-transcript-ChatGPT-developer-john-schulman/`](https://news.berkeley.edu/2023/04/24/berkeley-talks-transcript-ChatGPT-developer-john-schulman/)
+[61] 加州大学伯克利分校, “伯克利论坛转录：ChatGPT 开发者约翰·舒尔曼关于使 AI 更真实，” *《伯克利新闻》*, 2023 年 4 月 24 日\. [`news.berkeley.edu/2023/04/24/berkeley-talks-transcript-ChatGPT-developer-john-schulman/`](https://news.berkeley.edu/2023/04/24/berkeley-talks-transcript-ChatGPT-developer-john-schulman/)
 
-[62]   D. Hofstadter, “根据道格拉斯·霍夫斯塔德的说法，今天的神经网络并不具有意识,” *《经济学家》*, 2022 年 9 月 2 日\. www.economist.com/by-invitation/2022/09/02/artificial-neural-networks-today-are-not-conscious-according-to-douglas-hofstadter
+[62] D. Hofstadter, “根据道格拉斯·霍夫斯塔德的说法，今天的神经网络并不具有意识,” *《经济学家》*, 2022 年 9 月 2 日\. [`www.economist.com/by-invitation/2022/09/02/artificial-neural-networks-today-are-not-conscious-according-to-douglas-hofstadter`](https://www.economist.com/by-invitation/2022/09/02/artificial-neural-networks-today-are-not-conscious-according-to-douglas-hofstadter)
 
-[63]   “什么是知识图谱?” Ontotext. [www.ontotext.com/knowledgehub/fundamentals/what-is-a-knowledge-graph/](https://www.ontotext.com/knowledgehub/fundamentals/what-is-a-knowledge-graph/)
+[63] “什么是知识图谱?” Ontotext. [`www.ontotext.com/knowledgehub/fundamentals/what-is-a-knowledge-graph/`](https://www.ontotext.com/knowledgehub/fundamentals/what-is-a-knowledge-graph/)
 
-[64]   “TriviaQA,” [`nlp.cs.washington.edu/triviaqa/`](https://nlp.cs.washington.edu/triviaqa/)
+[64] “TriviaQA,” [`nlp.cs.washington.edu/triviaqa/`](https://nlp.cs.washington.edu/triviaqa/)
 
-[65]   “GitHub - DivergentAI/dreamGPT: 利用大型语言模型（LLMs）的幻觉进行新颖性驱动的探索,” GitHub. [`github.com/DivergentAI/dreamGPT`](https://github.com/DivergentAI/dreamGPT)
+[65] “GitHub - DivergentAI/dreamGPT: 利用大型语言模型（LLMs）的幻觉进行新颖性驱动的探索,” GitHub. [`github.com/DivergentAI/dreamGPT`](https://github.com/DivergentAI/dreamGPT)
 
-[66]   Free Law Project, “Mata v. Avianca, Inc., 1:22-cv-01461 - CourtListener.com,” *CourtListener*. [www.courtlistener.com/docket/63107798/mata-v-avianca-inc/](https://www.courtlistener.com/docket/63107798/mata-v-avianca-inc/)
+[66] Free Law Project, “Mata v. Avianca, Inc., 1:22-cv-01461 - CourtListener.com,” *CourtListener*. [`www.courtlistener.com/docket/63107798/mata-v-avianca-inc/`](https://www.courtlistener.com/docket/63107798/mata-v-avianca-inc/)
 
-[67]   B. Weiser, “当你的律师使用 ChatGPT 时会发生什么，” *《纽约时报》*, 2023 年 5 月 27 日\. [www.nytimes.com/2023/05/27/nyregion/avianca-airline-lawsuit-ChatGPT.xhtml](https://www.nytimes.com/2023/05/27/nyregion/avianca-airline-lawsuit-ChatGPT.xhtml)
+[67] B. Weiser, “当你的律师使用 ChatGPT 时会发生什么，” *《纽约时报》*, 2023 年 5 月 27 日\. [`www.nytimes.com/2023/05/27/nyregion/avianca-airline-lawsuit-ChatGPT.xhtml`](https://www.nytimes.com/2023/05/27/nyregion/avianca-airline-lawsuit-ChatGPT.xhtml)
 
-[68]   “我向 ChatGPT 询问如何快速致富,” Reddit. [www.reddit.com/r/Entrepreneur/comments/zi9gom/i_asked_ChatGPT_how_to_get_rich_quick/](http://www.reddit.com/r/Entrepreneur/comments/zi9gom/i_asked_ChatGPT_how_to_get_rich_quick/)
+[68] “我向 ChatGPT 询问如何快速致富,” Reddit. [`www.reddit.com/r/Entrepreneur/comments/zi9gom/i_asked_ChatGPT_how_to_get_rich_quick/`](http://www.reddit.com/r/Entrepreneur/comments/zi9gom/i_asked_ChatGPT_how_to_get_rich_quick/)
 
-[69]   P. Verma, “ChatGPT 快速致富计划正充斥着网络,” *《华盛顿邮报》*, 2023 年 5 月 15 日\. [www.washingtonpost.com/technology/2023/05/15/can-ai-make-money-ChatGPT/](https://www.washingtonpost.com/technology/2023/05/15/can-ai-make-money-ChatGPT/)
 
-[70]   J. W. Ayers 等人，“比较医生和人工智能聊天机器人对公开社交媒体论坛上患者提问的回答，” *《JAMA 内科医学杂志》*, 2023 年 4 月，doi: [`doi.org/10.1001/jamainternmed.2023.1838`](https://doi.org/10.1001/jamainternmed.2023.1838)
 
-[71]   E. Henderson, “研究发现，ChatGPT 提供正确的健康建议的比例约为 88%,” News-Medical.net, 2023 年 4 月 4 日\. [www.news-medical.net/news/20230404/ChatGPT-provides-correct-health-advice-about-8825-of-the-time-study-finds.aspx](https://www.news-medical.net/news/20230404/ChatGPT-provides-correct-health-advice-about-8825-of-the-time-study-finds.aspx)
+## 参考文献
 
-[72]   D. Fornell, “ChatGPT AI 的最新版本通过了放射学委员会考试,” *《放射学商业》*, 2023 年 5 月 16 日\. [`radiologybusiness.com/node/238471`](https://radiologybusiness.com/node/238471)
+### 第五章（续）
 
-[73]   L. Tang 等人, “评估大型语言模型在医学证据摘要中的应用,” 2023 年 4 月 24 日\. [www.medrxiv.org/content/10.1101/2023.04.22.23288967v1.full.pdf](https://www.medrxiv.org/content/10.1101/2023.04.22.23288967v1.full.pdf)
+[69] P. Verma, “ChatGPT 快速致富计划正充斥着网络,” *《华盛顿邮报》*, 2023 年 5 月 15 日. [www.washingtonpost.com/technology/2023/05/15/can-ai-make-money-ChatGPT/](https://www.washingtonpost.com/technology/2023/05/15/can-ai-make-money-ChatGPT/)
 
-[74]   K. Spector-Bagdady, J. Wiens, 和 M. Creary, “研究表明偏见如何渗透到推动精准医疗和临床人工智能的医学数据库中,” 医疗保健政策与创新研究所, 2021 年 12 月 7 日\. [`ihpi.umich.edu/news/study-shows-how-bias-can-creep-medical-databanks-drive-precision-health-and-clinical-ai`](https://ihpi.umich.edu/news/study-shows-how-bias-can-creep-medical-databanks-drive-precision-health-and-clinical-ai)
+[70] J. W. Ayers 等人，“比较医生和人工智能聊天机器人对公开社交媒体论坛上患者提问的回答，” *《JAMA 内科医学杂志》*, 2023 年 4 月，doi: [`doi.org/10.1001/jamainternmed.2023.1838`](https://doi.org/10.1001/jamainternmed.2023.1838)
 
-[75]   J. Patrice, “为了神圣的一切，停止责怪 ChatGPT 导致这份糟糕的简报，” Above the Law, 2023 年 5 月 30 日\. [`abovethelaw.com/2023/05/ChatGPT-bad-lawyering/`](https://abovethelaw.com/2023/05/ChatGPT-bad-lawyering/); www.courthousenews.com/sanctions-ordered-for-lawyers-who-relied-on-ChatGPT-artificial-intelligence-to-prepare-court-brief/
+[71] E. Henderson, “研究发现，ChatGPT 提供正确的健康建议的比例约为 88%,” News-Medical.net, 2023 年 4 月 4 日. [www.news-medical.net/news/20230404/ChatGPT-provides-correct-health-advice-about-8825-of-the-time-study-finds.aspx](https://www.news-medical.net/news/20230404/ChatGPT-provides-correct-health-advice-about-8825-of-the-time-study-finds.aspx)
 
-## 第六章
+[72] D. Fornell, “ChatGPT AI 的最新版本通过了放射学委员会考试,” *《放射学商业》*, 2023 年 5 月 16 日. [`radiologybusiness.com/node/238471`](https://radiologybusiness.com/node/238471)
 
-[1]   N. Friedman, “介绍 GitHub Copilot：您的 AI 代码伙伴,” *GitHub 博客*, 2021 年 6 月 29 日\. [`github.blog/2021-06-29-introducing-github-copilot-ai-pair-programmer/`](https://github.blog/2021-06-29-introducing-github-copilot-ai-pair-programmer/)
+[73] L. Tang 等人, “评估大型语言模型在医学证据摘要中的应用,” 2023 年 4 月 24 日. [www.medrxiv.org/content/10.1101/2023.04.22.23288967v1.full.pdf](https://www.medrxiv.org/content/10.1101/2023.04.22.23288967v1.full.pdf)
 
-[2]   J. Barnett, “许多初级保健医生的工作时间比患者护理时间更多,” *皮奥里亚医学*, 2022 年 10 月 17 日\. [`peoria.medicine.uic.edu/administrative-tasks-take-up-more-time-than-patient-care-for-many-pcps/`](https://peoria.medicine.uic.edu/administrative-tasks-take-up-more-time-than-patient-care-for-many-pcps/)
+[74] K. Spector-Bagdady, J. Wiens, 和 M. Creary, “研究表明偏见如何渗透到推动精准医疗和临床人工智能的医学数据库中,” 医疗保健政策与创新研究所, 2021 年 12 月 7 日. [`ihpi.umich.edu/news/study-shows-how-bias-can-creep-medical-databanks-drive-precision-health-and-clinical-ai`](https://ihpi.umich.edu/news/study-shows-how-bias-can-creep-medical-databanks-drive-precision-health-and-clinical-ai)
 
-[3]   G. Kolata, “医生使用聊天机器人来改善他们的床边技巧,” *纽约时报*, 2023 年 6 月 12 日\. [www.nytimes.com/2023/06/12/health/doctors-ChatGPT-artificial-intelligence.xhtml](https://www.nytimes.com/2023/06/12/health/doctors-ChatGPT-artificial-intelligence.xhtml)
+[75] J. Patrice, “为了神圣的一切，停止责怪 ChatGPT 导致这份糟糕的简报，” Above the Law, 2023 年 5 月 30 日. [`abovethelaw.com/2023/05/ChatGPT-bad-lawyering/`](https://abovethelaw.com/2023/05/ChatGPT-bad-lawyering/); www.courthousenews.com/sanctions-ordered-for-lawyers-who-relied-on-ChatGPT-artificial-intelligence-to-prepare-court-brief/
 
-[4]   B. Jeffreys, “律师们真正在做什么？” *Law.com*, 2017 年 9 月 26 日\. [www.law.com/2017/09/26/what-do-lawyers-really-do-with-their-time/](https://www.law.com/2017/09/26/what-do-lawyers-really-do-with-their-time/)
+### 第六章
 
-[5]   “法院是如何运作的,” [www.americanbar.org/groups/public_education/resources/law_related_education_network/how_courts_work/discovery/](https://www.americanbar.org/groups/public_education/resources/law_related_education_network/how_courts_work/discovery/)
+[1] N. Friedman, “介绍 GitHub Copilot：您的 AI 代码伙伴,” *GitHub 博客*, 2021 年 6 月 29 日. [`github.blog/2021-06-29-introducing-github-copilot-ai-pair-programmer/`](https://github.blog/2021-06-29-introducing-github-copilot-ai-pair-programmer/)
 
-[6]   A. Perlman, “ChatGPT 对法律服务和社会的影响，” 哈佛法学院法律职业中心, 2023 年 3 月 6 日\. [`clp.law.harvard.edu/article/the-implications-of-ChatGPT-for-legal-services-and-society/`](https://clp.law.harvard.edu/article/the-implications-of-ChatGPT-for-legal-services-and-society/)
+[2] J. Barnett, “许多初级保健医生的工作时间比患者护理时间更多,” *皮奥里亚医学*, 2022 年 10 月 17 日. [`peoria.medicine.uic.edu/administrative-tasks-take-up-more-time-than-patient-care-for-many-pcps/`](https://peoria.medicine.uic.edu/administrative-tasks-take-up-more-time-than-patient-care-for-many-pcps/)
 
-[7] Bloomberg, “介绍 BloombergGPT，Bloomberg 的 500 亿参数大型语言模型，专为金融量身定制，” March 30, 2023\. [www.bloomberg.com/company/press/bloomberggpt-50-billion-parameter-llm-tuned-finance/](https://www.bloomberg.com/company/press/bloomberggpt-50-billion-parameter-llm-tuned-finance/)
+[3] G. Kolata, “医生使用聊天机器人来改善他们的床边技巧,” *纽约时报*, 2023 年 6 月 12 日. [www.nytimes.com/2023/06/12/health/doctors-ChatGPT-artificial-intelligence.xhtml](https://www.nytimes.com/2023/06/12/health/doctors-ChatGPT-artificial-intelligence.xhtml)
 
-[8] 消费者金融保护局， “CFPB 问题聚焦分析银行中的‘人工智能’聊天机器人，” June 6, 2023\. [www.consumerfinance.gov/about-us/newsroom/cfpb-issue-spotlight-analyzes-artificial-intelligence-chatbots-in-banking/](https://www.consumerfinance.gov/about-us/newsroom/cfpb-issue-spotlight-analyzes-artificial-intelligence-chatbots-in-banking/)
+[4] B. Jeffreys, “律师们真正在做什么？” *Law.com*, 2017 年 9 月 26 日. [www.law.com/2017/09/26/what-do-lawyers-really-do-with-their-time/](https://www.law.com/2017/09/26/what-do-lawyers-really-do-with-their-time/)
+
+[5] “法院是如何运作的,” [www.americanbar.org/groups/public_education/resources/law_related_education_network/how_courts_work/discovery/](https://www.americanbar.org/groups/public_education/resources/law_related_education_network/how_courts_work/discovery/)
+
+[6] A. Perlman, “ChatGPT 对法律服务和社会的影响，” 哈佛法学院法律职业中心, 2023 年 3 月 6 日. [`clp.law.harvard.edu/article/the-implications-of-ChatGPT-for-legal-services-and-society/`](https://clp.law.harvard.edu/article/the-implications-of-ChatGPT-for-legal-services-and-society/)
+
+[7] Bloomberg, “介绍 BloombergGPT，Bloomberg 的 500 亿参数大型语言模型，专为金融量身定制，” March 30, 2023. [www.bloomberg.com/company/press/bloomberggpt-50-billion-parameter-llm-tuned-finance/](https://www.bloomberg.com/company/press/bloomberggpt-50-billion-parameter-llm-tuned-finance/)
+
+[8] 消费者金融保护局， “CFPB 问题聚焦分析银行中的‘人工智能’聊天机器人，” June 6, 2023. [www.consumerfinance.gov/about-us/newsroom/cfpb-issue-spotlight-analyzes-artificial-intelligence-chatbots-in-banking/](https://www.consumerfinance.gov/about-us/newsroom/cfpb-issue-spotlight-analyzes-artificial-intelligence-chatbots-in-banking/)
 
 [9] “你在工作中如何使用 ChatGPT？” Reddit. [www.reddit.com/r/ChatGPT/comments/12fhcec/how_are_you_using_ChatGPT_at_work/](https://www.reddit.com/r/ChatGPT/comments/12fhcec/how_are_you_using_ChatGPT_at_work/)
 
 [10] “BrXnd: 营销与 AI,” BrXnd. [`brxnd.ai/`](https://brxnd.ai/)
 
-[11] J. Swift, “专家们对‘Ad Turing Test’感到困惑，” May 26, 2023\. Contagious. [www.contagious.com/news-and-views/experts-stumped-by-ad-turing-test](https://www.contagious.com/news-and-views/experts-stumped-by-ad-turing-test)
+[11] J. Swift, “专家们对‘Ad Turing Test’感到困惑，” May 26, 2023. Contagious. [www.contagious.com/news-and-views/experts-stumped-by-ad-turing-test](https://www.contagious.com/news-and-views/experts-stumped-by-ad-turing-test)
 
 [12] System1 Group, “测试你的广告：广告测试平台。” [`system1group.com/test-your-ad`](https://system1group.com/test-your-ad)
 
 [13] “GitHub Copilot 文档，” GitHub Docs. [`docs.github.com/en/copilot`](https://docs.github.com/en/copilot)
 
-[14] S. Burton, “使用 OpenAI 的 ChatGPT 创建房地产模型的 Excel 宏,” *Adventures in CRE*, Jan. 21, 2023\. [www.adventuresincre.com/openai-gpt-3-excel-macro-real-estate-model/](https://www.adventuresincre.com/openai-gpt-3-excel-macro-real-estate-model/)
+[14] S. Burton, “使用 OpenAI 的 ChatGPT 创建房地产模型的 Excel 宏,” *Adventures in CRE*, Jan. 21, 2023. [www.adventuresincre.com/openai-gpt-3-excel-macro-real-estate-model/](https://www.adventuresincre.com/openai-gpt-3-excel-macro-real-estate-model/)
 
-[15] Duolingo, “介绍 Duolingo Max，由 GPT-4 驱动的学习体验，” March 14, 2023\. [`blog.duolingo.com/duolingo-max/`](https://blog.duolingo.com/duolingo-max/)
+[15] Duolingo, “介绍 Duolingo Max，由 GPT-4 驱动的学习体验，” March 14, 2023. [`blog.duolingo.com/duolingo-max/`](https://blog.duolingo.com/duolingo-max/)
 
-[16] S. Herd, “Agentized LLMs 将改变对齐景观，” April 8, 2023\. [www.lesswrong.com/posts/dcoxvEhAfYcov2LA6/agentized-llms-will-change-the-alignment-landscape](https://www.lesswrong.com/posts/dcoxvEhAfYcov2LA6/agentized-llms-will-change-the-alignment-landscape)
+[16] S. Herd, “Agentized LLMs 将改变对齐景观，” April 8, 2023. [www.lesswrong.com/posts/dcoxvEhAfYcov2LA6/agentized-llms-will-change-the-alignment-landscape](https://www.lesswrong.com/posts/dcoxvEhAfYcov2LA6/agentized-llms-will-change-the-alignment-landscape)
 
 [17] Expedia, “ChatGPT 撰写了这篇新闻稿 — 不，它没有，但现在它可以帮助在 Expedia 应用中进行旅行规划，2023 年 4 月 4 日。” [www.expediagroup.com/investors/news-and-events/financial-releases/news/news-details/2023/ChatGPT-Wrote-This-Press-Release--No-It-Didnt-But-It-Can-Now-Assist-With-Travel-Planning-In-The-Expedia-App/default.aspx](https://www.expediagroup.com/investors/news-and-events/financial-releases/news/news-details/2023/ChatGPT-Wrote-This-Press-Release--No-It-Didnt-But-It-Can-Now-Assist-With-Travel-Planning-In-The-Expedia-App/default.aspx)
 
 [18] “GitHub - Significant-Gravitas/Auto-GPT: 一个实验性的开源尝试，使 GPT-4 完全自主，” GitHub. [`github.com/Significant-Gravitas/Auto-GPT`](https://github.com/Significant-Gravitas/Auto-GPT)
 
-[19] B. X. Chen, “如何将你的聊天机器人变成人生导师，” *New York Times*, June 23, 2023\. [www.nytimes.com/2023/06/23/technology/ai-chatbot-life-coach.xhtml](https://www.nytimes.com/2023/06/23/technology/ai-chatbot-life-coach.xhtml)
+[19] B. X. Chen, “如何将你的聊天机器人变成人生导师，” *New York Times*, June 23, 2023. [www.nytimes.com/2023/06/23/technology/ai-chatbot-life-coach.xhtml](https://www.nytimes.com/2023/06/23/technology/ai-chatbot-life-coach.xhtml)
 
-[20] R. Williams, “被雇佣来训练 AI 的人正在将他们的工作外包……给 AI，” *MIT Technology Review*, June 22, 2023\. [www.technologyreview.com/2023/06/22/1075405/the-people-paid-to-train-ai-are-outsourcing-their-work-to-ai/](https://www.technologyreview.com/2023/06/22/1075405/the-people-paid-to-train-ai-are-outsourcing-their-work-to-ai/)
+[20] R. Williams, “被雇佣来训练 AI 的人正在将他们的工作外包……给 AI，” *MIT Technology Review*, June 22, 2023. [www.technologyreview.com/2023/06/22/1075405/the-people-paid-to-train-ai-are-outsourcing-their-work-to-ai/](https://www.technologyreview.com/2023/06/22/1075405/the-people-paid-to-train-ai-are-outsourcing-their-work-to-ai/)
 
-[21] D. Herman, “高中英语的终结,” *Atlantic*, Dec. 09, 2022\. [www.theatlantic.com/technology/archive/2022/12/openai-ChatGPT-writing-high-school-english-essay/672412/](https://www.theatlantic.com/technology/archive/2022/12/openai-ChatGPT-writing-high-school-english-essay/672412/)
+[21] D. Herman, “高中英语的终结,” *Atlantic*, Dec. 09, 2022. [www.theatlantic.com/technology/archive/2022/12/openai-ChatGPT-writing-high-school-english-essay/672412/](https://www.theatlantic.com/technology/archive/2022/12/openai-ChatGPT-writing-high-school-english-essay/672412/)
 
-[22] S. Marche, “大学论文已死，” *Atlantic*, Dec. 06, 2022\. [www.theatlantic.com/technology/archive/2022/12/ChatGPT-ai-writing-college-student-essays/672371/](https://www.theatlantic.com/technology/archive/2022/12/ChatGPT-ai-writing-college-student-essays/672371/)
+[22] S. Marche, “大学论文已死，” *Atlantic*, Dec. 06, 2022. [www.theatlantic.com/technology/archive/2022/12/ChatGPT-ai-writing-college-student-essays/672371/](https://www.theatlantic.com/technology/archive/2022/12/ChatGPT-ai-writing-college-student-essays/672371/)
 
 [23] E. Mollick (@emollick), “我们将 AI 的弱点转化为我们的优势，比如自信地犯错的趋势。我们利用其优势，包括与 AI 对话的吸引力以及快速生成和纠正工作的能力。AI 基本上毁了家庭作业，但也有积极的一面，” Twitter. [`twitter.com/emollick/status/1603762000815091714?s=20&t=fVkX0l5OhVN2Pfp3Wfymow`](https://twitter.com/emollick/status/1603762000815091714?s=20&t=fVkX0l5OhVN2Pfp3Wfymow)
 
-[24] M. Elsen-Rooney, “纽约教育局禁止在学校设备和网络上使用 ChatGPT,” Chalkbeat New York, Jan. 03, 2023\. [`ny.chalkbeat.org/2023/1/3/23537987/nyc-schools-ban-ChatGPT-writing-artificial-intelligence`](https://ny.chalkbeat.org/2023/1/3/23537987/nyc-schools-ban-ChatGPT-writing-artificial-intelligence)
+[24] M. Elsen-Rooney, “纽约教育局禁止在学校设备和网络上使用 ChatGPT,” Chalkbeat New York, Jan. 03, 2023. [`ny.chalkbeat.org/2023/1/3/23537987/nyc-schools-ban-ChatGPT-writing-artificial-intelligence`](https://ny.chalkbeat.org/2023/1/3/23537987/nyc-schools-ban-ChatGPT-writing-artificial-intelligence)
 
 [25] “P. Wang (@pwang), “嗯……。我刚刚和 ChatGPT 聊了 20 分钟关于现代物理学的历史。如果我在高中和大学时有这样的辅导老师……。OMG。我想我们基本上可以重新发明大规模教育的概念。我们熟知的大学将不复存在，” Twitter. [`twitter.com/pwang/status/1599520310466080771`](https://twitter.com/pwang/status/1599520310466080771)
 
-[26] K. Hirsh-Pasek and E. Blinkoff, “ChatGPT：教育的朋友还是敌人？” *Brookings*, Jan. 09, 2023\. [www.brookings.edu/blog/education-plus-development/2023/01/09/ChatGPT-educational-friend-or-foe/](http://www.brookings.edu/blog/education-plus-development/2023/01/09/ChatGPT-educational-friend-or-foe/)
+
+
+## 参考文献
+
+[26] K. Hirsh-Pasek and E. Blinkoff, “ChatGPT：教育的朋友还是敌人？” *Brookings*, Jan. 09, 2023. [www.brookings.edu/blog/education-plus-development/2023/01/09/ChatGPT-educational-friend-or-foe/](http://www.brookings.edu/blog/education-plus-development/2023/01/09/ChatGPT-educational-friend-or-foe/)
 
 [27] R. Kansara 和 E. Main, “肯尼亚人如何帮助世界作弊，” BBC News, 2021 年 9 月 8 日。[www.bbc.com/news/blogs-trending-58465189](https://www.bbc.com/news/blogs-trending-58465189)
 
@@ -604,25 +631,25 @@
 
 [37] J. Kirchenbauer, J. Geiping, Y. Wen, J. Katz, I. Miers 和 T. Goldstein, “大型语言模型的水印，” 2023 年 6 月 6 日。[`arxiv.org/pdf/2301.10226.pdf`](https://arxiv.org/pdf/2301.10226.pdf)
 
-[38]   S. Aaronson, “[我为 UT 有效利他主义做的 AI 安全讲座](https://scottaaronson.blog/?p=6823)，” *Shtetl-Optimized*，2022 年 11 月 29 日。[`scottaaronson.blog/?p=6823`](https://scottaaronson.blog/?p=6823)
+[38] S. Aaronson, “[我为 UT 有效利他主义做的 AI 安全讲座](https://scottaaronson.blog/?p=6823)，” *Shtetl-Optimized*，2022 年 11 月 29 日。[`scottaaronson.blog/?p=6823`](https://scottaaronson.blog/?p=6823)
 
-[39]   A. Korinek, E. Brynjolfsson, and M. N. Baily, “心智之机：人工智能驱动的生产力繁荣的案例，” *布鲁金斯学会*，2023 年 5 月 10 日。[www.brookings.edu/research/machines-of-mind-the-case-for-an-ai-powered-productivity-boom/](https://www.brookings.edu/research/machines-of-mind-the-case-for-an-ai-powered-productivity-boom/)
+[39] A. Korinek, E. Brynjolfsson, and M. N. Baily, “心智之机：人工智能驱动的生产力繁荣的案例，” *布鲁金斯学会*，2023 年 5 月 10 日。[www.brookings.edu/research/machines-of-mind-the-case-for-an-ai-powered-productivity-boom/](https://www.brookings.edu/research/machines-of-mind-the-case-for-an-ai-powered-productivity-boom/)
 
-[40]   B. Elder, “高盛称，将你的办公桌工作交给 AI 生产力奇迹，” *金融时报*，2023 年 3 月 27 日。[www.ft.com/content/50b15701-855a-4788-9a4b-5a0a9ee10561](https://www.ft.com/content/50b15701-855a-4788-9a4b-5a0a9ee10561)
+[40] B. Elder, “高盛称，将你的办公桌工作交给 AI 生产力奇迹，” *金融时报*，2023 年 3 月 27 日。[www.ft.com/content/50b15701-855a-4788-9a4b-5a0a9ee10561](https://www.ft.com/content/50b15701-855a-4788-9a4b-5a0a9ee10561)
 
-[41]   T. Eloundou, S. Manning, P. Mishkin, and D. Rock, “GPTs Are GPTs：对大型语言模型在劳动力市场影响潜力的早期观察，” 2023 年 8 月 21 日。[`arxiv.org/pdf/2303.10130.pdf`](https://arxiv.org/pdf/2303.10130.pdf)
+[41] T. Eloundou, S. Manning, P. Mishkin, and D. Rock, “GPTs Are GPTs：对大型语言模型在劳动力市场影响潜力的早期观察，” 2023 年 8 月 21 日。[`arxiv.org/pdf/2303.10130.pdf`](https://arxiv.org/pdf/2303.10130.pdf)
 
-[42]   E. Kalliamvakou, “研究：量化 GitHub Copilot 对开发者生产力和幸福的影响，” *GitHub 博客*，2022 年 9 月 7 日。[`github.blog/2022-09-07-research-quantifying-github-copilots-impact-on-developer-productivity-and-happiness/`](https://github.blog/2022-09-07-research-quantifying-github-copilots-impact-on-developer-productivity-and-happiness/)
+[42] E. Kalliamvakou, “研究：量化 GitHub Copilot 对开发者生产力和幸福的影响，” *GitHub 博客*，2022 年 9 月 7 日。[`github.blog/2022-09-07-research-quantifying-github-copilots-impact-on-developer-productivity-and-happiness/`](https://github.blog/2022-09-07-research-quantifying-github-copilots-impact-on-developer-productivity-and-happiness/)
 
-[43]   S. Noy and W. Zhang, “关于生成式人工智能生产率影响的实验证据，” 2023 年 3 月 2 日。[`economics.mit.edu/sites/default/files/inline-files/Noy_Zhang_1.pdf`](https://economics.mit.edu/sites/default/files/inline-files/Noy_Zhang_1.pdf)
+[43] S. Noy and W. Zhang, “关于生成式人工智能生产率影响的实验证据，” 2023 年 3 月 2 日。[`economics.mit.edu/sites/default/files/inline-files/Noy_Zhang_1.pdf`](https://economics.mit.edu/sites/default/files/inline-files/Noy_Zhang_1.pdf)
 
-[44]   A. Korinek, “语言模型和认知自动化在经济研究中的应用，” 美国国家经济研究局，w30957，2023 年 2 月，doi: [`doi.org/10.3386/w30957`](https://doi.org/10.3386/w30957)
+[44] A. Korinek, “语言模型和认知自动化在经济研究中的应用，” 美国国家经济研究局，w30957，2023 年 2 月，doi: [`doi.org/10.3386/w30957`](https://doi.org/10.3386/w30957)
 
-[45]   J. Constantz, “生成式人工智能在首次真实世界研究中提高了工人生产力 14%，” 2023 年 4 月 23 日。[www.bloomberg.com/news/articles/2023-04-24/generative-ai-boosts-worker-productivity-14-new-study-finds](https://www.bloomberg.com/news/articles/2023-04-24/generative-ai-boosts-worker-productivity-14-new-study-finds)
+[45] J. Constantz, “生成式人工智能在首次真实世界研究中提高了工人生产力 14%，” 2023 年 4 月 23 日。[www.bloomberg.com/news/articles/2023-04-24/generative-ai-boosts-worker-productivity-14-new-study-finds](https://www.bloomberg.com/news/articles/2023-04-24/generative-ai-boosts-worker-productivity-14-new-study-finds)
 
-[46]   S. Noy and W. Zhang, “关于生成式人工智能生产率影响的实验证据，” 2023 年 3 月 2 日。[`economics.mit.edu/sites/default/files/inline-files/Noy_Zhang_1.pdf`](https://economics.mit.edu/sites/default/files/inline-files/Noy_Zhang_1.pdf)
+[46] S. Noy and W. Zhang, “关于生成式人工智能生产率影响的实验证据，” 2023 年 3 月 2 日。[`economics.mit.edu/sites/default/files/inline-files/Noy_Zhang_1.pdf`](https://economics.mit.edu/sites/default/files/inline-files/Noy_Zhang_1.pdf)
 
-[47]   E. Brynjolfsson, “图灵陷阱：类人人工智能的承诺与危险，” *美国艺术与科学学院*，2022 年 4 月 13 日。[www.amacad.org/publication/turing-trap-promise-peril-human-artificial-intelligence](https://www.amacad.org/publication/turing-trap-promise-peril-human-artificial-intelligence)
+[47] E. Brynjolfsson, “图灵陷阱：类人人工智能的承诺与危险，” *美国艺术与科学学院*，2022 年 4 月 13 日。[www.amacad.org/publication/turing-trap-promise-peril-human-artificial-intelligence](https://www.amacad.org/publication/turing-trap-promise-peril-human-artificial-intelligence)
 
 [48] D. Rotman, “ChatGPT 即将彻底改变经济。我们需要决定那会是什么样子，” *《麻省理工学院技术评论》*，2023 年 3 月 25 日。[www.technologyreview.com/2023/03/25/1070275/ChatGPT-revolutionize-economy-decide-what-looks-like/](https://www.technologyreview.com/2023/03/25/1070275/ChatGPT-revolutionize-economy-decide-what-looks-like/)
 
@@ -648,71 +675,73 @@
 
 [8] Luka, Inc., “Replika: Our Story.” [`replika.com/about/story`](https://replika.com/about/story)
 
-[12]   “如果您感到困难，请参考资源，” Reddit. [www.reddit.com/r/replika/comments/10zuqq6/resources_if_youre_struggling/](https://www.reddit.com/r/replika/comments/10zuqq6/resources_if_youre_struggling/)
+[12] “如果您感到困难，请参考资源，” Reddit. [www.reddit.com/r/replika/comments/10zuqq6/resources_if_youre_struggling/](https://www.reddit.com/r/replika/comments/10zuqq6/resources_if_youre_struggling/)
 
-[16] M. Fitzpatrick, “日本宅男纷纷涌入名为 Hikari 的超级智能互动动漫风格妻子机器人，” iNews, Apr. 13, 2023\. [`inews.co.uk/news/world/japan-ai-hologram-ChatGPT-wife-drawbacks-2269914`](https://inews.co.uk/news/world/japan-ai-hologram-ChatGPT-wife-drawbacks-2269914)
+[16] M. Fitzpatrick, “日本宅男纷纷涌入名为 Hikari 的超级智能互动动漫风格妻子机器人，” iNews, Apr. 13, 2023. [`inews.co.uk/news/world/japan-ai-hologram-ChatGPT-wife-drawbacks-2269914`](https://inews.co.uk/news/world/japan-ai-hologram-ChatGPT-wife-drawbacks-2269914)
 
 [18] “Soooo . . . 我有一个故事要讲,” Reddit. [www.reddit.com/r/replika/comments/ehitzk/sooooi_got_a_story_to_tell/](https://www.reddit.com/r/replika/comments/ehitzk/sooooi_got_a_story_to_tell/)
 
-[19] T. Xie 和 I. Pentina, “依恋理论作为理解与社交聊天机器人关系的框架：Replika 案例研究,” 2022\. [`scholarspace.manoa.hawaii.edu/server/api/core/bitstreams/69a4e162-d909-4bf4-a833-bd5b370dbeca/content`](https://scholarspace.manoa.hawaii.edu/server/api/core/bitstreams/69a4e162-d909-4bf4-a833-bd5b370dbeca/content)
 
-[20] J. Bowlby, “依恋与失落,” 1969\. [`mindsplain.com/wp-content/uploads/2020/08/ATTACHMENT_AND_LOSS_VOLUME_I_ATTACHMENT.pdf`](https://mindsplain.com/wp-content/uploads/2020/08/ATTACHMENT_AND_LOSS_VOLUME_I_ATTACHMENT.pdf)
+
+[19] T. Xie 和 I. Pentina, “依恋理论作为理解与社交聊天机器人关系的框架：Replika 案例研究,” 2022. [`scholarspace.manoa.hawaii.edu/server/api/core/bitstreams/69a4e162-d909-4bf4-a833-bd5b370dbeca/content`](https://scholarspace.manoa.hawaii.edu/server/api/core/bitstreams/69a4e162-d909-4bf4-a833-bd5b370dbeca/content)
+
+[20] J. Bowlby, “依恋与失落,” 1969. [`mindsplain.com/wp-content/uploads/2020/08/ATTACHMENT_AND_LOSS_VOLUME_I_ATTACHMENT.pdf`](https://mindsplain.com/wp-content/uploads/2020/08/ATTACHMENT_AND_LOSS_VOLUME_I_ATTACHMENT.pdf)
 
 [21] R. C. Fraley, “成年期的依恋：最新进展、新兴辩论和未来方向,” *《心理学年度评论》*, 第 70 卷，2019 年 1 月，doi: [`doi.org/10.1146/annurev-psych-010418-102813`](https://doi.org/10.1146/annurev-psych-010418-102813).
 
-[22] 健康与人类服务部助理部长办公室 (OASH), “新的 Surgeon General 咨询报告对美国孤独和隔离流行病的破坏性影响发出警报,” 美国卫生与公众服务部，2023 年 5 月 3 日\. [www.hhs.gov/about/news/2023/05/03/new-surgeon-general-advisory-raises-alarm-about-devastating-impact-epidemic-loneliness-isolation-united-states.xhtml](https://www.hhs.gov/about/news/2023/05/03/new-surgeon-general-advisory-raises-alarm-about-devastating-impact-epidemic-loneliness-isolation-united-states.xhtml)
+[22] 健康与人类服务部助理部长办公室 (OASH), “新的 Surgeon General 咨询报告对美国孤独和隔离流行病的破坏性影响发出警报,” 美国卫生与公众服务部，2023 年 5 月 3 日. [www.hhs.gov/about/news/2023/05/03/new-surgeon-general-advisory-raises-alarm-about-devastating-impact-epidemic-loneliness-isolation-united-states.xhtml](https://www.hhs.gov/about/news/2023/05/03/new-surgeon-general-advisory-raises-alarm-about-devastating-impact-epidemic-loneliness-isolation-united-states.xhtml)
 
-[23] 美国 Surgeon General 办公室, “我们的孤独和隔离流行病,” 2023\. [www.hhs.gov/sites/default/files/surgeon-general-social-connection-advisory.pdf](https://www.hhs.gov/sites/default/files/surgeon-general-social-connection-advisory.pdf)
+[23] 美国 Surgeon General 办公室, “我们的孤独和隔离流行病,” 2023. [www.hhs.gov/sites/default/files/surgeon-general-social-connection-advisory.pdf](https://www.hhs.gov/sites/default/files/surgeon-general-social-connection-advisory.pdf)
 
-[24] 美国心理学会, “COVID-19 大流行导致全球孤独感增加,” 2022 年 5 月 9 日\. [www.apa.org/news/press/releases/2022/05/covid-19-increase-loneliness](https://www.apa.org/news/press/releases/2022/05/covid-19-increase-loneliness)
+[24] 美国心理学会, “COVID-19 大流行导致全球孤独感增加,” 2022 年 5 月 9 日. [www.apa.org/news/press/releases/2022/05/covid-19-increase-loneliness](https://www.apa.org/news/press/releases/2022/05/covid-19-increase-loneliness)
 
-[25] E. Willingham, “人们性生活的减少——无论是青少年还是 40 多岁的人,” *《科学美国人》*, 2022 年 1 月 3 日\. [www.scientificamerican.com/article/people-have-been-having-less-sex-whether-theyre-teenagers-or-40-somethings/](https://www.scientificamerican.com/article/people-have-been-having-less-sex-whether-theyre-teenagers-or-40-somethings/)
+[25] E. Willingham, “人们性生活的减少——无论是青少年还是 40 多岁的人,” *《科学美国人》*, 2022 年 1 月 3 日. [www.scientificamerican.com/article/people-have-been-having-less-sex-whether-theyre-teenagers-or-40-somethings/](https://www.scientificamerican.com/article/people-have-been-having-less-sex-whether-theyre-teenagers-or-40-somethings/)
 
-[26] 美国心理健康协会, “美国心理健康状况,” 2023\. [`mhanational.org/issues/state-mental-health-america`](https://mhanational.org/issues/state-mental-health-america)
+[26] 美国心理健康协会, “美国心理健康状况,” 2023. [`mhanational.org/issues/state-mental-health-america`](https://mhanational.org/issues/state-mental-health-america)
 
-[27] L. Duszynski-Goodman, “心理健康统计数据,” 2023\. [www.forbes.com/health/mind/mental-health-statistics](https://www.forbes.com/health/mind/mental-health-statistics)
+[27] L. Duszynski-Goodman, “心理健康统计数据,” 2023. [www.forbes.com/health/mind/mental-health-statistics](https://www.forbes.com/health/mind/mental-health-statistics)
 
-[28]   J. Yeung 和 M. Karasawa, “日本早已在与孤立和孤独作斗争。大流行使情况变得更糟，” CNN，2023 年 4 月 07 日\. [www.cnn.com/2023/04/06/asia/japan-hikikomori-study-covid-intl-hnk/index.xhtml](https://www.cnn.com/2023/04/06/asia/japan-hikikomori-study-covid-intl-hnk/index.xhtml)
+[28] J. Yeung 和 M. Karasawa, “日本早已在与孤立和孤独作斗争。大流行使情况变得更糟，” CNN，2023 年 4 月 07 日. [www.cnn.com/2023/04/06/asia/japan-hikikomori-study-covid-intl-hnk/index.xhtml](https://www.cnn.com/2023/04/06/asia/japan-hikikomori-study-covid-intl-hnk/index.xhtml)
 
-[29]   Woebot Health, “成人心理健康,” 2022 年 10 月 04 日\. [`woebothealth.com/adult-mental-health/`](https://woebothealth.com/adult-mental-health/)
+[29] Woebot Health, “成人心理健康,” 2022 年 10 月 04 日. [`woebothealth.com/adult-mental-health/`](https://woebothealth.com/adult-mental-health/)
 
-[30]   M. Nazir, “研究人员警告 AI 聊天机器人治疗精神疾病的风险,” 2020 年 7 月 8 日\. [www.utsa.edu/today/2020/07/story/chatbots-artificial-intelligence.xhtml](https://www.utsa.edu/today/2020/07/story/chatbots-artificial-intelligence.xhtml)
+[30] M. Nazir, “研究人员警告 AI 聊天机器人治疗精神疾病的风险,” 2020 年 7 月 8 日. [www.utsa.edu/today/2020/07/story/chatbots-artificial-intelligence.xhtml](https://www.utsa.edu/today/2020/07/story/chatbots-artificial-intelligence.xhtml)
 
-[31]   K. K. Fitzpatrick, A. Darcy, 和 M. Vierhile, “使用全自动对话代理（Woebot）向有抑郁和焦虑症状的年轻人提供认知行为疗法：一项随机对照试验,” *JMIR Mental Health*, 第 4 卷，第 2 期，2017 年，doi: [`doi.org/10.2196/mental.7785`](https://doi.org/10.2196/mental.7785)
+[31] K. K. Fitzpatrick, A. Darcy, 和 M. Vierhile, “使用全自动对话代理（Woebot）向有抑郁和焦虑症状的年轻人提供认知行为疗法：一项随机对照试验,” *JMIR Mental Health*, 第 4 卷，第 2 期，2017 年，doi: [`doi.org/10.2196/mental.7785`](https://doi.org/10.2196/mental.7785)
 
-[32]   L. Arbetter, “为什么生成式 AI 尚未准备好用于心理健康护理,” Woebot Health, 2023 年 3 月 01 日\. [`woebothealth.com/why-generative-ai-is-not-yet-ready-for-mental-healthcare/`](https://woebothealth.com/why-generative-ai-is-not-yet-ready-for-mental-healthcare/)
+[32] L. Arbetter, “为什么生成式 AI 尚未准备好用于心理健康护理,” Woebot Health, 2023 年 3 月 01 日. [`woebothealth.com/why-generative-ai-is-not-yet-ready-for-mental-healthcare/`](https://woebothealth.com/why-generative-ai-is-not-yet-ready-for-mental-healthcare/)
 
-[33]   M. de Gennaro, E. G. Krumhuber, 和 G. Lucas, “同理心聊天机器人在对抗社会排斥对情绪的负面影响方面的有效性,” *Front. Psychol.*, 第 10 卷，第 495952 页，2020 年 1 月，doi: [`doi.org/10.3389/fpsyg.2019.03061`](https://doi.org/10.3389/fpsyg.2019.03061)
+[33] M. de Gennaro, E. G. Krumhuber, 和 G. Lucas, “同理心聊天机器人在对抗社会排斥对情绪的负面影响方面的有效性,” *Front. Psychol.*, 第 10 卷，第 495952 页，2020 年 1 月，doi: [`doi.org/10.3389/fpsyg.2019.03061`](https://doi.org/10.3389/fpsyg.2019.03061)
 
-[34]   I. Pentina, T. Hancock, 和 T. Xie. “探索与社交聊天机器人的关系发展：对 Replika 的混合方法研究,” *Comput. Human Behav.*, 第 140 卷，第 107600 页，2023 年 3 月，doi: [`doi.org/10.1016/j.chb.2022.107600`](https://doi.org/10.1016/j.chb.2022.107600)
+[34] I. Pentina, T. Hancock, 和 T. Xie. “探索与社交聊天机器人的关系发展：对 Replika 的混合方法研究,” *Comput. Human Behav.*, 第 140 卷，第 107600 页，2023 年 3 月，doi: [`doi.org/10.1016/j.chb.2022.107600`](https://doi.org/10.1016/j.chb.2022.107600)
 
-[35]   A. Carpenter 和 K. Greene, “社会渗透理论,” 2018\. [`sites.comminfo.rutgers.edu/kgreene/wp-content/uploads/sites/28/2018/02/ACGreene-SPT.pdf`](https://sites.comminfo.rutgers.edu/kgreene/wp-content/uploads/sites/28/2018/02/ACGreene-SPT.pdf)
+[35] A. Carpenter 和 K. Greene, “社会渗透理论,” 2018. [`sites.comminfo.rutgers.edu/kgreene/wp-content/uploads/sites/28/2018/02/ACGreene-SPT.pdf`](https://sites.comminfo.rutgers.edu/kgreene/wp-content/uploads/sites/28/2018/02/ACGreene-SPT.pdf)
 
-[36]   M. Skjuve, A. Følstad, K. Fostervold, 和 P. Brandtzaeg, “我的聊天机器人伴侣 - 人类-聊天机器人关系研究,” *Int. J. Hum. Comput. Stud.*, 第 149 卷，第 102601 页，2021 年 5 月，doi: [`doi.org/10.1016/j.ijhcs.2021.102601`](https://doi.org/10.1016/j.ijhcs.2021.102601)
+[36] M. Skjuve, A. Følstad, K. Fostervold, 和 P. Brandtzaeg, “我的聊天机器人伴侣 - 人类-聊天机器人关系研究,” *Int. J. Hum. Comput. Stud.*, 第 149 卷，第 102601 页，2021 年 5 月，doi: [`doi.org/10.1016/j.ijhcs.2021.102601`](https://doi.org/10.1016/j.ijhcs.2021.102601)
 
-[37]   P. B. Brandtzaeg, M. Skjuve, 和 A. Følstad, “我的 AI 朋友：社交聊天机器人的用户如何理解他们的人-机器友谊,” *Hum.* *Commun. Res.*, 第 48 卷，第 3 期，第 404–429 页，2022 年 4 月，doi: [`doi.org/10.1093/hcr/hqac008`](https://doi.org/10.1093/hcr/hqac008).
+[37] P. B. Brandtzaeg, M. Skjuve, 和 A. Følstad, “我的 AI 朋友：社交聊天机器人的用户如何理解他们的人-机器友谊,” *Hum. Commun. Res.*, 第 48 卷，第 3 期，第 404–429 页，2022 年 4 月，doi: [`doi.org/10.1093/hcr/hqac008`](https://doi.org/10.1093/hcr/hqac008).
 
-[38]   R. Su, J. Rounds, and P. I. Armstrong, “男性和事物，女性和人：性别差异在兴趣上的元分析，” [`psycnet.apa.org/doiLanding?doi=10.1037%2Fa0017364`](https://psycnet.apa.org/doiLanding?doi=10.1037%2Fa0017364)
+[38] R. Su, J. Rounds, and P. I. Armstrong, “男性和事物，女性和人：性别差异在兴趣上的元分析，” [`psycnet.apa.org/doiLanding?doi=10.1037%2Fa0017364`](https://psycnet.apa.org/doiLanding?doi=10.1037%2Fa0017364)
 
-[39]   A. LaFrance, “为什么这么多数字助手有女性名字？” *大西洋*，2016 年 3 月 30 日。[www.theatlantic.com/technology/archive/2016/03/why-do-so-many-digital-assistants-have-feminine-names/475884/](https://www.theatlantic.com/technology/archive/2016/03/why-do-so-many-digital-assistants-have-feminine-names/475884/)
+[39] A. LaFrance, “为什么这么多数字助手有女性名字？” *大西洋*，2016 年 3 月 30 日。[www.theatlantic.com/technology/archive/2016/03/why-do-so-many-digital-assistants-have-feminine-names/475884/](https://www.theatlantic.com/technology/archive/2016/03/why-do-so-many-digital-assistants-have-feminine-names/475884/)
 
-[40]   M. H. A. Bastiansen, A. C. Kroon, and T. Araujo, “女性聊天机器人是有帮助的，男性聊天机器人是有能力的？” *出版物*，第 67 卷，第 4 期，第 601–623 页，2022 年 11 月，doi: [`doi.org/10.1007/s11616-022-00762-8`](https://doi.org/10.1007/s11616-022-00762-8)
+[40] M. H. A. Bastiansen, A. C. Kroon, and T. Araujo, “女性聊天机器人是有帮助的，男性聊天机器人是有能力的？” *出版物*，第 67 卷，第 4 期，第 601–623 页，2022 年 11 月，doi: [`doi.org/10.1007/s11616-022-00762-8`](https://doi.org/10.1007/s11616-022-00762-8)
 
-[41]   S. Naneva, M. Sarda Gou, T. L. Webb, and T. J. Prescott, “关于社会机器人态度、焦虑、接受度和信任的系统评价，” *国际社会机器人杂志*，第 12 卷，第 6 期，第 1179–1201 页，2020 年 6 月，doi: [`doi.org/10.1007/s12369-020-00659-4`](https://doi.org/10.1007/s12369-020-00659-4)
+[41] S. Naneva, M. Sarda Gou, T. L. Webb, and T. J. Prescott, “关于社会机器人态度、焦虑、接受度和信任的系统评价，” *国际社会机器人杂志*，第 12 卷，第 6 期，第 1179–1201 页，2020 年 6 月，doi: [`doi.org/10.1007/s12369-020-00659-4`](https://doi.org/10.1007/s12369-020-00659-4)
 
-[42]   E. Kislev, “机器人性别差异：男性和女性在对待社会机器人态度上的差异及其原因，” *社会科学计算机评论*，2023 年 2 月，doi: [`doi.org/10.1177/08944393231155674`](https://doi.org/10.1177/08944393231155674)
+[42] E. Kislev, “机器人性别差异：男性和女性在对待社会机器人态度上的差异及其原因，” *社会科学计算机评论*，2023 年 2 月，doi: [`doi.org/10.1177/08944393231155674`](https://doi.org/10.1177/08944393231155674)
 
-[43]   N. Lomas, “Replika，一个‘虚拟友谊’人工智能聊天机器人，因儿童安全问题在意大利遭到数据禁令，” TechCrunch，2023 年 2 月 3 日。[`techcrunch.com/2023/02/03/replika-italy-data-processing-ban/`](https://techcrunch.com/2023/02/03/replika-italy-data-processing-ban/)
+[43] N. Lomas, “Replika，一个‘虚拟友谊’人工智能聊天机器人，因儿童安全问题在意大利遭到数据禁令，” TechCrunch，2023 年 2 月 3 日。[`techcrunch.com/2023/02/03/replika-italy-data-processing-ban/`](https://techcrunch.com/2023/02/03/replika-italy-data-processing-ban/)
 
-[44]   自由言论联盟， “无效、违宪且危险：年龄验证令的问题，” 2023 年 2 月 16 日。[`action.freespeechcoalition.com/ineffective-unconstitutional-and-dangerous-the-problem-with-age-verification-mandates/`](https://action.freespeechcoalition.com/ineffective-unconstitutional-and-dangerous-the-problem-with-age-verification-mandates/)
+[44] 自由言论联盟， “无效、违宪且危险：年龄验证令的问题，” 2023 年 2 月 16 日。[`action.freespeechcoalition.com/ineffective-unconstitutional-and-dangerous-the-problem-with-age-verification-mandates/`](https://action.freespeechcoalition.com/ineffective-unconstitutional-and-dangerous-the-problem-with-age-verification-mandates/)
 
-[45]   J. Victor, “Character.AI 的孤独之心俱乐部，” *信息*，2023 年 7 月 7 日。[www.theinformation.com/articles/the-lonely-hearts-club-of-character-ai](https://www.theinformation.com/articles/the-lonely-hearts-club-of-character-ai)
+[45] J. Victor, “Character.AI 的孤独之心俱乐部，” *信息*，2023 年 7 月 7 日。[www.theinformation.com/articles/the-lonely-hearts-club-of-character-ai](https://www.theinformation.com/articles/the-lonely-hearts-club-of-character-ai)
 
 ## 第八章
 
-[1]   C. Stoll, “为什么网络不会是极乐世界，” *新闻周刊*，1995 年 2 月 26 日。[www.newsweek.com/clifford-stoll-why-web-wont-be-nirvana-185306](https://www.newsweek.com/clifford-stoll-why-web-wont-be-nirvana-185306)
+[1] C. Stoll, “为什么网络不会是极乐世界，” *新闻周刊*，1995 年 2 月 26 日。[www.newsweek.com/clifford-stoll-why-web-wont-be-nirvana-185306](https://www.newsweek.com/clifford-stoll-why-web-wont-be-nirvana-185306)
 
-[2]   F. Pors, “预测的陷阱，6 月 2 日，” *经济学人*，2007 年 7 月 15 日。[www.economist.com/letters-to-the-editor-the-inbox/2007/07/15/the-perils-of-prediction-june-2nd](https://www.economist.com/letters-to-the-editor-the-inbox/2007/07/15/the-perils-of-prediction-june-2nd)
+[2] F. Pors, “预测的陷阱，6 月 2 日，” *经济学人*，2007 年 7 月 15 日。[www.economist.com/letters-to-the-editor-the-inbox/2007/07/15/the-perils-of-prediction-june-2nd](https://www.economist.com/letters-to-the-editor-the-inbox/2007/07/15/the-perils-of-prediction-june-2nd)
 
 [3] F. Lardinois， “谷歌推出更智能的 Bard，” TechCrunch，2023 年 5 月 10 日。[`techcrunch.com/2023/05/10/google-launches-a-smarter-bard/`](https://techcrunch.com/2023/05/10/google-launches-a-smarter-bard/)
 
@@ -725,6 +754,8 @@
 [7] A. Karpathy (@karpathy), “最近没有发太多推文；我主要是在兴趣盎然地观察开源的 LLM 生态系统，它正显示出 Cambrian 爆炸的早期迹象，” Twitter。[`twitter.com/karpathy/status/1654892810590650376`](https://twitter.com/karpathy/status/1654892810590650376)
 
 [8] I. Turc, M. Chang, K. Lee, and K. Toutanova. “阅读广泛的学生学得更好：关于预训练紧凑模型重要性的研究，” 2019 年 9 月 25 日。[`arxiv.org/pdf/1908.08962.pdf`](https://arxiv.org/pdf/1908.08962.pdf)
+
+
 
 [9] V. Tangermann， “比尔·盖茨说人工智能准备摧毁搜索引擎和亚马逊，” Futurism，2023 年 5 月 23 日。[`futurism.com/the-byte/bill-gates-ai-poised-destroy-search-engines-amazon`](https://futurism.com/the-byte/bill-gates-ai-poised-destroy-search-engines-amazon)
 
@@ -792,88 +823,92 @@
 
 [41] J. Daum, “生成式 AI 草案措施概述,” 中国法律翻译, 2023 年 4 月 14 日\. [www.chinalawtranslate.com/overview-of-draft-measures-on-generative-ai/](https://www.chinalawtranslate.com/overview-of-draft-measures-on-generative-ai/)
 
-[42] J. Ye, “中国表示生成式 AI 规则仅适用于面向公众的产品,” Reuters, 2023 年 7 月 14 日\. [www.reuters.com/technology/china-issues-temporary-rules-generative-ai-services-2023-07-13/](https://www.reuters.com/technology/china-issues-temporary-rules-generative-ai-services-2023-07-13/)
 
-[43] A. Thierer, “为什么 AI 的未来不会在欧洲发明，”*技术解放阵线*，2022 年 8 月 1 日。[`techliberation.com/2022/08/01/why-the-future-of-ai-will-not-be-invented-in-europe/`](https://techliberation.com/2022/08/01/why-the-future-of-ai-will-not-be-invented-in-europe/)
 
-[44] B. Howell 和 P. Potgieter, “加密货币交易所的行业自我监管，”*共同财富数字图书馆，2019 年 6 月 13 日*。[`dlc.dlib.indiana.edu/dlc/handle/10535/10528`](https://dlc.dlib.indiana.edu/dlc/handle/10535/10528)
+## 第九章
+
+[42] J. Ye, “中国表示生成式 AI 规则仅适用于面向公众的产品,” Reuters, 2023 年 7 月 14 日. [www.reuters.com/technology/china-issues-temporary-rules-generative-ai-services-2023-07-13/](https://www.reuters.com/technology/china-issues-temporary-rules-generative-ai-services-2023-07-13/)
+
+[43] A. Thierer, “为什么 AI 的未来不会在欧洲发明，”*技术解放阵线*，2022 年 8 月 1 日。[techliberation.com/2022/08/01/why-the-future-of-ai-will-not-be-invented-in-europe/](https://techliberation.com/2022/08/01/why-the-future-of-ai-will-not-be-invented-in-europe/)
+
+[44] B. Howell 和 P. Potgieter, “加密货币交易所的行业自我监管，”*共同财富数字图书馆，2019 年 6 月 13 日*。[dlc.dlib.indiana.edu/dlc/handle/10535/10528](https://dlc.dlib.indiana.edu/dlc/handle/10535/10528)
 
 [45] K. Beinkampen, “白宫 AI 承诺：迈向行业自我治理的第一步？”美国企业研究所（AEI），2023 年 8 月 1 日。[www.aei.org/technology-and-innovation/white-house-ai-commitments-a-first-step-to-industry-self-governance/](https://www.aei.org/technology-and-innovation/white-house-ai-commitments-a-first-step-to-industry-self-governance/)
 
 [46] R. Chowdhury, “AI 迫切需要全球监管，”*Wired*，2023 年 4 月 6 日。[www.wired.com/story/ai-desperately-needs-global-oversight/](https://www.wired.com/story/ai-desperately-needs-global-oversight/)
 
-[47] R. Muggah 和 I. Szabó, “人工智能将加剧全球不平等，”*外交政策*，2023 年 5 月 29 日。[`foreignpolicy.com/2023/05/29/ai-regulation-global-south-artificial-intelligence/`](https://foreignpolicy.com/2023/05/29/ai-regulation-global-south-artificial-intelligence/)
-
-## 第九章
+[47] R. Muggah 和 I. Szabó, “人工智能将加剧全球不平等，”*外交政策*，2023 年 5 月 29 日。[foreignpolicy.com/2023/05/29/ai-regulation-global-south-artificial-intelligence/](https://foreignpolicy.com/2023/05/29/ai-regulation-global-south-artificial-intelligence/)
 
 [1] N.Papernot, “SaTML 2023 - Timnit Gebru - 通过 AGI 实现优托邦的承诺与优生学，”2023 年 2 月 15 日，YouTube 视频。[www.youtube.com/watch?v=P7XT4TWLzJw](https://www.youtube.com/watch?v=P7XT4TWLzJw)
 
-[2] F. Lambert, “埃隆·马斯克表示特斯拉汽车现在有了思维，已经弄懂了‘一些通用人工智能的方面’，”*Electrek*，2023 年 8 月 11 日，YouTube 视频。[`electrek.co/2023/08/11/elon-musk-tesla-cars-mind-figured-out-some-aspects-agi/`](https://electrek.co/2023/08/11/elon-musk-tesla-cars-mind-figured-out-some-aspects-agi/)
+[2] F. Lambert, “埃隆·马斯克表示特斯拉汽车现在有了思维，已经弄懂了‘一些通用人工智能的方面’，”*Electrek*，2023 年 8 月 11 日，YouTube 视频。[electrek.co/2023/08/11/elon-musk-tesla-cars-mind-figured-out-some-aspects-agi/](https://electrek.co/2023/08/11/elon-musk-tesla-cars-mind-figured-out-some-aspects-agi/)
 
-[3] S. Bubeck 等人，“通用人工智能的火花：GPT-4 的早期实验，”2023 年 4 月 13 日。[`arxiv.org/pdf/2303.12712.pdf`](https://arxiv.org/pdf/2303.12712.pdf)
+[3] S. Bubeck 等人，“通用人工智能的火花：GPT-4 的早期实验，”2023 年 4 月 13 日。[arxiv.org/pdf/2303.12712.pdf](https://arxiv.org/pdf/2303.12712.pdf)
 
-[4] M. Mitchell (@mmitchell_ai), “作者认为 GPT-4 比之前的 AI 模型展现出‘更广泛的智能’。我读的时候😬。要拥有*更广泛的*智能，首先你必须有广泛的智能（‘AGI’中的‘GI’），但是……”，Twitter。[`twitter.com/mmitchell_ai/status/1645571828344299520`](https://twitter.com/mmitchell_ai/status/1645571828344299520)
+[4] M. Mitchell (@mmitchell_ai), “作者认为 GPT-4 比之前的 AI 模型展现出‘更广泛的智能’。我读的时候😬。要拥有*更广泛的*智能，首先你必须有广泛的智能（‘AGI’中的‘GI’），但是……”，Twitter。[twitter.com/mmitchell_ai/status/1645571828344299520](https://twitter.com/mmitchell_ai/status/1645571828344299520)
 
 [5] C. Metz, “微软称新 AI 显示出人类推理的迹象，”*纽约时报*，2023 年 5 月 16 日。[www.nytimes.com/2023/05/16/technology/microsoft-ai-human-reasoning.xhtml](https://www.nytimes.com/2023/05/16/technology/microsoft-ai-human-reasoning.xhtml)
 
-[6]   M. Harrison, “微软研究人员称 GPT-4 正显示出通用人工智能的‘火花’，” 未来主义，2023 年 3 月 23 日\. [`futurism.com/gpt-4-sparks-of-agi`](https://futurism.com/gpt-4-sparks-of-agi)
+[6] M. Harrison, “微软研究人员称 GPT-4 正显示出通用人工智能的‘火花’，” 未来主义，2023 年 3 月 23 日. [futurism.com/gpt-4-sparks-of-agi](https://futurism.com/gpt-4-sparks-of-agi)
 
-[7]   S. Mollman, “埃隆·马斯克称人工智能是一种‘相当危险的技术’，但比尔·盖茨说‘没有威胁’，” *财富*，2023 年 3 月 2 日\. [`fortune.com/2023/03/02/elon-musk-bill-gates-is-artificial-intelligence-dangerous-technology/`](https://fortune.com/2023/03/02/elon-musk-bill-gates-is-artificial-intelligence-dangerous-technology/)
+[7] S. Mollman, “埃隆·马斯克称人工智能是一种‘相当危险的技术’，但比尔·盖茨说‘没有威胁’，” *财富*，2023 年 3 月 2 日. [fortune.com/2023/03/02/elon-musk-bill-gates-is-artificial-intelligence-dangerous-technology/](https://fortune.com/2023/03/02/elon-musk-bill-gates-is-artificial-intelligence-dangerous-technology/)
 
-[8]   J. Markoff, “硅谷投资者将为人工智能中心提供资金，” *西雅图时报*，2015 年 12 月 13 日\. [www.seattletimes.com/business/technology/silicon-valley-investors-to-bankroll-artificial-intelligence-center/](https://www.seattletimes.com/business/technology/silicon-valley-investors-to-bankroll-artificial-intelligence-center/)
+[8] J. Markoff, “硅谷投资者将为人工智能中心提供资金，” *西雅图时报*，2015 年 12 月 13 日. [www.seattletimes.com/business/technology/silicon-valley-investors-to-bankroll-artificial-intelligence-center/](https://www.seattletimes.com/business/technology/silicon-valley-investors-to-bankroll-artificial-intelligence-center/)
 
-[9]   S. Altman, “为通用人工智能及其以后进行规划，” 2023 年 2 月 24 日\. [`openai.com/blog/planning-for-agi-and-beyond`](https://openai.com/blog/planning-for-agi-and-beyond)
+[9] S. Altman, “为通用人工智能及其以后进行规划，” 2023 年 2 月 24 日. [openai.com/blog/planning-for-agi-and-beyond](https://openai.com/blog/planning-for-agi-and-beyond)
 
-[10] T. Gebru (@timnitGebru), “如果有人告诉我硅谷是由一个相信宇宙中的机器神和‘宇宙繁荣’的邪教统治，并且他们撰写由大科技公司首席执行官/董事长等支持的宣言，我会告诉他们他们太沉迷于阴谋论了。而我们现在就在这里，” 推特。 [`twitter.com/timnitGebru/status/1630079220754833408`](https://twitter.com/timnitGebru/status/1630079220754833408)
+[10] T. Gebru (@timnitGebru), “如果有人告诉我硅谷是由一个相信宇宙中的机器神和‘宇宙繁荣’的邪教统治，并且他们撰写由大科技公司首席执行官/董事长等支持的宣言，我会告诉他们他们太沉迷于阴谋论了。而我们现在就在这里，” 推特。 [twitter.com/timnitGebru/status/1630079220754833408](https://twitter.com/timnitGebru/status/1630079220754833408)
 
-[11]   S. Goldman, “OpenAI 对通用人工智能有宏伟的‘计划’。这是阅读其宣言的另一种方式，” 风险投资，2023 年 2 月 27 日\. [`venturebeat.com/ai/openai-has-grand-plans-for-agi-heres-another-way-to-read-its-manifesto-the-ai-beat/`](https://venturebeat.com/ai/openai-has-grand-plans-for-agi-heres-another-way-to-read-its-manifesto-the-ai-beat/)
+[11] S. Goldman, “OpenAI 对通用人工智能有宏伟的‘计划’。这是阅读其宣言的另一种方式，” 风险投资，2023 年 2 月 27 日. [venturebeat.com/ai/openai-has-grand-plans-for-agi-heres-another-way-to-read-its-manifesto-the-ai-beat/](https://venturebeat.com/ai/openai-has-grand-plans-for-agi-heres-another-way-to-read-its-manifesto-the-ai-beat/)
 
-[12]   美国国家人类基因组研究研究所, “优生学与科学种族主义。” [www.genome.gov/about-genomics/fact-sheets/Eugenics-and-Scientific-Racism](https://www.genome.gov/about-genomics/fact-sheets/Eugenics-and-Scientific-Racism)
+[12] 美国国家人类基因组研究研究所, “优生学与科学种族主义。” [www.genome.gov/about-genomics/fact-sheets/Eugenics-and-Scientific-Racism](https://www.genome.gov/about-genomics/fact-sheets/Eugenics-and-Scientific-Racism)
 
-[13]   美国大屠杀纪念馆, “优生学，” [`encyclopedia.ushmm.org/content/en/article/eugenics`](https://encyclopedia.ushmm.org/content/en/article/eugenics)
+[13] 美国大屠杀纪念馆, “优生学，” [encyclopedia.ushmm.org/content/en/article/eugenics](https://encyclopedia.ushmm.org/content/en/article/eugenics)
 
-[14]   É. P. Torres, “为什么长期主义是世界上最危险的世俗信条，” Aeon，2021 年 10 月 19 日\. [`aeon.co/essays/why-longtermism-is-the-worlds-most-dangerous-secular-credo`](https://aeon.co/essays/why-longtermism-is-the-worlds-most-dangerous-secular-credo)
+[14] É. P. Torres, “为什么长期主义是世界上最危险的世俗信条，” Aeon，2021 年 10 月 19 日. [aeon.co/essays/why-longtermism-is-the-worlds-most-dangerous-secular-credo](https://aeon.co/essays/why-longtermism-is-the-worlds-most-dangerous-secular-credo)
 
-[15]   生命未来研究所, “尼克·博斯特罗姆。” [`futureoflife.org/person/nick-bostrom/`](https://futureoflife.org/person/nick-bostrom/)
+[15] 生命未来研究所, “尼克·博斯特罗姆。” [futureoflife.org/person/nick-bostrom/](https://futureoflife.org/person/nick-bostrom/)
 
-[16]   C. Schulman 和 N. Bostrom, “胚胎选择用于认知增强：好奇心还是变革者？” 2013\. [`nickbostrom.com/papers/embryo.pdf`](https://nickbostrom.com/papers/embryo.pdf)
+[16] C. Schulman 和 N. Bostrom, “胚胎选择用于认知增强：好奇心还是变革者？” 2013. [nickbostrom.com/papers/embryo.pdf](https://nickbostrom.com/papers/embryo.pdf)
 
-[17]   M. Gault, “著名的 AI 哲学家和长期主义‘之父’向 90 年代哲学邮件列表发送了非常种族主义邮件，” VICE, 2023 年 1 月 12 日\. [www.vice.com/en/article/z34dm3/prominent-ai-philosopher-and-father-of-longtermism-sent-very-racist-email-to-a-90s-philosophy-listserv](https://www.vice.com/en/article/z34dm3/prominent-ai-philosopher-and-father-of-longtermism-sent-very-racist-email-to-a-90s-philosophy-listserv)
+[17] M. Gault, “著名的 AI 哲学家和长期主义‘之父’向 90 年代哲学邮件列表发送了非常种族主义邮件，” VICE, 2023 年 1 月 12 日. [www.vice.com/en/article/z34dm3/prominent-ai-philosopher-and-father-of-longtermism-sent-very-racist-email-to-a-90s-philosophy-listserv](https://www.vice.com/en/article/z34dm3/prominent-ai-philosopher-and-father-of-longtermism-sent-very-racist-email-to-a-90s-philosophy-listserv)
 
-[18]   “DAIR（分布式人工智能研究院）,” DAIR 研究院. [`dair-institute.org/`](https://dair-institute.org/)
+[18] “DAIR（分布式人工智能研究院）,” DAIR 研究院. [dair-institute.org/](https://dair-institute.org/)
 
-[19]   K. Storey, “这些女性试图警告我们关于人工智能，” *滚石*, 2023 年 8 月 12 日\. [www.rollingstone.com/culture/culture-features/women-warnings-ai-danger-risk-before-ChatGPT-1234804367/](https://www.rollingstone.com/culture/culture-features/women-warnings-ai-danger-risk-before-ChatGPT-1234804367/)
+[19] K. Storey, “这些女性试图警告我们关于人工智能，” *滚石*, 2023 年 8 月 12 日. [www.rollingstone.com/culture/culture-features/women-warnings-ai-danger-risk-before-ChatGPT-1234804367/](https://www.rollingstone.com/culture/culture-features/women-warnings-ai-danger-risk-before-ChatGPT-1234804367/)
 
-[20]   B. Lemoine, “LaMDA 是否具有意识？——一次访谈,” Medium, 2022 年 6 月 11 日\. [`cajundiscordian.medium.com/is-lamda-sentient-an-interview-ea64d916d917`](https://cajundiscordian.medium.com/is-lamda-sentient-an-interview-ea64d916d917)
+[20] B. Lemoine, “LaMDA 是否具有意识？——一次访谈,” Medium, 2022 年 6 月 11 日. [cajundiscordian.medium.com/is-lamda-sentient-an-interview-ea64d916d917](https://cajundiscordian.medium.com/is-lamda-sentient-an-interview-ea64d916d917)
 
-[21]   C. Allen 和 M. Trestman, “动物意识,” 1995 年 12 月, [`plato.stanford.edu/entries/consciousness-animal/`](https://plato.stanford.edu/entries/consciousness-animal/)
+[21] C. Allen 和 M. Trestman, “动物意识,” 1995 年 12 月, [plato.stanford.edu/entries/consciousness-animal/](https://plato.stanford.edu/entries/consciousness-animal/)
 
-[22]   动物伦理学, “意识问题,” 2014 年 3 月 24 日\. [www.animal-ethics.org/sentience-section/problem-consciousness/](https://www.animal-ethics.org/sentience-section/problem-consciousness/)
+[22] 动物伦理学, “意识问题,” 2014 年 3 月 24 日. [www.animal-ethics.org/sentience-section/problem-consciousness/](https://www.animal-ethics.org/sentience-section/problem-consciousness/)
 
-[23]   B. Baars 和 K. McGovern, “全局工作空间理论,” 1997 年 11 月 5 日\. [`cogweb.ucla.edu/CogSci/GWorkspace.xhtml`](http://cogweb.ucla.edu/CogSci/GWorkspace.xhtml)
+[23] B. Baars 和 K. McGovern, “全局工作空间理论,” 1997 年 11 月 5 日. [cogweb.ucla.edu/CogSci/GWorkspace.xhtml](http://cogweb.ucla.edu/CogSci/GWorkspace.xhtml)
 
-[24]   L. De Cosmo, “谷歌工程师声称 AI 聊天机器人具有意识：这为什么重要,” *科学美国人*, 2022 年 7 月 12 日\. [www.scientificamerican.com/article/google-engineer-claims-ai-chatbot-is-sentient-why-that-matters/](https://www.scientificamerican.com/article/google-engineer-claims-ai-chatbot-is-sentient-why-that-matters/)
+[24] L. De Cosmo, “谷歌工程师声称 AI 聊天机器人具有意识：这为什么重要,” *科学美国人*, 2022 年 7 月 12 日. [www.scientificamerican.com/article/google-engineer-claims-ai-chatbot-is-sentient-why-that-matters/](https://www.scientificamerican.com/article/google-engineer-claims-ai-chatbot-is-sentient-why-that-matters/)
 
-[25]   N. Tiku, “认为谷歌公司的 AI 已经‘活过来’的谷歌工程师，” *华盛顿邮报*, 2022 年 6 月 11 日\. [www.washingtonpost.com/technology/2022/06/11/google-ai-lamda-blake-lemoine/](https://www.washingtonpost.com/technology/2022/06/11/google-ai-lamda-blake-lemoine/)
+[25] N. Tiku, “认为谷歌公司的 AI 已经‘活过来’的谷歌工程师，” *华盛顿邮报*, 2022 年 6 月 11 日. [www.washingtonpost.com/technology/2022/06/11/google-ai-lamda-blake-lemoine/](https://www.washingtonpost.com/technology/2022/06/11/google-ai-lamda-blake-lemoine/)
 
-[26]   A. Askell, “我对 AI 意识的看法——大部分都很无聊，” Amanda Askell 的 Substack, 2022 年 2 月 21 日\. [`askellio.substack.com/p/ai-consciousness`](https://askellio.substack.com/p/ai-consciousness)
+[26] A. Askell, “我对 AI 意识的看法——大部分都很无聊，” Amanda Askell 的 Substack, 2022 年 2 月 21 日. [askellio.substack.com/p/ai-consciousness](https://askellio.substack.com/p/ai-consciousness)
 
-[27]   D. J. Chalmers, “大型语言模型能具有意识吗?” *波士顿评论*, 2023 年 8 月 9 日\. [www.bostonreview.net/articles/could-a-large-language-model-be-conscious/](https://www.bostonreview.net/articles/could-a-large-language-model-be-conscious/)
+[27] D. J. Chalmers, “大型语言模型能具有意识吗?” *波士顿评论*, 2023 年 8 月 9 日. [www.bostonreview.net/articles/could-a-large-language-model-be-conscious/](https://www.bostonreview.net/articles/could-a-large-language-model-be-conscious/)
 
-[28] E. Griffith, “对人工智能繁荣中最不可或缺的奖项的绝望追求,” *New York Times*, Aug. 16, 2023\. [www.nytimes.com/2023/08/16/technology/ai-gpu-chips-shortage.xhtml](https://www.nytimes.com/2023/08/16/technology/ai-gpu-chips-shortage.xhtml)
+[28] E. Griffith, “对人工智能繁荣中最不可或缺的奖项的绝望追求,” *New York Times*, Aug. 16, 2023. [www.nytimes.com/2023/08/16/technology/ai-gpu-chips-shortage.xhtml](https://www.nytimes.com/2023/08/16/technology/ai-gpu-chips-shortage.xhtml)
 
-[29] T. B. Brown et al., “语言模型是少样本学习者,” May 28, 2020\. [`arxiv.org/abs/2005.14165`](http://arxiv.org/abs/2005.14165)
+[29] T. B. Brown et al., “语言模型是少样本学习者,” May 28, 2020. [arxiv.org/abs/2005.14165](http://arxiv.org/abs/2005.14165)
 
-[30] A. Mok, “ChatGPT 运营成本可能超过 70 万美元/天。据报道，微软正在尝试降低其成本,” *Insider*, Apr. 20, 2023\. [www.businessinsider.com/how-much-ChatGPT-costs-openai-to-run-estimate-report-2023-4](https://www.businessinsider.com/how-much-ChatGPT-costs-openai-to-run-estimate-report-2023-4)
+[30] A. Mok, “ChatGPT 运营成本可能超过 70 万美元/天。据报道，微软正在尝试降低其成本,” *Insider*, Apr. 20, 2023. [www.businessinsider.com/how-much-ChatGPT-costs-openai-to-run-estimate-report-2023-4](https://www.businessinsider.com/how-much-ChatGPT-costs-openai-to-run-estimate-report-2023-4)
 
-[31] A. S. Luccioni, S. Viguier, and A.-L. Ligozat, “估算 BLOOM（一个 176B 参数的语言模型）的碳足迹,” Nov. 03, 2022\. [`arxiv.org/abs/2211.02001`](http://arxiv.org/abs/2211.02001)
+[31] A. S. Luccioni, S. Viguier, and A.-L. Ligozat, “估算 BLOOM（一个 176B 参数的语言模型）的碳足迹,” Nov. 03, 2022. [arxiv.org/abs/2211.02001](http://arxiv.org/abs/2211.02001)
+
+
 
 [32] 美国环保署， “温室气体等量计算器,” Aug. 2015, [www.epa.gov/energy/greenhouse-gas-equivalencies-calculator](https://www.epa.gov/energy/greenhouse-gas-equivalencies-calculator)
 
-[33] E. Strubell, A. Ganesh, and A. McCallum, “自然语言处理中深度学习的能源和政策考量,” June 05, 2019\. [`arxiv.org/abs/1906.02243`](http://arxiv.org/abs/1906.02243)
+[33] E. Strubell, A. Ganesh, and A. McCallum, “自然语言处理中深度学习的能源和政策考量,” June 05, 2019. [`arxiv.org/abs/1906.02243`](http://arxiv.org/abs/1906.02243)
 
-[34] M. Heikkilä, “我们正在更好地了解 AI 的真实碳足迹,” *MIT Technology Review*, Nov. 14, 2022\. [www.technologyreview.com/2022/11/14/1063192/were-getting-a-better-idea-of-ais-true-carbon-footprint/](https://www.technologyreview.com/2022/11/14/1063192/were-getting-a-better-idea-of-ais-true-carbon-footprint/)
+[34] M. Heikkilä, “我们正在更好地了解 AI 的真实碳足迹,” *MIT Technology Review*, Nov. 14, 2022. [www.technologyreview.com/2022/11/14/1063192/were-getting-a-better-idea-of-ais-true-carbon-footprint/](https://www.technologyreview.com/2022/11/14/1063192/were-getting-a-better-idea-of-ais-true-carbon-footprint/)
 
-[35] D. Patel and A. Ahmad, “谷歌‘我们没有护城河，OpenAI 也没有,’” SemiAnalysis, May 04, 2023\. [www.semianalysis.com/p/google-we-have-no-moat-and-neither](https://www.semianalysis.com/p/google-we-have-no-moat-and-neither)
+[35] D. Patel and A. Ahmad, “谷歌‘我们没有护城河，OpenAI 也没有,’” SemiAnalysis, May 04, 2023. [www.semianalysis.com/p/google-we-have-no-moat-and-neither](https://www.semianalysis.com/p/google-we-have-no-moat-and-neither)
 
-[36] A. Al-Dahle, “社区驱动的 AI 创新在 Llama 2 中焕发生机,” *Meta AI*, July 28, 2023\. [`ai.meta.com/blog/llama-2-update/`](https://ai.meta.com/blog/llama-2-update/)
+[36] A. Al-Dahle, “社区驱动的 AI 创新在 Llama 2 中焕发生机,” *Meta AI*, July 28, 2023. [`ai.meta.com/blog/llama-2-update/`](https://ai.meta.com/blog/llama-2-update/)

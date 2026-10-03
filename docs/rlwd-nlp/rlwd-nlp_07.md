@@ -1,14 +1,13 @@
+
+
 # 第五章：顺序标注和语言建模
 
 本章涵盖
 
-+   使用顺序标注解决词性标注（POS）和命名实体识别（NER）
-
-+   使 RNNs 更强大——多层和双向循环神经网络（RNNs）
-
-+   使用语言模型捕捉语言的统计特性
-
-+   使用语言模型评估和生成自然语言文本
++ 使用顺序标注解决词性标注（POS）和命名实体识别（NER）
++ 使 RNNs 更强大——多层和双向循环神经网络（RNNs）
++ 使用语言模型捕捉语言的统计特性
++ 使用语言模型评估和生成自然语言文本
 
 在本章中，我们将讨论顺序标注——一个重要的自然语言处理框架，系统会为每个单词打上相应的标签。许多自然语言处理应用，如词性标注和命名实体识别，可以被构建为顺序标注任务。在本章的后半部分，我将介绍语言模型的概念，这是自然语言处理中最基本但也最令人兴奋的主题之一。我将谈论它们为何重要以及如何使用它们来评估甚至生成一些自然语言文本。
 
@@ -18,7 +17,7 @@
 
 ### 5.1.1 顺序标注是什么？
 
-*顺序标注* 是一种自然语言处理任务，给定一个序列，比如一个句子，NLP 系统会为输入序列的每个元素（比如单词）分配一个标签。这与句子分类形成对比，句子分类仅为输入*句子*分配一个标签。图 5.1 展示了这种对比。
+*顺序标注*是一种自然语言处理任务，给定一个序列，比如一个句子，NLP 系统会为输入序列的每个元素（比如单词）分配一个标签。这与句子分类形成对比，句子分类仅为输入*句子*分配一个标签。图 5.1 展示了这种对比。
 
 ![CH05_F01_Hagiwara](img/CH05_F01_Hagiwara.png)
 
@@ -56,7 +55,7 @@ def rnn_vec(words):
 
 图 5.4 句子分类的递归神经网络（RNN）
 
-什么样的神经网络可以用于序列标记？我们似乎需要句子中每个输入单词的一些信息，而不仅仅是在末尾。如果您仔细查看 rnn_vec()的伪代码，您会注意到我们已经有了输入中每个单词的信息，这些信息由状态捕获。该函数恰好只返回状态的最终值，但我们没有理由不能存储状态的中间值并将它们作为列表返回，就像以下函数一样：
+什么样的神经网络可以用于序列标记？我们似乎需要句子中每个输入单词的一些信息，而不仅仅是在末尾。如果您仔细查看`rnn_vec()`的伪代码，您会注意到我们已经有了输入中每个单词的信息，这些信息由状态捕获。该函数恰好只返回状态的最终值，但我们没有理由不能存储状态的中间值并将它们作为列表返回，就像以下函数一样：
 
 ```py
 def rnn_seq(words):
@@ -87,7 +86,7 @@ state = update(state, v("."))
 states.append(state)
 ```
 
-这里的 v()是一个函数，它返回给定单词的嵌入。这可以通过图 5.5 中所示的方式进行可视化。请注意，对于每个输入单词 word，网络都会产生捕获有关该单词的一些信息的相应状态。状态列表 states 的长度与 words 的长度相同。状态的最终值，即 states[-1]，与先前的 rnn_vec()的返回值相同。
+这里的`v()`是一个函数，它返回给定单词的嵌入。这可以通过图 5.5 中所示的方式进行可视化。请注意，对于每个输入单词`word`，网络都会产生捕获有关该单词的一些信息的相应状态。状态列表`states`的长度与`words`的长度相同。状态的最终值，即`states[-1]`，与先前的`rnn_vec()`的返回值相同。
 
 ![CH05_F05_Hagiwara](img/CH05_F05_Hagiwara.png)
 
@@ -95,9 +94,7 @@ states.append(state)
 
 如果将这个循环神经网络视为一个黑匣子，它接受一系列东西（例如，词嵌入）并将其转换为编码有关输入中各个单词信息的向量序列，因此该架构在 AllenNLP 中被称为*Seq2Seq*（代表“序列到序列”）编码器。
 
-最后一步是将这个 RNN 的每个状态应用于一个线性层，以得到对每个标签的可能性的一组分数。如果这是一个词性标注器，我们
-
-对于标签 NOUN，需要一个分数，对于 VERB，需要另一个分数，以此类推，适用于每个单词。此转换如图 5.6 所示。请注意，相同的线性层（具有相同的参数集）应用于每个状态。
+最后一步是将这个 RNN 的每个状态应用于一个线性层，以得到对每个标签的可能性的一组分数。如果这是一个词性标注器，我们对于标签 NOUN，需要一个分数，对于 VERB，需要另一个分数，以此类推，适用于每个单词。此转换如图 5.6 所示。请注意，相同的线性层（具有相同的参数集）应用于每个状态。
 
 ![CH05_F06_Hagiwara](img/CH05_F06_Hagiwara.png)
 
@@ -107,14 +104,14 @@ states.append(state)
 
 ### 5.1.3 在 AllenNLP 中实现 Seq2Seq 编码器
 
-AllenNLP 实现了一个称为 Seq2SeqEncoder 的抽象类，用于抽象化所有接受向量序列并返回另一个修改后向量序列的 Seq2Seq 编码器。理论上，您可以继承该类并实现自己的 Seq2Seq 编码器。然而，在实践中，您很可能会使用 PyTorch/AllenNLP 提供的现成实现之一，例如 LSTM 和 GRU。请记住，当我们为情感分析器构建编码器时，我们使用了 PyTorch 的内置 torch.nn.LSTM，并将其包装为 PytorchSeq2VecWrapper，如下所示，这使其与 AllenNLP 的抽象兼容：
+AllenNLP 实现了一个称为`Seq2SeqEncoder`的抽象类，用于抽象化所有接受向量序列并返回另一个修改后向量序列的 Seq2Seq 编码器。理论上，您可以继承该类并实现自己的 Seq2Seq 编码器。然而，在实践中，您很可能会使用 PyTorch/AllenNLP 提供的现成实现之一，例如 LSTM 和 GRU。请记住，当我们为情感分析器构建编码器时，我们使用了 PyTorch 的内置`torch.nn.LSTM`，并将其包装为`PytorchSeq2VecWrapper`，如下所示，这使其与 AllenNLP 的抽象兼容：
 
 ```py
 encoder = PytorchSeq2VecWrapper(
     torch.nn.LSTM(EMBEDDING_DIM, HIDDEN_DIM, batch_first=True))
 ```
 
-AllenNLP 还实现了 PytorchSeq2SeqWrapper，它使用 PyTorch 的内置 RNN 实现之一，并使其符合 AllenNLP 的 Seq2SeqEncoder，因此你需要做的很少，只需要像这样初始化一个 Seq2Seq 编码器：
+AllenNLP 还实现了`PytorchSeq2SeqWrapper`，它使用 PyTorch 的内置 RNN 实现之一，并使其符合 AllenNLP 的`Seq2SeqEncoder`，因此你需要做的很少，只需要像这样初始化一个 Seq2Seq 编码器：
 
 ```py
 encoder = PytorchSeq2SeqWrapper(
@@ -125,7 +122,7 @@ encoder = PytorchSeq2SeqWrapper(
 
 ## 5.2 构建一个词性标注器
 
-在本节中，我们将构建我们的第一个顺序标记应用程序—一个词性（POS）标注器。您可以在 Google Colab 笔记本上查看此部分的全部代码([`realworldnlpbook.com/ch5.html#pos-nb`](http://realworldnlpbook.com/ch5.html#pos-nb))。我们假设您已经导入了所有必要的依赖项，如下所示：
+在本节中，我们将构建我们的第一个顺序标记应用程序—一个词性（POS）标注器。您可以在 Google Colab 笔记本上查看此部分的全部代码（[`realworldnlpbook.com/ch5.html#pos-nb`](http://realworldnlpbook.com/ch5.html#pos-nb)）。我们假设您已经导入了所有必要的依赖项，如下所示：
 
 ```py
 from itertools import chain
@@ -154,11 +151,11 @@ from realworldnlp.predictors import UniversalPOSPredictor
 
 如我们在第一章中所看到的那样，*词性*（POS）是一组共享相似语法属性的词汇类别。词性标注是将句子中的每个单词与相应的词性标记进行标记化的过程。用于 POS 标注的训练集遵循一组预定义的语言 POS 标签集。
 
-要训练一个词性标注器，我们需要一个数据集，其中每个句子中的每个单词都标有相应的词性标记。在这个实验中，我们将使用英语 Universal Dependencies (UD)数据集。Universal Dependencies 是一个由一群研究者开发的语言无关的依存语法框架。UD 还定义了一个标签集，称为*通用词性标记集* ([`realworldnlpbook.com/ch1.html#universal-pos`](http://realworldnlpbook.com/ch1.html#universal-pos))。UD 和 Universal POS 标记集的使用在 NLP 社区中非常流行，尤其是在诸如词性标注和解析等语言无关任务和模型中。
+要训练一个词性标注器，我们需要一个数据集，其中每个句子中的每个单词都标有相应的词性标记。在这个实验中，我们将使用英语 Universal Dependencies (UD)数据集。Universal Dependencies 是一个由一群研究者开发的语言无关的依存语法框架。UD 还定义了一个标签集，称为*通用词性标记集*（[`realworldnlpbook.com/ch1.html#universal-pos`](http://realworldnlpbook.com/ch1.html#universal-pos)）。UD 和 Universal POS 标记集的使用在 NLP 社区中非常流行，尤其是在诸如词性标注和解析等语言无关任务和模型中。
 
-我们将使用 UD 的一个子语料库，名为*"A Gold Standard Universal Dependencies Corpus for English"，该语料库建立在英语 Web Treebank (EWT)之上([`realworldnlpbook.com/ch5.html#ewt`](http://realworldnlpbook.com/ch5.html#ewt))，并可在创作共用许可下使用。如需要，您可以从数据集页面([`realworldnlpbook.com/ch5.html#ewt-data`](http://realworldnlpbook.com/ch5.html#ewt-data))下载整个数据集。
+我们将使用 UD 的一个子语料库，名为*"A Gold Standard Universal Dependencies Corpus for English"*，该语料库建立在英语 Web Treebank (EWT)之上（[`realworldnlpbook.com/ch5.html#ewt`](http://realworldnlpbook.com/ch5.html#ewt)），并可在创作共用许可下使用。如需要，您可以从数据集页面（[`realworldnlpbook.com/ch5.html#ewt-data`](http://realworldnlpbook.com/ch5.html#ewt-data)）下载整个数据集。
 
-Universal Dependencies 数据集以一种称为*CoNLL-U 格式*（[`universaldependencies.org/docs/format.html`](http://universaldependencies.org/docs/format.html)）的格式分发。AllenNLP 模型包已经实现了一个名为 UniversalDependenciesDatasetReader 的数据集读取器，它以这种格式读取数据集，并返回包含词形、词性标签和依赖关系等信息的实例集合，因此你只需初始化并使用它，如下所示：
+Universal Dependencies 数据集以一种称为*CoNLL-U 格式*（[`universaldependencies.org/docs/format.html`](http://universaldependencies.org/docs/format.html)）的格式分发。AllenNLP 模型包已经实现了一个名为`UniversalDependenciesDatasetReader`的数据集读取器，它以这种格式读取数据集，并返回包含词形、词性标签和依赖关系等信息的实例集合，因此你只需初始化并使用它，如下所示：
 
 ```py
 reader = UniversalDependenciesDatasetReader()
@@ -185,7 +182,7 @@ dev_data_loader.index_with(vocab)
 
 ### 5.2.2 定义模型和损失
 
-构建词性标注器的下一步是定义模型。在前面的部分中，我们已经看到你可以使用 AllenNLP 内置的 PytorchSeq2VecWrapper 很少修改就初始化一个 Seq2Seq 编码器。让我们按照以下方式定义其他组件（词嵌入和 LSTM）以及模型所需的一些变量：
+构建词性标注器的下一步是定义模型。在前面的部分中，我们已经看到你可以使用 AllenNLP 内置的`PytorchSeq2VecWrapper`很少修改就初始化一个 Seq2Seq 编码器。让我们按照以下方式定义其他组件（词嵌入和 LSTM）以及模型所需的一些变量：
 
 ```py
 EMBEDDING_SIZE = 128
@@ -202,6 +199,9 @@ lstm = PytorchSeq2SeqWrapper(
 现在我们准备定义词性标注器模型的主体，如下所示。
 
 清单 5.1 词性标注器模型
+
+
+
 
 ```py
 class LstmTagger(Model):
@@ -243,11 +243,11 @@ class LstmTagger(Model):
 
 ❶ 我们使用准确度来评估词性标注器。
 
-❷ 我们需要**args 来捕获 AllenNLP 自动解构的不必要的实例字段。
+❷ 我们需要`**args`来捕获 AllenNLP 自动解构的不必要的实例字段。
 
 ❸ 使用序列交叉熵损失训练 Seq2Seq 编码器。
 
-注意，清单 5.1 中显示的代码与我们用于构建情感分析器的 LstmClassifier 代码（清单 4.1）非常相似。实际上，除了一些命名差异之外，只存在一个基本差异——损失函数的类型。
+注意，清单 5.1 中显示的代码与我们用于构建情感分析器的`LstmClassifier`代码（清单 4.1）非常相似。实际上，除了一些命名差异之外，只存在一个基本差异——损失函数的类型。
 
 回想一下，我们在句子分类任务中使用了一种称为*交叉熵*的损失函数，它基本上衡量了两个分布之间的距离。如果模型产生了真实标签的高概率，损失将很低。否则，它将很高。但是这假设每个句子只有一个标签。当每个词只有一个标签时，我们如何衡量预测与真实标签的差距？
 
@@ -293,7 +293,7 @@ tag_ids = np.argmax(logits, axis=-1)
 print([vocab.get_token_from_index(tag_id, 'pos') for tag_id in tag_ids])
 ```
 
-此代码使用了 UniversalPOSPredictor，这是我为这个特定的 POS 标注器编写的一个预测器。虽然其细节并不重要，但如果您感兴趣，可以查看它的代码（[`realworldnlpbook.com/ch5#upos-predictor`](http://realworldnlpbook.com/ch5#upos-predictor)）。如果成功，这将显示一个 POS 标签列表：['DET', 'NOUN', 'VERB', 'DET', 'NOUN', 'PUNCT']，这确实是输入句子的正确 POS 标签序列。
+此代码使用了`UniversalPOSPredictor`，这是我为这个特定的 POS 标注器编写的一个预测器。虽然其细节并不重要，但如果您感兴趣，可以查看它的代码（[`realworldnlpbook.com/ch5#upos-predictor`](http://realworldnlpbook.com/ch5#upos-predictor)）。如果成功，这将显示一个 POS 标签列表：`['DET', 'NOUN', 'VERB', 'DET', 'NOUN', 'PUNCT']`，这确实是输入句子的正确 POS 标签序列。
 
 ## 5.3 多层和双向 RNN
 
@@ -309,7 +309,7 @@ print([vocab.get_token_from_index(tag_id, 'pos') for tag_id in tag_ids])
 
 为什么这是一个好主意呢？如果你将 RNN 的一层看作是一个接受具体输入（例如，单词嵌入）并提取一些抽象概念（例如，POS 标签的得分）的机器，你可以期望，通过重复这个过程，RNN 能够随着层数的增加提取越来越抽象的概念。尽管没有完全经过理论证明，但许多真实世界的 NLP 应用都使用了多层 RNNs。例如，谷歌的神经机器翻译（NMT）系统使用了一个包括八层编码器和解码器的堆叠 RNN（[`realworldnlpbook.com/ch5.html#nmt-paper`](http://realworldnlpbook.com/ch5.html#nmt-paper)）。
 
-要在你的 NLP 应用中使用多层 RNNs，你需要做的只是改变编码器的初始化方式。具体来说，你只需要使用 num_layers 参数指定层数，就像下一个代码片段中所示的那样，而 AllenNLP 会确保训练管道的其余部分按原样工作：
+要在你的 NLP 应用中使用多层 RNNs，你需要做的只是改变编码器的初始化方式。具体来说，你只需要使用`num_layers`参数指定层数，就像下一个代码片段中所示的那样，而 AllenNLP 会确保训练管道的其余部分按原样工作：
 
 ```py
 encoder = PytorchSeq2SeqWrapper(
@@ -331,7 +331,7 @@ encoder = PytorchSeq2SeqWrapper(
 
 让我们用具体的例子来说明。假设输入句子是“time flies like an arrow”，你想知道这个句子中间的单词“like”的词性标注。前向 RNN 处理“time”和“flies”，到达“like”时，它的内部状态（图 5.9 中的 A）编码了关于“time flies like”所有的信息。同样地，反向 RNN 处理“arrow”和“an”，到达“like”时，它的内部状态（图 5.9 中的 B）编码了关于“like an arrow”的所有信息。双向 RNN 的“like”的内部状态是这两个状态（A + B）的连接。您只需将两个向量连接在一起——不需要进行数学运算。因此，“like”的内部状态编码了整个句子的信息。这比只知道句子的一半要好得多！
 
-实现双向 RNN 同样容易——您只需要在初始化 RNN 时添加 bidirectional=True 标志，如下所示：
+实现双向 RNN 同样容易——您只需要在初始化 RNN 时添加`bidirectional=True`标志，如下所示：
 
 ```py
 encoder = PytorchSeq2SeqWrapper(
@@ -341,7 +341,7 @@ encoder = PytorchSeq2SeqWrapper(
 
 如果你使用这个变化来训练 POS 标注器，验证集的准确率将从 ~88% 跳升到 91%。这意味着将词的两侧信息结合起来对于 POS 标注是有效的。
 
-请注意，您可以通过堆叠双向 RNN 来结合本节介绍的两种技术。双向 RNN 的一层输出（由前向和后向层连接）成为另一层双向 RNN 的输入（见图 5.10）。您可以在初始化 PyTorch/AllenNLP 中的 RNN 时指定 num_layers 和 bidirectional 两个标志来实现此目的。
+请注意，您可以通过堆叠双向 RNN 来结合本节介绍的两种技术。双向 RNN 的一层输出（由前向和后向层连接）成为另一层双向 RNN 的输入（见图 5.10）。您可以在初始化 PyTorch/AllenNLP 中的 RNN 时指定`num_layers`和`bidirectional`两个标志来实现此目的。
 
 ![CH05_F10_Hagiwara](img/CH05_F10_Hagiwara.png)
 
@@ -395,7 +395,11 @@ NLP 中的一个常见做法是使用某种形式的编码将跨度转换为每�
 
 ### 5.4.3 实现命名实体识别器
 
-要构建一个 NER 系统，我们使用由 Abhinav Walia 准备的命名实体识别注释语料库，该语料库已在 Kaggle 上发布（[`realworldnlpbook.com/ch5.html#ner-data`](http://realworldnlpbook.com/ch5.html#ner-data)）。 在接下来的内容中，我假设您已经下载并展开了数据集，并将其放置在 data/entity-annotated-corpus 下。 或者，您可以使用我上传到 S3 的数据集的副本（[`realworldnlpbook.com/ch5.html#ner-data-s3`](http://realworldnlpbook.com/ch5.html#ner-data-s3)），这就是以下代码所做的事情。 我为这个数据集编写了一个数据集读取器（[`realworldnlpbook.com/ch5.html#ner-reader`](http://realworldnlpbook.com/ch5.html#ner-reader)），所以您只需导入（或复制粘贴）它并使用它：
+
+
+# 构建 NER 系统
+
+要构建一个 NER 系统，我们使用由 Abhinav Walia 准备的命名实体识别注释语料库，该语料库已在 Kaggle 上发布（[`realworldnlpbook.com/ch5.html#ner-data`](http://realworldnlpbook.com/ch5.html#ner-data)）。在接下来的内容中，我假设您已经下载并展开了数据集，并将其放置在`data/entity-annotated-corpus`下。或者，您可以使用我上传到 S3 的数据集的副本（[`realworldnlpbook.com/ch5.html#ner-data-s3`](http://realworldnlpbook.com/ch5.html#ner-data-s3)），这就是以下代码所做的事情。我为这个数据集编写了一个数据集读取器（[`realworldnlpbook.com/ch5.html#ner-reader`](http://realworldnlpbook.com/ch5.html#ner-reader)），所以您只需导入（或复制粘贴）它并使用它：
 
 ```py
 reader = NERDatasetReader('https:/./s3.amazonaws.com/realworldnlpbook/'
@@ -416,7 +420,7 @@ dev_data_loader = MultiProcessDataLoader(
 
 注意，如果在计算这些指标时忽略实体类型，它被称为*总体平均*。例如，总体平均的精确度是所有类型的真阳性总数除以检索到的命名实体总数，而不管类型如何。另一方面，如果按实体类型计算这些指标，然后对它们进行平均，它被称为*宏平均*。例如，如果 PER 和 GPE 的精确度分别为 80%和 90%，则它的宏平均为 85%。接下来，AllenNLP 所计算的是总体平均。
 
-AllenNLP 实现了 SpanBasedF1Measure，它计算每个类型的指标（精确度、召回率和 F1 度量），以及平均值。你可以在你的模型的 __init__()方法中定义这个指标，如下所示：
+AllenNLP 实现了`SpanBasedF1Measure`，它计算每个类型的指标（精确度、召回率和 F1 度量），以及平均值。你可以在你的模型的`__init__()`方法中定义这个指标，如下所示：
 
 ```py
 self.f1 = SpanBasedF1Measure(vocab, tag_namespace='labels')
@@ -451,11 +455,11 @@ Apple/B-org is/O looking/O to/O buy/O UK/O startup/O for/O $1/O billion/O ./O
 
 这并不完美 —— NER 标注器正确获取了第一个命名实体（“Apple”），但错过了另外两个（“UK”和“10 亿美元”）。如果你查看训练数据，你会发现提及“UK”的情况从未出现过，而且没有标注货币值。系统难以标记它从未见过的实体是毫不奇怪的。在自然语言处理（以及机器学习一般）中，测试实例的特征需要与训练数据匹配，才能使模型完全有效。
 
-## 5.5 语言建模
+# 5.5 语言建模
 
 在这一部分，我将稍微转换一下方向，介绍*语言模型*，这是自然语言处理中最重要的概念之一。我们将讨论它们是什么，它们为什么重要，以及如何使用我们迄今介绍的神经网络组件来训练它们。
 
-### 5.5.1 什么是语言模型？
+## 5.5.1 什么是语言模型？
 
 想象一下，你被要求预测接下来的单词是什么，给出一个部分句子：“My trip to the beach was ruined by bad ___。”接下来可能是什么词？许多事情都可能毁了一次海滩之行，但最有可能的是天气不好。也许是海滩上的没礼貌的人，或者可能是这个人在旅行前吃的不好的食物，但大多数人会同意在这个部分句子之后跟着“weather”是一个可能性很高的词。在这种情况下，很少有其他名词（*people*，*food*，*dogs*）和其他词性的词（*be*，*the*，*run*，*green*）与“weather”一样合适。
 
@@ -463,7 +467,7 @@ Apple/B-org is/O looking/O to/O buy/O UK/O startup/O for/O $1/O billion/O ./O
 
 形式上，*语言模型*是一种给出文本片段概率的统计模型。一个英文语言模型会为看起来像英文的句子分配较高的概率。例如，一个英文语言模型会给“My trip to the beach was ruined by bad weather”比给“My trip to the beach was ruined by bad dogs”或甚至“by weather was trip my bad beach the ruined to.”更高的概率。句子的语法越好，越有“意义”，概率就越高。
 
-### 5.5.2 语言模型有什么用处？
+## 5.5.2 语言模型有什么用处？
 
 你可能会想知道这样一个统计模型有什么用。虽然在回答填空题时预测下一个单词可能会派上用场，但语言模型在自然语言处理中扮演着什么特殊的角色呢？
 
@@ -475,7 +479,7 @@ Apple/B-org is/O looking/O to/O buy/O UK/O startup/O for/O $1/O billion/O ./O
 
 实际上，人类一直在做这种类型的消歧义，虽然是无意识的。当你在一个大型聚会上和别人交谈时，你接收到的实际音频信号通常非常嘈杂。大多数人仍然可以毫无问题地相互理解，因为人们的语言模型帮助他们“纠正”你听到的内容并填补任何缺失部分。如果你尝试用不太熟练的第二语言进行交流，你会注意到这一点——在嘈杂的环境中，你会更难以理解对方，因为你的语言模型不如你的第一语言好。
 
-### 训练 RNN 语言模型
+## 训练 RNN 语言模型
 
 此时，你可能想知道预测下一个单词与为句子分配概率之间的联系是什么。这两者实际上是等价的。我不打算解释背后的理论，因为这需要你理解一些数学（尤其是概率论），我将在不涉及数学细节的情况下尝试一个直观的例子。
 
@@ -486,13 +490,9 @@ Apple/B-org is/O looking/O to/O buy/O UK/O startup/O for/O $1/O billion/O ./O
 类似地，如果你能正确估计一部分句子后一个词出现的概率，你可以简单地将其与部分句子的概率相乘。从第一个词开始，你可以一直做下去，直到句子的结尾。例如，如果你想计算“去海滩的旅行是……”的概率，你可以将以下内容相乘：
 
 +   句子开头出现“The”的概率
-
 +   “The”之后出现“trip”的概率
-
 +   “旅行”之后出现“去”的概率
-
 +   “去”之后出现“the”的概率
-
 +   依此类推
 
 这意味着要建立一个语言模型，你需要一个能够预测下一个词的概率（或者更准确地说，是概率分布）的模型，考虑到上下文。你可能已经注意到这听起来有点熟悉。确实，在这里所做的事情与本章中我们一直在谈论的顺序标记模型非常相似。例如，一个词性标注模型预测可能的词性标签在给定上下文的情况下的概率分布。一个命名实体识别（NER）模型为可能的命名实体标签做同样的事情。不同之处在于，语言模型是为可能的下一个词做出预测，考虑到模型到目前为止遇到了什么。希望现在开始有些明白为什么我在本章中谈论语言模型了！
@@ -505,11 +505,11 @@ Apple/B-org is/O looking/O to/O buy/O UK/O startup/O for/O $1/O billion/O ./O
 
 基于 RNN 的语言模型的训练方式与其他序列标注模型类似。我们使用的损失函数是序列交叉熵损失，它度量了预测单词与实际单词之间的“偏差”程度。交叉熵损失是每个单词计算的，并且在句子中的所有单词上进行平均。
 
-## 5.6 使用 RNN 生成文本
+# 5.6 使用 RNN 生成文本
 
 我们看到语言模型为自然语言句子给出了概率。但更有趣的部分是，你可以使用语言模型从头开始生成自然语言句子！在本章的最后一节，我们将构建一个语言模型。你可以使用训练好的模型来评估和生成英语句子。你可以在 Google Colab 笔记本上找到此子节的整个脚本（[`realworldnlpbook.com/ch5.html#lm-nb`](http://realworldnlpbook.com/ch5.html#lm-nb)）。
 
-### 5.6.1 将字符馈送到 RNN
+## 5.6.1 将字符馈送到 RNN
 
 在本节的前半部分，我们将构建一个英语语言模型，并使用通用英语语料库对其进行训练。在我们开始之前，我们注意到，本章中构建的 RNN 语言模型是基于 *字符* 而不是基于单词或令牌的。到目前为止，我们所见过的所有 RNN 模型都是基于单词的，这意味着 RNN 的输入始终是单词序列。另一方面，在本节中，我们将使用的 RNN 接受字符序列作为输入。
 
@@ -517,11 +517,11 @@ Apple/B-org is/O looking/O to/O buy/O UK/O startup/O for/O $1/O billion/O ./O
 
 在决定是否应将单词或字符馈送到 RNN 时需要考虑一些因素。使用字符肯定会使 RNN 的效率降低，这意味着它需要更多的计算才能“理解”相同的概念。例如，基于单词的 RNN 可以在一个时间步接收到单词“dog”并更新其内部状态，而基于字符的 RNN 必须等到接收到三个元素 *d*、*o* 和 *g*，以及可能的“_”（空格符）才能做到。基于字符的 RNN 需要“学会”这个由这三个字符组成的序列表示了某个特殊意义（“dog”这个概念）。
 
-另一方面，通过向 RNN 馈送字符，您可以避开许多处理标记的问题。其中一个问题与处理词汇表外（OOV）的单词有关。当训练基于单词的 RNN 时，通常会固定整个词汇表的集合，通常通过枚举在训练集中出现的所有单词来实现。但是，每当在测试集中遇到一个 OOV 单词时，它就不知道如何处理它。通常情况下，它会给所有 OOV 单词分配一个特殊的标记 <UNK> 并以相同的方式处理它们，这并不理想。相反，基于字符的 RNN 仍然可以处理单个字符，因此它可能能够通过观察训练集中的“dog”所学到的规则，推断出“doggy”是什么意思，即使它从未见过确切的单词“doggy”。
+另一方面，通过向 RNN 馈送字符，您可以避开许多处理标记的问题。其中一个问题与处理词汇表外（OOV）的单词有关。当训练基于单词的 RNN 时，通常会固定整个词汇表的集合，通常通过枚举在训练集中出现的所有单词来实现。但是，每当在测试集中遇到一个 OOV 单词时，它就不知道如何处理它。通常情况下，它会给所有 OOV 单词分配一个特殊的标记 `<UNK>` 并以相同的方式处理它们，这并不理想。相反，基于字符的 RNN 仍然可以处理单个字符，因此它可能能够通过观察训练集中的“dog”所学到的规则，推断出“doggy”是什么意思，即使它从未见过确切的单词“doggy”。
 
-### 5.6.2 使用语言模型评估文本
+## 5.6.2 使用语言模型评估文本
 
-让我们开始构建一个基于字符的语言模型。第一步是读取一个纯文本数据集文件并生成用于训练模型的实例。我将展示如何在不使用数据集读取器的情况下构建实例以进行演示。假设您有一个 Python 字符串对象 text，您想将其转换为用于训练语言模型的实例。首先，您需要使用 CharacterTokenizer 将其分段为字符，如下所示：
+让我们开始构建一个基于字符的语言模型。第一步是读取一个纯文本数据集文件并生成用于训练模型的实例。我将展示如何在不使用数据集读取器的情况下构建实例以进行演示。假设您有一个 Python 字符串对象`text`，您想将其转换为用于训练语言模型的实例。首先，您需要使用`CharacterTokenizer`将其分段为字符，如下所示：
 
 ```py
 from allennlp.data.tokenizers import CharacterTokenizer
@@ -530,7 +530,7 @@ tokenizer = CharacterTokenizer()
 tokens = tokenizer.tokenize(text)
 ```
 
-需要注意的是，这里的 tokens 是一个 Token 对象的列表。每个 Token 对象包含一个字符，而不是一个单词。然后，按照下面显示的方式在列表的开头和末尾插入 <START> 和 <END> 符号：
+需要注意的是，这里的`tokens`是一个`Token`对象的列表。每个`Token`对象包含一个字符，而不是一个单词。然后，按照下面显示的方式在列表的开头和末尾插入`<START>`和`<END>`符号：
 
 ```py
 from allennlp.common.util import START_SYMBOL, END_SYMBOL
@@ -543,6 +543,8 @@ tokens.append(Token(END_SYMBOL))
 
 最后，您可以通过指定单独的文本字段来构建一个实例。请注意，语言模型的“输出”与输入完全相同，只是偏移了一个标记，如下所示：
 
+
+
 ```py
 from allennlp.data.fields import TextField
 from allennlp.data.instance import Instance
@@ -553,7 +555,7 @@ instance = Instance({'input_tokens': input_field,
                      'output_tokens': output_field})
 ```
 
-这里的 token_indexers 指定了如何将各个标记映射到 ID。我们仍然使用迄今为止使用的 SingleIdTokenIndexer，如下所示：
+这里的`token_indexers`指定了如何将各个标记映射到 ID。我们仍然使用迄今为止使用的`SingleIdTokenIndexer`，如下所示：
 
 ```py
 from allennlp.data.token_indexers import TokenIndexer 
@@ -586,7 +588,7 @@ predict('by weather was trip my bad beach the ruined to.', model)
 
 ### 5.6.3 使用语言模型生成文本
 
-(完全训练好的) 语言模型最有趣的方面在于，它们可以根据给定的一些上下文来预测可能出现的下一个字符。具体而言，它们可以给出可能的下一个字符的概率分布，然后根据该分布选择确定下一个字符。例如，如果模型生成了“t”和“h”，并且 LM 是基于通用英文文本训练的，它可能会对字母“e”分配较高的概率，生成常见的英文单词，包括 *the*、*they*、*them* 等。如果你从 <START> 标记开始这个过程，并一直进行下去直到达到句子的结尾（即生成 <END>），你就可以从头开始生成一句英文句子。顺便说一句，这也是为什么像 <START> 和 <END> 这样的标记很有用——你需要将某些内容输入 RNN 以开始生成，并且你还需要知道句子何时结束。
+(完全训练好的) 语言模型最有趣的方面在于，它们可以根据给定的一些上下文来预测可能出现的下一个字符。具体而言，它们可以给出可能的下一个字符的概率分布，然后根据该分布选择确定下一个字符。例如，如果模型生成了“t”和“h”，并且 LM 是基于通用英文文本训练的，它可能会对字母“e”分配较高的概率，生成常见的英文单词，包括 *the*、*they*、*them* 等。如果你从 `<START>` 标记开始这个过程，并一直进行下去直到达到句子的结尾（即生成 `<END>`），你就可以从头开始生成一句英文句子。顺便说一句，这也是为什么像 `<START>` 和 `<END>` 这样的标记很有用——你需要将某些内容输入 RNN 以开始生成，并且你还需要知道句子何时结束。
 
 让我们在下面的类似 Python 代码的伪代码中看一下这个过程：
 
@@ -609,9 +611,9 @@ def generate():
 
 图 5.14 使用 RNN 生成文本
 
-在上一个代码段中，init_state()和 update()函数是初始化和更新 RNN 隐藏状态的函数，正如我们之前所见。 在生成文本时，我们假设模型及其参数已经训练好了大量的自然语言文本。softmax()函数是在给定向量上运行 Softmax 的函数，而 linear()是扩展/缩小向量大小的线性层。sample()函数根据给定的概率分布返回一个字符。例如，如果分布是“a”：0.6，“b”：0.3，“c”：0.1，则会在 60％的时间内选择“a”，30％的时间选择“b”，10％的时间选择“c”。这确保生成的字符串每次都不同，同时每个字符串看起来都像是英语句子。
+在上一个代码段中，`init_state()`和`update()`函数是初始化和更新 RNN 隐藏状态的函数，正如我们之前所见。在生成文本时，我们假设模型及其参数已经训练好了大量的自然语言文本。`softmax()`函数是在给定向量上运行 Softmax 的函数，而`linear()`是扩展/缩小向量大小的线性层。`sample()`函数根据给定的概率分布返回一个字符。例如，如果分布是“a”：0.6，“b”：0.3，“c”：0.1，则会在 60％的时间内选择“a”，30％的时间选择“b”，10％的时间选择“c”。这确保生成的字符串每次都不同，同时每个字符串看起来都像是英语句子。
 
-注意，您可以使用 PyTorch 的 torch.multinomial()从概率分布中进行抽样。
+注意，您可以使用 PyTorch 的`torch.multinomial()`从概率分布中进行抽样。
 
 如果使用 Tatoeba 中的英语句子进行训练，并按照这个算法生成句子，系统将会创建类似于以下举出的例子：
 

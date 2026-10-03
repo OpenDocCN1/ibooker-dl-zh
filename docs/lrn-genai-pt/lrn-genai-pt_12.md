@@ -1,14 +1,12 @@
+
 # 第十章：训练 Transformer 以将英语翻译成法语
 
 本章涵盖
 
-+   将英语和法语短语分词为子词
-
-+   理解词嵌入和位置编码
-
-+   从头开始训练 Transformer 以将英语翻译成法语
-
-+   使用训练好的 Transformer 将英语短语翻译成法语
++ 将英语和法语短语分词为子词
++ 理解词嵌入和位置编码
++ 从头开始训练 Transformer 以将英语翻译成法语
++ 使用训练好的 Transformer 将英语短语翻译成法语
 
 在上一章中，我们从头开始构建了一个 Transformer，可以根据“Attention Is All You Need.”这篇论文在任意两种语言之间进行翻译。具体来说，我们实现了自注意力机制，使用查询、键和值向量来计算缩放点积注意力（SDPA）。
 
@@ -26,7 +24,7 @@
 
 ### 10.1.1 标记英文和法语短语
 
-访问[`mng.bz/WVAw`](https://mng.bz/WVAw)下载包含我从各种来源收集的英文到法语翻译的 zip 文件。解压文件并将 en2fr.csv 放在计算机上的/files/文件夹中。
+访问[`mng.bz/WVAw`](https://mng.bz/WVAw)下载包含我从各种来源收集的英文到法语翻译的 zip 文件。解压文件并将`en2fr.csv`放在计算机上的`/files/`文件夹中。
 
 我们将加载数据并打印出一句英文短语及其法语翻译，如下所示：
 
@@ -41,14 +39,11 @@ print(df.iloc[30856]["fr"])                                      ④
 ```
 
 ① 加载 CSV 文件
-
 ② 计算数据中有多少对短语
-
 ③ 打印出一个英文短语的示例
-
 ④ 打印出相应的法语翻译
 
-前面代码片段的输出如下
+前面代码片段的输出如下：
 
 ```py
 there are 47173 examples in the training data
@@ -82,12 +77,10 @@ print(tokenizer.tokenize("Comment êtes-vous?"))
 ```
 
 ① 导入预训练标记器
-
 ② 使用标记器对英文句子进行标记
-
 ③ 标记一个法语句子
 
-列表 10.1 的输出如下
+列表 10.1 的输出如下：
 
 ```py
 ['i</w>', 'don</w>', "'t</w>", 'speak</w>', 'fr', 'ench</w>', '.</w>']
@@ -98,7 +91,7 @@ print(tokenizer.tokenize("Comment êtes-vous?"))
 
 在前面的代码块中，我们使用 XLM 模型预训练的标记器将英文句子“我不说法语。”分解成一组标记。在第八章中，你开发了一个自定义的词级标记器。然而，本章介绍了使用更高效的预训练子词标记器，其有效性超过了词级标记器。因此，句子“我不说法语。”被标记为`['i', 'don', "'t", 'speak', 'fr', 'ench', '.']`。同样，法语句子“Je ne parle pas français.”被分割成六个标记：`['je', 'ne', 'parle', 'pas', 'franc', 'ais', '.']`。我们还将英文短语“你好吗？”及其法语翻译进行了标记。结果显示在上面的输出最后两行。
 
-注意：你可能已经注意到，XLM 模型使用 '`</w>`' 作为标记分隔符，除非两个标记是同一个单词的一部分。子词标记化通常导致每个标记要么是一个完整的单词或标点符号，但有时一个单词会被分成音节。例如，单词“French”被分成“fr”和“ench。”值得注意的是，模型在“fr”和“ench”之间不会插入 `</w>`，因为这些音节共同构成了单词“French”。
+注意：你可能已经注意到，XLM 模型使用`'</w>'`作为标记分隔符，除非两个标记是同一个单词的一部分。子词标记化通常导致每个标记要么是一个完整的单词或标点符号，但有时一个单词会被分成音节。例如，单词“French”被分成“fr”和“ench。”值得注意的是，模型在“fr”和“ench”之间不会插入`</w>`，因为这些音节共同构成了单词“French”。
 
 深度学习模型如 Transformers 不能直接处理原始文本；因此，在将文本输入模型之前，我们需要将文本转换为数值表示。为此，我们创建一个字典，将所有英语标记映射到整数。
 
@@ -125,18 +118,14 @@ en_idx_dict={v:k for k,v in en_word_dict.items()}              ⑤
 ```
 
 ① 从训练数据集中获取所有英语句子
-
 ② 对所有英语句子进行标记化
-
 ③ 计算标记的频率
-
 ④ 创建一个字典将标记映射到索引
-
 ⑤ 创建一个字典将索引映射到标记
 
-我们分别在每句话的开始和结束处插入标记 `"BOS"`（句子开始）和 `"EOS"`（句子结束）。字典 `en_word_dict` 为每个标记分配一个唯一的整数值。此外，用于填充的 `"PAD"` 标记被分配整数 0，而代表未知标记的 `"UNK"` 标记被分配整数 1。反向字典 `en_idx_dict` 将整数（索引）映射回相应的标记。这种反向映射对于将整数序列转换回标记序列至关重要，使我们能够重建原始的英语短语。
+我们分别在每句话的开始和结束处插入标记`"BOS"`（句子开始）和`"EOS"`（句子结束）。字典`en_word_dict`为每个标记分配一个唯一的整数值。此外，用于填充的`"PAD"`标记被分配整数 0，而代表未知标记的`"UNK"`标记被分配整数 1。反向字典`en_idx_dict`将整数（索引）映射回相应的标记。这种反向映射对于将整数序列转换回标记序列至关重要，使我们能够重建原始的英语短语。
 
-使用字典 `en_word_dict`，我们可以将英语句子“我不说法语。”转换为其数值表示。这个过程涉及在字典中查找每个标记以找到其对应的整数值。例如：
+使用字典`en_word_dict`，我们可以将英语句子“我不说法语。”转换为其数值表示。这个过程涉及在字典中查找每个标记以找到其对应的整数值。例如：
 
 ```py
 enidx=[en_word_dict.get(i,UNK) for i in tokenized_en]   
@@ -149,9 +138,9 @@ print(enidx)
 [15, 100, 38, 377, 476, 574, 5]
 ```
 
-这意味着英语句子“我不说法语。”现在由一系列整数[15, 100, 38, 377, 476, 574, 5]表示。
+这意味着英语句子“我不说法语。”现在由一系列整数`[15, 100, 38, 377, 476, 574, 5]`表示。
 
-我们还可以使用字典 `en_idx_dict` 将数值表示转换回标记。这个过程涉及将数值序列中的每个整数映射回字典中定义的相应标记。以下是操作方法：
+我们还可以使用字典`en_idx_dict`将数值表示转换回标记。这个过程涉及将数值序列中的每个整数映射回字典中定义的相应标记。以下是操作方法：
 
 ```py
 entokens=[en_idx_dict.get(i,"UNK") for i in enidx]          ①
@@ -164,21 +153,18 @@ print(en_phrase)
 ```
 
 ① 将索引转换为标记
-
 ② 将标记连接成一个字符串
-
 ③ 将分隔符替换为空格
-
 ④ 删除标点符号前的空格
 
-上述代码片段的输出是
+上述代码片段的输出是：
 
 ```py
 ['i</w>', 'don</w>', "'t</w>", 'speak</w>', 'fr', 'ench</w>', '.</w>']
 i don't speak french. 
 ```
 
-字典`en_idx_dict`用于将数字转换回它们原始的标记。在此之后，这些标记被转换成完整的英语短语。这是通过首先将标记连接成一个字符串，然后将分隔符`''</w>''`替换为空格来完成的。我们还移除了标点符号前的空格。请注意，恢复的英语短语全部为小写字母，因为预训练的标记器自动将大写字母转换为小写以减少唯一标记的数量。正如你将在下一章中看到的，一些模型，如 GPT2 和 ChatGPT，并不这样做；因此，它们的词汇量更大。
+字典`en_idx_dict`用于将数字转换回它们原始的标记。在此之后，这些标记被转换成完整的英语短语。这是通过首先将标记连接成一个字符串，然后将分隔符`'</w>'`替换为空格来完成的。我们还移除了标点符号前的空格。请注意，恢复的英语短语全部为小写字母，因为预训练的标记器自动将大写字母转换为小写以减少唯一标记的数量。正如你将在下一章中看到的，一些模型，如 GPT2 和 ChatGPT，并不这样做；因此，它们的词汇量更大。
 
 练习 10.1
 
@@ -204,11 +190,8 @@ fr_idx_dict={v:k for k,v in fr_word_dict.items()}              ④
 ```
 
 ① 将所有法语句子进行标记化
-
 ② 统计法语标记的频率
-
 ③ 创建一个将法语标记映射到索引的字典
-
 ④ 创建一个将索引映射到法语标记的字典
 
 字典`fr_word_dict`为每个法语标记分配一个整数，而`fr_idx_dict`将这些整数映射回它们相应的法语标记。接下来，我将演示如何将法语短语“Je ne parle pas français.”转换成其数值表示：
@@ -218,7 +201,7 @@ fridx=[fr_word_dict.get(i,UNK) for i in tokenized_fr]
 print(fridx)
 ```
 
-前一个代码片段的输出结果是
+前一个代码片段的输出结果是：
 
 ```py
 [28, 40, 231, 32, 726, 370, 4]
@@ -238,7 +221,7 @@ for x in '''?:;.,'("-!&)%''':
 print(fr_phrase)
 ```
 
-前一个代码块输出的结果是
+前一个代码块输出的结果是：
 
 ```py
 ['je</w>', 'ne</w>', 'parle</w>', 'pas</w>', 'franc', 'ais</w>', '.</w>']
@@ -251,7 +234,7 @@ je ne parle pas francais.
 
 在列表 10.1 中，我们将句子“Comment êtes-vous?”分解为标记`['comment</w>', 'et', 'es-vous</w>', '?</w>']`。按照本小节中的步骤进行以下操作：(i) 使用字典`fr_word_dict`将标记转换为索引；(ii) 使用字典`fr_idx_dict`将索引转换回标记；(iii) 通过将标记连接成一个字符串来恢复法语文句，将分隔符`'</w>'`更改为空格，并删除标点符号前的空格。
 
-将四个字典保存在您的计算机上的文件夹/files/中，以便您可以加载它们并在稍后开始翻译，而无需担心首先将标记映射到索引，反之亦然：
+将四个字典保存在您的计算机上的文件夹`/files/`中，以便您可以加载它们并在稍后开始翻译，而无需担心首先将标记映射到索引，反之亦然：
 
 ```py
 import pickle
@@ -272,6 +255,8 @@ with open("files/dict.p","wb") as fb:
 注意，在机器翻译中，在每句话的开始和结尾加入`BOS`和`EOS`标记，以及在一个批次中对较短的序列进行填充，这是一个显著的特征。这种区别源于输入由整个句子或短语组成。相比之下，正如你将在下一章中看到的，训练一个文本生成模型不需要这些过程；模型的输入包含一个预定的标记数量。
 
 我们首先将所有英文短语转换为它们的数值表示，然后对法语文句应用相同的过程：
+
+
 
 ```py
 out_en_ids=[[en_word_dict.get(w,UNK) for w in s] for s in en_tokens]
@@ -316,9 +301,9 @@ def seq_padding(X, padding=0):
 
 函数 `seq_padding()` 首先在批次中识别最长的序列。然后，它将零添加到较短的序列的末尾，以确保批次中的每个序列都与这个最大长度匹配。
 
-为了节省空间，我们在本地模块 ch09util.py 中创建了一个 `Batch()` 类，您在上一个章节中已下载（见图 10.1）。
+为了节省空间，我们在本地模块 `ch09util.py` 中创建了一个 `Batch()` 类，您在上一个章节中已下载（见图 10.1）。
 
-列表 10.4 在本地模块中创建一个 `B`atc`h()` 类
+列表 10.4 在本地模块中创建一个 `Batch()` 类
 
 ```py
 import torch
@@ -352,7 +337,7 @@ class Batch:
 
 `Batch()` 类还准备了 Transformer 解码器的输入和输出。以法语短语“Comment êtes-vous?”为例，它被转换成六个标记：`['BOS', 'comment', 'et', 'es-vous', '?', 'EOS']`。这些前五个标记的索引作为解码器的输入，命名为 `trg`。接下来，我们将这个输入向右移动一个标记以形成解码器的输出，`trg_y`。因此，输入包含 `['BOS', 'comment', 'et', 'es-vous', '?']` 的索引，而输出则包含 `['comment', 'et', 'es-vous', '?', 'EOS']` 的索引。这种方法与我们第八章讨论的内容相似，旨在迫使模型根据前面的标记预测下一个标记。
 
-`Batch()` 类还生成了一个用于解码器输入的掩码，`trg_mask`。这个掩码的目的是隐藏输入中的后续标记，确保模型仅依赖于先前标记进行预测。这个掩码是由 `make_std_mask()` 函数生成的，该函数定义在本地模块 ch09util 中：
+`Batch()` 类还生成了一个用于解码器输入的掩码，`trg_mask`。这个掩码的目的是隐藏输入中的后续标记，确保模型仅依赖于先前标记进行预测。这个掩码是由 `make_std_mask()` 函数生成的，该函数定义在本地模块 `ch09util` 中：
 
 ```py
 import numpy as np
@@ -419,7 +404,7 @@ there are 11239 distinct French tokens
 
 在我们的数据集中，有 11,055 个唯一的英语标记和 11,239 个唯一的法语标记。对这些使用一维热编码会导致训练时参数数量过高。为了解决这个问题，我们将采用词嵌入，它将数值表示压缩成连续的向量，每个向量的长度为 `d_model = 256`。
 
-这是通过使用定义在本地模块 ch09util 中的 `Embeddings()` 类来实现的：
+这是通过使用定义在本地模块 `ch09util` 中的 `Embeddings()` 类来实现的：
 
 ```py
 import math
@@ -490,7 +475,7 @@ print(f"the shape of positional encoding is {y.shape}")
 print(y)                                                       ④
 ```
 
-① 实例化 PositionalEncoding() 类并将模型维度设置为 256
+① 实例化 `PositionalEncoding()` 类并将模型维度设置为 256
 
 ② 创建一个词嵌入并将其填充为零
 
@@ -501,6 +486,8 @@ print(y)                                                       ④
 我们首先创建一个 `PositionalEncoding()` 类的实例 `pe`，将模型维度设置为 256，并将 dropout 率设置为 0.1。由于这个类的输出是词嵌入和位置编码的和，我们创建一个填充为零的词嵌入并将其输入到 `pe` 中：这样输出就是位置编码。
 
 运行前面的代码块后，你会看到以下输出：
+
+
 
 ```py
 the shape of positional encoding is torch.Size([1, 8, 256])
@@ -519,7 +506,7 @@ tensor([[[ 0.0000e+00,  1.1111e+00,  0.0000e+00,  ...,  0.0000e+00,
            8.3581e-04,  1.1111e+00]]], device='cuda:0')
 ```
 
-前面的张量表示了英语短语“你好吗？”的位置编码。重要的是要注意，这个位置编码也有(1, 6, 256)的维度，这与“你好吗？”的词嵌入大小相匹配。下一步是将词嵌入和位置编码组合成一个单独的张量。
+前面的张量表示了英语短语“你好吗？”的位置编码。重要的是要注意，这个位置编码也有`(1, 6, 256)`的维度，这与“你好吗？”的词嵌入大小相匹配。下一步是将词嵌入和位置编码组合成一个单独的张量。
 
 位置编码的一个基本特征是，无论输入序列是什么，它们的值都是相同的。这意味着无论具体的输入序列是什么，第一个标记的位置编码始终是相同的 256 值向量，如上输出所示，即`[0.0000e+00, 1.1111e+00, ..., 1.1111e+00]`。同样，第二个标记的位置编码始终是`[9.3497e-01, 6.0034e-01, ..., 1.1111e+00]`，依此类推。它们的值在训练过程中也不会改变。
 
@@ -531,7 +518,7 @@ tensor([[[ 0.0000e+00,  1.1111e+00,  0.0000e+00,  ...,  0.0000e+00,
 
 ### 10.3.1 损失函数和优化器
 
-首先，我们从本地模块 ch09util.py 中导入`create_model()`函数，构建一个 Transformer，以便我们可以训练它将英语翻译成法语：
+首先，我们从本地模块`ch09util.py`中导入`create_model()`函数，构建一个 Transformer，以便我们可以训练它将英语翻译成法语：
 
 ```py
 from utils.ch09util import create_model
@@ -548,7 +535,7 @@ model = create_model(src_vocab, tgt_vocab, N=6,
 
 标签平滑调整目标标签以降低其信心。对于一个三分类问题，你可能会得到类似`[0.9, 0.05, 0.05]`的目标标签。这种方法通过惩罚过自信的输出，鼓励模型不要对其预测过于自信。平滑后的标签是原始标签和一些其他标签分布（通常是均匀分布）的混合。
 
-我们在本地模块 ch09util 中定义了以下`LabelSmoothing()`类。
+我们在本地模块`ch09util`中定义了以下`LabelSmoothing()`类。
 
 列表 10.6 用于执行标签平滑的类
 
@@ -702,7 +689,7 @@ torch.save(model.state_dict(),"files/en2fr.pth")               ④
 
 ④ 训练后保存训练模型的权重
 
-如果你使用的是支持 CUDA 的 GPU，这个过程可能需要几个小时。如果你使用 CPU 训练，可能需要整整一天。一旦训练完成，模型权重将保存在你的电脑上作为 en2fr.pth。或者，你也可以从我的网站上下载训练好的权重（[`gattonweb.uky.edu/faculty/lium/gai/ch9.zip`](https://gattonweb.uky.edu/faculty/lium/gai/ch9.zip)）。
+如果你使用的是支持 CUDA 的 GPU，这个过程可能需要几个小时。如果你使用 CPU 训练，可能需要整整一天。一旦训练完成，模型权重将保存在你的电脑上作为`en2fr.pth`。或者，你也可以从我的网站上下载训练好的权重（[`gattonweb.uky.edu/faculty/lium/gai/ch9.zip`](https://gattonweb.uky.edu/faculty/lium/gai/ch9.zip)）。
 
 ## 10.4 使用训练好的模型将英语翻译成法语
 
@@ -710,35 +697,41 @@ torch.save(model.state_dict(),"files/en2fr.pth")               ④
 
 列表 10.9 定义一个 `translate()` 函数以将英语翻译成法语
 
+
+
+# 英法翻译 Transformer 模型
+
+## 翻译函数实现
+
 ```py
 def translate(eng):
-    tokenized_en=tokenizer.tokenize(eng)
-    tokenized_en=["BOS"]+tokenized_en+["EOS"]
-    enidx=[en_word_dict.get(i,UNK) for i in tokenized_en]  
-    src=torch.tensor(enidx).long().to(DEVICE).unsqueeze(0)    
-    src_mask=(src!=0).unsqueeze(-2)
-    memory=model.encode(src,src_mask)                           ①
-    start_symbol=fr_word_dict["BOS"]
+    tokenized_en = tokenizer.tokenize(eng)
+    tokenized_en = ["BOS"] + tokenized_en + ["EOS"]
+    enidx = [en_word_dict.get(i, UNK) for i in tokenized_en]
+    src = torch.tensor(enidx).long().to(DEVICE).unsqueeze(0)
+    src_mask = (src != 0).unsqueeze(-2)
+    memory = model.encode(src, src_mask)  # ①
+    start_symbol = fr_word_dict["BOS"]
     ys = torch.ones(1, 1).fill_(start_symbol).type_as(src.data)
-    translation=[]
+    translation = []
     for i in range(100):
-        out = model.decode(memory,src_mask,ys,
-        subsequent_mask(ys.size(1)).type_as(src.data))          ②
+        out = model.decode(memory, src_mask, ys,
+                           subsequent_mask(ys.size(1)).type_as(src.data))  # ②
         prob = model.generator(out[:, -1])
         _, next_word = torch.max(prob, dim=1)
-        next_word = next_word.data[0]    
+        next_word = next_word.data[0]
         ys = torch.cat([ys, torch.ones(1, 1).type_as(
             src.data).fill_(next_word)], dim=1)
         sym = fr_idx_dict[ys[0, -1].item()]
         if sym != 'EOS':
             translation.append(sym)
         else:
-            break                                               ③
-    trans="".join(translation)
-    trans=trans.replace("</w>"," ") 
+            break  # ③
+    trans = "".join(translation)
+    trans = trans.replace("</w>", " ")
     for x in '''?:;.,'("-!&)%''':
-        trans=trans.replace(f" {x}",f"{x}")                     ④
-    print(trans) 
+        trans = trans.replace(f" {x}", f"{x}")  # ④
+    print(trans)
     return trans
 ```
 
@@ -746,9 +739,11 @@ def translate(eng):
 
 ② 使用解码器预测下一个标记
 
-③ 当下一个标记是“EOS”时停止翻译
+③ 当下一个标记是`"EOS"`时停止翻译
 
 ④ 将预测的标记连接起来形成一个法语句子
+
+## 翻译流程
 
 要将英语短语翻译成法语，我们首先使用分词器将英语句子转换为标记。然后，我们在短语的开始和结束处添加`"BOS"`和`"EOS"`。我们使用本章前面创建的`en_word_dict`字典将标记转换为索引。我们将索引序列输入到训练好的模型的编码器中。编码器产生一个抽象向量表示，并将其传递给解码器。
 
@@ -756,16 +751,18 @@ def translate(eng):
 
 最后，我们将标记分隔符更改为空格，并移除标点符号前的空格。输出结果是格式整洁的法语翻译。
 
+## 模型测试
+
 让我们尝试使用`translate()`函数翻译英语短语“今天是个美好的一天！”：
 
 ```py
 from utils.ch09util import subsequent_mask
 
-with open("files/dict.p","rb") as fb:
-    en_word_dict,en_idx_dict,\
-    fr_word_dict,fr_idx_dict=pickle.load(fb)
-trained_weights=torch.load("files/en2fr.pth",
-                           map_location=DEVICE)
+with open("files/dict.p", "rb") as fb:
+    en_word_dict, en_idx_dict, \
+    fr_word_dict, fr_idx_dict = pickle.load(fb)
+trained_weights = torch.load("files/en2fr.pth",
+                             map_location=DEVICE)
 model.load_state_dict(trained_weights)
 model.eval()
 eng = "Today is a beautiful day!"
@@ -790,12 +787,12 @@ translated_fr = translate(eng)
 输出结果是
 
 ```py
-un petit garcon en jeans grimpe un petit arbre tandis qu'un autre enfant regarde. 
+un petit garcon en jeans grimpe un petit arbre tandis qu'un autre enfant regarde.
 ```
 
 当我用谷歌翻译将前面的输出翻译回英语时，它说，“一个穿牛仔裤的小男孩爬上一棵小树，另一个孩子在一旁观看”——并不完全与原始的英语句子相同，但意思是一样的。
 
-接下来，我们将测试训练好的模型是否为两个英语句子“我不会说法语。”和“I do not speak French.”生成相同的翻译。首先，让我们尝试句子“I don’t speak French.”：
+接下来，我们将测试训练好的模型是否为两个英语句子“我不会说法语。”和“I do not speak French.”生成相同的翻译。首先，让我们尝试句子“I don't speak French.”：
 
 ```py
 eng = "I don't speak French."
@@ -805,7 +802,7 @@ translated_fr = translate(eng)
 输出结果是
 
 ```py
-je ne parle pas francais. 
+je ne parle pas francais.
 ```
 
 现在，让我们尝试句子“I do not speak French.”：
@@ -818,14 +815,16 @@ translated_fr = translate(eng)
 这次输出结果是
 
 ```py
-je ne parle pas francais. 
+je ne parle pas francais.
 ```
 
 结果表明，这两个句子的法语翻译完全相同。这表明 Transformer 的编码器组件成功地把握了这两个短语的语义本质。然后，它将它们表示为相似的抽象连续向量形式，随后传递给解码器。解码器随后根据这些向量生成翻译，并产生相同的结果。
 
-练习 10.3
+## 练习 10.3
 
-使用 `translate()` 函数将以下两个英文句子翻译成法语。将结果与谷歌翻译的结果进行比较，看看它们是否相同：(i) 我喜欢冬天滑雪！(ii) 你好吗？
+使用`translate()`函数将以下两个英文句子翻译成法语。将结果与谷歌翻译的结果进行比较，看看它们是否相同：(i) 我喜欢冬天滑雪！(ii) 你好吗？
+
+## 本章总结
 
 在本章中，您训练了一个编码器-解码器 Transformer，通过使用超过 47,000 对英法翻译来将英语翻译成法语。训练的模型表现良好，能够正确翻译常见的英语短语！
 
@@ -833,12 +832,12 @@ je ne parle pas francais.
 
 ## 摘要
 
-+   与处理数据序列的循环神经网络不同，Transformers 并行处理输入数据，例如句子。这种并行性提高了它们的效率，但并不固有地允许它们识别输入的序列顺序。为了解决这个问题，Transformers 将位置编码添加到输入嵌入中。这些位置编码是分配给输入序列中每个位置的独特向量，并在维度上与输入嵌入对齐。
++ 与处理数据序列的循环神经网络不同，Transformers 并行处理输入数据，例如句子。这种并行性提高了它们的效率，但并不固有地允许它们识别输入的序列顺序。为了解决这个问题，Transformers 将位置编码添加到输入嵌入中。这些位置编码是分配给输入序列中每个位置的独特向量，并在维度上与输入嵌入对齐。
 
-+   标签平滑在训练深度神经网络时常用，以提高模型的泛化能力。它用于解决过度自信问题（预测概率大于真实概率）和分类中的过拟合问题。具体来说，它通过调整目标标签来修改模型的学习方式，旨在降低模型对训练数据的信心，这可能导致在未见过的数据上表现更好。
++ 标签平滑在训练深度神经网络时常用，以提高模型的泛化能力。它用于解决过度自信问题（预测概率大于真实概率）和分类中的过拟合问题。具体来说，它通过调整目标标签来修改模型的学习方式，旨在降低模型对训练数据的信心，这可能导致在未见过的数据上表现更好。
 
-+   基于编码器输出的捕获英语短语意义的输出，训练的 Transformer 中的解码器以自回归的方式开始翻译，从开始标记 `"BOS"` 开始。在每个时间步，解码器根据先前生成的标记生成最可能的下一个标记，直到预测标记是 `"EOS"`，这表示句子的结束。
++ 基于编码器输出的捕获英语短语意义的输出，训练的 Transformer 中的解码器以自回归的方式开始翻译，从开始标记`"BOS"`开始。在每个时间步，解码器根据先前生成的标记生成最可能的下一个标记，直到预测标记是`"EOS"`，这表示句子的结束。
 
-* * *
+---
 
 ^(1) Vaswani 等人，2017，“Attention Is All You Need.” [`arxiv.org/abs/1706.03762`](https://arxiv.org/abs/1706.03762).

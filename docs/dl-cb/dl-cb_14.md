@@ -1,3 +1,4 @@
+
 # 第十四章：使用深度网络生成图标
 
 在上一章中，我们看了一下从 Quick Draw 项目生成手绘草图和从 MNIST 数据集生成数字。在本章中，我们将尝试三种类型的网络来完成一个稍微具有挑战性的任务：生成图标。
@@ -202,8 +203,8 @@ for i in range(5):
     x = MaxPooling2D((2, 2), padding='same')(conc)
     channels *= 2
 
- x = Dense(channels)(x)
- encoder_hidden = Flatten()(x)
+x = Dense(channels)(x)
+encoder_hidden = Flatten()(x)
 ```
 
 我们像以前一样处理损失函数和分布。`KL_loss`的权重很重要。如果设置得太低，结果空间将不会很密集。如果设置得太高，网络将很快学会预测空位图会得到一个体面的`reconstruction_loss`和一个很好的`KL_loss`：
@@ -223,9 +224,9 @@ def reconstruction_loss(y_true, y_pred):
     y_pred = K.batch_flatten(y_pred)
     return binary_crossentropy(y_true, y_pred)
 
-    def total_loss(y_true, y_pred):
-        return (reconstruction_loss(y_true, y_pred)
-                + KL_loss(y_true, y_pred))
+def total_loss(y_true, y_pred):
+    return (reconstruction_loss(y_true, y_pred)
+            + KL_loss(y_true, y_pred))
 ```
 
 现在我们将潜在状态放大回图标。与以前一样，我们为编码器和自动编码器并行执行此操作：
@@ -287,6 +288,8 @@ x_train_trunc.shape, x_test_trunc.shape
 
 使用数据增强。
 
+
+
 在上一个配方中，我们的自动编码器学习了图标集的模糊轮廓，但仅限于此。结果表明它正在捕捉某些东西，但不足以做出出色的工作。增加更多数据可能有所帮助，但这将要求我们找到更多图标，并且这些图标必须与我们的原始集合足够相似才能帮助。相反，我们将生成更多数据。
 
 数据增强的背后思想，如第一章中讨论的，是生成输入数据的变化，这些变化对网络不重要。在这种情况下，我们希望通过输入图标让我们的网络学习*图标特性*的概念。但如果我们翻转或旋转我们的图标，这会使它们不那么*图标化*吗？实际上并不是。这样做将使我们的输入增加 16 倍。我们的网络将从这些新的训练示例中学习，旋转和翻转并不重要，希望能够表现更好。增强会是这样的：
@@ -316,7 +319,7 @@ x_test_aug = augment(x_test)
 
 ## 讨论
 
-数据增强是在计算机图像方面广泛使用的技术。旋转和翻转是这样做的一种明显方式，但考虑到我们实际上是从图标的*.svg*表示开始的，我们还可以做很多其他事情。SVG 是一种矢量格式，因此我们可以轻松地创建具有轻微旋转或放大的图标，而不会出现我们如果基线数据仅包含位图时会出现的那种伪影。
+数据增强是在计算机图像方面广泛使用的技术。旋转和翻转是这样做的一种明显方式，但考虑到我们实际上是从图标的`.svg`表示开始的，我们还可以做很多其他事情。SVG 是一种矢量格式，因此我们可以轻松地创建具有轻微旋转或放大的图标，而不会出现我们如果基线数据仅包含位图时会出现的那种伪影。
 
 我们得到的图标空间比上一个配方的要好，似乎捕捉到了某种图标特性。
 
@@ -608,62 +611,7 @@ def decode_icon(encoded, icon_size):
 
 现在我们可以将单个图标编码为绘图指令，下一步是编码整个集合。由于我们将向 RNN 馈送块，并要求它预测下一个指令，因此我们实际上构建了一个大“文档”：
 
-```py
-def make_array(icons):
-    res = []
-    for icon in icons:
-        res.extend(icon)
-        res.append(33)
-    return np.asarray(res)
 
-def load_icons(train_size=0.90):
-    icon_index = json.load(open('icons/index.json'))
-    x = []
-    img_rows, img_cols = 32, 32
-    for icon in icon_index:
-        if icon['name'].endswith('_filled'):
-            continue
-        img_path = 'icons/png32/%s.png' % icon['name']
-        x.append(encode_icon(PIL.Image.open(img_path), 32))
-    x_train, x_val = train_test_split(x, train_size=train_size)
-    x_train = make_array(x_train)
-    x_val = make_array(x_val)
-    return x_train, x_val
-
-x_train, x_test = load_icons()
-```
-
-我们将使用帮助我们生成莎士比亚文本的相同模型运行：
-
-```py
-def icon_rnn_model(num_chars, num_layers, num_nodes=512, dropout=0.1):
-    input = Input(shape=(None, num_chars), name='input')
-    prev = input
-    for i in range(num_layers):
-        lstm = LSTM(num_nodes, return_sequences=True,
-                    name='lstm_layer_%d' % (i + 1))(prev)
-        if dropout:
-            prev = Dropout(dropout)(lstm)
-        else:
-            prev = lstm
-    dense = TimeDistributed(Dense(num_chars,
-                                  name='dense',
-                                  activation='softmax'))(prev)
-    model = Model(inputs=[input], outputs=[dense])
-    optimizer = RMSprop(lr=0.01)
-    model.compile(loss='categorical_crossentropy',
-                  optimizer=optimizer,
-                  metrics=['accuracy'])
-    return model
-
-model = icon_rnn_model(34, num_layers=2, num_nodes=256, dropout=0)
-```
-
-## 讨论
-
-要更详细地了解我们在这里使用的网络是如何训练的以及数据是如何生成的，最好回顾一下第五章。
-
-您可以尝试不同层数和节点数，或尝试不同的 dropout 值。不同的 RNN 层也会产生影响。该模型有点脆弱；很容易陷入不学习任何内容的状态，或者在学习时陷入局部最大值。
 
 # 14.10 使用 RNN 生成图标
 

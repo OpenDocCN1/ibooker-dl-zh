@@ -1,3 +1,5 @@
+
+
 # 第十一章：魔术棒：构建一个应用程序
 
 到目前为止，我们的示例应用程序已经处理了人类可以轻松理解的数据。我们的大脑有整个区域专门用于理解语音和视觉，因此对于我们来说，解释视觉或音频数据并形成对正在发生的事情的想法并不困难。
@@ -148,11 +150,11 @@ TF Lite 解释器
 
 展示如何使用输出处理程序显示推理结果
 
-让我们从*magic_wand_test.cc*开始，这将向我们展示使用我们的模型进行推理的端到端过程。
+让我们从`magic_wand_test.cc`开始，这将向我们展示使用我们的模型进行推理的端到端过程。
 
 ## 基本流程
 
-我们在*magic_wand_test.cc*中逐步进行基本流程。
+我们在`magic_wand_test.cc`中逐步进行基本流程。
 
 首先，我们列出模型将需要的操作：
 
@@ -248,7 +250,10 @@ for (int i = 0; i < (input->bytes / sizeof(float)); ++i) {
 }
 ```
 
-常量`g_circle_micro_f9643d42_nohash_4_data`在*circle_micro_features_data.cc*中定义；它包含一个浮点值数组，表示一个人尝试执行圆形手势的数据。在`for`循环中，我们遍历这些数据，并将每个值写入输入。我们只写入与输入张量容量相符的`float`值。
+
+
+
+常量`g_circle_micro_f9643d42_nohash_4_data`在`circle_micro_features_data.cc`中定义；它包含一个浮点值数组，表示一个人尝试执行圆形手势的数据。在`for`循环中，我们遍历这些数据，并将每个值写入输入。我们只写入与输入张量容量相符的`float`值。
 
 接下来，我们以熟悉的方式运行推理：
 
@@ -333,7 +338,7 @@ make -f tensorflow/lite/micro/tools/make/Makefile test_magic_wand_test
 
 我们的下一个测试展示了加速度计处理程序的接口。该组件的任务是为每次推理填充输入张量的加速度计数据。
 
-由于这两个因素取决于设备的加速计工作方式，因此为每个单独的设备提供了不同的加速计处理程序实现。我们稍后将介绍这些实现，但现在，位于[*accelerometer_handler_test.cc*](https://oreil.ly/MwM7g)中的测试将展示我们应该如何调用处理程序。
+由于这两个因素取决于设备的加速计工作方式，因此为每个单独的设备提供了不同的加速计处理程序实现。我们稍后将介绍这些实现，但现在，位于`accelerometer_handler_test.cc`中的测试将展示我们应该如何调用处理程序。
 
 第一个测试非常简单：
 
@@ -374,7 +379,7 @@ TF_LITE_MICRO_TEST(TestAccelerometer) {
 
 当调用`ReadAccelerometer()`函数时，会尝试将 384 字节的数据写入传递给它的数组。如果加速计刚开始收集数据，可能还没有完整的 384 字节可用。在这种情况下，函数将不执行任何操作，并返回一个值`false`。我们可以利用这一点，避免在没有数据可用时运行推理。
 
-位于[*accelerometer_handler.cc*](https://oreil.ly/MwM7g)中的加速计处理程序的虚拟实现模拟每次调用时都有另一个读数可用。通过调用它额外 127 次，我们确保它将累积足够的数据开始返回`true`。
+位于`accelerometer_handler.cc`中的加速计处理程序的虚拟实现模拟每次调用时都有另一个读数可用。通过调用它额外 127 次，我们确保它将累积足够的数据开始返回`true`。
 
 要运行这些测试，请使用以下命令：
 
@@ -395,7 +400,7 @@ make -f tensorflow/lite/micro/tools/make/Makefile \
 
 1.  检查手势是否在一定数量的推理中被一致地检测到
 
-所需的最小推理次数因手势而异，因为有些手势执行时间较长。它还因设备而异，因为更快的设备能够更频繁地运行推理。为 SparkFun Edge 开发板调整的默认值位于[*constants.cc*](https://oreil.ly/ktGgw)中：
+所需的最小推理次数因手势而异，因为有些手势执行时间较长。它还因设备而异，因为更快的设备能够更频繁地运行推理。为 SparkFun Edge 开发板调整的默认值位于`constants.cc`中：
 
 ```cpp
 const int kConsecutiveInferenceThresholds[3] = {15, 12, 10};
@@ -403,7 +408,7 @@ const int kConsecutiveInferenceThresholds[3] = {15, 12, 10};
 
 这些值的定义顺序与模型输出张量中手势出现的顺序相同。其他平台，如 Arduino，有包含针对其性能调整的设备特定版本的文件。
 
-让我们浏览一下[*gesture_predictor.cc*](https://oreil.ly/f3I6U)中的代码，看看这些是如何使用的。
+让我们浏览一下`gesture_predictor.cc`中的代码，看看这些是如何使用的。
 
 首先，我们定义一些变量，用于跟踪上次看到的手势以及连续记录的相同手势数量：
 
@@ -474,7 +479,7 @@ int PredictGesture(float* output) {
 
 函数通过返回当前预测结束。这将由我们的主循环传递给输出处理程序，显示结果给用户。
 
-手势预测器的测试位于[*gesture_predictor_test.cc*](https://oreil.ly/5BZzt)中。第一个测试展示了一个成功的预测：
+手势预测器的测试位于`gesture_predictor_test.cc`中。第一个测试展示了一个成功的预测：
 
 ```cpp
 TF_LITE_MICRO_TEST(SuccessfulPrediction) {
@@ -497,6 +502,8 @@ TF_LITE_MICRO_TEST(SuccessfulPrediction) {
 `PredictGesture()`函数被提供了一组概率，强烈表明第一个类别应该匹配。然而，在它被调用`threshold`次数之前，它返回一个`3`，表示一个“未知”结果。在它被调用`threshold`次数之后，它为类别`0`返回一个正面预测。
 
 接下来的测试展示了如果一个类别的连续高概率运行被另一个类别的高概率中断会发生什么：
+
+
 
 ```cpp
 TF_LITE_MICRO_TEST(FailPartWayThere) {
@@ -739,7 +746,9 @@ make -f tensorflow/lite/micro/tools/make/Makefile magic_wand
 
 +   [Arduino Nano 33 BLE Sense](https://oreil.ly/6qlMD)
 
-+   [SparkFun Edge](https://oreil.ly/-hoL-)
+
+
++ [SparkFun Edge](https://oreil.ly/-hoL-)
 
 让我们从 Arduino 实现开始。
 
@@ -781,7 +790,7 @@ Arduino 加速度计处理程序位于 [*arduino/accelerometer_handler.cc*](http
 #include "tensorflow/lite/micro/examples/magic_wand/constants.h"
 ```
 
-文件 *Arduino.h* 提供对 Arduino 平台一些基本功能的访问。文件 *Arduino_LSM9DS1.h* 是 [Arduino_LSM9DS1](https://oreil.ly/eb3Zs) 库的一部分，我们将使用它与板的加速度计通信。
+文件 `Arduino.h` 提供对 Arduino 平台一些基本功能的访问。文件 `Arduino_LSM9DS1.h` 是 [Arduino_LSM9DS1](https://oreil.ly/eb3Zs) 库的一部分，我们将使用它与板的加速度计通信。
 
 接下来，我们设置一些变量：
 
@@ -800,7 +809,7 @@ int sample_skip_counter = 1;
 
 这些包括我们将用数据填充的缓冲区 `save_data`，以及一些用于跟踪缓冲区中当前位置和是否有足够数据开始运行推断的变量。最有趣的两个变量 `sample_every_n` 和 `sample_skip_counter` 用于下采样过程。我们稍后将更仔细地看一下这个。
 
-接下来在文件中，程序的主循环调用`SetupAccelerometer()`函数，准备好捕获数据的板：
+接下来在文件中，程序的主循环调用 `SetupAccelerometer()` 函数，准备好捕获数据的板：
 
 ```cpp
 TfLiteStatus SetupAccelerometer(tflite::ErrorReporter* error_reporter) {
@@ -815,9 +824,9 @@ TfLiteStatus SetupAccelerometer(tflite::ErrorReporter* error_reporter) {
   }
 ```
 
-因为我们将输出一条消息来指示一切都准备就绪，它首先确保设备的串行端口准备就绪。然后打开*惯性测量单元*（IMU），这是包含加速度计的电子组件。`IMU`对象来自 Arduino_LSM9DS1 库。
+因为我们将输出一条消息来指示一切都准备就绪，它首先确保设备的串行端口准备就绪。然后打开*惯性测量单元*（IMU），这是包含加速度计的电子组件。`IMU` 对象来自 Arduino_LSM9DS1 库。
 
-下一步是开始考虑降采样。我们首先查询 IMU 库以确定板的采样率。当我们得到这个数字后，我们将其除以我们的目标采样率，该目标采样率在[*constants.h*](https://oreil.ly/rQaSw)中的`kTargetHz`中定义：
+下一步是开始考虑降采样。我们首先查询 IMU 库以确定板的采样率。当我们得到这个数字后，我们将其除以我们的目标采样率，该目标采样率在 [*constants.h*](https://oreil.ly/rQaSw) 中的 `kTargetHz` 中定义：
 
 ```cpp
   // Determine how many measurements to keep in order to
@@ -828,9 +837,9 @@ TfLiteStatus SetupAccelerometer(tflite::ErrorReporter* error_reporter) {
 
 我们的目标速率是 25 Hz，板的采样率是 119 Hz；因此，我们的除法结果是 4.76。这让我们知道我们需要保留多少个 119 Hz 样本，以达到 25 Hz 的目标采样率：每 4.76 个样本中的 1 个。
 
-因为保留一个分数个样本很困难，我们使用`roundf()`函数四舍五入到最近的数字 5。因此，为了降采样我们的信号，我们需要保留每五个测量值中的一个。这将导致一个有效的采样率为 23.8 Hz，这是一个足够接近的近似值，使我们的模型应该能够很好地工作。我们将这个值存储在`sample_every_n`变量中以供以后使用。
+因为保留一个分数个样本很困难，我们使用 `roundf()` 函数四舍五入到最近的数字 5。因此，为了降采样我们的信号，我们需要保留每五个测量值中的一个。这将导致一个有效的采样率为 23.8 Hz，这是一个足够接近的近似值，使我们的模型应该能够很好地工作。我们将这个值存储在 `sample_every_n` 变量中以供以后使用。
 
-现在我们已经确定了降采样的参数，我们向用户发送一条消息，告诉他们应用程序已经准备好了，然后从`SetupAccelerometer()`函数返回：
+现在我们已经确定了降采样的参数，我们向用户发送一条消息，告诉他们应用程序已经准备好了，然后从 `SetupAccelerometer()` 函数返回：
 
 ```cpp
   error_reporter->Report("Magic starts!");
@@ -839,7 +848,7 @@ TfLiteStatus SetupAccelerometer(tflite::ErrorReporter* error_reporter) {
 }
 ```
 
-接下来，我们定义`ReadAccelerometer()`。这个函数的任务是捕获新数据并将其写入模型的输出张量。它从一些代码开始，用于在成功识别手势后清除其内部缓冲区，为任何后续手势做好准备：
+接下来，我们定义 `ReadAccelerometer()`。这个函数的任务是捕获新数据并将其写入模型的输出张量。它从一些代码开始，用于在成功识别手势后清除其内部缓冲区，为任何后续手势做好准备：
 
 ```cpp
 bool ReadAccelerometer(tflite::ErrorReporter* error_reporter, float* input,
@@ -867,9 +876,9 @@ bool ReadAccelerometer(tflite::ErrorReporter* error_reporter, float* input,
     }
 ```
 
-Arduino Nano 33 BLE Sense 板上的加速度计配备有一个称为[*FIFO 缓冲区*](https://oreil.ly/kFEa0)的东西。这是一个特殊的内存缓冲区，位于加速度计本身上，保存最近的 32 个测量值。由于它是加速度计硬件的一部分，FIFO 缓冲区在我们的应用程序代码运行时继续积累测量值。如果没有 FIFO 缓冲区，我们可能会丢失很多数据，这意味着我们将无法准确记录所做手势。
+Arduino Nano 33 BLE Sense 板上的加速度计配备有一个称为 [*FIFO 缓冲区*](https://oreil.ly/kFEa0) 的东西。这是一个特殊的内存缓冲区，位于加速度计本身上，保存最近的 32 个测量值。由于它是加速度计硬件的一部分，FIFO 缓冲区在我们的应用程序代码运行时继续积累测量值。如果没有 FIFO 缓冲区，我们可能会丢失很多数据，这意味着我们将无法准确记录所做手势。
 
-当我们调用`IMU.accelerationAvailable()`时，我们正在查询加速度计，看看其 FIFO 缓冲区中是否有新数据可用。使用我们的循环，我们继续从缓冲区中读取所有数据，直到没有剩余数据为止。
+当我们调用 `IMU.accelerationAvailable()` 时，我们正在查询加速度计，看看其 FIFO 缓冲区中是否有新数据可用。使用我们的循环，我们继续从缓冲区中读取所有数据，直到没有剩余数据为止。
 
 接下来，我们实现我们超级简单的降采样算法：
 
@@ -881,9 +890,9 @@ Arduino Nano 33 BLE Sense 板上的加速度计配备有一个称为[*FIFO 缓�
     }
 ```
 
-我们的方法是保留每*n*个样本中的一个，其中*n*存储在`sample_every_n`中。为了做到这一点，我们维护一个计数器，`sample_skip_counter`，它让我们知道自上次保留的样本以来已经读取了多少个样本。对于我们读取的每个测量值，我们检查它是否是第*n*个。如果不是，我们将`continue`循环，而不将数据写入任何地方，有效地将其丢弃。这个简单的过程导致我们的数据被降采样。
+我们的方法是保留每 *n* 个样本中的一个，其中 *n* 存储在 `sample_every_n` 中。为了做到这一点，我们维护一个计数器，`sample_skip_counter`，它让我们知道自上次保留的样本以来已经读取了多少个样本。对于我们读取的每个测量值，我们检查它是否是第 *n* 个。如果不是，我们将 `continue` 循环，而不将数据写入任何地方，有效地将其丢弃。这个简单的过程导致我们的数据被降采样。
 
-如果执行超过这一点，我们计划保留数据。为了做到这一点，我们将数据写入我们的`save_data`缓冲区中的连续位置：
+如果执行超过这一点，我们计划保留数据。为了做到这一点，我们将数据写入我们的 `save_data` 缓冲区中的连续位置：
 
 ```cpp
     // Write samples to our buffer, converting to milli-Gs
@@ -931,7 +940,7 @@ Arduino Nano 33 BLE Sense 板上的加速度计配备有一个称为[*FIFO 缓�
   }
 ```
 
-当没有新数据时返回`false`，我们确保调用函数知道不要运行推理。
+当没有新数据时返回 `false`，我们确保调用函数知道不要运行推理。
 
 如果我们走到这一步，我们已经获得了一些新数据。我们复制适当数量的数据，包括我们的新样本，到输入张量中：
 
@@ -953,7 +962,7 @@ Arduino Nano 33 BLE Sense 板上的加速度计配备有一个称为[*FIFO 缓�
 
 ### 在 Arduino 上响应手势
 
-输出处理程序在[*arduino/output_handler.cc*](https://oreil.ly/kdVLW)中定义。它非常简单：根据检测到的手势记录信息到串行端口，并在每次运行推理时切换板上的 LED。
+输出处理程序在 [*arduino/output_handler.cc*](https://oreil.ly/kdVLW) 中定义。它非常简单：根据检测到的手势记录信息到串行端口，并在每次运行推理时切换板上的 LED。
 
 函数第一次运行时，LED 被配置为输出：
 
@@ -1007,25 +1016,27 @@ void HandleOutput(tflite::ErrorReporter* error_reporter, int kind) {
 
 要部署此示例，我们需要以下内容：
 
-+   一个 Arduino Nano 33 BLE Sense 板
++ 一个 Arduino Nano 33 BLE Sense 板
 
-+   一个 micro-USB 电缆
 
-+   Arduino IDE
+
+一个 micro-USB 电缆
+
+Arduino IDE
 
 ###### 提示
 
-建议检查[*README.md*](https://oreil.ly/Zkd3x)以获取最新说明，因为构建过程可能会在本书编写后发生变化。
+建议检查[`README.md`](https://oreil.ly/Zkd3x)以获取最新说明，因为构建过程可能会在本书编写后发生变化。
 
-本书中的项目作为 TensorFlow Lite Arduino 库中的示例代码可用。如果您尚未安装该库，请打开 Arduino IDE 并从工具菜单中选择管理库。在出现的窗口中，搜索并安装名为 TensorFlowLite 的库。您应该能够使用最新版本，但如果遇到问题，本书测试的版本是 1.14-ALPHA。
+本书中的项目作为 TensorFlow Lite Arduino 库中的示例代码可用。如果您尚未安装该库，请打开 Arduino IDE 并从工具菜单中选择管理库。在出现的窗口中，搜索并安装名为 `TensorFlowLite` 的库。您应该能够使用最新版本，但如果遇到问题，本书测试的版本是 `1.14-ALPHA`。
 
 ###### 注意
 
-您还可以从 *.zip* 文件安装库，您可以从 TensorFlow Lite 团队[下载](https://oreil.ly/blgB8)或使用 TensorFlow Lite for Microcontrollers Makefile 生成自己的 *.zip* 文件。如果您更喜欢后者，请参阅附录 A。
+您还可以从 `.zip` 文件安装库，您可以从 TensorFlow Lite 团队[下载](https://oreil.ly/blgB8)或使用 TensorFlow Lite for Microcontrollers Makefile 生成自己的 `.zip` 文件。如果您更喜欢后者，请参阅附录 A。
 
-安装完库后，`magic_wand`示例将显示在文件菜单下的 Examples→Arduino_TensorFlowLite 中，如图 11-5 所示。
+安装完库后，`magic_wand` 示例将显示在文件菜单下的 Examples→Arduino_TensorFlowLite 中，如图 11-5 所示。
 
-单击“magic_wand”加载示例。它将显示为一个新窗口，每个源文件都有一个选项卡。第一个选项卡中的文件 *magic_wand* 相当于我们之前介绍的 *main_functions.cc*。
+单击“magic_wand”加载示例。它将显示为一个新窗口，每个源文件都有一个选项卡。第一个选项卡中的文件 `magic_wand` 相当于我们之前介绍的 `main_functions.cc`。
 
 ###### 注意
 
@@ -1035,17 +1046,17 @@ void HandleOutput(tflite::ErrorReporter* error_reporter, int kind) {
 
 ###### 图 11-5\. 示例菜单
 
-除了 TensorFlow 库，我们还需要安装和修补 Arduino_LSM9DS1 库。默认情况下，该库不启用示例所需的 FIFO 缓冲区，因此我们需要对其代码进行一些修改。
+除了 TensorFlow 库，我们还需要安装和修补 `Arduino_LSM9DS1` 库。默认情况下，该库不启用示例所需的 FIFO 缓冲区，因此我们需要对其代码进行一些修改。
 
-在 Arduino IDE 中，选择 Tools→Manage Libraries，然后搜索 Arduino_LSM9DS1。为了确保以下说明有效，你必须安装驱动程序的 1.0.0 版本。
+在 Arduino IDE 中，选择 Tools→Manage Libraries，然后搜索 `Arduino_LSM9DS1`。为了确保以下说明有效，你必须安装驱动程序的 `1.0.0` 版本。
 
 ###### 注意
 
-可能在你阅读本章时，驱动程序已经修复。你可以在[*README.md*](https://oreil.ly/pk61J)中找到最新的部署说明。
+可能在你阅读本章时，驱动程序已经修复。你可以在[`README.md`](https://oreil.ly/pk61J)中找到最新的部署说明。
 
-驱动程序将安装到*Arduino/libraries*目录中，子目录为*Arduino_LSM9DS1*。
+驱动程序将安装到 `Arduino/libraries` 目录中，子目录为 `Arduino_LSM9DS1`。
 
-打开*Arduino_LSM9DS1/src/LSM9DS1.cpp*驱动源文件，然后转到名为`LSM9DS1Class::begin()`的函数。在函数末尾插入以下行，即在`return 1`语句之前立即插入：
+打开 `Arduino_LSM9DS1/src/LSM9DS1.cpp` 驱动源文件，然后转到名为 `LSM9DS1Class::begin()` 的函数。在函数末尾插入以下行，即在 `return 1` 语句之前立即插入：
 
 ```cpp
 // Enable FIFO (see docs https://www.st.com/resource/en/datasheet/DM00103319.pdf)
@@ -1054,7 +1065,7 @@ void HandleOutput(tflite::ErrorReporter* error_reporter, int kind) {
 writeRegister(LSM9DS1_ADDRESS, 0x2E, 0xC0);
 ```
 
-接下来，找到名为`LSM9DS1Class::accelerationAvailable()`的函数。你会看到以下几行：
+接下来，找到名为 `LSM9DS1Class::accelerationAvailable()` 的函数。你会看到以下几行：
 
 ```cpp
 if (readRegister(LSM9DS1_ADDRESS, LSM9DS1_STATUS_REG) & 0x01) {
@@ -1160,7 +1171,7 @@ SLOPE:
  * * * * * * * *
 ```
 
-就像任何好的魔法咒语一样，您可能需要练习一下才能每次都完美地执行它们。您可以在[*README.md*](https://oreil.ly/O1LqD)中看到手势的视频演示。
+就像任何好的魔法咒语一样，您可能需要练习一下才能每次都完美地执行它们。您可以在[`README.md`](https://oreil.ly/O1LqD)中看到手势的视频演示。
 
 ### 制作您自己的更改
 
@@ -1168,21 +1179,21 @@ SLOPE:
 
 以下是您可以尝试的一些事情：
 
-+   尝试在[*arduino/constants.cc*](https://oreil.ly/H49iS)中调整阈值值，以使手势更容易或更难执行（以增加误报或漏报的代价）。
++   尝试在[`arduino/constants.cc`](https://oreil.ly/H49iS)中调整阈值值，以使手势更容易或更难执行（以增加误报或漏报的代价）。
 
 +   在您的计算机上编写一个程序，让您可以使用物理手势执行任务。
 
-+   扩展程序以通过蓝牙传输检测结果。有一些示例显示如何做到这一点，这些示例包含在[ArduinoBLE 库](https://oreil.ly/xW4SN)中，您可以通过 Arduino IDE 下载。
++   扩展程序以通过蓝牙传输检测结果。有一些示例显示如何做到这一点，这些示例包含在 [ArduinoBLE 库](https://oreil.ly/xW4SN) 中，您可以通过 Arduino IDE 下载。
 
-## [*sparkfun_edge/accelerometer_handler.cc*](https://oreil.ly/yZi0v)中包含捕获加速度计数据的代码。其中很多是特定于设备的，但我们将跳过实现细节，专注于重要的内容。
+## [`sparkfun_edge/accelerometer_handler.cc`](https://oreil.ly/yZi0v) 中包含捕获加速度计数据的代码。其中很多是特定于设备的，但我们将跳过实现细节，专注于重要的内容。
 
 对于最后一个手势，在空中画一个三角形的角。最好通过 ASCII 艺术演示来描述，如下所示：
 
-### 您会注意到调用一个名为`initAccelerometer()`的函数。这在[SparkFun Edge BSP 的加速度计示例](https://oreil.ly/JC0b6)中定义，当我们的项目构建时，它作为依赖项被下载下来。它执行各种任务来打开和配置板载加速度计。
+### 您会注意到调用一个名为 `initAccelerometer()` 的函数。这在 [SparkFun Edge BSP 的加速度计示例](https://oreil.ly/JC0b6) 中定义，当我们的项目构建时，它作为依赖项被下载下来。它执行各种任务来打开和配置板载加速度计。
 
 捕获 SparkFun Edge 上的加速度计数据
 
-捕获加速度计数据的第一步是配置硬件。`SetupAccelerometer()`函数通过设置加速度计所需的各种低级参数来启动这个过程：
+捕获加速度计数据的第一步是配置硬件。`SetupAccelerometer()` 函数通过设置加速度计所需的各种低级参数来启动这个过程：
 
 ```cpp
 TfLiteStatus SetupAccelerometer(tflite::ErrorReporter* error_reporter) {
@@ -1202,7 +1213,7 @@ TfLiteStatus SetupAccelerometer(tflite::ErrorReporter* error_reporter) {
 
 SparkFun Edge 配有三轴加速度计、电池支架和蓝牙支持。这使它非常适合用作魔杖，因为它可以无线操作。
 
-加速度计运行后，我们启用其[FIFO 缓冲区](https://oreil.ly/kFEa0)。这是一个特殊的内存缓冲区，位于加速度计本身上，可以保存最后 32 个数据点。通过启用它，我们能够在我们的应用程序代码忙于运行推断时继续收集加速度计测量数据。函数的其余部分设置缓冲区并在出现问题时记录错误：
+加速度计运行后，我们启用其 [FIFO 缓冲区](https://oreil.ly/kFEa0)。这是一个特殊的内存缓冲区，位于加速度计本身上，可以保存最后 32 个数据点。通过启用它，我们能够在我们的应用程序代码忙于运行推断时继续收集加速度计测量数据。函数的其余部分设置缓冲区并在出现问题时记录错误：
 
 ```cpp
   // Enable the accelerometer's FIFO buffer.
@@ -1230,9 +1241,9 @@ SparkFun Edge 配有三轴加速度计、电池支架和蓝牙支持。这使它
 }
 ```
 
-初始化完成后，我们可以调用`ReadAccelerometer()`函数来获取最新数据。这将发生在每次推断之间。
+初始化完成后，我们可以调用 `ReadAccelerometer()` 函数来获取最新数据。这将发生在每次推断之间。
 
-首先，如果`reset_buffer`参数为`true`，`ReadAccelerometer()`会对其数据缓冲区进行重置。在检测到有效手势后执行此操作，以便为进一步手势提供一个干净的基础。作为这个过程的一部分，我们使用`am_util_delay_ms()`让我们的代码等待 10 毫秒。没有这个延迟，当读取新数据时代码经常会挂起（截至目前为止，原因尚不清楚，但如果您确定有更好的修复方法，TensorFlow 开源项目欢迎拉取请求）：
+首先，如果 `reset_buffer` 参数为 `true`，`ReadAccelerometer()` 会对其数据缓冲区进行重置。在检测到有效手势后执行此操作，以便为进一步手势提供一个干净的基础。作为这个过程的一部分，我们使用 `am_util_delay_ms()` 让我们的代码等待 10 毫秒。没有这个延迟，当读取新数据时代码经常会挂起（截至目前为止，原因尚不清楚，但如果您确定有更好的修复方法，TensorFlow 开源项目欢迎拉取请求）：
 
 ```cpp
 bool ReadAccelerometer(tflite::ErrorReporter* error_reporter, float* input,
@@ -1247,7 +1258,7 @@ bool ReadAccelerometer(tflite::ErrorReporter* error_reporter, float* input,
   }
 ```
 
-重置主缓冲区后，`ReadAccelerometer()`会检查加速度计的 FIFO 缓冲区中是否有任何新数据可用。如果还没有可用的数据，我们就从函数中返回：
+重置主缓冲区后，`ReadAccelerometer()` 会检查加速度计的 FIFO 缓冲区中是否有任何新数据可用。如果还没有可用的数据，我们就从函数中返回：
 
 ```cpp
   // Check FIFO buffer for new samples
@@ -1270,7 +1281,7 @@ bool ReadAccelerometer(tflite::ErrorReporter* error_reporter, float* input,
 
 我们的应用程序的主循环将继续调用，这意味着一旦有数据可用，我们就可以继续执行。
 
-函数的下一部分循环遍历新数据并将其存储在另一个更大的缓冲区中。首先，我们设置一个特殊类型为`axis3bit16_t`的结构体，用于保存加速度计数据。然后我们调用`lis2dh12_acceleration_raw_get()`来填充下一个可用的测量值。如果此函数失败，将返回零，此时我们会显示错误：
+函数的下一部分循环遍历新数据并将其存储在另一个更大的缓冲区中。首先，我们设置一个特殊类型为 `axis3bit16_t` 的结构体，用于保存加速度计数据。然后我们调用 `lis2dh12_acceleration_raw_get()` 来填充下一个可用的测量值。如果此函数失败，将返回零，此时我们会显示错误：
 
 ```cpp
   // Load data from FIFO buffer
@@ -1283,7 +1294,9 @@ bool ReadAccelerometer(tflite::ErrorReporter* error_reporter, float* input,
       error_reporter->Report("Failed to get raw data.");
 ```
 
-如果成功获取了测量值，我们将其转换为毫 G，这是模型期望的测量单位，然后将其写入`save_data[]`，这是一个我们用作缓冲区以存储将用于推理的值的数组。加速度计每个轴的值是连续存储的：
+如果成功获取了测量值，我们将其转换为毫 G，这是模型期望的测量单位，然后将其写入 `save_data[]`，这是一个我们用作缓冲区以存储将用于推理的值的数组。加速度计每个轴的值是连续存储的：
+
+
 
 ```cpp
     } else {
@@ -1340,7 +1353,7 @@ bool ReadAccelerometer(tflite::ErrorReporter* error_reporter, float* input,
 
 此时，我们的输入张量已填充新的加速度计数据。将运行推理，手势预测器将解释结果，并将结果传递给输出处理程序显示给用户。
 
-### 响应 SparkFun Edge 上的手势
+## 响应 SparkFun Edge 上的手势
 
 输出处理程序位于[*sparkfun_edge/output_handler.cc*](https://oreil.ly/ix1o1)，非常简单。第一次运行时，我们为 LED 配置输出：
 
@@ -1398,25 +1411,22 @@ WING:
 
 每个手势使用不同的串行输出和 LED。
 
-### 运行示例
+## 运行示例
 
 我们现在已经看到了 SparkFun Edge 代码的工作原理。接下来，让我们在我们的硬件上运行它。
 
-###### 提示
+### 提示
 
 建议检查[*README.md*](https://oreil.ly/Ts6MT)以获取最新指令，因为构建过程可能会有变化。
 
 构建和部署我们的代码，我们需要以下内容：
 
-+   带有[Himax HM01B0 breakout](https://oreil.ly/f23oa)的 SparkFun Edge 板
+- 带有[Himax HM01B0 breakout](https://oreil.ly/f23oa)的 SparkFun Edge 板
+- 一个 USB 编程器（我们推荐 SparkFun Serial Basic Breakout，可在[micro-B USB](https://oreil.ly/KKfyI)和[USB-C](https://oreil.ly/ztUrB)变体中获得）
+- 匹配的 USB 电缆
+- Python 3 和一些依赖项
 
-+   一个 USB 编程器（我们推荐 SparkFun Serial Basic Breakout，可在[micro-B USB](https://oreil.ly/KKfyI)和[USB-C](https://oreil.ly/ztUrB)变体中获得）
-
-+   匹配的 USB 电缆
-
-+   Python 3 和一些依赖项
-
-###### 注意
+### 注意
 
 如果您不确定是否安装了正确版本的 Python，“运行示例”中有检查方法的说明。
 
@@ -1429,7 +1439,7 @@ cd tensorflow
 
 接下来，我们将构建二进制文件，并运行一些命令，使其准备好下载到设备中。为了避免一些打字，您可以从[*README.md*](https://oreil.ly/MQmWw)中复制并粘贴这些命令。
 
-#### 构建二进制文件
+### 构建二进制文件
 
 以下命令下载所有必需的依赖项，然后为 SparkFun Edge 编译一个二进制文件：
 
@@ -1457,7 +1467,7 @@ test -f tensorflow/lite/micro/tools/make/gen/sparkfun_edge_ \
 
 如果看到`二进制文件丢失`，则构建过程中出现问题。如果是这样，很可能在`make`命令的输出中有一些关于出错原因的线索。
 
-#### 对二进制文件进行签名
+### 对二进制文件进行签名
 
 二进制文件必须使用加密密钥进行签名才能部署到设备上。让我们运行一些命令来对二进制文件进行签名，以便可以将其刷入 SparkFun Edge。此处使用的脚本来自 Ambiq SDK，在运行 Makefile 时下载。
 
@@ -1497,31 +1507,30 @@ AmbiqSuite-Rel2.0.0/tools/apollo3_scripts/create_cust_wireupdate_blob.py \
 
 现在，您应该在运行命令的目录中有一个名为*main_nonsecure_wire.bin*的文件。这是您将要刷写到设备的文件。
 
-#### 刷写二进制文件
+### 刷写二进制文件
 
 SparkFun Edge 将当前运行的程序存储在其 1 兆字节的闪存中。如果您希望板运行一个新程序，您需要将其发送到板上，该程序将存储在闪存中，覆盖以前保存的任何程序。这个过程称为刷写。
 
-#### 将编程器连接到板上
+### 将编程器连接到板上
 
 要下载新程序到板上，您将使用 SparkFun USB-C 串行基本串行编程器。该设备允许您的计算机通过 USB 与微控制器通信。
 
 要将此设备连接到您的板上，请执行以下步骤：
 
-1.  在 SparkFun Edge 的一侧，找到六针排针。
-
-1.  将 SparkFun USB-C 串行基本插入这些引脚，确保每个设备上标记为 BLK 和 GRN 的引脚正确对齐。
+1. 在 SparkFun Edge 的一侧，找到六针排针。
+2. 将 SparkFun USB-C 串行基本插入这些引脚，确保每个设备上标记为 BLK 和 GRN 的引脚正确对齐。
 
 您可以在图 11-11 中看到正确的排列方式。
 
 ![显示 SparkFun Edge 和 USB-C 串行基本如何连接的照片](img/timl_0613.png)
 
-###### 图 11-11\. 连接 SparkFun Edge 和 USB-C 串行基本（图片由 SparkFun 提供）
+###### 图 11-11. 连接 SparkFun Edge 和 USB-C 串行基本（图片由 SparkFun 提供）
 
-#### 将编程器连接到计算机
+### 将编程器连接到计算机
 
 接下来，通过 USB 将板连接到计算机。要对板进行编程，您需要确定计算机给设备的名称。最好的方法是在连接设备之前和之后列出所有计算机的设备，然后查看哪个设备是新的。
 
-###### 警告
+### 警告
 
 一些人报告了他们的操作系统默认驱动程序与编程器存在问题，因此我们强烈建议在继续之前安装[驱动程序](https://oreil.ly/vLavS)。
 
@@ -1564,7 +1573,7 @@ ls /dev/tty*
 
 这个名称将用于引用设备。但是，它可能会根据编程器连接到哪个 USB 端口而改变，因此如果您从计算机断开板然后重新连接，您可能需要再次查找其名称。
 
-###### 提示
+### 提示
 
 一些用户报告列表中出现了两个设备。如果看到两个设备，则正确的设备名称以“wch”开头；例如，“/dev/wchusbserial-14410”。
 
@@ -1577,7 +1586,7 @@ export DEVICENAME=<*your device name here*>
 
 这是在后续过程中运行需要设备名称的命令时可以使用的变量。
 
-#### 运行脚本刷写您的板
+### 运行脚本刷写您的板
 
 要刷写板子，您需要将其置于特殊的“引导加载程序”状态，以准备接收新的二进制文件。然后您可以运行一个脚本将二进制文件发送到板子上。
 
@@ -1601,19 +1610,18 @@ python3 tensorflow/lite/micro/tools/make/downloads/ \
 
 ![显示 SparkFun Edge 按钮的照片](img/timl_0614.png)
 
-###### 图 11-12\. SparkFun Edge 的按钮
+###### 图 11-12. SparkFun Edge 的按钮
 
 执行以下步骤：
 
-1.  确保您的板子连接到编程器，并且整个设备通过 USB 连接到计算机。
-
-1.  在板子上，按住标记为`14`的按钮。*继续按住。*
-
-1.  在仍然按住标记为`14`的按钮的同时，按下标记为`RST`的按钮重置板子。
-
-1.  在计算机上按 Enter 键运行脚本。*继续按住按钮`14`。*
+1. 确保您的板子连接到编程器，并且整个设备通过 USB 连接到计算机。
+2. 在板子上，按住标记为`14`的按钮。*继续按住。*
+3. 在仍然按住标记为`14`的按钮的同时，按下标记为`RST`的按钮重置板子。
+4. 在计算机上按 Enter 键运行脚本。*继续按住按钮`14`。*
 
 现在您应该会看到类似以下内容出现在屏幕上：
+
+
 
 ```cpp
 Connecting with Corvette over serial port /dev/cu.usbserial-1440...
@@ -1656,11 +1664,11 @@ Done.
 
 这表示刷写成功。
 
-###### 提示
+## 提示
 
 如果程序输出以错误结束，请检查是否打印了`Sending Reset Command.`。如果是，则尽管有错误，刷写很可能成功。否则，刷写可能失败。尝试再次运行这些步骤（您可以跳过设置环境变量）。
 
-### 测试程序
+## 测试程序
 
 首先按下`RST`按钮确保程序正在运行。当程序运行时，黄色 LED 灯会每次推断时闪烁一次。
 
@@ -1680,13 +1688,13 @@ Magic starts!
 
 ![一只手拿着 SparkFun Edge 板子的照片](img/timl_1113.png)
 
-###### 图 11-13\. 手势执行时如何握住板子
+**图 11-13\. 手势执行时如何握住板子**
 
 图 11-14 展示了如何执行每个手势的图表。由于模型是在板子连接到魔杖时收集的数据上进行训练的，您可能需要尝试几次才能使它们正常工作。
 
 ![三个魔杖手势的图表](img/timl_1103.png)
 
-###### 图 11-14\. 三个魔杖手势
+**图 11-14\. 三个魔杖手势**
 
 最容易开始的是“翅膀”。您应该将手移动得足够快，以便大约一秒钟完成手势。如果成功，红色 LED 灯应该会亮起，并且您应该会看到以下输出：
 
@@ -1702,7 +1710,7 @@ WING:
 
 恭喜，您已经使用 SparkFun Edge 施展了您的第一个魔法咒语！
 
-###### 注意
+## 注意
 
 此时，您可以选择发挥创造力，将板子连接到魔杖的尖端，距离手最远的地方。任何棍子、尺子或其他长度约为一英尺（30 厘米）的家用物品都应该很好用。
 
@@ -1737,9 +1745,9 @@ SLOPE:
 
 就像任何好的魔法咒语一样，您可能需要练习一下，才能每次都完美地执行它们。您可以在[*README.md*](https://oreil.ly/ilGJY)中看到手势的视频演示。
 
-### 进行您自己的更改
+## 进行您自己的更改
 
-现在您已经部署了基本应用程序，请尝试玩耍并进行一些更改。您可以在*tensorflow/lite/micro/examples/magic_wand*文件夹中找到应用程序的代码。只需编辑并保存，然后重复之前的说明以将修改后的代码部署到设备上。
+现在您已经部署了基本应用程序，请尝试玩耍并进行一些更改。您可以在`tensorflow/lite/micro/examples/magic_wand`文件夹中找到应用程序的代码。只需编辑并保存，然后重复之前的说明以将修改后的代码部署到设备上。
 
 以下是您可以尝试的一些事项：
 
@@ -1747,7 +1755,7 @@ SLOPE:
 
 +   在您的计算机上编写一个程序，让您可以使用物理手势执行任务。
 
-+   扩展程序以通过蓝牙传输检测结果。在[Ambiq SDK](https://oreil.ly/Bci3a)中有一个如何做到这一点的示例，在*AmbiqSuite-Rel2.0.0/boards/apollo3_evb/examples/uart_ble_bridge*中。构建魔法棒应用程序时，SDK 将下载到*tensorflow/tensorflow/lite/micro/tools/make/downloads/AmbiqSuite-Rel2.0.0*中。
++   扩展程序以通过蓝牙传输检测结果。在[Ambiq SDK](https://oreil.ly/Bci3a)中有一个如何做到这一点的示例，在`AmbiqSuite-Rel2.0.0/boards/apollo3_evb/examples/uart_ble_bridge`中。构建魔法棒应用程序时，SDK 将下载到`tensorflow/tensorflow/lite/micro/tools/make/downloads/AmbiqSuite-Rel2.0.0`中。
 
 # 总结
 

@@ -1,40 +1,34 @@
+
+
 ## 第十三章：介绍自动优化：让我们构建一个深度学习框架
 
 **本章**
 
-+   什么是深度学习框架？
-
-+   张量简介
-
-+   自动求导简介
-
-+   加法反向传播是如何工作的？
-
-+   如何学习一个框架
-
-+   非线性层
-
-+   嵌入层
-
-+   交叉熵层
-
-+   循环层
++ 什么是深度学习框架？
++ 张量简介
++ 自动求导简介
++ 加法反向传播是如何工作的？
++ 如何学习一个框架
++ 非线性层
++ 嵌入层
++ 交叉熵层
++ 循环层
 
 > “无论我们基于碳还是硅，在本质上都没有区别；我们都应该得到适当的尊重。”
-> 
+>
 > *亚瑟·C·克拉克，2010 年：《2001 太空漫游》（1982 年）*
 
 ### 什么是深度学习框架？
 
 #### 好的工具可以减少错误，加快开发速度，并提高运行时性能
 
-如果你长期关注深度学习，你可能已经遇到了一些主要的框架，例如 PyTorch、TensorFlow、Theano（最近已弃用）、Keras、Lasagne 或 DyNet。在过去几年中，框架的发展非常迅速，尽管所有框架都是免费的开源软件，但每个框架周围都有一股竞争和团结的气氛。
+如果你长期关注深度学习，你可能已经遇到了一些主要的框架，例如 `PyTorch`、`TensorFlow`、`Theano`（最近已弃用）、`Keras`、`Lasagne` 或 `DyNet`。在过去几年中，框架的发展非常迅速，尽管所有框架都是免费的开源软件，但每个框架周围都有一股竞争和团结的气氛。
 
-到目前为止，我一直在避免讨论框架的话题，因为首先，了解这些框架底层的工作原理对于你来说极其重要，这可以通过自己实现算法（从 NumPy 的零开始）来实现。但现在我们将过渡到使用框架，因为接下来你将要训练的网络——长短期记忆网络（LSTMs）——非常复杂，描述它们实现的 NumPy 代码难以阅读、使用或调试（梯度无处不在）。
+到目前为止，我一直在避免讨论框架的话题，因为首先，了解这些框架底层的工作原理对于你来说极其重要，这可以通过自己实现算法（从 `NumPy` 的零开始）来实现。但现在我们将过渡到使用框架，因为接下来你将要训练的网络——长短期记忆网络（`LSTMs`）——非常复杂，描述它们实现的 `NumPy` 代码难以阅读、使用或调试（梯度无处不在）。
 
-深度学习框架的创建正是为了减轻这种代码复杂性。特别是如果你希望在 GPU 上训练神经网络（提供 10-100 倍的训练速度），深度学习框架可以显著减少代码复杂性（减少错误并提高开发速度），同时提高运行时性能。出于这些原因，它们在研究社区中几乎被普遍使用，对深度学习框架的深入了解将成为你成为深度学习用户或研究人员的旅程中必不可少的。
+深度学习框架的创建正是为了减轻这种代码复杂性。特别是如果你希望在 `GPU` 上训练神经网络（提供 10-100 倍的训练速度），深度学习框架可以显著减少代码复杂性（减少错误并提高开发速度），同时提高运行时性能。出于这些原因，它们在研究社区中几乎被普遍使用，对深度学习框架的深入了解将成为你成为深度学习用户或研究人员的旅程中必不可少的。
 
-但我们不会跳入你听说过的任何深度学习框架，因为这会阻碍你了解复杂模型（如 LSTMs）底层的工作原理。相反，你将根据框架发展的最新趋势构建一个轻量级的深度学习框架。这样，你将毫无疑问地了解框架在用于复杂架构时的作用。此外，自己构建一个小框架应该会为使用实际的深度学习框架提供一个平稳的过渡，因为你已经熟悉了 API 及其底层的功能。我发现这项练习很有益，我在构建自己的框架中学到的教训在尝试调试麻烦的模型时特别有用。
+但我们不会跳入你听说过的任何深度学习框架，因为这会阻碍你了解复杂模型（如 `LSTMs`）底层的工作原理。相反，你将根据框架发展的最新趋势构建一个轻量级的深度学习框架。这样，你将毫无疑问地了解框架在用于复杂架构时的作用。此外，自己构建一个小框架应该会为使用实际的深度学习框架提供一个平稳的过渡，因为你已经熟悉了 `API` 及其底层的功能。我发现这项练习很有益，我在构建自己的框架中学到的教训在尝试调试麻烦的模型时特别有用。
 
 框架是如何简化你的代码的？抽象地说，它消除了多次重复编写代码的需要。具体来说，深度学习框架最有益的部分是其对自动反向传播和自动优化的支持。这些功能让你只需指定模型的正向传播代码，框架会自动处理反向传播和权重更新。大多数框架甚至通过提供高级接口来简化常见的层和损失函数，使正向传播代码更容易编写。
 
@@ -72,7 +66,7 @@ print(y)
     [ 2   4   6   8 10]
 ```
 
-这是这种基本数据结构的第一个版本。请注意，它将所有数值信息存储在 NumPy 数组（`self.data`）中，并且支持一个张量操作（加法）。添加更多操作相对简单：在张量类上创建更多具有适当功能的功能。
+这是这种基本数据结构的第一个版本。请注意，它将所有数值信息存储在 `NumPy` 数组（`self.data`）中，并且支持一个张量操作（加法）。添加更多操作相对简单：在张量类上创建更多具有适当功能的功能。
 
 ### 自动梯度计算（autograd）简介
 
@@ -136,9 +130,7 @@ print(z.creation_op)
 add
 ```
 
-这种形式的 autograd 最优雅的部分可能是它还可以递归地工作，因为每个向量都会在其所有`self.creators`上调用`.backward()`：
-
-|
+这种形式的 `autograd` 最优雅的部分可能是它还可以递归地工作，因为每个向量都会在其所有`self.creators`上调用`.backward()`：
 
 ```
 a = Tensor([1,2,3,4,5])
@@ -152,23 +144,21 @@ g.backward(Tensor(np.array([1,1,1,1,1])))
 print(a.grad)
 ```
 
-| **输出**
+**输出**
 
 ```
 [1 1 1 1 1]
 ```
 
-|
-
 ### 一个快速的检查点
 
 #### Tensor 中的所有内容都是已经学到的知识的另一种形式
 
-在继续之前，我想首先承认，即使考虑梯度在图形结构上流动可能感觉有点牵强或费劲，但与你已经使用过的内容相比，这并不是什么新鲜事。在关于 RNN 的上一章中，你在一个方向上进行了正向传播，然后在（虚拟图）激活上进行了反向传播。
+在继续之前，我想首先承认，即使考虑梯度在图形结构上流动可能感觉有点牵强或费劲，但与你已经使用过的内容相比，这并不是什么新鲜事。在关于 `RNN` 的上一章中，你在一个方向上进行了正向传播，然后在（虚拟图）激活上进行了反向传播。
 
 你并没有在图形数据结构中明确编码节点和边。相反，你有一个层的列表（字典），并手动编码了正向和反向传播操作的正确顺序。现在你正在构建一个很好的接口，这样你就不需要写那么多代码了。这个接口让你可以递归地进行反向传播，而无需手动编写复杂的反向传播代码。
 
-本章主要涉及一些理论性的内容。它主要讲述的是学习深度神经网络时常用的工程实践。特别是，在正向传播过程中构建的这种图结构被称为**动态计算图**，因为它是在正向传播过程中即时构建的。这种类型的 autograd 存在于较新的深度学习框架中，如 DyNet 和 PyTorch。而像 Theano 和 TensorFlow 这样的旧框架则有一个所谓的**静态计算图**，它是在正向传播开始之前就定义好的。
+本章主要涉及一些理论性的内容。它主要讲述的是学习深度神经网络时常用的工程实践。特别是，在正向传播过程中构建的这种图结构被称为**动态计算图**，因为它是在正向传播过程中即时构建的。这种类型的 `autograd` 存在于较新的深度学习框架中，如 `DyNet` 和 `PyTorch`。而像 `Theano` 和 `TensorFlow` 这样的旧框架则有一个所谓的**静态计算图**，它是在正向传播开始之前就定义好的。
 
 通常，动态计算图更容易编写/实验，而静态计算图由于底层的一些复杂逻辑，运行速度更快。但请注意，动态和静态框架最近正朝着中间发展，允许动态图编译为静态图（以获得更快的运行时间）或允许静态图动态构建（以获得更易实验）。从长远来看，你很可能会两者都拥有。主要区别在于正向传播是在图构建期间发生还是在图已经定义之后发生。在这本书中，我们将坚持使用动态的。
 
@@ -208,6 +198,15 @@ array([False, False, False, False, False])
 #### 添加一个新函数，并更新三个旧函数
 
 对`Tensor`对象的这次更新增加了两个新功能。首先，梯度可以累积，以便当变量被多次使用时，它从所有子张量接收梯度：
+
+
+
+
+# 自动微分框架实现详解
+
+## 核心张量类
+
+以下是实现自动微分功能的核心`Tensor`类代码：
 
 ```
 import numpy as np
@@ -310,9 +309,9 @@ print(b.grad.data == np.array([2,2,2,2,2]))
 
 如前所述，从深度学习理论的角度来看，这些概念并不新颖；这些都是深度学习框架试图面对的工程挑战。更重要的是，它们是你在标准框架中调试神经网络时将面临的那种挑战。在继续之前，花点时间玩一下这段代码，熟悉它。尝试删除不同的部分，看看它以各种方式崩溃。尝试两次调用`.backprop()`。
 
-### 加法反向传播是如何工作的？
+## 加法反向传播的工作原理
 
-#### 让我们研究这个抽象，以了解如何添加对更多函数的支持
+### 研究抽象以支持更多函数
 
 到目前为止，这个框架已经达到了一个令人兴奋的地方！你现在可以通过将函数添加到`Tensor`类并添加其导数到`.backward()`方法来支持任意操作。对于加法，有以下方法：
 
@@ -340,9 +339,9 @@ def __add__(self, other):
 
 尽管加法的反向传播逻辑将梯度反向传播到所有对其有贡献的变量，但除非将该变量的 `.autograd` 设置为 `True`，否则反向传播不会运行（对于 `self.creators[0]` 或 `self.creators[1]` 分别）。注意，在 `__add__()` 的第一行中，创建的张量（稍后是 `running.backward()`）的 `self.autograd` 仅当 `self.autograd` == `other.autograd` == `True` 时才为 `True`。
 
-### 添加对否定的支持
+## 添加对否定的支持
 
-#### 让我们修改支持加法以支持否定
+### 修改加法以支持否定
 
 现在加法功能已经正常工作，你应该能够复制并粘贴加法代码，进行一些修改，并为否定添加自动微分支持。让我们试试。`__add__` 函数的修改内容以粗体显示：
 
@@ -383,9 +382,9 @@ print(b.grad.data == np.array([-2,-2,-2,-2,-2]))
 
 当你使用 `-b` 而不是 `b` 进行前向传播时，反向传播的梯度也会翻转符号。此外，你不需要对一般的反向传播系统做任何修改来使其工作。你可以根据需要创建新的函数。让我们添加一些吧！
 
-### 添加对其他函数的支持
+## 添加对其他函数的支持
 
-#### 减法、乘法、求和、扩展、转置和矩阵乘法
+### 减法、乘法、求和、扩展、转置和矩阵乘法
 
 使用你为加法和否定学到的相同思想，让我们添加几个其他函数的前向和反向传播逻辑：
 
@@ -469,38 +468,40 @@ def __sub__(self, other):
 
 您现在可以将相应的反向传播逻辑添加到 `.backward()` 方法中：
 
+
+
 ```
-         if(self.creation_op == "sub"):
-              new = Tensor(self.grad.data)
-              self.creators[0].backward(new, self)
-              new = Tensor(self.grad.__neg__().data)
-              self.creators[1].backward(, self)
+if(self.creation_op == "sub"):
+    new = Tensor(self.grad.data)
+    self.creators[0].backward(new, self)
+    new = Tensor(self.grad.__neg__().data)
+    self.creators[1].backward(, self)
 
-          if(self.creation_op == "mul"):
-              new = self.grad * self.creators[1]
-              self.creators[0].backward(new , self)
-              new = self.grad * self.creators[0]
-              self.creators[1].backward(new, self)
+if(self.creation_op == "mul"):
+    new = self.grad * self.creators[1]
+    self.creators[0].backward(new , self)
+    new = self.grad * self.creators[0]
+    self.creators[1].backward(new, self)
 
-          if(self.creation_op == "mm"):
-              act = self.creators[0]                    *1*
-              weights = self.creators[1]                *2*
-              new = self.grad.mm(weights.transpose())
-              act.backward(new)
-              new = self.grad.transpose().mm(act).transpose()
-              weights.backward(new)
+if(self.creation_op == "mm"):
+    act = self.creators[0]                    *1*
+    weights = self.creators[1]                *2*
+    new = self.grad.mm(weights.transpose())
+    act.backward(new)
+    new = self.grad.transpose().mm(act).transpose()
+    weights.backward(new)
 
-          if(self.creation_op == "transpose"):
-              self.creators[0].backward(self.grad.transpose())
+if(self.creation_op == "transpose"):
+    self.creators[0].backward(self.grad.transpose())
 
-          if("sum" in self.creation_op):
-              dim = int(self.creation_op.split("_")[1])
-              ds = self.creators[0].data.shape[dim]
-              self.creators[0].backward(self.grad.expand(dim,ds))
+if("sum" in self.creation_op):
+    dim = int(self.creation_op.split("_")[1])
+    ds = self.creators[0].data.shape[dim]
+    self.creators[0].backward(self.grad.expand(dim,ds))
 
-          if("expand" in self.creation_op):
-              dim = int(self.creation_op.split("_")[1])
-              self.creators[0].backward(self.grad.sum(dim))
+if("expand" in self.creation_op):
+    dim = int(self.creation_op.split("_")[1])
+    self.creators[0].backward(self.grad.sum(dim))
 ```
 
 +   ***1* 通常是一个激活**
@@ -772,7 +773,15 @@ for i in range(10):
 
 你也可以创建函数层，这些函数作用于输入。这类层中最受欢迎的版本可能是损失函数层，例如均方误差：
 
-```
+
+
+# 构建一个简单的神经网络框架
+
+## 定义损失函数层
+
+首先，我们定义一个均方误差（MSE）损失层。该层继承自`Layer`基类，并实现`forward`方法计算预测值与目标值之间的均方误差。
+
+```python
 class MSELoss(Layer):
 
     def __init__(self):
@@ -780,7 +789,13 @@ class MSELoss(Layer):
 
     def forward(self, pred, target):
         return ((pred - target)*(pred - target)).sum(0)
+```
 
+## 训练一个简单的神经网络
+
+接下来，我们使用上述`MSELoss`层以及之前构建的`Linear`层和`Sequential`模型，训练一个简单的神经网络来解决异或（XOR）问题。
+
+```python
 import numpy
 np.random.seed(0)
 
@@ -809,7 +824,9 @@ for i in range(10):
 
 +   ***3* 学习**
 
-```
+训练过程中的损失值输出如下：
+
+```text
                      [2.33428272]
                      [0.06743796]
                          ...
@@ -819,9 +836,9 @@ for i in range(10):
 
 如果您能原谅重复，再次强调，这里没有什么特别新的。在底层，最后几个代码示例都执行了完全相同的计算。只是自动微分正在执行所有的反向传播，正向传播步骤被封装在漂亮的类中，以确保功能按正确的顺序执行。
 
-### 如何学习一个框架
+## 如何学习一个框架
 
-#### 过于简化地说，框架是自动微分加上一系列预构建的层和优化器
+### 过于简化地说，框架是自动微分加上一系列预构建的层和优化器
 
 您已经能够（相当快速地）使用底层自动微分系统编写各种新的层类型，这使得组合任意功能层变得相当容易。说实话，这是现代框架的主要功能，消除了为正向和反向传播手动编写每个数学运算的需要。使用框架大大增加了您从想法到实验的速度，并将减少您代码中的错误数量。
 
@@ -835,7 +852,7 @@ for i in range(10):
 
 学习新框架的一般工作流程是找到最简单的代码示例，对其进行调整，了解自动微分系统的 API，然后逐步修改代码示例，直到达到您关心的任何实验。
 
-```
+```python
 def backward(self,grad=None, grad_origin=None):
     if(self.autograd):
 
@@ -843,15 +860,15 @@ def backward(self,grad=None, grad_origin=None):
             grad = Tensor(np.ones_like(self.data))
 ```
 
-在我们继续之前，我正在向 `Tensor.backward()` 添加一个方便的函数，这样您在第一次调用 `.backward()` 时就不必传入 1 的梯度。严格来说，这不是必需的——但它很方便。
+在我们继续之前，我正在向`Tensor.backward()`添加一个方便的函数，这样您在第一次调用`.backward()`时就不必传入 1 的梯度。严格来说，这不是必需的——但它很方便。
 
-### 非线性层
+## 非线性层
 
-#### 让我们在 Tensor 中添加非线性函数，然后创建一些层类型
+### 让我们在 Tensor 中添加非线性函数，然后创建一些层类型
 
-对于下一章，您将需要 `.sigmoid()` 和 `.tanh()`。让我们将它们添加到 `Tensor` 类中。您很久以前就学过了这两个函数的导数，所以这应该很容易：
+对于下一章，您将需要`.sigmoid()`和`.tanh()`。让我们将它们添加到`Tensor`类中。您很久以前就学过了这两个函数的导数，所以这应该很容易：
 
-```
+```python
 def sigmoid(self):
     if(self.autograd):
         return Tensor(1 / (1 + np.exp(-self.data)),
@@ -869,9 +886,9 @@ def tanh(self):
     return Tensor(np.tanh(self.data))
 ```
 
-以下代码展示了添加到 `Tensor.backward()` 方法的反向传播逻辑：
+以下代码展示了添加到`Tensor.backward()`方法的反向传播逻辑：
 
-```
+```python
 if(self.creation_op == "sigmoid"):
     ones = Tensor(np.ones_like(self.grad.data))
     self.creators[0].backward(self.grad * (self * (ones - self)))
@@ -881,9 +898,9 @@ if(self.creation_op == "tanh"):
     self.creators[0].backward(self.grad * (ones - (self * self)))
 ```
 
-希望这感觉相当常规。看看您能否创建更多的非线性函数：尝试 `HardTanh` 或 `relu`。
+希望这感觉相当常规。看看您能否创建更多的非线性函数：尝试`HardTanh`或`relu`。
 
-```
+```python
 class Tanh(Layer):                          class Sigmoid(Layer):
     def __init__(self):                         def __init__(self):
         super().__init__()                          super().__init__()
@@ -894,7 +911,7 @@ class Tanh(Layer):                          class Sigmoid(Layer):
 
 让我们尝试新的非线性函数。新添加的内容以粗体显示：
 
-```
+```python
 import numpy
 np.random.seed(0)
 
@@ -923,7 +940,7 @@ for i in range(10):
 
 +   ***3* 学习**
 
-```
+```text
 [1.06372865]
 [0.75148144]
 [0.57384259]
@@ -936,17 +953,17 @@ for i in range(10):
 [0.04700013]
 ```
 
-如您所见，您可以将新的 `Tanh()` 和 `Sigmoid()` 层直接放入 `Sequential()` 的输入参数中，神经网络会确切地知道如何使用它们。简单！
+如您所见，您可以将新的`Tanh()`和`Sigmoid()`层直接放入`Sequential()`的输入参数中，神经网络会确切地知道如何使用它们。简单！
 
 在上一章中，你学习了循环神经网络。特别是，你训练了一个模型来预测下一个单词，给定前几个单词。在我们完成本章之前，我希望你能将那段代码翻译成新的框架。为此，你需要三种新的层类型：一个学习词嵌入的嵌入层，一个可以学习建模输入序列的 RNN 层，以及一个可以预测标签概率分布的 softmax 层。
 
-### 嵌入层
+## 嵌入层
 
-#### 嵌入层将索引转换为激活
+### 嵌入层将索引转换为激活
 
 在第十一章中，你学习了关于词嵌入的内容，这些嵌入是将向量映射到单词，你可以将其前向传播到神经网络中。因此，如果你有一个 200 个单词的词汇表，你也将有 200 个嵌入。这为创建嵌入层提供了初始规范。首先，初始化一个（正确长度的）单词嵌入列表（正确的大小）：
 
-```
+```python
 class Embedding(Layer):
 
     def __init__(self, vocab_size, dim):
@@ -966,13 +983,13 @@ class Embedding(Layer):
 
 注意，当你将整数矩阵传递给 NumPy 矩阵时，它返回相同的矩阵，但每个整数都被替换为指定的行。因此，一个索引的二维矩阵变成了一个三维的嵌入矩阵（行）。这太完美了！
 
-### 将索引添加到 autograd
+## 将索引添加到 autograd
 
-#### 在构建嵌入层之前，autograd 需要支持索引
+### 在构建嵌入层之前，autograd 需要支持索引
 
 为了支持新的嵌入策略（该策略假设单词作为索引矩阵进行前向传播），你在上一节中玩弄的索引必须由 autograd 支持。这是一个相当简单的想法。你需要确保在反向传播过程中，梯度被放置在与前向传播中索引到的相同行中。这要求你保留传递的任何索引，以便在反向传播期间使用简单的`for`循环将每个梯度放置在适当的位置：
 
-```
+```python
 def index_select(self, indices):
 
     if(self.autograd):
@@ -987,7 +1004,7 @@ def index_select(self, indices):
 
 首先，使用你在上一节中学到的 NumPy 技巧来选择正确的行：
 
-```
+```python
              if(self.creation_op == "index_select"):
                  new_grad = np.zeros_like(self.creators[0].data)
                  indices_ = self.index_select_indices.data.flatten()
@@ -997,17 +1014,17 @@ def index_select(self, indices):
                  self.creators[0].backward(Tensor(new_grad))
 ```
 
-然后，在 `backprop()` 期间，初始化一个正确大小的新梯度（原始矩阵的大小，该矩阵正在被索引）。其次，展平索引，以便你可以遍历它们。第三，将 `grad_` 压缩成一个简单的行列表。（微妙之处在于 `indices_` 中的索引列表和 `grad_` 中的向量列表将按对应顺序排列。）然后，遍历每个索引，将其添加到你正在创建的新梯度的正确行中，并将其反向传播到 `self.creators[0]`。正如你所看到的，`grad_[i]` 正确地更新了每一行（在这种情况下，添加一个由 1 组成的向量），并按照索引被使用的次数进行更新。索引 2 和 3 更新了两次（加粗）：
+然后，在`backprop()`期间，初始化一个正确大小的新梯度（原始矩阵的大小，该矩阵正在被索引）。其次，展平索引，以便你可以遍历它们。第三，将`grad_`压缩成一个简单的行列表。（微妙之处在于`indices_`中的索引列表和`grad_`中的向量列表将按对应顺序排列。）然后，遍历每个索引，将其添加到你正在创建的新梯度的正确行中，并将其反向传播到`self.creators[0]`。正如你所看到的，`grad_[i]`正确地更新了每一行（在这种情况下，添加一个由 1 组成的向量），并按照索引被使用的次数进行更新。索引 2 和 3 更新了两次（加粗）：
 
 ![](img/f0256-01_alt.jpg)
 
-### 嵌入层（重访）
+## 嵌入层（重访）
 
-#### 现在你可以使用新的 .index_select() 方法完成正向传播
+### 现在你可以使用新的 .index_select() 方法完成正向传播
 
-对于正向传播，调用 `.index_select()`，autograd 将处理其余部分：
+对于正向传播，调用`.index_select()`，autograd 将处理其余部分：
 
-```
+```python
 class Embedding(Layer):
 
     def __init__(self, vocab_size, dim):
@@ -1027,7 +1044,7 @@ class Embedding(Layer):
 
 +   ***1* 这种初始化风格是来自 word2vec 的约定。**
 
-```
+```python
 data = Tensor(np.array([1,2,1,2]), autograd=True)
 target = Tensor(np.array([[0],[1],[0],[1]]), autograd=True)
 
@@ -1054,7 +1071,7 @@ for i in range(10):
 
 +   ***3* 学习**
 
-```
+```text
 [0.98874126]
 [0.6658868]
 [0.45639889]
@@ -1065,48 +1082,66 @@ for i in range(10):
 
 在这个神经网络中，你学习将输入索引 1 和 2 与预测 0 和 1 相关联。在理论上，索引 1 和 2 可以对应于单词（或某种其他输入对象），在最终的例子中，它们将这样做。这个例子是为了展示嵌入的工作。
 
-### 交叉熵层
+## 交叉熵层
 
-#### 让我们向 autograd 添加交叉熵并创建一个层
+### 让我们向 autograd 添加交叉熵并创建一个层
 
 希望到这一点，你已经开始对如何创建新的层类型感到舒适。交叉熵是一个相当标准的层，你在本书中已经多次见过。因为我们已经介绍了如何创建几个新的层类型，所以我会在这里留下代码供你参考。在复制此代码之前，尝试自己完成它。
 
+
+
+# 交叉熵损失与循环神经网络
+
+## 交叉熵损失函数实现
+
+以下代码实现了一个带有自动梯度支持的交叉熵损失函数：
+
 ```
-    def cross_entropy(self, target_indices):
+def cross_entropy(self, target_indices):
 
-         temp = np.exp(self.data)
-         softmax_output = temp / np.sum(temp,
-                                        axis=len(self.data.shape)-1,
-                                        keepdims=True)
+    temp = np.exp(self.data)
+    softmax_output = temp / np.sum(temp,
+                                    axis=len(self.data.shape)-1,
+                                    keepdims=True)
 
-         t = target_indices.data.flatten()
-         p = softmax_output.reshape(len(t),-1)
-         target_dist = np.eye(p.shape[1])[t]
-         loss = -(np.log(p) * (target_dist)).sum(1).mean()
+    t = target_indices.data.flatten()
+    p = softmax_output.reshape(len(t),-1)
+    target_dist = np.eye(p.shape[1])[t]
+    loss = -(np.log(p) * (target_dist)).sum(1).mean()
 
-         if(self.autograd):
-             out = Tensor(loss,
-                          autograd=True,
-                          creators=[self],
-                          creation_op="cross_entropy")
-             out.softmax_output = softmax_output
-             out.target_dist = target_dist
-             return out
+    if(self.autograd):
+        out = Tensor(loss,
+                      autograd=True,
+                      creators=[self],
+                      creation_op="cross_entropy")
+        out.softmax_output = softmax_output
+        out.target_dist = target_dist
+        return out
 
-         return Tensor(loss)
+    return Tensor(loss)
 
-                 if(self.creation_op == "cross_entropy"):
-                     dx = self.softmax_output - self.target_dist
-                     self.creators[0].backward(Tensor(dx))
+            if(self.creation_op == "cross_entropy"):
+                dx = self.softmax_output - self.target_dist
+                self.creators[0].backward(Tensor(dx))
+```
 
+`CrossEntropyLoss` 类封装了上述函数，提供了统一的接口：
+
+```
 class CrossEntropyLoss(object):
 
-       def __init__(self):
-           super().__init__()
+    def __init__(self):
+        super().__init__()
 
-       def forward(self, input, target):
-           return input.cross_entropy(target)
+    def forward(self, input, target):
+        return input.cross_entropy(target)
+```
 
+## 训练示例
+
+以下代码演示了如何使用该损失函数训练一个简单的神经网络：
+
+```
 import numpy
 np.random.seed(0)
 
@@ -1138,6 +1173,8 @@ for i in range(10):
 
 +   ***3* 学习**
 
+训练过程中的损失值输出如下：
+
 ```
 1.3885032434928422
 0.9558181509266037
@@ -1155,9 +1192,9 @@ for i in range(10):
 
 这些之所以如此一致地组合在一起，是因为性能。在交叉熵函数中一起计算 `softmax` 和负对数似然比梯度的速度比在两个不同的模块中分别进行正向传播和反向传播要快得多。这与梯度数学中的捷径有关。
 
-### 循环神经网络层
+## 循环神经网络层
 
-#### 通过组合多个层，你可以学习时间序列
+### 通过组合多个层，你可以学习时间序列
 
 作为本章的最后一个练习，让我们再创建一个由多个较小的层类型组成的层。这个层的目的是学习你在上一章结束时完成的任务。这个层是**循环层**。你将使用三个线性层来构建它，`.forward()`方法将接受前一个隐藏状态和当前训练数据的输入：
 
@@ -1197,7 +1234,7 @@ class RNNCell(Layer):
         return Tensor(np.zeros((batch_size,self.n_hidden)),autograd=True)
 ```
 
-本章不涉及重新介绍 RNNs，但指出一些应该已经熟悉的组成部分是值得的。RNNs 有一个状态向量，它在时间步长之间传递。在这种情况下，它是变量`hidden`，它既是`forward`函数的输入参数也是输出变量。RNNs 还有几个不同的权重矩阵：一个将输入向量映射到隐藏向量（处理输入数据），一个将隐藏向量映射到隐藏向量（根据前一个更新每个隐藏向量），以及可选的隐藏到输出层，该层学习根据隐藏向量进行预测。这个 RNNCell 实现包括了这三个。`self.w_ih`层是输入到隐藏层，`self.w_hh`是隐藏到隐藏层，`self.w_ho`是隐藏到输出层。注意每个的维度。`self.w_ih`的输入大小和`self.w_ho`的输出大小都是词汇表的大小。所有其他维度都是基于`n_hidden`参数可配置的。
+本章不涉及重新介绍 RNNs，但指出一些应该已经熟悉的组成部分是值得的。RNNs 有一个状态向量，它在时间步长之间传递。在这种情况下，它是变量`hidden`，它既是`forward`函数的输入参数也是输出变量。RNNs 还有几个不同的权重矩阵：一个将输入向量映射到隐藏向量（处理输入数据），一个将隐藏向量映射到隐藏向量（根据前一个更新每个隐藏向量），以及可选的隐藏到输出层，该层学习根据隐藏向量进行预测。这个 `RNNCell` 实现包括了这三个。`self.w_ih`层是输入到隐藏层，`self.w_hh`是隐藏到隐藏层，`self.w_ho`是隐藏到输出层。注意每个的维度。`self.w_ih`的输入大小和`self.w_ho`的输出大小都是词汇表的大小。所有其他维度都是基于`n_hidden`参数可配置的。
 
 最后，一个`activation`输入参数定义了在每个时间步长应用于隐藏向量的非线性函数。我添加了两种可能性（`Sigmoid`和`Tanh`），但有很多选项可供选择。让我们训练一个网络：
 
@@ -1246,7 +1283,7 @@ for line in tokens:
 data = np.array(indices)
 ```
 
-#### 你可以学习适应你在上一章中完成的任务
+### 你可以学习适应你在上一章中完成的任务
 
 现在，你可以使用嵌入输入初始化循环层，并训练一个网络来解决上一章相同的任务。请注意，尽管代码要简单得多，但由于这个小框架，这个网络稍微复杂一些（它有一个额外的层）。
 
@@ -1284,6 +1321,8 @@ for iter in range(1000):
         print("Loss:",print_loss,"% Correct:",p_correct)
 ```
 
+训练过程中的损失和准确率输出如下：
+
 ```
 Loss: 0.47631100976371393 % Correct: 0.01
 Loss: 0.17189538896184856 % Correct: 0.28
@@ -1291,6 +1330,8 @@ Loss: 0.1460940222788725 % Correct: 0.37
 Loss: 0.13845863915406884 % Correct: 0.37
 Loss: 0.135574472565278 % Correct: 0.37
 ```
+
+使用训练好的模型进行预测：
 
 ```
 batch_size = 1
@@ -1310,6 +1351,8 @@ print("Context:",ctx)
 print("Pred:", vocab[output.data.argmax()])
 ```
 
+预测结果示例：
+
 ```
 Context: - mary moved to the
 Pred: office.
@@ -1317,9 +1360,9 @@ Pred: office.
 
 如你所见，神经网络学会了以大约 37%的准确率预测训练数据集的前 100 个示例（对于这个玩具任务来说几乎是完美的）。它预测了玛丽可能移动的方向，就像在第十二章的结尾一样。
 
-### 摘要
+## 摘要
 
-#### 框架是前向和反向逻辑的高效、方便的抽象
+### 框架是前向和反向逻辑的高效、方便的抽象
 
 我希望这一章的练习让你体会到了框架的便利性。它们可以使你的代码更易读，编写更快，执行更快（通过内置优化），并且错误更少。更重要的是，这一章将为你使用和扩展行业标准框架如 PyTorch 和 TensorFlow 做好准备。无论是调试现有的层类型还是原型设计你自己的，你在本章学到的技能将是你在本书中获得的最重要的技能之一，因为它们将之前章节中关于深度学习的抽象知识与你未来将用于实现模型的真实工具的设计联系起来。
 

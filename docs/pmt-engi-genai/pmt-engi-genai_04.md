@@ -1,30 +1,31 @@
+
 # 第四章：LangChain 文本生成高级技术
 
 使用简单的提示工程技巧通常适用于大多数任务，但偶尔您需要使用更强大的工具包来解决复杂的生成式 AI 问题。这些问题和任务包括：
 
-上下文长度
+**上下文长度**
 
 将整本书总结成可消化的摘要。
 
-结合顺序 LLM 输入/输出
+**结合顺序 LLM 输入/输出**
 
 为一本书创造故事，包括角色、情节和世界构建。
 
-执行复杂的推理任务
+**执行复杂的推理任务**
 
 作为代理的 LLMs。例如，您可以创建一个 LLM 代理来帮助您实现个人健身目标。
 
-为了巧妙地应对这样的复杂生成式 AI 挑战，熟悉开源框架 LangChain 非常有帮助。这个工具大大简化并增强了您 LLM 的工作流程。 
+为了巧妙地应对这样的复杂生成式 AI 挑战，熟悉开源框架 LangChain 非常有帮助。这个工具大大简化并增强了您 LLM 的工作流程。
 
-# LangChain 简介
+## LangChain 简介
 
 LangChain 是一个多功能的框架，它使创建利用 LLMs 的应用程序成为可能，并且作为[Python](https://oreil.ly/YPid-)和[TypeScript](https://oreil.ly/5Vl0W)包提供。其核心原则是，最有影响力和独特的应用程序不仅通过 API 与语言模型接口，而且还将：
 
-增强数据意识
+**增强数据意识**
 
 该框架旨在在语言模型和外部数据源之间建立无缝连接。
 
-增强代理能力
+**增强代理能力**
 
 它致力于赋予语言模型与环境互动和影响的能力。
 
@@ -36,31 +37,31 @@ LangChain 是一个多功能的框架，它使创建利用 LLMs 的应用程序�
 
 每个模块都设计得易于使用，可以独立或一起高效地利用。目前 LangChain 中有六个常见的模块：
 
-模型 I/O
+**模型 I/O**
 
 处理与模型相关的输入/输出操作
 
-检索
+**检索**
 
 专注于检索对 LLM 相关的文本
 
-链
+**链**
 
 也称为*LangChain 可运行程序*，链允许构建 LLM 操作或函数调用的序列
 
-代理
+**代理**
 
 允许链根据高级指令或指示决定使用哪些工具
 
-内存
+**内存**
 
 在链的不同运行之间保持应用程序的状态
 
-回调
+**回调**
 
 对于在特定事件上运行附加代码，例如每当生成新令牌时
 
-## 环境设置
+### 环境设置
 
 您可以使用以下任一命令在终端上安装 LangChain：
 
@@ -72,15 +73,15 @@ LangChain 是一个多功能的框架，它使创建利用 LLMs 的应用程序�
 
 建议在虚拟环境中安装这些包：
 
-创建虚拟环境
+**创建虚拟环境**
 
 `python -m venv venv`
 
-激活虚拟环境
+**激活虚拟环境**
 
 `source venv/bin/activate`
 
-安装依赖项
+**安装依赖项**
 
 `pip install -r requirements.txt`
 
@@ -105,21 +106,21 @@ LangChain 的功能确保了你在切换模型时不需要重新发明你的提�
 
 在接下来的章节中，你将使用 OpenAI 包及其在 LangChain 中的 API。
 
-# Chat Models
+## Chat Models
 
 如 GPT-4 之类的聊天模型已成为与 OpenAI API 交互的主要方式。它们不是提供简单的“输入文本，输出文本”响应，而是提出一种交互方法，其中*聊天消息*是输入和输出元素。
 
 使用聊天模型生成 LLM 响应涉及将一个或多个消息输入到聊天模型中。在 LangChain 的上下文中，目前接受的消息类型是`AIMessage`、`HumanMessage`和`SystemMessage`。聊天模型的输出始终是`AIMessage`。
 
-SystemMessage
+**SystemMessage**
 
 代表应该是对 AI 系统的指令信息。这些用于以某种方式引导 AI 的行为或行动。
 
-HumanMessage
+**HumanMessage**
 
 代表来自与 AI 系统交互的人类信息。这可能是一个问题、一个命令，或任何其他人类用户需要 AI 处理和响应的输入。
 
-AIMessage
+**AIMessage**
 
 代表来自 AI 系统本身的信息。这通常是 AI 对`HumanMessage`的响应或`SystemMessage`指令的结果。
 
@@ -129,7 +130,7 @@ AIMessage
 
 让我们在 LangChain 中创建一个笑话生成器。
 
-输入：
+**输入：**
 
 ```py
 from langchain_openai.chat_models import ChatOpenAI
@@ -144,7 +145,7 @@ response = chat.invoke(input=messages)
 print(response.content)
 ```
 
-输出：
+**输出：**
 
 ```py
 Sure, here's a lighthearted joke for you:
@@ -164,7 +165,7 @@ Because he lost his domain in a bet and couldn't afford to renew it.
 response = chat(messages=messages)
 ```
 
-# 流式聊天模型
+## 流式聊天模型
 
 当你使用 ChatGPT 时，你可能已经注意到单词是逐个返回给你的，一个字符接一个字符。这种独特的响应生成模式被称为*流式传输*，它在增强基于聊天的应用程序性能中起着至关重要的作用：
 
@@ -179,11 +180,11 @@ for chunk in chat.stream(messages):
 
 然而，这种技术也带来了一系列挑战。一个显著的挑战是在流式传输过程中解析输出。在消息形成时理解和适当地回应消息可能很复杂，尤其是当内容复杂且详细时。
 
-# 创建多个 LLM 生成
+## 创建多个 LLM 生成
 
 可能存在一些场景，从 LLM 生成多个响应可能很有用。这在创建动态内容，如社交媒体帖子时尤其如此。你不需要提供消息列表，而是提供一个*消息列表的列表*。
 
-输入：
+**输入：**
 
 ```py
 # 2x lists of messages, which is the same as [messages, messages]
@@ -191,7 +192,7 @@ synchronous_llm_result = chat.batch([messages]*2)
 print(synchronous_llm_result)
 ```
 
-输出：
+**输出：**
 
 ```py
 [AIMessage(content='''Sure, here's a lighthearted joke for you:\n\nWhy did
@@ -222,7 +223,7 @@ results = chat.batch([messages, messages], config=config)
 
 LangChain 中的大多数异步函数只是以字母`a`为前缀，例如`.ainvoke()`和`.abatch()`。如果你想使用异步 API 以更高效的任务性能，那么请使用这些函数。
 
-# LangChain 提示模板
+## LangChain 提示模板
 
 到目前为止，你一直在硬编码`ChatOpenAI`对象中的字符串。随着你的 LLM 应用程序规模的扩大，利用*提示模板*变得越来越重要。
 
@@ -248,7 +249,7 @@ print(prompt) # What is the best way to learn coding in Python?
 
 +   创建在创建时执行附加代码或指令的自定义提示模板
 
-# LangChain 表达式语言（LCEL）
+## LangChain 表达式语言（LCEL）
 
 `|`管道运算符是 LangChain 表达式语言（LCEL）的关键组件，它允许你在数据处理管道中将不同的组件或*可运行*组件连接起来。
 
@@ -310,7 +311,7 @@ result = chain.invoke({
 print(result.content)
 ```
 
-输出：
+**输出：**
 
 ```py
 1\. SummarAI
@@ -320,11 +321,13 @@ print(result.content)
 5\. SmartSummarize
 ```
 
-首先，你将导入 `ChatOpenAI`、`SystemMessagePromptTemplate` 和 `ChatPromptTemplate`。然后，你将在 `template` 下定义一个具有特定指南的提示模板，指示 LLM 生成商业名称。`ChatOpenAI()` 初始化聊天，而 `SystemMessagePromptTemplate.from_template(template)` 和 `ChatPromptTemplate.from_messages([system_prompt])` 创建你的提示模板。
+首先，你将导入`ChatOpenAI`、`SystemMessagePromptTemplate`和`ChatPromptTemplate`。然后，你将在`template`下定义一个具有特定指南的提示模板，指示 LLM 生成商业名称。`ChatOpenAI()`初始化聊天，而`SystemMessagePromptTemplate.from_template(template)`和`ChatPromptTemplate.from_messages([system_prompt])`创建你的提示模板。
 
-你通过将 `chat_prompt` 和 `model` 连接在一起创建一个 LCEL `chain`，然后调用它。这将在提示中替换 `{industries}`、`{context}` 和 `{principles}` 占位符，以字典 `invoke` 函数中的值。
+你通过将`chat_prompt`和`model`连接在一起创建一个 LCEL `chain`，然后调用它。这将在提示中替换`{industries}`、`{context}`和`{principles}`占位符，以字典`invoke`函数中的值。
 
-最后，通过访问 `result` 变量的 `.content` 属性，你可以提取 LLM 的响应作为字符串。
+
+
+最后，通过访问`result`变量的`.content`属性，你可以提取 LLM 的响应作为字符串。
 
 # 指明方向并指定格式
 
@@ -332,7 +335,7 @@ print(result.content)
 
 # 使用 Chat 模型与 PromptTemplate
 
-LangChain 提供了一个更传统的模板 `PromptTemplate`，它需要 `input_variables` 和 `template` 参数。
+LangChain 提供了一个更传统的模板`PromptTemplate`，它需要`input_variables`和`template`参数。
 
 输入：
 
@@ -360,9 +363,9 @@ français.", additional_kwargs={}, example=False)
 
 # 输出解析器
 
-在 第三章 中，你使用了正则表达式 (regex) 从包含数字列表的文本中提取结构化数据，但在 LangChain 中使用 *输出解析器* 可以自动完成此操作。
+在第三章中，你使用了正则表达式 (regex) 从包含数字列表的文本中提取结构化数据，但在 LangChain 中使用*输出解析器*可以自动完成此操作。
 
-*输出解析器* 是 LangChain 提供的用于从 LLM 字符串响应中解析结构化数据的高级抽象。目前可用的输出解析器包括：
+*输出解析器*是 LangChain 提供的用于从 LLM 字符串响应中解析结构化数据的高级抽象。目前可用的输出解析器包括：
 
 列表解析器
 
@@ -406,7 +409,7 @@ XML 解析器
 
 此函数负责将你的 LLM 响应解析为预定义的格式。
 
-通常，你会发现使用 `ChatOpenAI()` 的 Pydantic (JSON) 解析器提供了最大的灵活性。
+通常，你会发现使用`ChatOpenAI()`的 Pydantic (JSON) 解析器提供了最大的灵活性。
 
 Pydantic（JSON）解析器利用 Python 中的[Pydantic](https://oreil.ly/QIMih)库。Pydantic 是一个数据验证库，它提供了一种使用 Python 类型注解验证传入数据的方法。这意味着 Pydantic 允许您为您的数据创建模式，并自动根据这些模式验证和解析输入数据。
 
@@ -479,7 +482,7 @@ BusinessName(name='SciData', rating_score=8.1),
 BusinessName(name='InfoMax', rating_score=9.5)]
 ```
 
-在加载必要的库之后，您将设置一个 ChatOpenAI 模型。然后从您的模板创建`SystemMessagePromptTemplate`，并使用它形成一个`ChatPromptTemplate`。您将使用 Pydantic 模型`BusinessName`和`BusinessNames`来结构化您期望的输出，即独特的公司名称列表。您将为这些模型创建一个`Pydantic`解析器，并通过调用`invoke`函数使用用户输入的变量来格式化提示。将这个定制的提示输入到模型中，您就使它能够通过使用`parser`生成创造性的、独特的公司名称。
+在加载必要的库之后，您将设置一个`ChatOpenAI`模型。然后从您的模板创建`SystemMessagePromptTemplate`，并使用它形成一个`ChatPromptTemplate`。您将使用 Pydantic 模型`BusinessName`和`BusinessNames`来结构化您期望的输出，即独特的公司名称列表。您将为这些模型创建一个`Pydantic`解析器，并通过调用`invoke`函数使用用户输入的变量来格式化提示。将这个定制的提示输入到模型中，您就使它能够通过使用`parser`生成创造性的、独特的公司名称。
 
 您可以在 LCEL 中使用以下语法使用输出解析器：
 
@@ -533,17 +536,27 @@ names=[BusinessName(name='DataTech', rating_score=9.5),...]
 
 评估指标不仅对提示测试有用，还可以用于识别用于检索的正负示例，以及构建用于微调自定义模型的训练数据集。
 
-大多数评估指标都依赖于一组测试用例，这些测试用例是已知正确答案的输入和输出配对。通常，这些参考答案是由人工创建或整理的，但使用更智能的模型（如 GPT-4）生成真实答案的做法也很常见，以下示例就是这样做的。给定一系列金融交易的描述，我们使用 GPT-4 对每个交易进行分类，并赋予 `transaction_category` 和 `transaction_type`。该过程可以在书籍的 [GitHub 仓库](https://oreil.ly/a4Hut) 中的 `langchain-evals.ipynb` Jupyter Notebook 中找到。
+大多数评估指标都依赖于一组测试用例，这些测试用例是已知正确答案的输入和输出配对。通常，这些参考答案是由人工创建或整理的，但使用更智能的模型（如 GPT-4）生成真实答案的做法也很常见，以下示例就是这样做的。给定一系列金融交易的描述，我们使用 GPT-4 对每个交易进行分类，并赋予`transaction_category`和`transaction_type`。该过程可以在书籍的 [GitHub 仓库](https://oreil.ly/a4Hut) 中的`langchain-evals.ipynb`Jupyter Notebook 中找到。
 
-以 GPT-4 的答案作为正确答案，现在可以评估 GPT-3.5-turbo 和 Mixtral 8x7b（在 API 中称为 `mistral-small`）等较小模型的准确性。如果您能够使用较小模型达到足够的准确性，您可以节省资金或减少延迟。此外，如果该模型是开源的，如 [Mistral 的模型](https://oreil.ly/Ec578)，您可以将该任务迁移到您自己的服务器上运行，从而避免将可能敏感的数据发送到组织外部。我们建议在尝试自托管 OS 模型之前，先使用外部 API 进行测试。
+以 GPT-4 的答案作为正确答案，现在可以评估 GPT-3.5-turbo 和 Mixtral 8x7b（在 API 中称为`mistral-small`）等较小模型的准确性。如果您能够使用较小模型达到足够的准确性，您可以节省资金或减少延迟。此外，如果该模型是开源的，如 [Mistral 的模型](https://oreil.ly/Ec578)，您可以将该任务迁移到您自己的服务器上运行，从而避免将可能敏感的数据发送到组织外部。我们建议在尝试自托管 OS 模型之前，先使用外部 API 进行测试。
 
 [请记住注册](https://mistral.ai) 并订阅以获取 API 密钥；然后通过在终端中输入以下命令将其作为环境变量公开：
 
-+   `**export MISTRAL_API_KEY=api-key**`
++   `export MISTRAL_API_KEY=api-key`
 
-以下脚本是笔记本的一部分，该笔记本之前已定义了一个名为 `df` 的数据框。为了简洁起见，让我们只调查脚本的评估部分，假设已经定义了数据框。
+以下脚本是笔记本的一部分，该笔记本之前已定义了一个名为`df`的数据框。为了简洁起见，让我们只调查脚本的评估部分，假设已经定义了数据框。
 
 输入：
+
+
+
+# 使用 LangChain 评估 Mistral 交易分类结果
+
+## 代码执行步骤解析
+
+以下代码演示了如何使用 Mistral 模型对银行交易进行分类，并使用 LangChain 进行评估。
+
+### 1. 导入必要的库
 
 ```py
 import os
@@ -553,13 +566,24 @@ from langchain_core.prompts import ChatPromptTemplate
 from pydantic.v1 import BaseModel
 from typing import Literal, Union
 from langchain_core.output_parsers import StrOutputParser
+```
 
-# 1\. Define the model:
+- `from langchain_mistralai.chat_models import ChatMistralAI`：导入 LangChain 的 Mistral 实现。
+- `from langchain.output_parsers import PydanticOutputParser`：导入 `PydanticOutputParser` 类，用于使用 Pydantic 模型解析输出。同时导入字符串输出解析器，用于处理从 Mistral 获取的响应中移除反斜杠的中间步骤（这是 Mistral 响应中常见的问题）。
+
+### 2. 初始化模型
+
+```py
 mistral_api_key = os.environ["MISTRAL_API_KEY"]
-
 model = ChatMistralAI(model="mistral-small", mistral_api_key=mistral_api_key)
+```
 
-# 2\. Define the prompt:
+- `mistral_api_key = os.environ["MISTRAL_API_KEY"]`：从环境变量中检索 Mistral API 密钥。在运行笔记本之前需要设置此变量。
+- `model = ChatMistralAI(model="mistral-small", mistral_api_key=mistral_api_key)`：使用指定的模型和 API 密钥初始化 `ChatMistralAI` 实例。Mistral Small 是他们在 API 中对 Mixtral 8x7b 模型的称呼（也是开源的）。
+
+### 3. 定义提示模板
+
+```py
 system_prompt = """You are are an expert at analyzing
 bank transactions, you will be categorizing a single
 transaction.
@@ -573,18 +597,17 @@ user_prompt = """Transaction Text:
 
 prompt = ChatPromptTemplate.from_messages(
     [
-        (
-            "system",
-            system_prompt,
-        ),
-        (
-            "user",
-            user_prompt,
-        ),
+        ("system", system_prompt),
+        ("user", user_prompt),
     ]
 )
+```
 
-# 3\. Define the pydantic model:
+`system_prompt` 和 `user_prompt`：这些行定义了在聊天中用于分类交易的系统和用户提示模板。
+
+### 4. 定义 Pydantic 模型
+
+```py
 class EnrichedTransactionInformation(BaseModel):
     transaction_type: Union[
         Literal["Purchase", "Withdrawal", "Deposit",
@@ -595,18 +618,31 @@ class EnrichedTransactionInformation(BaseModel):
         "Utilities", "Rent", "Other"],
         None,
     ]
+```
 
-# 4\. Define the output parser:
+`class EnrichedTransactionInformation(BaseModel)`：定义一个 Pydantic 模型 `EnrichedTransactionInformation`，包含两个字段：`transaction_type` 和 `transaction_category`，每个字段都有特定的允许值，并且可能为 `None`。这正是告诉我们输出是否处于正确格式的依据。
+
+### 5. 定义输出解析器
+
+```py
 output_parser = PydanticOutputParser(
     pydantic_object=EnrichedTransactionInformation)
+```
 
-# 5\. Define a function to try to fix and remove the backslashes:
+### 6. 定义清理函数
+
+```py
 def remove_back_slashes(string):
     # double slash to escape the slash
     cleaned_string = string.replace("\\", "")
     return cleaned_string
+```
 
-# 6\. Create an LCEL chain that fixes the formatting:
+`def remove_back_slashes(string)`：定义一个函数，用于从字符串中删除反斜杠。
+
+### 7. 创建 LCEL 链
+
+```py
 chain = prompt | model | StrOutputParser() \
 | remove_back_slashes | output_parser
 
@@ -618,8 +654,15 @@ result = chain.invoke(
             output_parser.get_format_instructions(),
         }
     )
+```
 
-# 7\. Invoke the chain for the whole dataset:
+`chain = prompt | model | StrOutputParser() | remove_back_slashes | output_parser`：更新链，包括一个字符串输出解析器和 `remove_back_slashes` 函数，在原始输出解析器之前。
+
+`transaction = df.iloc[0]["Transaction Description"]`：从数据框 `df` 中提取第一条交易描述。这个数据框在之前的 [Jupyter Notebook](https://oreil.ly/-koAO) 中已加载（为了简洁起见省略）。
+
+### 8. 遍历整个数据集
+
+```py
 results = []
 
 for i, row in tqdm(df.iterrows(), total=len(df)):
@@ -639,9 +682,15 @@ for i, row in tqdm(df.iterrows(), total=len(df)):
         )
 
     results.append(result)
+```
 
-# 8\. Add the results to the dataframe, as columns transaction type and
-# transaction category:
+- `for i, row in tqdm(df.iterrows(), total=len(df))`：遍历数据框 `df` 中的每一行，并显示进度条。
+- `result = chain.invoke(...)`：在循环内部，为每个交易调用链。
+- `except`：如果发生异常，将创建一个默认的 `EnrichedTransactionInformation` 对象，其值为 `None`。这些将在评估中被视为错误，但不会中断处理循环。
+
+### 9. 添加结果到数据框
+
+```py
 transaction_types = []
 transaction_categories = []
 
@@ -655,7 +704,9 @@ df["mistral_transaction_category"] = transaction_categories
 df.head()
 ```
 
-输出：
+`df["mistral_transaction_type"] = transaction_types`, `df["mistral_transaction_category"] = transaction_categories`：在数据框中添加交易类型和类别作为新列，然后我们使用 `df.head()` 显示它们。
+
+### 输出示例
 
 ```py
 Transaction Description	transaction_type
@@ -673,39 +724,13 @@ Withdrawal	Other
 Purchase	Entertainment
 ```
 
-代码执行以下操作：
-
-1.  `from langchain_mistralai.chat_models import ChatMistralAI`：我们导入 LangChain 的 Mistral 实现。
-
-1.  `from langchain.output_parsers import PydanticOutputParser`：导入 `PydanticOutputParser` 类，用于使用 Pydantic 模型解析输出。我们还导入了一个字符串输出解析器，用于处理从 Mistral 获取的响应中移除反斜杠的中间步骤（这是 Mistral 响应中常见的问题）。
-
-1.  `mistral_api_key = os.environ["MISTRAL_API_KEY"]`: 从环境变量中检索 Mistral API 密钥。在运行笔记本之前需要设置此变量。
-
-1.  `model = ChatMistralAI(model="mistral-small", mistral_api_key=mistral_api_key)`: 使用指定的模型和 API 密钥初始化 `ChatMistralAI` 实例。Mistral Small 是他们在 API 中对 Mixtral 8x7b 模型的称呼（也是开源的）。
-
-1.  `system_prompt` 和 `user_prompt`：这些行定义了在聊天中用于分类交易的系统和用户提示模板。
-
-1.  `class EnrichedTransactionInformation(BaseModel)`: 定义一个 Pydantic 模型 `EnrichedTransactionInformation`，包含两个字段：`transaction_type` 和 `transaction_category`，每个字段都有特定的允许值，并且可能为 `None`。这正是告诉我们输出是否处于正确格式的依据。
-
-1.  `def remove_back_slashes(string)`: 定义一个函数，用于从字符串中删除反斜杠。
-
-1.  `chain = prompt | model | StrOutputParser() | remove_back_slashes | output_parser`: 更新链，包括一个字符串输出解析器和 `remove_back_slashes` 函数，在原始输出解析器之前。
-
-1.  `transaction = df.iloc[0]["Transaction Description"]`: 从数据框 `df` 中提取第一条交易描述。这个数据框在之前的 [Jupyter Notebook](https://oreil.ly/-koAO) 中已加载（为了简洁起见省略）。
-
-1.  `for i, row in tqdm(df.iterrows(), total=len(df))`: 遍历数据框 `df` 中的每一行，并显示进度条。
-
-1.  `result = chain.invoke(...)`: 在循环内部，为每个交易调用链。
-
-1.  `except`: 如果发生异常，将创建一个默认的 `EnrichedTransactionInformation` 对象，其值为 `None`。这些将在评估中被视为错误，但不会中断处理循环。
-
-1.  `df["mistral_transaction_type"] = transaction_types`, `df["mistral_transaction_category"] = transaction_categories`: 在数据框中添加交易类型和类别作为新列，然后我们使用 `df.head()` 显示它们。
+## 评估 Mistral 的准确性
 
 将 Mistral 的响应保存在数据框中后，可以将其与之前定义的交易类别和类型进行比较，以检查 Mistral 的准确性。最基础的 LangChain 评估指标是对预测结果与参考答案进行精确字符串匹配，如果匹配正确则返回分数 1，如果错误则返回 0。笔记本提供了一个如何[实现此功能](https://oreil.ly/vPUfI)的示例，这表明 Mistral 的准确率为 77.5%。然而，如果你只是比较字符串，你可能不需要在 LangChain 中实现它。
 
 LangChain 的价值在于其标准化和经过测试的方法，用于使用 LLM 实现更高级的评估器。`labeled_pairwise_string`评估器比较两个输出，并给出选择它们的原因，使用 GPT-4。此类评估器的常见用例是比较来自两个不同提示或模型的输出，尤其是如果被测试的模型不如 GPT-4 复杂。使用 GPT-4 的此评估器仍然可以用于评估 GPT-4 的响应，但您应该手动审查推理和评分以确保其表现良好：如果 GPT-4 在某个任务上表现不佳，它也可能在评估该任务上表现不佳。在[notebook](https://oreil.ly/9O7Mb)中，相同的交易分类再次运行，但模型已更改为`model = ChatOpenAI(model="gpt-3.5-turbo-1106", model_kwargs={"response_format": {"type": "json_object"}})`。现在可以进行 Mistral 和 GPT-3.5 响应的成对比较，如下例所示。您可以在输出中看到用于证明评分的推理。
 
-输入：
+### 输入
 
 ```py
 # Evaluate answers using LangChain evaluators:
@@ -776,7 +801,9 @@ evaluator.evaluate_string_pairs(
 )
 ```
 
-输出：
+### 输出
+
+
 
 ```py
 {'reasoning': '''Both Assistant A and Assistant B provided the exact same
@@ -792,41 +819,41 @@ it\'s a tie between the two assistants. \n\nFinal Verdict: [[C]]''',
 
 此代码演示了 LangChain 中的简单精确字符串匹配评估器：
 
-1.  `evaluator = load_evaluator("labeled_pairwise_string")`: 这是一个辅助函数，可以用来通过名称加载任何 LangChain 评估器。在这种情况下，使用的是`labeled_pairwise_string`评估器。
+1. `evaluator = load_evaluator("labeled_pairwise_string")`：这是一个辅助函数，可以用来通过名称加载任何 LangChain 评估器。在这种情况下，使用的是`labeled_pairwise_string`评估器。
 
-1.  `row = df.iloc[0]`: 这一行以及随后的七行代码获取第一行并提取所需的不同列的值。这包括交易描述，以及 Mistral 和 GPT-3.5 的交易类别和类型。这展示了单个交易，但这段代码可以很容易地通过循环遍历每个交易运行，将此行替换为`iterrows`函数`for i, row in tqdm(df.iterrows(), total=len(df)):`，就像在[notebook](https://oreil.ly/dcCOO)中做的那样。
+2. `row = df.iloc[0]`：这一行以及随后的七行代码获取第一行并提取所需的不同列的值。这包括交易描述，以及 Mistral 和 GPT-3.5 的交易类别和类型。这展示了单个交易，但这段代码可以很容易地通过循环遍历每个交易运行，将此行替换为`iterrows`函数`for i, row in tqdm(df.iterrows(), total=len(df)):`，就像在[notebook](https://oreil.ly/dcCOO)中做的那样。
 
-1.  `gpt3pt5_data = f"""{{`: 要使用成对比较评估器，我们需要以正确格式化的方式传递结果，以便用于提示。这适用于 Mistral 和 GPT-3.5，以及参考数据。
+3. `gpt3pt5_data = f"""{{`：要使用成对比较评估器，我们需要以正确格式化的方式传递结果，以便用于提示。这适用于 Mistral 和 GPT-3.5，以及参考数据。
 
-1.  `input_prompt = """You are an expert...`: 我们还需要正确格式化提示。为了获得准确的评估分数，评估器需要看到为任务提供的说明。
+4. `input_prompt = """You are an expert...`：我们还需要正确格式化提示。为了获得准确的评估分数，评估器需要看到为任务提供的说明。
 
-1.  `evaluator.evaluate_string_pairs(...`: 剩下的就是通过传递`prediction`和`prediction_b`（分别代表 GPT-3.5 和 Mistral）以及`input`提示和`reference`数据（作为真实数据）来运行评估器。
+5. `evaluator.evaluate_string_pairs(...`：剩下的就是通过传递`prediction`和`prediction_b`（分别代表 GPT-3.5 和 Mistral）以及`input`提示和`reference`数据（作为真实数据）来运行评估器。
 
-1.  在[notebook](https://oreil.ly/hW8Wr)中的此代码之后，有一个示例，展示了如何遍历 dataframe 中的每一行并运行评估器，然后将结果和推理保存回 dataframe。
+6. 在[notebook](https://oreil.ly/hW8Wr)中的此代码之后，有一个示例，展示了如何遍历 dataframe 中的每一行并运行评估器，然后将结果和推理保存回 dataframe。
 
 这个例子演示了如何使用 LangChain 评估器，但有许多不同类型的评估器可用。字符串距离 ([Levenshtein](https://oreil.ly/Al5G3)) 或 [嵌入距离](https://oreil.ly/0p_nE) 评估器通常用于答案不是与参考答案完全匹配，但只需要在语义上足够接近的场景。Levenshtein 距离允许基于需要多少单个字符编辑来将预测文本转换为参考文本进行模糊匹配，而嵌入距离则使用向量（在第五章中介绍）来计算答案与参考之间的相似度。
 
 我们在工作中经常使用的另一种评估器是成对比较，这对于比较两个不同的提示或模型非常有用，可以使用像 GPT-4 这样的智能模型。这种比较类型很有帮助，因为每个比较都提供了推理，这有助于调试为什么一个方法被优先考虑而不是另一个。本节[笔记本](https://oreil.ly/iahTJ)展示了使用成对比较评估器检查 GPT-3.5-turbo 的准确度与 Mixtral 8x7b 的示例。
 
-# 评估质量
+## 评估质量
 
 如果没有定义适当的评估指标集来定义成功，就很难判断提示或更广泛系统的更改是否在提高或损害响应的质量。如果你可以使用像 GPT-4 这样的智能模型自动化评估指标，你就可以更快地迭代以改进结果，而无需昂贵的或耗时的手动人工审查。
 
-# OpenAI 函数调用
+## OpenAI 函数调用
 
 *函数调用* 提供了一种输出解析器的替代方法，利用微调后的 OpenAI 模型。这些模型识别何时应该执行函数，并为预定义的函数生成包含 *名称和参数* 的 JSON 响应。几个用例包括：
 
-设计复杂的聊天机器人
+- 设计复杂的聊天机器人
 
-能够组织和管理工作安排。例如，你可以定义一个安排会议的函数：`schedule_meeting(date: str, time: str, attendees: List[str])`。
+  能够组织和管理工作安排。例如，你可以定义一个安排会议的函数：`schedule_meeting(date: str, time: str, attendees: List[str])`。
 
-将自然语言转换为可操作的 API 调用
+- 将自然语言转换为可操作的 API 调用
 
-像这样的命令“打开走廊的灯”可以转换为 `control_device(device: str, action: 'on' | 'off')` 以与你的家庭自动化 API 进行交互。
+  像这样的命令“打开走廊的灯”可以转换为 `control_device(device: str, action: 'on' | 'off')` 以与你的家庭自动化 API 进行交互。
 
-提取结构化数据
+- 提取结构化数据
 
-这可以通过定义一个函数如 `extract_contextual_data(context: str, data_points: List[str])` 或 `search_database(query: str)` 来实现。
+  这可以通过定义一个函数如 `extract_contextual_data(context: str, data_points: List[str])` 或 `search_database(query: str)` 来实现。
 
 在函数调用中使用的每个函数都将需要一个适当的 *JSON 架构*。让我们通过 `OpenAI` 包的例子来探索一下：
 
@@ -873,7 +900,7 @@ functions = [
 ]
 ```
 
-# 指定格式
+### 指定格式
 
 当使用 OpenAI 模型进行函数调用时，始终确保定义一个详细的 JSON 架构（包括名称和描述）。这作为函数的蓝图，指导模型理解何时以及如何正确调用它。
 
@@ -950,19 +977,19 @@ The event ID is 1234.
 
 函数调用时需要注意的几个重要点：
 
-+   LLM 可以调用许多函数。
+- LLM 可以调用许多函数。
 
-+   OpenAI 可以推测函数参数，因此在 `system` 消息中要更加明确，以克服这一点。
+- OpenAI 可以推测函数参数，因此在 `system` 消息中要更加明确，以克服这一点。
 
-+   `function_call` 参数可以以多种方式设置：
+- `function_call` 参数可以以多种方式设置：
 
-    +   强制调用特定函数：`tool_choice: {"type: "function", "function": {"name": "my_function"}}}`。
+  - 强制调用特定函数：`tool_choice: {"type: "function", "function": {"name": "my_function"}}}`。
 
-    +   对于没有函数调用的用户消息：`tool_choice: "none"`。
+  - 对于没有函数调用的用户消息：`tool_choice: "none"`。
 
-    +   默认情况下（`tool_choice: "auto"`），模型会自主决定是否以及调用哪个函数。
+  - 默认情况下（`tool_choice: "auto"`），模型会自主决定是否以及调用哪个函数。
 
-# 并行函数调用
+### 并行函数调用
 
 你可以将你的聊天消息设置为包含请求同时调用多个工具的意图。这种策略被称为 *并行函数调用*。
 
@@ -1028,6 +1055,8 @@ if response.tool_calls:
     print(second_response.choices[0].message.content)
 ```
 
+
+
 输出：
 
 ```py
@@ -1042,7 +1071,7 @@ Two meetings have been scheduled:
 2. Meeting with Charlie and Dave on 2023-11-02 at 15:00.
 ```
 
-从这个例子中，可以看出如何有效地管理多个函数调用。你看到了 `schedule_meeting` 函数连续两次被调用以安排不同的会议。这展示了如何灵活且轻松地使用 AI 工具处理各种复杂请求。
+从这个例子中，可以看出如何有效地管理多个函数调用。你看到了`schedule_meeting`函数连续两次被调用以安排不同的会议。这展示了如何灵活且轻松地使用 AI 工具处理各种复杂请求。
 
 # LangChain 中的函数调用
 
@@ -1109,7 +1138,7 @@ contrarian_points='Without stringent regulations, ...',
 author='Dr. Jane Smith')]
 ```
 
-你将首先导入各种模块，包括`PydanticToolsParser`和`ChatPromptTemplate`，这些对于解析和模板化你的提示至关重要。然后，你将定义一个 Pydantic 模型`Article`，以指定从给定文本中提取信息所需的结构。通过使用自定义提示模板和 ChatOpenAI 模型，你将指示 AI 从文章中提取关键点和相反观点。最后，提取的数据将被整洁地转换为预定义的 Pydantic 模型并打印出来，让你看到从文本中提取的结构化信息。
+你将首先导入各种模块，包括`PydanticToolsParser`和`ChatPromptTemplate`，这些对于解析和模板化你的提示至关重要。然后，你将定义一个 Pydantic 模型`Article`，以指定从给定文本中提取信息所需的结构。通过使用自定义提示模板和`ChatOpenAI`模型，你将指示 AI 从文章中提取关键点和相反观点。最后，提取的数据将被整洁地转换为预定义的 Pydantic 模型并打印出来，让你看到从文本中提取的结构化信息。
 
 有几个关键点，包括：
 
@@ -1311,6 +1340,12 @@ AI: Madrid
 
 输入：
 
+
+
+# 使用 LangChain 进行少样本提示与数据连接
+
+## 少样本提示示例
+
 ```py
 from langchain_core.output_parsers import StrOutputParser
 
@@ -1416,19 +1451,19 @@ Frodo was a young hobbit living a peaceful life in the Shire. However,
 his life...
 ```
 
-# 提供示例并指定格式
+## 提供示例并指定格式
 
 当使用少样本示例时，内容的长度在确定 AI 模型可以考虑到多少示例时很重要。调整输入内容的长度，并提供适当的示例以获得高效的结果，以防止大型语言模型生成可能超过其上下文窗口限制的内容。
 
-在格式化提示后，你使用 `ChatOpenAI()` 创建一个聊天模型，并将格式化后的提示加载到一个 `SystemMessage` 中，创建一个关于《指环王》中弗罗多的简短故事。
+在格式化提示后，你使用`ChatOpenAI()`创建一个聊天模型，并将格式化后的提示加载到一个`SystemMessage`中，创建一个关于《指环王》中弗罗多的简短故事。
 
-而不是创建和格式化一个 `ChatPromptTemplate`，通常简单地调用一个带有格式化提示的 `SystemMessage` 要容易得多：
+而不是创建和格式化一个`ChatPromptTemplate`，通常简单地调用一个带有格式化提示的`SystemMessage`要容易得多：
 
 ```py
 result = model.invoke([SystemMessage(content=formatted_prompt)])
 ```
 
-# 少样本示例的局限性
+## 少样本示例的局限性
 
 少样本学习有其局限性。尽管在某些场景中可能有益，但它并不总是能产生预期的高质量结果。这主要是由于两个原因：
 
@@ -1442,7 +1477,7 @@ result = model.invoke([SystemMessage(content=formatted_prompt)])
 
 如果任务复杂且模型在少样本学习中的表现不令人满意，你可能需要考虑[微调](https://oreil.ly/S40bZ)你的模型。微调使模型对特定任务有更细微的理解，从而显著提高性能。
 
-# 保存和加载 LLM 提示
+## 保存和加载 LLM 提示
 
 为了有效地利用 GPT-4 等生成式 AI 模型，将提示存储为文件而不是 Python 代码是有益的。这种方法增强了提示的可分享性、存储和版本控制。
 
@@ -1466,35 +1501,35 @@ load_prompt("translation_prompt.json")
 # Returns PromptTemplate()
 ```
 
-在从 `langchain.prompts` 模块导入 `PromptTemplate` 和 `load_prompt` 之后，你为英语到西班牙语的翻译任务定义一个 `PromptTemplate` 并将其保存为 *translation_prompt.json*。最后，使用 `load_prompt` 函数加载保存的提示模板，该函数返回一个 `PromptTemplate` 实例。
+在从`langchain.prompts`模块导入`PromptTemplate`和`load_prompt`之后，你为英语到西班牙语的翻译任务定义一个`PromptTemplate`并将其保存为*translation_prompt.json*。最后，使用`load_prompt`函数加载保存的提示模板，该函数返回一个`PromptTemplate`实例。
 
 ###### 警告
 
-请注意，LangChain 的提示保存可能不适用于所有类型的提示模板。为了减轻这种情况，你可以利用 *pickle* 库或 *.txt* 文件来读取和写入 LangChain 不支持的任何提示。
+请注意，LangChain 的提示保存可能不适用于所有类型的提示模板。为了减轻这种情况，你可以利用*pickle*库或*.txt*文件来读取和写入 LangChain 不支持的任何提示。
 
 你已经学会了如何使用 LangChain 通过两种技术创建少量提示模板：固定数量的示例和使用示例选择器。
 
-前者创建一组少量示例，并使用 `ChatPromptTemplate` 对象将这些格式化为聊天消息。这构成了创建 `FewShotChatMessagePromptTemplate` 对象的基础。
+前者创建一组少量示例，并使用`ChatPromptTemplate`对象将这些格式化为聊天消息。这构成了创建`FewShotChatMessagePromptTemplate`对象的基础。
 
-后者方法，即使用示例选择器，当用户输入长度差异显著时很有用。在这种情况下，可以使用 `LengthBasedExampleSelector` 来根据用户输入长度调整示例数量。这确保你的 LLM 不会超过其上下文窗口限制。
+后者方法，即使用示例选择器，当用户输入长度差异显著时很有用。在这种情况下，可以使用`LengthBasedExampleSelector`来根据用户输入长度调整示例数量。这确保你的 LLM 不会超过其上下文窗口限制。
 
 此外，你已经看到存储/加载提示作为文件是多么容易，这增强了可分享性、存储和版本控制。
 
-# 数据连接
+## 数据连接
 
 通过结合 LLM 应用程序和你的数据，可以揭示大量提升效率并细化决策过程的机会。
 
 你的组织数据可能以各种形式呈现：
 
-非结构化数据
+**非结构化数据**
 
 这可能包括 Google Docs、来自 Slack 或 Microsoft Teams 等通信平台的线程、网页、内部文档或 GitHub 上的代码仓库。
 
-结构化数据
+**结构化数据**
 
 数据整齐地存储在 SQL、NoSQL 或图数据库中。
 
-要查询你的非结构化数据，需要加载、转换、嵌入，然后将其存储在向量数据库中的过程。*向量数据库* 是一种专门类型的数据库，旨在高效地存储和查询以向量形式表示的数据，这些向量以适合机器学习和相似性搜索的格式表示复杂数据，如文本或图像。
+要查询你的非结构化数据，需要加载、转换、嵌入，然后将其存储在向量数据库中的过程。*向量数据库*是一种专门类型的数据库，旨在高效地存储和查询以向量形式表示的数据，这些向量以适合机器学习和相似性搜索的格式表示复杂数据，如文本或图像。
 
 对于结构化数据，鉴于其已索引和存储的状态，你可以利用 LangChain 代理在你的数据库上执行中间查询。这允许提取特定特征，然后可以在你的 LLM 提示中使用。
 
@@ -1508,29 +1543,29 @@ load_prompt("translation_prompt.json")
 
 尤其是 LangChain 为你提供了加载、修改、存储和检索数据的必要组件：
 
-文档加载器
+**文档加载器**
 
 这些工具便于上传来自各种来源的信息资源或*文档*，例如 Word 文档、PDF 文件、文本文件，甚至是网页。
 
-文档转换器
+**文档转换器**
 
 这些工具允许对文档进行分段、转换为问答布局、消除冗余文档等。
 
-文本嵌入模型
+**文本嵌入模型**
 
 这些工具可以将非结构化文本转换为浮点数序列，这些序列用于向量存储库进行相似度搜索。
 
-向量数据库（向量存储库）
+**向量数据库（向量存储库）**
 
 这些数据库可以保存并执行对嵌入数据的搜索。
 
-检索器
+**检索器**
 
 这些工具提供了查询和检索数据的能力。
 
 值得注意的是，其他 LLM 框架如[LlamaIndex](https://oreil.ly/9NcTB)与 LangChain 无缝协作。[LlamaHub](https://llamahub.ai)是另一个致力于文档加载器的开源库，可以创建 LangChain 特定的`Document`对象。
 
-# 文档加载器
+## 文档加载器
 
 让我们假设你被分配了一个为 NutriFusion Foods 构建 LLM 数据收集管道的任务。你需要为 LLM 收集的信息包含在以下内容中：
 
@@ -1545,6 +1580,8 @@ load_prompt("translation_prompt.json")
 除了*.docx*文件之外的所有数据都可以在[*content/chapter_4/data*](https://oreil.ly/u9gMx)中找到。你可以先导入所有各种数据加载器，并创建一个空的`all_documents`列表来存储来自你数据源的所有`Document`对象。
 
 输入：
+
+
 
 ```py
 from langchain_community.document_loaders import Docx2txtLoader
@@ -1811,21 +1848,23 @@ splitted_docs = text_splitter.split_documents(docs)
 
 内容生成
 
+
+
 对于生成长篇内容，如文章或博客，任务可以分解为生成提纲、撰写各个部分，然后编译和精炼最终草稿。每个步骤都可以由 GPT-4 独立管理，以获得更好的结果。
 
-大型文档摘要
+## 大型文档摘要
 
 通过将任务分解为几个更小的任务，如理解各个部分、独立总结它们，然后编译最终摘要，可以更有效地总结像研究论文或报告这样篇幅较长的文档。
 
-交互式对话代理
+## 交互式对话代理
 
 对于创建高级聊天机器人，任务分解可以帮助管理对话的不同方面，如理解用户输入、保持上下文、生成相关响应和管理对话流程。
 
-学习和辅导系统
+## 学习和辅导系统
 
 在数字辅导系统中，将教授一个概念的任务分解为理解学习者的当前知识、识别差距、建议学习材料和评估进度可以使系统更有效。每个子任务都可以利用 GPT-4 的生成能力。
 
-![.使用 GPT-4 进行任务分解](img/pega_0403.png)
+![使用 GPT-4 进行任务分解](img/pega_0403.png)
 
 ###### 图 4-3\. 使用 LLMs 进行任务分解
 
@@ -1842,9 +1881,7 @@ splitted_docs = text_splitter.split_documents(docs)
 让我们想象一个例子，一个电影公司希望部分自动化他们的电影制作。这可以分解成几个关键组成部分，例如：
 
 +   角色创建
-
 +   情节生成
-
 +   场景/世界构建
 
 图 4-4 显示了提示工作流程可能的样子。
@@ -2108,7 +2145,9 @@ summarize_prompt = ChatPromptTemplate.from_template(
 
 从技术上讲，你可以异步生成所有场景。然而，了解每个角色在**前一个场景中做了什么**以避免重复点是很有益的。
 
-因此，你可以创建两个 LCEL 链，一个用于每个场景生成角色剧本，另一个用于前一个场景的总结：
+因此，你可以创建两个 LCEL 链，一个用于每个场景生成角色剧本，另一个用于前一个场景的总结。
+
+
 
 ```py
 # Loading a chat model:

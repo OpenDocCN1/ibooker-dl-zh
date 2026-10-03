@@ -1,3 +1,5 @@
+
+
 # 第四章\. 使用 PyTorch 的数据
 
 在本书的前三章中，你使用各种数据训练模型，从通过 API 方便地捆绑的 Fashion MNIST 数据集，到基于图像的“马或人”和“狗与猫”数据集，这些数据集作为 ZIP 文件提供，你需要下载并预处理。因此，到现在你可能已经意识到，有无数种方式获取用于训练模型的数据。
@@ -9,7 +11,6 @@
 ```py
 train_dataset = datasets.FashionMNIST(root='./data', train=True,
                              download=True, transform=transform)
-
 ```
 
 在这个数据集的情况下，我们还从 torchvision 库中导入以获取包含 Fashion MNIST 引用的数据集对象：
@@ -22,32 +23,32 @@ from torchvision import datasets
 
 PyTorch 有许多其他不同类型的数据集，可以以相同的方式加载。以下是一些：
 
-视觉
+**视觉**
 
 Fashion MNIST 位于前面提到的 torchvision 库中。它是“图像分类”内置数据集之一，但还有更多适用于其他场景的数据集，如图像检测、分割、光流、立体匹配、图像配对、图像描述、视频分类、视频预测等。
 
-文本
+**文本**
 
 在 torchtext 库中可以找到常见的文本数据集。这里列出的太多，无法一一列举，但包括文本分类、语言模型、机器翻译、序列标注、问答和未监督学习等。更多详情可以在[PyTorch 文档](https://oreil.ly/aFamN)中找到。请注意，这个库不仅限于数据集；它还包含许多辅助函数，这些函数在处理文本时你会用到。
 
-*音频*
+**音频**
 
 torchaudio 库包含许多数据集，可以在机器学习场景中用于声音或语音。详细信息可以在[PyTorch 文档](https://oreil.ly/tvDe4)中找到。
 
 所有数据集都是`torch.utils.data.Dataset`的子类，因此查看这个库并深入了解它非常重要。这将帮助你不仅消费现有的数据集，还可以创建自己的数据集与他人分享。
 
-# 开始使用数据集
+## 开始使用数据集
 
 `torch.utils.data.Dataset`是一个表示数据集的抽象类。要创建自定义数据集，你只需将其子类化并实现这些方法：
 
 ```py
-__len__(self) 
+__len__(self)
 ```
 
 这应该返回你数据集中的项目总数：
 
 ```py
-__getitem__(self, index) 
+__getitem__(self, index)
 ```
 
 这应该从你的数据集中返回指定索引的单个项目。在将其发送到模型之前，该项目将被转换。
@@ -80,7 +81,7 @@ class CustomDataset(Dataset):
 # Generate synthetic data
 torch.manual_seed(0)  # For reproducibility
 x = torch.arange(0, 100, dtype=torch.float32)
-y = 2 * x – 1
+y = 2 * x - 1
 ```
 
 然后，我们可以将其转换为如下所示的数据集：
@@ -89,26 +90,26 @@ y = 2 * x – 1
 class CustomDataset(Dataset):
     def __init__(self, x, y):
         """
- Initialize the dataset with x and y values.
- Arguments:
- x (torch.Tensor): The input features.
- y (torch.Tensor): The output labels.
- """
+        Initialize the dataset with x and y values.
+        Arguments:
+        x (torch.Tensor): The input features.
+        y (torch.Tensor): The output labels.
+        """
         self.x = x
         self.y = y
 
     def __len__(self):
         """
- Return the total number of samples in the dataset.
- """
+        Return the total number of samples in the dataset.
+        """
         return len(self.x)
 
     def __getitem__(self, idx):
         """
- Fetch the sample at index `idx` from the dataset.
- Arguments:
- idx (int): The index of the sample to retrieve.
- """
+        Fetch the sample at index `idx` from the dataset.
+        Arguments:
+        idx (int): The index of the sample to retrieve.
+        """
         return self.x[idx], self.y[idx]
 ```
 
@@ -133,7 +134,7 @@ for batch_idx, (inputs, labels) in enumerate(data_loader):
 
 在这个基础上，你现在可以探索自本章开始以来在各个库中提供的数据集类。鉴于它们将基于或扩展此类，API 应该看起来很熟悉。
 
-# 探索 FashionMNIST 类
+## 探索 FashionMNIST 类
 
 在本书的早期，我们看到了`FashionMNIST`类——它提供了访问 Fashion-MNIST 数据集的权限，这是一个包含 10 类服装 60,000 个示例的训练集，以及一个包含 10,000 个示例的配套测试集。每个示例都是一个 28 × 28 的灰度图像。
 
@@ -147,11 +148,11 @@ fashion_mnist_train = datasets.FashionMNIST(root='./data', train=True,
 
 当你设置`train=True`时，覆盖类初始化方法的代码将获取 60,000 条记录并将其返回给调用者。其他参数包括指定数据应存放的根目录，甚至是否下载数据。最后，正如你通常在下载数据时看到的，还有`transform=`参数。正如你在前面的基类中看到的，当设置此参数时，它将作为所有数据集的可选参数，并在设置时应用转换。
 
-# 通用数据集类
+## 通用数据集类
 
 你可能需要使用在数据集类中不可用的某些数据，例如`FashionMNIST`，但你也会想利用数据生态系统中的一切——例如，转换你的数据的能力，像拆分这样的东西，以及你将在本章后面看到的`DataLoader`类中的所有好东西。为此，`torch.utils.data`提供了一系列通用的数据集类，你可以使用。
 
-## ImageFolder
+### ImageFolder
 
 在第三章中，我们使用了“马或人”、“石头、剪刀、布”和“猫对狗”数据集，这些数据集不是直接作为类提供的，而是作为包含图像的 ZIP 文件。当我们下载并将它们保存到不同图像类型的子目录中（例如，“马”一个文件夹，“人”另一个文件夹）时，通用的`ImageFolder`数据集类可以充当我们的数据集。
 
@@ -174,7 +175,7 @@ dataset.class_to_idx = custom_class_to_idx
 print(dataset.class_to_idx)
 ```
 
-## DatasetFolder
+### DatasetFolder
 
 `ImageFolder` 实际上是更通用的 `DatasetFolder` 类的一个子类，它针对图像进行了定制。`DatasetFolder` 类不仅限于图像数据，你可以用它来处理任何东西。它还允许你使用目录作为标签。例如，假设你有一些包含不同类别文本的文本文件，其目录结构如下：
 
@@ -188,7 +189,7 @@ root/factual/factdoc2.doc
 
 然后，你可以使用 `DatasetFolder` 按正确的标签流式传输文档。此外，因为这个类是基于文档的，所以你可以应用转换来从文件中提取信息！
 
-## FakeData
+### FakeData
 
 `FakeData` 是一个有用的通用数据集，正如其名称所暗示的，为你提供虚假数据。在撰写本文时，它仅支持创建虚假图像数据。如果你没有数据但想实验不同的架构，或者如果你想对你的系统进行基准测试，它也非常有用。
 
@@ -218,7 +219,7 @@ data_loader = DataLoader(fake_dataset, batch_size=10, shuffle=True)
 
 虽然 `FakeData` 只提供图像类型，但你相对容易地创建自己的 CustomData（如我们之前所看到的）以提供其他格式的虚假数据，例如数值或序列数据。
 
-# 使用自定义拆分
+## 使用自定义拆分
 
 到目前为止，你用来构建模型的所有数据都已经预先为你分割成训练集和测试集。例如，对于 Fashion MNIST，你有 60,000 和 10,000 条记录。但如果你不想使用这些分割怎么办？如果你想根据自己的需求来分割数据怎么办？
 
@@ -244,7 +245,7 @@ train_count = int(0.7 * total_count)
 val_count = int(0.15 * total_count)
 
 # Ensures all data is used
-test_count = total_count – train_count – val_count  
+test_count = total_count - train_count - val_count  
 
 train_dataset, val_dataset, test_dataset = 
      random_split(dataset, [train_count, val_count, test_count])
@@ -260,25 +261,28 @@ train_dataset, val_dataset, test_dataset =
 
 在使用自定义拆分时，还有一点需要考虑的是，名称 `random` 并不意味着这种方法会 *洗牌* 或随机化你的数据集。它只是在随机点切割数据集，以便每次都提供不同的切片。如果你还想对数据集进行洗牌，你可以在数据加载器中这样做，我们将在下一节中探讨。
 
-# 机器学习中管理数据的 ETL 过程
+## 机器学习中管理数据的 ETL 过程
 
 *提取、传输、加载*（ETL）是训练机器学习模型的核心理念，无论规模大小。我们在本书中探索了小规模、单机模型构建，但我们可以使用相同的技术在多台机器上执行大规模训练，并处理大量数据集。
 
 提取、传输、加载（ETL）过程由其名称中的三个阶段组成：
 
-提取阶段
+**提取阶段**
 
 当原始数据从存储位置加载并准备以进行转换时，就会发生这种情况。
 
-转换阶段
+**转换阶段**
 
 当数据以使其适合或改进训练的方式进行操作时，就会发生这种情况。例如，批处理、图像增强、映射到特征列以及其他应用于数据的此类逻辑可以被认为是这一阶段的一部分。
 
-加载阶段
+**加载阶段**
 
 这发生在数据被加载到神经网络进行训练时。
 
 考虑我们用来训练“马或人”分类器的 第三章 中的代码。在代码的顶部，你看到了这样的片段：
+
+
+
 
 ```py
 # Define transformations
@@ -309,11 +313,11 @@ val_loader = DataLoader(val_dataset, batch_size=32, shuffle=True)
 
 这就是代码中体现的 ETL 模式！
 
-代码首先定义了 `transform`（“T”），但活跃的代码直到 `Load the datasets` 注释下的行才开始。仔细看看这里，你会看到 `ImageFolder` 正在被用来 *提取* 数据，这些数据位于磁盘上的静态位置。
+代码首先定义了`transform`（“T”），但活跃的代码直到`Load the datasets`注释下的行才开始。仔细看看这里，你会看到`ImageFolder`正在被用来*提取*数据，这些数据位于磁盘上的静态位置。
 
-然后，随着数据的提取，我们定义的 `transform` 被应用。
+然后，随着数据的提取，我们定义的`transform`被应用。
 
-然后，在 `Data loaders` 注释下，我们使用定义好的 `train_loader` 和 `val_loader` 来执行数据的 *加载*。严格来说，实际的加载直到我们执行训练循环以从加载器中提取数据时才会发生。
+然后，在`Data loaders`注释下，我们使用定义好的`train_loader`和`val_loader`来执行数据的*加载*。严格来说，实际的加载直到我们执行训练循环以从加载器中提取数据时才会发生。
 
 了解这一点很重要，使用这个过程可以使你的数据管道对数据及其底层模式的变化不那么敏感。当你使用这种方法提取数据时，无论数据是否足够小以适应内存，或者足够大以至于即使在简单的机器上也无法容纳，都会使用相同的底层结构。应用转换的 API 也是一致的，所以无论底层数据源如何，你都可以使用类似的 API。当然，一旦数据被转换，加载数据的过程也是一致的，无论你的训练后端是什么。
 
@@ -323,7 +327,7 @@ val_loader = DataLoader(val_dataset, batch_size=32, shuffle=True)
 
 当你在训练模型时，让我们更仔细地看看 ETL 流程。我们可以认为数据的提取和转换可以在任何处理器上进行，包括 CPU。实际上，你在这些阶段使用的代码来执行诸如下载数据、解压缩以及逐条记录地处理这些记录的任务并不是 GPU 和 TPU 设计来完成的，所以代码很可能会在 CPU 上执行。然而，当涉及到训练时，你可以从 GPU 或 TPU 获得巨大的好处，所以如果可能的话，使用一个来处理这个阶段是有意义的。因此，在你有 GPU 或 TPU 的情况下，理想情况下你应该在 CPU 和 GPU/TPU 之间分配工作量，提取和转换在 CPU 上进行，而加载在 GPU/TPU 上进行。
 
-如果你探索这本书中使用的代码，你会注意到我们使用了 `.to(device)` 方法。无论你是在处理训练或推理，并且希望数据或模型在加速器上，你都会看到类似 `.to(“cuda”)` 的内容，但对于提取和转换，你不会看到它，因为这会浪费 GPU 的资源。
+如果你探索这本书中使用的代码，你会注意到我们使用了`.to(device)`方法。无论你是在处理训练或推理，并且希望数据或模型在加速器上，你都会看到类似`.to("cuda")`的内容，但对于提取和转换，你不会看到它，因为这会浪费 GPU 的资源。
 
 假设你正在处理一个大型数据集。假设它非常大，以至于你必须分批准备数据（即进行提取和转换），你最终会得到如图 图 4-1 所示的情况。当第一批数据正在准备时，GPU 或 TPU 是空闲的。然后，当该批次准备好后，你可以将其发送到 GPU/TPU 进行训练，但此时 CPU 将处于空闲状态，直到训练完成并开始准备第二批数据。这里有大量的空闲时间，因此我们可以看到有优化的空间。
 
@@ -343,11 +347,11 @@ val_loader = DataLoader(val_dataset, batch_size=32, shuffle=True)
 
 # 使用 DataLoader 类
 
-我们已经多次看到了 `DataLoader` 类，但现在深入了解一下它，可以帮助你在机器学习工作流程中充分利用它。它提供了以下你可以使用的功能。
+我们已经多次看到了`DataLoader`类，但现在深入了解一下它，可以帮助你在机器学习工作流程中充分利用它。它提供了以下你可以使用的功能。
 
 ## 批处理
 
-直观地，你可能认为前向传递一次处理一个数据项。你*可以*这样做，但一些优化器，如随机梯度下降，当输入以批次形式传递时，效果会更好，这样它们可以更准确地计算。批处理还可以加快你在使用固定内存大小的 GPU 上的训练速度。最有效的方法是通过拥有一个完全适合该内存的数据批次来最大化使用该内存。如果你使用 `DataLoader`，批处理只是设置一个参数的问题。
+直观地，你可能认为前向传递一次处理一个数据项。你*可以*这样做，但一些优化器，如随机梯度下降，当输入以批次形式传递时，效果会更好，这样它们可以更准确地计算。批处理还可以加快你在使用固定内存大小的 GPU 上的训练速度。最有效的方法是通过拥有一个完全适合该内存的数据批次来最大化使用该内存。如果你使用`DataLoader`，批处理只是设置一个参数的问题。
 
 ## 打乱顺序
 
@@ -392,7 +396,7 @@ from torch.utils.data import DataLoader
 
 # DataLoader with multiple workers
 data_loader = DataLoader(dataset, batch_size=64, shuffle=True, 
-                         `num_workers``=``4`)
+                         num_workers=4)
 ```
 
 注意`num_workers=4`参数，这将创建四个子进程来并行同时加载数据。根据你拥有的硬件、核心数量以及 CPU 的速度等因素，你可以尝试调整这个数字以减少整体瓶颈。
@@ -437,7 +441,7 @@ train(model, data_loader)
 
 # 摘要
 
-本章介绍了 PyTorch 中的数据生态系统，并介绍了 `dataset` 和 `DataLoader` 类。你看到了它们如何使用通用的 API 和通用的格式来帮助减少你需要编写的代码量，以便访问数据，你也看到了如何使用 ETL 流程，这是 PyTorch 训练模型时通用设计模式的核心。特别是，我们探讨了并行化数据的提取、转换和加载，以提高训练性能。
+本章介绍了 PyTorch 中的数据生态系统，并介绍了`dataset`和`DataLoader`类。你看到了它们如何使用通用的 API 和通用的格式来帮助减少你需要编写的代码量，以便访问数据，你也看到了如何使用 ETL 流程，这是 PyTorch 训练模型时通用设计模式的核心。特别是，我们探讨了并行化数据的提取、转换和加载，以提高训练性能。
 
 现在你已经有机会查看这个过程了，看看你能否创建自己的数据集！也许可以从你相册中的照片、一些测试，或者像我们这里一样随机噪声中创建。
 

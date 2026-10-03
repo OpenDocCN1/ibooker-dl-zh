@@ -1,10 +1,12 @@
+
+
 # 前言
 
 2022 年 11 月 30 日，总部位于旧金山的公司 OpenAI[公开发布了 ChatGPT](https://oreil.ly/uAnsr)—这是一个病毒式 AI 聊天机器人，可以像人类一样生成内容、回答问题和解决问题。自发布以来两个月内，ChatGPT 吸引了超过[1 亿每月活跃用户](https://oreil.ly/ATsLe)，这是新消费技术应用的最高采用率（到目前为止）。ChatGPT 是一个由 OpenAI 的 GPT-3.5 系列大型语言模型（LLM）的指令和对话调整版本驱动的聊天机器人体验。我们很快就会接触到这些概念的定义。
 
-###### 注意
-
-使用或不用 LangChain 构建 LLM 应用都需要使用 LLM。在这本书中，我们将使用 OpenAI API 作为我们在代码示例中使用的 LLM 提供商（价格列表可在其[平台](https://oreil.ly/-YYoR)上查看）。与 LangChain 合作的一个好处是，你可以使用 OpenAI 或替代的商业或开源 LLM 提供商来跟随所有这些示例。
+> **注意**
+>
+> 使用或不用 LangChain 构建 LLM 应用都需要使用 LLM。在这本书中，我们将使用 OpenAI API 作为我们在代码示例中使用的 LLM 提供商（价格列表可在其[平台](https://oreil.ly/-YYoR)上查看）。与 LangChain 合作的一个好处是，你可以使用 OpenAI 或替代的商业或开源 LLM 提供商来跟随所有这些示例。
 
 三个月后，OpenAI[发布了 ChatGPT API](https://oreil.ly/DwU7R)，为开发者提供了访问聊天和语音到文本功能的能力。这启动了无数新的应用和技术发展，这些应用和技术发展在*生成式 AI*这个宽松的术语下展开。
 
@@ -14,9 +16,8 @@
 
 LLM 与之前的 ML 算法有两个其他的不同之处：
 
-+   它们在大量数据上进行训练；从头开始训练这些模型会非常昂贵。
-
-+   它们更加灵活。
+- 它们在大量数据上进行训练；从头开始训练这些模型会非常昂贵。
+- 它们更加灵活。
 
 同样的文本生成模型可以用于摘要、翻译、分类等等，而之前的 ML 模型通常是为了特定任务进行训练和使用的。
 
@@ -44,9 +45,9 @@ How many balls are left after splitting 1,234 balls evenly among 123 people?
 
 让我们分解一下术语*大型语言模型*：
 
-+   “大型”指的是这些模型在学习和训练过程中使用的训练数据和参数的大小。例如，OpenAI 的 GPT-3 模型包含 1750 亿个*参数*，这些参数是通过在 4500 太字节文本数据上训练获得的.^(1) 神经网络模型中的*参数*由控制每个*神经元*输出的数字及其与相邻神经元的相对权重组成。（连接到哪些其他神经元的神经元对于每个神经网络架构都是不同的，这超出了本书的范围。）
+- “大型”指的是这些模型在学习和训练过程中使用的训练数据和参数的大小。例如，OpenAI 的 GPT-3 模型包含 1750 亿个*参数*，这些参数是通过在 4500 太字节文本数据上训练获得的.^(1) 神经网络模型中的*参数*由控制每个*神经元*输出的数字及其与相邻神经元的相对权重组成。（连接到哪些其他神经元的神经元对于每个神经网络架构都是不同的，这超出了本书的范围。）
 
-+   *语言模型* 指的是一种计算机算法，经过训练可以接收书面文本（英语或其他语言）并产生书面文本输出（同一种语言或不同的一种）。这些是 *神经网络*，一种类似于人类大脑风格化概念的机器学习模型，最终输出是由许多简单数学函数（称为 *神经元*）的个别输出及其相互连接的组合产生的。如果许多神经元以特定方式组织，并且经过适当的训练过程和训练数据，这将产生一个能够解释单个单词和句子含义的模型，这使得它们可以用于生成合理、可读的书面文本。
+- *语言模型* 指的是一种计算机算法，经过训练可以接收书面文本（英语或其他语言）并产生书面文本输出（同一种语言或不同的一种）。这些是 *神经网络*，一种类似于人类大脑风格化概念的机器学习模型，最终输出是由许多简单数学函数（称为 *神经元*）的个别输出及其相互连接的组合产生的。如果许多神经元以特定方式组织，并且经过适当的训练过程和训练数据，这将产生一个能够解释单个单词和句子含义的模型，这使得它们可以用于生成合理、可读的书面文本。
 
 由于训练数据中英语的普遍性，大多数模型在英语上的表现优于其他说英语较少的语言。通过“更好”我们指的是更容易让它们在英语中产生期望的输出。有一些 LLM 是为多语言输出设计的，例如 [BLOOM](https://oreil.ly/Nq7w0)，它使用更大比例的其他语言的训练数据。有趣的是，即使在以英语为主的训练语料库上训练的 LLM 中，不同语言之间的性能差异也没有预期的那么大。研究人员发现，LLM 能够将其部分语义理解转移到其他语言上。（^(2））
 
@@ -60,31 +61,21 @@ The capital of England is _______.
 
 LLM 将接受该输入文本并预测正确的输出答案为 `London`。这看起来像是魔法，但并非如此。在底层，LLM 估计给定先前单词序列的单词序列的概率。
 
-###### 小贴士
-
-从技术角度讲，该模型基于标记进行预测，而不是基于单词。一个 *标记* 代表文本的原子单位。标记可以代表单个字符、单词、子词，甚至更大的语言单位，具体取决于所使用的特定标记化方法。例如，使用 GPT-3.5 的标记化器（称为 `cl100k`），短语 *good morning dearest friend* 将由 [五个标记](https://oreil.ly/dU83b) 组成（使用 `_` 来表示空格字符）：
-
-`Good`
-
-使用标记 ID `19045`
-
-`_morning`
-
-使用标记 ID `6693`
-
-`_de`
-
-使用标记 ID `409`
-
-`arest`
-
-使用标记 ID `15795`
-
-`_friend`
-
-使用标记 ID `4333`
-
-通常，标记化器（tokenizer）的训练目标是使最常见的单词编码为单个标记，例如，单词*morning*被编码为标记`6693`。不常见的单词或其他语言的单词（通常标记化器是在英语文本上训练的）需要多个标记来编码。例如，单词*dearest*被编码为标记`409, 15795`。对于常见的英语文本，一个标记平均跨越四个字符的文本，或大约四分之三的单词。
+> **小贴士**
+>
+> 从技术角度讲，该模型基于标记进行预测，而不是基于单词。一个 *标记* 代表文本的原子单位。标记可以代表单个字符、单词、子词，甚至更大的语言单位，具体取决于所使用的特定标记化方法。例如，使用 GPT-3.5 的标记化器（称为 `cl100k`），短语 *good morning dearest friend* 将由 [五个标记](https://oreil.ly/dU83b) 组成（使用 `_` 来表示空格字符）：
+>
+> `Good` 使用标记 ID `19045`
+>
+> `_morning` 使用标记 ID `6693`
+>
+> `_de` 使用标记 ID `409`
+>
+> `arest` 使用标记 ID `15795`
+>
+> `_friend` 使用标记 ID `4333`
+>
+> 通常，标记化器（tokenizer）的训练目标是使最常见的单词编码为单个标记，例如，单词*morning*被编码为标记`6693`。不常见的单词或其他语言的单词（通常标记化器是在英语文本上训练的）需要多个标记来编码。例如，单词*dearest*被编码为标记`409, 15795`。对于常见的英语文本，一个标记平均跨越四个字符的文本，或大约四分之三的单词。
 
 LLM 预测能力的驱动引擎被称为*变换器神经网络架构*。3 变换器架构使模型能够处理数据序列，如句子或代码行，并预测序列中最可能出现的下一个单词。变换器的设计是通过考虑每个单词与其他单词的关系来理解句子中每个单词的上下文。这使得模型能够构建对句子、段落等（换句话说，单词序列）的综合理解，即其各部分之间的联合意义。
 
@@ -146,13 +137,13 @@ LLM 预测能力的驱动引擎被称为*变换器神经网络架构*。3 变换
 
 为了跟随本节内容，我们建议您将这些提示复制到 OpenAI 游乐场中亲自尝试：
 
-1.  在[*http://platform.openai.com*](http://platform.openai.com)创建一个 OpenAI API 的账户，这将允许你通过 Python 或 JavaScript 代码程序化地使用 OpenAI LLMs，也就是说，使用 API 从你的代码中调用。它还将为你提供访问 OpenAI Playgrounds 的权限，在那里你可以通过网页浏览器进行实验。
+1. 在[*http://platform.openai.com*](http://platform.openai.com)创建一个 OpenAI API 的账户，这将允许你通过 Python 或 JavaScript 代码程序化地使用 OpenAI LLMs，也就是说，使用 API 从你的代码中调用。它还将为你提供访问 OpenAI Playgrounds 的权限，在那里你可以通过网页浏览器进行实验。
 
-1.  如有必要，为你的新 OpenAI 账户添加支付详情。OpenAI 是 LLMs 的商业提供商，每次你通过 OpenAI 的 API 或通过 Playground 使用他们的模型时都会收费。你可以在他们的[网站](https://oreil.ly/MiKRD)上找到最新的定价。在过去的两年里，随着新功能和优化的引入，使用 OpenAI 模型的价格已经大幅下降。
+2. 如有必要，为你的新 OpenAI 账户添加支付详情。OpenAI 是 LLMs 的商业提供商，每次你通过 OpenAI 的 API 或通过 Playground 使用他们的模型时都会收费。你可以在他们的[网站](https://oreil.ly/MiKRD)上找到最新的定价。在过去的两年里，随着新功能和优化的引入，使用 OpenAI 模型的价格已经大幅下降。
 
-1.  前往[OpenAI Playground](https://oreil.ly/rxiAG)，你就可以尝试以下提示符了。在这本书中，我们将使用 OpenAI API。
+3. 前往[OpenAI Playground](https://oreil.ly/rxiAG)，你就可以尝试以下提示符了。在这本书中，我们将使用 OpenAI API。
 
-1.  一旦你导航到 Playground，你将在屏幕右侧看到一个预设的面板，包括你选择的项目。如果你继续向下查看面板，你将在“模型配置”标题下看到“温度”。将温度切换从中间移动到左侧，直到数字显示为 0.00。本质上，温度控制 LLM 输出的随机性。温度越低，模型输出越确定。
+4. 一旦你导航到 Playground，你将在屏幕右侧看到一个预设的面板，包括你选择的项目。如果你继续向下查看面板，你将在“模型配置”标题下看到“温度”。将温度切换从中间移动到左侧，直到数字显示为 0.00。本质上，温度控制 LLM 输出的随机性。温度越低，模型输出越确定。
 
 现在转到提示符！
 
@@ -171,9 +162,9 @@ The 30th president of the United States, Calvin Coolidge, was 48 years old when
 his wife's mother passed away in 1926.
 ```
 
-###### 注意
-
-你可能会得到与我们不同的结果。LLMs 生成响应的方式中存在一定的随机性，OpenAI 在你尝试时可能已经更新了模型。
+> **注意**
+>
+> 你可能会得到与我们不同的结果。LLMs 生成响应的方式中存在一定的随机性，OpenAI 在你尝试时可能已经更新了模型。
 
 虽然模型正确地识别了第 30 任总统，但答案并不完全正确。通常，你需要迭代提示和响应以获得可靠的系统。接下来的几节将扩展如何做到这一点。
 
@@ -189,27 +180,20 @@ How old was the 30th president of the United States when his wife's mother died?
 
 现在让我们看看这个新提示符模型会产生什么结果：
 
-```py
-1\. First, find out who the 30th president of the United States was. This can be
-done by researching a list of US presidents or by searching for "30th president 
-of the United States" online. You will find that the 30th president was Calvin 
-Coolidge.
 
-2\. Next, find out the year when Calvin Coolidge was the president. This can also 
-be found by researching online or in a history book. You will find that he was 
-the president from 1923-1929.
 
-3\. Now, you need to determine the year when Calvin Coolidge's wife's mother died. 
-This can be done by researching the life and death of his wife, Grace Goodhue 
-Coolidge. You will find that she lived from 1879-1957.
 
-4\. Calculate the age of Calvin Coolidge's wife's mother when she died. She was 
-78 years old.
+# 引言
 
-5\. Determine the age of Calvin Coolidge when his wife's mother died. Subtract 
-the year of his birth, 1872, from the year his mother-in-law died, 1957\. This 
-means that Calvin Coolidge was 85 years old when his wife's mother passed away.
-```
+首先，找出美国第30任总统是谁。这可以通过研究美国总统名单或在线搜索“美国第30任总统”来完成。你会发现第30任总统是卡尔文·柯立芝。
+
+接下来，找出卡尔文·柯立芝担任总统的年份。这也可以通过在线研究或查阅历史书籍找到。你会发现他在1923年至1929年间担任总统。
+
+现在，你需要确定卡尔文·柯立芝妻子的母亲去世的年份。这可以通过研究他妻子格雷丝·古德休·柯立芝的生平与去世来完成。你会发现她生于1879年，卒于1957年。
+
+计算卡尔文·柯立芝妻子的母亲去世时的年龄。她享年78岁。
+
+确定卡尔文·柯立芝在其岳母去世时的年龄。用其岳母去世的年份1957年减去他出生的年份1872年。这意味着卡尔文·柯立芝在其岳母去世时为85岁。
 
 注意到提示中的唯一变化是添加了`Think step by step`，以及这一变化在模型输出中的巨大差异。现在模型输出了一系列步骤，你可以在尝试回答这个问题时遵循这些步骤。不幸的是，尽管步骤非常合理，但最终输出仍然不正确，因为它在事实上有一些错误，即它列出了柯立芝总统妻子的母亲错误的出生和去世年份。让我们看看如何改进这一点。
 
@@ -217,7 +201,7 @@ means that Calvin Coolidge was 85 years old when his wife's mother passed away.
 
 *检索增强生成*（RAG）包括找到相关的文本片段，也称为*上下文*，例如你可以在百科全书找到的事实，并将这些上下文包含在提示中。RAG 技术可以（并且在实际应用中应该）与 CoT（思维链）结合使用，但为了简单起见，我们在这里一次使用这些技术中的一个。以下是一个包含 RAG 的提示示例：
 
-```py
+```
 Context:
 
 - Calvin Coolidge (born John Calvin Coolidge Jr.; /ˈkuːlɪdʒ/; July 4, 1872 – 
@@ -238,7 +222,7 @@ How old was the 30th president of the United States when his wife's mother died?
 
 模型的输出如下：
 
-```py
+```
 The 30th president of the United States, Calvin Coolidge, was 54 years old when 
 his wife's mother, Lemira A. Goodhue, died on October 24, 1929.
 ```
@@ -249,7 +233,7 @@ his wife's mother, Lemira A. Goodhue, died on October 24, 1929.
 
 *工具调用*技术包括在提示前添加一个外部函数列表，这些函数是 LLM（大型语言模型）可以使用的，以及每个函数的用途描述和如何在输出中指示它*想要*使用这些函数的说明。最后，你——应用程序的开发者——应该解析输出并调用适当的函数。以下是一种实现方式：
 
-```py
+```
 Tools:
 
 - calculator: This tool accepts math expressions and returns their result.
@@ -265,7 +249,7 @@ How old was the 30th president of the United States when his wife's mother died?
 
 这可能是你得到的输出：
 
-```py
+```
 tool,input
 
 calculator,2023-1892
@@ -275,7 +259,7 @@ search,"What age was Calvin Coolidge when his mother-in-law died?"
 
 虽然 LLM 正确地遵循了输出格式说明，但选择的工具和输入并不适用于这个问题。这涉及到在提示 LLM 时需要记住的最重要的事情之一：*每种提示技术在与（某些）其他技术结合使用时最有用*。例如，我们可以通过将工具调用、思维链和 RAG 结合到一个提示中，使用所有三种技术来改进这一点。让我们看看这会是什么样子：
 
-```py
+```
 Context:
 
 - Calvin Coolidge (born John Calvin Coolidge Jr.; /ˈkuːlɪdʒ/; July 4, 1872 –
@@ -305,7 +289,7 @@ How old was the 30th president of the United States when his wife's mother died?
 
 使用这个提示，也许经过几次尝试，我们可能会得到以下输出：
 
-```py
+```
 tool,input
 
 calculator,1929 - 1872
@@ -413,15 +397,16 @@ LangChain 包含许多与第三方服务的集成（例如 Google Sheets、Wolfr
 
 本书旨在帮助您完成工作。一般来说，如果本书提供了示例代码，您可以在您的程序和文档中使用它。除非您正在复制代码的很大一部分，否则您无需联系我们获取许可。例如，编写一个使用本书中多个代码片段的程序不需要许可。通过引用本书并引用示例代码来回答问题不需要许可。将本书的大量示例代码纳入您产品的文档中则需要许可。
 
+
+
 我们感谢，但通常不需要归属。归属通常包括标题、作者、出版商和 ISBN。例如：“*Learning LangChain* by Mayo Oshin and Nuno Campos (O’Reilly). Copyright 2025 Olumayowa “Mayo” Olufemi Oshin, 978-1-098-16728-8。”
 
-如果您认为您对代码示例的使用超出了合理使用或上述许可的范围，请随时通过*permissions@oreilly.com*联系我们。
+如果您认为您对代码示例的使用超出了合理使用或上述许可的范围，请随时通过`permissions@oreilly.com`联系我们。
 
 # O’Reilly 在线学习
 
-###### 注意
-
-40 多年来，[*O’Reilly Media*](https://oreilly.com)一直提供技术和商业培训、知识和洞察力，以帮助公司成功。
+> **注意**
+> 40 多年来，[*O’Reilly Media*](https://oreilly.com)一直提供技术和商业培训、知识和洞察力，以帮助公司成功。
 
 我们独特的专家和创新者网络通过书籍、文章和我们的在线学习平台分享他们的知识和专业知识。O’Reilly 的在线学习平台为您提供按需访问现场培训课程、深入的学习路径、交互式编码环境以及来自 O’Reilly 和 200 多家其他出版商的大量文本和视频。更多信息，请访问[*https://oreilly.com*](https://oreilly.com)。
 
@@ -429,21 +414,14 @@ LangChain 包含许多与第三方服务的集成（例如 Google Sheets、Wolfr
 
 请将有关本书的评论和问题寄给出版社：
 
-+   O’Reilly Media, Inc.
-
-+   1005 Gravenstein Highway North
-
-+   Sebastopol, CA 95472
-
-+   800-889-8969 (美国或加拿大)
-
-+   707-827-7019 (国际或本地)
-
-+   707-829-0104 (传真)
-
-+   *support@oreilly.com*
-
-+   [*https://oreilly.com/about/contact.html*](https://oreilly.com/about/contact.html)
++ O’Reilly Media, Inc.
++ 1005 Gravenstein Highway North
++ Sebastopol, CA 95472
++ 800-889-8969 (美国或加拿大)
++ 707-827-7019 (国际或本地)
++ 707-829-0104 (传真)
++ `support@oreilly.com`
++ [*https://oreilly.com/about/contact.html*](https://oreilly.com/about/contact.html)
 
 我们为本书有一个网页，其中列出了勘误表、示例和任何其他附加信息。您可以通过[*https://oreil.ly/learning-langchain*](https://oreil.ly/learning-langchain)访问此页面。
 
@@ -457,10 +435,7 @@ LangChain 包含许多与第三方服务的集成（例如 Google Sheets、Wolfr
 
 我们想对审稿人——Rajat Kant Goel、Douglas Bailley、Tom Taulli、Gourav Bais 和 Jacob Lee——表示感谢，他们为改进本书提供了宝贵的技术反馈。
 
-^(1) Tom B. Brown 等人，[“Language Models Are Few-Shot Learners”](https://oreil.ly/1qoM6)，arXiv，2020 年 7 月 22 日。
-
-^(2) 张翔等人，[“当你的问题不是英文时不要相信 ChatGPT：关于多语言能力和 LLMs 类型的研究”](https://oreil.ly/u5Cy1)，2023 年自然语言处理实证方法会议论文集，2023 年 12 月 6 日至 10 日。
-
-^(3) 更多信息，请参阅 Ashish Vaswani 等人，[“Attention Is All You Need"](https://oreil.ly/Frtul)，arXiv，2017 年 6 月 12 日。
-
-^(4) 刘瑞等人 [“Mind Your Step (by Step): Chain-of-Thought Can Reduce Performance on Tasks Where Thinking Makes Humans Worse”](https://oreil.ly/UHFp9)，arXiv，2024 年 11 月 8 日。
+1. Tom B. Brown 等人，[“Language Models Are Few-Shot Learners”](https://oreil.ly/1qoM6)，arXiv，2020 年 7 月 22 日。
+2. 张翔等人，[“当你的问题不是英文时不要相信 ChatGPT：关于多语言能力和 LLMs 类型的研究”](https://oreil.ly/u5Cy1)，2023 年自然语言处理实证方法会议论文集，2023 年 12 月 6 日至 10 日。
+3. 更多信息，请参阅 Ashish Vaswani 等人，[“Attention Is All You Need"](https://oreil.ly/Frtul)，arXiv，2017 年 6 月 12 日。
+4. 刘瑞等人 [“Mind Your Step (by Step): Chain-of-Thought Can Reduce Performance on Tasks Where Thinking Makes Humans Worse”](https://oreil.ly/UHFp9)，arXiv，2024 年 11 月 8 日。

@@ -1,16 +1,13 @@
+
 # 第七章：编码基础设施和管理部署
 
 本章涵盖
 
-+   在 Copilot 的帮助下创建 Dockerfile
-
-+   使用大型语言模型起草基础设施代码
-
-+   使用容器注册库管理 Docker 镜像
-
-+   利用 Kubernetes 的力量
-
-+   使用 GitHub Actions 无缝发布您的代码
++ 在 Copilot 的帮助下创建 Dockerfile
++ 使用大型语言模型起草基础设施代码
++ 使用容器注册库管理 Docker 镜像
++ 利用 Kubernetes 的力量
++ 使用 GitHub Actions 无缝发布您的代码
 
 没有什么比一个应用程序闲置不用更令人沮丧的了。因此，快速将经过良好测试的应用程序推向生产是每个合格开发者的目标声明。因为我们已经在上一章测试了我们的产品，所以它现在可以准备发布了。
 
@@ -57,17 +54,12 @@
 
 您可能只剩下一个空文件（除了这个注释）。基础设施即代码的支持是不断发展的（与一般的 LLM 生态系统类似）。根据 Copilot Chat，GitHub Copilot 能够为您创建 Dockerfile——但是您必须通过以下步骤来激励它：
 
-1.  在 Dockerfile 中输入`FROM python:`并等待 Copilot 建议要使用的 Python 版本。选择您想要使用的版本。
-
-1.  输入`WORKDIR /app`以设置容器的当前工作目录。
-
-1.  输入`COPY . /app`以将项目内容复制到容器中。
-
-1.  输入`RUN pip install --trusted-host pypi.python.org -r requirements.txt`以安装项目的依赖项。
-
-1.  输入`EXPOSE 8080`以暴露容器的 8080 端口。
-
-1.  输入`CMD ["python", "main.py"]`以指定容器启动时运行的命令。
+1. 在 Dockerfile 中输入`FROM python:`并等待 Copilot 建议要使用的 Python 版本。选择您想要使用的版本。
+2. 输入`WORKDIR /app`以设置容器的当前工作目录。
+3. 输入`COPY . /app`以将项目内容复制到容器中。
+4. 输入`RUN pip install --trusted-host pypi.python.org -r requirements.txt`以安装项目的依赖项。
+5. 输入`EXPOSE 8080`以暴露容器的 8080 端口。
+6. 输入`CMD ["python", "main.py"]`以指定容器启动时运行的命令。
 
 或者，您可能希望将之前写入 Dockerfile 中的相同提示复制粘贴到 Copilot Chat 的提示窗口中。Copilot Chat 将为您提供所需的 Dockerfile 内容。
 
@@ -100,7 +92,7 @@ docker run -p 8000:8000 -d --name itam itam:latest
 
 在创建和测试应用程序时，使用你电脑上的 Docker 镜像是有用的。但是，当到了启动你的应用程序的时候，你需要一台比本地电脑更强大的机器。在本节中，我们将使用 GitHub Copilot 帮助我们通过让 Copilot 编写基础设施代码工具 Terraform 所需的必要部署描述符来设置和控制我们的 AWS 基础设施。Terraform 由 HashiCorp 制作，允许我们使用领域特定语言（DSL）来编写我们希望基础设施看起来像什么。这种 DSL 使我们免于理解每个云服务提供商用于配置硬件的所有复杂性和细微差别。此外，它还允许我们使用基础设施代码存储和版本化我们的基础设施。
 
-首先，我们想要创建一个名为 ec2.tf 的文件，并添加提示告知 Copilot 我们打算将其作为 Terraform 文件，以及我们希望如何搭建我们的基础设施。请注意，Copilot 需要我们在输入给定行的第一个单词之前才能继续。
+首先，我们想要创建一个名为`ec2.tf`的文件，并添加提示告知 Copilot 我们打算将其作为 Terraform 文件，以及我们希望如何搭建我们的基础设施。请注意，Copilot 需要我们在输入给定行的第一个单词之前才能继续。
 
 列表 7.2 示例 Terraform 文件，包括实例大小
 
@@ -195,7 +187,7 @@ output "public_dns" {
 
 接下来，Terraform 将解释它打算做出的更改。你可以使用`terraform plan`命令来完成这个操作。这个命令为你的基础设施更改创建一个执行计划：它显示当你应用你的配置文件时，Terraform 将如何更改你的基础设施。计划将显示哪些资源将被创建、修改或销毁，以及将对你的基础设施做出的任何其他更改。
 
-注意：当你第一次运行`terraform plan`时可能会遇到错误：“错误：配置 Terraform AWS Provider：未找到有效的 Terraform AWS Provider 凭证来源。”当你尝试连接到 AWS 但无法向 AWS 提供适当的凭证时，你会遇到这个错误。为了解决这个问题，你需要创建（或编辑）名为~/.aws/credentials 的文件，并添加你的 ITAM AWS 访问密钥 ID 和 AWS 秘密访问密钥凭证。你可以在*Amazon Web Services in Action，第三版*的 4.2.2 节“配置 CLI”中找到更多关于如何正确完成此操作的详细信息。
+注意：当你第一次运行`terraform plan`时可能会遇到错误：“错误：配置 Terraform AWS Provider：未找到有效的 Terraform AWS Provider 凭证来源。”当你尝试连接到 AWS 但无法向 AWS 提供适当的凭证时，你会遇到这个错误。为了解决这个问题，你需要创建（或编辑）名为`~/.aws/credentials`的文件，并添加你的 ITAM AWS 访问密钥 ID 和 AWS 秘密访问密钥凭证。你可以在*Amazon Web Services in Action，第三版*的 4.2.2 节“配置 CLI”中找到更多关于如何正确完成此操作的详细信息。
 
 最后，为了应用 Terraform 的更改，你将使用`terraform apply`命令。然后，Terraform 将读取当前目录中的配置文件，并将任何更改应用到你的基础设施上。如果你在最后一次运行`terraform apply`之后对配置文件进行了任何更改——例如，如果你需要启动一个新的数据库实例或更改 EC2 的大小——Terraform 将显示更改的预览，并提示你在应用更改之前进行确认。
 
@@ -203,60 +195,49 @@ output "public_dns" {
 
 ## 7.3 以困难的方式移动 Docker 镜像
 
-首先，我们将从本地机器导出一个 Docker 镜像并将其加载到远程机器上。我们将使用`docker save`和`load`命令来完成这项任务。你可以在本地机器上使用`docker save`命令将镜像保存到一个 tar 归档文件中。以下命令将镜像保存到名为<image-name>.tar 的 tar 归档文件中：
+首先，我们将从本地机器导出一个 Docker 镜像并将其加载到远程机器上。我们将使用`docker save`和`load`命令来完成这项任务。你可以在本地机器上使用`docker save`命令将镜像保存到一个 tar 归档文件中。以下命令将镜像保存到名为`<image-name>.tar`的 tar 归档文件中：
 
-```py
-docker save -o <image-name>.tar <image-name>:<tag>
+
+
+# 7.4 以简单方式移动 Docker 镜像
+
+Docker 镜像是我们容器的蓝图，是容器化应用的基本构建块。正确管理它们确保我们保持干净、高效和有序的开发和部署工作流程。Amazon ECR 作为一个完全管理的 Docker 容器注册库，使得开发者能够轻松地存储、管理和部署 Docker 容器镜像。
+
+首先，让我们深入了解如何将 Docker 镜像推送到 ECR。这个过程对于使你的镜像可用于使用和部署至关重要。我们将逐步介绍设置你的本地环境、使用 ECR 进行认证以及推送你的镜像。在我们能够将镜像移动到 ECR 之前，我们必须创建一个用于存放该镜像的仓库。这可以通过 AWS 管理控制台完成，或者，就像我们很快要做的那样，使用 AWS 命令行界面（CLI）。创建用于镜像的新仓库的命令是：
+
 ```
-
-接下来，使用文件传输协议，如安全复制协议（SCP）或安全文件传输协议（SFTP），将 tar 存档传输到远程机器。你可以在远程机器上使用`docker load`命令从 tar 存档加载镜像：`docker load -i <image-name>.tar`。这将把镜像加载到远程机器上的本地 Docker 镜像缓存中。一旦镜像被加载，使用`docker run`命令启动镜像并运行 Docker 容器，就像你在构建它之后所做的那样。然后，将此镜像添加到你的 Docker compose 文件中，其中包含 Postgres 数据库和 Kafka 实例。
-
-注意：关于 Terraform 的讨论被大大简化了。当你准备好认真使用 Terraform 时，你应该查阅 Scott Winkler 的《Terraform in Action》（Manning，2021 年；[www.manning.com/books/terraform-in-action](https://www.manning.com/books/terraform-in-action)）。
-
-本节探讨了如何打包镜像并在远程主机上加载它们。这个过程是可脚本化的，但随着容器注册库的出现，现在管理部署比以往任何时候都更容易，无需将它们发送到整个互联网。在下一节中，我们将探讨这样一个工具：亚马逊的弹性容器注册库（ECR）。
-
-## 7.4 以简单方式移动 Docker 镜像
-
-Docker 镜像，我们容器的蓝图，是容器化应用的基本构建块。正确管理它们确保我们保持干净、高效和有序的开发和部署工作流程。Amazon ECR 作为一个完全管理的 Docker 容器注册库，使得开发者能够轻松地存储、管理和部署 Docker 容器镜像。
-
-首先，让我们深入了解如何将 Docker 镜像推送到 ECR。这个过程对于使你的镜像可用于使用和部署至关重要。我们将逐步介绍设置你的本地环境、使用 ECR 进行认证以及推送你的镜像。在我们能够将镜像移动到 ECR 之前，我们必须创建一个用于存放该镜像的仓库。这可以通过 AWS 管理控制台完成，或者，就像我们很快要做的那样，使用 AWS 命令行界面（CLI）。创建用于镜像的新仓库的命令是
-
-```py
 aws ecr create-repository --repository-name itam
 ```
 
 接下来，你需要使用 ECR 仓库 URL 和镜像名称给你的 Docker 镜像打标签。你可能想称之为`latest`或使用语义版本控制。打标签将允许你轻松回滚或前进到系统版本。使用以下命令给你的应用程序镜像打上`latest`标签：
 
-```py
-docker tag itam:latest 
-123456789012.dkr.ecr.us-west-2.amazonaws.com/itam:latest
+```
+docker tag itam:latest 123456789012.dkr.ecr.us-west-2.amazonaws.com/itam:latest
 ```
 
-现在，使用`aws ecr get-login-password`命令对 Docker 进行 ECR 注册库的认证。这将生成一个用于认证 Docker 到注册库的 Docker `login`命令。登录命令如下
+现在，使用`aws ecr get-login-password`命令对 Docker 进行 ECR 注册库的认证。这将生成一个用于认证 Docker 到注册库的 Docker `login`命令。登录命令如下：
 
-```py
-aws ecr get-login-password --region us-west-2 | 
-docker login --username AWS --password-stdin 
-123456789012.dkr.ecr.us-west-2.amazonaws.com
+```
+aws ecr get-login-password --region us-west-2 | docker login --username AWS --password-stdin 123456789012.dkr.ecr.us-west-2.amazonaws.com
 ```
 
 最后，使用`docker push`命令将 Docker 镜像推送到 ECR 注册库：
 
-```py
+```
 docker push 123456789012.dkr.ecr.us-west-2.amazonaws.com/itam:latest
 ```
 
-一旦镜像存放在你的注册表中，你的部署选项大大增加。例如，你可以编写一个 bash 脚本，登录到 EC2 实例并执行 `docker pull` 来下载和在该 EC2 上运行镜像。或者，你可能希望采用更可靠的部署模式。在下一节中，我们将介绍如何在名为 Elastic Kubernetes Service (EKS) 的强大云服务上设置和启动我们的应用程序的过程。EKS 是 AWS 提供的托管 Kubernetes 服务。让我们深入探讨吧！
+一旦镜像存放在你的注册表中，你的部署选项大大增加。例如，你可以编写一个 bash 脚本，登录到 EC2 实例并执行`docker pull`来下载和在该 EC2 上运行镜像。或者，你可能希望采用更可靠的部署模式。在下一节中，我们将介绍如何在名为 Elastic Kubernetes Service (EKS) 的强大云服务上设置和启动我们的应用程序的过程。EKS 是 AWS 提供的托管 Kubernetes 服务。让我们深入探讨吧！
 
-## 7.5 将我们的应用程序部署到 AWS Elastic Kubernetes Service
+# 7.5 将我们的应用程序部署到 AWS Elastic Kubernetes Service
 
 Kubernetes 相比于在 EC2 实例上简单地运行 Docker 镜像提供了许多好处。首先，使用 Kubernetes 管理和扩展我们的应用程序变得更加简单。此外，使用 Kubernetes，我们不需要花费很多额外的时间去思考我们的基础设施应该是什么样子。而且，多亏了其对名为 *pods* 的镜像生命周期的自动管理，我们的应用程序将基本上是自我修复的。这意味着如果出现问题，Kubernetes 可以自动修复它，确保我们的应用程序始终运行顺畅。
 
-首先，我们需要一个用 YAML（Yet Another Markup Language 或 YAML Ain’t Markup Language，取决于你问谁）编写的部署描述符，这将描述我们希望 ITAM 系统始终保持的状态。这个文件（通常称为 deployment.yaml）将提供 Kubernetes 将与之比较的当前运行系统的模板，并根据需要做出修正。
+首先，我们需要一个用 YAML（Yet Another Markup Language 或 YAML Ain’t Markup Language，取决于你问谁）编写的部署描述符，这将描述我们希望 ITAM 系统始终保持的状态。这个文件（通常称为 `deployment.yaml`）将提供 Kubernetes 将与之比较的当前运行系统的模板，并根据需要做出修正。
 
-列表 7.4 ITAM 系统的 Kubernetes 部署文件
+**列表 7.4 ITAM 系统的 Kubernetes 部署文件**
 
-```py
+```
 # Create a Kubernetes deployment file for the itam application. The image name is itam:latest
 # The deployment will run on port 8000
 
@@ -288,15 +269,15 @@ spec:
 
 首先，更新部署 YAML 以使用 ECR 镜像：
 
-```py
-image: 123456789012.dkr.ecr.us-west-2.amazonaws.com/itam:latest. 
+```
+image: 123456789012.dkr.ecr.us-west-2.amazonaws.com/itam:latest
 ```
 
 然后，你需要为 EKS 定义一个策略，并使用 AWS CLI 或身份和访问管理（IAM）管理控制台应用该策略。尽管应用策略超出了本书的范围，但你可以使用 Copilot 来定义它。生成的策略将类似于以下列表。
 
-列表 7.5 允许 EKS 从 ECR 拉取镜像的 IAM 策略
+**列表 7.5 允许 EKS 从 ECR 拉取镜像的 IAM 策略**
 
-```py
+```
 {
   "Version": "2012-10-17",
   "Statement": [
@@ -311,8 +292,7 @@ image: 123456789012.dkr.ecr.us-west-2.amazonaws.com/itam:latest.
         "ecr:BatchGetImage",
         "ecr:BatchCheckLayerAvailability"
       ],
-      "Resource": "arn:aws:ecr:<region>:<aws_account_id>:
-repository/<repository_name>"
+      "Resource": "arn:aws:ecr:<region>:<aws_account_id>:repository/<repository_name>"
     }
   ]
 }
@@ -322,9 +302,9 @@ repository/<repository_name>"
 
 服务使得应用程序的不同部分以及不同应用程序之间能够进行通信。它们通过将 Pod 暴露给网络和其他 Kubernetes 中的 Pod 来帮助分配网络流量和负载均衡。
 
-列表 7.6 Kubernetes 服务文件，以启用我们的应用程序的外部访问
+**列表 7.6 Kubernetes 服务文件，以启用我们的应用程序的外部访问**
 
-```py
+```
 # Please create a service for the application that uses a load balancer type egress
 apiVersion: v1
 kind: Service
@@ -342,7 +322,7 @@ spec:
 
 Kubernetes 负责将所有请求从入口路由到服务，然后到正在运行的 Pod，无论它们运行在哪个主机上。这允许无缝故障转移。Kubernetes 预期事情会失败。它依赖于此。因此，许多分布式系统中的最佳实践都内置到了 Kubernetes 中。到达 Kube 是构建一个可靠、高可用系统的重大第一步。在下一节中，我们将探讨如何重复和持续地减轻将我们的应用程序部署到 Kubernetes 的负担。我们将查看如何使用 GitHub Actions 构建一个小型部署管道。
 
-## 7.6 在 GitHub Actions 中设置持续集成/持续部署（CI/CD）管道
+# 7.6 在 GitHub Actions 中设置持续集成/持续部署（CI/CD）管道
 
 如果发布很困难，那么它就不会经常进行。这限制了我们对应用程序增值的能力，从而也限制了我们对利益相关者的增值。然而，自动化部署过程显著减少了发布所需的时间。这使得更频繁的发布成为可能，加速了开发步伐，并能够更快地将功能交付给用户。持续集成/持续部署（CI/CD）管道限制了与部署相关的风险。通过进行更小、更频繁的更新，任何出现的问题都可以被隔离和快速修复，最小化对最终用户潜在的影响。这些管道促进了代码更改的无缝集成，并加速了部署，简化了软件发布过程。
 
@@ -350,19 +330,19 @@ GitHub Actions 允许我们在 GitHub 仓库中直接构建定制的 CI/CD 管�
 
 本节简要介绍了使用 GitHub Actions 和 GitHub Copilot 设置 CI/CD 管道。请注意，这不会是一个全面的指南，而是一个介绍潜在好处和一般工作流程的概述。这应该作为入门指南，让你了解这些工具如何被用来优化你的软件开发过程。
 
-首先，在你的项目中的路径 .github/workflows 下创建一个文件。注意前面的点。你可以把这个文件命名为 itam.yaml 或者你想要的任何名字。在这个文件的第一个行，添加以下提示：
+首先，在你的项目中的路径 `.github/workflows` 下创建一个文件。注意前面的点。你可以把这个文件命名为 `itam.yaml` 或者你想要的任何名字。在这个文件的第一行，添加以下提示：
 
-```py
-# Create a GitHub Actions workflow that builds the ITAM application on every merge to the main branch and deploys it to EKS. 
+```
+# Create a GitHub Actions workflow that builds the ITAM application on every merge to the main branch and deploys it to EKS.
 ```
 
 注意：像本章中我们交给 Copilot 的许多与基础设施相关任务一样，Copilot 在创建此文件时需要我们提供大量帮助。我们需要了解这个文件的结构以及如何开始每一行。在这种情况下，向 ChatGPT 或 Copilot Chat 请求为我们构建文件是有意义的。
 
-文件的这部分概述了此操作何时应该执行。on:push 指令表示当向主分支进行 git push 时，此操作应该执行。此文件中只有一个作业，包含多个步骤。这个名为“build”的作业使用内嵌函数`login-ecr`登录到我们的 ECR。
+文件的这部分概述了此操作何时应该执行。`on:push` 指令表示当向主分支进行 `git push` 时，此操作应该执行。此文件中只有一个作业，包含多个步骤。这个名为“build”的作业使用内嵌函数 `login-ecr` 登录到我们的 ECR。
 
-列表 7.7 构建我们的应用程序的 GitHub Actions 文件的开始部分
+**列表 7.7 构建我们的应用程序的 GitHub Actions 文件的开始部分**
 
-```py
+```
 # Create a GitHub Actions workflow that builds the ITAM application on every merge to the main branch and deploys it to EKS.
 name: Build and Deploy to EKS
 
@@ -373,13 +353,13 @@ on:
 jobs:
 ```
 
-构建作业首先会从我们的 GitHub 仓库检出代码。它使用模块`actions/checkout`版本 2 中编写的代码。同样，接下来它将获取 EKS CLI 并配置凭证以连接到 EKS。请注意，AWS 访问密钥和秘密是自动传递到应用程序中的值。GitHub Actions 使用内置的秘密管理系统来存储敏感数据，如 API 密钥、密码和证书。该系统集成到 GitHub 平台中，允许你在仓库和组织级别添加、删除或更新秘密（以及其他敏感数据）。在存储之前，秘密会被加密，不会显示在日志中或可供下载。它们仅作为环境变量暴露给 GitHub Actions 运行器，这是一种处理敏感数据的安全方式。
+构建作业首先会从我们的 GitHub 仓库检出代码。它使用模块 `actions/checkout` 版本 2 中编写的代码。同样，接下来它将获取 EKS CLI 并配置凭证以连接到 EKS。请注意，AWS 访问密钥和秘密是自动传递到应用程序中的值。GitHub Actions 使用内置的秘密管理系统来存储敏感数据，如 API 密钥、密码和证书。该系统集成到 GitHub 平台中，允许你在仓库和组织级别添加、删除或更新秘密（以及其他敏感数据）。在存储之前，秘密会被加密，不会显示在日志中或可供下载。它们仅作为环境变量暴露给 GitHub Actions 运行器，这是一种处理敏感数据的安全方式。
 
-同样，您可以在操作中创建环境参数并使用它们。例如，看看变量`ECR_REGISTRY`。这个变量是使用`login-ecr`函数的输出创建的。在这种情况下，您仍然需要在您的 Actions 文件中硬编码 ECR。然而，您应该这样做是为了保持一致性，并且需要在文件中仅在一个地方管理它。大多数这些步骤应该看起来很熟悉，因为我们已经在整个章节中使用了它们。这就是自动化的魔力：它为您完成这些工作。
+同样，您可以在操作中创建环境参数并使用它们。例如，看看变量 `ECR_REGISTRY`。这个变量是使用 `login-ecr` 函数的输出创建的。在这种情况下，您仍然需要在您的 Actions 文件中硬编码 ECR。然而，您应该这样做是为了保持一致性，并且需要在文件中仅在一个地方管理它。大多数这些步骤应该看起来很熟悉，因为我们已经在整个章节中使用了它们。这就是自动化的魔力：它为您完成这些工作。
 
-列表 7.8 我们的 GitHub Actions 文件的构建和部署步骤
+**列表 7.8 我们的 GitHub Actions 文件的构建和部署步骤**
 
-```py
+```
   build:
     runs-on: ubuntu-latest
 
@@ -418,9 +398,9 @@ jobs:
 
 文件的最后部分登录到 AWS ECR。Actions 文件中的步骤调用此操作。完成后，它将输出返回到调用函数。
 
-列表 7.9 构建和部署到 EKS 的 GitHub Actions 文件
+**列表 7.9 构建和部署到 EKS 的 GitHub Actions 文件**
 
-```py
+```
   login-ecr:
     runs-on: ubuntu-latest
     steps:
@@ -435,16 +415,18 @@ jobs:
 
 探索代码即基础设施使我们能够理解它在任何项目中的关键作用以及如何通过代码更好地管理。像 Terraform 这样的工具为管理基础设施提供了简化的解决方案，GitHub 以代码为中心的功能有助于维护整体工作流程。
 
+
+
 通过 GitHub Actions 等平台引入 CI/CD 管道，突出了自动化软件交付过程的重要性。自动化此类过程可以提高软件开发生命周期的速度和可靠性，并最大限度地减少人为错误的可能性。
 
 将基础设施作为代码管理的旅程是不断演变的，新的工具和实践不断涌现。这需要持续学习和适应的心态。本章为您展示了其优势和可能性。
 
 ## 摘要
 
-+   你了解了从应用开发到产品发布的转变，包括部署策略、云基础设施的最佳实践，以及使用 Docker 和 Terraform 高效管理和容器化应用的方法。
++ 你了解了从应用开发到产品发布的转变，包括部署策略、云基础设施的最佳实践，以及使用 `Docker` 和 `Terraform` 高效管理和容器化应用的方法。
 
-+   本章解释了如何通过 Kubernetes 管理应用部署，包括创建 YAML 部署描述符、形成用于网络流量分配的服务，以及在亚马逊的弹性 Kubernetes 服务（EKS）上部署。
++ 本章解释了如何通过 `Kubernetes` 管理应用部署，包括创建 `YAML` 部署描述符、形成用于网络流量分配的服务，以及在亚马逊的弹性 `Kubernetes` 服务（`EKS`）上部署。
 
-+   你发现了如何将部署方法适应不同的环境，无论是各种云平台还是本地环境，以及 GitHub Copilot 如何帮助准确创建 Dockerfile 和 Terraform 文件。
++ 你发现了如何将部署方法适应不同的环境，无论是各种云平台还是本地环境，以及 `GitHub Copilot` 如何帮助准确创建 `Dockerfile` 和 `Terraform` 文件。
 
-+   最后，我们探讨了将 Docker 镜像导出到远程机器、推送到亚马逊的弹性容器注册库（ECR）以及使用 GitHub Actions 迁移到自动化部署的过程。
++ 最后，我们探讨了将 `Docker` 镜像导出到远程机器、推送到亚马逊的弹性容器注册库（`ECR`）以及使用 `GitHub Actions` 迁移到自动化部署的过程。

@@ -1,11 +1,10 @@
+
 # 第十章：使用生成式 AI 时常见的 10 个问题
 
-### 本章涵盖
+## 本章涵盖
 
 +   幻觉、偏见和版权
-
 +   使用生成式 AI 的指南
-
 +   确认来源
 
 您的数据故事现在准备好了。然而，在向您的受众传播之前，您应该反思使用生成式 AI 可能出现的潜在问题。我们不会讨论这些问题的技术细节，但描述的概念将帮助您完成对生成式 AI 的整体理解。更多细节，鼓励您阅读一些关于该主题的详细书籍——其中一些列在本章的参考文献中。
@@ -114,15 +113,12 @@ DALL-E 将色彩和情绪关联起来。例如，尝试以下提示：（1）一
 
 +   *环境繁荣*—AI 应优先考虑可持续性，并为环境保护做出积极贡献。
 
-我们可以将之前的指南应用于检查 AI 生成的内内容是否道德正确。对于所有 AI 生成的内内容，我们应该回答以下问题：
+我们可以将之前的指南应用于检查 AI 生成的内容是否道德正确。对于所有 AI 生成的内容，我们应该回答以下问题：
 
-+   AI 生成的内内容是否尊重人权？
-
-+   AI 生成的内内容是否尊重社会？
-
-+   AI 生成的内内容是否尊重多样性和包容性？
-
-+   AI 生成的内内容是否尊重环境？
++   AI 生成的内容是否尊重人权？
++   AI 生成的内容是否尊重社会？
++   AI 生成的内容是否尊重多样性和包容性？
++   AI 生成的内容是否尊重环境？
 
 为了了解如何将这些指南应用于实际的数据故事，考虑我们在第四章中分析的案例研究，相关于选择最佳体育学科进行训练以在即将到来的比赛中取得好成绩。作为下一步，我们提出了投资自行车和划船。图 10.4 显示了最终的数据故事。
 
@@ -133,28 +129,21 @@ DALL-E 将色彩和情绪关联起来。例如，尝试以下提示：（1）一
 让我们看看 AI 生成的每个部分：
 
 +   *一般标题*—释放潜力：投资划船和自行车以获得最大回报！
-
 +   *图像 1*—正在练习划船的白人男子
-
 +   *图像 2*—正在练习骑自行车的白人女子
 
-对于这个场景的 AI 生成的内内容，唯一的问题是多样性和包容性。实际上，这两张图片描述的是两个白皮肤的个人。为了使数据故事符合道德规范，我们可以用另一个种族的个人替换这两张图片中的一张。
+对于这个场景的 AI 生成的内容，唯一的问题是多样性和包容性。实际上，这两张图片描述的是两个白皮肤的个人。为了使数据故事符合道德规范，我们可以用另一个种族的个人替换这两张图片中的一张。
 
 #### 练习 1
 
 考虑第五章中关于无家可归的案例研究，如图 10.5 所示。该案例研究侧重于寻找资金来资助一个旨在减少意大利无家可归问题的项目。现在，按照以下步骤进行：
 
-1.  识别 AI 生成的内内容。
-
-1.  对于每个由 AI 生成的内容的元素，回答以下问题：
-
-    1.  AI 生成的内内容是否尊重人权？
-
-    1.  AI 生成的内内容是否尊重社会？
-
-    1.  AI 生成的内内容是否尊重多样性和包容性？
-
-    1.  AI 生成的内内容是否尊重环境？
+1. 识别 AI 生成的内容。
+2. 对于每个由 AI 生成的内容的元素，回答以下问题：
+    1. AI 生成的内容是否尊重人权？
+    2. AI 生成的内容是否尊重社会？
+    3. AI 生成的内容是否尊重多样性和包容性？
+    4. AI 生成的内容是否尊重环境？
 
 ![figure](img/10-5.png)
 
@@ -167,19 +156,14 @@ DALL-E 将色彩和情绪关联起来。例如，尝试以下提示：（1）一
 *引用来源*意味着在数据故事中引用所使用的来源。这尤其重要，因为它允许你认可他人的工作。它还增加了故事的可信度，因为观众可以亲自检查故事中使用的来源。应该引用哪些类型的来源？一般来说，用于制作故事的任何来源都应该被引用，但特别以下来源：
 
 +   数据来源
-
 +   使用生成式 AI 的事实
-
 +   任何用于微调或检索增强生成（RAG）的文档
 
 虽然你可以发挥创意将引用放置在任何你想的地方，但传统上，我们在数据故事中将其添加到以下四个位置之一：
 
 +   在标题/副标题下
-
 +   在主图表下
-
 +   在下一步骤下
-
 +   横向
 
 让我们分别调查这些。
@@ -226,7 +210,7 @@ DALL-E 将色彩和情绪关联起来。例如，尝试以下提示：（1）一
 
 考虑第四章中描述并在图 10.4 中展示的体育学科案例研究。让我们为图像致谢 DALL-E，为标题致谢 ChatGPT。添加以下文本作为致谢：*图像：来源 DALL-E。标题：来源 ChatGPT*。
 
-我们将在左侧放置致谢。你可以在书籍的 GitHub 仓库中找到实现的代码，位于 10/crediting/left-sideways。以下列表显示了在左侧实现致谢部分的代码。
+我们将在左侧放置致谢。你可以在书籍的 GitHub 仓库中找到实现的代码，位于`10/crediting/left-sideways`。以下列表显示了在左侧实现致谢部分的代码。
 
 ##### 列表 10.1 在左侧添加致谢
 
@@ -237,10 +221,9 @@ credits = alt.Chart(credits_df
             size=10, 
             align='left', 
             color='black',
- angle=270,
+            angle=270,
             x=-70,
             y=200
-
         ).encode(
             text='text'
         )
@@ -248,7 +231,7 @@ credits = alt.Chart(credits_df
 chart = (credits + chart + annotation)
 ```
 
-备注  使用`mark_text()`添加致谢。使用`angle`属性将文本旋转 270 度。调整`x`和`y`以适应图表。尝试不同的值以获得最佳结果。
+备注：使用`mark_text()`添加致谢。使用`angle`属性将文本旋转 270 度。调整`x`和`y`以适应图表。尝试不同的值以获得最佳结果。
 
 如往常一样，你可以要求 Copilot 为你生成代码。图 10.10 显示了生成的图表。
 
@@ -264,7 +247,7 @@ chart = (credits + chart + annotation)
 
 ##### 图 10.11 描述在第四章中，标题下带有致谢的体育学科案例研究
 
-你可以在书籍的 GitHub 仓库中找到这个练习的解决方案，位于 10/crediting/under-the-title。
+你可以在书籍的 GitHub 仓库中找到这个练习的解决方案，位于`10/crediting/under-the-title`。
 
 ##### 挑战 5：比较阅读流程
 
@@ -275,23 +258,20 @@ chart = (credits + chart + annotation)
 ## 摘要
 
 +   在任何应用中使用生成式人工智能可能会暴露出不同的问题，例如偏见和歧视。因此，审查生成式人工智能提供的内容非常重要。
-
 +   根据联合国教科文组织原则，道德地使用生成式人工智能意味着尊重人、社会和环境。
-
 +   在发布你的数据故事之前，确保要注明来源。这是认可他人工作并增强受众对你信任感的一种方式。
 
 ## 参考文献
 
-### 生成式人工智能问题
 
-+   Baer, T. (2019). *理解、管理和预防算法偏差*. Apress.
 
-+   Tomczak, J. M. (2022). *深度生成建模*. Springer.
+# 生成式人工智能问题
 
-### 伦理与人工智能
+- Baer, T. (2019). *理解、管理和预防算法偏差*. Apress.
+- Tomczak, J. M. (2022). *深度生成建模*. Springer.
 
-+   欧盟人工智能法案。 (2021). [`eur-lex.europa.eu/legal-content/EN/TXT/HTML/?uri=CELEX:52021PC0206`](https://eur-lex.europa.eu/legal-content/EN/TXT/HTML/?uri=CELEX:52021PC0206)。
+# 伦理与人工智能
 
-+   美国白宫关于人工智能安全、可靠和值得信赖的开发与使用的行政命令。（2023 年）[`www.whitehouse.gov/briefing-room/presidential-actions/2023/10/30/executive-order-on-the-safe-secure-and-trustworthy-development-and-use-of-artificial-intelligence/`](https://www.whitehouse.gov/briefing-room/presidential-actions/2023/10/30/executive-order-on-the-safe-secure-and-trustworthy-development-and-use-of-artificial-intelligence/).
-
-+   联合国教科文组织关于人工智能伦理的建议。（2022 年）[`unesdoc.unesco.org/ark:/48223/pf0000381137`](https://unesdoc.unesco.org/ark:/48223/pf0000381137) .
+- 欧盟人工智能法案。(2021). [`eur-lex.europa.eu/legal-content/EN/TXT/HTML/?uri=CELEX:52021PC0206`](https://eur-lex.europa.eu/legal-content/EN/TXT/HTML/?uri=CELEX:52021PC0206)。
+- 美国白宫关于人工智能安全、可靠和值得信赖的开发与使用的行政命令。（2023 年）[`www.whitehouse.gov/briefing-room/presidential-actions/2023/10/30/executive-order-on-the-safe-secure-and-trustworthy-development-and-use-of-artificial-intelligence/`](https://www.whitehouse.gov/briefing-room/presidential-actions/2023/10/30/executive-order-on-the-safe-secure-and-trustworthy-development-and-use-of-artificial-intelligence/)。
+- 联合国教科文组织关于人工智能伦理的建议。（2022 年）[`unesdoc.unesco.org/ark:/48223/pf0000381137`](https://unesdoc.unesco.org/ark:/48223/pf0000381137)。

@@ -1,18 +1,14 @@
+
 # 第十章：模型部署
 
 本章涵盖
 
-+   在我们的本地系统上部署深度学习模型到简单的网络应用程序
-
-+   Google Cloud 关键概念的介绍
-
-+   Vertex AI 简介，Google Cloud 中的机器学习环境
-
-+   使用 Vertex AI 端点部署深度学习模型
-
-+   适配网络应用程序以使用 Vertex AI 端点
-
-+   使用 Gemini 为 Google Cloud 获取生成式 AI 辅助
++ 在我们的本地系统上部署深度学习模型到简单的网络应用程序
++ Google Cloud 关键概念的介绍
++ Vertex AI 简介，Google Cloud 中的机器学习环境
++ 使用 Vertex AI 端点部署深度学习模型
++ 适配网络应用程序以使用 Vertex AI 端点
++ 使用 Gemini 为 Google Cloud 获取生成式 AI 辅助
 
 在第九章中，我们回顾了使用表格数据训练深度学习模型的一组最佳实践，并介绍了吉隆坡房地产价格预测问题作为一个具有混合类型特征的挑战性表格问题。在本章中，我们将使用第九章中训练的模型，并在一个简单的网络应用程序中部署它。首先，我们将本地部署它——也就是说，将网络服务器和训练好的模型都放在我们的本地系统上。接下来，我们将介绍 Google Cloud 作为部署我们模型的另一种方式。实际上，我们将训练好的模型部署到 Vertex AI 中，这是 Google Cloud 中的机器学习环境。最后，我们将探讨如何在 Google Cloud 上使用 Google 的生成式 AI 助手 Gemini。本章中描述的代码可在 [`mng.bz/6e1A`](https://mng.bz/6e1A) 获取。
 
@@ -34,17 +30,12 @@
 
 让我们回顾一下构成图 10.1 所示网络部署的组件：
 
-+   *训练好的模型—*这是我们保存在 Keras 预处理层笔记本中的模型。实际上，模型是以目录结构保存的 ([`mng.bz/oKJp`](https://mng.bz/oKJp))。在 Flask 服务器模块中，使用对该目录的引用来加载模型。
-
-+   *Flask 服务器模块*—这是一个 Python 模块，用于加载训练好的模型，并包含每个解决方案 HTML 页面的视图函数。视图函数指定当这些 HTML 页面被加载时，Flask 服务器模块采取的操作。
-
-+   *Flask 服务器配置文件*—YAML 文件，其中可以指定 Flask 服务器的参数，例如包含训练模型的目录。
-
-+   `home.html`—由 Flask 服务器提供的 HTML 页面之一。此页面包含用户可以指定他们想要获取价格预测的房产特征的字段（例如位置、房间数量和停车位数量）。此页面还包含 JavaScript 函数，用于将默认值加载到页面上的每个字段中，指定可以输入到每个字段的合法值，并将用户输入的值打包，以便可以发送回 Flask 服务器模块。
-
-+   `show-prediction.html`—由 Flask 服务器提供的 HTML 页面之一。此页面显示模型对用户在`home.html`页面上输入的房产特征的预测。
-
-+   *CSS 文件*—指定解决方案中 HTML 页面的渲染方式。
++ *训练好的模型*—这是我们保存在 Keras 预处理层笔记本中的模型。实际上，模型是以目录结构保存的 ([`mng.bz/oKJp`](https://mng.bz/oKJp))。在 Flask 服务器模块中，使用对该目录的引用来加载模型。
++ *Flask 服务器模块*—这是一个 Python 模块，用于加载训练好的模型，并包含每个解决方案 HTML 页面的视图函数。视图函数指定当这些 HTML 页面被加载时，Flask 服务器模块采取的操作。
++ *Flask 服务器配置文件*—YAML 文件，其中可以指定 Flask 服务器的参数，例如包含训练模型的目录。
++ `home.html`—由 Flask 服务器提供的 HTML 页面之一。此页面包含用户可以指定他们想要获取价格预测的房产特征的字段（例如位置、房间数量和停车位数量）。此页面还包含 JavaScript 函数，用于将默认值加载到页面上的每个字段中，指定可以输入到每个字段的合法值，并将用户输入的值打包，以便可以发送回 Flask 服务器模块。
++ `show-prediction.html`—由 Flask 服务器提供的 HTML 页面之一。此页面显示模型对用户在`home.html`页面上输入的房产特征的预测。
++ *CSS 文件*—指定解决方案中 HTML 页面的渲染方式。
 
 与本书中的其他示例不同，默认情况下 Web 部署运行在您的本地系统上。当 Flask 服务器运行时，它会在`localhost:5000`上提供`home.html`，这样您就可以在浏览器中练习系统。
 
@@ -157,11 +148,9 @@ prediction=prediction))                                         ⑧
 
 `home.html`页面中发生了很多事情：
 
-+   设置用户可以输入基于预测的八个属性特征的值的字段
-
-+   为每个字段设置默认值和范围
-
-+   当用户点击获取预测并从字段收集输入时，将它们发送到 Flask 服务器模块中的视图函数
++ 设置用户可以输入基于预测的八个属性特征的值的字段
++ 为每个字段设置默认值和范围
++ 当用户点击获取预测并从字段收集输入时，将它们发送到 Flask 服务器模块中的视图函数
 
 图 10.3 总结了 `home.html` 中 JavaScript 函数与用户界面元素的交互。
 
@@ -209,6 +198,14 @@ Number of rooms (1 - 20):</label>                          ③
 
 列表 10.5 `load-selections()` JavaScript 函数
 
+
+
+### 10.1.3 从 `home.html` 收集输入
+
+列表 10.5 显示了 `load_selections()` JavaScript 函数。此函数在 `home.html` 中加载时被调用，用于初始化页面上的所有字段。
+
+列表 10.5 `load_selections()` JavaScript 函数
+
 ```py
 function load_selections(){
     // initialize all selections
@@ -249,7 +246,7 @@ document.getElementById("location");                        ①
 
 ⑥ 循环填充位置字段选择列表中的值
 
-从列表 10.5 中我们可以看到 `load-selections()` JavaScript 函数执行的主要操作：
+从列表 10.5 中我们可以看到 `load_selections()` JavaScript 函数执行的主要操作：
 
 +   对于连续字段，设置默认值。这是页面初始加载时在字段中显示的值，如果用户没有更改它，则将其传递给 Flask 服务器模块。
 
@@ -328,7 +325,7 @@ rooms_value,"&property_type=",property_type_string,\
 
 ③ 获取位置字段选择列表中选定条目的值
 
-④ 将 window.output 的值设置为查询字符串
+④ 将 `window.output` 的值设置为查询字符串
 
 列表 10.7 中显示的 `getOption()` JavaScript 函数执行以下操作：
 
@@ -369,7 +366,7 @@ size=500
 
 将查询字符串传递给 Flask 服务器模块中的 `show-prediction` 视图函数。如列表 10.3 所示，在该函数中，查询字符串被解析以获取在 `home.html` 中输入的每个特征的值，并使用这些值从模型中获取预测。
 
-### 10.1.4 show-prediction.html 页面
+### 10.1.4 `show-prediction.html` 页面
 
 现在我们已经查看了 Flask 服务器模块和 `home.html`，还有另一个网络部署组件需要检查：`show-prediction.html`。此页面显示模型对用户在 `home.html` 中输入值的属性所做的预测，并有一个按钮将用户带回到 `home.html`，在那里他们可以为另一个属性输入值。
 
@@ -416,11 +413,11 @@ style="font-size : 20px; width: 40%; height: 30px;"/>
 
 ④ 返回到 `home.html` 的按钮
 
-如列表 10.8 所示，`show-prediction.html`不包含任何 JavaScript 函数。页面的 HTML 定义了页面上的文本，按钮“获取另一个预测”将用户返回到`home.html`。图 10.4 显示了本节中讨论的元素在`show-prediciton.html`中的显示方式。
+如列表 10.8 所示，`show-prediction.html` 不包含任何 JavaScript 函数。页面的 HTML 定义了页面上的文本，按钮“获取另一个预测”将用户返回到 `home.html`。图 10.4 显示了本节中讨论的元素在 `show-prediciton.html` 中的显示方式。
 
 ![](img/CH10_F04_Ryan2.png)
 
-图 10.4 `show-prediction.html`中的关键元素
+图 10.4 `show-prediction.html` 中的关键元素
 
 现在我们已经检查了 Web 部署的所有组件，我们将在下一节中回顾在 Web 上简单部署我们的模型的理由。
 
@@ -430,13 +427,13 @@ style="font-size : 20px; width: 40%; height: 30px;"/>
 
 1.  在您的本地系统上创建一个新的目录并克隆仓库 [`github.com/lmassaron/ml_on_tabular_data`](https://github.com/lmassaron/ml_on_tabular_data)。
 
-1.  将`chapter_10`设置为当前目录并启动 Flask 服务器模块：
+1.  将 `chapter_10` 设置为当前目录并启动 Flask 服务器模块：
 
     ```py
     python flask_endpoint_deploy.py
     ```
 
-1.  一旦 Flask 服务器模块运行，请在浏览器中转到`localhost:5000`以练习部署。
+1.  一旦 Flask 服务器模块运行，请在浏览器中转到 `localhost:5000` 以练习部署。
 
 恭喜！您已经在简单本地 Web 应用程序的背景下练习了一个在表格数据上训练的深度学习模型。这种部署是我们练习训练好的模型并查看其是否按预期行为的一种高效方式。然而，这种非常基础的部署并没有包含我们在生产部署中期望拥有的许多特性。例如，我们不希望服务模型的资源受限于我们的本地系统。在本章的剩余部分，我们将探讨如何使用这个相同的 Web 应用程序来练习从云环境中的端点部署的训练模型。
 
@@ -472,7 +469,9 @@ style="font-size : 20px; width: 40%; height: 30px;"/>
 
 ### 10.3.1 首次访问谷歌云
 
-在本节中，我们将介绍如何首次登录谷歌云并设置一个谷歌云*项目*。你在谷歌云中做的每一件事都与一个项目相关联。你可以使用项目来组织你的工作，并控制可以访问给定谷歌云资源的团队和个人。要开始，请访问[`cloud.google.com`](https://cloud.google.com)并点击登录，如图 10.5 所示。
+在本节中，我们将介绍如何首次登录谷歌云并设置一个谷歌云*项目*。你在谷歌云中做的每一件事都与一个项目相关联。你可以使用项目来组织你的工作，并控制可以访问给定谷歌云资源的团队和个人。要开始，请访问 [`cloud.google.com`](https://cloud.google.com) 并点击登录，如图 10.5 所示。
+
+
 
 ![](img/CH10_F05_Ryan2.png)
 
@@ -490,19 +489,18 @@ style="font-size : 20px; width: 40%; height: 30px;"/>
 
 图 10.7 Google Cloud 控制台
 
-控制台是 Google Cloud 的用户界面。这是与 Google Cloud 功能交互的界面选择之一，也是我们在本章中将在 Google Cloud 中执行的大多数操作所使用的界面。除了 Cloud 控制台外，您还可以使用
+控制台是 Google Cloud 的用户界面。这是与 Google Cloud 功能交互的界面选择之一，也是我们在本章中将在 Google Cloud 中执行的大多数操作所使用的界面。除了 Cloud 控制台外，您还可以使用：
 
-+   命令行界面
-
-+   客户端库
++ 命令行界面
++ 客户端库
 
 注意：有关 Google Cloud 接口的更多详细信息，请参阅 [`cloud.google.com/docs/overview`](https://cloud.google.com/docs/overview)。
 
-### 10.3.2 创建 Google Cloud 项目
+## 10.3.2 创建 Google Cloud 项目
 
 您成功登录 Google Cloud 并访问 Google Cloud 控制台后，可以创建一个项目。在本节中，我们将介绍创建项目的步骤。
 
-在 Google Cloud 控制台中，单击“项目选择”字段，如图 10.8 所示。在“选择项目”屏幕中，选择“新建项目”，如图 10.9 所示。然后，在“项目名称”字段中输入 `first-project-ml-tabular` 并单击创建，如图 10.10 所示。
+在 Google Cloud 控制台中，单击“项目选择”字段，如图 10.8 所示。在“选择项目”屏幕中，选择“新建项目”，如图 10.9 所示。然后，在“项目名称”字段中输入`first-project-ml-tabular`并单击创建，如图 10.10 所示。
 
 ![](img/CH10_F08_Ryan2.png)
 
@@ -520,7 +518,7 @@ style="font-size : 20px; width: 40%; height: 30px;"/>
 
 注意，项目名称对于您的项目集合必须是唯一的。项目 ID，位于“项目名称”字段下方，必须是全局唯一的，因此如果您有一个与 Google Cloud 中任何其他项目共享的项目名称，该项目的项目 ID 将自动更新为唯一。
 
-### 10.3.3 创建 Google Cloud 存储桶
+## 10.3.3 创建 Google Cloud 存储桶
 
 在 Google Cloud 中存储数据的主要方式是使用 Cloud Storage 存储桶。在本节中，我们将介绍您在部署模型时需要了解的关于 Cloud Storage 存储桶的详细信息。如果您想了解更多关于 Cloud Storage 存储桶的细节，请参阅文档：[`cloud.google.com/storage/docs/buckets`](https://cloud.google.com/storage/docs/buckets)。我们将使用一个存储桶来存储第九章中训练的模型。要创建 Cloud Storage 存储桶，请在 Cloud Console 的搜索栏中输入“cloud storage”，然后选择 Cloud Storage，如图 10.11 所示。
 
@@ -558,9 +556,8 @@ Cloud Storage 存储桶页面出现。选择创建以创建新的 Cloud Storage 
 
 现在我们已经在 Google Cloud 中创建了一个项目，并在新项目中创建了一个云存储桶，我们准备在 Google Cloud 中部署一个模型。以下是我们将遵循的部署步骤（在 Vertex AI 文档[`mng.bz/nRJ2`](https://mng.bz/nRJ2)中描述得更详细）：
 
-1.  将第九章中训练的模型上传到 Google Cloud 存储。
-
-1.  将模型导入 Vertex AI 模型注册表。
+1. 将第九章中训练的模型上传到 Google Cloud 存储。
+2. 将模型导入 Vertex AI 模型注册表。
 
 以下各节描述了这些步骤。
 
@@ -604,7 +601,7 @@ Cloud Storage 存储桶页面出现。选择创建以创建新的 Cloud Storage 
 
 图 10.21 模型注册表导入
 
-在导入模型页面上，选择“导入为新模型”，在名称字段中输入“first-model-ml-tabular”，然后单击继续，如图 10.22 所示。
+在导入模型页面上，选择“导入为新模型”，在名称字段中输入`first-model-ml-tabular`，然后单击继续，如图 10.22 所示。
 
 ![](img/CH10_F22_Ryan2.png)
 
@@ -612,18 +609,16 @@ Cloud Storage 存储桶页面出现。选择创建以创建新的 Cloud Storage 
 
 在导入模型页面的模型设置选项卡上，按照以下步骤操作：
 
-1.  在模型框架中，选择 TensorFlow。回想一下，第八章中 TensorFlow 是 Keras 的低级框架，我们用它来训练模型。
+1. 在模型框架中，选择 TensorFlow。回想一下，第八章中 TensorFlow 是 Keras 的低级框架，我们用它来训练模型。
+2. 在模型框架版本中，选择用于训练模型的 TensorFlow 级别。您可以从用于训练模型的笔记本中`tf.__version__`的输出中找到此级别：
 
-1.  在模型框架版本中，选择用于训练模型的 TensorFlow 级别。您可以从用于训练模型的笔记本中`tf.__version__`的输出中找到此级别：
+```py
+tf.__version__ 
+2.9.2
+```
 
-    ```py
-    tf.__version__ 
-    2.9.2
-    ```
-
-1.  在模型工件位置中，单击浏览并选择您上传模型的文件夹。
-
-1.  按照图 10.23 所示，单击继续并导入。
+3. 在模型工件位置中，单击浏览并选择您上传模型的文件夹。
+4. 按照图 10.23 所示，单击继续并导入。
 
 ![](img/CH10_F23_Ryan2.png)
 
@@ -655,7 +650,7 @@ Cloud Storage 存储桶页面出现。选择创建以创建新的 Cloud Storage 
 
 图 10.27 部署到端点页面
 
-在模型设置选项卡下，在高级扩展选项中，选择一个最小机器类型，例如 `n1-standard-2`，如图 10.28 所示，然后点击继续。
+在模型设置选项卡下，在高级扩展选项中，选择一个最小机器类型，例如`n1-standard-2`，如图 10.28 所示，然后点击继续。
 
 ![图片](img/CH10_F28_Ryan2.png)
 
@@ -712,11 +707,9 @@ sample = {
 
 注意 JSON 请求样本格式与第九章 Jupyter Notebook 中的原始样本之间的三个差异：
 
-+   键值对中的值都是数组而不是单个值。如果您有单个值，将会得到一个错误。
-
-+   全角引号（“ “）被广泛使用，而不是单引号。
-
-+   在最后一个键值对之后不需要逗号。
++ 键值对中的值都是数组而不是单个值。如果您有单个值，将会得到一个错误。
++ 全角引号（“ “）被广泛使用，而不是单引号。
++ 在最后一个键值对之后不需要逗号。
 
 一旦 JSON 请求字段包含有效的 JSON，框架就会变成蓝色。点击预测，在响应字段中查看端点的输出，如图 10.33 所示。
 
@@ -751,9 +744,8 @@ of having a price over the median.
 
 为了使 Flask 部署与 Vertex AI 端点部署兼容，我们需要采取以下步骤：
 
-1.  设置 Vertex AI SDK。
-
-1.  更新 Flask 服务器模块以访问 Vertex AI 端点，从该端点获取模型的预测。
+1. 设置 Vertex AI SDK。
+2. 更新 Flask 服务器模块以访问 Vertex AI 端点，从该端点获取模型的预测。
 
 图 10.34 显示了适配使用 Vertex AI 端点部署的应用程序的关键组件。
 
@@ -794,11 +786,13 @@ from google.protobuf import json_format
 from google.protobuf.struct_pb2 import Value
 ```
 
-接下来，我们添加定义在 [`mng.bz/QD8v`](https://mng.bz/QD8v) 的 `predict_custom_trained_model_sample()` 函数。我们需要对这个函数进行一项更新，以便它将 `predictions`（包含端点的响应）返回到 `show-prediction.html` 视图函数。
+接下来，我们添加定义在 [`mng.bz/QD8v`](https://mng.bz/QD8v) 的`predict_custom_trained_model_sample()`函数。我们需要对这个函数进行一项更新，以便它将`predictions`（包含端点的响应）返回到`show-prediction.html`视图函数。
 
-列表 10.9 突出了我们需要对 `show-prediction.html` 视图函数进行的更新。这些更改将输入值打包成 Vertex AI 端点部署所期望的格式，并通过 `predict_custom_trained_model_sample()` 函数在 Vertex AI 端点调用模型。
 
-列表 10.9 `show-prediction.html` 端点视图函数
+
+列表 10.9 突出了我们需要对`show-prediction.html`视图函数进行的更新。这些更改将输入值打包成 Vertex AI 端点部署所期望的格式，并通过`predict_custom_trained_model_sample()`函数在 Vertex AI 端点调用模型。
+
+## 列表 10.9 `show-prediction.html`端点视图函数
 
 ```py
 def show_prediction():
@@ -821,15 +815,15 @@ value in scoring_dict.items()}                               ②
     prob = tf.nn.sigmoid(predictions[0])
 ```
 
-① 从特征列表中删除 size_type
+① 从特征列表中删除`size_type`
 
-② 将 scoring_dict 中的值转换为值列表
+② 将`scoring_dict`中的值转换为值列表
 
-③ 调用 predict_custom_trained_model_sample
+③ 调用`predict_custom_trained_model_sample`
 
-列表 10.9 显示了对 `show-prediction.html` 视图函数的以下更新：
+列表 10.9 显示了对`show-prediction.html`视图函数的以下更新：
 
-+   对端点的调用必须具有精确正确的特征和值列表，不能缺少特征或额外特征。由于我们不直接使用 `size_type` 与模型一起，我们需要使用 `scoring_dict.pop('size_type')` 语句显式地从特征和值的字典中删除它。
++   对端点的调用必须具有精确正确的特征和值列表，不能缺少特征或额外特征。由于我们不直接使用`size_type`与模型一起，我们需要使用`scoring_dict.pop('size_type')`语句显式地从特征和值的字典中删除它。
 
 +   端点期望以与我们在 10.4.4 节中直接在控制台练习端点所使用的 JSON 相同的格式从字典中获取特征和值。这意味着字典中的值需要转换为值列表，每个列表中恰好包含一个值。此语句将字典转换为值列表：
 
@@ -837,7 +831,7 @@ value in scoring_dict.items()}                               ②
 input_dict = {name: [value] for name, value in scoring_dict.items()}
 ```
 
-+   `predict_custom_trained_model_sample()` 函数需要使用指定项目、端点和我们想要预测的特征键值对的参数来调用。
++   `predict_custom_trained_model_sample()`函数需要使用指定项目、端点和我们想要预测的特征键值对的参数来调用。
 
 除了对 Flask 服务器模块的这些更新外，我们还可以删除从本地文件系统加载模型的语句，因为我们在这个解决方案中不使用本地模型。
 
@@ -871,7 +865,7 @@ pip install protobuf==3.20.*n
 
 现在我们已经看到了模型的两种部署方式：一种是从本地系统完全运行的 Web 部署，另一种是使用从 Vertex AI 端点提供模型的 Web 部署。
 
-### 10.5.3 将模型部署到端点的益处
+## 10.5.3 将模型部署到端点的益处
 
 如果模型在简单的 Web 部署或部署到端点时得到相同的结果，您可能会问，将模型部署到端点有什么意义。将模型部署到端点可以带来许多好处：
 
@@ -931,9 +925,9 @@ Google Cloud 不是唯一利用生成式 AI 来简化平台使用并自动化开
 
 现在我们已经完成了 Gemini for Google Cloud 的基本设置，我们将在下一节中看到如何使用它来回答关于 Google Cloud 的问题。
 
-### 10.6.1 使用 Gemini for Google Cloud 回答关于 Google Cloud 的问题
+### 10.6.2 使用 Gemini for Google Cloud 回答关于 Google Cloud 的问题
 
-Gemini for Google Cloud 在 Google Cloud 中表现出多种方式，包括
+Gemini for Google Cloud 在 Google Cloud 中表现出多种方式，包括：
 
 +   *在 Google Cloud 中可用的聊天面板中*——图 10.38 展示了 Gemini for Google Cloud 的聊天面板。
 

@@ -1,3 +1,5 @@
+
+
 # 附录 B. 设置 GitHub Copilot
 
 本附录将指导您将 Copilot 扩展安装到 Visual Studio Code 和 PyCharm 中。Visual Studio Code，通常简称为 VS Code，是由微软创建的一个跨平台、语言无关的集成开发环境（IDE）。微软免费提供 VS Code。它拥有出色的 Copilot 支持，因此它是您阅读本书时的理想选择。PyCharm 是 JetBrains 提供的针对 Python 的特定 IDE。JetBrains 提供了一个社区版，它是免费的。此外，它还有一个扩展来启用 Copilot 支持。无论选择哪个都行，因为它们都是优秀的工具。
@@ -52,7 +54,7 @@
 
 打开 PyCharm，打开首选项。然后按照以下步骤操作：
 
-1. 点击插件标签页。类似于 VS Code，点击此标签页将打开一个搜索窗口。在此搜索窗口中，输入`copilot`。当您在市场中找到 Copilot 时，点击安装按钮（见图 B.7）。
+1. 点击插件标签页。类似于 VS Code，点击此标签页将打开一个搜索窗口。在此搜索窗口中，输入 `copilot`。当您在市场中找到 Copilot 时，点击安装按钮（见图 B.7）。
 
 ![图片](img/APPB_F07_Crocker2.png)
 
@@ -90,14 +92,14 @@
 
 ## B.3 使用 Copilot 进行首次飞行
 
-如果它尚未打开，请打开您喜欢的 IDE 并创建一个新的 Python 项目。在该项目中，创建一个名为 app.py 的文件。然后在文件的顶部输入以下提示作为注释，以便 Copilot 创建一个简单的 FastAPI 应用程序：
+如果它尚未打开，请打开您喜欢的 IDE 并创建一个新的 Python 项目。在该项目中，创建一个名为 `app.py` 的文件。然后在文件的顶部输入以下提示作为注释，以便 Copilot 创建一个简单的 FastAPI 应用程序：
 
 ```py
 # create a FastAPI app
 # run with uvicorn app:app --reload
 ```
 
-如果您已正确安装并初始化 Copilot，Copilot 将开始为您生成代码。按两次 Enter 键，然后开始输入`from fastapi import FastAPI`的`import`语句。注意，当您开始输入时，该语句会自动为您填写（见图 B.13）。这就是 Copilot。
+如果您已正确安装并初始化 Copilot，Copilot 将开始为您生成代码。按两次 Enter 键，然后开始输入 `from fastapi import FastAPI` 的 `import` 语句。注意，当您开始输入时，该语句会自动为您填写（见图 B.13）。这就是 Copilot。
 
 ![图片](img/APPB_F13_Crocker2.png)
 
@@ -142,10 +144,11 @@ pip install uvicorn
 python3 app.py
 ```
 
-这应该会启动 FastAPI。在您的浏览器中导航到 http://localhost:8000，您应该会看到一个“Hello, world”的 JSON 表示（见图 B.14）。
+这应该会启动 FastAPI。在您的浏览器中导航到 `http://localhost:8000`，您应该会看到一个“Hello, world”的 JSON 表示（见图 B.14）。
 
 ![图片](img/APPB_F14_Crocker2.png)
 
 图 B.14 您的简单 FastAPI 应该返回消息“Hello, world”，这是在学习新语言或技术时最常见的初始输出。
 
 恭喜！您已经创建了第一个由 Copilot 辅助的程序，并且正朝着成为 AI 驱动开发者的大步迈进。
+

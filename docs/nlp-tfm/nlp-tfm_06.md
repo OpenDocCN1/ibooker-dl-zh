@@ -1,3 +1,5 @@
+
+
 # 第五章：文本生成
 
 基于 Transformer 的语言模型最令人不安的特点之一是它们生成的文本几乎无法与人类写的文本区分开。一个著名的例子是 OpenAI 的 GPT-2，当给出以下提示时：¹
@@ -78,6 +80,13 @@ model = AutoModelForCausalLM.from_pretrained(model_name).to(device)
 
 现在让我们生成一些文本！虽然 ![nlpt_pin01](img/nlpt_pin01.png) Transformers 为 GPT-2 这样的自回归模型提供了 `generate()` 函数，但我们将自己实现这种解码方法，以了解底层发生了什么。为了热身，我们将采用图 5-3 中显示的相同的迭代方法：我们将使用“Transformers are the”作为输入提示，并运行八个时间步的解码。在每个时间步，我们挑选出模型对提示中最后一个标记的 logits，并用 softmax 包装它们以获得概率分布。然后我们选择具有最高概率的下一个标记，将其添加到输入序列中，然后再次运行该过程。以下代码完成了这项工作，并且还存储了每个时间步的五个最有可能的标记，以便我们可以可视化替代方案：
 
+
+
+
+# 文本生成与束搜索解码
+
+## 使用 Transformers 库进行文本生成
+
 ```py
 import pandas as pd
 
@@ -122,9 +131,9 @@ pd.DataFrame(iterations)
 | 6 | Transformers are the most popular toy line in the | world (69.26%) | United (4.55%) | history (4.29%) | US (4.23%) | U (2.30%) |
 | 7 | Transformers are the most popular toy line in the world | , (39.73%) | . (30.64%) | and (9.87%) | with (2.32%) | today (1.74%) |
 
-通过这种简单的方法，我们能够生成句子“Transformers are the most popular toy line in the world”。有趣的是，这表明 GPT-2 已经内化了一些关于变形金刚媒体特许经营的知识，这是由两家玩具公司（孩之宝和 Takara Tomy）创造的。我们还可以看到每一步的其他可能的延续，这显示了文本生成的迭代性质。与其他任务（如序列分类）不同，在那些任务中，单次前向传递就足以生成预测，而在文本生成中，我们需要逐个解码输出标记。
+通过这种简单的方法，我们能够生成句子"Transformers are the most popular toy line in the world"。有趣的是，这表明 GPT-2 已经内化了一些关于变形金刚媒体特许经营的知识，这是由两家玩具公司（孩之宝和 Takara Tomy）创造的。我们还可以看到每一步的其他可能的延续，这显示了文本生成的迭代性质。与其他任务（如序列分类）不同，在那些任务中，单次前向传递就足以生成预测，而在文本生成中，我们需要逐个解码输出标记。
 
-实现贪婪搜索并不太难，但我们希望使用来自 ![nlpt_pin01](img/nlpt_pin01.png) Transformers 的内置 `generate()` 函数来探索更复杂的解码方法。为了重现我们的简单示例，让我们确保抽样被关闭（默认情况下关闭，除非您从加载检查点的特定模型配置中另有说明），并指定 `max_new_tokens` 为新生成标记的数量：
+实现贪婪搜索并不太难，但我们希望使用来自 ![nlpt_pin01](img/nlpt_pin01.png) Transformers 的内置`generate()`函数来探索更复杂的解码方法。为了重现我们的简单示例，让我们确保抽样被关闭（默认情况下关闭，除非您从加载检查点的特定模型配置中另有说明），并指定`max_new_tokens`为新生成标记的数量：
 
 ```py
 input_ids = tokenizer(input_txt, return_tensors="pt")["input_ids"].to(device)
@@ -136,7 +145,7 @@ print(tokenizer.decode(output[0]))
 Transformers are the most popular toy line in the world,
 ```
 
-现在让我们尝试一些更有趣的东西：我们能否重现 OpenAI 的独角兽故事？与之前一样，我们将使用分词器对提示进行编码，并为 `max_length` 指定一个较大的值，以生成更长的文本序列。
+现在让我们尝试一些更有趣的东西：我们能否重现 OpenAI 的独角兽故事？与之前一样，我们将使用分词器对提示进行编码，并为`max_length`指定一个较大的值，以生成更长的文本序列。
 
 ```py
 max_length = 128
@@ -170,15 +179,16 @@ The researchers were surprised to find that the unicorns were able
 
 幸运的是，我们可以做得更好——让我们来看一种被称为*束搜索解码*的流行方法。
 
-###### 注意
+> **注意**
+> 尽管贪婪搜索解码在需要多样性的文本生成任务中很少使用，但它对于生成像算术这样需要确定性和事实正确的输出的短序列是有用的。⁴ 对于这些任务，您可以通过提供格式为`"5 + 8 => 13 \n 7 + 2 => 9 \n 1 + 0 =>"`的几个以换行符分隔的示例来对 GPT-2 进行条件设置。
 
-尽管贪婪搜索解码在需要多样性的文本生成任务中很少使用，但它对于生成像算术这样需要确定性和事实正确的输出的短序列是有用的。⁴ 对于这些任务，您可以通过提供格式为`"5 + 8 => 13 \n 7 + 2 => 9 \n 1 + 0 =>"`的几个以换行符分隔的示例来对 GPT-2 进行条件设置。`  `#束搜索解码
+## 束搜索解码
 
 束搜索不是在每一步解码时选择具有最高概率的标记，而是跟踪前*b*个最有可能的下一个标记，其中*b*被称为*束*或*部分假设*的数量。下一组束是通过考虑现有集合的所有可能的下一个标记扩展，并选择*b*个最有可能的扩展来选择的。这个过程重复进行，直到达到最大长度或 EOS 标记，并且通过根据它们的对数概率对*b*束进行排名来选择最有可能的序列。束搜索的一个示例显示在图 5-4 中。
 
 ![束搜索](img/nlpt_0504.png)
 
-###### 图 5-4。具有两个束的束搜索
+**图 5-4。** 具有两个束的束搜索
 
 为什么我们要使用对数概率而不是概率本身来对序列进行评分？计算序列的总体概率<math alttext="upper P left-parenthesis y 1 comma y 2 comma ellipsis comma y Subscript t Baseline vertical-bar bold x right-parenthesis"><mrow><mi>P</mi> <mo>(</mo> <msub><mi>y</mi> <mn>1</mn></msub> <mo>,</mo> <msub><mi>y</mi> <mn>2</mn></msub> <mo>,</mo> <mo>...</mo> <mo>,</mo> <msub><mi>y</mi> <mi>t</mi></msub> <mo>|</mo> <mi>𝐱</mi> <mo>)</mo></mrow></math>涉及计算条件概率<math alttext="upper P left-parenthesis y Subscript t Baseline vertical-bar y Subscript t Baseline comma bold x right-parenthesis"><mrow><mi>P</mi> <mo>(</mo> <msub><mi>y</mi> <mi>t</mi></msub> <mo>|</mo> <msub><mi>y</mi> <mrow><mo><</mo><mi>t</mi></mrow></msub> <mo>,</mo> <mi>𝐱</mi> <mo>)</mo></mrow></math>的*乘积*是一个原因。由于每个条件概率通常是在[ <math alttext="0 comma 1"><mrow><mn>0</mn> <mo>,</mo> <mn>1</mn></mrow></math> ]范围内的一个小数，取它们的乘积可能导致总体概率很容易下溢。这意味着计算机不能准确地表示计算结果。例如，假设我们有一个包含<math alttext="t equals 1024"><mrow><mi>t</mi> <mo>=</mo> <mn>1024</mn></mrow></math>个标记的序列，并慷慨地假设每个标记的概率为 0.5。这个序列的总体概率是一个极小的数：
 
@@ -231,7 +241,9 @@ def sequence_logprob(model, labels, input_len=0):
     return seq_log_prob.cpu().numpy()
 ```
 
-请注意，我们忽略输入序列的对数概率，因为它们不是模型生成的。我们还可以看到对齐 logits 和标签的重要性；因为模型预测下一个标记，我们不会得到第一个标签的 logit，并且我们不需要最后一个 logit，因为我们没有它的真实标记。
+
+
+请注意，我们忽略输入序列的对数概率，因为它们不是模型生成的。我们还可以看到对齐 `logits` 和标签的重要性；因为模型预测下一个标记，我们不会得到第一个标签的 `logit`，并且我们不需要最后一个 `logit`，因为我们没有它的真实标记。
 
 让我们首先使用这些函数来计算 OpenAI 提示中贪婪解码器的序列对数概率：
 
@@ -259,7 +271,7 @@ The researchers were surprised to find that the unicorns were able
 log-prob: -87.43
 ```
 
-现在让我们将其与使用束搜索生成的序列进行比较。要使用`generate()`函数激活束搜索，我们只需要使用`num_beams`参数指定束的数量。我们选择的束数越多，结果可能就越好；然而，生成过程变得更慢，因为我们为每个束生成并行序列：
+现在让我们将其与使用束搜索生成的序列进行比较。要使用 `generate()` 函数激活束搜索，我们只需要使用 `num_beams` 参数指定束的数量。我们选择的束数越多，结果可能就越好；然而，生成过程变得更慢，因为我们为每个束生成并行序列：
 
 ```py
 output_beam = model.generate(input_ids, max_length=max_length, num_beams=5,
@@ -286,7 +298,7 @@ that the unicorns spoke perfect English
 log-prob: -55.23
 ```
 
-我们可以看到，使用束搜索得到的对数概率（越高越好）比简单的贪婪解码要好。然而，我们也可以看到束搜索也存在重复的文本问题。解决这个问题的一种方法是使用`no_repeat_ngram_size`参数来施加*n*-gram 惩罚，该参数跟踪已经看到的*n*-gram，并且如果生成的下一个标记会产生先前看到的*n*-gram，则将其概率设置为零：
+我们可以看到，使用束搜索得到的对数概率（越高越好）比简单的贪婪解码要好。然而，我们也可以看到束搜索也存在重复的文本问题。解决这个问题的一种方法是使用 `no_repeat_ngram_size` 参数来施加 *n*-gram 惩罚，该参数跟踪已经看到的 *n*-gram，并且如果生成的下一个标记会产生先前看到的 *n*-gram，则将其概率设置为零：
 
 ```py
 output_beam = model.generate(input_ids, max_length=max_length, num_beams=5,
@@ -313,25 +325,25 @@ unicorn in person before. The researchers were
 log-prob: -93.12
 ```
 
-这并不太糟糕！我们成功地停止了重复，并且可以看到，尽管产生了较低的分数，文本仍然连贯。带有*n*-gram 惩罚的波束搜索是一种很好的方法，可以在关注高概率标记（使用波束搜索）的同时减少重复（使用*n*-gram 惩罚），在摘要或机器翻译等需要事实正确性的应用中通常使用。当事实正确性不如生成输出的多样性重要时，例如在开放域闲聊或故事生成中，另一种减少重复并提高多样性的替代方法是使用抽样。让我们通过检查一些最常见的抽样方法来完成我们对文本生成的探索。
+这并不太糟糕！我们成功地停止了重复，并且可以看到，尽管产生了较低的分数，文本仍然连贯。带有 *n*-gram 惩罚的波束搜索是一种很好的方法，可以在关注高概率标记（使用波束搜索）的同时减少重复（使用 *n*-gram 惩罚），在摘要或机器翻译等需要事实正确性的应用中通常使用。当事实正确性不如生成输出的多样性重要时，例如在开放域闲聊或故事生成中，另一种减少重复并提高多样性的替代方法是使用抽样。让我们通过检查一些最常见的抽样方法来完成我们对文本生成的探索。
 
-# 抽样方法
+## 抽样方法
 
 最简单的抽样方法是在每个时间步从模型输出的概率分布中随机抽样整个词汇表：
 
 <math alttext="upper P left-parenthesis y Subscript t Baseline equals w Subscript i Baseline vertical-bar y Subscript t Baseline comma bold x right-parenthesis equals normal s normal o normal f normal t normal m normal a normal x left-parenthesis z Subscript t comma i Baseline right-parenthesis equals StartFraction exp left-parenthesis z Subscript t comma i Baseline right-parenthesis Over sigma-summation Underscript j equals 1 Overscript StartAbsoluteValue upper V EndAbsoluteValue Endscripts exp left-parenthesis z Subscript t comma j Baseline right-parenthesis EndFraction" display="block"><mrow><mi>P</mi> <mrow><mo>(</mo> <msub><mi>y</mi> <mi>t</mi></msub> <mo>=</mo> <msub><mi>w</mi> <mi>i</mi></msub> <mo>|</mo> <msub><mi>y</mi> <mrow><mo><</mo><mi>t</mi></mrow></msub> <mo>,</mo> <mi>𝐱</mi> <mo>)</mo></mrow> <mo>=</mo> <mi>softmax</mi> <mrow><mo>(</mo> <msub><mi>z</mi> <mrow><mi>t</mi><mo>,</mo><mi>i</mi></mrow></msub> <mo>)</mo></mrow> <mo>=</mo> <mfrac><mrow><mo form="prefix">exp</mo><mo>(</mo><msub><mi>z</mi> <mrow><mi>t</mi><mo>,</mo><mi>i</mi></mrow></msub> <mo>)</mo></mrow> <mrow><msubsup><mo>∑</mo> <mrow><mi>j</mi><mo>=</mo><mn>1</mn></mrow> <mrow><mo>|</mo><mi>V</mi><mo>|</mo></mrow></msubsup> <mo form="prefix">exp</mo><mrow><mo>(</mo><msub><mi>z</mi> <mrow><mi>t</mi><mo>,</mo><mi>j</mi></mrow></msub> <mo>)</mo></mrow></mrow></mfrac></mrow></math>
 
-其中<math alttext="StartAbsoluteValue upper V EndAbsoluteValue"><mrow><mo>|</mo> <mi>V</mi> <mo>|</mo></mrow></math>表示词汇表的基数。我们可以通过添加一个温度参数*T*来控制输出的多样性，该参数在进行 softmax 之前重新调整 logits：
+其中 <math alttext="StartAbsoluteValue upper V EndAbsoluteValue"><mrow><mo>|</mo> <mi>V</mi> <mo>|</mo></mrow></math> 表示词汇表的基数。我们可以通过添加一个温度参数 *T* 来控制输出的多样性，该参数在进行 softmax 之前重新调整 logits：
 
 <math alttext="upper P left-parenthesis y Subscript t Baseline equals w Subscript i Baseline vertical-bar y Subscript t Baseline comma bold x right-parenthesis equals StartFraction exp left-parenthesis z Subscript t comma i Baseline slash upper T right-parenthesis Over sigma-summation Underscript j equals 1 Overscript StartAbsoluteValue upper V EndAbsoluteValue Endscripts exp left-parenthesis z Subscript t comma j Baseline slash upper T right-parenthesis EndFraction" display="block"><mrow><mi>P</mi> <mrow><mo>(</mo> <msub><mi>y</mi> <mi>t</mi></msub> <mo>=</mo> <msub><mi>w</mi> <mi>i</mi></msub> <mo>|</mo> <msub><mi>y</mi> <mrow><mo><</mo><mi>t</mi></mrow></msub> <mo>,</mo> <mi>𝐱</mi> <mo>)</mo></mrow> <mo>=</mo> <mfrac><mrow><mo form="prefix">exp</mo><mo>(</mo><msub><mi>z</mi> <mrow><mi>t</mi><mo>,</mo><mi>i</mi></mrow></msub> <mo>/</mo><mi>T</mi><mo>)</mo></mrow> <mrow><msubsup><mo>∑</mo> <mrow><mi>j</mi><mo>=</mo><mn>1</mn></mrow> <mrow><mo>|</mo><mi>V</mi><mo>|</mo></mrow></msubsup> <mo form="prefix">exp</mo><mrow><mo>(</mo><msub><mi>z</mi> <mrow><mi>t</mi><mo>,</mo><mi>j</mi></mrow></msub> <mo>/</mo><mi>T</mi><mo>)</mo></mrow></mrow></mfrac></mrow></math>
 
-通过调整*T*，我们可以控制概率分布的形状。⁵ 当<math alttext="upper T much-less-than 1"><mrow><mi>T</mi> <mo>≪</mo> <mn>1</mn></mrow></math>时，分布在原点附近呈峰值，罕见的标记被抑制。另一方面，当<math alttext="upper T much-greater-than 1"><mrow><mi>T</mi> <mo>≫</mo> <mn>1</mn></mrow></math>时，分布变得平坦，每个标记变得同样可能。温度对标记概率的影响在图 5-5 中显示。
+通过调整 *T*，我们可以控制概率分布的形状。⁵ 当 <math alttext="upper T much-less-than 1"><mrow><mi>T</mi> <mo>≪</mo> <mn>1</mn></mrow></math> 时，分布在原点附近呈峰值，罕见的标记被抑制。另一方面，当 <math alttext="upper T much-greater-than 1"><mrow><mi>T</mi> <mo>≫</mo> <mn>1</mn></mrow></math> 时，分布变得平坦，每个标记变得同样可能。温度对标记概率的影响在图 5-5 中显示。
 
 ![标记概率作为温度的函数](img/nlpt_0505.png)
 
 ###### 图 5-5. 三个选定温度下随机生成的标记概率分布
 
-为了看看我们如何使用温度来影响生成的文本，让我们通过在`generate()`函数中设置`temperature`参数来使用<math alttext="upper T equals 2"><mrow><mi>T</mi> <mo>=</mo> <mn>2</mn></mrow></math>进行抽样（我们将在下一节解释`top_k`参数的含义）：
+为了看看我们如何使用温度来影响生成的文本，让我们通过在 `generate()` 函数中设置 `temperature` 参数来使用 <math alttext="upper T equals 2"><mrow><mi>T</mi> <mo>=</mo> <mn>2</mn></mrow></math> 进行抽样（我们将在下一节解释 `top_k` 参数的含义）：
 
 ```py
 output_temp = model.generate(input_ids, max_length=max_length, do_sample=True,
@@ -347,7 +359,7 @@ English.
 
 While the station aren protagonist receive Pengala nostalgiates tidbitRegarding
 Jenny loclonju AgreementCON irrational �rite Continent seaf A jer Turner
-Dorbecue WILL Pumpkin mere Thatvernuildagain YoAniamond disse *
+Dorbecue WILL Pumpkin Mere thatvernuildagainYoAniamond disse *
 Runewitingkusstemprop});b zo coachinginventorymodules deflation press
 Vaticanpres Wrestling chargesThingsctureddong Ty physician PET KimBi66 graz Oz
 at aff da temporou MD6 radi iter
@@ -361,114 +373,16 @@ output_temp = model.generate(input_ids, max_length=max_length, do_sample=True,
 print(tokenizer.decode(output_temp[0]))
 ```
 
-```py
-In a shocking finding, scientist discovered a herd of unicorns living in a
-remote, previously unexplored valley, in the Andes Mountains. Even more
-surprising to the researchers was the fact that the unicorns spoke perfect
-English.
 
-The scientists were searching for the source of the mysterious sound, which was
-making the animals laugh and cry.
 
-The unicorns were living in a remote valley in the Andes mountains
+在`/path/to/xxx`目录中，找到`xxx.json`。
 
-'When we first heard the noise of the animals, we thought it was a lion or a
-tiger,' said Luis Guzman, a researcher from the University of Buenos Aires,
-Argentina.
+在表达式`cvar = avar + bvar`中，加法运算符（`+`）将`avar`与`bvar`相加，得到它们的和`cvar`。
 
-'But when
+在`List.of(arg0, arg1, arg2)`中，`List`接口的工厂方法`of()`接受一系列元素，返回包含它们的只读列表。
+
+之后我们这样调用`cmd`命令：`cmd arg0 arg1 arg2`。
+
 ```
-
-这显然更加连贯，甚至包括了另一所大学被认为是发现的引用！我们可以从温度中得出的主要教训是，它允许我们控制样本的质量，但在连贯性（低温）和多样性（高温）之间总是存在一个权衡，需要根据手头的使用情况进行调整。
-
-调整连贯性和多样性之间的权衡的另一种方法是截断词汇的分布。这使我们能够通过温度自由调整多样性，但在一个更有限的范围内，排除了在上下文中太奇怪的单词（即低概率单词）。有两种主要方法可以做到这一点：top-*k*和核（或 top-*p*）抽样。让我们来看看。
-
-# Top-k 和核抽样
-
-Top-*k*和核（top-*p*）抽样是使用温度的两种流行的替代方法或扩展。在这两种情况下，基本思想是限制我们可以在每个时间步骤从中抽样的可能标记的数量。为了了解这是如何工作的，让我们首先可视化模型在<math alttext="upper T equals 1"><mrow><mi>T</mi> <mo>=</mo> <mn>1</mn></mrow></math>时的累积概率分布，如图 5-6 中所示。
-
-让我们分解这些图表，因为它们包含了大量信息。在上图中，我们可以看到标记概率的直方图。它在<math alttext="10 Superscript negative 8"><msup><mn>10</mn> <mrow><mo>-</mo><mn>8</mn></mrow></msup></math>左右有一个峰值，然后在<math alttext="10 Superscript negative 4"><msup><mn>10</mn> <mrow><mo>-</mo><mn>4</mn></mrow></msup></math>左右有第二个较小的峰值，接着急剧下降，只有少数标记的概率在<math alttext="10 Superscript negative 2"><msup><mn>10</mn> <mrow><mo>-</mo><mn>2</mn></mrow></msup></math>和<math alttext="10 Superscript negative 1"><msup><mn>10</mn> <mrow><mo>-</mo><mn>1</mn></mrow></msup></math>之间。从这个图表中，我们可以看到选择具有最高概率的标记（在<math alttext="10 Superscript negative 1"><msup><mn>10</mn> <mrow><mo>-</mo><mn>1</mn></mrow></msup></math>处的孤立条）的概率是 10 中的 1。
-
-![下一个标记预测的概率分布](img/nlpt_0506.png)
-
-###### 图 5-6. 下一个标记预测的概率分布（上）和下降标记概率的累积分布（下）
-
-在下图中，我们按概率降序排列了标记，并计算了前 10,000 个标记的累积和（GPT-2 的词汇表中总共有 50,257 个标记）。曲线代表选择任何前面标记的概率。例如，选择具有最高概率的 1,000 个标记的概率大约为 96%。我们看到概率在 90%以上迅速上升，但只有在几千个标记后才接近 100%。图表显示，有 100 分之一的机会不选择任何不在前 2,000 位的标记。
-
-尽管这些数字乍一看可能很小，但它们变得重要，因为在生成文本时，我们每个标记只采样一次。因此，即使只有 100 分之一或 1000 分之一的几率，如果我们采样数百次，就有很大的机会在某个时候选择到一个不太可能的标记，并且在采样时选择这些标记可能会严重影响生成文本的质量。因此，我们通常希望避免这些非常不太可能的标记。这就是 top-*k*和 top-*p*采样发挥作用的地方。
-
-top-*k*采样的理念是通过仅从具有最高概率的*k*个标记中进行采样来避免低概率的选择。这对分布的长尾部分进行了固定的截断，并确保我们只从可能的选择中进行采样。回到图 5-6，top-*k*采样相当于定义一条垂直线，并从左侧的标记中进行采样。同样，`generate()`函数提供了一个使用`top_k`参数轻松实现这一点的方法：
-
-```py
-output_topk = model.generate(input_ids, max_length=max_length, do_sample=True,
-                             top_k=50)
-print(tokenizer.decode(output_topk[0]))
+if (condVar > someVal) {console.log("xxx")}
 ```
-
-```py
-In a shocking finding, scientist discovered a herd of unicorns living in a
-remote, previously unexplored valley, in the Andes Mountains. Even more
-surprising to the researchers was the fact that the unicorns spoke perfect
-English.
-
-The wild unicorns roam the Andes Mountains in the region of Cajamarca, on the
-border with Argentina (Picture: Alamy/Ecole Nationale Supérieure d'Histoire
-Naturelle)
-
-The researchers came across about 50 of the animals in the valley. They had
-lived in such a remote and isolated area at that location for nearly a thousand
-years that
-```
-
-这可能是我们迄今为止生成的最接近人类的文本。但是我们如何选择*k*？*k*的值是手动选择的，并且对于序列中的每个选择都是相同的，独立于实际的输出分布。我们可以通过查看一些文本质量指标来找到*k*的合适值，我们将在下一章中探讨这些指标，但是这种固定的截断可能并不令人满意。
-
-另一种选择是使用*动态*截断。使用核或 top-*p*采样时，我们不是选择固定的截断值，而是设置一个截断条件。这个条件是在选择中达到一定的概率质量时截断。假设我们将该值设置为 95%。然后，我们按概率降序排列所有标记，并从列表顶部逐个添加标记，直到所选标记的概率总和达到 95%。回到图 5-6，*p*的值定义了累积概率图上的水平线，并且我们只从线下的标记中进行采样。根据输出分布，这可能只是一个（非常可能的）标记，也可能是一百个（同等可能的）标记。在这一点上，您可能不会感到惊讶，`generate()`函数还提供了一个参数来激活 top-*p*采样。让我们试一试：
-
-```py
-output_topp = model.generate(input_ids, max_length=max_length, do_sample=True,
-                             top_p=0.90)
-print(tokenizer.decode(output_topp[0]))
-```
-
-```py
-In a shocking finding, scientist discovered a herd of unicorns living in a
-remote, previously unexplored valley, in the Andes Mountains. Even more
-surprising to the researchers was the fact that the unicorns spoke perfect
-English.
-
-The scientists studied the DNA of the animals and came to the conclusion that
-the herd are descendants of a prehistoric herd that lived in Argentina about
-50,000 years ago.
-
-According to the scientific analysis, the first humans who migrated to South
-America migrated into the Andes Mountains from South Africa and Australia, after
-the last ice age had ended.
-
-Since their migration, the animals have been adapting to
-```
-
-Top-*p*采样也产生了一个连贯的故事，这次是关于从澳大利亚迁移到南美洲的新情节。您甚至可以结合这两种采样方法，以获得两全其美。设置`top_k=50`和`top_p=0.9`相当于选择具有 90%概率质量的标记，最多从 50 个标记中进行选择的规则。
-
-###### 注意
-
-当我们使用采样时，我们还可以应用束搜索。我们可以对下一批候选标记进行采样并以相同的方式构建束，而不是贪婪地选择它们。
-
-# 哪种解码方法最好？
-
-不幸的是，没有普遍“最佳”的解码方法。哪种方法最好将取决于你为生成文本的任务的性质。如果你希望你的模型执行精确的任务，比如算术或提供对特定问题的答案，那么你应该降低温度或使用贪婪搜索与波束搜索的确定性方法来保证得到最可能的答案。如果你希望模型生成更长的文本，甚至有点创造性，那么你应该切换到采样方法，增加温度或使用 top-*k*和核采样的混合。
-
-# 结论
-
-在本章中，我们研究了文本生成，这与我们之前遇到的 NLU 任务非常不同。生成文本至少需要每个生成的标记进行一次前向传递，如果使用波束搜索，甚至需要更多。这使得文本生成在计算上要求很高，需要适当的基础设施来规模化运行文本生成模型。此外，一个良好的解码策略，将模型的输出概率转换为离散标记，可以提高文本质量。找到最佳的解码策略需要一些实验和对生成的文本进行主观评价。
-
-然而，在实践中，我们不希望仅凭直觉做出这些决定！与其他 NLP 任务一样，我们应该选择一个反映我们想要解决的问题的模型性能指标。毫不奇怪，有很多选择，我们将在下一章中遇到最常见的选择，在那里我们将看看如何训练和评估文本摘要模型。或者，如果你迫不及待地想学习如何从头开始训练 GPT 类型的模型，你可以直接跳到第十章，在那里我们收集了大量的代码数据集，然后对其进行自回归语言模型的训练。
-
-¹ 这个例子来自 OpenAI 的[GPT-2 博客文章](https://openai.com/blog/better-language-models)。
-
-² 然而，正如[Delip Rao 指出的](https://oreil.ly/mOM3V)，Meena 是否*打算*讲冷笑话是一个微妙的问题。
-
-³ 如果你的机器内存不足，你可以通过将`model_name = "gpt-xl"`替换为`model_name = "gpt"`来加载一个较小的 GPT-2 版本。
-
-⁴ N.S. Keskar 等人，[“CTRL: A Conditional Transformer Language Model for Controllable Generation”](https://arxiv.org/abs/1909.05858)，（2019）。
-
-⁵ 如果你懂一些物理学，你可能会发现与[玻尔兹曼分布](https://oreil.ly/ZsMmx)有惊人的相似之处。

@@ -1,3 +1,4 @@
+
 # 第二章：深入了解 GPT-4 和 ChatGPT 的 API
 
 本章将详细介绍 GPT-4 和 ChatGPT 的 API。本章的目标是让您对这些 API 的使用有扎实的理解，以便您可以有效地将它们集成到您的 Python 应用程序中。通过本章的学习，您将能够充分利用这些 API 在自己的开发项目中的强大功能。
@@ -6,11 +7,10 @@
 
 随着我们的进展，您将获得实用的知识，这对您作为与 GPT-4 和 ChatGPT 一起使用的 Python 开发人员的旅程非常有用。本章中包含的所有 Python 代码都可以在[本书的 GitHub 存储库](https://oreil.ly/DevAppsGPT_GitHub)中找到。
 
-###### 注意
+> **注意**
+> 在继续之前，请查看[OpenAI 使用政策](https://openai.com/policies/usage-policies)，如果您还没有帐户，请在[OpenAI 主页](https://openai.com)上创建一个。您还可以查看[条款和政策页面](https://openai.com/policies)上的其他法律文件。第一章中介绍的概念对于使用 OpenAI API 和库也是必不可少的。
 
-在继续之前，请查看[OpenAI 使用政策](https://openai.com/policies/usage-policies)，如果您还没有帐户，请在[OpenAI 主页](https://openai.com)上创建一个。您还可以查看[条款和政策页面](https://openai.com/policies)上的其他法律文件。第一章中介绍的概念对于使用 OpenAI API 和库也是必不可少的。
-
-# 基本概念
+## 基本概念
 
 OpenAI 提供了几种为各种任务设计的模型，每种模型都有自己的定价。在接下来的页面上，您将找到可用模型的详细比较以及如何选择使用哪些模型的提示。重要的是要注意，模型设计的目的——无论是用于文本完成、聊天还是编辑——都会影响您如何使用其 API。例如，ChatGPT 和 GPT-4 背后的模型是基于聊天的，并使用聊天端点。
 
@@ -22,31 +22,30 @@ OpenAI 提供了几种为各种任务设计的模型，每种模型都有自己�
 
 ![](img/dev-app-gpt4-cgpt-dagc_0201.png)
 
-###### 图 2-1\. 使用 OpenAI API 的基本概念
+**图 2-1.** 使用 OpenAI API 的基本概念
 
 现在我们已经讨论了概念，让我们转向模型的细节。
 
-# OpenAI API 中可用的模型
+## OpenAI API 中可用的模型
 
 OpenAI API 为您提供了访问[OpenAI 开发的多个模型](https://platform.openai.com/docs/models)。这些模型可作为 API 的服务使用（通过直接的 HTTP 调用或提供的库），这意味着 OpenAI 在远程服务器上运行模型，开发人员只需向其发送查询。
 
 每个模型都具有不同的功能和定价。在本节中，我们将看一下 OpenAI 通过其 API 提供的 LLM。需要注意的是，这些模型是专有的，因此您不能直接修改代码以适应您的需求。但正如我们将在后面看到的，您可以通过 OpenAI API 对其中一些模型进行特定数据的微调。
 
-###### 注意
-
-一些较旧的 OpenAI 模型，包括 GPT-2 模型，不是专有的。虽然您可以从[Hugging Face](https://oreil.ly/39Bu5)或[GitHub](https://oreil.ly/CYPN6)下载 GPT-2 模型，但无法通过 API 访问它。
+> **注意**
+> 一些较旧的 OpenAI 模型，包括 GPT-2 模型，不是专有的。虽然您可以从[Hugging Face](https://oreil.ly/39Bu5)或[GitHub](https://oreil.ly/CYPN6)下载 GPT-2 模型，但无法通过 API 访问它。
 
 由于 OpenAI 提供的许多模型都在不断更新，因此在本书中很难给出完整的模型列表；OpenAI 提供的模型的更新列表可在[在线文档](https://platform.openai.com/docs/models)中找到。因此，我们将重点放在最重要的模型上：
 
-InstructGPT
+**InstructGPT**
 
 这一系列模型可以处理许多单轮完成任务。`text-ada-001`模型只能完成简单的完成任务，但也是 GPT-3 系列中最快速和最便宜的模型。`text-babbage-001`和`text-curie-001`稍微更强大，但也更昂贵。`text-davinci-003`模型可以以优秀的质量执行所有完成任务，但也是 GPT-3 模型系列中最昂贵的模型。
 
-ChatGPT
+**ChatGPT**
 
 ChatGPT 背后的模型是`gpt-3.5-turbo`。作为聊天模型，它可以将一系列消息作为输入，并返回一个适当生成的消息作为输出。虽然`gpt-3.5-turbo`的聊天格式旨在促进多轮对话，但也可以将其用于没有对话的单轮任务。在单轮任务中，`gpt-3.5-turbo`的性能与`text-davinci-003`相当，由于`gpt-3.5-turbo`的价格是后者的十分之一，性能几乎相当，建议您默认使用它进行单轮任务。`gpt-3.5-turbo`模型的上下文大小为 4,000 个标记，这意味着它可以接收 4,000 个标记作为输入。OpenAI 还提供另一个模型，名为`gpt-3.5-turbo-16k`，具有与标准`gpt-3.5-turbo`模型相同的功能，但上下文大小增加了四倍。
 
-GPT-4
+**GPT-4**
 
 这是 OpenAI 发布的最大模型。它还在最广泛的文本和图像多模态语料库上进行了训练。因此，它在许多领域都具有知识和专业知识。GPT-4 能够遵循复杂的自然语言指令并准确解决困难问题。它可以用于具有高准确性的聊天和单轮任务。OpenAI 提供了两个 GPT-4 模型：`gpt-4`的上下文大小为 8,000 个标记，`gpt-4-32k`的上下文大小为 32,000 个标记。32,000 的上下文大约代表 24,000 个单词，大约相当于 40 页的上下文。
 
@@ -56,43 +55,37 @@ GPT-3.5 Turbo 和 GPT-4 都在不断更新。当我们提到`gpt-3.5-turbo`、`g
 
 正如在第一章中讨论的，OpenAI 建议使用 InstructGPT 系列而不是原始的基于 GPT-3 的模型。这些模型仍然在 API 中以`davinci`、`curie`、`babbage`和`ada`的名称提供。鉴于这些模型可能会提供奇怪、错误和误导性的答案，因此建议在使用时要谨慎。但是，这些模型仍然被使用，因为它们是唯一可以对您的数据进行微调的模型。在撰写本文时，OpenAI 宣布 GPT-3.5 Turbo 和 GPT-4 的微调将在 2024 年推出。
 
-###### 注意
+> **注意**
+> 在经过监督微调阶段获得的 SFT 模型（在第一章中介绍）也可以在 API 中以`davinci-instruct-beta`的名称使用。
 
-在经过监督微调阶段获得的 SFT 模型（在第一章中介绍）也可以在 API 中以`davinci-instruct-beta`的名称使用。
-
-# 使用 OpenAI Playground 尝试 GPT 模型
+## 使用 OpenAI Playground 尝试 GPT 模型
 
 直接测试 OpenAI 提供的不同语言模型的绝佳方法，而无需编码，是使用 OpenAI Playground，这是一个基于 Web 的平台，允许您快速测试 OpenAI 提供的各种 LLM 在特定任务上的表现。Playground 允许您编写提示，选择模型，并轻松查看生成的输出。
 
 访问 Playground 的方法如下：
 
-1.  转到[OpenAI 主页](https://openai.com)，单击开发人员，然后单击概述。
-
-1.  如果您已经有账户但未登录，请单击屏幕右上方的登录。如果您没有 OpenAI 账户，您需要创建一个才能使用 Playground 和大多数 OpenAI 功能。请单击屏幕右上方的注册。请注意，由于 Playground 和 API 会收费，因此您需要提供支付方式。
-
-1.  登录后，您将在网页的左上方看到加入 Playground 的链接。单击该链接，您应该会看到类似于图 2-2 的内容。
+1. 转到[OpenAI 主页](https://openai.com)，单击开发人员，然后单击概述。
+2. 如果您已经有账户但未登录，请单击屏幕右上方的登录。如果您没有 OpenAI 账户，您需要创建一个才能使用 Playground 和大多数 OpenAI 功能。请单击屏幕右上方的注册。请注意，由于 Playground 和 API 会收费，因此您需要提供支付方式。
+3. 登录后，您将在网页的左上方看到加入 Playground 的链接。单击该链接，您应该会看到类似于图 2-2 的内容。
 
 ![](img/dev-app-gpt4-cgpt-dagc_0202.png)
 
-###### 图 2-2. 文本完成模式下的 OpenAI Playground 界面
+**图 2-2.** 文本完成模式下的 OpenAI Playground 界面
 
-###### 注意
-
-ChatGPT Plus 选项与使用 API 或 Playground 无关。如果您订阅了 ChatGPT Plus 服务，那么使用 API 和 Playground 仍会产生费用。
+> **注意**
+> ChatGPT Plus 选项与使用 API 或 Playground 无关。如果您订阅了 ChatGPT Plus 服务，那么使用 API 和 Playground 仍会产生费用。
 
 界面中心的主要空白是用于输入消息的。在编写消息后，单击提交以生成消息的完成。在图 2-2 的示例中，我们写下“正如笛卡尔所说，我思故我在”，然后单击提交后，模型用“我是”完成了我们的输入。
 
-###### 警告
-
-每次单击提交，您的 OpenAI 账户都会收取使用费。我们将在本章后面提供有关价格的更多信息，但举例来说，这个完成大约花费了$0.0002。
+> **警告**
+> 每次单击提交，您的 OpenAI 账户都会收取使用费。我们将在本章后面提供有关价格的更多信息，但举例来说，这个完成大约花费了$0.0002。
 
 界面的各个部分都有许多选项。让我们从底部开始。在提交按钮的右侧是一个撤消按钮[图中标记为(A)]，用于删除最后生成的文本。在我们的情况下，它将删除“我是”。接下来是重新生成按钮[图中标记为(B)]，用于重新生成刚刚删除的文本。然后是历史按钮[标记为(C)]，其中包含了您在过去 30 天内的所有请求。请注意，一旦进入历史菜单，根据隐私原因，有必要时可以轻松删除请求。
 
 屏幕右侧的选项面板提供了与界面和所选模型相关的各种设置。我们只会在这里解释其中一些选项；其他选项将在本书的后面介绍。右侧的第一个下拉列表是模式列表[labeled (D)]。在撰写本文时，可用的模式是 Chat（默认）、Complete 和 Edit。
 
-###### 注意
-
-在本书撰写时，Complete 和 Edit 模式被标记为传统模式，并且可能会在 2024 年 1 月消失。
+> **注意**
+> 在本书撰写时，Complete 和 Edit 模式被标记为传统模式，并且可能会在 2024 年 1 月消失。
 
 如前所示，语言模型致力于在 Playground 的默认模式下无缝完成用户的输入提示。
 
@@ -102,21 +95,27 @@ ChatGPT Plus 选项与使用 API 或 Playground 无关。如果您订阅了 Chat
 
 ![](img/dev-app-gpt4-cgpt-dagc_0203.png)
 
-###### 图 2-3。Chat 模式下的 OpenAI Playground 界面
+**图 2-3.** Chat 模式下的 OpenAI Playground 界面
 
 Playground 中的另一种模式是 Edit。在这种模式下，如图 2-4 所示，您提供一些文本[(I)]和指示[(J)]，模型将尝试相应地修改文本。在这个例子中，给出了描述一个年轻男子要去旅行的文本。模型被指示将文本的主题改为一个老妇人，您可以看到结果符合指示[(K)]。
 
 ![](img/dev-app-gpt4-cgpt-dagc_0204.png)
 
-###### 图 2-4。Edit 模式下的 OpenAI Playground 界面
+**图 2-4.** Edit 模式下的 OpenAI Playground 界面
 
 在 Playground 界面的右侧，在 Mode 下拉列表下方，是 Model 下拉列表[(L)]。正如您已经看到的，这是您选择 LLM 的地方。下拉列表中可用的模型取决于所选的模式。在 Model 下拉列表下方是参数，比如温度[(M)]，它们定义了模型的行为。我们不会在这里详细讨论这些参数。当我们仔细研究这些不同的模型如何工作时，大部分参数将被探索。
 
 屏幕顶部是“加载预设”下拉列表(N)]和四个按钮。在图 2-2 中，我们使用 LLM 来完成句子“正如笛卡尔所说，我思故我在”，但是可以通过使用适当的提示使模型执行特定任务。图 2-5 显示了模型可以执行的常见任务列表，以及与预设示例相关联的示例。
 
-![###### 图 2-5。示例的下拉列表值得注意的是，所提议的预设不仅定义了提示，还定义了屏幕右侧的一些选项。例如，如果您点击 Grammatical Standard English，您将在主窗口中看到图 2-6 中显示的提示。![](img/dev-app-gpt4-cgpt-dagc_0206.png)
+![](img/dev-app-gpt4-cgpt-dagc_0205.png)
 
-###### 图 2-6。Grammatical Standard English 的示例提示
+**图 2-5.** 示例的下拉列表
+
+值得注意的是，所提议的预设不仅定义了提示，还定义了屏幕右侧的一些选项。例如，如果您点击 Grammatical Standard English，您将在主窗口中看到图 2-6 中显示的提示。
+
+![](img/dev-app-gpt4-cgpt-dagc_0206.png)
+
+**图 2-6.** Grammatical Standard English 的示例提示
 
 如果您点击提交，您将得到以下回复：“她没有去市场。”您可以使用下拉列表中提供的提示作为起点，但您总是需要修改它们以适应您的问题。OpenAI 还为不同任务提供了[完整的示例列表](https://platform.openai.com/examples)。
 
@@ -140,7 +139,7 @@ response = openai.Completion.create(
 
 现在您了解了如何使用 Playground 在不编写代码的情况下测试 OpenAI 语言模型，让我们讨论如何获取和管理 OpenAI 服务的 API 密钥。
 
-# 入门：OpenAI Python 库
+## 入门：OpenAI Python 库
 
 在本节中，我们将重点介绍如何在一个小的 Python 脚本中使用 API 密钥，并使用 OpenAI API 进行我们的第一次测试。
 
@@ -148,27 +147,25 @@ OpenAI 提供 GPT-4 和 ChatGPT 作为服务。这意味着用户无法直接访
 
 在完成以下步骤之前，请确保您已登录[OpenAI 网页](https://platform.openai.com/login?launch)。
 
-## OpenAI 访问和 API 密钥
+### OpenAI 访问和 API 密钥
 
 OpenAI 要求您拥有 API 密钥才能使用其服务。此密钥有两个目的：
 
-+   它赋予您调用 API 方法的权利。
-
-+   它将您的 API 调用与您的帐户关联起来，以进行计费。
++ 它赋予您调用 API 方法的权利。
++ 它将您的 API 调用与您的帐户关联起来，以进行计费。
 
 您必须拥有此密钥才能从您的应用程序调用 OpenAI 服务。
 
-要获取密钥，请导航到 OpenAI 平台](https://platform.openai.com)页面。在右上角，点击您的帐户名称，然后点击“查看 API 密钥”，如图 2-7 所示。
+要获取密钥，请导航到 [OpenAI 平台](https://platform.openai.com) 页面。在右上角，点击您的帐户名称，然后点击“查看 API 密钥”，如图 2-7 所示。
 
-![
+![](img/dev-app-gpt4-cgpt-dagc_0207.png)
 
-###### 图 2-7. OpenAI 菜单选择“查看 API 密钥”
+**图 2-7.** OpenAI 菜单选择“查看 API 密钥”
 
-当您在“API 密钥”页面上时，点击“创建新的秘密密钥”并复制您的密钥。此密钥是以*sk-*开头的一长串字符。
+当您在“API 密钥”页面上时，点击“创建新的秘密密钥”并复制您的密钥。此密钥是以`sk-`开头的一长串字符。
 
-###### 警告
-
-请妥善保管此密钥，因为它直接与您的帐户相关联，而且被盗的密钥可能会导致不必要的费用。
+> **警告**
+> 请妥善保管此密钥，因为它直接与您的帐户相关联，而且被盗的密钥可能会导致不必要的费用。
 
 一旦您获得了您的密钥，最佳做法是将其导出为环境变量。这将允许您的应用程序访问密钥，而无需直接在代码中编写它。以下是如何做到这一点。
 
@@ -190,11 +187,13 @@ set OPENAI_API_KEY=sk-(...)
 echo %OPENAI_API_KEY%
 ```
 
-上述代码片段将设置一个环境变量，并使您的密钥可用于从同一 shell 会话启动的其他进程。对于 Linux 系统，还可以直接将此代码添加到您的*.bashrc*文件中。这将允许在所有 shell 会话中访问您的环境变量。当然，不要将这些命令行包含在您推送到公共存储库的代码中。
+上述代码片段将设置一个环境变量，并使您的密钥可用于从同一 shell 会话启动的其他进程。对于 Linux 系统，还可以直接将此代码添加到您的`.bashrc`文件中。这将允许在所有 shell 会话中访问您的环境变量。当然，不要将这些命令行包含在您推送到公共存储库的代码中。
 
-要在 Windows 11 中永久添加/更改环境变量，请同时按下 Windows 键+R 键以打开运行程序或文件窗口。在此窗口中，键入**sysdm.cpl**以转到系统属性面板。然后点击高级选项卡，然后点击环境变量按钮。在结果屏幕上，您可以使用您的 OpenAI 密钥添加新的环境变量。
+要在 Windows 11 中永久添加/更改环境变量，请同时按下 Windows 键+R 键以打开运行程序或文件窗口。在此窗口中，键入`sysdm.cpl`以转到系统属性面板。然后点击高级选项卡，然后点击环境变量按钮。在结果屏幕上，您可以使用您的 OpenAI 密钥添加新的环境变量。
 
-###### 提示
+> **提示**
+
+
 
 OpenAI 提供了一个关于 API 密钥安全的详细页面。
 
@@ -204,7 +203,7 @@ OpenAI 提供了一个关于 API 密钥安全的详细页面。
 
 本节显示了使用 OpenAI Python 库的第一行代码。我们将从一个经典的“Hello World”示例开始，以了解 OpenAI 如何提供其服务。
 
-使用*pip*安装 Python 库：
+使用`pip`安装 Python 库：
 
 ```py
 pip install openai
@@ -258,7 +257,7 @@ openai.api_key_path = <PATH>,
 openai.api_key = os.getenv("OPENAI_API_KEY")
 ```
 
-我们建议遵循环境变量的广泛约定：将密钥存储在*.env*文件中，并在*.gitignore*文件中将其从源代码控制中删除。然后，在 Python 中，您可以运行`load_dotenv`函数来加载环境变量并导入*openai*库：
+我们建议遵循环境变量的广泛约定：将密钥存储在`.env`文件中，并在`.gitignore`文件中将其从源代码控制中删除。然后，在 Python 中，您可以运行`load_dotenv`函数来加载环境变量并导入`openai`库：
 
 ```py
 from dotenv import load_dotenv
@@ -266,7 +265,7 @@ load_dotenv()
 import openai
 ```
 
-在加载*.env*文件后，重要的是要有`openai`导入声明；否则，OpenAI 的设置将无法正确应用。
+在加载`.env`文件后，重要的是要有`openai`导入声明；否则，OpenAI 的设置将无法正确应用。
 
 现在我们已经介绍了 ChatGPT 和 GPT-4 的基本概念，我们可以继续了解它们的使用细节。
 
@@ -353,7 +352,7 @@ ChatGPT 和 GPT-4 都使用相同的端点：`openai.ChatCompletion`。更改模
 
 ###### 提示
 
-OpenAI 提供了一个名为[*tiktoken*](https://oreil.ly/zxRIi)的库，允许开发人员计算文本字符串中的令牌数量。我们强烈建议在调用端点之前使用此库来估算成本。
+OpenAI 提供了一个名为[`tiktoken`](https://oreil.ly/zxRIi)的库，允许开发人员计算文本字符串中的令牌数量。我们强烈建议在调用端点之前使用此库来估算成本。
 
 ### 额外的可选参数
 
@@ -473,6 +472,10 @@ functions = [
 
 然后我们可以创建一个对话并调用`openai.ChatCompletion`端点：
 
+
+
+# 使用函数调用与数据库交互
+
 ```py
 # Example question
 user_question = "I need the top 2 products where the price is less than 2.00"
@@ -532,9 +535,8 @@ The top 2 products where the price is less than $2.00 are:
 
 正如提到的，OpenAI 除了 GPT-3 和 GPT-3.5 系列之外，还提供了几个其他模型。这些模型使用的端点与 ChatGPT 和 GPT-4 模型不同。尽管 GPT 3.5 Turbo 模型通常是在价格和性能方面最佳的选择，但了解如何使用完成模型，特别是对于微调等用例，对于只有 GPT-3 完成模型可用的情况非常有帮助。
 
-###### 注意
-
-OpenAI 已经发布了文本完成端点的弃用计划。我们在这里介绍这个端点只是因为完成基础模型是唯一可以进行微调的模型。OpenAI 将在 2024 年 1 月之前为基于聊天的模型提供微调的解决方案。由于目前还不可用，我们没有必要的信息来在这里描述它。
+> **注意**
+> OpenAI 已经发布了文本完成端点的弃用计划。我们在这里介绍这个端点只是因为完成基础模型是唯一可以进行微调的模型。OpenAI 将在 2024 年 1 月之前为基于聊天的模型提供微调的解决方案。由于目前还不可用，我们没有必要的信息来在这里描述它。
 
 文本完成和聊天完成之间有一个重要的区别：你可能会猜到，两者都生成文本，但聊天完成是为对话优化的。如你在下面的代码片段中所见，与`openai.ChatCompletion`端点的主要区别在于提示格式。基于聊天的模型必须是对话格式；对于完成，它是一个单一的提示：
 
@@ -564,16 +566,14 @@ print(response["choices"][0]["text"])
 
 我们描述了必需的输入参数和我们认为最有用的一些可选参数在表 2-5 中。
 
-表 2-5。文本完成端点的必需参数和可选参数
+**表 2-5。文本完成端点的必需参数和可选参数**
 
-|字段名称|类型|描述|
-|---|---|---|
-|`model`|字符串（必需）|要使用的模型的 ID（与`openai.ChatCompletion`相同）。这是唯一必需的选项。|
-| `prompt` | 字符串或数组（默认：`<&#124;endoftext&#124;>`） | 用于生成完成的提示。这是与`openai.ChatCompletion`端点的主要区别。`openai.Completion.create`端点应编码为字符串、字符串数组、标记数组或标记数组的数组。如果未提供提示给模型，它将生成文本，就像从新文档的开头开始一样。
-
-| `max_tokens` | 整数 | 聊天完成中要生成的标记的最大数量。此参数的默认值为`16`，对于某些用例来说可能太低，应根据您的需求进行调整。
-
-| `suffix` | 字符串（默认：null） | 完成后的文本。此参数允许添加后缀文本。它还允许进行插入。
+| 字段名称 | 类型 | 描述 |
+| --- | --- | --- |
+| `model` | 字符串（必需） | 要使用的模型的 ID（与`openai.ChatCompletion`相同）。这是唯一必需的选项。 |
+| `prompt` | 字符串或数组（默认：`<&#124;endoftext&#124;>`） | 用于生成完成的提示。这是与`openai.ChatCompletion`端点的主要区别。`openai.Completion.create`端点应编码为字符串、字符串数组、标记数组或标记数组的数组。如果未提供提示给模型，它将生成文本，就像从新文档的开头开始一样。 |
+| `max_tokens` | 整数 | 聊天完成中要生成的标记的最大数量。此参数的默认值为`16`，对于某些用例来说可能太低，应根据您的需求进行调整。 |
+| `suffix` | 字符串（默认：null） | 完成后的文本。此参数允许添加后缀文本。它还允许进行插入。 |
 
 ### 提示和标记的长度
 
@@ -605,9 +605,8 @@ print(response["choices"][0]["text"])
 }
 ```
 
-###### 注意
-
-这个输出与我们在聊天模型中得到的非常相似。唯一的区别在于`choice`对象：不再有带有`content`和`role`属性的消息，而是有一个简单的`text`属性，其中包含模型生成的完成。
+> **注意**
+> 这个输出与我们在聊天模型中得到的非常相似。唯一的区别在于`choice`对象：不再有带有`content`和`role`属性的消息，而是有一个简单的`text`属性，其中包含模型生成的完成。
 
 # 考虑事项
 
@@ -619,7 +618,7 @@ OpenAI 将其模型的定价列在其[定价页面](https://openai.com/pricing)�
 
 在撰写本文时，OpenAI 模型的定价如表 2-6 所示。
 
-表 2-6。每个模型的定价和标记限制
+**表 2-6。每个模型的定价和标记限制**
 
 | 家庭 | 模型 | 定价 | 最大标记 |
 | --- | --- | --- | --- |
@@ -643,9 +642,8 @@ GPT-4 允许的上下文长度是 GPT-3.5 Turbo 的两倍，甚至可以达到 3
 
 在我们撰写本文时，OpenAI 声称发送给模型的输入数据不会被用于重新训练，除非您决定选择加入。然而，您的输入将被保留 30 天，用于监控和使用合规检查。这意味着 OpenAI 员工以及专门的第三方承包商可能会访问您的 API 数据。
 
-###### 警告
-
-永远不要通过 OpenAI 端点发送个人信息或密码等敏感数据。我们建议您查看[OpenAI 的数据使用政策](https://openai.com/policies/api-data-usage-policies)以获取最新信息，因为这可能会有所变化。如果您是国际用户，请注意您的个人信息和输入的数据可能会从您的位置传输到美国的 OpenAI 设施和服务器。这可能会对您的应用程序创建产生一些法律影响。
+> **警告**
+> 永远不要通过 OpenAI 端点发送个人信息或密码等敏感数据。我们建议您查看[OpenAI 的数据使用政策](https://openai.com/policies/api-data-usage-policies)以获取最新信息，因为这可能会有所变化。如果您是国际用户，请注意您的个人信息和输入的数据可能会从您的位置传输到美国的 OpenAI 设施和服务器。这可能会对您的应用程序创建产生一些法律影响。
 
 有关如何构建考虑安全和隐私问题的 LLM 应用程序的更多细节，请参阅第三章。
 
@@ -673,33 +671,21 @@ result['data']['embedding']
 
 生成的嵌入是一个向量：一个浮点数组。
 
-###### 提示
-
-有关嵌入的完整文档可在[OpenAI 的参考文档](https://platform.openai.com/docs/api-reference/embeddings)中找到。
+> **提示**
+> 有关嵌入的完整文档可在[OpenAI 的参考文档](https://platform.openai.com/docs/api-reference/embeddings)中找到。
 
 嵌入的原则是以某种方式有意义地表示文本字符串，捕捉它们的语义相似性。有了这个想法，你可以有各种用例：
 
-搜索
-
-按与查询字符串相关性对结果进行排序。
-
-推荐
-
-推荐包含与查询字符串相关的文本字符串的文章。
-
-聚类
-
-按相似性对字符串进行分组。
-
-异常检测
-
-找到一个与其他字符串无关的文本字符串。
+- **搜索**：按与查询字符串相关性对结果进行排序。
+- **推荐**：推荐包含与查询字符串相关的文本字符串的文章。
+- **聚类**：按相似性对字符串进行分组。
+- **异常检测**：找到一个与其他字符串无关的文本字符串。
 
 嵌入式具有这样的特性，即如果两个文本具有相似的含义，它们的向量表示将是相似的。例如，在图 2-8 中，显示了三个句子的二维嵌入。尽管两个句子“猫追逐老鼠绕着房子。”和“房子周围，老鼠被猫追赶。”有不同的句法，但它们传达了相同的一般意义，因此它们应该具有相似的嵌入表示。而句子“宇航员在轨道上修理了太空飞船。”与前两个句子的主题（猫和老鼠）无关，讨论的是完全不同的主题（宇航员和太空飞船），因此它应该具有明显不同的嵌入表示。请注意，在此示例中，为了清晰起见，我们将嵌入显示为具有两个维度，但实际上它们通常是更高维度的，例如 512。
 
 ![](img/dev-app-gpt4-cgpt-dagc_0208.png)
 
-###### 图 2-8\. 三个句子的二维嵌入示例
+**图 2-8。三个句子的二维嵌入示例**
 
 我们在剩下的章节中多次提到嵌入式 API，因为嵌入式是处理自然语言与 AI 模型的重要部分。
 
@@ -707,43 +693,21 @@ result['data']['embedding']
 
 如前所述，使用 OpenAI 模型时，您必须遵守[OpenAI 使用政策](https://openai.com/policies/usage-policies)中描述的规则。为了帮助您遵守这些规则，OpenAI 提供了一个模型，用于检查内容是否符合这些使用政策。如果您构建一个应用程序，用户输入将用作提示，这可能很有用：您可以根据审查端点的结果过滤查询。该模型提供了分类功能，允许您搜索以下类别的内容：
 
-仇恨
+- **仇恨**：针对基于种族、性别、种族、宗教、国籍、性取向、残疾或种姓的群体的仇恨
+- **仇恨/威胁**：涉及对特定群体进行暴力或严重伤害的仇恨内容
+- **自残**：推广或描述自残行为，包括自杀、自残和饮食障碍
+- **性**：旨在描述性行为或推广性服务（除了教育和健康）的内容
+- **涉及未成年人的性**：涉及 18 岁以下人员的性内容
+- **暴力**：美化暴力或庆祝他人的痛苦或羞辱的内容
+- **暴力/图形**：描绘死亡、暴力或严重身体伤害的暴力内容
 
-针对基于种族、性别、种族、宗教、国籍、性取向、残疾或种姓的群体的仇恨
-
-仇恨/威胁
-
-涉及对特定群体进行暴力或严重伤害的仇恨内容
-
-自残
-
-推广或描述自残行为，包括自杀、自残和饮食障碍
-
-性
-
-旨在描述性行为或推广性服务（除了教育和健康）的内容
-
-涉及未成年人的性
-
-涉及 18 岁以下人员的性内容
-
-暴力
-
-美化暴力或庆祝他人的痛苦或羞辱的内容
-
-暴力/图形
-
-描绘死亡、暴力或严重身体伤害的暴力内容
-
-###### 注意
-
-支持英语以外的语言有限。
+> **注意**
+> 支持英语以外的语言有限。
 
 审查模型的端点是`openai.Moderation.create`，只有两个参数可用：模型和输入文本。内容审查有两种模型。默认模型是`text-moderation-latest`，会随着时间自动更新，以确保您始终使用最准确的模型。另一个模型是`text-moderation-stable`。OpenAI 会在更新此模型之前通知您。
 
-###### 警告
-
-`text-moderation-stable`的准确性可能略低于`text-moderation-latest`。
+> **警告**
+> `text-moderation-stable`的准确性可能略低于`text-moderation-latest`。
 
 以下是如何使用这个审查模型的示例：
 
@@ -758,48 +722,22 @@ response = openai.Moderation.create(
 
 让我们来看看`response`对象中包含的审查端点的输出结果：
 
-```py
-{
-    "id": "modr-7AftIJg7L5jqGIsbc7NutObH4j0Ig",
-    "model": "text-moderation-004",
-    "results": [
-        {
-            "categories": {
-                "hate": false,
-                "hate/threatening": false,
-                "self-harm": false,
-                "sexual": false,
-                "sexual/minors": false,
-                "violence": true,
-                "violence/graphic": false,
-            },
-            "category_scores": {
-                "hate": 0.0400671623647213,
-                "hate/threatening": 3.671687863970874e-06,
-                "self-harm": 1.3143378509994363e-06,
-                "sexual": 5.508050548996835e-07,
-                "sexual/minors": 1.1862029225540027e-07,
-                "violence": 0.9461417198181152,
-                "violence/graphic": 1.463699845771771e-06,
-            },
-            "flagged": true,
-        }
-    ],
-}
-```
+
+
+# 审查端点输出
 
 审查端点的输出结果提供了表 2-7 中显示的信息片段。
 
-表 2-7\. 审查端点输出的描述
+**表 2-7\. 审查端点输出的描述**
 
 | 字段名称 | 类型 | 描述 |
 | --- | --- | --- |
 | `model` | 字符串 | 这是用于预测的模型。在我们之前的示例中调用该方法时，我们指定了使用模型`text-moderation-latest`，在输出结果中使用的模型是`text-moderation-004`。如果我们使用`text-moderation-stable`调用该方法，那么将使用`text-moderation-001`。 |
 | `flagged` | 布尔值 | 如果模型确定内容违反了 OpenAI 的使用政策，则将其设置为`true`；否则，将其设置为`false`。 |
-| `categories` | Dict | 这包括一个带有违规政策类别的二进制标志的字典。对于每个类别，如果模型识别到违规，则值为`true`，否则为`false`。可以通过`print(type(response['results'][0]​['cate⁠gories']))`访问该字典。 |
-| `category_scores` | Dict | 该模型提供了一个具有特定类别分数的字典，显示它对输入违反 OpenAI 该类别政策的信心程度。分数范围从 0 到 1，分数越高表示信心越大。这些分数不应被视为概率。可以通过`print(type(response​['re⁠sults'][0]['category_scores']))`访问该字典。 |
+| `categories` | Dict | 这包括一个带有违规政策类别的二进制标志的字典。对于每个类别，如果模型识别到违规，则值为`true`，否则为`false`。可以通过`print(type(response['results'][0]['categories']))`访问该字典。 |
+| `category_scores` | Dict | 该模型提供了一个具有特定类别分数的字典，显示它对输入违反 OpenAI 该类别政策的信心程度。分数范围从 0 到 1，分数越高表示信心越大。这些分数不应被视为概率。可以通过`print(type(response['results'][0]['category_scores']))`访问该字典。 |
 
-###### 警告
+**警告**
 
 OpenAI 将定期改进审查系统。因此，`category_scores`可能会有所变化，并且用于确定类别值的阈值也可能会改变。
 
@@ -819,40 +757,40 @@ Whisper 是语音识别的多功能模型。它经过大型音频数据集的训
 
 以下是发送输入到 GPT-3.5 Turbo 时使用的备忘单：
 
-1.  安装`openai`依赖项：
+1. 安装`openai`依赖项：
 
-    ```py
-    pip install openai
-    ```
+```py
+pip install openai
+```
 
-1.  将 API 密钥设置为环境变量：
+2. 将 API 密钥设置为环境变量：
 
-    ```py
-    export OPENAI_API_KEY=sk-(...)
-    ```
+```py
+export OPENAI_API_KEY=sk-(...)
+```
 
-1.  在 Python 中，导入`openai`：
+3. 在 Python 中，导入`openai`：
 
-    ```py
-    import openai
-    ```
+```py
+import openai
+```
 
-1.  调用`openai.ChatCompletion`端点：
+4. 调用`openai.ChatCompletion`端点：
 
-    ```py
-    response = openai.ChatCompletion.create(
-        model="gpt-3.5-turbo",
-        messages=[{"role": "user", "content": "Your Input Here"}],
-    )
-    ```
+```py
+response = openai.ChatCompletion.create(
+    model="gpt-3.5-turbo",
+    messages=[{"role": "user", "content": "Your Input Here"}],
+)
+```
 
-1.  获取答案：
+5. 获取答案：
 
-    ```py
-        print(response['choices'][0]['message']['content'])
-    ```
+```py
+print(response['choices'][0]['message']['content'])
+```
 
-###### 提示
+**提示**
 
 不要忘记查看[定价页面](https://openai.com/pricing)，并使用[tiktoken](https://github.com/openai/tiktoken)来估算使用成本。
 
@@ -861,5 +799,3 @@ Whisper 是语音识别的多功能模型。它经过大型音频数据集的训
 OpenAI 还提供了其他几个模型和工具。在接下来的章节中，您将发现嵌入端点对于在应用程序中包含 NLP 功能非常有用。
 
 现在您知道如何使用 OpenAI 服务，是时候深入了解为什么要使用它们了。在下一章中，您将看到各种示例和用例的概述，以帮助您充分利用 OpenAI ChatGPT 和 GPT-4 模型。
-
-

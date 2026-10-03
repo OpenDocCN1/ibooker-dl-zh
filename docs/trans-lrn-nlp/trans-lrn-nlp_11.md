@@ -1,14 +1,15 @@
+
+
 # 第八章：使用 BERT 和多语言 BERT 的 NLP 深度迁移学习
 
-本章包括
+本章包括：
 
-+   使用预训练的双向编码器表示来自变换器（BERT）架构来执行一些有趣的任务
-
-+   使用 BERT 架构进行跨语言迁移学习
+- 使用预训练的双向编码器表示来自变换器（BERT）架构来执行一些有趣的任务
+- 使用 BERT 架构进行跨语言迁移学习
 
 在这一章和上一章，我们的目标是介绍一些代表性的深度迁移学习建模架构，这些架构依赖于最近流行的神经架构——*transformer*¹——来进行关键功能的自然语言处理（NLP）。这可以说是当今 NLP 中最重要的架构。具体来说，我们的目标是研究一些建模框架，例如生成式预训练变换器（GPT），² 双向编码器表示来自变换器（BERT），³ 和多语言 BERT（mBERT）。⁴ 这些方法使用的神经网络的参数比我们之前介绍的深度卷积和循环神经网络模型更多。尽管它们体积更大，但由于它们在并行计算架构上的比较效率更高，它们的流行度急剧上升。这使得实际上可以开发出更大更复杂的模型。为了使内容更易理解，我们将这些模型的覆盖分成两章/部分：我们在上一章中介绍了变换器和 GPT 神经网络架构，而在接下来的这章中，我们将专注于 BERT 和 mBERT。
 
-作为提醒，BERT 是基于 transformer 的模型，我们在第三章和第七章中简要介绍过。它是使用*masked modeling objective*进行训练来填补空白。此外，它还经过了“下一个句子预测”任务的训练，以确定给定句子是否是目标句子后的合理跟随句子。mBERT，即“多语言 BERT”，实际上是针对 100 多种语言同时预训练的 BERT。自然地，这个模型特别适用于跨语言迁移学习。我们将展示多语言预训练权重检查点如何促进为初始未包含在多语言训练语料库中的语言创建 BERT 嵌入。BERT 和 mBERT 均由 Google 创建。
+作为提醒，BERT 是基于 transformer 的模型，我们在第三章和第七章中简要介绍过。它是使用 *masked modeling objective* 进行训练来填补空白。此外，它还经过了“下一个句子预测”任务的训练，以确定给定句子是否是目标句子后的合理跟随句子。mBERT，即“多语言 BERT”，实际上是针对 100 多种语言同时预训练的 BERT。自然地，这个模型特别适用于跨语言迁移学习。我们将展示多语言预训练权重检查点如何促进为初始未包含在多语言训练语料库中的语言创建 BERT 嵌入。BERT 和 mBERT 均由 Google 创建。
 
 本章的第一节深入探讨了 BERT，并将其应用于重要的问答应用作为一个独立的示例。该章节通过实验展示了预训练知识从 mBERT 预训练权重转移到新语言的 BERT 嵌入的迁移。这种新语言最初并未包含在用于生成预训练 mBERT 权重的多语料库中。在这种情况下，我们使用加纳语 Twi 作为示例语言。
 
@@ -16,11 +17,11 @@
 
 ## 8.1 双向编码器表示来自变换器（BERT）
 
-在本节中，我们介绍了可能是最受欢迎和最具影响力的基于 Transformer 的神经网络架构，用于自然语言处理的迁移学习——双向编码器表示的 Transformer（BERT）模型，正如我们之前提到的，它也是以流行的*Sesame Street*角色命名的，向 ELMo 开创的潮流致敬。回想一下 ELMo 本质上就是 transformers 做的事情，但是使用的是循环神经网络。我们在第一章首次遇到了这两种模型，在我们对自然语言处理迁移学习历史的概述中。我们还在第三章中使用了它们进行了一对分类问题，使用了 TensorFlow Hub 和 Keras。如果您不记得这些练习，可能有必要在继续本节之前进行复习。结合上一章，这些模型的预览使您对了解模型的更详细功能处于一个很好的位置，这是本节的目标。
+在本节中，我们介绍了可能是最受欢迎和最具影响力的基于 Transformer 的神经网络架构，用于自然语言处理的迁移学习——双向编码器表示的 Transformer（BERT）模型，正如我们之前提到的，它也是以流行的 *Sesame Street* 角色命名的，向 ELMo 开创的潮流致敬。回想一下 ELMo 本质上就是 transformers 做的事情，但是使用的是循环神经网络。我们在第一章首次遇到了这两种模型，在我们对自然语言处理迁移学习历史的概述中。我们还在第三章中使用了它们进行了一对分类问题，使用了 TensorFlow Hub 和 Keras。如果您不记得这些练习，可能有必要在继续本节之前进行复习。结合上一章，这些模型的预览使您对了解模型的更详细功能处于一个很好的位置，这是本节的目标。
 
-BERT 是早期预训练语言模型，开发于 ELMo 和 GPT 之后，但在普通语言理解评估（GLUE）数据集的大多数任务中表现出色，因为它是*双向训练*的。我们在第六章讨论了 ELMo 如何将从左到右和从右到左的 LSTM 组合起来实现双向上下文。在上一章中，我们还讨论了 GPT 模型的掩码自注意力如何通过堆叠 transformers 解码器更适合因果文本生成。与这些模型不同，BERT 通过堆叠 transformers 编码器而不是解码器，为每个输入标记*同时*实现双向上下文。回顾我们在第 7.2 节中对 BERT 每个层中的自注意力的讨论，每个标记的计算都考虑了两个方向上的每个其他标记。而 ELMo 通过将两个方向放在一起实现了双向性，GPT 是一种因果单向模型。BERT 每一层的同时双向性似乎给了它更深层次的语言上下文感。
+BERT 是早期预训练语言模型，开发于 ELMo 和 GPT 之后，但在普通语言理解评估（GLUE）数据集的大多数任务中表现出色，因为它是 *双向训练* 的。我们在第六章讨论了 ELMo 如何将从左到右和从右到左的 LSTM 组合起来实现双向上下文。在上一章中，我们还讨论了 GPT 模型的掩码自注意力如何通过堆叠 transformers 解码器更适合因果文本生成。与这些模型不同，BERT 通过堆叠 transformers 编码器而不是解码器，为每个输入标记 *同时* 实现双向上下文。回顾我们在第 7.2 节中对 BERT 每个层中的自注意力的讨论，每个标记的计算都考虑了两个方向上的每个其他标记。而 ELMo 通过将两个方向放在一起实现了双向性，GPT 是一种因果单向模型。BERT 每一层的同时双向性似乎给了它更深层次的语言上下文感。
 
-BERT 是通过掩码语言建模（MLM）填空预测目标进行训练的。在训练文本中，标记被随机掩码，模型的任务是预测掩码的标记。为了说明，再次考虑我们示例句子的略微修改版本，“他不想在手机上谈论细胞，他认为这个话题很无聊。” 为了使用 MLM，我们可以将其转换为“他不想在手机上谈论细胞，一个[MASK]，他认为这个话题很无聊。” 这里的[MASK]是一个特殊标记，指示哪些词已被省略。然后，我们要求模型根据其在此之前观察到的所有文本来预测省略的词。经过训练的模型可能会预测掩码词 40%的时间是“conversation”，35%的时间是“subject”，其余 25%的时间是“topic”。在训练期间重复执行这个过程，建立了模型对英语语言的知识。
+BERT 是通过掩码语言建模（MLM）填空预测目标进行训练的。在训练文本中，标记被随机掩码，模型的任务是预测掩码的标记。为了说明，再次考虑我们示例句子的略微修改版本，“他不想在手机上谈论细胞，他认为这个话题很无聊。” 为了使用 MLM，我们可以将其转换为“他不想在手机上谈论细胞，一个[MASK]，他认为这个话题很无聊。” 这里的 `[MASK]` 是一个特殊标记，指示哪些词已被省略。然后，我们要求模型根据其在此之前观察到的所有文本来预测省略的词。经过训练的模型可能会预测掩码词 40% 的时间是“conversation”，35% 的时间是“subject”，其余 25% 的时间是“topic”。在训练期间重复执行这个过程，建立了模型对英语语言的知识。
 
 另外，BERT 的训练还使用了下一句预测（NSP）目标。在这里，训练文本中的一些句子被随机替换为其他句子，并要求模型预测句子 B 是否是句子 A 的合理续篇。为了说明，让我们将我们的示例句子分成两个句子：“他不想谈论手机上的细胞。他认为这个话题很无聊。” 然后我们可能删除第二个句子，并用略微随机的句子替换它，“足球是一项有趣的运动。” 一个经过适当训练的模型需要能够检测前者作为潜在的合理完成，而将后者视为不合理的。我们通过具体的编码练习示例来讨论 MLM 和 NSP 目标，以帮助您理解这些概念。
 
@@ -40,9 +41,9 @@ BERT 是通过掩码语言建模（MLM）填空预测目标进行训练的。在
 
 图 8.2 BERT 输入转换可视化
 
-此时提到`[CLS]`和`[SEP]`特殊标记的简要说明值得一提。回想一下，`[SEP]`标记分隔句子并结束它们，如前几节所讨论的。另一方面，`[CLS]`特殊标记被添加到每个*输入示例*的开头。输入示例是 BERT 框架内部用来指代标记化的输入文本的术语，如图 8.2 所示。`[CLS]`标记的最终隐藏状态用作分类任务的聚合序列表示，例如蕴涵或情感分析。`[CLS]`代表“分类”。
+此时提到 `[CLS]` 和 `[SEP]` 特殊标记的简要说明值得一提。回想一下，`[SEP]` 标记分隔句子并结束它们，如前几节所讨论的。另一方面，`[CLS]` 特殊标记被添加到每个 *输入示例* 的开头。输入示例是 BERT 框架内部用来指代标记化的输入文本的术语，如图 8.2 所示。`[CLS]` 标记的最终隐藏状态用作分类任务的聚合序列表示，例如蕴涵或情感分析。`[CLS]` 代表“分类”。
 
-在继续查看以下小节中使用一些这些概念的具体示例之前，请记得，在第三章中首次遇到 BERT 模型时，我们将输入首先转换为输入示例，然后转换为特殊的三元组形式。这些是*输入 ID*，*输入掩码*和*段 ID*。我们在这里复制了列表 3.8 以帮助你记忆，因为当时这些术语尚未被介绍。
+在继续查看以下小节中使用一些这些概念的具体示例之前，请记得，在第三章中首次遇到 BERT 模型时，我们将输入首先转换为输入示例，然后转换为特殊的三元组形式。这些是 *输入 ID*，*输入掩码* 和 *段 ID*。我们在这里复制了列表 3.8 以帮助你记忆，因为当时这些术语尚未被介绍。
 
 列表 3.8（从第三章复制）将数据转换为 BERT 期望的形式，训练
 
@@ -69,16 +70,16 @@ def initialize_vars(sess):                                                ❸
     sess.run(tf.tables_initializer())
     K.set_session(sess)
 
-bert_path = "https:/ /tfhub.dev/google/bert_uncased_L-12_H-768_A-12/1"
+bert_path = "https://tfhub.dev/google/bert_uncased_L-12_H-768_A-12/1"
 tokenizer = create_tokenizer_from_hub_module(bert_path)                   ❹
 
 train_examples = convert_text_to_examples(train_x, train_y)               ❺
 test_examples = convert_text_to_examples(test_x, test_y)
 # Convert to features
-(train_input_ids,train_input_masks,train_segment_ids,train_labels) =       ❻
+(train_input_ids, train_input_masks, train_segment_ids, train_labels) =   ❻
      convert_examples_to_features(tokenizer, train_examples,               ❻
      max_seq_length=maxtokens)                                             ❻
-(test_input_ids,test_input_masks,test_segment_ids,test_labels) = 
+(test_input_ids, test_input_masks, test_segment_ids, test_labels) = 
      convert_examples_to_features(tokenizer, test_examples, 
      max_seq_length=maxtokens)
 
@@ -87,8 +88,8 @@ model = build_model(maxtokens)                                             ❼
 initialize_vars(sess)                                                      ❽
 
 history = model.fit([train_input_ids, train_input_masks, train_segment_ids], ❾
-train_labels,validation_data=([test_input_ids, test_input_masks, 
-test_segment_ids],test_labels), epochs=5, batch_size=32)
+train_labels, validation_data=([test_input_ids, test_input_masks, 
+test_segment_ids], test_labels), epochs=5, batch_size=32)
 ```
 
 ❶ 用于构建模型的函数
@@ -124,7 +125,7 @@ test_segment_ids],test_labels), epochs=5, batch_size=32)
 ```py
 from transformers import pipeline
 
-qNa= pipeline('question-answering', model= 'bert-large-cased-whole-word-masking-finetuned-squad', tokenizer='bert-large-cased-whole-word-masking-finetuned-squad')          ❶
+qNa = pipeline('question-answering', model='bert-large-cased-whole-word-masking-finetuned-squad', tokenizer='bert-large-cased-whole-word-masking-finetuned-squad')          ❶
 
 paragraph = 'A new study estimates that if the US had universally mandated masks on 1 April, there could have been nearly 40% fewer deaths by the start of June. Containment policies had a large impact on the number of COVID-19 cases and deaths, directly by reducing transmission rates and indirectly by constraining people’s behaviour. They account for roughly half the observed change in the growth rates of cases and deaths.'
 ```
@@ -134,7 +135,7 @@ paragraph = 'A new study estimates that if the US had universally mandated masks
 在初始化了流水线之后，让我们首先看看是否能够通过询问文章的主题来自动提取文章的精髓。我们用以下代码来实现：
 
 ```py
-ans = qNa({'question': 'What is this article about?','context': f'{paragraph}'})
+ans = qNa({'question': 'What is this article about?', 'context': f'{paragraph}'})
 print(ans)
 ```
 
@@ -145,6 +146,9 @@ print(ans)
 ```
 
 注意，0.47 相对较低的分数表明答案缺少一些上下文。类似“遏制政策对 COVID-19 的影响”可能是更好的回答，但因为我们正在进行提取式问答，而这个句子不在上下文段落中，所以这是模型能做到的最好的。低分数可以帮助标记此回答进行人工双重检查和/或改进。
+
+
+
 
 为什么不问一些更多的问题？让我们看看模型是否知道文章中描述的是哪个国家，使用以下代码：
 
@@ -252,7 +256,7 @@ model.eval()                                                            ❸
 
 ❷ 计算原始输出的最终概率
 
-❸ PyTorch 模型默认是可训练的。为了更便宜的推断和可执行重复性，将其设置为“eval”模式，如此处所示。通过 model.train()将其设置回“train”模式。对于 TensorFlow 模型不适用！
+❸ PyTorch 模型默认是可训练的。为了更便宜的推断和可执行重复性，将其设置为“eval”模式，如此处所示。通过 `model.train()` 将其设置回“train”模式。对于 TensorFlow 模型不适用！
 
 作为健全性检查，首先我们要确定第一句和第二句是否从模型的角度来看是合理的完成。我们使用以下代码进行检查：
 
@@ -304,7 +308,7 @@ tensor([0.7666, 0.2334], grad_fn=<SoftmaxBackward>)
 
 JW300 数据集是一个面向低资源语言的广泛覆盖的平行语料库。正如之前提到的，它是一个可能具有偏见的样本，由耶和华见证人翻译的宗教文本组成。然而，对于许多低资源语言研究而言，它是一个起点，通常是唯一可用的平行数据的开放来源。然而，重要的是要记住这种偏见，并在这个语料库上进行任何训练时配备第二阶段，该阶段可以将第一阶段的模型转移到一个更少偏见和更具代表性的语言和/或任务样本。
 
-尽管它本质上是一个平行语料库，但我们只需要 Twi 数据的单语语料库进行我们的实验。Python 包 opustools-pkg 可以用于获取给定语言对的平行语料库。为了让您的工作更容易，我们已经为英语-Twi 语对进行了这项工作，并将其托管在 Kaggle 上。⁹要为其他低资源语言重复我们的实验，您需要稍微调整一下*opustools-pkg*并获取一个等价的语料库（如果您这样做，请与社区分享）。我们只使用平行语料库的 Twi 部分进行我们的实验，并忽略英语部分。
+尽管它本质上是一个平行语料库，但我们只需要 Twi 数据的单语语料库进行我们的实验。Python 包 `opustools-pkg` 可以用于获取给定语言对的平行语料库。为了让您的工作更容易，我们已经为英语-Twi 语对进行了这项工作，并将其托管在 Kaggle 上。⁹要为其他低资源语言重复我们的实验，您需要稍微调整一下 `opustools-pkg` 并获取一个等价的语料库（如果您这样做，请与社区分享）。我们只使用平行语料库的 Twi 部分进行我们的实验，并忽略英语部分。
 
 让我们继续将 mBERT 转移到单语低资源语言语料库。
 
@@ -317,7 +321,7 @@ from transformers import BertTokenizerFast                                   ❶
 tokenizer = BertTokenizerFast.from_pretrained("bert-base-multilingual-cased")❷
 ```
 
-❶ 这只是 BertTokenizer 的一个更快的版本，你可以用这个替代它。
+❶ 这只是 `BertTokenizer` 的一个更快的版本，你可以用这个替代它。
 
 ❷ 使用了预训练的 mBERT 标记器
 
@@ -367,6 +371,8 @@ data_collator = DataCollatorForLanguageModeling(
 
 定义标准的训练参数，比如输出目录和训练批量大小，如下所示：
 
+
+
 ```py
 from transformers import TrainingArguments
 
@@ -409,7 +415,7 @@ print((end-start))
 trainer.save_model("twimbert")
 ```
 
-最后，我们从语料库中取出以下句子 —— “Eyi de *ɔ*haw k*ɛ*se baa sukuu h*ɔ*” —— 它的翻译是 “这在学校中提出了一个大问题。” 我们遮蔽了一个单词，sukuu（在 Twi 中意思是“学校”），然后应用 pipelines API 来预测遗漏的单词，如下所示：
+最后，我们从语料库中取出以下句子 —— “Eyi de *ɔ*haw k*ɛ*se baa sukuu h*ɔ*” —— 它的翻译是 “这在学校中提出了一个大问题。” 我们遮蔽了一个单词，`sukuu`（在 Twi 中意思是“学校”），然后应用 `pipelines` API 来预测遗漏的单词，如下所示：
 
 ```py
 from transformers import pipeline
@@ -478,9 +484,9 @@ from transformers import BertTokenizerFast
 tokenizer = BertTokenizerFast.from_pretrained("twibert", max_len=512)    ❶
 ```
 
-❶ 使用我们刚刚训练的语言特定的分词器，max_len=512，以保持与上一小节一致
+❶ 使用我们刚刚训练的语言特定的分词器，`max_len=512`，以保持与上一小节一致
 
-请注意，我们使用最大序列长度为 512，以保持与上一小节一致——这也是预训练的 mBERT 使用的长度。还要注意，保存分词器将在指定文件夹中创建词汇文件 vocab.txt 文件。
+请注意，我们使用最大序列长度为 512，以保持与上一小节一致——这也是预训练的 mBERT 使用的长度。还要注意，保存分词器将在指定文件夹中创建词汇文件 `vocab.txt` 文件。
 
 从这里开始，我们只需初始化一个全新的 BERT 模型来进行掩码语言建模，如下所示：
 

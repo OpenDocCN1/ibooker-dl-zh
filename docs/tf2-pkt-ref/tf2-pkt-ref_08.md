@@ -1,10 +1,12 @@
+
+
 # 第八章：分布式训练
 
-训练一个机器学习模型可能需要很长时间，特别是如果您的训练数据集很大或者您正在使用单台机器进行训练。即使您有一个 GPU 卡可供使用，训练一个复杂的模型（如 ResNet50，一个具有 50 个卷积层的计算机视觉模型，用于将对象分类为一千个类别）仍可能需要几周的时间。
+训练一个机器学习模型可能需要很长时间，特别是如果您的训练数据集很大或者您正在使用单台机器进行训练。即使您有一个 GPU 卡可供使用，训练一个复杂的模型（如 `ResNet50`，一个具有 50 个卷积层的计算机视觉模型，用于将对象分类为一千个类别）仍可能需要几周的时间。
 
 减少模型训练时间需要采用不同的方法。您已经看到了一些可用的选项：例如，在第五章中，您学习了如何利用数据管道中的数据集。然后还有更强大的加速器，如 GPU 和 TPU（这些加速器仅在 Google Cloud 中提供）。
 
-本章将介绍一种不同的模型训练方式，称为*分布式训练*。分布式训练在一组设备（如 CPU、GPU 和 TPU）上并行运行模型训练过程，以加快训练过程。 （在本章中，为了简洁起见，我将把 GPU、CPU 和 TPU 等硬件加速器称为*工作节点*或*设备*。）阅读完本章后，您将了解如何为分布式训练重构您的单节点训练例程。（到目前为止，您在本书中看到的每个示例都是单节点：也就是说，它们都使用一台带有一个 CPU 的机器来训练模型。）
+本章将介绍一种不同的模型训练方式，称为*分布式训练*。分布式训练在一组设备（如 CPU、GPU 和 TPU）上并行运行模型训练过程，以加快训练过程。（在本章中，为了简洁起见，我将把 GPU、CPU 和 TPU 等硬件加速器称为*工作节点*或*设备*。）阅读完本章后，您将了解如何为分布式训练重构您的单节点训练例程。（到目前为止，您在本书中看到的每个示例都是单节点：也就是说，它们都使用一台带有一个 CPU 的机器来训练模型。）
 
 在分布式训练中，您的模型由多个独立的进程进行训练。您可以将每个进程视为一个独立的训练尝试。每个进程在单独的设备上运行训练例程，使用训练数据的一个子集（称为*片*）。这意味着每个进程使用不同的训练数据。当每个进程完成一个训练周期时，它将结果发送回*主例程*，该主例程收集和聚合结果，然后向所有进程发出更新。然后，每个进程使用更新后的权重和偏差继续训练。
 
@@ -26,9 +28,9 @@
 
 ![使用异步参数服务器进行分布式训练（改编自 Google I/O 2018 视频中的分布式 TensorFlow 训练）](img/t2pr_0802.png)
 
-###### 图 8-2。使用异步参数服务器进行分布式训练。 （改编自[分布式 TensorFlow 训练](https://oreil.ly/beSob)中的 Google I/O 2018 视频）
+###### 图 8-2。使用异步参数服务器进行分布式训练。（改编自[分布式 TensorFlow 训练](https://oreil.ly/beSob)中的 Google I/O 2018 视频）
 
-在图 8-2 中标记为 PS0 和 PS1 的设备是*参数服务器*；这些服务器保存模型的参数。其他设备被指定为工人，如图 8-2 中标记的那样。
+在图 8-2 中标记为 `PS0` 和 `PS1` 的设备是*参数服务器*；这些服务器保存模型的参数。其他设备被指定为工人，如图 8-2 中标记的那样。
 
 工人们承担了大部分计算工作。每个工人从服务器获取参数，计算损失和梯度，然后将梯度发送回参数服务器，参数服务器使用这些梯度来更新模型的参数。每个工人都独立完成这个过程，因此这种方法可以扩展到使用大量工人。这里的优势在于，如果训练工人被高优先级的生产工作抢占，如果工人之间存在不对称，或者如果一台机器因维护而宕机，都不会影响你的扩展，因为工人们不需要等待彼此。
 
@@ -62,42 +64,42 @@
 
 我们将简要查看一些代码片段，演示在一个机器上使用多个设备时需要对训练代码进行的更改：
 
-1.  创建一个对象来处理分布式训练。您可以在源代码的开头执行此操作：
+1. 创建一个对象来处理分布式训练。您可以在源代码的开头执行此操作：
 
-    ```py
-    strategy = tf.distribute.MirroredStrategy()
-    ```
+```py
+strategy = tf.distribute.MirroredStrategy()
+```
 
-    `strategy`对象包含一个属性，其中包含机器上可用设备的数量。您可以使用此命令显示您可以使用多少个 GPU 或 TPU：
+`strategy`对象包含一个属性，其中包含机器上可用设备的数量。您可以使用此命令显示您可以使用多少个 GPU 或 TPU：
 
-    ```py
-    print('Number of devices: {}'.format(
-     strategy.num_replicas_in_sync))
-    ```
+```py
+print('Number of devices: {}'.format(
+ strategy.num_replicas_in_sync))
+```
 
-    如果您正在使用 GPU 集群，例如通过 Databricks 或云提供商的环境，您将看到您可以访问的 GPU 数量：
+如果您正在使用 GPU 集群，例如通过 Databricks 或云提供商的环境，您将看到您可以访问的 GPU 数量：
 
-    ```py
-    Number of devices: 2
-    ```
+```py
+Number of devices: 2
+```
 
-    请注意，Google Colab 仅为每个用户提供一个 GPU。
+请注意，Google Colab 仅为每个用户提供一个 GPU。
 
-1.  将您的模型定义和损失函数包装在`strategy`范围内。您只需确保模型定义和编译，包括您选择的损失函数，封装在特定范围内：
+2. 将您的模型定义和损失函数包装在`strategy`范围内。您只需确保模型定义和编译，包括您选择的损失函数，封装在特定范围内：
 
-    ```py
-    with strategy.scope():
-      model = tf.keras.Sequential([
-      …
-      ])
-      model.build(…)
-      model.compile(
-        loss=tf.keras.losses…,
-        optimizer=…,
-        metrics=…)
-    ```
+```py
+with strategy.scope():
+  model = tf.keras.Sequential([
+  …
+  ])
+  model.build(…)
+  model.compile(
+    loss=tf.keras.losses…,
+    optimizer=…,
+    metrics=…)
+```
 
-    这是您需要进行代码更改的唯一两个地方。
+这是您需要进行代码更改的唯一两个地方。
 
 `tf.distribute.MirroredStrategy`类是幕后的工作马。正如您所见，我们创建的`strategy`对象知道有多少设备可用。这些信息使其能够将训练数据分成不同的碎片，并将每个碎片馈送到特定设备中。由于模型架构包装在此对象的范围内，因此它也保存在每个设备的内存中。这使得每个设备可以在相同的模型架构上运行训练例程，最小化相同的损失函数，并根据其特定的训练数据碎片更新梯度。模型架构和参数被复制，或*镜像*，在所有设备上。`MirroredStrategy`类还在幕后实现了环形 allreduce 算法，因此您无需担心从每个设备聚合所有梯度。
 
@@ -238,6 +240,13 @@ print('Test data sample size: ', test_dataset_size)
 
 您可以期待这些结果：
 
+
+
+
+# 数据准备与分布式训练
+
+## 数据集概览
+
 ```py
 Training data sample size:  50000
 Validation data sample size:  500
@@ -306,7 +315,7 @@ checkpoint_prefix = os.path.join(checkpoint_dir, "ckpt-{epoch}")
 print(checkpoint_prefix)
 ```
 
-前面的命令指定目录路径类似于*./ myCIFAR10-20210302-014804/ckpt-{epoch}*。
+前面的命令指定目录路径类似于`./myCIFAR10-20210302-014804/ckpt-{epoch}`。
 
 一旦定义了检查点目录，只需将定义传递给`ModelCheckpoint`。为简单起见，我们只会在训练时代提高模型在验证数据上的准确性时保存检查点：
 
@@ -397,11 +406,11 @@ Eval loss: 1.753335952758789,
 
 要了解 Horovod API 的工作原理，您需要了解两个关键参数：每个 GPU 的标识和用于并行训练的进程数。每个参数都分配给一个 Horovod 环境变量，该变量将在您的代码中使用。在这种特殊情况下，您应该有两个 GPU。每个 GPU 将在一个数据片段上进行训练，因此将有两个训练进程。您可以使用以下函数检索 Horovod 环境变量：
 
-等级
+**等级**
 
 等级表示 GPU 的标识。如果有两个 GPU，则一个 GPU 将被指定为等级值 0，另一个 GPU 将被指定为等级值 1。如果有更多 GPU，则指定的等级值将是 2、3 等。
 
-大小
+**大小**
 
 大小表示 GPU 的总数。如果有两个 GPU，则 Horovod 的范围大小为 2，训练数据将被分成两个片段。同样，如果有四个 GPU，则该值将为 4，数据将被分成四个片段。
 
@@ -495,7 +504,7 @@ def get_dataset(num_classes, rank=0, size=1):
   return train_images, train_labels, test_images, test_labels
 ```
 
-注意函数签名中的输入参数`rank`和`size`。`rank`默认为 0，`size`默认为 1，因此与单节点训练兼容。在具有多个 GPU 的分布式训练中，每个 GPU 将`hvd.rank`和`hvd.size`作为输入传递到此函数中。由于每个 GPU 的身份由`hvd.rank`通过双冒号(::)表示，图像和标签根据从一个记录到下一个跳过多少步来切片和分片。因此，此函数返回的数组`train_images`、`train_labels`、`test_images`和`test_labels`对于每个 GPU 都是不同的，取决于其`hvd.rank`。（有关 NumPy 数组跳过和切片的详细解释，请参见[此 Colab 笔记本](https://oreil.ly/23bmZ)。）
+注意函数签名中的输入参数`rank`和`size`。`rank`默认为 0，`size`默认为 1，因此与单节点训练兼容。在具有多个 GPU 的分布式训练中，每个 GPU 将`hvd.rank`和`hvd.size`作为输入传递到此函数中。由于每个 GPU 的身份由`hvd.rank`通过双冒号(`::`)表示，图像和标签根据从一个记录到下一个跳过多少步来切片和分片。因此，此函数返回的数组`train_images`、`train_labels`、`test_images`和`test_labels`对于每个 GPU 都是不同的，取决于其`hvd.rank`。（有关 NumPy 数组跳过和切片的详细解释，请参见[此 Colab 笔记本](https://oreil.ly/23bmZ)。）
 
 ## 参数同步在工作节点之间
 
@@ -526,6 +535,8 @@ hvd.callbacks.LearningRateWarmupCallback(warmup_epochs=5)
 ```py
 tf.keras.callbacks.ReduceLROnPlateau(patience=10, factor = 0.2)
 ```
+
+
 
 在这个例子中，如果模型指标在 10 个时期后没有改善，您将开始将学习率降低 0.2 倍。
 
@@ -659,7 +670,6 @@ def train_hvd(checkpoint_path, learning_rate=1.0):
 然后，创建并初始化一个 Horovod 对象，并使用它来访问您的工作人员的配置，以便稍后可以正确分片数据：
 
 ```py
-
 # Initialize Horovod
 hvd.init()
 
@@ -680,7 +690,6 @@ print(' Horovod size (processes): ', hvd.size())
 一旦您有了这些分片，将它们转换为数据集，以便您可以像在“使用 tf.distribute.MirroredStrategy 的 GPU 集群”中那样流式传输训练数据：
 
 ```py
-
   # Call the get_dataset function you created, this time with the
     Horovod rank and size
   num_classes = 10
@@ -801,7 +810,7 @@ os.makedirs(checkpoint_dir)
 print(checkpoint_dir)
 ```
 
-`checkpoint_dir`将看起来像*/dbfs/ml/CIFAR10DistributedDemo/train/1615074200.2146788/*。
+`checkpoint_dir`将看起来像`/dbfs/ml/CIFAR10DistributedDemo/train/1615074200.2146788/`。
 
 在下一个单元格中，继续启动分布式训练例程：
 
@@ -815,17 +824,19 @@ hr.run(train_hvd, checkpoint_path=checkpoint_path,
        learning_rate=learning_rate)
 ```
 
-在运行器定义中，`HorovodRunner(np=2)`，将进程数指定为每个设置的两个（请参阅“设置分布式训练”），这将设置两个 Standard_NC12 工作人员 GPU。
+
+
+在运行器定义中，`HorovodRunner(np=2)`，将进程数指定为每个设置的两个（请参阅“设置分布式训练”），这将设置两个 `Standard_NC12` 工作人员 GPU。
 
 训练例程完成后，请使用以下命令查看检查点目录：
 
-```py
+```
 ls -lrt  /dbfs/ml/CIFAR10DistributedDemo/train/1615074200.2146788/
 ```
 
 您应该看到类似于这样的内容：
 
-```py
+```
 drwxrwxrwx 2 root root 4096 Mar 6 23:18 checkpoint-9.ckpt/
 drwxrwxrwx 2 root root 4096 Mar 6 23:18 checkpoint-8.ckpt/
 drwxrwxrwx 2 root root 4096 Mar 6 23:18 checkpoint-7.ckpt/
@@ -850,8 +861,8 @@ drwxrwxrwx 2 root root 4096 Mar 6 23:18 checkpoint-10.ckpt/
 
 # 总结
 
-在本章中，您了解了在具有多个工作人员的环境中使分布式模型训练正常工作所需的内容。在数据并行框架中，有两种主要的分布式训练模式：异步参数服务器和同步 allreduce。如今，由于高性能加速器的普遍可用性，同步 allreduce 更受欢迎。
+在本章中，您了解了在具有多个工作人员的环境中使分布式模型训练正常工作所需的内容。在数据并行框架中，有两种主要的分布式训练模式：异步参数服务器和同步 `allreduce`。如今，由于高性能加速器的普遍可用性，同步 `allreduce` 更受欢迎。
 
-通过学习如何使用 Databricks GPU 集群执行两种类型的同步 allreduce API：TensorFlow 自己的`tf.distribute` API 和 Uber 的 Horovod API。TensorFlow 选项提供了最优雅和方便的使用方式，并且需要最少的代码重构，而 Horovod API 需要用户手动处理数据分片、分发管道、梯度聚合和平均以及模型检查点。这两种选项通过确保每个工作节点执行自己的训练，然后在每个训练步骤结束时，在所有工作节点之间同步和一致地更新梯度来执行分布式训练。这是分布式训练的标志。
+通过学习如何使用 `Databricks` GPU 集群执行两种类型的同步 `allreduce` API：`TensorFlow` 自己的`tf.distribute` API 和 `Uber` 的 `Horovod` API。`TensorFlow` 选项提供了最优雅和方便的使用方式，并且需要最少的代码重构，而 `Horovod` API 需要用户手动处理数据分片、分发管道、梯度聚合和平均以及模型检查点。这两种选项通过确保每个工作节点执行自己的训练，然后在每个训练步骤结束时，在所有工作节点之间同步和一致地更新梯度来执行分布式训练。这是分布式训练的标志。
 
-恭喜！通过学习本章内容，您学会了如何使用云中的一组 GPU 训练具有分布式数据管道和分布式训练例程的深度学习模型。在下一章中，您将学习如何为推理服务一个 TensorFlow 模型。
+恭喜！通过学习本章内容，您学会了如何使用云中的一组 GPU 训练具有分布式数据管道和分布式训练例程的深度学习模型。在下一章中，您将学习如何为推理服务一个 `TensorFlow` 模型。

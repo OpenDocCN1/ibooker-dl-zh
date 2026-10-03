@@ -1,8 +1,9 @@
+
 # 第二章：深度学习
 
 让我们从深度学习的基本定义开始：
 
-> 深度学习是一类机器学习算法，它使用*多个堆叠层的处理单元*从*非结构化*数据中学习高级表示。
+> 深度学习是一类机器学习算法，它使用多个堆叠层的处理单元从非结构化数据中学习高级表示。
 
 要充分理解深度学习，我们需要进一步探讨这个定义。首先，我们将看一下深度学习可以用来建模的不同类型的非结构化数据，然后我们将深入研究构建多个堆叠层的处理单元来解决分类任务的机制。这将为我们未来关注生成任务的章节奠定基础。
 
@@ -16,7 +17,7 @@
 
 ###### 图 2-1。结构化数据和非结构化数据之间的区别
 
-当我们的数据是非结构化的时候，单个像素、频率或字符几乎完全没有信息性。例如，知道图像的第 234 个像素是一种泥泞的褐色并不能真正帮助识别图像是房子还是狗，知道句子的第 24 个字符是一个*e*并不能帮助预测文本是关于足球还是政治。
+当我们的数据是非结构化的时候，单个像素、频率或字符几乎完全没有信息性。例如，知道图像的第 234 个像素是一种泥泞的褐色并不能真正帮助识别图像是房子还是狗，知道句子的第 24 个字符是一个`e`并不能帮助预测文本是关于足球还是政治。
 
 像素或字符实际上只是画布上的凹痕，其中嵌入了高级信息性特征，例如烟囱的图像或*前锋*这个词。如果图像中的烟囱被放在房子的另一侧，图像仍然包含烟囱，但这些信息现在由完全不同的像素传递。如果文本中的*前锋*出现在稍早或稍晚的位置，文本仍然是关于足球的，但不同的字符位置会提供这些信息。数据的粒度与高度的空间依赖性破坏了像素或字符作为独立信息特征的概念。
 
@@ -54,11 +55,11 @@
 
 1.  单元 A 接收输入像素的单个通道的值。
 
-1.  单元 B 组合其输入值，使得当存在特定的低级特征，例如边缘时，它发射最强。
+2.  单元 B 组合其输入值，使得当存在特定的低级特征，例如边缘时，它发射最强。
 
-1.  单元 C 组合低级特征，使得当图像中看到高级特征，例如*牙齿*时，它发射最强。
+3.  单元 C 组合低级特征，使得当图像中看到高级特征，例如*牙齿*时，它发射最强。
 
-1.  单元 D 结合高级特征，使得当原始图像中的人在微笑时它发射最强。
+4.  单元 D 结合高级特征，使得当原始图像中的人在微笑时它发射最强。
 
 每个后续层中的单元能够通过结合来自前一层的低级特征来表示原始输入的越来越复杂的方面。令人惊讶的是，这是训练过程中自然产生的——我们不需要*告诉*每个单元要寻找什么，或者它应该寻找高级特征还是低级特征。
 
@@ -74,7 +75,7 @@
 
 ![](img/gdl2_0203.png)
 
-###### 图 2-3\. TensorFlow 和 Keras 是构建深度学习解决方案的优秀工具
+###### 图 2-3。TensorFlow 和 Keras 是构建深度学习解决方案的优秀工具
 
 如果您刚开始学习深度学习，我强烈推荐使用 TensorFlow 和 Keras。这个设置将允许您在生产环境中构建任何您能想到的网络，同时还提供易于学习的 API，可以快速开发新的想法和概念。让我们从看看使用 Keras 构建多层感知器有多容易开始。
 
@@ -86,7 +87,7 @@ MLP 是一种判别模型（而不是生成模型），但在本书后面的章�
 
 # 运行此示例的代码
 
-这个例子的代码可以在位于书籍存储库中的 Jupyter 笔记本中找到，位置为*notebooks/02_deeplearning/01_mlp/mlp.ipynb*。
+这个例子的代码可以在位于书籍存储库中的 Jupyter 笔记本中找到，位置为`notebooks/02_deeplearning/01_mlp/mlp.ipynb`。
 
 ## 准备数据
 
@@ -94,11 +95,11 @@ MLP 是一种判别模型（而不是生成模型），但在本书后面的章�
 
 ![](img/gdl2_0204.png)
 
-###### 图 2-4\. CIFAR-10 数据集中的示例图像（来源：[Krizhevsky, 2009](https://www.cs.toronto.edu/~kriz/learning-features-2009-TR.pdf))²
+###### 图 2-4。CIFAR-10 数据集中的示例图像（来源：[Krizhevsky, 2009](https://www.cs.toronto.edu/~kriz/learning-features-2009-TR.pdf)）²
 
 默认情况下，图像数据由每个像素通道的 0 到 255 之间的整数组成。我们首先需要通过将这些值缩放到 0 到 1 之间来预处理图像，因为当每个输入的绝对值小于 1 时，神经网络的效果最好。
 
-我们还需要将图像的整数标签更改为独热编码向量，因为神经网络的输出将是图像属于每个类的概率。如果图像的类整数标签是<math alttext="i"><mi>i</mi></math>，那么它的独热编码是一个长度为 10 的向量（类的数量），除了第<math alttext="i"><mi>i</mi></math>个元素为 1 之外，其他元素都为 0。这些步骤在示例 2-1 中显示。
+我们还需要将图像的整数标签更改为独热编码向量，因为神经网络的输出将是图像属于每个类的概率。如果图像的类整数标签是`i`，那么它的独热编码是一个长度为 10 的向量（类的数量），除了第`i`个元素为 1 之外，其他元素都为 0。这些步骤在示例 2-1 中显示。
 
 ##### 示例 2-1。预处理 CIFAR-10 数据集
 
@@ -212,32 +213,38 @@ model = models.Model(input_layer, output_layer)
 
 如果您希望从该层输出的总和等于 1，则*softmax*激活函数是有用的；例如，对于每个观察结果只属于一个类的多类分类问题。它被定义为：
 
-<math alttext="y Subscript i Baseline equals StartFraction e Superscript x Super Subscript i Superscript Baseline Over sigma-summation Underscript j equals 1 Overscript upper J Endscripts e Superscript x Super Subscript j Superscript Baseline EndFraction" display="block"><mrow><msub><mi>y</mi> <mi>i</mi></msub> <mo>=</mo> <mfrac><msup><mi>e</mi> <msub><mi>x</mi> <mi>i</mi></msub></msup> <mrow><munderover><mo>∑</mo> <mrow><mi>j</mi><mo>=</mo><mn>1</mn></mrow> <mi>J</mi></munderover> <msup><mi>e</mi> <msub><mi>x</mi> <mi>j</mi></msub></msup></mrow></mfrac></mrow></math>
 
-在这里，*J*是层中单元的总数。在我们的神经网络中，我们在最后一层使用 softmax 激活，以确保输出是一组总和为 1 的 10 个概率，这可以被解释为图像属于每个类的可能性。
+
+# Softmax 激活函数
+
+在神经网络中，Softmax 函数将一组实数转换为概率分布，其公式如下：
+
+$$y_i = \frac{e^{x_i}}{\sum_{j=1}^{J} e^{x_j}}$$
+
+在这里，`J`是层中单元的总数。在我们的神经网络中，我们在最后一层使用 softmax 激活，以确保输出是一组总和为 1 的 10 个概率，这可以被解释为图像属于每个类的可能性。
 
 在 Keras 中，激活函数可以在层内定义（示例 2-5）或作为单独的层定义（示例 2-6）。
 
-##### 示例 2-5。作为`Dense`层的一部分定义的 ReLU 激活函数
+##### 示例 2-5. 作为 `Dense` 层的一部分定义的 ReLU 激活函数
 
 ```py
 x = layers.Dense(units=200, activation = 'relu')(x)
 ```
 
-##### 示例 2-6。作为自己的层定义的 ReLU 激活函数
+##### 示例 2-6. 作为自己的层定义的 ReLU 激活函数
 
 ```py
 x = layers.Dense(units=200)(x)
 x = layers.Activation('relu')(x)
 ```
 
-在我们的示例中，我们通过两个`Dense`层传递输入，第一个有 200 个单元，第二个有 150 个，两者都带有 ReLU 激活函数。
+在我们的示例中，我们通过两个 `Dense` 层传递输入，第一个有 200 个单元，第二个有 150 个，两者都带有 ReLU 激活函数。
 
-### 检查模型
+## 检查模型
 
-我们可以使用`model.summary()`方法来检查每一层网络的形状，如表 2-1 所示。
+我们可以使用 `model.summary()` 方法来检查每一层网络的形状，如表 2-1 所示。
 
-表 2-1. `model.summary()`方法的输出
+**表 2-1. `model.summary()` 方法的输出**
 
 | 层（类型） | 输出形状 | 参数 # |
 | --- | --- | --- |
@@ -246,19 +253,19 @@ x = layers.Activation('relu')(x)
 | Dense | (None, 200) | 614,600 |
 | Dense | (None, 150) | 30,150 |
 | Dense | (None, 10) | 1,510 |
-| 总参数 | 646,260 |
-| 可训练参数 | 646,260 |
-| 不可训练参数 | 0 |
+| **总参数** | | 646,260 |
+| **可训练参数** | | 646,260 |
+| **不可训练参数** | | 0 |
 
-注意我们的`Input`层的形状与`x_train`的形状匹配，而我们的`Dense`输出层的形状与`y_train`的形状匹配。Keras 使用`None`作为第一维的标记，以显示它尚不知道将传递到网络中的观测数量。实际上，它不需要知道；我们可以一次通过 1 个观测或 1000 个观测通过网络。这是因为张量操作是使用线性代数同时在所有观测上进行的—这是由 TensorFlow 处理的部分。这也是为什么在 GPU 上训练深度神经网络而不是在 CPU 上时性能会提高的原因：GPU 针对大型张量操作进行了优化，因为这些计算对于复杂的图形处理也是必要的。
+注意我们的 `Input` 层的形状与 `x_train` 的形状匹配，而我们的 `Dense` 输出层的形状与 `y_train` 的形状匹配。Keras 使用 `None` 作为第一维的标记，以显示它尚不知道将传递到网络中的观测数量。实际上，它不需要知道；我们可以一次通过 1 个观测或 1000 个观测通过网络。这是因为张量操作是使用线性代数同时在所有观测上进行的—这是由 TensorFlow 处理的部分。这也是为什么在 GPU 上训练深度神经网络而不是在 CPU 上时性能会提高的原因：GPU 针对大型张量操作进行了优化，因为这些计算对于复杂的图形处理也是必要的。
 
-`summary`方法还会给出每一层将被训练的参数（权重）的数量。如果你发现你的模型训练速度太慢，检查摘要看看是否有任何包含大量权重的层。如果有的话，你应该考虑是否可以减少该层中的单元数量以加快训练速度。
+`summary` 方法还会给出每一层将被训练的参数（权重）的数量。如果你发现你的模型训练速度太慢，检查摘要看看是否有任何包含大量权重的层。如果有的话，你应该考虑是否可以减少该层中的单元数量以加快训练速度。
 
 ###### 提示
 
 确保你理解每一层中参数是如何计算的！重要的是要记住，默认情况下，给定层中的每个单元也连接到一个额外的*偏置*单元，它总是输出 1。这确保了即使来自前一层的所有输入为 0，单元的输出仍然可以是非零的。
 
-因此，200 单元`Dense`层中的参数数量为 200 * (3,072 + 1) = 614,600。
+因此，200 单元 `Dense` 层中的参数数量为 `200 * (3,072 + 1) = 614,600`。
 
 ## 编译模型
 
@@ -282,23 +289,23 @@ model.compile(loss='categorical_crossentropy', optimizer=opt,
 
 Keras 提供了许多内置的损失函数可供选择，或者你可以创建自己的损失函数。最常用的三个是均方误差、分类交叉熵和二元交叉熵。重要的是要理解何时适合使用每种损失函数。
 
-如果你的神经网络旨在解决回归问题（即输出是连续的），那么你可能会使用*均方误差*损失。这是每个输出单元的实际值<math alttext="y Subscript i"><msub><mi>y</mi> <mi>i</mi></msub></math>和预测值<math alttext="p Subscript i"><msub><mi>p</mi> <mi>i</mi></msub></math>之间的平方差的平均值，其中平均值是在所有<math alttext="n"><mi>n</mi></math>个输出单元上取得的：
+如果你的神经网络旨在解决回归问题（即输出是连续的），那么你可能会使用*均方误差*损失。这是每个输出单元的实际值 `y_i` 和预测值 `p_i` 之间的平方差的平均值，其中平均值是在所有 `n` 个输出单元上取得的：
 
-<math alttext="upper M upper S upper E equals StartFraction 1 Over n EndFraction sigma-summation Underscript i equals 1 Overscript n Endscripts left-parenthesis y Subscript i Baseline minus p Subscript i Baseline right-parenthesis squared" display="block"><mstyle scriptlevel="0" displaystyle="true"><mrow><mo form="prefix">MSE</mo> <mo>=</mo> <mfrac><mn>1</mn> <mi>n</mi></mfrac> <munderover><mo>∑</mo> <mrow><mi>i</mi><mo>=</mo><mn>1</mn></mrow> <mi>n</mi></munderover> <msup><mrow><mo>(</mo><msub><mi>y</mi> <mi>i</mi></msub> <mo>-</mo><msub><mi>p</mi> <mi>i</mi></msub> <mo>)</mo></mrow> <mn>2</mn></msup></mrow></mstyle></math>
+$$MSE = \frac{1}{n} \sum_{i=1}^{n} (y_i - p_i)^2$$
 
 如果你正在处理一个分类问题，其中每个观测只属于一个类，那么*分类交叉熵*是正确的损失函数。它定义如下：
 
-<math alttext="minus sigma-summation Underscript i equals 1 Overscript n Endscripts y Subscript i Baseline log left-parenthesis p Subscript i Baseline right-parenthesis" display="block"><mrow><mo>-</mo> <munderover><mo>∑</mo> <mrow><mi>i</mi><mo>=</mo><mn>1</mn></mrow> <mi>n</mi></munderover> <msub><mi>y</mi> <mi>i</mi></msub> <mo form="prefix">log</mo> <mrow><mo>(</mo> <msub><mi>p</mi> <mi>i</mi></msub> <mo>)</mo></mrow></mrow></math>
+$$-\sum_{i=1}^{n} y_i \log(p_i)$$
 
 最后，如果你正在处理一个具有一个输出单元的二元分类问题，或者一个每个观测可以同时属于多个类的多标签问题，你应该使用*二元交叉熵*：
 
-<math alttext="minus StartFraction 1 Over n EndFraction sigma-summation Underscript i equals 1 Overscript n Endscripts left-parenthesis y Subscript i Baseline log left-parenthesis p Subscript i Baseline right-parenthesis plus left-parenthesis 1 minus y Subscript i Baseline right-parenthesis log left-parenthesis 1 minus p Subscript i Baseline right-parenthesis right-parenthesis" display="block"><mrow><mo>-</mo> <mfrac><mn>1</mn> <mi>n</mi></mfrac> <munderover><mo>∑</mo> <mrow><mi>i</mi><mo>=</mo><mn>1</mn></mrow> <mi>n</mi></munderover> <mrow><mo>(</mo> <msub><mi>y</mi> <mi>i</mi></msub> <mo form="prefix">log</mo> <mrow><mo>(</mo> <msub><mi>p</mi> <mi>i</mi></msub> <mo>)</mo></mrow> <mo>+</mo> <mrow><mo>(</mo> <mn>1</mn> <mo>-</mo> <msub><mi>y</mi> <mi>i</mi></msub> <mo>)</mo></mrow> <mo form="prefix">log</mo> <mrow><mo>(</mo> <mn>1</mn> <mo>-</mo> <msub><mi>p</mi> <mi>i</mi></msub> <mo>)</mo></mrow> <mo>)</mo></mrow></mrow></math>
+$$-\frac{1}{n} \sum_{i=1}^{n} (y_i \log(p_i) + (1 - y_i) \log(1 - p_i))$$
 
 ### 优化器
 
 *优化器* 是基于损失函数的梯度更新神经网络权重的算法。最常用和稳定的优化器之一是 *Adam*（自适应矩估计）。³ 在大多数情况下，您不需要调整 Adam 优化器的默认参数，除了 *学习率*。学习率越大，每个训练步骤中权重的变化就越大。虽然初始时使用较大的学习率训练速度更快，但缺点是可能导致训练不稳定，无法找到损失函数的全局最小值。这是您可能需要在训练过程中调整的参数。
 
-另一个您可能遇到的常见优化器是 *RMSProp*（均方根传播）。同样，您不需要太多调整这个优化器的参数，但值得阅读[Keras 文档](https://keras.io/optimizers)以了解每个参数的作用。
+另一个您可能遇到的常见优化器是 *RMSProp*（均方根传播）。同样，您不需要太多调整这个优化器的参数，但值得阅读 [Keras 文档](https://keras.io/optimizers) 以了解每个参数的作用。
 
 我们将损失函数和优化器一起传递给模型的 `compile` 方法，还有一个 `metrics` 参数，我们可以在训练过程中指定任何额外的指标，如准确率。
 
@@ -308,7 +315,7 @@ Keras 提供了许多内置的损失函数可供选择，或者你可以创建�
 
 要针对数据训练模型，我们只需调用 `fit` 方法，如示例 2-8 所示。
 
-##### 示例 2-8\. 调用 `fit` 方法来训练模型
+##### 示例 2-8. 调用 `fit` 方法来训练模型
 
 ```py
 model.fit(x_train # ①
@@ -319,25 +326,15 @@ model.fit(x_train # ①
           )
 ```
 
-①
+① 原始图像数据。
 
-原始图像数据。
+② 独热编码的类标签。
 
-②
+③ `batch_size` 确定每个训练步骤将传递给网络多少观察值。
 
-独热编码的类标签。
+④ `epochs` 确定网络将被展示完整训练数据的次数。
 
-③
-
-`batch_size` 确定每个训练步骤将传递给网络多少观察值。
-
-④
-
-`epochs` 确定网络将被展示完整训练数据的次数。
-
-⑤
-
-如果 `shuffle = True`，每个训练步骤将从训练数据中随机抽取批次而不重复。
+⑤ 如果 `shuffle = True`，每个训练步骤将从训练数据中随机抽取批次而不重复。
 
 这将开始训练一个深度神经网络，以预测来自 CIFAR-10 数据集的图像的类别。训练过程如下。
 
@@ -349,19 +346,19 @@ model.fit(x_train # ①
 
 这将持续到数据集中的所有观察值都被看到一次。这完成了第一个 *epoch*。然后数据再次以批次的形式通过网络，作为第二个 epoch 的一部分。这个过程重复，直到指定的 epoch 数已经过去。
 
-在训练过程中，Keras 会输出过程的进展，如图 2-7 所示。我们可以看到训练数据集已经被分成了 1,563 批次（每批包含 32 张图片），并且已经被展示给网络 10 次（即 10 个 epochs），每批大约需要 2 毫秒的时间。分类交叉熵损失从 1.8377 下降到 1.3696，导致准确率从第一个 epoch 后的 33.69%增加到第十个 epoch 后的 51.67%。
+在训练过程中，Keras 会输出过程的进展，如图 2-7 所示。我们可以看到训练数据集已经被分成了 1,563 批次（每批包含 32 张图片），并且已经被展示给网络 10 次（即 10 个 epochs），每批大约需要 2 毫秒的时间。分类交叉熵损失从 1.8377 下降到 1.3696，导致准确率从第一个 epoch 后的 33.69% 增加到第十个 epoch 后的 51.67%。
 
 ![](img/gdl2_0207.png)
 
-###### 图 2-7\. `fit` 方法的输出
+###### 图 2-7. `fit` 方法的输出
 
 ## 评估模型
 
 我们知道模型在训练集上的准确率为 51.9%，但它在从未见过的数据上表现如何？
 
-为了回答这个问题，我们可以使用 Keras 提供的`evaluate`方法，如示例 2-9 所示。
+为了回答这个问题，我们可以使用 Keras 提供的 `evaluate` 方法，如示例 2-9 所示。
 
-##### 示例 2-9。在测试集上评估模型性能
+##### 示例 2-9. 在测试集上评估模型性能
 
 ```py
 model.evaluate(x_test, y_test)
@@ -371,13 +368,13 @@ model.evaluate(x_test, y_test)
 
 ![](img/gdl2_0208.png)
 
-###### 图 2-8。`evaluate`方法的输出
+###### 图 2-8. `evaluate` 方法的输出
 
-输出是我们正在监控的指标列表：分类交叉熵和准确率。我们可以看到，即使在它从未见过的图像上，模型的准确率仍然是 49.0%。请注意，如果模型是随机猜测的，它将达到大约 10%的准确率（因为有 10 个类别），因此 49.0%是一个很好的结果，考虑到我们使用了一个非常基本的神经网络。
+输出是我们正在监控的指标列表：分类交叉熵和准确率。我们可以看到，即使在它从未见过的图像上，模型的准确率仍然是 49.0%。请注意，如果模型是随机猜测的，它将达到大约 10% 的准确率（因为有 10 个类别），因此 49.0% 是一个很好的结果，考虑到我们使用了一个非常基本的神经网络。
 
-我们可以使用`predict`方法查看测试集上的一些预测，如示例 2-10 所示。
+我们可以使用 `predict` 方法查看测试集上的一些预测，如示例 2-10 所示。
 
-##### 示例 2-10。使用`predict`方法查看测试集上的预测
+##### 示例 2-10. 使用 `predict` 方法查看测试集上的预测
 
 ```py
 CLASSES = np.array(['airplane', 'automobile', 'bird', 'cat', 'deer', 'dog'
@@ -388,17 +385,13 @@ preds_single = CLASSES[np.argmax(preds, axis = -1)] # ②
 actual_single = CLASSES[np.argmax(y_test, axis = -1)]
 ```
 
-①
+① `preds` 是一个形状为 `[10000, 10]` 的数组，即每个观测的 10 个类别概率的向量。
 
-`preds`是一个形状为`[10000, 10]`的数组，即每个观测的 10 个类别概率的向量。
-
-②
-
-我们将这个概率数组转换回一个单一的预测，使用`numpy`的`argmax`函数。这里，`axis = -1`告诉函数将数组折叠到最后一个维度（类别维度），因此`preds_single`的形状为`[10000, 1]`。
+② 我们将这个概率数组转换回一个单一的预测，使用 `numpy` 的 `argmax` 函数。这里，`axis = -1` 告诉函数将数组折叠到最后一个维度（类别维度），因此 `preds_single` 的形状为 `[10000, 1]`。
 
 我们可以使用示例 2-11 中的代码查看一些图像以及它们的标签和预测。如预期的那样，大约一半是正确的。
 
-##### 示例 2-11。显示 MLP 的预测与实际标签
+##### 示例 2-11. 显示 MLP 的预测与实际标签
 
 ```py
 import matplotlib.pyplot as plt
@@ -424,7 +417,9 @@ for i, idx in enumerate(indices):
 
 ![](img/gdl2_0209.png)
 
-###### 图 2-9。模型进行的一些预测，以及实际标签
+###### 图 2-9. 模型进行的一些预测，以及实际标签
+
+
 
 恭喜！您刚刚使用 Keras 构建了一个多层感知器，并用它对新数据进行了预测。即使这是一个监督学习问题，但当我们在未来的章节中构建生成模型时，本章的许多核心思想（如损失函数、激活函数和理解层形状）仍然非常重要。接下来，我们将探讨通过引入一些新的层类型来改进这个模型的方法。
 
@@ -540,14 +535,23 @@ model = models.Model(input_layer, output_layer)
 表 2-2\. CNN 模型摘要
 
 | 层（类型） | 输出形状 | 参数数量 |
+
 | --- | --- | --- |
+
 | 输入层 | (None, 32, 32, 3) | 0 |
+
 | Conv2D | (None, 16, 16, 10) | 490 |
+
 | Conv2D | (None, 8, 8, 20) | 1,820 |
+
 | Flatten | (None, 1280) | 0 |
+
 | Dense | (None, 10) | 12,810 |
+
 | 总参数 | 15,120 |
+
 | 可训练参数 | 15,120 |
+
 | 不可训练参数 | 0 |
 
 让我们逐层走过我们的网络，注意张量的形状：
@@ -652,19 +656,21 @@ layers.Dropout(rate = 0.25)
 
 ###### 提示
 
-批量归一化也被证明可以减少过拟合，因此许多现代深度学习架构根本不使用 dropout，完全依赖批量归一化进行正则化。与大多数深度学习原则一样，在每种情况下都没有适用的黄金法则，唯一确定最佳方法的方式是测试不同的架构，看看哪种在保留数据集上表现最好。
+
+
+批量归一化也被证明可以减少过拟合，因此许多现代深度学习架构根本不使用 `dropout`，完全依赖批量归一化进行正则化。与大多数深度学习原则一样，在每种情况下都没有适用的黄金法则，唯一确定最佳方法的方式是测试不同的架构，看看哪种在保留数据集上表现最好。
 
 ## 构建 CNN
 
-您现在已经看到了三种新的 Keras 层类型：`Conv2D`、`BatchNormalization`和`Dropout`。让我们将这些部分组合成一个 CNN 模型，并看看它在 CIFAR-10 数据集上的表现。
+您现在已经看到了三种新的 Keras 层类型：`Conv2D`、`BatchNormalization` 和 `Dropout`。让我们将这些部分组合成一个 CNN 模型，并看看它在 CIFAR-10 数据集上的表现。
 
-# 运行此示例的代码
+### 运行此示例的代码
 
-您可以在书籍存储库中名为*notebooks/02_deeplearning/02_cnn/cnn.ipynb*的 Jupyter 笔记本中运行以下示例。
+您可以在书籍存储库中名为 `notebooks/02_deeplearning/02_cnn/cnn.ipynb` 的 Jupyter 笔记本中运行以下示例。
 
 我们将测试的模型架构显示在示例 2-16 中。
 
-##### 示例 2-16\. 使用 Keras 构建 CNN 模型的代码
+#### 示例 2-16\. 使用 Keras 构建 CNN 模型的代码
 
 ```py
 from tensorflow.keras import layers, models
@@ -700,15 +706,15 @@ output_layer = layers.Dense(10, activation = 'softmax')(x)
 model = models.Model(input_layer, output_layer)
 ```
 
-我们使用四个堆叠的`Conv2D`层，每个后面跟一个`BatchNormalization`和一个`LeakyReLU`层。在展平结果张量后，我们通过一个大小为 128 的`Dense`层，再次跟一个`BatchNormalization`和一个`LeakyReLU`层。紧接着是一个用于正则化的`Dropout`层，网络最后是一个大小为 10 的输出`Dense`层。
+我们使用四个堆叠的 `Conv2D` 层，每个后面跟一个 `BatchNormalization` 和一个 `LeakyReLU` 层。在展平结果张量后，我们通过一个大小为 128 的 `Dense` 层，再次跟一个 `BatchNormalization` 和一个 `LeakyReLU` 层。紧接着是一个用于正则化的 `Dropout` 层，网络最后是一个大小为 10 的输出 `Dense` 层。
 
-###### 提示
+##### 提示
 
 使用批量归一化和激活层的顺序是个人偏好的问题。通常情况下，批量归一化层放在激活层之前，但一些成功的架构会反过来使用这些层。如果选择在激活之前使用批量归一化，可以使用缩写 *BAD*（批量归一化，激活，然后是 dropout）来记住顺序！
 
 模型摘要显示在表 2-3 中。
 
-表 2-3\. CIFAR-10 的 CNN 模型摘要
+**表 2-3\. CIFAR-10 的 CNN 模型摘要**
 
 | 层（类型） | 输出形状 | 参数 # |
 | --- | --- | --- |
@@ -735,27 +741,27 @@ model = models.Model(input_layer, output_layer)
 | 可训练参数 | 591,914 |
 | 不可训练参数 | 640 |
 
-###### 提示
+##### 提示
 
-在继续之前，请确保您能够手工计算每一层的输出形状和参数数量。这是一个很好的练习，可以证明您已经完全理解了每一层是如何构建的，以及它是如何与前一层连接的！不要忘记包括作为`Conv2D`和`Dense`层的一部分包含的偏置权重。
+在继续之前，请确保您能够手工计算每一层的输出形状和参数数量。这是一个很好的练习，可以证明您已经完全理解了每一层是如何构建的，以及它是如何与前一层连接的！不要忘记包括作为 `Conv2D` 和 `Dense` 层的一部分包含的偏置权重。
 
-## 训练和评估 CNN
+### 训练和评估 CNN
 
-我们编译和训练模型的方式与之前完全相同，并调用`evaluate`方法来确定其在留存集上的准确率（图 2-16）。
+我们编译和训练模型的方式与之前完全相同，并调用 `evaluate` 方法来确定其在留存集上的准确率（图 2-16）。
 
 ![](img/gdl2_0216.png)
 
-###### 图 2-16。CNN 性能
+#### 图 2-16。CNN 性能
 
-正如您所看到的，这个模型现在的准确率达到了 71.5%，比之前的 49.0%有所提高。好多了！图 2-17 展示了我们新卷积模型的一些预测。
+正如您所看到的，这个模型现在的准确率达到了 71.5%，比之前的 49.0% 有所提高。好多了！图 2-17 展示了我们新卷积模型的一些预测。
 
 通过简单地改变模型的架构来包括卷积、批量归一化和丢弃层，已经实现了这一改进。请注意，我们新模型中的参数数量实际上比之前的模型更少，尽管层数要多得多。这表明了对模型设计进行实验和熟悉不同层类型如何利用优势的重要性。在构建生成模型时，更加重要的是要理解模型的内部工作原理，因为您最感兴趣的是网络的中间层，这些层捕捉了高级特征。
 
 ![](img/gdl2_0217.png)
 
-###### 图 2-17。CNN 预测
+#### 图 2-17。CNN 预测
 
-# 总结
+## 总结
 
 本章介绍了构建深度生成模型所需的核心深度学习概念。我们首先使用 Keras 构建了一个多层感知器（MLP），并训练模型来预测来自 CIFAR-10 数据集的给定图像的类别。然后，我们通过引入卷积、批量归一化和丢弃层来改进这个架构，创建了一个卷积神经网络（CNN）。
 
@@ -763,18 +769,18 @@ model = models.Model(input_layer, output_layer)
 
 在下一章中，我们将看到如何使用这些积木来设计一个可以生成图像的网络。
 
-¹ Kaiming He 等人，“用于图像识别的深度残差学习”，2015 年 12 月 10 日，[*https://arxiv.org/abs/1512.03385*](https://arxiv.org/abs/1512.03385)。
+¹ Kaiming He 等人，“用于图像识别的深度残差学习”，2015 年 12 月 10 日，[`https://arxiv.org/abs/1512.03385`](https://arxiv.org/abs/1512.03385)。
 
-² Alex Krizhevsky，“从微小图像中学习多层特征”，2009 年 4 月 8 日，[*https://www.cs.toronto.edu/~kriz/learning-features-2009-TR.pdf*](https://www.cs.toronto.edu/~kriz/learning-features-2009-TR.pdf)。
+² Alex Krizhevsky，“从微小图像中学习多层特征”，2009 年 4 月 8 日，[`https://www.cs.toronto.edu/~kriz/learning-features-2009-TR.pdf`](https://www.cs.toronto.edu/~kriz/learning-features-2009-TR.pdf)。
 
-³ Diederik Kingma 和 Jimmy Ba，“Adam：一种随机优化方法”，2014 年 12 月 22 日，[*https://arxiv.org/abs/1412.6980v8*](https://arxiv.org/abs/1412.6980v8)。
+³ Diederik Kingma 和 Jimmy Ba，“Adam：一种随机优化方法”，2014 年 12 月 22 日，[`https://arxiv.org/abs/1412.6980v8`](https://arxiv.org/abs/1412.6980v8)。
 
-⁴ Samuel L. Smith 等人，“不要降低学习率，增加批量大小”，2017 年 11 月 1 日，[*https://arxiv.org/abs/1711.00489*](https://arxiv.org/abs/1711.00489)。
+⁴ Samuel L. Smith 等人，“不要降低学习率，增加批量大小”，2017 年 11 月 1 日，[`https://arxiv.org/abs/1711.00489`](https://arxiv.org/abs/1711.00489)。
 
-⁵ Vincent Dumoulin 和 Francesco Visin，“深度学习卷积算术指南”，2018 年 1 月 12 日，[*https://arxiv.org/abs/1603.07285*](https://arxiv.org/abs/1603.07285)。
+⁵ Vincent Dumoulin 和 Francesco Visin，“深度学习卷积算术指南”，2018 年 1 月 12 日，[`https://arxiv.org/abs/1603.07285`](https://arxiv.org/abs/1603.07285)。
 
-⁶ Sergey Ioffe 和 Christian Szegedy，“批量归一化：通过减少内部协变量转移加速深度网络训练”，2015 年 2 月 11 日，[*https://arxiv.org/abs/1502.03167*](https://arxiv.org/abs/1502.03167)。
+⁶ Sergey Ioffe 和 Christian Szegedy，“批量归一化：通过减少内部协变量转移加速深度网络训练”，2015 年 2 月 11 日，[`https://arxiv.org/abs/1502.03167`](https://arxiv.org/abs/1502.03167)。
 
-⁷ Hinton 等人，“通过防止特征探测器的共适应来构建网络”，2012 年 7 月 3 日，[*https://arxiv.org/abs/1207.0580*](https://arxiv.org/abs/1207.0580)。
+⁷ Hinton 等人，“通过防止特征探测器的共适应来构建网络”，2012 年 7 月 3 日，[`https://arxiv.org/abs/1207.0580`](https://arxiv.org/abs/1207.0580)。
 
-⁸ Nitish Srivastava 等人，“Dropout：防止神经网络过拟合的简单方法”，*机器学习研究杂志* 15 (2014): 1929–1958，[*http://jmlr.org/papers/volume15/srivastava14a/srivastava14a.pdf*](http://jmlr.org/papers/volume15/srivastava14a/srivastava14a.pdf)。
+⁸ Nitish Srivastava 等人，“Dropout：防止神经网络过拟合的简单方法”，*机器学习研究杂志* 15 (2014): 1929–1958，[`http://jmlr.org/papers/volume15/srivastava14a/srivastava14a.pdf`](http://jmlr.org/papers/volume15/srivastava14a/srivastava14a.pdf)。

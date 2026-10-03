@@ -1,6 +1,7 @@
+
 # 第一章：你好，Transformer
 
-2017 年，谷歌的研究人员发表了一篇关于序列建模的新型神经网络架构的论文。这种被称为*Transformer*的架构在机器翻译任务中优于循环神经网络（RNN），无论是翻译质量还是训练成本。
+2017 年，谷歌的研究人员发表了一篇关于序列建模的新型神经网络架构的论文。这种被称为`Transformer`的架构在机器翻译任务中优于循环神经网络（RNN），无论是翻译质量还是训练成本。
 
 与此同时，一种名为 ULMFiT 的有效迁移学习方法表明，对非常大和多样化的语料库进行长短期记忆（LSTM）网络训练可以产生具有很少标记数据的最先进文本分类器。
 
@@ -13,9 +14,7 @@
 但我们正在走得太快了。要理解 Transformer 的新颖之处，我们首先需要解释：
 
 +   编码器-解码器框架
-
 +   注意机制
-
 +   迁移学习
 
 在本章中，我们将介绍支持 transformer 广泛应用的核心概念，参观一些它们擅长的任务，并最后看一下 Hugging Face 工具和库的生态系统。
@@ -98,7 +97,7 @@ RNN 在机器翻译系统的发展中发挥了重要作用，其目标是将一�
 
 ![ulmfit](img/nlpt_0108.png)
 
-###### 图 1-8\. ULMFiT 过程（由 Jeremy Howard 提供）
+###### 图 1-8。ULMFiT 过程（由 Jeremy Howard 提供）
 
 通过引入 NLP 中的预训练和迁移学习的可行框架，ULMFiT 提供了使 Transformer 起飞的缺失环节。2018 年，发布了两个将自注意力与迁移学习相结合的 Transformer：
 
@@ -119,12 +118,9 @@ GPT 和 BERT 在各种 NLP 基准测试中树立了新的技术水平，并开�
 将新的机器学习架构应用于新任务可能是一个复杂的过程，通常涉及以下步骤：
 
 1.  在代码中实现模型架构，通常基于 PyTorch 或 TensorFlow。
-
-1.  从服务器加载预训练的权重（如果可用）。
-
-1.  预处理输入，将其通过模型，并应用一些特定于任务的后处理。
-
-1.  实现数据加载器，并定义损失函数和优化器来训练模型。
+2.  从服务器加载预训练的权重（如果可用）。
+3.  预处理输入，将其通过模型，并应用一些特定于任务的后处理。
+4.  实现数据加载器，并定义损失函数和优化器来训练模型。
 
 每个步骤都需要为每个模型和任务编写自定义逻辑。传统上（但并非总是如此！），当研究小组发布新文章时，他们通常会连同模型权重一起发布代码。然而，这些代码很少是标准化的，通常需要数天的工程来适应新的用例。
 
@@ -162,7 +158,7 @@ classifier = pipeline("text-classification")
 
 第一次运行此代码时，您将看到一些进度条出现，因为管道会自动从[Hugging Face Hub](https://oreil.ly/zLK11)下载模型权重。第二次实例化管道时，库将注意到您已经下载了权重，并将使用缓存版本。默认情况下，`text-classification`管道使用的是专为情感分析设计的模型，但它也支持多类和多标签分类。
 
-现在我们有了我们的管道，让我们生成一些预测！每个管道都将一个文本字符串（或字符串列表）作为输入，并返回一系列预测。每个预测都是一个 Python 字典，所以我们可以使用 Pandas 将它们漂亮地显示为`Data⁠Frame`：
+现在我们有了我们的管道，让我们生成一些预测！每个管道都将一个文本字符串（或字符串列表）作为输入，并返回一系列预测。每个预测都是一个 Python 字典，所以我们可以使用 Pandas 将它们漂亮地显示为`DataFrame`：
 
 ```py
 import pandas as pd
@@ -202,11 +198,13 @@ pd.DataFrame(outputs)
 | 8 | MISC | 0.987854 | 奥普蒂默斯·普莱姆 | 367 | 380 |
 | 9 | PER | 0.812096 | 大黄蜂 | 502 | 511 |
 
+
+
 您可以看到管道检测到了所有实体，并为每个实体分配了类别，例如`ORG`（组织）、`LOC`（位置）或`PER`（人）。在这里，我们使用了`aggregation_strategy`参数根据模型的预测对单词进行分组。例如，实体“奥普蒂默斯·普莱姆”由两个单词组成，但被分配了一个单一的类别：`MISC`（杂项）。分数告诉我们模型对其识别的实体有多自信。我们可以看到它对“欺诈者”和“Megatron”的第一次出现的识别最不自信，它们都未能被分组为单个实体。
 
-###### 注释
+## 注释
 
-看到上一个表格中`word`列中的奇怪的井号符号(`#`)了吗？这些是模型的*分词器*产生的，它将单词分割成称为*标记*的原子单位。您将在第二章中学习有关标记化的所有内容。
+看到上一个表格中`word`列中的奇怪的井号符号（`#`）了吗？这些是模型的*分词器*产生的，它将单词分割成称为*标记*的原子单位。您将在第二章中学习有关标记化的所有内容。
 
 提取文本中的所有命名实体是不错的，但有时我们想提出更有针对性的问题。这就是我们可以使用*问答*的地方。
 
@@ -240,7 +238,7 @@ print(outputs[0]['summary_text'])
 ```
 
 ```py
- Bumblebee ordered an Optimus Prime action figure from your online store in
+Bumblebee ordered an Optimus Prime action figure from your online store in
 Germany. Unfortunately, when I opened the package, I discovered to my horror
 that I had been sent an action figure of Megatron instead.
 ```
@@ -311,7 +309,7 @@ order
 
 # Hugging Face 生态系统
 
-从![nlpt_pin01](img/nlpt_pin01.png) Transformers 开始，迅速发展成为一个由许多库和工具组成的整个生态系统，以加速您的 NLP 和机器学习项目。 Hugging Face 生态系统主要由两部分组成：一系列库和 Hub，如图 1-9 所示。库提供代码，而 Hub 提供预训练模型权重、数据集、用于评估指标的脚本等。在本节中，我们将简要介绍各个组件。我们将跳过![nlpt_pin01](img/nlpt_pin01.png) Transformers，因为我们已经讨论过它，并且在本书的过程中还会看到更多。
+从![nlpt_pin01](img/nlpt_pin01.png) Transformers 开始，迅速发展成为一个由许多库和工具组成的整个生态系统，以加速您的 NLP 和机器学习项目。Hugging Face 生态系统主要由两部分组成：一系列库和 Hub，如图 1-9 所示。库提供代码，而 Hub 提供预训练模型权重、数据集、用于评估指标的脚本等。在本节中，我们将简要介绍各个组件。我们将跳过![nlpt_pin01](img/nlpt_pin01.png) Transformers，因为我们已经讨论过它，并且在本书的过程中还会看到更多。
 
 ![ecosystem](img/nlpt_0109.png)
 
@@ -403,6 +401,10 @@ Transformer 模型主要是在互联网文本数据上进行预训练的。这�
 
 ² J. Howard and S. Ruder, [“Universal Language Model Fine-Tuning for Text Classification”](https://arxiv.org/abs/1801.06146), (2018).
 
+
+
+# 参考文献与相关说明
+
 10. A. Radford et al., [“Improving Language Understanding by Generative Pre-Training”](https://openai.com/blog/language-unsupervised), (2018).
 
 6. J. Devlin et al., [“BERT: Pre-Training of Deep Bidirectional Transformers for Language Understanding”](https://arxiv.org/abs/1810.04805), (2018).
@@ -415,7 +417,7 @@ Transformer 模型主要是在互联网文本数据上进行预训练的。这�
 
 9. A. Radford, R. Jozefowicz, and I. Sutskever, [“Learning to Generate Reviews and Discovering Sentiment”](https://arxiv.org/abs/1704.01444), (2017).
 
-2. 在这个时候的相关工作是 ELMo（来自语言模型的嵌入），它展示了如何通过预训练 LSTMs 可以为下游任务生成高质量的词嵌入。
+2. 在这个时候的相关工作是`ELMo`（来自语言模型的嵌入），它展示了如何通过预训练`LSTMs`可以为下游任务生成高质量的词嵌入。
 
 7. 这对于英语而言更为真实，而对于世界上大多数语言来说，获取大规模的数字化文本语料库可能会很困难。找到弥合这一差距的方法是自然语言处理研究和活动的一个活跃领域。
 

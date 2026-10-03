@@ -1,4 +1,5 @@
-# 附录。设置 Colab
+
+# 附录：设置 Colab
 
 本书中的所有代码都是使用 Python 3 作为 Jupyter 笔记本编写的。虽然你可以使用 Anaconda（[www.anaconda.com/products/individual](https://www.anaconda.com/products/individual)）在你的电脑上自行设置 Jupyter 和软件库，但本书采用的方法是使用 Google 的 Colab 服务（[`colab.research.google.com`](https://colab.research.google.com)）。Google Colab 预先安装了所有需要的软件库，并提供有限期限内的免费图形处理单元（GPU）。这足以让你开始学习，而无需投资数百或数千美元的计算机配置。本附录将指导你如何设置 Google Colab；我鼓励你获取专业版，目前每月只需几美元。这不是一个赞助推荐——我不会得到任何回扣，我从未为 Google 工作。这只是我喜欢的一个产品，我认为它使深度学习更容易获得。
 
@@ -34,7 +35,7 @@
 
 GPU 是昂贵且需求量大的商品，因此您并不能**无限**地访问这个 GPU。没有公开的公式，但当前对 GPU 的需求以及您个人使用 GPU 的程度将影响您获得的 GPU 质量。
 
-如我之前提到的，虽然这样做不是必需的，但我鼓励您注册 Colab Pro 以简化您的生活([`colab.research.google.com/signup`](https://colab.research.google.com/signup))。专业版 Colab 并没有从根本上改变 Colab 的工作方式，但它为您提供了更高的 GPU 访问优先级和更长的运行时间。Colab Pro 每月仅需 10 美元：对于便携式 GPU 访问来说，这是一个相当不错的交易，而且比购买新硬件便宜得多。根据我的经验，我发现 Colab Pro 总是意味着我可以无问题地获得 GPU。
+如我之前提到的，虽然这样做不是必需的，但我鼓励您注册 Colab Pro 以简化您的生活（[`colab.research.google.com/signup`](https://colab.research.google.com/signup)）。专业版 Colab 并没有从根本上改变 Colab 的工作方式，但它为您提供了更高的 GPU 访问优先级和更长的运行时间。Colab Pro 每月仅需 10 美元：对于便携式 GPU 访问来说，这是一个相当不错的交易，而且比购买新硬件便宜得多。根据我的经验，我发现 Colab Pro 总是意味着我可以无问题地获得 GPU。
 
 ### 测试您的 GPU
 

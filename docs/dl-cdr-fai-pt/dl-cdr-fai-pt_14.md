@@ -1,15 +1,15 @@
+
 # 第十一章：使用 fastai 的中级 API 进行数据整理
 
 > 原文：[`www.bookstack.cn/read/th-fastai-book/cedbd4fb150718e5.md`](https://www.bookstack.cn/read/th-fastai-book/cedbd4fb150718e5.md)
->
+> 
 > 译者：[飞龙](https://github.com/wizardforcel)
->
+> 
 > 协议：[CC BY-NC-SA 4.0](http://creativecommons.org/licenses/by-nc-sa/4.0/)
-
 
 我们已经看到了`Tokenizer`和`Numericalize`对文本集合的处理方式，以及它们如何在数据块 API 中使用，该 API 直接使用`TextBlock`处理这些转换。但是，如果我们只想应用这些转换中的一个，要么是为了查看中间结果，要么是因为我们已经对文本进行了标记化，我们该怎么办？更一般地说，当数据块 API 不足以满足我们特定用例的需求时，我们需要使用 fastai 的*中级 API*来处理数据。数据块 API 是建立在该层之上的，因此它将允许您执行数据块 API 所做的一切，以及更多更多。
 
-# 深入了解 fastai 的分层 API
+## 深入了解 fastai 的分层 API
 
 fastai 库是建立在*分层 API*上的。在最顶层是*应用程序*，允许我们在五行代码中训练模型，正如我们在第一章中看到的。例如，对于为文本分类器创建`DataLoaders`，我们使用了这一行：
 
@@ -33,11 +33,11 @@ dls = DataBlock(
 
 但有时它并不够灵活。例如，出于调试目的，我们可能需要仅应用与此数据块一起的部分转换。或者我们可能希望为 fastai 不直接支持的应用程序创建一个`DataLoaders`。在本节中，我们将深入探讨 fastai 内部用于实现数据块 API 的组件。了解这些将使您能够利用这个中间层 API 的强大和灵活性。
 
-# 中级 API
+## 中级 API
 
 中级 API 不仅包含用于创建`DataLoaders`的功能。它还具有*回调*系统，允许我们以任何我们喜欢的方式自定义训练循环，以及*通用优化器*。这两者将在第十六章中介绍。
 
-## 转换
+### 转换
 
 在前一章中研究标记化和数值化时，我们首先获取了一堆文本：
 
@@ -114,7 +114,7 @@ tok((txts[0], txts[1]))
  > ['xxbos','xxmaj','conrad','xxmaj','hall','went','out','with','a','bang'...])
 ```
 
-## 编写您自己的转换
+### 编写您自己的转换
 
 如果您想编写一个自定义的转换来应用于您的数据，最简单的方法是编写一个函数。正如您在这个例子中看到的，`Transform` 只会应用于匹配的类型，如果提供了类型（否则，它将始终被应用）。在下面的代码中，函数签名中的 `:int` 表示 `f` 仅应用于 `ints`。这就是为什么 `tfm(2.0)` 返回 `2.0`，但 `tfm(2)` 在这里返回 `3`：
 
@@ -177,7 +177,7 @@ tfm.mean,y,z
 
 因此，例如，您永远不会直接调用 `setups`，而是会调用 `setup`。原因是 `setup` 在为您调用 `setups` 之前和之后做了一些工作。要了解有关 `Transform` 及如何使用它们根据输入类型实现不同行为的更多信息，请务必查看 fastai 文档中的教程。
 
-## Pipeline
+### Pipeline
 
 要将几个转换组合在一起，fastai 提供了 `Pipeline` 类。我们通过向 `Pipeline` 传递一个 `Transform` 列表来定义一个 `Pipeline`；然后它将组合其中的转换。当您在对象上调用 `Pipeline` 时，它将自动按顺序调用其中的转换：
 
@@ -204,11 +204,11 @@ tfms.decode(t)[:100]
 
 `Transform` 中与 `Transform` 不同的部分是设置。要在一些数据上正确设置 `Transform` 的 `Pipeline`，您需要使用 `TfmdLists`。
 
-# TfmdLists 和 Datasets：转换的集合
+## TfmdLists 和 Datasets：转换的集合
 
 您的数据通常是一组原始项目（如文件名或 DataFrame 中的行），您希望对其应用一系列转换。我们刚刚看到，一系列转换在 fastai 中由`Pipeline`表示。将这个`Pipeline`与您的原始项目组合在一起的类称为`TfmdLists`。
 
-## TfmdLists
+### TfmdLists
 
 以下是在前一节中看到的转换的简短方式：
 
@@ -244,35 +244,7 @@ tls.decode(t)[:100]
 tls.show(t)
 ```
 
-```py
-xxbos xxmaj well , " cube " ( 1997 ) , xxmaj vincenzo 's first movie , was one
- > of the most interesting and tricky ideas that xxmaj i 've ever seen when
- > talking about movies . xxmaj they had just one scenery , a bunch of actors
- > and a plot . xxmaj so , what made it so special were all the effective
- > direction , great dialogs and a bizarre condition that characters had to deal
- > like rats in a labyrinth . xxmaj his second movie , " cypher " ( 2002 ) , was
- > all about its story , but it was n't so good as " cube " but here are the
- > characters being tested like rats again .
 
- " nothing " is something very interesting and gets xxmaj vincenzo coming back
- > to his ' cube days ' , locking the characters once again in a very different
- > space with no time once more playing with the characters like playing with
- > rats in an experience room . xxmaj but instead of a thriller sci - fi ( even
- > some of the promotional teasers and trailers erroneous seemed like that ) , "
- > nothing " is a loose and light comedy that for sure can be called a modern
- > satire about our society and also about the intolerant world we 're living .
- > xxmaj once again xxmaj xxunk amaze us with a great idea into a so small kind
- > of thing . 2 actors and a blinding white scenario , that 's all you got most
- > part of time and you do n't need more than that . xxmaj while " cube " is a
- > claustrophobic experience and " cypher " confusing , " nothing " is
- > completely the opposite but at the same time also desperate .
-
- xxmaj this movie proves once again that a smart idea means much more than just
- > a millionaire budget . xxmaj of course that the movie fails sometimes , but
- > its prime idea means a lot and offsets any flaws . xxmaj there 's nothing
- > more to be said about this movie because everything is a brilliant surprise
- > and a totally different experience that i had in movies since " cube " .
-```
 
 `TfmdLists`以“s”命名，因为它可以使用`splits`参数处理训练集和验证集。您只需要传递在训练集中的元素的索引和在验证集中的元素的索引：
 
@@ -489,6 +461,8 @@ s2 = Resize(224)(s1)
 s2.show();
 ```
 
+
+
 ![](img/dlcf_11in03.png)
 
 这里`Resize`转换应用于两个图片中的每一个，但不应用于布尔标志。即使我们有一个自定义类型，我们也可以从库中的所有数据增强转换中受益。
@@ -558,11 +532,11 @@ dls = tls.dataloaders(after_item=[Resize(224), ToTensor],
 
 现在我们可以使用这个`DataLoaders`来训练模型。与`cnn_learner`提供的通常模型相比，它需要更多的定制，因为它必须接受两个图像而不是一个，但我们将看到如何创建这样的模型并在第十五章中进行训练。
 
-# 结论
+## 结论
 
 fastai 提供了分层 API。当数据处于通常设置之一时，只需一行代码即可获取数据，这使得初学者可以专注于训练模型，而无需花费太多时间组装数据。然后，高级数据块 API 通过允许您混合和匹配构建块来提供更多灵活性。在其下面，中级 API 为您提供更大的灵活性，以在项目上应用转换。在您的实际问题中，这可能是您需要使用的内容，我们希望它使数据处理步骤尽可能简单。
 
-# 问卷调查
+## 问卷调查
 
 1.  为什么我们说 fastai 具有“分层”API？这是什么意思？
 
@@ -600,7 +574,7 @@ fastai 提供了分层 API。当数据处于通常设置之一时，只需一行
 
 1.  查看[fastai 文档](https://docs.fast.ai)中的 Siamese 教程，了解如何为新类型的项目自定义`show_batch`和`show_results`的行为。在您自己的项目中实现它。
 
-# 理解 fastai 的应用：总结
+## 理解 fastai 的应用：总结
 
 恭喜你——你已经完成了本书中涵盖训练模型和使用深度学习的关键实用部分的所有章节！你知道如何使用所有 fastai 内置的应用程序，以及如何使用数据块 API 和损失函数进行定制。你甚至知道如何从头开始创建神经网络并训练它！（希望你现在也知道一些问题要问，以确保你的创作有助于改善社会。）
 

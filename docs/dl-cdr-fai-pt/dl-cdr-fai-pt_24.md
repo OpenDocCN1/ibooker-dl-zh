@@ -1,3 +1,5 @@
+
+
 # 第十九章：从头开始创建一个 fastai 学习器
 
 > 原文：[`www.bookstack.cn/read/th-fastai-book/5443c76c2b161687.md`](https://www.bookstack.cn/read/th-fastai-book/5443c76c2b161687.md)
@@ -6,14 +8,13 @@
 >
 > 协议：[CC BY-NC-SA 4.0](http://creativecommons.org/licenses/by-nc-sa/4.0/)
 
-
 这最后一章（除了结论和在线章节）将会有所不同。它包含的代码比以前的章节要多得多，而叙述要少得多。我们将介绍新的 Python 关键字和库，而不进行讨论。这一章的目的是为您开展一项重要的研究项目。您将看到，我们将从头开始实现 fastai 和 PyTorch API 的许多关键部分，仅建立在我们在第十七章中开发的组件上！这里的关键目标是最终拥有自己的`Learner`类和一些回调函数，足以训练一个模型在 Imagenette 上，包括我们学习的每个关键技术的示例。在构建`Learner`的过程中，我们将创建我们自己的`Module`、`Parameter`和并行`DataLoader`的版本，这样您就会对 PyTorch 类的功能有一个很好的了解。
 
 本章末尾的问卷调查对于本章非常重要。这是我们将指导您探索许多有趣方向的地方，使用本章作为起点。我们建议您在计算机上跟着本章进行学习，并进行大量的实验、网络搜索和其他必要的工作，以了解发生了什么。在本书的其余部分，您已经积累了足够的技能和专业知识来做到这一点，所以我们相信您会做得很好！
 
 让我们开始手动收集一些数据。
 
-# 数据
+## 数据
 
 查看`untar_data`的源代码，看看它是如何工作的。我们将在这里使用它来访问 Imagene 的 160 像素版本，以在本章中使用：
 
@@ -29,8 +30,7 @@ t[0]
 ```
 
 ```py
-Path('/home/jhoward/.fastai/data/imagenette2-160/val/n03417042/n03417042_3752.JP
- > EG')
+Path('/home/jhoward/.fastai/data/imagenette2-160/val/n03417042/n03417042_3752.JPEG')
 ```
 
 或者我们可以使用 Python 的标准库`glob`来做同样的事情：
@@ -42,8 +42,7 @@ files[0]
 ```
 
 ```py
-Path('/home/jhoward/.fastai/data/imagenette2-160/val/n03417042/n03417042_3752.JP
- > EG')
+Path('/home/jhoward/.fastai/data/imagenette2-160/val/n03417042/n03417042_3752.JPEG')
 ```
 
 如果您查看`get_image_files`的源代码，您会发现它使用了 Python 的`os.walk`；这是一个比`glob`更快、更灵活的函数，所以一定要尝试一下。
@@ -66,15 +65,14 @@ im_t.shape
 torch.Size([160, 213, 3])
 ```
 
-这将成为我们独立变量的基础。对于我们的因变量，我们可以使用`pathlib`中的`Path.parent`。首先，我们需要我们的词汇表
+这将成为我们独立变量的基础。对于我们的因变量，我们可以使用`pathlib`中的`Path.parent`。首先，我们需要我们的词汇表：
 
 ```py
 lbls = files.map(Self.parent.name()).unique(); lbls
 ```
 
 ```py
-(#10) ['n03417042','n03445777','n03888257','n03394916','n02979186','n03000684','
- > n03425413','n01440764','n03028079','n02102040']
+(#10) ['n03417042','n03445777','n03888257','n03394916','n02979186','n03000684','n03425413','n01440764','n03028079','n02102040']
 ```
 
 以及反向映射，感谢`L.val2idx`：
@@ -98,7 +96,7 @@ v2i = lbls.val2idx(); v2i
 
 这就是我们需要组合成`Dataset`的所有部分。
 
-## 数据集
+### 数据集
 
 在 PyTorch 中，`Dataset`可以是任何支持索引（`__getitem__`）和`len`的东西：
 
@@ -236,7 +234,7 @@ t.mean((0,2,3)),t.std((0,2,3))
 
 这就是我们模型的数据所需的全部内容。现在我们需要模型本身！
 
-# Module 和 Parameter
+## Module 和 Parameter
 
 要创建一个模型，我们需要`Module`。要创建`Module`，我们需要`Parameter`，所以让我们从那里开始。回想一下，在第八章中我们说`Parameter`类“没有添加任何功能（除了自动调用`requires_grad_`）。它只用作一个‘标记’，以显示要包含在`parameters`中的内容。”这里有一个确切的定义：
 
@@ -311,6 +309,9 @@ Python 的`__call__`允许我们定义当我们的对象被视为函数时会发
 除了这些功能之外，我们的`Module`还提供了`cuda`和`training`属性，我们很快会用到。
 
 现在我们可以创建我们的第一个`Module`，即`ConvLayer`：
+
+
+
 
 ```py
 class ConvLayer(Module):
@@ -427,7 +428,7 @@ class Sequential(Module):
 
 这里的`forward`方法只是依次调用每个层。请注意，我们必须使用我们在`Module`中定义的`register_modules`方法，否则`layers`的内容不会出现在`parameters`中。
 
-# 所有的代码都在这里
+## 所有的代码都在这里
 
 请记住，我们在这里没有使用任何 PyTorch 模块的功能；我们正在自己定义一切。所以如果你不确定`register_modules`做什么，或者为什么需要它，再看看我们为`Module`编写的代码！
 
@@ -483,7 +484,7 @@ torch.Size([128, 10])
 
 我们有数据和模型。现在我们需要一个损失函数。
 
-# 损失
+## 损失
 
 我们已经看到如何定义“负对数似然”：
 
@@ -585,7 +586,7 @@ def cross_entropy(preds, yb): return nll(log_softmax(preds), yb).mean()
 
 现在让我们将所有这些部分组合起来创建一个`学习者`。
 
-# 学习者
+## 学习者
 
 我们有数据、模型和损失函数；在我们可以拟合模型之前，我们只需要另一件事，那就是优化器！这里是 SGD：
 
@@ -657,6 +658,8 @@ class Learner:
 ```py
 for self.epoch in range(n_epochs)
 ```
+
+
 
 并在每个 epoch 中分别调用`self.one_epoch`，然后`train=True`，然后`train=False`。然后`self.one_epoch`对`dls.train`或`dls.valid`中的每个批次调用`self.one_batch`，适当地（在将`DataLoader`包装在`fastprogress.progress_bar`之后）。最后，`self.one_batch`遵循我们在本书中看到的适合一个小批量的一系列步骤。
 

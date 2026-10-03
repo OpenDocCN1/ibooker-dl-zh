@@ -1,12 +1,14 @@
+
+
 # AI智能体权威指南
 
-# 第 1 章 从 LLM 到智能体：基础蓝图
+## 第 1 章 从 LLM 到智能体：基础蓝图
 
 人类智能的一个显著特征，是我们将内在推理与具体行动相结合的方式，而这与大型语言模型（LLM）智能体在配合工具时的运作方式惊人地相似。以构建编程项目的过程为例。作为人类开发者，你从一个提示（即客户的需求）开始。首先是推理，你会勾勒出如何处理它的计划。然后是行动，例如搜索文档、编写函数或调试错误。当测试失败、同行评审指出漏洞或客户测试应用程序时，反馈便进入循环。每一步都不是静态的，而是迭代的，推理会适应新的见解，行动也会随之改变。
 
 单个 LLM 智能体也是如此。面对一项任务，智能体首先会推理缺少什么或下一步该做什么，然后通过调用工具来检索数据、运行代码或检查结果。与开发者的反馈循环类似，环境会提供错误、缺失或确认等信号，指引下一次迭代。代码库或文档等外部支持，对应检索系统或网页搜索等工具，这些工具能够超越模型自身的原始能力来优化输出。
 
-LLM 智能体是一个嵌入在推理、行动和反馈循环中的大型语言模型，它能够调用外部工具并根据结果调整自身行为。与局限于静态文本生成的独立 LLM 不同，智能体作为工作流中的决策实体运作。在本书中，我将交替使用"AI 智能体"、"智能体"和"LLM 智能体"这些术语。严格来说，AI 智能体或智能体根本不需要涉及语言模型。例如，在纯强化学习中，智能体通过与环境进行试错交互来直接训练。使用 LLM 的优势在于它带来了强大的泛化、推理和自然语言能力，这使得智能体的行为更加灵活，适用范围远超狭义的特定环境。
+LLM 智能体是一个嵌入在推理、行动和反馈循环中的大型语言模型，它能够调用外部工具并根据结果调整自身行为。与局限于静态文本生成的独立 LLM 不同，智能体作为工作流中的决策实体运作。在本书中，我将交替使用“AI 智能体”、“智能体”和“LLM 智能体”这些术语。严格来说，AI 智能体或智能体根本不需要涉及语言模型。例如，在纯强化学习中，智能体通过与环境进行试错交互来直接训练。使用 LLM 的优势在于它带来了强大的泛化、推理和自然语言能力，这使得智能体的行为更加灵活，适用范围远超狭义的特定环境。
 
 正如个人技能终有其极限，单个智能体也只能将工作流推进到一定程度，之后复杂度的增加便需要协调。想一想，在一家小公司里，一个独立贡献者可能端到端地处理所有事情：设计、编码、测试和部署。但随着项目的发展，团队需要扩张。有人可能专注于后端，有人负责前端，还有人负责测试。为了保持一切协同一致，技术负责人或工程副总裁会介入，协调工作量、分配任务并整合结果。独立贡献者与协同团队之间的差异，直接映射到单个智能体与多智能体系统（MAS）之间的差异。正如技术负责人协调多个贡献者一样，监督智能体可以编排多个专业智能体协作解决复杂目标。
 
@@ -14,14 +16,11 @@ LLM 智能体是一个嵌入在推理、行动和反馈循环中的大型语言�
 
 这种相似性揭示了为什么将纯 LLM 与工具结合是合理的。语言模型本身就像一个与 StackOverflow、IDE 或 GitHub 等资源隔绝的开发者，虽有推理能力，却无法在没有外部帮助的情况下收集新数据、验证结果或改进任务输出。正如软件团队通过添加更好的工具、资源和领导力来扩展自身能力，LLM 在被嵌入智能体工作流、甚至 MAS 中的多个专业智能体时，也能扩展自身能力。若没有这些升级，两者都将囿于初始训练的限制，面对复杂任务时很快就会不堪重负。有了工具、反馈和分治法，LLM 可以迭代式地改进、适应并解决那些原本超出其独立能力的复杂任务。
 
-
-
-
 我假设你在阅读本书时已经具备大语言模型（LLM）的基础知识。也许你读过《[动手学大语言模型](https://learning.oreilly.com/library/view/hands-on-large-language/9781098150952//)》这本书，或者类似的著作。你不需要知道如何部署 LLM 就能让你的智能体运行起来，因为我将在后续章节中逐步指导你完成这些步骤。不过，我希望你具备扎实的 Python 编码技能，也就是说你了解类和函数是什么，并且熟悉核心的机器学习和深度学习概念，如神经网络、训练循环和反向传播。具备线性代数和微积分的实用知识也很有帮助，因为它们是现代深度学习的重要基础。如果你了解 Transformer 如何处理序列，并且对嵌入的工作原理或向量存储如何支持检索有基本的认识，那也会很有用。
 
 如果你有一段时间没接触这些主题了，不要惊慌！就像《银河系漫游指南》建议的那样，不要惊慌，我在本书中也会这样说。话虽如此，书中的每个概念都会以代码为基础，因此你的知识会重新变得可用，而无需翻出旧教材。而且，在你问之前——不，关于 AI 智能体的所有问题的答案并不是 42，但我保证你会在本书中找到答案。
 
-## 本书代码
+### 本书代码
 
 本书的所有代码示例都可以在[配套的 GitHub 仓库](https://github.com/Nicolepcx/ai-agents-the-definitive-guide)中找到。该仓库按章节组织，因此你可以轻松找到属于每个部分的代码。
 
@@ -44,9 +43,13 @@ LLM 智能体是一个嵌入在推理、行动和反馈循环中的大型语言�
 *有限状态机*拥有一个小的词汇表，它定义了系统可以处于的模式、可以执行的操作以及它们之间允许的转换。每次转换由一个事件触发，可选地由一个谓词作为守卫，并且可能会执行更新状态的动作。起始和结束是具有特殊含义的区分状态。核心词汇如下：
 
 - **状态**：一个紧凑的快照，捕捉系统在给定时刻所知道的信息。对于智能体来说，这可能是消息列表、路由提示或进度标记。
+
 - **事件**：自上次决策以来发生的事情，例如工具被调用或返回结果。
+
 - **守卫**：一种检查，根据当前状态和最新事件决定采取哪种转换。
+
 - **动作**：在转换过程中执行的工作，例如调用工具、追加消息、保存检查点或请求人工输入。
+
 - **终止**：表示过程已到达结束的条件。
 
 图 1-1 展示了用于工具使用的有限状态机。每次转换都由一个事件、一个守卫和一个动作定义。
@@ -57,22 +60,23 @@ LLM 智能体是一个嵌入在推理、行动和反馈循环中的大型语言�
 
 当行为在少数稳定模式之间交替且可恢复性很重要时，FSM 是理想的选择，因为你可以在每个节点上设置检查点，并在崩溃后从最后一个已完成的状态恢复。
 
-从状态的角度思考，可以将复杂任务分解为不同的步骤。例如，与其用一个单一的提示词来"写一篇博客文章"，你可以定义诸如主题构思、大纲生成、草稿撰写、编辑和 SEO 优化等状态。每个状态都可以关联到你的智能体将使用的特定工具。
+从状态的角度思考，可以将复杂任务分解为不同的步骤。例如，与其用一个单一的提示词来“写一篇博客文章”，你可以定义诸如主题构思、大纲生成、草稿撰写、编辑和 SEO 优化等状态。每个状态都可以关联到你的智能体将使用的特定工具。
 
 *转换*让你明确一个任务交接给下一个任务的条件。例如，大纲生成状态的什么输出会触发草稿撰写状态。这种结构可以应对非结构化的、一次性的提示词，因为仅靠 LLM 处理这类提示词往往会导致结果不一致。
 
-一旦你添加更多模式，如规划、反思、审批门控和重试，FSM 就可能造成重复或产生混乱的"意大利面条式"路由。你需要控制这些边（edge），因为它们是决策点：每条边都编码了驱动功能的事件、守卫和动作。这就是层次结构发挥作用的地方。
+一旦你添加更多模式，如规划、反思、审批门控和重试，FSM 就可能造成重复或产生混乱的“意大利面条式”路由。你需要控制这些边（edge），因为它们是决策点：每条边都编码了驱动功能的事件、守卫和动作。这就是层次结构发挥作用的地方。
 
 ### 层次状态机
 
 *层次状态机*允许状态包含其他状态。超状态（superstate）捕获共享的进入/退出行为和共享的守卫。子状态（substate）继承这些规则并添加自己的规则。历史节点会记住你离开时处于哪个子状态，以便之后精确地从那里恢复。状态机的这些新增功能说明如下。
 
 - **超状态**：一种状态，用于分组一组子状态及其公共策略。进入超状态时运行一次共享逻辑；退出时运行一次共享清理。
+
 - **子状态**：存在于超状态内部的具象模式。它有自己的边，但继承超状态的守卫和动作。
-- **历史**：一个"记住我在哪里"的标记。浅历史从最后一个活跃的子状态恢复；深历史在嵌套的孙状态内部恢复。用智能体的术语来说，这是图的一部分的检查点。
+
+- **历史**：一个“记住我在哪里”的标记。浅历史从最后一个活跃的子状态恢复；深历史在嵌套的孙状态内部恢复。用智能体的术语来说，这是图的一部分的检查点。
+
 - **并行区域**：超状态的两个或多个子区域，可以独立推进。适用于扇出工具调用或智能体角色，然后再汇合。
-
-
 
 图 1-2 展示了一个带有 `WORKING` 超状态的分层状态机。`PLAN`、`ACT` 和 `REFLECT` 是子状态。`H` 是一个浅层历史标记，用于记录最后活跃的子状态，以便在重新进入超状态时从中断处继续执行。
 
@@ -95,6 +99,7 @@ class State(TypedDict):
 ```
 
 - ![1](img/#ch01.html_co_from_llms_to_agents__the_foundational_blueprint_CO1-1)：父图和子图之间的共享总线。
+
 - ![2](img/#ch01.html_co_from_llms_to_agents__the_foundational_blueprint_CO1-2)：可选的浅层历史标记。
 
 **节点和子图**：子图是一个 HSM 超状态。其内部节点是子状态。进入子图会运行其入口节点；离开子图会通过其出口边返回到父图。
@@ -142,7 +147,9 @@ parent.add_conditional_edges("WORKING", global_guard,
 ```
 
 - ![1](img/#ch01.html_co_from_llms_to_agents__the_foundational_blueprint_CO3-1)：在子图内添加条件边。
+
 - ![2](img/#ch01.html_co_from_llms_to_agents__the_foundational_blueprint_CO3-2)：带有全局守卫的父图。
+
 - ![3](img/#ch01.html_co_from_llms_to_agents__the_foundational_blueprint_CO3-3)：示例策略：如果用户说“停止”则结束。
 
 **历史和检查点**：`MemorySaver` 为你免费提供浅层和深层历史：恢复线程会从最后完成的节点重新创建子图。如果你想要显式的“返回到我在 `WORKING` 内部的位置”，持久化一个小标记（例如 `state["working_last"] = "reflect"`），并在重新进入时根据它进行分支。
@@ -161,8 +168,13 @@ app.invoke({"messages": [HumanMessage(content="start")],
 ```
 
 - ![1](img/#ch01.html_co_from_llms_to_agents__the_foundational_blueprint_CO4-1)：子状态在退出时设置 `working_last`。
+
 - ![2](img/#ch01.html_co_from_llms_to_agents__the_foundational_blueprint_CO4-2)：使用检查点进行编译。
+
 - ![3](img/#ch01.html_co_from_llms_to_agents__the_foundational_blueprint_CO4-3)：在线程中运行。`MemorySaver` 会在恢复时还原最后完成的节点。
+
+
+
 
 FSM 让你能够将任务结构化为稳定、可恢复的步骤。HSM 在此基础上通过减少重复并在工作流变得复杂时集中策略来扩展这一能力。这两种模式都为你的下一步做好准备：将静态的 LLM 预测转化为动态的、有状态的代理。
 
@@ -187,8 +199,6 @@ FSM 让你能够将任务结构化为稳定、可恢复的步骤。HSM 在此基
 | 无工具使用 | 增强工具（检索、代码、API） |
 | 对提示的固定解释 | 可以动态细化或重新解释目标 |
 | 无外部验证 | 主动检查、纠正和改进输出 |
-
-
 
 图 1-3 说明了模块如何将静态 LLM 转化为动态智能体。用户请求进入核心，规划与记忆塑造其推理，工具则使其能够采取具体行动。推理、行动和适应的循环正是由这些元素的协调而涌现。
 
@@ -316,9 +326,6 @@ Square of current temperature:"""))
 4. 读取结构化工具调用。
 5. 将观察结果与匹配的`tool_call_id`一起附加，以便模型将结果与调用对应起来。
 
-
-
-
 工具循环可以以一次观察结果作为结束。这条最终指令确保以你要求的格式生成一条收尾的助手消息。
 
 ## 为 LLM 赋予状态
@@ -326,15 +333,19 @@ Square of current temperature:"""))
 将 LLM 转变为智能体的第一步是让它具备状态。为你的 LLM 提供一个状态，记录它处于工作流中的哪个位置。基于输入和逻辑，它会转换到下一个状态，而每个状态都关联着一个函数或行为。在 LangGraph 中，这可以是任何 Python 类型，但通常是 `TypedDict` 或 [Pydantic](https://docs.pydantic.dev/latest/api/base_model/) `BaseModel`。下面概述了 LangGraph 用于构建有状态、可适应的 AI 智能体的关键概念。
 
 `State`
+
 : 一种共享数据结构，表示应用的当前快照。它可以是任何 Python 类型，但通常是 `TypedDict` 或 `Pydantic BaseModel`。
 
 `Nodes`
+
 : 对智能体逻辑进行编码的函数。它们接收当前状态，执行计算或副作用，并返回更新后的状态。
 
 `Edges`
+
 : 根据当前状态选择下一个节点的规则。它们可以是条件分支或固定转换，并且还应当检测是否满足结束条件。
 
 `Command`
+
 : 一个将控制流与状态更新相结合、以支持多智能体通信的对象。节点可以通过返回 `Command` 来同时更新状态并选择下一个节点。
 
 到目前为止，你之前创建的工具仅被用于*无状态循环*中。每次运行都是独立的：模型可以调用工具、获取答案并收尾，但一旦运行结束，所有上下文都会丢失。现在，如果你想结合 LangGraph 的概念来构建有状态的智能体，就需要将工具嵌入到有状态的工作流中。不要在每一轮之后丢弃消息，而是将它们保存在结构化的状态中。这使得系统具备了智能体特性：
@@ -393,6 +404,9 @@ cfg = {"configurable": {"thread_id": "nyc-weather-session"}}
 
 - ![1](img/#ch01.html_co_from_llms_to_agents__the_foundational_blueprint_CO9-1): 轻量级的按线程检查点机制，可在各轮之间持久化状态。
 - ![2](img/#ch01.html_co_from_llms_to_agents__the_foundational_blueprint_CO9-2): 生成一个知道如何保存和加载状态的可运行应用。
+
+
+
 - ![3](img/#ch01.html_co_from_llms_to_agents__the_foundational_blueprint_CO9-3): 线程 ID 标识一个对话分支。新的 ID 会创建新的分支。
 
 一旦你有了可运行的应用和就绪的检查点，下一步就是让它的执行过程可观测。你想看到图正在做什么、哪些消息在流动，以及工具输出如何接入。示例 1-7 介绍了一个简洁的辅助函数，它可以将消息格式化为一行可读文本，让你更容易跟踪执行轨迹，而不会被大量日志淹没。
@@ -446,10 +460,6 @@ def print_state_snapshot(app, config, title: str):
         print(f"queued tasks: {tasks}")
     print("memory: in-memory checkpoint present for this thread")
 ```
-
-
-
-
 
 ![1](img/#ch01.html_co_from_llms_to_agents__the_foundational_blueprint_CO11-1): 读取某个线程的最新状态。
 
@@ -569,15 +579,18 @@ print_state_snapshot(app, cfg_branch, title="BRANCH THREAD memory view")
 **表 1-2 代理当前的自主性：可以实现什么 vs. 仍然无法做到什么**
 
 | 代理可以做什么 | 代理尚不能做什么 |
+
 | --- | --- |
+
 | 在预定义路径之间路由（例如路由器节点） | 重新设计或重新连接自己的控制图 |
+
 | 选择调用哪些工具或子代理 | 动态生成并验证新的图拓扑 |
+
 | 判断完成前是否还需要更多步骤 | 持续评估工具有效性，或自主创建新工具 |
+
 | 在边界内修改自己的提示或工具集 | 在执行中途转变策略时保证对齐与连贯性 |
+
 | 编写并运行小段代码以确定后续步骤 | 作为完全自我导向的系统运行，独立于编排框架 |
-
-
-
 
 智能体在运行时进行适配，但仅限于你设计的框架之内。将它视为一个频谱会很有帮助。一端是路由器，从一组固定选项中做出单一决策；中间是支持多步推理、反思和记忆的工具调用型智能体；另一端则是多智能体系统（MAS），专业化的智能体在监督者协调下协作，将决策分布到不同角色中。图 1-4 展示了自治程度的频谱，从简单的路由决策到完全自主执行的理念。实际上，几乎所有现实世界的系统都落在中间地带：它们是智能体系统，而不是真正的自主智能体。它们的自主性是被编排出来的，而非自我进化；决策发生在预定义状态、转换和工具集的框架之内，即使智能体能在运行时从中进行适应性选择。
 
@@ -607,9 +620,11 @@ print_state_snapshot(app, cfg_branch, title="BRANCH THREAD memory view")
 
 你现在已经知道，AI 智能体并非魔法。它们是工程化系统，其力量来自架构的战略性配置。通过结合推理循环、工具、有状态设计和自适应控制，大语言模型可以超越静态提示，演化为能够实时规划、反应和反思的多智能体系统（MAS）。本章探讨了使这一切成为可能的架构，从思维链、思维树和 ReAct 等结构化推理方法，到监督者智能体和层次智能体等架构范式。在此过程中，你将更深入地理解推理流程，并看到包括审批门、修正和中止在内的“人在回路”机制如何让这些系统保持可靠、对齐且安全。
 
+
+
 当你比较一个简单的单步智能体与一个多步智能体如何处理任务时，智能体架构的重要性就显而易见了。单步智能体接收请求，在内部规划一切，一次性执行，并在返回结果时从不重新审视中间步骤。相比之下，多步智能体在迭代循环中交替进行推理和行动，根据部分结果或工作中的新观察调整其计划。正是这种灵活性让智能体能够动态优化输出，并应对来自环境的不确定性或反馈。这种对比如图 2-1 所示，表 2-1 则展示了两种方法在相同任务上逐步展开的过程。
 
-表 2-1. 示例：任务“总结文档并创建关键统计数据的柱状图”的单步执行与多步（ReAct）执行
+**表 2-1.** 示例：任务“总结文档并创建关键统计数据的柱状图”的单步执行与多步（ReAct）执行
 
 | 步骤 | 单步智能体 | 多步（ReAct）智能体 |
 | --- | --- | --- |
@@ -624,7 +639,7 @@ print_state_snapshot(app, cfg_branch, title="BRANCH THREAD memory view")
 
 ![ch01 single vs multi step](img/ch01_single_vs_multi_step.png)
 
-## 图 2-1：单步（左）与 ReAct（右）智能体工作流。
+**图 2-1：** 单步（左）与 ReAct（右）智能体工作流。
 
 ## 结构化推理与行动
 
@@ -634,11 +649,9 @@ print_state_snapshot(app, cfg_branch, title="BRANCH THREAD memory view")
 
 ### 让 AI 智能体出声思考
 
-
-
 *思维链提示*（CoT）^(1)受人类思维过程的启发，该技术先解决中间步骤，再得出最终答案。虽然 CoT 常被作为一种提示技巧来介绍，但在 AI 智能体的语境中，CoT 可以作为额外的推理步骤来引导控制流。通过强制模型生成中间步骤，你可以获得对推理过程更高的透明度。它通常能提高可靠性，并帮助较小的模型执行原本需要更大模型才能完成的任务。这既降低了成本，又能更清晰地洞察智能体如何得出其决策。表 2-2 为你提供了常见场景的提示词思路，你可根据需要进行调整。
 
-表 2-2. 示例：按场景划分的思维链提示词
+**表 2-2.** 示例：按场景划分的思维链提示词
 
 | 场景 | CoT 提示词示例 |
 | --- | --- |
@@ -740,10 +753,6 @@ def propose_options(state: BlogState) -> BlogState:
     return state
 ```
 
-
-
-
-
 ## 思维树（ToT）
 
 然后，你可以让智能体进行反思和选择（示例 2-4），从而对树进行剪枝。在这里，一个更强大的 LLM 对三个提议的选项进行评估。可以指示模型根据清晰度和原创性等标准对每个选项进行评判，然后选择最佳的一个。这一步在 ToT 中至关重要，因为它确保智能体不会简单地采用第一个想法，而是批判性地评估备选方案，并选择最有希望推进的路径。
@@ -811,7 +820,9 @@ app = graph.compile(checkpointer=checkpointer)
 
 在上一节中，你已经看到 CoT 和 ToT 对推理是有帮助的，但仅靠推理是不够的。一个只进行推理的智能体永远停留在纸面上，而一个只行动的智能体无法从自己的决定中学习。要将两者结合起来，你需要使用 ReAct，它代表推理与行动。
 
-从数学上讲，你可以把这看作是将上下文 `c[t]` 映射到动作空间 `Â = A ∪ L` 中的动作 `a[t]`。这里 `A` 是影响环境的特定任务动作集合，而 `L` 是基于语言的推理痕迹或思想集合。因此，每一步动作不仅产生任务动作 `a[t]`，还产生一条推理痕迹 `â[t]`。
+
+
+从数学上讲，你可以把这看作是将上下文`c[t]`映射到动作空间`Â = A ∪ L`中的动作`a[t]`。这里`A`是影响环境的特定任务动作集合，而`L`是基于语言的推理痕迹或思想集合。因此，每一步动作不仅产生任务动作`a[t]`，还产生一条推理痕迹`â[t]`。
 
 这些痕迹被折回智能体的状态中，因此上下文演变为：
 
@@ -825,11 +836,11 @@ app = graph.compile(checkpointer=checkpointer)
 
 ![CH 02 ReAct](img/CH_02_ReAct.png)
 
-**图 2-3.** ReAct 智能体的控制流图。该循环是策略 `π(a[t]|c[t])` 的操作形式。
+**图 2-3.** ReAct 智能体的控制流图。该循环是策略`π(a[t]|c[t])`的操作形式。
 
-该过程从 `__start__` 开始，将控制权交给智能体，然后根据结果进行分支：
+该过程从`__start__`开始，将控制权交给智能体，然后根据结果进行分支：
 
-- 如果智能体决定已经得出结论，它会发出一个结束信号并移动到 `__end__`。
+- 如果智能体决定已经得出结论，它会发出一个结束信号并移动到`__end__`。
 - 如果需要更多推理或行动，智能体会发出继续信号，并可能调用工具来收集更多信息或执行操作。
 - 与工具交互后，控制权流回智能体，使其能够在决定继续还是停止之前整合结果并进行反思。
 
@@ -839,7 +850,7 @@ app = graph.compile(checkpointer=checkpointer)
 
 让我们把数学和图表落到实处，看看它们如何真正映射到代码。下面的代码清单将 ReAct 方程转化为代码。和之前一样，注意我这里只展示重要的部分，但完整可运行的实现将在随附的笔记本中。
 
-在进入代码清单之前，请记住其意图：我们携带不断增长的对话状态 `c[t]`，同时模型在语言痕迹 `L` 和任务动作 `A` 之间交替。每一步都会将想法、动作或工具观察结果追加回状态。代码就是这个循环的镜像。因此，你要先为图创建状态，如示例 2-6 所示。
+在进入代码清单之前，请记住其意图：我们携带不断增长的对话状态`c[t]`，同时模型在语言痕迹`L`和任务动作`A`之间交替。每一步都会将想法、动作或工具观察结果追加回状态。代码就是这个循环的镜像。因此，你要先为图创建状态，如示例 2-6 所示。
 
 ### 示例 2-6. 创建 ReAct 状态
 
@@ -848,15 +859,11 @@ class AgentState(TypedDict):
     messages: Annotated[Sequence[BaseMessage], add_messages] 
 ```
 
-
-
-
-
 ![1](img/#ch02.html_co_architectures_and_patterns__planning__reactivity__and_multi_agent_systems_CO2-1) ：代理的状态。
 
-![2](img/#ch02.html_co_architectures_and_patterns__planning__reactivity__and_multi_agent_systems_CO2-2) ：上下文 `c[t]` 是消息流。
+![2](img/#ch02.html_co_architectures_and_patterns__planning__reactivity__and_multi_agent_systems_CO2-2) ：上下文`c[t]`是消息流。
 
-现在，你通过 示例 2-7 赋予模型两种能力。它可以生成作为思想 `L` 的语言标记，也可以请求结构化的工具调用 `A`。绑定工具使得这些动作成为一流输出，供运行时调度。
+现在，你通过示例 2-7 赋予模型两种能力。它可以生成作为思想`L`的语言标记，也可以请求结构化的工具调用`A`。绑定工具使得这些动作成为一流输出，供运行时调度。
 
 ### 示例 2-7. 初始化 LLM
 
@@ -865,7 +872,7 @@ model = ChatOpenAI(model="gpt-4o-mini", temperature=0)
 model = model.bind_tools(TOOLS)
 ```
 
-![1](img/#ch02.html_co_architectures_and_patterns__planning__reactivity__and_multi_agent_systems_CO3-1) ：将工具绑定到模型上，将动作空间扩展为 `Â = A ∪ L`。
+![1](img/#ch02.html_co_architectures_and_patterns__planning__reactivity__and_multi_agent_systems_CO3-1) ：将工具绑定到模型上，将动作空间扩展为`Â = A ∪ L`。
 
 示例 2-8 是策略步骤。它读取完整的消息历史，应用系统规则，并产生唯一结果：要么是思想，要么是工具调用请求，要么两者兼有。你不在此处分支，只需返回模型决定的结果。
 
@@ -877,11 +884,11 @@ def call_model(state: AgentState, config: RunnableConfig) -> Dict[str, Any]:
     return {"messages": [response]}
 ```
 
-![1](img/#ch02.html_co_architectures_and_patterns__planning__reactivity__and_multi_agent_systems_CO4-1) ：策略 `π(c[t]) → a[t]` 是对当前上下文执行 `model.invoke`。
+![1](img/#ch02.html_co_architectures_and_patterns__planning__reactivity__and_multi_agent_systems_CO4-1) ：策略`π(c[t]) → a[t]`是对当前上下文执行`model.invoke`。
 
-![2](img/#ch02.html_co_architectures_and_patterns__planning__reactivity__and_multi_agent_systems_CO4-2) ：归约器追加新消息，实现 `c[t + 1] = (c[t], a[t])`。
+![2](img/#ch02.html_co_architectures_and_patterns__planning__reactivity__and_multi_agent_systems_CO4-2) ：归约器追加新消息，实现`c[t + 1] = (c[t], a[t])`。
 
-在 示例 2-9 中，你将意图转化为效果。每个请求的工具调用都会确定性执行，其结果被封装为一条消息。通过将观察结果推入同一消息流，你让下一步策略能够在没有特殊处理的情况下基于新证据进行推理。
+在示例 2-9 中，你将意图转化为效果。每个请求的工具调用都会确定性执行，其结果被封装为一条消息。通过将观察结果推入同一消息流，你让下一步策略能够在没有特殊处理的情况下基于新证据进行推理。
 
 ### 示例 2-9. 执行工具调用
 
@@ -908,7 +915,7 @@ def tool_node(state: AgentState) -> Dict[str, Any]:
     return {"messages": outputs}
 ```
 
-![1](img/#ch02.html_co_architectures_and_patterns__planning__reactivity__and_multi_agent_systems_CO5-1) ：如果模型选择了动作 `a[t] ∈ A`，则执行该工具。
+![1](img/#ch02.html_co_architectures_and_patterns__planning__reactivity__and_multi_agent_systems_CO5-1) ：如果模型选择了动作`a[t] ∈ A`，则执行该工具。
 
 ![2](img/#ch02.html_co_architectures_and_patterns__planning__reactivity__and_multi_agent_systems_CO5-2) ：工具输出是通知下一步的观测。
 
@@ -924,9 +931,9 @@ def should_continue(state: AgentState) -> str:
     return "end"
 ```
 
-![1](img/#ch02.html_co_architectures_and_patterns__planning__reactivity__and_multi_agent_systems_CO6-1) ：停止测试读取最后一条 AI 消息来决定 `continue` 或 `end`。
+![1](img/#ch02.html_co_architectures_and_patterns__planning__reactivity__and_multi_agent_systems_CO6-1) ：停止测试读取最后一条 AI 消息来决定`continue`或`end`。
 
-现在，你将各组件连接成一个小型状态机，如 示例 2-11 所示。边编码了镜像 ReAct 图表的控制流。策略节点先运行。如果它发出动作，则路由到工具节点，然后返回策略。如果它只发出思想或最终答案，则终止。
+现在，你将各组件连接成一个小型状态机，如示例 2-11 所示。边编码了镜像 ReAct 图表的控制流。策略节点先运行。如果它发出动作，则路由到工具节点，然后返回策略。如果它只发出思想或最终答案，则终止。
 
 ### 示例 2-11. 构建工作流图
 
@@ -946,7 +953,7 @@ workflow.add_edge("tools", "agent")
 graph = workflow.compile()
 ```
 
-在运行时，图一次推进一条边。条件边决定下一跳是 `tools` 还是 `END`。从 `tools` 回到 `agent` 的固定边完成了思考-行动循环。
+在运行时，图一次推进一条边。条件边决定下一跳是`tools`还是`END`。从`tools`回到`agent`的固定边完成了思考-行动循环。
 
 为了演示运行过程，我提了一个问题：苏黎世今天天气如何。LLM 先决定调用哪个工具来最好地回答，然后工具返回证据，模型根据证据写出最终答案。由于每一步都记录在消息流中，推理过程可检索：
 
@@ -1015,11 +1022,7 @@ graph = workflow.compile()
 
 ## 你肯定是在开玩笑，AI 智能体！
 
-
-
-
-
-有时，智能体的行为会很有趣。它可能调用错误的工具、无休止地循环，或者产生古怪而富有创意的回应。在那些时刻，你可能会笑着对 AI 智能体说：“你在开玩笑吧？”但当同样的不可预测性波及访问控制、财务操作或客户数据时，这就不再是玩笑了。在错误的时间或在错误的系统上执行操作可能会带来严重后果。这就是 *人在回路*（HITL）存在的原因。HITL 允许智能体在关键节点暂停，请求你的批准，只有在确保安全后才继续执行。
+有时，智能体的行为会很有趣。它可能调用错误的工具、无休止地循环，或者产生古怪而富有创意的回应。在那些时刻，你可能会笑着对 AI 智能体说：“你在开玩笑吧？”但当同样的不可预测性波及访问控制、财务操作或客户数据时，这就不再是玩笑了。在错误的时间或在错误的系统上执行操作可能会带来严重后果。这就是*人在回路*（HITL）存在的原因。HITL 允许智能体在关键节点暂停，请求你的批准，只有在确保安全后才继续执行。
 
 HITL 不仅是为了在错误发生前将其捕获。它还提供了问责制和透明性。通过在智能体的工作流中插入检查点，你可以确保不可逆的操作经过审查、决策可追溯，并且敏感操作始终处于人类控制之下。这种监督非但不会拖慢系统，反而会让智能体更值得信赖，也更容易在生产环境中采用。
 
@@ -1032,7 +1035,7 @@ HITL 不仅是为了在错误发生前将其捕获。它还提供了问责制和
 - **审查工具调用**：如果工具调用可能影响外部系统，请在执行前检查其参数。例如，在预订旅行之前，你可以确认预订详情。
 - **验证人工输入**：在图的特定步骤明确请求人工输入。这对于收集附加信息或上下文以支持智能体的决策过程，或支持多轮对话非常有用。
 
-LangGraph 提供了[详尽的文档](https://langchain-ai.github.io/langgraph/how-tos/human_in_the_loop/add-human-in-the-loop/)，介绍如何在你的应用程序中应用这些模式。此外，[本书的代码仓库](https://github.com/Nicolepcx/ai-agents-the-definitive-guide)包含了六种不同模式的完整可运行示例。你可以通过一个 `main()` 函数在它们之间进行选择，如示例 2-12 所示。
+LangGraph 提供了[详尽的文档](https://langchain-ai.github.io/langgraph/how-tos/human_in_the_loop/add-human-in-the-loop/)，介绍如何在你的应用程序中应用这些模式。此外，[本书的代码仓库](https://github.com/Nicolepcx/ai-agents-the-definitive-guide)包含了六种不同模式的完整可运行示例。你可以通过一个`main()`函数在它们之间进行选择，如示例 2-12 所示。
 
 #### 示例 2-12. HITL 模式演示的主函数
 
@@ -1054,11 +1057,11 @@ q. Quit
 
 ### LangGraph 中的 Command
 
-`Command` 结合了控制流（边）和状态更新（节点）。它促进了多参与者（或多智能体）之间的通信。例如，一个节点可以更新其状态并决定下一个要访问的节点。LangGraph 通过从节点函数返回 `Command` 对象来实现这一点。
+`Command`结合了控制流（边）和状态更新（节点）。它促进了多参与者（或多智能体）之间的通信。例如，一个节点可以更新其状态并决定下一个要访问的节点。LangGraph 通过从节点函数返回`Command`对象来实现这一点。
 
 当你想要对类似 HTTP 调用这样具有副作用的步骤设置门控时，可以使用批准或拒绝模式。
 
-示例 2-13 让 LLM 生成请求计划，并将其存储在 `proposed_request` 中。
+示例 2-13 让 LLM 生成请求计划，并将其存储在`proposed_request`中。
 
 #### 示例 2-13. 使用 LLM 提出请求
 
@@ -1078,6 +1081,10 @@ def b_propose(state: BState) -> BState:
     return {"proposed_request": data} 
 ```
 
+
+
+# 架构与模式：规划、反应性与多智能体系统
+
 ![1](img/#ch02.html_co_architectures_and_patterns__planning__reactivity__and_multi_agent_systems_CO7-1)：让 LLM 生成结构化计划。
 
 ![2](img/#ch02.html_co_architectures_and_patterns__planning__reactivity__and_multi_agent_systems_CO7-2)：如果解析失败，则回退到默认请求。
@@ -1086,11 +1093,11 @@ def b_propose(state: BState) -> BState:
 
 ![4](img/#ch02.html_co_architectures_and_patterns__planning__reactivity__and_multi_agent_systems_CO7-4)：将结果存储在状态的 `proposed_request` 下。
 
-示例 2-14 调用 `interrupt(…)` 来暂停并请求人工批准或修改。
+## 示例 2-14 调用 `interrupt(…)` 来暂停并请求人工批准或修改。
 
-#### 示例 2-14. 请求的批准门控
+### 示例 2-14. 请求的批准门控
 
-```
+```python
 def b_gate(state: BState) -> Command[Literal["b_call", "b_propose"]]:
     v = interrupt({ 
         "question": "Approve or revise request",
@@ -1129,11 +1136,11 @@ def b_gate(state: BState) -> Command[Literal["b_call", "b_propose"]]:
 
 在 `resume` 时，你可以传递 `Command(resume={"action": "approve"})` 来继续，或传递 `{"action": "revise", "update": {...}}` 来合并修改并循环回到门控。
 
-示例 2-15 仅在获得批准后才执行 HTTP 调用，并将结果存储在 `api_result` 中。你可以拒绝以阻止执行，路由则取决于人工输入。
+## 示例 2-15 仅在获得批准后才执行 HTTP 调用，并将结果存储在 `api_result` 中。你可以拒绝以阻止执行，路由则取决于人工输入。
 
-#### 示例 2-15. 执行已批准的 HTTP 调用
+### 示例 2-15. 执行已批准的 HTTP 调用
 
-```
+```python
 def b_call(state: BState) -> BState:
     import requests
     r = requests.get(state["proposed_request"]["url"],
@@ -1145,12 +1152,9 @@ def b_call(state: BState) -> BState:
 
 ![2](img/#ch02.html_co_architectures_and_patterns__planning__reactivity__and_multi_agent_systems_CO9-2)：将结果存储在状态的 `api_result` 下。
 
-你可以使用“审查并编辑”模式，通过直接写入状态来纠正或改进模型输出。这里，示例 2-16 使用 LLM 生成一段简短摘要，并将其存储在 `summary` 中。
+## 你可以使用“审查并编辑”模式，通过直接写入状态来纠正或改进模型输出。这里，示例 2-16 使用 LLM 生成一段简短摘要，并将其存储在 `summary` 中。
 
-
-
-
-#### 示例 2-16. 生成摘要文本
+### 示例 2-16. 生成摘要文本
 
 ```python
 def c_write(state: CState) -> CState:
@@ -1160,11 +1164,12 @@ def c_write(state: CState) -> CState:
 ```
 
 1. ![1](img/#ch02.html_co_architectures_and_patterns__planning__reactivity__and_multi_agent_systems_CO10-1): 让 LLM 生成一份候选摘要。
+
 2. ![2](img/#ch02.html_co_architectures_and_patterns__planning__reactivity__and_multi_agent_systems_CO10-2): 将 `summary` 存储到状态中，以便稍后审查。
 
-示例 2-17 通过 `interrupt(...)` 暂停执行，其中包含一个请求 `edited_text` 的 JSON 模式。
+## 示例 2-17 通过 `interrupt(...)` 暂停执行，其中包含一个请求 `edited_text` 的 JSON 模式。
 
-#### 示例 2-17. 中断以进行人工编辑
+### 示例 2-17. 中断以进行人工编辑
 
 ```python
 def c_edit(state: CState) -> CState:
@@ -1181,15 +1186,18 @@ def c_edit(state: CState) -> CState:
 ```
 
 1. ![1](img/#ch02.html_co_architectures_and_patterns__planning__reactivity__and_multi_agent_systems_CO11-1): 暂停并请求人工提供编辑输入。
+
 2. ![2](img/#ch02.html_co_architectures_and_patterns__planning__reactivity__and_multi_agent_systems_CO11-2): 提供生成的摘要以供检查。
+
 3. ![3](img/#ch02.html_co_architectures_and_patterns__planning__reactivity__and_multi_agent_systems_CO11-3): 将编辑限制为字符串字段。
+
 4. ![4](img/#ch02.html_co_architectures_and_patterns__planning__reactivity__and_multi_agent_systems_CO11-4): 用人工修订版本覆盖 `summary`。
 
-你可以使用 `Command(resume={"edited_text": "your revision"})` 恢复执行。节点会重新启动，并返回你的编辑内容而不再暂停，然后图会用人工版本更新 `summary`。也就是说，你实际上是暂停下来审查，然后用编辑后的内容覆盖图中的状态。
+## 你可以使用 `Command(resume={"edited_text": "your revision"})` 恢复执行。节点会重新启动，并返回你的编辑内容而不再暂停，然后图会用人工版本更新 `summary`。也就是说，你实际上是暂停下来审查，然后用编辑后的内容覆盖图中的状态。
 
-当工具可能影响外部系统且需要检查参数时，你会使用审查工具调用。示例 2-18 将任何工具包装在 `interrupt([...])` 中。中断的有效负载会请求接受、编辑或响应。
+## 当工具可能影响外部系统且需要检查参数时，你会使用审查工具调用。示例 2-18 将任何工具包装在 `interrupt([...])` 中。中断的有效负载会请求接受、编辑或响应。
 
-#### 示例 2-18. 用审查门包装工具
+### 示例 2-18. 用审查门包装工具
 
 ```python
 def add_hitl(tool_obj: BaseTool | Any) -> BaseTool:
@@ -1218,14 +1226,20 @@ def add_hitl(tool_obj: BaseTool | Any) -> BaseTool:
 ```
 
 1. ![1](img/#ch02.html_co_architectures_and_patterns__planning__reactivity__and_multi_agent_systems_CO12-1): 将原始工具调用包装在审查请求中。
+
 2. ![2](img/#ch02.html_co_architectures_and_patterns__planning__reactivity__and_multi_agent_systems_CO12-2): 传递工具名称和参数以便检查。
+
 3. ![3](img/#ch02.html_co_architectures_and_patterns__planning__reactivity__and_multi_agent_systems_CO12-3): 允许人工接受、编辑或响应。
+
 4. ![4](img/#ch02.html_co_architectures_and_patterns__planning__reactivity__and_multi_agent_systems_CO12-4): 暂停，直到收到决定。
+
 5. ![5](img/#ch02.html_co_architectures_and_patterns__planning__reactivity__and_multi_agent_systems_CO12-5): 如果被接受，则执行原始工具调用。
+
 6. ![6](img/#ch02.html_co_architectures_and_patterns__planning__reactivity__and_multi_agent_systems_CO12-6): 使用修订后的参数执行工具。
+
 7. ![7](img/#ch02.html_co_architectures_and_patterns__planning__reactivity__and_multi_agent_systems_CO12-7): 用人工响应替换工具输出。
 
-你可以使用以下任一方式恢复：
+## 你可以使用以下任一方式恢复：
 
 ```json
 {"type": "accept"}
@@ -1268,20 +1282,24 @@ def build_graph_D():
 ```
 
 1. ![1](img/#ch02.html_co_architectures_and_patterns__planning__reactivity__and_multi_agent_systems_CO13-1): 中断以获取第一个文本输入。
-2. ![2](img/#ch02.html_co_architectures_and_patterns__planning__reactivity__and_multi_agent_systems_CO13-2): 使用修订后的 `text_1` 更新状态。
-3. ![3](img/#ch02.html_co_architectures_and_patterns__planning__reactivity__and_multi_agent_systems_CO13-3): 中断以获取第二个文本输入。
-4. ![4](img/#ch02.html_co_architectures_and_patterns__planning__reactivity__and_multi_agent_systems_CO13-4): 使用修订后的 `text_2` 更新状态。
-5. ![5](img/#ch02.html_co_architectures_and_patterns__planning__reactivity__and_multi_agent_systems_CO13-5): 将两个节点都添加到图中。
-6. ![6](img/#ch02.html_co_architectures_and_patterns__planning__reactivity__and_multi_agent_systems_CO13-6): 两个节点都直接从 `START` 分支。
-7. ![7](img/#ch02.html_co_architectures_and_patterns__planning__reactivity__and_multi_agent_systems_CO13-7): 使用 `checkpointer` 编译，使两个中断都可以恢复。
 
-这里，两个节点都从 `START` 开始，并且每个节点都调用 `interrupt(...)`。你可以使用 示例 2-20 构建一个将 `interrupt_id` 映射到其值的字典，然后使用 `Command(resume=that_map)` 恢复执行。
+2. ![2](img/#ch02.html_co_architectures_and_patterns__planning__reactivity__and_multi_agent_systems_CO13-2): 使用修订后的 `text_1` 更新状态。
+
+3. ![3](img/#ch02.html_co_architectures_and_patterns__planning__reactivity__and_multi_agent_systems_CO13-3): 中断以获取第二个文本输入。
+
+4. ![4](img/#ch02.html_co_architectures_and_patterns__planning__reactivity__and_multi_agent_systems_CO13-4): 使用修订后的 `text_2` 更新状态。
+
+
+
+5. ![5](img/#ch02.html_co_architectures_and_patterns__planning__reactivity__and_multi_agent_systems_CO13-5)：将两个节点都添加到图中。
+
+6. ![6](img/#ch02.html_co_architectures_and_patterns__planning__reactivity__and_multi_agent_systems_CO13-6)：两个节点都直接从`START`分支。
+
+7. ![7](img/#ch02.html_co_architectures_and_patterns__planning__reactivity__and_multi_agent_systems_CO13-7)：使用`checkpointer`编译，使两个中断都可以恢复。
+
+这里，两个节点都从`START`开始，并且每个节点都调用`interrupt(...)`。你可以使用示例 2-20 构建一个将`interrupt_id`映射到其值的字典，然后使用`Command(resume=that_map)`恢复执行。
 
 #### 示例 2-20. 恢复多个中断
-
-
-
-
 
 ```
 def wait_for_interrupt_and_prompt(app, cfg):
@@ -1309,13 +1327,19 @@ def wait_for_interrupt_and_prompt(app, cfg):
         return Command(resume=resume_map)
 ```
 
-- ![1](img/#ch02.html_co_architectures_and_patterns__planning__reactivity__and_multi_agent_systems_CO14-1): 从状态中收集所有待处理的中断。
-- ![2](img/#ch02.html_co_architectures_and_patterns__planning__reactivity__and_multi_agent_systems_CO14-2): 一次处理多个中断。
-- ![3](img/#ch02.html_co_architectures_and_patterns__planning__reactivity__and_multi_agent_systems_CO14-3): 打印每个中断的 ID 及其当前值。
-- ![4](img/#ch02.html_co_architectures_and_patterns__planning__reactivity__and_multi_agent_systems_CO14-4): 针对每个中断，向人工请求新值。
-- ![5](img/#ch02.html_co_architectures_and_patterns__planning__reactivity__and_multi_agent_systems_CO14-5): 尝试将其解析为 JSON，以进行结构化编辑。
-- ![6](img/#ch02.html_co_architectures_and_patterns__planning__reactivity__and_multi_agent_systems_CO14-6): 如果没有输入，则保留原始值。
-- ![7](img/#ch02.html_co_architectures_and_patterns__planning__reactivity__and_multi_agent_systems_CO14-7): 使用完整的更新值映射恢复执行。
+- ![1](img/#ch02.html_co_architectures_and_patterns__planning__reactivity__and_multi_agent_systems_CO14-1)：从状态中收集所有待处理的中断。
+
+- ![2](img/#ch02.html_co_architectures_and_patterns__planning__reactivity__and_multi_agent_systems_CO14-2)：一次处理多个中断。
+
+- ![3](img/#ch02.html_co_architectures_and_patterns__planning__reactivity__and_multi_agent_systems_CO14-3)：打印每个中断的 ID 及其当前值。
+
+- ![4](img/#ch02.html_co_architectures_and_patterns__planning__reactivity__and_multi_agent_systems_CO14-4)：针对每个中断，向人工请求新值。
+
+- ![5](img/#ch02.html_co_architectures_and_patterns__planning__reactivity__and_multi_agent_systems_CO14-5)：尝试将其解析为 JSON，以进行结构化编辑。
+
+- ![6](img/#ch02.html_co_architectures_and_patterns__planning__reactivity__and_multi_agent_systems_CO14-6)：如果没有输入，则保留原始值。
+
+- ![7](img/#ch02.html_co_architectures_and_patterns__planning__reactivity__and_multi_agent_systems_CO14-7)：使用完整的更新值映射恢复执行。
 
 正如你所看到的，添加人工监督并没有一种唯一“正确”的方法。你可以根据任务的敏感度以及你想要保留的控制程度，从不同的模式中进行选择。我鼓励你在提供的 notebook 中尝试这些模式，因为这样可以更容易地看到人工监督如何从简单的审批门控演变为人类与智能体之间更丰富的协作。
 
@@ -1335,7 +1359,7 @@ def wait_for_interrupt_and_prompt(app, cfg):
 
 ### 构建层级研究团队
 
-为了将监督者和子智能体的概念具体化，让我们通过一个示例来构建一个层级研究团队。我将使用 LangGraph 预构建的、可复用的 `create_react_agent` 组件来快速实现 ReAct 智能体。然后，每个工作智能体都会有明确的角色：有些专注于网络搜索，有些负责抓取页面，查询 [Exa](https://exa.ai/) 以获取更结构化的搜索结果，甚至可以在 Google 上查找专利。一个监督者智能体位于顶层，协调这些专家并决定下一步由谁执行。最终目标是组建一个市场研究团队。图 2-5 展示了你正在构建的最终应用。
+为了将监督者和子智能体的概念具体化，让我们通过一个示例来构建一个层级研究团队。我将使用 LangGraph 预构建的、可复用的`create_react_agent`组件来快速实现 ReAct 智能体。然后，每个工作智能体都会有明确的角色：有些专注于网络搜索，有些负责抓取页面，查询 [Exa](https://exa.ai/) 以获取更结构化的搜索结果，甚至可以在 Google 上查找专利。一个监督者智能体位于顶层，协调这些专家并决定下一步由谁执行。最终目标是组建一个市场研究团队。图 2-5 展示了你正在构建的最终应用。
 
 ![ch02 市场研究团队图](img/ch02_market_research_team_graph.png)
 
@@ -1387,16 +1411,15 @@ def make_supervisor_node(llm: BaseChatModel, members: list[str]) -> str:
     return supervisor_node
 ```
 
-- ![1](img/#ch02.html_co_architectures_and_patterns__planning__reactivity__and_multi_agent_systems_CO15-1): 创建状态以跟踪下一个工作智能体。
-- ![2](img/#ch02.html_co_architectures_and_patterns__planning__reactivity__and_multi_agent_systems_CO15-2): 定义一个辅助函数，为任意智能体集合构建监督者节点。
-- ![3](img/#ch02.html_co_architectures_and_patterns__planning__reactivity__and_multi_agent_systems_CO15-3): 提供系统提示，告知 LLM 如何扮演监督者角色。
-- ![4](img/#ch02.html_co_architectures_and_patterns__planning__reactivity__and_multi_agent_systems_CO15-4): 使用结构化输出，可靠地决定下一步调用哪个工作智能体。
-- ![5](img/#ch02.html_co_architectures_and_patterns__planning__reactivity__and_multi_agent_systems_CO15-5):
+- ![1](img/#ch02.html_co_architectures_and_patterns__planning__reactivity__and_multi_agent_systems_CO15-1)：创建状态以跟踪下一个工作智能体。
 
+- ![2](img/#ch02.html_co_architectures_and_patterns__planning__reactivity__and_multi_agent_systems_CO15-2)：定义一个辅助函数，为任意智能体集合构建监督者节点。
 
+- ![3](img/#ch02.html_co_architectures_and_patterns__planning__reactivity__and_multi_agent_systems_CO15-3)：提供系统提示，告知 LLM 如何扮演监督者角色。
 
+- ![4](img/#ch02.html_co_architectures_and_patterns__planning__reactivity__and_multi_agent_systems_CO15-4)：使用结构化输出，可靠地决定下一步调用哪个工作智能体。
 
-当主管发出 `FINISH` 指令时，让工作流干净地终止。
+- ![5](img/#ch02.html_co_architectures_and_patterns__planning__reactivity__and_multi_agent_systems_CO15-5)：当主管发出`FINISH`指令时，让工作流干净地终止。
 
 接下来，你需要一个辅助函数来创建你的工作节点，其实现方式见示例 2-22。这使得配置简洁且可复用，这样你每次添加新代理时就不必重复相同的样板代码。
 
@@ -1425,9 +1448,11 @@ def make_react_worker_node(
     return node
 ```
 
-- ![1](img/#ch02.html_co_architectures_and_patterns__planning__reactivity__and_multi_agent_systems_CO16-1): 创建一个带有工具和角色提示的专业 ReAct 代理。
-- ![2](img/#ch02.html_co_architectures_and_patterns__planning__reactivity__and_multi_agent_systems_CO16-2): 使用当前状态调用代理。
-- ![3](img/#ch02.html_co_architectures_and_patterns__planning__reactivity__and_multi_agent_systems_CO16-3): 将代理的最新输出传回状态，并返回给主管。
+- ![1](img/#ch02.html_co_architectures_and_patterns__planning__reactivity__and_multi_agent_systems_CO16-1)：创建一个带有工具和角色提示的专业 ReAct 代理。
+
+- ![2](img/#ch02.html_co_architectures_and_patterns__planning__reactivity__and_multi_agent_systems_CO16-2)：使用当前状态调用代理。
+
+- ![3](img/#ch02.html_co_architectures_and_patterns__planning__reactivity__and_multi_agent_systems_CO16-3)：将代理的最新输出传回状态，并返回给主管。
 
 一旦有了这些辅助函数，就可以继续定义你的代理了。为每个代理指定具体角色会很有帮助。由于这里的目标是构建一个市场调研团队，因此角色应非常有针对性。我的角色提示见示例 2-23。
 
@@ -1451,6 +1476,8 @@ about patents using the Google Patents API."""
 现在，让我们创建代理。使用示例 2-22 中的辅助函数，你可以实例化每个工作节点，并为其分配适当的角色和工具。具体实现见示例 2-24。
 
 #### 示例 2-24. 创建研究代理
+
+
 
 ```
 specs = [
@@ -1485,6 +1512,7 @@ patent_research_node = nodes["patent_research"]
 ```
 
 - ![1](img/#ch02.html_co_architectures_and_patterns__planning__reactivity__and_multi_agent_systems_CO17-1): 为每个工作节点定义其工具和角色。
+
 - ![2](img/#ch02.html_co_architectures_and_patterns__planning__reactivity__and_multi_agent_systems_CO17-2): 使用辅助函数实例化所有工作节点，无需重复样板代码。
 
 为了完善主管架构，我们需要设置一个能够协调所有四个研究代理的主管。这确保工作流不会停滞，并且每个代理都能在适当的时候发挥作用。具体实现见示例 2-25。
@@ -1522,7 +1550,9 @@ research_graph = research_builder.compile()
 ```
 
 - ![1](img/#ch02.html_co_architectures_and_patterns__planning__reactivity__and_multi_agent_systems_CO19-1): 注册主管和工作节点。
+
 - ![2](img/#ch02.html_co_architectures_and_patterns__planning__reactivity__and_multi_agent_systems_CO19-2): 连接边，使所有工作节点都路由回主管。
+
 - ![3](img/#ch02.html_co_architectures_and_patterns__planning__reactivity__and_multi_agent_systems_CO19-3): 将图编译为可执行的工作流。
 
 要测试此设置，你可以运行示例 2-27 中的代码。
@@ -1558,9 +1588,6 @@ for s in research_graph.stream(
 这种模块化方法使逐步构建能力越来越强的多智能体系统（MAS）变得容易：首先连接专门的工作节点，然后将整个团队组合成更大的图。在实践中，这意味着你可以从小处着手——比如在研究团队中加入搜索、抓取和专利查询，然后将其接入写作团队，形成完整的端到端流水线，或者通过内部数据以及图表编写和绘图代理进一步扩展。
 
 要从单个团队过渡到合适的层级结构，你需要构建另一个图来将所有内容紧密连接起来。可以把这个图看作是你的“超级图”，如示例 2-28 所示。
-
-
-
 
 #### 示例 2-28. 构建分层架构
 
@@ -1611,7 +1638,7 @@ for step in super_graph.stream(
 {'supervisor': {'next': '__end__'}}
 ```
 
-运行结束时，报告被成功保存到 `semiconductor_whitepaper.txt`。在实践中，此工作流只需大约两分钟即可收集研究资料、生成文本并将所有内容写入文件。
+运行结束时，报告被成功保存到`semiconductor_whitepaper.txt`。在实践中，此工作流只需大约两分钟即可收集研究资料、生成文本并将所有内容写入文件。
 
 ### 开发智能体群
 
@@ -1621,11 +1648,13 @@ for step in super_graph.stream(
 
 #### 图 2-8. 智能体群之间的交接流程
 
-LangGraph 提供了一个[开源库](https://github.com/langchain-ai/langgraph-swarm-py)，用于快速推进智能体群的开发。默认情况下，群中的智能体使用由预构建的 `create_handoff_tool` 创建的交接工具。你也可以创建自己的自定义交接工具，以更好地适应工作流程。例如，你可以：
+LangGraph 提供了一个[开源库](https://github.com/langchain-ai/langgraph-swarm-py)，用于快速推进智能体群的开发。默认情况下，群中的智能体使用由预构建的`create_handoff_tool`创建的交接工具。你也可以创建自己的自定义交接工具，以更好地适应工作流程。例如，你可以：
 
 *   更改工具名称或描述，使交接目的更清晰。
+
 *   添加供 LLM 填写的工具调用参数，例如给下一个智能体的具体任务描述。
-*   控制传递给下一个智能体的数据。默认情况下，`create_handoff_tool` 会传递完整的消息历史（所有先前的智能体消息）以及一条确认交接的工具消息，但你可以选择仅发送过滤后的上下文子集。
+
+*   控制传递给下一个智能体的数据。默认情况下，`create_handoff_tool`会传递完整的消息历史（所有先前的智能体消息）以及一条确认交接的工具消息，但你可以选择仅发送过滤后的上下文子集。
 
 在搭建完整的智能体群之前，你需要首先定义交接辅助函数，如示例 2-30 所示。这些工具充当信号，让一个智能体将控制权传递给另一个智能体。在下面的示例中，研究助理在收集到足够多的资料来源后可以交接给写作助理，而写作助理在需要更多证据时可以将控制权交回。
 
@@ -1711,6 +1740,8 @@ swarm = create_swarm(
 
 #### 示例 2-33. 运行研究-写作智能体群
 
+
+
 ```
 user_request = { 
     "messages": [
@@ -1733,10 +1764,6 @@ for chunk in swarm.stream(user_request):
 ![1](img/#ch02.html_co_architectures_and_patterns__planning__reactivity__and_multi_agent_systems_CO23-1)
 
 : 定义一个用户提示，要求提供瑞士金融科技牌照的详细信息。
-
-
-
-
 
 ![2](img/#ch02.html_co_architectures_and_patterns__planning__reactivity__and_multi_agent_systems_CO23-2)
 
@@ -1775,4 +1802,3 @@ for chunk in swarm.stream(user_request):
 **Nicole Koenigstein**是深科技公司的创始人、首席执行官兼联合首席 AI 官，该公司专注于大型语言模型（LLM）系统和复杂多智能体架构。她是 LLM 和智能体架构领域全球公认的思想领袖，尤其关注其在量化金融中的变革性应用。Nicole 曾担任欧盟委员会在 LLM 研究资助方面的外部专家，以及国际证监会组织（IOSCO）的外部专家，就受监管行业中生成式 AI（GenAI）的采用提供建议。她还是 QuantMinds International 和 QuantStrats 的顾问委员会成员，这两场会议均属于全球规模最大、最具影响力的金融科技、人工智能和量化策略会议。在过去两年半中，Nicole 已在全球发表了超过 50 场受邀演讲、主题演讲和技术研讨会，包括在牛津大学、康奈尔大学、美国银行、摩根大通和国际金融学院，以及诸如 European Women in Technology、ACM Tech Talk 和 ODSC Europe 等国际活动上。
 
 Nicole 是纽约人工智能金融研究所（Artificial Intelligence in Finance Institute）的教员，负责教授关于`Python`、机器学习、深度学习、大语言模型和智能体 AI（agentic AI）的编程课程。她是*机器学习数学*和*Transformers 实战*（Manning Publications）的作者，她的新书*Transformers：权威指南*将由 O’Reilly Media 出版。
-

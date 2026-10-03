@@ -1,3 +1,4 @@
+
 # 第三章\. 高级 Tableau Pulse 功能
 
 现在您已经知道了如何启用 Tableau Pulse 并构建基本度量，是时候深入了解可用的更高级功能了。这些高级功能允许您，作为度量作者，使用定义过滤器创建更健壮的度量，调整时间维度，并使用计算字段或自定义过滤构建高级度量定义。您还将了解度量权限的工作方式以及如何管理它们。
@@ -71,9 +72,13 @@
 表 3-1\. 基于指定细节的日期转换
 
 | 日期 | 新的日期粒度 | 转换 |
+
 | --- | --- | --- |
+
 | 06/15/2024 | 月份 | 06/01/2024 |
+
 | 06/15/2024 | 季度 | 04/01/2024 |
+
 | 06/15/2024 | 年份 | 01/01/2024 |
 
 你现在可以使用这些新的日期字段之一创建一个度量；你可以使用季度版本并查看会发生什么。
@@ -111,16 +116,27 @@
 表 3-2\. Pulse 中可用的时间范围、日期轴单位和比较期
 
 | 时间范围 | 日期轴单位 | 前期 | 前年 |
+
 | --- | --- | --- | --- |
+
 | 今天 | 天 | 使用昨天计算出的值 | 与前年同一天计算出的值 |
+
 | 昨天 | 天数 | 使用前天计算出的值 | 从上一年同一天计算出的值 |
+
 | 截止到本周 | 天数 | 使用上周计算出的值 | 使用上一年相同周计算出的值 |
+
 | 上周 | 周数 | 使用上周之前的一周计算出的值 | 使用上一年相同周计算出的值 |
+
 | 截止到本月（默认时间范围） | 天数 | 使用当前月之前相同天数直接计算出的值 | 使用上一年同月相同天数计算出的值 |
+
 | 上个月 | 月份 | 使用上个月之前的月份计算出的值 | 使用上一年相同月份计算出的值 |
+
 | 截止到本季度 | 周数 | 使用当前季度之前相同天数直接计算出的值 | 使用上一年同季度相同天数计算出的值 |
+
 | 上一个季度 | 季度 | 使用上一个季度之前的一个季度计算出的值 | 使用上一年相同季度计算出的值 |
+
 | 截止到本年 | 月份 | 使用上一年相同天数计算出的值 | 无比较（与前期相同） |
+
 | 上一年 | 年份 | 上一年之前的年份计算出的值 | 无比较（与前期相同） |
 
 从表中，你可以看到许多这些时间范围使用天数来显示指标，因此可以安全地说，如果你的时间维度是按日粒度，你将从 Pulse 中获得最大的好处。
@@ -187,7 +203,7 @@ Tableau Pulse 现在将使用这些信息来构建时间范围和比较期。它
 
 要构建利润比率计算，右键单击利润度量，然后选择创建 > 计算字段，如图 图 3-11 所示。
 
-此操作将显示一个计算编辑器，您可以在其中输入以下计算：`**SUM(Profit) / SUM(Sales)**`；将新字段命名为利润比率，如图 图 3-12 所示。
+此操作将显示一个计算编辑器，您可以在其中输入以下计算：`SUM(Profit) / SUM(Sales)`；将新字段命名为利润比率，如图 图 3-12 所示。
 
 ![assets/lait_0311.png]
 
@@ -227,7 +243,9 @@ Tableau 我最喜欢的功能之一是能够以多种方式过滤数据。正如
 
 +   将产品名称拖动到过滤器面板上。
 
-一旦将产品名称拖动到过滤器面板上，完整的过滤器配置窗口将出现，如图 3-16 所示。点击旁边的箭头以折叠多选列表功能，然后点击旁边的箭头以展开选项。从这里，在“匹配值”框中输入“`**Canon**`”，并将比较设置为包含。这将使指标仅计算包含名称*Canon*的产品的数量。或者，如果你想要强制产品名称的第一个单词是*Canon*，你可以选择“以...开头”。
+
+
+一旦将产品名称拖动到过滤器面板上，完整的过滤器配置窗口将出现，如图 3-16 所示。点击旁边的箭头以折叠多选列表功能，然后点击旁边的箭头以展开选项。从这里，在“匹配值”框中输入“`**Canon**`”，并将比较设置为包含。这将使指标仅计算包含名称`Canon`的产品的数量。或者，如果你想要强制产品名称的第一个单词是`Canon`，你可以选择“以...开头”。
 
 ![图片](img/lait_0316.png)
 
@@ -239,35 +257,35 @@ Tableau 我最喜欢的功能之一是能够以多种方式过滤数据。正如
 
 ###### 图 3-17\. 应用自定义定义过滤器后显示的细分指标（查看此图的更大版本[在线](https://oreil.ly/lait0317)）
 
-将"Now let’s go through an example where the metric has a definition filter based on a measure. This type of filtering is useful anytime you want to isolate data used in a Pulse metric based on a numerical value."翻译为：“现在让我们通过一个例子来了解，当指标有一个基于度量的定义过滤器时。这种类型的筛选在您想要根据数值值隔离用于脉搏指标的任何数据时非常有用。”
+现在让我们通过一个例子来了解，当指标有一个基于度量的定义过滤器时。这种类型的筛选在您想要根据数值值隔离用于脉搏指标的任何数据时非常有用。
 
-将“Continuing with Superstore Transactions, you can construct a metric showing the number of items sold where the Discount value was at least 50%. At Superstore, any sale with a discount of 50% or greater represents discontinued products. The department buyers like to track these transactions to minimize the amount of unpopular products stocked. To do this, click the Create Advanced Definition button in a new metric definition window. Then do the following:”翻译为：“继续使用“超市交易”，您可以构建一个指标，显示折扣值至少为 50%的已售出项目数量。在超市，任何折扣为 50%或更高的销售代表停售产品。部门买家喜欢跟踪这些交易，以最小化库存中不受欢迎的产品数量。为此，在新指标定义窗口中单击“创建高级定义”按钮。然后执行以下操作：”
+继续使用“超市交易”，您可以构建一个指标，显示折扣值至少为 50%的已售出项目数量。在超市，任何折扣为 50%或更高的销售代表停售产品。部门买家喜欢跟踪这些交易，以最小化库存中不受欢迎的产品数量。为此，在新指标定义窗口中单击“创建高级定义”按钮。然后执行以下操作：
 
-+   将“Drag Quantity to the Measure shelf.”翻译为：“将“数量”拖动到“度量”架子上。”
++   将“数量”拖动到“度量”架子上。
 
-+   将“Drag Order Date to the Time Dimension shelf.”翻译为：“将“订单日期”拖动到“时间维度”架子上。”
++   将“订单日期”拖动到“时间维度”架子上。
 
-+   将“Drag Discount to the Filters shelf.”翻译为：“将“折扣”拖动到“过滤器”架子上。”
++   将“折扣”拖动到“过滤器”架子上。
 
-将“Once you drag Discount to the Filters shelf, a menu will pop up (Figure 3-18). Since this is a numerical filter, you’re given the option to filter by the individual values that exist in the Discount field (“All values”), or you can filter by a specified aggregation. Additionally, because you want to filter individual rows of data that have a discount value of at least 50%, select “All values.” An additional box will display (Figure 3-19) that allows you to specify the way the data is limited. Here choosing the “At least” option and setting the minimum to 0.5 (50%) makes the most sense.”翻译为：“一旦将“折扣”拖动到“过滤器”架子上，就会弹出一个菜单(图 3-18)。由于这是一个数值过滤器，您可以选择按“折扣”字段中存在的单个值进行筛选（“所有值”），或者可以按指定的聚合进行筛选。另外，因为您想要筛选折扣值至少为 50%的单独数据行，请选择“所有值”。将显示一个额外的框(图 3-19)，允许您指定数据的限制方式。在这里选择“至少”选项并将最小值设置为 0.5（50%）最有意义。”
+一旦将“折扣”拖动到“过滤器”架子上，就会弹出一个菜单(图 3-18)。由于这是一个数值过滤器，您可以选择按“折扣”字段中存在的单个值进行筛选（“所有值”），或者可以按指定的聚合进行筛选。另外，因为您想要筛选折扣值至少为 50%的单独数据行，请选择“所有值”。将显示一个额外的框(图 3-19)，允许您指定数据的限制方式。在这里选择“至少”选项并将最小值设置为 0.5（50%）最有意义。
 
-将“![A screenshot of a computer  Description automatically generated](img/lait_0318.png)”翻译为：“![计算机屏幕截图  自动生成描述](img/lait_0318.png)”
+![计算机屏幕截图  自动生成描述](img/lait_0318.png)
 
-###### 将“Figure 3-18\. Filter menu specifying how a measure is to be filtered”翻译为：“图 3-18\. 指定如何筛选度量的过滤器菜单”
+###### 图 3-18\. 指定如何筛选度量的过滤器菜单
 
-将“As a last step, include Sub-Category as an adjustable filter. Remember, the department buyers are on the lookout for products that aren’t sold until they are discontinued, so including the Sub-Category will help them identify if one particular type of product isn’t very popular. Figure 3-20 shows the completed metric set to Quarter to Date with Breakdown; it appears that many Binders have been discontinued and sold.”翻译为：“作为最后一步，将“子类别”包括为可调整的过滤器。记住，部门买家正在寻找那些直到停售才出售的产品，因此包括“子类别”将帮助他们确定某种特定类型的产品是否不太受欢迎。图 3-20 显示了设置为“截至本季度”并带有细分的完成指标；看起来许多活页夹已经停售并出售。”
+作为最后一步，将“子类别”包括为可调整的过滤器。记住，部门买家正在寻找那些直到停售才出售的产品，因此包括“子类别”将帮助他们确定某种特定类型的产品是否不太受欢迎。图 3-20 显示了设置为“截至本季度”并带有细分的完成指标；看起来许多活页夹已经停售并出售。
 
-将“![A screenshot of a computer  Description automatically generated](img/lait_0319.png)”翻译为：“![计算机屏幕截图  自动生成描述](img/lait_0319.png)”
+![计算机屏幕截图  自动生成描述](img/lait_0319.png)
 
-###### 将“Figure 3-19\. Filter menu specifying the minimum Discount value to be included”翻译为：“图 3-19\. 指定要包含的最小折扣值过滤器菜单”
+###### 图 3-19\. 指定要包含的最小折扣值过滤器菜单
 
-将“![A screenshot of a computer  Description automatically generated](img/lait_0320.png)”翻译为：“![计算机屏幕截图  自动生成描述](img/lait_0320.png)”
+![计算机屏幕截图  自动生成描述](img/lait_0320.png)
 
-###### 将“Figure 3-20\. Metric with a custom definition filter based on a measure (see a larger version of this figure [online](https://oreil.ly/lait0320))”翻译为：“图 3-20\. 基于度量值的自定义定义过滤器指标（查看此图的更大版本[在线](https://oreil.ly/lait0320))”
+###### 图 3-20\. 基于度量值的自定义定义过滤器指标（查看此图的更大版本[在线](https://oreil.ly/lait0320)）
 
-将“The Advanced Metric Definition feature adds a very robust capability for constructing Pulse Metrics. In Chapter 5, you’ll see more examples of this functionality in action.”翻译为：“高级指标定义功能为构建脉搏指标添加了非常强大的能力。在第五章中，您将看到更多此功能在实际操作中的示例。”
+高级指标定义功能为构建脉搏指标添加了非常强大的能力。在第五章中，您将看到更多此功能在实际操作中的示例。
 
-# 将“Managing Pulse Metrics”翻译为：“管理脉搏指标”
+# 管理脉搏指标
 
 现在您已经了解了如何构建高级 Pulse 指标，现在是时候将注意力转向管理指标定义以及随后创建的指标了。请记住，您承担的最重要责任之一是确保正确的人有权访问正确的信息。
 
@@ -283,7 +301,7 @@ Pulse 指标的权限从发布数据源级别开始。这本身将决定用户�
 | --- | --- | --- |
 | 查看 | 用户可以在 Tableau Cloud 上查看数据源。 | 是 |
 | 连接 | 用户可以使用 Tableau Desktop、Prep Builder、Ask Data 或网页编写连接到数据源。 | 是 |
-| 下载数据源 | 用户可以将发布的数据源作为独立文件下载（*.tdsx*）。 | 否 |
+| 下载数据源 | 用户可以将发布的数据源作为独立文件下载（`*.tdsx`）。 | 否 |
 | 覆盖 | 用户可以覆盖现有数据源。 | 否 |
 | 另存为 | 用户可以将发布的数据源另存为新文件。 | 否 |
 | 移动 | 用户可以将数据源移动到不同的项目。 | 否 |

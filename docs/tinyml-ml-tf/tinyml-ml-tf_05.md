@@ -1,3 +1,5 @@
+
+
 # 第五章：TinyML 的“Hello World”：构建一个应用程序
 
 模型只是机器学习应用程序的一部分。单独来看，它只是一块信息；它几乎什么都做不了。要使用我们的模型，我们需要将其包装在代码中，为其设置必要的运行环境，提供输入，并使用其输出生成行为。图 5-1 显示了模型在右侧如何适配到基本 TinyML 应用程序中。
@@ -16,7 +18,7 @@
 
 请记住，由于 TensorFlow 是一个积极开发的开源项目，这里打印的代码与在线代码之间可能存在一些细微差异。不用担心，即使有一些代码行发生变化，基本原则仍然保持不变。
 
-# 测试步骤
+## 测试步骤
 
 在处理应用程序代码之前，编写一些测试通常是一个好主意。测试是演示特定逻辑片段的短代码片段。由于它们由可工作的代码组成，我们可以运行它们来证明代码是否按预期运行。编写完测试后，通常会自动运行测试，以持续验证项目是否仍然按照我们的期望运行，尽管我们可能对其代码进行了任何更改。它们也非常有用，作为如何执行操作的工作示例。
 
@@ -24,7 +26,7 @@
 
 现在让我们逐节来看一下。如果您在电脑上，打开*hello_world_test.cc*并跟着走可能会有帮助。
 
-## 包含依赖项
+### 包含依赖项
 
 第一部分，在许可证标题下方（指定任何人都可以在[Apache 2.0](https://oreil.ly/Xa5_x)开源许可下使用或共享此代码），如下所示：
 
@@ -40,33 +42,13 @@
 
 `#include`指令是 C++代码指定其依赖的其他代码的一种方式。当使用`#include`引用代码文件时，它定义的任何逻辑或变量将可供我们使用。在本节中，我们使用`#include`导入以下项目：
 
-*tensorflow/lite/micro/examples/hello_world/sine_model_data.h*
-
-我们训练的正弦模型，使用`xxd`转换并转换为 C++
-
-*tensorflow/lite/micro/kernels/all_ops_resolver.h*
-
-一个允许解释器加载我们模型使用的操作的类
-
-*tensorflow/lite/micro/micro_error_reporter.h*
-
-一个可以记录错误并输出以帮助调试的类
-
-* tensorflow/lite/micro/micro_interpreter.h *
-
-将运行我们模型的 TensorFlow Lite for Microcontrollers 解释器
-
-*tensorflow/lite/micro/testing/micro_test.h*
-
-一个用于编写测试的轻量级框架，允许我们将此文件作为测试运行
-
-*tensorflow/lite/schema/schema_generated.h*
-
-定义了 TensorFlow Lite FlatBuffer 数据结构的模式，用于理解*sine_model_data.h*中的模型数据
-
-*tensorflow/lite/version.h*
-
-模式的当前版本号，以便我们可以检查模型是否使用兼容版本定义
+- `tensorflow/lite/micro/examples/hello_world/sine_model_data.h`：我们训练的正弦模型，使用`xxd`转换并转换为 C++
+- `tensorflow/lite/micro/kernels/all_ops_resolver.h`：一个允许解释器加载我们模型使用的操作的类
+- `tensorflow/lite/micro/micro_error_reporter.h`：一个可以记录错误并输出以帮助调试的类
+- `tensorflow/lite/micro/micro_interpreter.h`：将运行我们模型的 TensorFlow Lite for Microcontrollers 解释器
+- `tensorflow/lite/micro/testing/micro_test.h`：一个用于编写测试的轻量级框架，允许我们将此文件作为测试运行
+- `tensorflow/lite/schema/schema_generated.h`：定义了 TensorFlow Lite FlatBuffer 数据结构的模式，用于理解`sine_model_data.h`中的模型数据
+- `tensorflow/lite/version.h`：模式的当前版本号，以便我们可以检查模型是否使用兼容版本定义
 
 当我们深入代码时，我们将更多地讨论其中一些依赖关系。
 
@@ -74,7 +56,7 @@
 
 按照惯例，设计用于与`#include`指令一起使用的 C++代码通常编写为两个文件：一个*.cc*文件，称为*源文件*，以及一个*.h*文件，称为*头文件*。头文件定义了允许代码连接到程序其他部分的接口。它们包含变量和类声明等内容，但几乎没有逻辑。源文件实现了执行计算和使事情发生的实际逻辑。当我们`#include`一个依赖项时，我们指定其头文件。例如，我们正在讨论的测试包括[*micro_interpreter.h*](https://oreil.ly/60uYt)。如果我们查看该文件，我们可以看到它定义了一个类，但没有包含太多逻辑。相反，它的逻辑包含在[*micro_interpreter.cc*](https://oreil.ly/twN7J)中。
 
-## 设置测试
+### 设置测试
 
 代码的下一部分用于 TensorFlow Lite for Microcontrollers 测试框架。看起来像这样：
 
@@ -90,7 +72,7 @@ TF_LITE_MICRO_TEST(LoadModelAndPerformInference) {
 
 第二个名为`TF_LITE_MICRO_TEST`的宏接受一个参数。在这种情况下，传入的参数是`LoadModelAndPerformInference`。这个参数是测试名称，当运行测试时，它将与测试结果一起输出，以便我们可以看到测试是通过还是失败。
 
-## 准备记录数据
+### 准备记录数据
 
 文件中剩余的代码是我们测试的实际逻辑。让我们看一下第一部分：
 
@@ -116,7 +98,7 @@ tflite::ErrorReporter* error_reporter = &micro_error_reporter;
 
 `MicroErrorReporter`是`ErrorReporter`类的一个子类，为 TensorFlow Lite 中这种调试日志机制应该如何工作提供了一个模板。`MicroErrorReporter`覆盖了`ErrorReporter`的一个方法，用专门为在微控制器上使用而编写的逻辑替换它。
 
-在前面的代码行中，我们创建了一个名为`error_reporter`的变量，它的类型是`ErrorReporter`。它也是一个指针，其声明中使用了*表示。
+在前面的代码行中，我们创建了一个名为`error_reporter`的变量，它的类型是`ErrorReporter`。它也是一个指针，其声明中使用了`*`表示。
 
 指针是一种特殊类型的变量，它不是保存一个值，而是保存一个引用，指向内存中的一个值。在 C++中，一个类的指针（比如`ErrorReporter`）可以指向它的一个子类（比如`MicroErrorReporter`）的值。
 
@@ -126,7 +108,7 @@ tflite::ErrorReporter* error_reporter = &micro_error_reporter;
 
 哎呀！听起来很复杂。如果你觉得难以理解，不要惊慌；C++可能有点难以掌握。对于我们的目的，我们只需要知道我们应该使用`error_reporter`来打印调试信息，并且它是一个指针。
 
-## 映射我们的模型
+### 映射我们的模型
 
 我们立即建立打印调试信息的机制的原因是为了记录代码中发生的任何问题。我们在下一段代码中依赖于这一点：
 
@@ -157,7 +139,7 @@ if (model->version() != TFLITE_SCHEMA_VERSION) {
 
 ###### 注意
 
-在前一行代码中，`version()`是属于`model`的一个方法。注意箭头（->）从`model`指向`version()`。这是 C++的*箭头运算符*，当我们想要访问一个对象的成员时使用。如果我们有对象本身（而不仅仅是一个指针），我们将使用点（.）来访问它的成员。
+在前一行代码中，`version()`是属于`model`的一个方法。注意箭头（`->`）从`model`指向`version()`。这是 C++的*箭头运算符*，当我们想要访问一个对象的成员时使用。如果我们有对象本身（而不仅仅是一个指针），我们将使用点（`.`）来访问它的成员。
 
 如果版本号不匹配，我们仍然会继续，但我们会使用我们的`error_reporter`记录一个警告：
 
@@ -168,7 +150,7 @@ error_reporter->Report(
     model->version(), TFLITE_SCHEMA_VERSION);
 ```
 
-我们调用`error_reporter`的`Report()`方法来记录这个警告。由于`error_reporter`也是一个指针，我们使用->运算符来访问`Report()`。
+我们调用`error_reporter`的`Report()`方法来记录这个警告。由于`error_reporter`也是一个指针，我们使用`->`运算符来访问`Report()`。
 
 `Report()`方法的设计类似于一个常用的 C++方法`printf()`，用于记录文本。作为它的第一个参数，我们传递一个我们想要记录的字符串。这个字符串包含两个`%d`格式说明符，它们充当变量在消息记录时插入的占位符。我们传递的下两个参数是模型版本和 TensorFlow Lite 模式版本。这些将按顺序插入到字符串中，以替换`%d`字符。
 
@@ -176,7 +158,7 @@ error_reporter->Report(
 
 `Report()`方法支持不同的格式说明符，用作不同类型变量的占位符。`%d`应该用作整数的占位符，`%f`应该用作浮点数的占位符，`%s`应该用作字符串的占位符。
 
-## 创建一个 AllOpsResolver
+### 创建一个 AllOpsResolver
 
 到目前为止一切顺利！我们的代码可以记录错误，我们已经将模型加载到一个方便的结构中，并检查它是否是兼容的版本。鉴于我们一路上在回顾一些 C++概念，我们进展有点慢，但事情开始变得清晰起来了。接下来，我们创建一个`AllOpsResolver`的实例：
 
@@ -189,7 +171,7 @@ tflite::ops::micro::AllOpsResolver resolver;
 
 在第三章中，您了解到机器学习模型由各种数学运算组成，这些运算按顺序运行，将输入转换为输出。`AllOpsResolver`类知道 TensorFlow Lite for Microcontrollers 可用的所有操作，并能够将它们提供给解释器。
 
-## 定义张量区域
+### 定义张量区域
 
 我们几乎已经准备好创建一个解释器所需的所有要素。我们需要做的最后一件事是分配一个工作内存区域，我们的模型在运行时将需要这个内存区域：
 
@@ -204,11 +186,14 @@ uint8_t tensor_arena[tensor_arena_size];
 
 那么，我们的张量区域应该有多大呢？这是一个很好的问题。不幸的是，没有一个简单的答案。不同的模型架构具有不同大小和数量的输入、输出和中间张量，因此很难知道我们需要多少内存。数字不需要精确——我们可以保留比我们需要的更多的内存——但由于微控制器的 RAM 有限，我们应该尽可能保持它小，以便为程序的其余部分留出空间。
 
-我们可以通过试错来完成这个过程。这就是为什么我们将数组大小表示为*`n`* `× 1024`：这样可以很容易地通过改变*`n`*来扩大或缩小数字（保持为 8 的倍数）。要找到正确的数组大小，从一个相对较高的数字开始，以确保它有效。本书示例中使用的最大数字是`70 × 1024`。然后，减少数字直到您的模型不再运行。最后一个有效的数字就是正确的数字！
+我们可以通过试错来完成这个过程。这就是为什么我们将数组大小表示为`n × 1024`：这样可以很容易地通过改变`n`来扩大或缩小数字（保持为 8 的倍数）。要找到正确的数组大小，从一个相对较高的数字开始，以确保它有效。本书示例中使用的最大数字是`70 × 1024`。然后，减少数字直到您的模型不再运行。最后一个有效的数字就是正确的数字！
 
-## 创建解释器
+### 创建解释器
 
 现在我们已经声明了`tensor_arena`，我们准备设置解释器。下面是具体步骤：
+
+
+
 
 ```cpp
 // Build an interpreter to run the model with
@@ -483,17 +468,19 @@ cd tensorflow
 
 ### 使用 Make 运行测试
 
-从我们的工具列表中可以看到，我们使用一个名为*Make*的程序来运行测试。Make 是一个用于自动化软件构建任务的工具。它自 1976 年以来一直在使用，从计算术语来看几乎是永远的。开发人员使用一种特殊的语言，在名为*Makefiles*的文件中编写，指示 Make 如何构建和运行代码。TensorFlow Lite for Microcontrollers 在[*micro/tools/make/Makefile*](https://oreil.ly/6Kvx5)中定义了一个 Makefile；在第十三章中有更多关于它的信息。
 
-要使用 Make 运行我们的测试，我们可以发出以下命令，确保我们是从使用 Git 下载的*tensorflow*目录的根目录运行。我们首先指定要使用的 Makefile，然后是*target*，即我们要构建的组件：
+
+从我们的工具列表中可以看到，我们使用一个名为`Make`的程序来运行测试。`Make`是一个用于自动化软件构建任务的工具。它自1976年以来一直在使用，从计算术语来看几乎是永远的。开发人员使用一种特殊的语言，在名为`Makefiles`的文件中编写，指示`Make`如何构建和运行代码。TensorFlow Lite for Microcontrollers在[`micro/tools/make/Makefile`](https://oreil.ly/6Kvx5)中定义了一个Makefile；在第十三章中有更多关于它的信息。
+
+要使用`Make`运行我们的测试，我们可以发出以下命令，确保我们是从使用Git下载的`tensorflow`目录的根目录运行。我们首先指定要使用的Makefile，然后是`target`，即我们要构建的组件：
 
 ```cpp
 make -f tensorflow/lite/micro/tools/make/Makefile test_hello_world_test
 ```
 
-Makefile 被设置为为了运行测试，我们提供一个以`test_`为前缀的目标，后面跟着我们想要构建的组件的名称。在我们的情况下，该组件是*`hello_world_test`*，因此完整的目标名称是*`test_hello_world_test`*。
+Makefile被设置为为了运行测试，我们提供一个以`test_`为前缀的目标，后面跟着我们想要构建的组件的名称。在我们的情况下，该组件是`hello_world_test`，因此完整的目标名称是`test_hello_world_test`。
 
-尝试运行这个命令。您应该开始看到大量输出飞过！首先，将下载一些必要的库和工具。接下来，我们的测试文件以及所有依赖项将被构建。我们的 Makefile 已经指示 C++编译器构建代码并创建一个二进制文件，然后运行它。
+尝试运行这个命令。您应该开始看到大量输出飞过！首先，将下载一些必要的库和工具。接下来，我们的测试文件以及所有依赖项将被构建。我们的Makefile已经指示C++编译器构建代码并创建一个二进制文件，然后运行它。
 
 您需要等待一段时间才能完成这个过程。当文本停止飞过时，最后几行应该是这样的：
 
@@ -505,7 +492,7 @@ Testing LoadModelAndPerformInference
 
 很好！这个输出显示我们的测试按预期通过了。您可以看到测试的名称`LoadModelAndPerformInference`，如其源文件顶部所定义。即使它还没有在微控制器上，我们的代码也成功地运行了推断。
 
-要查看测试失败时会发生什么，让我们引入一个错误。打开测试文件*hello_world_test.cc*。它将位于相对于目录根目录的路径：
+要查看测试失败时会发生什么，让我们引入一个错误。打开测试文件`hello_world_test.cc`。它将位于相对于目录根目录的路径：
 
 ```cpp
 tensorflow/lite/micro/examples/hello_world/hello_world_test.cc
@@ -523,7 +510,7 @@ input->data.f[0] = 0.;
 input->data.f[0] = 1.;
 ```
 
-现在保存文件，并使用以下命令再次运行测试（记得要从*tensorflow*目录的根目录运行）：
+现在保存文件，并使用以下命令再次运行测试（记得要从`tensorflow`目录的根目录运行）：
 
 ```cpp
 make -f tensorflow/lite/micro/tools/make/Makefile test_hello_world_test
@@ -543,75 +530,75 @@ Testing LoadModelAndPerformInference
 
 # 项目文件结构
 
-借助我们的测试，您已经学会了如何使用 TensorFlow Lite for Microcontrollers 库在 C++中运行推断。接下来，我们将浏览一个实际应用程序的源代码。
+借助我们的测试，您已经学会了如何使用TensorFlow Lite for Microcontrollers库在C++中运行推断。接下来，我们将浏览一个实际应用程序的源代码。
 
-如前所述，我们正在构建的程序由一个连续循环组成，该循环将一个`x`值输入模型，运行推断，并使用结果生成某种可见输出（如闪烁 LED 的模式），具体取决于平台。
+如前所述，我们正在构建的程序由一个连续循环组成，该循环将一个`x`值输入模型，运行推断，并使用结果生成某种可见输出（如闪烁LED的模式），具体取决于平台。
 
 因为应用程序很复杂，涉及多个文件，让我们看看它的结构以及它们如何相互配合。
 
-应用程序的根目录在*tensorflow/lite/micro/examples/hello_world*中。它包含以下文件：
+应用程序的根目录在`tensorflow/lite/micro/examples/hello_world`中。它包含以下文件：
 
-BUILD
+`BUILD`
 
 一个列出可以使用应用程序源代码构建的各种内容的文件，包括主应用程序二进制文件和我们之前讨论过的测试。在这一点上，我们不需要太担心它。
 
-Makefile.inc
+`Makefile.inc`
 
-一个包含有关应用程序内部构建目标信息的 Makefile，包括*hello_world_test*，这是我们之前运行的测试，以及*hello_world*，主应用程序二进制文件。它定义了它们的哪些源文件是其中的一部分。
+一个包含有关应用程序内部构建目标信息的Makefile，包括`hello_world_test`，这是我们之前运行的测试，以及`hello_world`，主应用程序二进制文件。它定义了它们的哪些源文件是其中的一部分。
 
-README.md
+`README.md`
 
 一个包含构建和运行应用程序说明的自述文件。
 
-constants.h, constants.cc
+`constants.h`, `constants.cc`
 
-一对包含各种*常量*（在程序生命周期中不会改变的变量）的文件，这些常量对于定义程序行为很重要。
+一对包含各种`常量`（在程序生命周期中不会改变的变量）的文件，这些常量对于定义程序行为很重要。
 
-create_sine_model.ipynb
+`create_sine_model.ipynb`
 
-在上一章中使用的 Jupyter 笔记本。
+在上一章中使用的Jupyter笔记本。
 
-hello_world_test.cc
+`hello_world_test.cc`
 
 一个使用我们模型运行推断的测试。
 
-main.cc
+`main.cc`
 
 程序的入口点，在应用部署到设备时首先运行。
 
-main_functions.h, main_functions.cc
+`main_functions.h`, `main_functions.cc`
 
-一对文件，定义了一个`setup()`函数，执行我们程序所需的所有初始化，以及一个`loop()`函数，包含程序的核心逻辑，并设计为在循环中重复调用。这些函数在程序启动时由*main.cc*调用。
+一对文件，定义了一个`setup()`函数，执行我们程序所需的所有初始化，以及一个`loop()`函数，包含程序的核心逻辑，并设计为在循环中重复调用。这些函数在程序启动时由`main.cc`调用。
 
-output_handler.h, output_handler.cc
+`output_handler.h`, `output_handler.cc`
 
-一对文件，定义了一个函数，我们可以用它来显示每次运行推断时的输出。默认实现在*output_handler.cc*中，将结果打印到屏幕上。我们可以覆盖这个实现，使其在不同设备上执行不同的操作。
+一对文件，定义了一个函数，我们可以用它来显示每次运行推断时的输出。默认实现在`output_handler.cc`中，将结果打印到屏幕上。我们可以覆盖这个实现，使其在不同设备上执行不同的操作。
 
-output_handler_test.cc
+`output_handler_test.cc`
 
-一个证明*output_handler.h*和*output_handler.cc*中的代码正常工作的测试。
+一个证明`output_handler.h`和`output_handler.cc`中的代码正常工作的测试。
 
-sine_model_data.h, sine_model_data.cc
+`sine_model_data.h`, `sine_model_data.cc`
 
 一对文件，定义了一个表示我们模型的数据数组，这些数据是在本章的第一部分中使用`xxd`导出的。
 
 除了这些文件外，目录中还包含以下子目录（可能还有更多）：
 
-+   *arduino/*
++   `arduino/`
 
-+   *disco_f76ng/*
++   `disco_f76ng/`
 
-+   *sparkfun_edge/*
++   `sparkfun_edge/`
 
-因为不同的微控制器平台具有不同的功能和 API，我们的项目结构允许我们提供设备特定版本的源文件，如果应用程序为该设备构建，则将使用这些版本而不是默认版本。例如，*arduino*目录包含了定制版本的*main.cc*、*constants.cc*和*output_handler.cc*，以使应用程序能够与 Arduino 兼容。我们稍后会深入研究这些定制实现。
+因为不同的微控制器平台具有不同的功能和API，我们的项目结构允许我们提供设备特定版本的源文件，如果应用程序为该设备构建，则将使用这些版本而不是默认版本。例如，`arduino`目录包含了定制版本的`main.cc`、`constants.cc`和`output_handler.cc`，以使应用程序能够与Arduino兼容。我们稍后会深入研究这些定制实现。
 
 # 源代码解析
 
-现在我们知道了应用程序源代码的结构，让我们深入代码。我们将从[*main_functions.cc*](https://oreil.ly/BYS5k)开始，这里发生了大部分的魔法，并从那里扩展到其他文件。
+现在我们知道了应用程序源代码的结构，让我们深入代码。我们将从[`main_functions.cc`](https://oreil.ly/BYS5k)开始，这里发生了大部分的魔法，并从那里扩展到其他文件。
 
 ###### 注意
 
-这段代码中很多内容在*hello_world_test.cc*中会看起来很熟悉。如果我们已经涵盖了某些内容，我们不会深入讨论它的工作原理；我们更愿意主要关注您之前没有见过的内容。
+这段代码中很多内容在`hello_world_test.cc`中会看起来很熟悉。如果我们已经涵盖了某些内容，我们不会深入讨论它的工作原理；我们更愿意主要关注您之前没有见过的内容。
 
 ## 从 main_functions.cc 开始
 
@@ -629,9 +616,9 @@ sine_model_data.h, sine_model_data.cc
 #include "tensorflow/lite/version.h"
 ```
 
-我们在*hello_world_test.cc*中看到了很多这样的内容。新出现的是*constants.h*和`output_handler.h`，我们在前面的文件列表中了解到了这些。
+我们在`hello_world_test.cc`中看到了很多这样的内容。新出现的是`constants.h`和`output_handler.h`，我们在前面的文件列表中了解到了这些。
 
-文件的下一部分设置了将在*main_functions.cc*中使用的全局变量：
+文件的下一部分设置了将在`main_functions.cc`中使用的全局变量：
 
 ```cpp
 namespace {
@@ -649,9 +636,9 @@ uint8_t tensor_arena[kTensorArenaSize];
 }  // namespace
 ```
 
-您会注意到这些变量被包裹在一个`namespace`中。这意味着即使它们可以在*main_functions.cc*中的任何地方访问，但在项目中的其他文件中是无法访问的。这有助于防止如果两个不同的文件恰好定义了相同名称的变量时出现问题。
+您会注意到这些变量被包裹在一个`namespace`中。这意味着即使它们可以在`main_functions.cc`中的任何地方访问，但在项目中的其他文件中是无法访问的。这有助于防止如果两个不同的文件恰好定义了相同名称的变量时出现问题。
 
-所有这些变量应该在测试中看起来很熟悉。我们设置变量来保存所有熟悉的 TensorFlow 对象，以及一个`tensor_arena`。唯一新的是一个保存`inference_count`的`int`，它将跟踪我们的程序执行了多少次推断。
+所有这些变量应该在测试中看起来很熟悉。我们设置变量来保存所有熟悉的TensorFlow对象，以及一个`tensor_arena`。唯一新的是一个保存`inference_count`的`int`，它将跟踪我们的程序执行了多少次推断。
 
 文件的下一部分声明了一个名为`setup()`的函数。这个函数将在程序首次启动时调用，但之后不会再次调用。我们用它来做所有需要在开始运行推断之前发生的一次性工作。
 
@@ -710,7 +697,7 @@ void setup() {
 
 此时，我们所有的机器学习基础设施都已经设置好并准备就绪。我们拥有运行推断并获得结果所需的所有工具。接下来要定义的是我们的应用逻辑。程序实际上要做什么？
 
-我们的模型经过训练，可以预测从 0 到 2π的任何数字的正弦值，这代表正弦波的完整周期。为了展示我们的模型，我们可以只输入这个范围内的数字，预测它们的正弦值，然后以某种方式输出这些值。我们可以按顺序执行这些操作，以展示模型在整个范围内的工作。这听起来是一个不错的计划！
+我们的模型经过训练，可以预测从0到2π的任何数字的正弦值，这代表正弦波的完整周期。为了展示我们的模型，我们可以只输入这个范围内的数字，预测它们的正弦值，然后以某种方式输出这些值。我们可以按顺序执行这些操作，以展示模型在整个范围内的工作。这听起来是一个不错的计划！
 
 为了做到这一点，我们需要编写一些在循环中运行的代码。首先，我们声明一个名为`loop()`的函数，接下来我们将逐步介绍。我们放在这个函数中的代码将被重复运行，一遍又一遍：
 
@@ -718,7 +705,7 @@ void setup() {
 void loop() {
 ```
 
-首先在我们的`loop()`函数中，我们必须确定要传递给模型的值（让我们称之为我们的`x`值）。我们使用两个常量来确定这一点：`kXrange`，它指定最大可能的`x`值为 2π，以及`kInferencesPerCycle`，它定义了我们希望在从 0 到 2π的步骤中执行的推断数量。接下来的几行代码计算`x`值：
+首先在我们的`loop()`函数中，我们必须确定要传递给模型的值（让我们称之为我们的`x`值）。我们使用两个常量来确定这一点：`kXrange`，它指定最大可能的`x`值为2π，以及`kInferencesPerCycle`，它定义了我们希望在从0到2π的步骤中执行的推断数量。接下来的几行代码计算`x`值：
 
 ```cpp
 // Calculate an x value to feed into the model. We compare the current
@@ -734,9 +721,11 @@ float x_val = position * kXrange;
 
 ###### 注意
 
-`static_cast<float>()`用于将`inference_count`和`kInferencesPerCycle`（两者都是整数值）转换为浮点数。我们这样做是为了能够正确执行除法。在 C++中，如果你将两个整数相除，结果将是一个整数；结果的任何小数部分都会被舍弃。因为我们希望我们的`x`值是一个包含小数部分的浮点数，所以我们需要将被除数转换为浮点数。
+`static_cast<float>()`用于将`inference_count`和`kInferencesPerCycle`（两者都是整数值）转换为浮点数。我们这样做是为了能够正确执行除法。在C++中，如果你将两个整数相除，结果将是一个整数；结果的任何小数部分都会被舍弃。因为我们希望我们的`x`值是一个包含小数部分的浮点数，所以我们需要将被除数转换为浮点数。
 
-我们使用的两个常量，`kInferencesPerCycle`和`kXrange`，在文件*constants.h*和*constants.cc*中定义。在使用这些常量时，C++的惯例是在常量名称前加上`k`，这样它们在代码中使用时很容易识别为常量。将常量定义在单独的文件中可能很有用，这样它们可以在需要的任何地方被包含和使用。
+我们使用的两个常量，`kInferencesPerCycle`和`kXrange`，在文件`constants.h`和`constants.cc`中定义。在使用这些常量时，C++的惯例是在常量名称前加上`k`，这样它们在代码中使用时很容易识别为常量。将常量定义在单独的文件中可能很有用，这样它们可以在需要的任何地方被包含和使用。
+
+
 
 我们代码的下一部分应该看起来很熟悉；我们将我们的`x`值写入模型的输入张量，运行推断，然后从输出张量中获取结果（让我们称之为我们的`y`值）：
 
@@ -758,7 +747,7 @@ float y_val = output->data.f[0];
 
 现在我们有了一个正弦值。由于对每个数字运行推断需要一点时间，并且这段代码在循环中运行，我们将随时间生成一系列正弦值。这将非常适合控制一些闪烁的 LED 或动画。我们的下一个任务是以某种方式输出它。
 
-以下一行调用了在*output_handler.cc*中定义的`HandleOutput()`函数：
+以下一行调用了在`output_handler.cc`中定义的`HandleOutput()`函数：
 
 ```cpp
 // Output the results. A custom HandleOutput function can be implemented
@@ -766,11 +755,11 @@ float y_val = output->data.f[0];
 HandleOutput(error_reporter, x_val, y_val);
 ```
 
-我们传入我们的`x`和`y`值，以及我们的`ErrorReporter`实例，我们可以用它来记录事情。要查看接下来会发生什么，让我们来探索*output_handler.cc*。
+我们传入我们的`x`和`y`值，以及我们的`ErrorReporter`实例，我们可以用它来记录事情。要查看接下来会发生什么，让我们来探索`output_handler.cc`。
 
 ## 使用 output_handler.cc 处理输出
 
-文件*output_handler.cc*定义了我们的`HandleOutput()`函数。它的实现非常简单：
+文件`output_handler.cc`定义了我们的`HandleOutput()`函数。它的实现非常简单：
 
 ```cpp
 void HandleOutput(tflite::ErrorReporter* error_reporter, float x_value,
@@ -782,9 +771,9 @@ void HandleOutput(tflite::ErrorReporter* error_reporter, float x_value,
 
 这个函数所做的就是使用`ErrorReporter`实例来记录`x`和`y`的值。这只是一个最基本的实现，我们可以用来测试应用程序的基本功能，例如在开发计算机上运行它。
 
-然而，我们的目标是将此应用程序部署到几种不同的微控制器平台上，使用每个平台的专用硬件来显示输出。对于我们计划部署到的每个单独平台，例如 Arduino，我们提供一个自定义替换*output_handler.cc*，使用平台的 API 来控制输出，例如点亮一些 LED。
+然而，我们的目标是将此应用程序部署到几种不同的微控制器平台上，使用每个平台的专用硬件来显示输出。对于我们计划部署到的每个单独平台，例如 Arduino，我们提供一个自定义替换`output_handler.cc`，使用平台的 API 来控制输出，例如点亮一些 LED。
 
-如前所述，这些替换文件位于具有每个平台名称的子目录中：*arduino/*、*disco_f76ng/*和*sparkfun_edge/*。我们将稍后深入研究特定于平台的实现。现在，让我们跳回*main_functions.cc*。
+如前所述，这些替换文件位于具有每个平台名称的子目录中：`arduino/`、`disco_f76ng/`和`sparkfun_edge/`。我们将稍后深入研究特定于平台的实现。现在，让我们跳回`main_functions.cc`。
 
 ## 结束 main_functions.cc
 
@@ -794,20 +783,20 @@ void HandleOutput(tflite::ErrorReporter* error_reporter, float x_value,
 // Increment the inference_counter, and reset it if we have reached
 // the total number per cycle
 inference_count += 1;
-if (inference_count 	>= kInferencesPerCycle) inference_count = 0;
+if (inference_count >= kInferencesPerCycle) inference_count = 0;
 ```
 
 下一次循环迭代时，这将使我们的`x`值沿着一步移动或者如果它已经达到范围的末尾，则将其包装回 0。
 
 我们现在已经到达了我们的`loop()`函数的末尾。每次运行时，都会计算一个新的`x`值，运行推理，并由`HandleOutput()`输出结果。如果`loop()`不断被调用，它将对范围为 0 到 2π的`x`值进行推理，然后重复。
 
-但是是什么让`loop()`函数一遍又一遍地运行？答案在*main.cc*文件中。
+但是是什么让`loop()`函数一遍又一遍地运行？答案在`main.cc`文件中。
 
 ## 理解 main.cc
 
-[C++标准](https://oreil.ly/BfmkW)规定每个 C++程序都包含一个名为`main()`的全局函数，该函数将在程序启动时运行。在我们的程序中，这个函数在*main.cc*文件中定义。这个`main()`函数的存在是*main.cc*代表我们程序入口点的原因。每当微控制器启动时，`main()`中的代码将运行。
+[C++标准](https://oreil.ly/BfmkW)规定每个 C++程序都包含一个名为`main()`的全局函数，该函数将在程序启动时运行。在我们的程序中，这个函数在`main.cc`文件中定义。这个`main()`函数的存在是`main.cc`代表我们程序入口点的原因。每当微控制器启动时，`main()`中的代码将运行。
 
-文件*main.cc*非常简短而简洁。首先，它包含了一个*main_functions.h*的`#include`语句，这将引入那里定义的`setup()`和`loop()`函数：
+文件`main.cc`非常简短而简洁。首先，它包含了一个`main_functions.h`的`#include`语句，这将引入那里定义的`setup()`和`loop()`函数：
 
 ```cpp
 #include "tensorflow/lite/micro/examples/hello_world/main_functions.h"
@@ -853,7 +842,7 @@ tensorflow/lite/micro/tools/make/gen/linux_x86_64/bin/hello_world
 tensorflow/lite/micro/tools/make/gen/windows_x86_64/bin/hello_world
 ```
 
-如果找不到正确的路径，请列出*tensorflow/lite/micro/tools/make/gen/*中的目录。
+如果找不到正确的路径，请列出`tensorflow/lite/micro/tools/make/gen/`中的目录。
 
 在运行二进制文件之后，您应该希望看到一堆输出滚动过去，看起来像这样：
 
@@ -877,7 +866,7 @@ x_value: 1.210171*2², y_value: -1.7542461*2^-1
 
 你会注意到这些数字以二的幂次方的形式输出，比如`1.4137159*2¹`。这是在微控制器上记录浮点数的高效方式，因为这些设备通常没有浮点运算的硬件支持。
 
-要获得原始值，只需拿出你的计算器：例如，`1.4137159*2¹`计算结果为`2.8274318`。如果你感兴趣，打印这些数字的代码在[*debug_log_numbers.cc*](https://oreil.ly/sb06c)中。
+要获得原始值，只需拿出你的计算器：例如，`1.4137159*2¹`计算结果为`2.8274318`。如果你感兴趣，打印这些数字的代码在[`debug_log_numbers.cc`](https://oreil.ly/sb06c)中。
 
 # 总结
 

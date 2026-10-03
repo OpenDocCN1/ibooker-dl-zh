@@ -1,3 +1,5 @@
+
+
 # 第一章. 提示的五项原则
 
 *提示工程*是发现可靠产生有用或所需结果的提示的过程。
@@ -32,23 +34,23 @@ PerfectGlide MultiFit Shoes
 
 然而，如果您计划将此提示投入生产，您将受益于投入更多精力以确保其正确性。错误会花费您金钱，因为 OpenAI 根据提示和响应的长度以及修复错误所花费的时间来收费。如果您正在构建一个拥有数千用户的名称生成器，有一些明显的问题您会想要尝试解决：
 
-模糊的方向
+**模糊的方向**
 
 您没有向 AI 说明您想要的名称风格或它应该具有的属性。您想要一个单词还是组合？单词可以随意创造，还是它们必须是真正的英语？您想要 AI 模仿您钦佩的、以优秀产品名称而闻名的人？
 
-未格式化的输出
+**未格式化的输出**
 
 您正在逐行返回一个分隔的名称列表，长度不固定。当您多次运行此提示时，您会看到有时它会返回一个编号列表，并且经常在开头有文本，这使得它难以程序化解析。
 
-缺少示例
+**缺少示例**
 
 您没有给出任何关于*好名字*样子的例子。它正在使用训练数据的平均值自动补全，即整个互联网（及其固有的偏见），但这真的是您想要的吗？理想情况下，您会提供成功名称的例子，行业中的常见名称，或者甚至只是您喜欢的其他名称。
 
-评估有限
+**评估有限**
 
 您没有一致或可扩展的方式来定义哪些名称是好是坏，因此您必须手动审查每个响应。如果您可以建立评分系统或其他形式的测量，您就可以优化提示以获得更好的结果，并确定它失败了多少次。
 
-没有任务划分
+**没有任务划分**
 
 你在这里对单个提示的要求很多：产品命名涉及到许多因素，而这个重要的任务被天真地一次性外包给了 AI，没有任何任务专业化或了解它如何为你处理这个任务的可见性。
 
@@ -97,23 +99,23 @@ Product names: iFitFoot, iPerfectFit, iShoeSize
 
 优化此提示的过程遵循**提示的五个原则**，我们将使用本章节的其余部分来剖析这些原则，并在整本书中回顾。它们与我们在讨论天真文本提示时提出的五个问题完全对应。您将在整本书的其余部分找到对这些原则的引用，以帮助您了解它们在实际中的应用。提示的五个原则如下：
 
-指明方向
+**指明方向**
 
 详细描述期望的风格，或参考相关角色
 
-指定格式
+**指定格式**
 
 定义需要遵循的规则以及响应的所需结构
 
-提供示例
+**提供示例**
 
 插入一组多样化的测试案例，其中任务执行正确
 
-评估质量
+**评估质量**
 
 识别错误并评估响应，测试驱动性能的因素。
 
-分工合作
+**分工合作**
 
 将任务拆分为多个步骤，以实现复杂目标
 
@@ -255,6 +257,9 @@ pair of shoes that can fit any foot size?
 ```
 
 输出：
+
+
+
 
 ```py
 Certainly! Based on the criteria given:
@@ -503,15 +508,17 @@ white MacBook on top of glass-top table, Panasonic, DC-GH5
 
 在撰写科学论文或评估新的基础模型发布时，需要更严格的评估技术，但通常你只需要比基本的试错多走一步。你可能发现，在 Jupyter Notebook 中实现的简单点赞/踩不点赞系统足以增加对提示优化的严谨性，而不会增加太多开销。一个常见的测试是看看提供示例是否值得额外的提示长度成本，或者你是否可以在提示中不提供示例也能应付。第一步是获取每个提示的多次运行响应并将它们存储在电子表格中，我们将在设置好环境后进行此操作。
 
-你可以使用 `pip install openai` 安装 OpenAI Python 包。如果你遇到与此包的兼容性问题，请创建一个虚拟环境并安装我们的[*requirements.txt*](https://oreil.ly/2KDV6)（请参阅前言中的说明）。
+
+
+你可以使用`pip install openai`安装 OpenAI Python 包。如果你遇到与此包的兼容性问题，请创建一个虚拟环境并安装我们的[*requirements.txt*](https://oreil.ly/2KDV6)（请参阅前言中的说明）。
 
 要使用 API，你需要[创建一个 OpenAI 账户](https://oreil.ly/oGv4j)，然后[在此处导航以获取你的 API 密钥](https://oreil.ly/oHID1)。
 
-###### 警告
+### 警告
 
 由于安全原因，不建议在脚本中硬编码 API 密钥。相反，利用环境变量或配置文件来管理你的密钥。
 
-一旦你有了 API 密钥，至关重要的是通过执行以下命令将其分配为环境变量，将 `api_key` 替换为你的实际 API 密钥值：
+一旦你有了 API 密钥，至关重要的是通过执行以下命令将其分配为环境变量，将`api_key`替换为你的实际 API 密钥值：
 
 ```py
 export OPENAI_API_KEY="api_key"
@@ -523,7 +530,7 @@ export OPENAI_API_KEY="api_key"
 set OPENAI_API_KEY=api_key
 ```
 
-或者，如果你不想预先设置 API 密钥，那么你可以在初始化模型时手动设置密钥，或者从 *.env* 文件中加载它，使用 *[python-dotenv](https://oreil.ly/IaQjS)*。首先，使用 `pip install python-dotenv` 安装库，然后在脚本或笔记本的顶部使用以下代码加载环境变量：
+或者，如果你不想预先设置 API 密钥，那么你可以在初始化模型时手动设置密钥，或者从*.env*文件中加载它，使用*[python-dotenv](https://oreil.ly/IaQjS)*。首先，使用`pip install python-dotenv`安装库，然后在脚本或笔记本的顶部使用以下代码加载环境变量：
 
 ```py
 from dotenv import load_dotenv
@@ -646,31 +653,31 @@ print(df)
 
 在这里，我们使用 OpenAI API 生成对一组提示的模型响应，并将结果存储在数据框中，然后将其保存为 CSV 文件。以下是工作原理：
 
-1.  定义了两个提示变体，每个变体都包含产品描述、种子词和潜在的产品名称，但 `prompt_B` 提供了两个示例。
+1. 定义了两个提示变体，每个变体都包含产品描述、种子词和潜在的产品名称，但`prompt_B`提供了两个示例。
 
-1.  需要导入 Pandas 库、OpenAI 库和 os 库。
+2. 需要导入 Pandas 库、OpenAI 库和 os 库。
 
-1.  `get_response` 函数接受一个提示作为输入，并从 `gpt-3.5-turbo` 模型返回一个响应。提示作为用户消息传递给模型，同时传递一个系统消息以设置模型的行为。
+3. `get_response`函数接受一个提示作为输入，并从`gpt-3.5-turbo`模型返回一个响应。提示作为用户消息传递给模型，同时传递一个系统消息以设置模型的行为。
 
-1.  两个提示变体存储在 `test_prompts` 列表中。
+4. 两个提示变体存储在`test_prompts`列表中。
 
-1.  创建一个空列表 `responses` 来存储生成的响应，并将变量 `num_tests` 设置为 5。
+5. 创建一个空列表`responses`来存储生成的响应，并将变量`num_tests`设置为 5。
 
-1.  使用嵌套循环来生成响应。外循环遍历每个提示，内循环为每个提示生成 `num_tests`（本例中为五个）个响应。
+6. 使用嵌套循环来生成响应。外循环遍历每个提示，内循环为每个提示生成`num_tests`（本例中为五个）个响应。
 
-    1.  使用 `enumerate` 函数获取 `test_prompts` 中每个提示的索引和值。然后将此索引转换为相应的大写字母（例如，0 变为 *A*，1 变为 *B*），用作变体名称。
+   - 使用`enumerate`函数获取`test_prompts`中每个提示的索引和值。然后将此索引转换为相应的大写字母（例如，0 变为*A*，1 变为*B*），用作变体名称。
 
-    1.  对于每次迭代，使用当前提示调用 `get_response` 函数来从模型生成响应。
+   - 对于每次迭代，使用当前提示调用`get_response`函数来从模型生成响应。
 
-    1.  创建一个包含变体名称、提示和模型响应的字典，并将其追加到 `responses` 列表中。
+   - 创建一个包含变体名称、提示和模型响应的字典，并将其追加到`responses`列表中。
 
-1.  一旦所有响应都生成完毕，`responses` 列表（现在是一个字典列表）被转换为 Pandas 数据框。
+7. 一旦所有响应都生成完毕，`responses`列表（现在是一个字典列表）被转换为 Pandas 数据框。
 
-1.  然后使用 Pandas 内置的 `to_csv` 函数将此数据框保存为 CSV 文件，文件名为 *responses.csv*，`index=False` 以防止写入行索引。
+8. 然后使用 Pandas 内置的`to_csv`函数将此数据框保存为 CSV 文件，文件名为*responses.csv*，`index=False`以防止写入行索引。
 
-1.  最后，数据框被打印到控制台。
+9. 最后，数据框被打印到控制台。
 
-将这些响应放在电子表格中已经很有用，因为你可以立即在打印的响应中看到，前五行中的 `prompt_A`（零样本）提供了一个编号列表，而最后五行中的 `prompt_B`（少样本）倾向于输出逗号分隔的行内列表的期望格式。下一步是对每个响应进行评分，最好是无视并随机化，以避免偏向某个提示而忽略另一个。
+将这些响应放在电子表格中已经很有用，因为你可以立即在打印的响应中看到，前五行中的`prompt_A`（零样本）提供了一个编号列表，而最后五行中的`prompt_B`（少样本）倾向于输出逗号分隔的行内列表的期望格式。下一步是对每个响应进行评分，最好是无视并随机化，以避免偏向某个提示而忽略另一个。
 
 输入：
 
@@ -745,9 +752,9 @@ display(response, button_box, count_label)
 
 ![pega 0112](img/pega_0112.png)
 
-###### 图 1-12\. 点赞/踩不点赞评价系统
+#### 图 1-12. 点赞/踩不点赞评价系统
 
-如果你在一个 Jupyter Notebook 中运行此代码，一个小部件会显示每个 AI 响应，并带有点赞或踩按钮（见 图 1-12）。这提供了一个简单的界面，可以快速标记响应，且开销最小。如果你想在 Jupyter Notebook 之外做这件事，你可以将点赞和踩按钮的表情符号改为 *Y* 和 *N*，并使用内置的 `input()` 函数实现循环，作为 iPyWidgets 的纯文本替代。
+如果你在一个 Jupyter Notebook 中运行此代码，一个小部件会显示每个 AI 响应，并带有点赞或踩按钮（见 图 1-12）。这提供了一个简单的界面，可以快速标记响应，且开销最小。如果你想在 Jupyter Notebook 之外做这件事，你可以将点赞和踩按钮的表情符号改为*Y*和*N*，并使用内置的`input()`函数实现循环，作为 iPyWidgets 的纯文本替代。
 
 一旦完成标记响应，你将得到输出，它显示了每个提示的性能。
 
@@ -762,37 +769,39 @@ A/B testing completed. Here's the results:
 
 数据框被随机洗牌，每个响应都被盲标（没有看到提示），因此你可以准确地了解每个提示执行得多频繁。以下是逐步解释：
 
-1.  导入了三个模块：`ipywidgets`、`IPython.display` 和 `pandas`。`ipywidgets` 包含用于 Jupyter Notebook 和 IPython 内核的交互式 HTML 小部件。`IPython.display` 提供了用于显示各种类型输出的类，如图像、声音、显示 HTML 等。Pandas 是一个强大的数据处理库。
+1. 导入了三个模块：`ipywidgets`、`IPython.display`和`pandas`。`ipywidgets`包含用于 Jupyter Notebook 和 IPython 内核的交互式 HTML 小部件。`IPython.display`提供了用于显示各种类型输出的类，如图像、声音、显示 HTML 等。Pandas 是一个强大的数据处理库。
 
-1.  使用 pandas 库读取包含你想要测试的响应的 CSV 文件 *responses.csv*，这创建了一个名为 `df` 的 Pandas 数据框。
+2. 使用 pandas 库读取包含你想要测试的响应的 CSV 文件*responses.csv*，这创建了一个名为`df`的 Pandas 数据框。
 
-1.  `df` 使用 `sample()` 函数并设置 `frac=1` 进行洗牌，这意味着它使用了所有行。`reset_index(drop=True)` 用于将索引重置为标准的 0, 1, 2, …, n 索引。
+3. `df`使用`sample()`函数并设置`frac=1`进行洗牌，这意味着它使用了所有行。`reset_index(drop=True)`用于将索引重置为标准的 0, 1, 2, …, n 索引。
 
-1.  脚本将 `response_index` 定义为 0。这用于跟踪用户当前正在查看数据框中的哪个响应。
+4. 脚本将`response_index`定义为 0。这用于跟踪用户当前正在查看数据框中的哪个响应。
 
-1.  在 `df` 数据框中添加了一个新的列 `feedback`，数据类型为 `str` 或字符串。
+5. 在`df`数据框中添加了一个新的列`feedback`，数据类型为`str`或字符串。
 
-1.  接下来，脚本定义了一个函数 `on_button_clicked(b)`，该函数将在界面中的任一按钮被点击时执行。
+6. 接下来，脚本定义了一个函数`on_button_clicked(b)`，该函数将在界面中的任一按钮被点击时执行。
 
-    1.  函数首先检查点击的按钮的 `description` 是否为点赞按钮 (`\U0001F44D`; ![点赞 1f44d](img/thumbs-up_1f44d.png))，并将 `user_feedback` 设置为 1，或者如果它是踩按钮 (`\U0001F44E` ![踩 1f44e](img/thumbs-down_1f44e.png))，则将 `user_feedback` 设置为 0。
 
-    1.  然后它更新当前 `response_index` 的数据框的 `feedback` 列为 `user_feedback`。
 
-    1.  之后，它将 `response_index` 增加，以移动到下一个响应。
+1. 函数首先检查点击的按钮的 `description` 是否为点赞按钮（`\U0001F44D`；![点赞 1f44d](img/thumbs-up_1f44d.png)），并将 `user_feedback` 设置为 1，或者如果它是踩按钮（`\U0001F44E` ![踩 1f44e](img/thumbs-down_1f44e.png)），则将 `user_feedback` 设置为 0。
 
-    1.  如果 `response_index` 仍然小于响应的总数（即数据框的长度），则调用 `update_response()` 函数。
+2. 然后它更新当前 `response_index` 的数据框的 `feedback` 列为 `user_feedback`。
 
-    1.  如果没有更多的响应，它将数据框保存到新的 CSV 文件 *results.csv*，然后打印一条消息，并按变体打印结果的摘要，显示收到的反馈数量和每个变体的平均分数（平均值）。
+3. 之后，它将 `response_index` 增加，以移动到下一个响应。
 
-1.  `update_response()`函数从数据框中获取下一个响应，将其包裹在段落 HTML 标签中（如果它不是 null），更新`response`小部件以显示新的响应，并更新`count_label`小部件以反映当前响应编号和总响应数。
+4. 如果 `response_index` 仍然小于响应的总数（即数据框的长度），则调用 `update_response()` 函数。
 
-1.  实例化了两个小部件，`response`（一个 HTML 小部件）和`count_label`（一个标签小部件）。然后调用`update_response()`函数以初始化这些小部件，显示第一个响应和适当的标签。
+5. 如果没有更多的响应，它将数据框保存到新的 CSV 文件 `results.csv`，然后打印一条消息，并按变体打印结果的摘要，显示收到的反馈数量和每个变体的平均分数（平均值）。
 
-1.  创建了两个更多的小部件，`thumbs_up_button`和`thumbs_down_button`（都是按钮小部件），分别以赞同和反对表情符号作为它们的描述。这两个按钮都配置为在点击时调用`on_button_clicked()`函数。
+`update_response()` 函数从数据框中获取下一个响应，将其包裹在段落 HTML 标签中（如果它不是 null），更新 `response` 小部件以显示新的响应，并更新 `count_label` 小部件以反映当前响应编号和总响应数。
 
-1.  使用`HBox`函数将两个按钮组合成一个水平框（`button_box`）。
+实例化了两个小部件，`response`（一个 HTML 小部件）和 `count_label`（一个标签小部件）。然后调用 `update_response()` 函数以初始化这些小部件，显示第一个响应和适当的标签。
 
-1.  最后，使用`IPython.display`模块的`display()`函数将`response`、`button_box`和`count_label`小部件显示给用户。
+创建了两个更多的小部件，`thumbs_up_button` 和 `thumbs_down_button`（都是按钮小部件），分别以赞同和反对表情符号作为它们的描述。这两个按钮都配置为在点击时调用 `on_button_clicked()` 函数。
+
+使用 `HBox` 函数将两个按钮组合成一个水平框（`button_box`）。
+
+最后，使用 `IPython.display` 模块的 `display()` 函数将 `response`、`button_box` 和 `count_label` 小部件显示给用户。
 
 这样的简单评分系统可以用来判断提示质量并处理边缘情况。通常在 10 次以下的对提示的测试运行中，你会发现偏差，否则你可能直到开始在生产中使用它之前都不会发现。缺点是手动评分大量响应可能会很繁琐，而且你的评分可能无法代表目标受众的偏好。然而，即使是少量测试也可以揭示两种提示策略之间的巨大差异，并在达到生产之前揭示不明显的问题。
 
@@ -800,47 +809,47 @@ A/B testing completed. Here's the results:
 
 赞同或其他手动标记的质量指标不一定是唯一的评判标准。人类评估通常被认为是反馈的最准确形式。然而，手动评估大量样本可能会很繁琐且成本高昂。在许多情况下，例如在数学或分类用例中，可能可以建立*基准真相*（测试用例的参考答案）以编程方式评估结果，从而大大提高你的测试和监控努力。以下列表并不全面，因为有许多动机促使你以编程方式评估提示：
 
-成本
+**成本**
 
 使用大量标记或仅与更昂贵模型工作的提示可能不适合生产使用。
 
-延迟
+**延迟**
 
 同样，标记越多，或所需的模型越大，完成任务所需的时间就越长，这可能会损害用户体验。
 
-调用
+**调用**
 
 许多 AI 系统需要多次循环调用才能完成任务，这可能会严重减慢处理速度。
 
-性能
+**性能**
 
 实现某种形式的外部反馈系统，例如用于预测现实世界结果的物理引擎或其他模型。
 
-分类
+**分类**
 
 确定提示正确标记给定文本的频率，使用另一个 AI 模型或基于规则的标记。
 
-推理
+**推理**
 
 计算 AI 未能应用逻辑推理或数学错误的实例与参考案例之间的差异。
 
-幻觉
+**幻觉**
 
 看看你遇到幻觉的频率，这是通过发明不在提示上下文中的新术语来衡量的。
 
-安全性
+**安全性**
 
 使用安全过滤器或检测系统标记任何可能返回不安全或不希望的结果的场景。
 
-拒绝
+**拒绝**
 
 通过标记已知的拒绝语言，找出系统错误拒绝合理用户请求的频率。
 
-对抗性
+**对抗性**
 
 使提示对已知的[提示注入](https://oreil.ly/KGAqe)攻击具有鲁棒性，这些攻击可以使模型运行不希望运行的提示而不是你编程的内容。
 
-相似度
+**相似度**
 
 使用共享的单词和短语（[BLEU 或 ROGUE](https://oreil.ly/iEGZ9)）或向量距离（在第五章中解释）来衡量生成文本和参考文本之间的相似度。
 
@@ -850,7 +859,7 @@ A/B testing completed. Here's the results:
 
 ###### 图 1-13。一个提示值是多少数据点？
 
-从点赞或点踩过渡到 3 分、5 分或 10 分的评分系统，以获得对提示质量更细致的反馈。还可以通过并排比较响应，而不是逐个查看响应，来确定总体相对性能。从这些信息中，你可以构建一个公平的跨模型比较，使用*[Elo 评分](https://oreil.ly/TlldE)*，这在象棋中很受欢迎，也被*lmsys.org*在[聊天机器人竞技场](https://oreil.ly/P2IcU)中使用。
+从点赞或点踩过渡到 3 分、5 分或 10 分的评分系统，以获得对提示质量更细致的反馈。还可以通过并排比较响应，而不是逐个查看响应，来确定总体相对性能。从这些信息中，你可以构建一个公平的跨模型比较，使用*[Elo 评分](https://oreil.ly/TlldE)*，这在象棋中很受欢迎，也被 `lmsys.org` 在[聊天机器人竞技场](https://oreil.ly/P2IcU)中使用。
 
 对于图像生成，评估通常采用*排列*提示的形式，即你输入多个方向或格式，并为每种组合生成一个图像。然后可以扫描图像或稍后以网格形式排列，以展示提示的不同元素对最终图像的影响。
 
@@ -886,7 +895,7 @@ on white MacBook on top of glass-top table
 on white MacBook on top of glass-top table
 ```
 
-每个提示通常都会生成其自己的四张图像，这使得输出结果稍微难以观察。我们从每个提示中选了一张图像进行放大，然后将它们组合成一个网格，如图图 1-14 所示。你会注意到，模型并不总是能得到正确的人数（生成式 AI 模型在数学上出奇地差），但它通过在右侧照片中添加比左侧更多的人数，正确地推断出了总体意图。
+每个提示通常都会生成其自己的四张图像，这使得输出结果稍微难以观察。我们从每个提示中选了一张图像进行放大，然后将它们组合成一个网格，如图 1-14 所示。你会注意到，模型并不总是能得到正确的人数（生成式 AI 模型在数学上出奇地差），但它通过在右侧照片中添加比左侧更多的人数，正确地推断出了总体意图。
 
 图 1-14 显示了输出。
 
@@ -987,7 +996,7 @@ target audience, branding strategy, and the overall message
 you want to convey.
 ```
 
-OpenAI [称之为](https://oreil.ly/0MZ3-) “给模型思考的时间”，这是提示工程的一个关键原则。实际上，*思维链*技术就像这种，鼓励模型列出其步骤，就像在同一个提示中分解任务一样。一旦我们自动完成了产品命名的任务，我们就可以再次调用 ChatGPT 来描述每个产品，然后这些描述可以输入到 Midjourney 中生成每个产品的图像。使用 AI 模型为 AI 模型生成提示词是*元提示*，它之所以有效，是因为 LLMs 是达到人类水平的提示工程师([周，2022](https://oreil.ly/Dwszu))。
+OpenAI [称之为](https://oreil.ly/0MZ3-) “给模型思考的时间”，这是提示工程的一个关键原则。实际上，*思维链*技术就像这种，鼓励模型列出其步骤，就像在同一个提示中分解任务一样。一旦我们自动完成了产品命名的任务，我们就可以再次调用 ChatGPT 来描述每个产品，然后这些描述可以输入到 Midjourney 中生成每个产品的图像。使用 AI 模型为 AI 模型生成提示词是*元提示*，它之所以有效，是因为 LLMs 是达到人类水平的提示工程师（[周，2022](https://oreil.ly/Dwszu)）。
 
 输入：
 
@@ -998,46 +1007,27 @@ that can fit any foot size, in great detail:
 
 输出：
 
-```py
-Introducing the revolutionary "OneFit UltraStride Shoes,"
-the footwear innovation designed to fit any foot size with
-unparalleled comfort and style. These shoes are a result of
-cutting-edge technology and meticulous craftsmanship,
-ensuring a truly personalized and enjoyable walking or
-running experience for everyone.
 
-Design and Materials:
-The OneFit UltraStride Shoes boast an elegant and modern
-design that appeals to both fashion-forward individuals and
-sports enthusiasts. They feature a sleek and streamlined
-silhouette, crafted using premium materials for durability
-and aesthetic appeal. The shoe's upper is constructed from a
-combination of breathable mesh and flexible synthetic
-materials, allowing for excellent airflow and a lightweight
-feel.
+
+# 引言
+
+介绍革命性的“OneFit UltraStride 运动鞋”，这是一款旨在以无与伦比的舒适度和风格适配任何脚型的鞋类创新产品。这些鞋是尖端技术和细致工艺的结晶，确保为每个人带来真正个性化和愉悦的步行或跑步体验。
+
+## 设计与材料
+
+OneFit UltraStride 运动鞋拥有优雅而现代的设计，吸引时尚前卫人士和运动爱好者。其外形 sleek 流畅，采用优质材料打造，兼具耐用性和美学吸引力。鞋面由透气网眼和柔性合成材料组合而成，提供极佳的空气流通性和轻盈感。
 
 ...
 
-Color and Customization:
-OneFit UltraStride Shoes are available in a variety of
-vibrant colors and stylish patterns, catering to diverse
-personal preferences. You can choose from classic
-monochromatic options for a timeless look or opt for bold
-and vibrant hues to make a fashion statement. The ability to
-customize the shoe's appearance allows individuals to
-express their unique style while enjoying the benefits of
-the OneFit technology.
+## 颜色与定制
 
-Conclusion:
-The OneFit UltraStride Shoes represent a breakthrough in
-footwear technology, eliminating the hassle of finding the
-perfect fit for your feet. With their adaptive design,
-superior comfort, and stylish aesthetics, these shoes offer
-a truly personalized experience for individuals of all foot
-sizes. Stay comfortable, confident, and on-trend with the
-OneFit UltraStride Shoes, the ultimate choice for those
-seeking unmatched versatility and a perfect fit.
-```
+OneFit UltraStride 运动鞋提供多种鲜艳色彩和时尚图案，满足多样化的个人偏好。您可以选择经典的单色系以获得永恒的外观，或选择大胆鲜艳的色调以彰显时尚。定制鞋履外观的能力使个人能够表达其独特风格，同时享受 OneFit 技术的优势。
+
+## 结论
+
+OneFit UltraStride 运动鞋代表了鞋类技术的突破，消除了为您的双脚寻找完美合脚鞋的麻烦。凭借其自适应设计、卓越舒适度和时尚美学，这些鞋为所有脚型的人士提供了真正个性化的体验。选择 OneFit UltraStride 运动鞋，保持舒适、自信和时尚，这是那些追求无与伦比的多功能性和完美贴合的人们的终极选择。
+
+---
 
 DALL-E 在 GPT-4 中是众所周知的，因此你可以在 ChatGPT 中调用它的名字，并且它为图像生成工具制作提示词做得相当不错。如果你打算在生产中使用这个提示词，你可能考虑应用提供示例的提示原则，但对我们来说，没有示例它也做得足够好。
 
@@ -1072,11 +1062,11 @@ the OneFit UltraStride Shoes offer.
 
 ###### 图 1-15\. OneFit UltraStride 运动鞋
 
-在专业处理 AI 时，将多个 AI 调用甚至多个模型串联起来以实现更复杂的目标是一种常见的做法。即使是单次提示应用也往往是动态构建的，基于从各种数据库或其他 AI 模型调用中查询的外部上下文。库[LangChain](https://www.langchain.com)开发了将多个提示模板和查询串联起来的工具，使这一过程更加可观察和结构化。一个基础示例是渐进式摘要，其中无法适应上下文窗口的大段文本可以被分成多个文本块，每个块被总结，最后再总结这些摘要。如果你与早期 AI 产品的构建者交谈，你会发现他们都在底层将多个提示串联起来，称为*AI 串联*，以在最终输出中获得更好的结果。
+在专业处理 AI 时，将多个 AI 调用甚至多个模型串联起来以实现更复杂的目标是一种常见的做法。即使是单次提示应用也往往是动态构建的，基于从各种数据库或其他 AI 模型调用中查询的外部上下文。库 [LangChain](https://www.langchain.com) 开发了将多个提示模板和查询串联起来的工具，使这一过程更加可观察和结构化。一个基础示例是渐进式摘要，其中无法适应上下文窗口的大段文本可以被分成多个文本块，每个块被总结，最后再总结这些摘要。如果你与早期 AI 产品的构建者交谈，你会发现他们都在底层将多个提示串联起来，称为*AI 串联*，以在最终输出中获得更好的结果。
 
-[原因与行动（ReAct）框架](https://oreil.ly/tPPW9)是 AI 代理中最早流行的尝试之一，包括开源项目[BabyAGI](https://oreil.ly/TEiQx)、[AgentGPT](https://oreil.ly/48lq6)和[Microsoft AutoGen](https://oreil.ly/KG5Xl)。实际上，这些代理是通过将多个 AI 调用串联起来以实现规划、观察、行动，然后评估行动结果。自主代理将在第六章中介绍，但截至写作时，它们在生产中尚未得到广泛应用。这种自我推理代理的做法还处于早期阶段，容易出错，但有一些迹象表明，这种方法在完成复杂任务时可能是有用的，并且很可能是 AI 系统下一阶段演化的一个部分。
+[原因与行动（ReAct）框架](https://oreil.ly/tPPW9)是 AI 代理中最早流行的尝试之一，包括开源项目 [BabyAGI](https://oreil.ly/TEiQx)、[AgentGPT](https://oreil.ly/48lq6) 和 [Microsoft AutoGen](https://oreil.ly/KG5Xl)。实际上，这些代理是通过将多个 AI 调用串联起来以实现规划、观察、行动，然后评估行动结果。自主代理将在第六章中介绍，但截至写作时，它们在生产中尚未得到广泛应用。这种自我推理代理的做法还处于早期阶段，容易出错，但有一些迹象表明，这种方法在完成复杂任务时可能是有用的，并且很可能是 AI 系统下一阶段演化的一个部分。
 
-在微软和谷歌等大型科技公司之间，以及 Hugging Face 上的众多开源项目，以及像 OpenAI 和 Anthropic 这样的风险投资初创公司之间，正在发生一场 AI 竞赛。随着新模型的不断涌现，它们正在多样化以争夺不断增长市场的不同细分市场。例如，Anthropic 的 Claude 2 拥有[10 万个令牌的上下文窗口](https://oreil.ly/NQcFW)，而 GPT-4 的标准[8,192 个令牌](https://oreil.ly/iZhMl)。OpenAI 很快推出了 GPT-4 的[128,000 个令牌窗口版本](https://oreil.ly/3TTZ9)，而谷歌吹嘘其 Gemini 1.5 拥有 1 百万个令牌的上下文长度。[`oreil.ly/cyhR4`](https://oreil.ly/cyhR4)。为了比较，一本《哈利·波特》的书大约有 185,000 个令牌，所以整个一本书可能都适合放入一个单一的提示中，尽管每次 API 调用处理数百万个令牌可能对大多数用例来说成本过高。
+在微软和谷歌等大型科技公司之间，以及 Hugging Face 上的众多开源项目，以及像 OpenAI 和 Anthropic 这样的风险投资初创公司之间，正在发生一场 AI 竞赛。随着新模型的不断涌现，它们正在多样化以争夺不断增长市场的不同细分市场。例如，Anthropic 的 Claude 2 拥有 [10 万个令牌的上下文窗口](https://oreil.ly/NQcFW)，而 GPT-4 的标准 [8,192 个令牌](https://oreil.ly/iZhMl)。OpenAI 很快推出了 GPT-4 的 [128,000 个令牌窗口版本](https://oreil.ly/3TTZ9)，而谷歌吹嘘其 Gemini 1.5 拥有 1 百万个令牌的上下文长度。[`oreil.ly/cyhR4`](https://oreil.ly/cyhR4)。为了比较，一本《哈利·波特》的书大约有 185,000 个令牌，所以整个一本书可能都适合放入一个单一的提示中，尽管每次 API 调用处理数百万个令牌可能对大多数用例来说成本过高。
 
 这本书主要关注文本生成技术中的 GPT-4，以及 Midjourney v6 和 Stable Diffusion XL 在图像生成技术中的应用，但几个月后这些模型可能就不再是业界领先的技术了。这意味着能够选择适合任务的正确模型并将多个 AI 系统串联起来将变得越来越重要。在迁移到新模型时，提示模板通常难以比较，但五个提示原则的效果将始终如一地提升你使用的任何模型的提示，从而获得更可靠的结果。
 

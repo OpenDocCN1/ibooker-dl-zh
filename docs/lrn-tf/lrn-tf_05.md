@@ -1,8 +1,9 @@
+
 # 第五章：文本 I：处理文本和序列，以及 TensorBoard 可视化
 
 在本章中，我们将展示如何在 TensorFlow 中处理序列，特别是文本。我们首先介绍循环神经网络（RNN），这是一类强大的深度学习算法，特别适用于自然语言处理（NLP）。我们展示如何从头开始实现 RNN 模型，介绍一些重要的 TensorFlow 功能，并使用交互式 TensorBoard 可视化模型。然后，我们探讨如何在监督文本分类问题中使用 RNN 进行词嵌入训练。最后，我们展示如何构建一个更高级的 RNN 模型，使用长短期记忆（LSTM）网络，并如何处理可变长度的序列。
 
-# 序列数据的重要性
+## 序列数据的重要性
 
 我们在前一章中看到，利用图像的空间结构可以导致具有出色结果的先进模型。正如在那一章中讨论的那样，利用结构是成功的关键。正如我们将很快看到的，一种极其重要和有用的结构类型是顺序结构。从数据科学的角度来看，这种基本结构出现在许多数据集中，跨越所有领域。在计算机视觉中，视频是随时间演变的一系列视觉内容。在语音中，我们有音频信号，在基因组学中有基因序列；在医疗保健中有纵向医疗记录，在股票市场中有金融数据，等等（见图 5-1）。
 
@@ -16,7 +17,7 @@
 
 我们从最重要和流行的用于序列（特别是文本）的深度学习模型类开始：循环神经网络。
 
-# 循环神经网络简介
+## 循环神经网络简介
 
 循环神经网络是一类强大且广泛使用的神经网络架构，用于建模序列数据。RNN 模型背后的基本思想是序列中的每个新元素都会提供一些新信息，从而更新模型的当前状态。
 
@@ -32,7 +33,7 @@ RNN 模型也基于这种链式结构的概念，并且在如何确切地维护�
 
 ###### 图 5-2。随时间更新的循环神经网络。
 
-## 基础 RNN 实现
+### 基础 RNN 实现
 
 在本节中，我们从头开始实现一个基本的 RNN，探索其内部工作原理，并了解 TensorFlow 如何处理序列。我们介绍了一些强大的、相当低级的工具，TensorFlow 提供了这些工具用于处理序列数据，您可以使用这些工具来实现自己的系统。
 
@@ -46,7 +47,7 @@ RNN 模型也基于这种链式结构的概念，并且在如何确切地维护�
 
 其中*W[h]*，*W[x]*和*b*是我们学习的权重和偏置变量，*tanh*(·)是双曲正切函数，其范围在[-1,1]之间，并且与前几章中使用的 sigmoid 函数密切相关，*x[t]*和*h[t]*是之前定义的输入和状态向量。最后，隐藏状态向量乘以另一组权重，产生出现在图 5-2 中的输出。
 
-### MNIST 图像作为序列
+#### MNIST 图像作为序列
 
 为了初尝序列模型的强大和普适性，在本节中，我们实现我们的第一个 RNN 来解决您现在熟悉的 MNIST 图像分类任务。在本章的后面，我们将专注于文本序列，并看看神经序列模型如何强大地操纵它们并提取信息以解决 NLU 任务。
 
@@ -85,7 +86,6 @@ _inputs = tf.placeholder(tf.float32,shape=[None, time_steps,
                                               name='inputs')
 y = tf.placeholder(tf.float32, shape=[None, num_classes],
                                               name='labels')
-
 ```
 
 `element_size`是我们序列中每个向量的维度，在我们的情况下是 28 个像素的行/列。`time_steps`是序列中这样的元素的数量。
@@ -102,7 +102,7 @@ batch_x = batch_x.reshape((batch_size, time_steps, element_size))
 
 `LOG_DIR`是我们保存模型摘要以供 TensorBoard 可视化的目录。随着我们的学习，您将了解这意味着什么。
 
-# TensorBoard 可视化
+## TensorBoard 可视化
 
 在本章中，我们还将简要介绍 TensorBoard 可视化。TensorBoard 允许您监视和探索模型结构、权重和训练过程，并需要对代码进行一些非常简单的添加。更多细节将在本章和本书后续部分提供。
 
@@ -143,10 +143,9 @@ with tf.name_scope('rnn_weights'):
   with tf.name_scope("Bias"):
     b_rnn = tf.Variable(tf.zeros([hidden_layer_size]))
     variable_summaries(b_rnn)
-
 ```
 
-### 使用 tf.scan()应用 RNN 步骤
+### 使用 tf.scan() 应用 RNN 步骤
 
 现在，我们创建一个函数，实现了我们在前一节中看到的基本 RNN 步骤，使用我们创建的变量。现在应该很容易理解这里使用的 TensorFlow 代码：
 
@@ -158,7 +157,6 @@ def rnn_step(previous_hidden_state,x):
       tf.matmul(x, Wx) + b_rnn)
 
     return current_hidden_state
-
 ```
 
 接下来，我们将这个函数应用到所有的 28 个时间步上：
@@ -175,12 +173,11 @@ all_hidden_states = tf.scan(rnn_step,
               processed_input,
               initializer=initial_hidden,
               name='states')
-
 ```
 
 在这个小的代码块中，有一些重要的元素需要理解。首先，我们将输入从`[batch_size, time_steps, element_size]`重塑为`[time_steps, batch_size, element_size]`。`tf.transpose()`的`perm`参数告诉 TensorFlow 我们想要交换的轴。现在，我们的输入张量中的第一个轴代表时间轴，我们可以通过使用内置的`tf.scan()`函数在所有时间步上进行迭代，该函数重复地将一个可调用（函数）应用于序列中的元素，如下面的说明所述。
 
-# tf.scan()
+## tf.scan()
 
 这个重要的函数被添加到 TensorFlow 中，允许我们在计算图中引入循环，而不仅仅是通过添加更多和更多的操作复制来“展开”循环。更技术上地说，它是一个类似于 reduce 操作符的高阶函数，但它返回随时间的所有中间累加器值。这种方法有几个优点，其中最重要的是能够具有动态数量的迭代而不是固定的，以及用于图构建的计算速度提升和优化。
 
@@ -195,16 +192,14 @@ scan_sum = tf.scan(lambda a, x: a + x, elems)
 
 sess=tf.InteractiveSession()
 sess.run(scan_sum)
-
 ```
 
 让我们看看我们得到了什么：
 
 ```py
 array([b'T', b'Te', b'Ten', b'Tens', b'Tenso', b'Tensor', b'Tensor ',
-       b'Tensor F', b'Tensor Fl', b'Tensor Flo', b'Tensor Flow'],
-       dtype=object)
-
+       b'Tensor F', b'Tensor Fl', b'Tensor Flo', b'Tensor Flow'],
+       dtype=object)
 ```
 
 在这种情况下，我们使用`tf.scan()`将字符顺序连接到一个字符串中，类似于算术累积和。
@@ -212,6 +207,12 @@ array([b'T', b'Te', b'Ten', b'Tens', b'Tenso', b'Tensor', b'Tensor ',
 ### 顺序输出
 
 正如我们之前看到的，在 RNN 中，我们为每个时间步获得一个状态向量，将其乘以一些权重，然后获得一个输出向量——我们数据的新表示。让我们实现这个：
+
+
+
+# 使用 TensorFlow 构建 RNN 分类器
+
+## 定义线性层权重
 
 ```py
 # Weights for output layers
@@ -226,7 +227,7 @@ with tf.name_scope('linear_layer_weights') as scope:
                       mean=0,stddev=.01))
     variable_summaries(bl)
 
-# Apply linear layer to state vector    
+# Apply linear layer to state vector
 def get_linear_layer(hidden_state):
 
   return tf.matmul(hidden_state, Wl) + bl
@@ -237,7 +238,6 @@ with tf.name_scope('linear_layer_weights') as scope:
   # Get last output
   output = all_outputs[-1]
   tf.summary.histogram('outputs', output)
-
 ```
 
 我们的 RNN 的输入是顺序的，输出也是如此。在这个序列分类示例中，我们取最后一个状态向量，并通过一个全连接的线性层将其传递，以提取一个输出向量（稍后将通过 softmax 激活函数传递以生成预测）。这在基本序列分类中是常见的做法，我们假设最后一个状态向量已经“积累”了代表整个序列的信息。
@@ -246,7 +246,7 @@ with tf.name_scope('linear_layer_weights') as scope:
 
 最后，我们提取批次中每个实例的最后输出，使用负索引（类似于普通 Python）。稍后我们将看到一些更多的方法来做这个，并深入研究输出和状态。
 
-### RNN 分类
+## RNN 分类
 
 现在我们准备训练一个分类器，方式与前几章相同。我们定义损失函数计算、优化和预测的操作，为 TensorBoard 添加一些更多摘要，并将所有这些摘要合并为一个操作：
 
@@ -271,7 +271,6 @@ with tf.name_scope('accuracy'):
 
 # Merge all the summaries
 merged = tf.summary.merge_all()
-
 ```
 
 到目前为止，您应该熟悉用于定义损失函数和优化的大多数组件。在这里，我们使用`RMSPropOptimizer`，实现了一个众所周知且强大的梯度下降算法，带有一些标准的超参数。当然，我们可以使用任何其他优化器（并在本书中一直这样做！）。
@@ -281,7 +280,7 @@ merged = tf.summary.merge_all()
 让我们运行模型并查看结果：
 
 ```py
-# Get a small test set  
+# Get a small test set
 test_data = mnist.test.images[:batch_size].reshape((-1, time_steps,
                           element_size))
 test_label = mnist.test.labels[:batch_size]
@@ -312,7 +311,7 @@ with tf.Session() as sess:
                         y: batch_y})
         print ("Iter " + str(i) + ", Minibatch Loss= " + \
            "{:.6f}".format(loss) + ", Training Accuracy= " + \
-           "{:.5f}".format(acc)) 
+           "{:.5f}".format(acc))
       if i % 10:
         # Calculate accuracy for 128 MNIST test images and
         # add to summaries
@@ -324,7 +323,6 @@ with tf.Session() as sess:
   test_acc = sess.run(accuracy, feed_dict={_inputs: test_data,
                       y: test_label})
   print ("Test Accuracy:", test_acc)
-
 ```
 
 最后，我们打印一些训练和测试准确率的结果：
@@ -341,31 +339,30 @@ Iter 7000, Minibatch Loss= 0.017689, Training Accuracy= 100.00000
 Iter 8000, Minibatch Loss= 0.065443, Training Accuracy= 99.21875
 Iter 9000, Minibatch Loss= 0.071438, Training Accuracy= 98.43750
 Testing Accuracy: 97.6563
-
 ```
 
 总结这一部分，我们从原始的 MNIST 像素开始，并将它们视为顺序数据——每列（或行）的 28 个像素作为一个时间步。然后，我们应用了 vanilla RNN 来提取对应于每个时间步的输出，并使用最后的输出来执行整个序列（图像）的分类。
 
-### 使用 TensorBoard 可视化模型
+## 使用 TensorBoard 可视化模型
 
 TensorBoard 是一个交互式基于浏览器的工具，允许我们可视化学习过程，以及探索我们训练的模型。
 
 运行 TensorBoard，转到命令终端并告诉 TensorBoard 相关摘要的位置：
 
 ```py
-tensorboard--logdir=*`LOG_DIR`*
+tensorboard--logdir=`LOG_DIR`
 ```
 
-在这里，`*LOG_DIR*`应替换为您的日志目录。如果您在 Windows 上并且这不起作用，请确保您从存储日志数据的相同驱动器运行终端，并按以下方式向日志目录添加名称，以绕过 TensorBoard 解析路径的错误：
+在这里，`LOG_DIR`应替换为您的日志目录。如果您在 Windows 上并且这不起作用，请确保您从存储日志数据的相同驱动器运行终端，并按以下方式向日志目录添加名称，以绕过 TensorBoard 解析路径的错误：
 
 ```py
-tensorboard--logdir=rnn_demo:*`LOG_DIR`*
+tensorboard--logdir=rnn_demo:`LOG_DIR`
 ```
 
 TensorBoard 允许我们为单独的日志目录分配名称，方法是在名称和路径之间放置一个冒号，当使用多个日志目录时可能会有用。在这种情况下，我们将传递一个逗号分隔的日志目录列表，如下所示：
 
 ```py
-tensorboard--logdir=rnn_demo1:*`LOG_DIR1`*,rnn_demo2:*`LOG_DIR2`*
+tensorboard--logdir=rnn_demo1:`LOG_DIR1`,rnn_demo2:`LOG_DIR2`
 ```
 
 在我们的示例中（有一个日志目录），一旦您运行了`tensorboard`命令，您应该会得到类似以下内容的信息，告诉您在浏览器中导航到哪里：
@@ -375,27 +372,27 @@ Starting TensorBoard b'39' on port 6006
 (You can navigate to http://10.100.102.4:6006)
 ```
 
-如果地址无法使用，请转到*localhost:6006*，这个地址应该始终有效。
+如果地址无法使用，请转到`localhost:6006`，这个地址应该始终有效。
 
-TensorBoard 递归地遍历以`*LOG_DIR*`为根的目录树，寻找包含 tfevents 日志数据的子目录。如果您多次运行此示例，请确保在每次运行后要么删除您创建的`*LOG_DIR*`文件夹，要么将日志写入`*LOG_DIR*`内的单独子目录，例如`*LOG_DIR*`*/run1/train*，`*LOG_DIR*`*/run2/train*等，以避免覆盖日志文件，这可能会导致一些“奇怪”的图形。
+TensorBoard 递归地遍历以`LOG_DIR`为根的目录树，寻找包含 tfevents 日志数据的子目录。如果您多次运行此示例，请确保在每次运行后要么删除您创建的`LOG_DIR`文件夹，要么将日志写入`LOG_DIR`内的单独子目录，例如`LOG_DIR`/run1/train，`LOG_DIR`/run2/train等，以避免覆盖日志文件，这可能会导致一些“奇怪”的图形。
 
 让我们看一些我们可以获得的可视化效果。在下一节中，我们将探讨如何使用 TensorBoard 对高维数据进行交互式可视化-现在，我们专注于绘制训练过程摘要和训练权重。
 
 首先，在浏览器中，转到标量选项卡。在这里，TensorBoard 向我们显示所有标量的摘要，包括通常最有趣的训练和测试准确性，以及我们记录的有关变量的一些摘要统计信息（请参见图 5-4）。将鼠标悬停在图表上，我们可以看到一些数字。
 
-！[](assets/letf_0504.png)
+![图 5-4](assets/letf_0504.png)
 
 ###### 图 5-4。TensorBoard 标量摘要。
 
 在图形选项卡中，我们可以通过放大来获得计算图的交互式可视化，从高级视图到基本操作（请参见图 5-5）。
 
-！[](assets/letf_0505.png)
+![图 5-5](assets/letf_0505.png)
 
 ###### 图 5-5。放大计算图。
 
 最后，在直方图选项卡中，我们可以看到在训练过程中权重的直方图（请参见图 5-6）。当然，我们必须明确将这些直方图添加到我们的日志记录中才能查看它们，使用`tf.summary.histogram()`。
 
-！[](assets/letf_0506.png)
+![图 5-6](assets/letf_0506.png)
 
 ###### 图 5-6。学习过程中权重的直方图。
 
@@ -403,7 +400,9 @@ TensorBoard 递归地遍历以`*LOG_DIR*`为根的目录树，寻找包含 tfeve
 
 前面的示例教会了我们一些使用序列的基本和强大的方法，通过几乎从头开始实现我们的图。在实践中，当然最好使用内置的高级模块和函数。这不仅使代码更短，更容易编写，而且利用了 TensorFlow 实现提供的许多低级优化。
 
-在本节中，我们首先以完整的新代码的新版本呈现。由于大部分整体细节没有改变，我们将重点放在主要的新元素`tf.contrib.rnn.BasicRNNCell`和`tf.nn.dynamic_rnn()`上：
+在本节中，我们首先以完整的新代码的新版本呈现。由于大部分整体细节没有改变，我们将重点放在主要的新元素`tf.contrib.rnn.BasicRNNCell`和`tf.nn.dynamic_rnn()`上。
+
+
 
 ```py
 import tensorflow as tf
@@ -467,7 +466,7 @@ print ("Testing Accuracy:",
 
 ```
 
-### tf.contrib.rnn.BasicRNNCell 和 tf.nn.dynamic_rnn()
+### `tf.contrib.rnn.BasicRNNCell` 和 `tf.nn.dynamic_rnn()`
 
 TensorFlow 的 RNN 单元是表示每个循环“单元”执行的基本操作（请参见本章开头的图 5-2 进行说明），以及其关联状态的抽象。它们通常是`rnn_step()`函数及其所需的相关变量的“替代”。当然，有许多变体和类型的单元，每个单元都有许多方法和属性。我们将在本章末尾和本书后面看到一些更高级的单元。
 
@@ -607,7 +606,7 @@ for sent in data:
     if word not in word2index_map:
       word2index_map[word] = index
       index+=1
-# Inverse map    
+# Inverse map
 index2word_map = {index: word for word, index in word2index_map.items()}      
 vocabulary_size = len(index2word_map)
 
@@ -658,6 +657,8 @@ def get_sentence_batch(batch_size,data_x,
 ```
 
 最后，我们为数据创建占位符：
+
+
 
 ```py
 _inputs = tf.placeholder(tf.int32, shape=[batch_size,times_steps])

@@ -1,3 +1,4 @@
+
 # 第九章：人员检测：构建一个应用程序
 
 如果你问人们哪种感官对他们的日常生活影响最大，很多人会回答视觉。
@@ -24,7 +25,7 @@
 
 阅读完本章后，您将了解如何在微控制器上处理摄像头数据，以及如何使用视觉模型运行推断并解释输出。您可能会惊讶于这实际上是多么容易！
 
-# 我们正在构建什么
+## 我们正在构建什么
 
 我们将构建一个嵌入式应用程序，该应用程序使用模型对摄像头捕获的图像进行分类。该模型经过训练，能够识别摄像头输入中是否存在人物。这意味着我们的应用程序将能够检测人物的存在或缺席，并相应地产生输出。
 
@@ -32,7 +33,7 @@
 
 ###### 注意
 
-与我们在第七章中开发的应用程序一样，您可以在[TensorFlow GitHub 存储库](https://oreil.ly/9aLhs)中找到此应用程序的源代码。
+与我们在第七章中开发的应用程序一样，您可以在 [TensorFlow GitHub 存储库](https://oreil.ly/9aLhs) 中找到此应用程序的源代码。
 
 与之前的章节一样，我们首先浏览测试和应用程序代码，然后是使示例在各种设备上运行的逻辑。
 
@@ -44,13 +45,13 @@
 
 ###### 注意
 
-TensorFlow Lite 定期添加对新设备的支持，因此如果您想要使用的设备未在此处列出，请查看示例的[*README.md*](https://oreil.ly/6gRlo)。如果在按照这些步骤操作时遇到问题，您也可以在那里查找更新的部署说明。
+TensorFlow Lite 定期添加对新设备的支持，因此如果您想要使用的设备未在此处列出，请查看示例的 [*README.md*](https://oreil.ly/6gRlo)。如果在按照这些步骤操作时遇到问题，您也可以在那里查找更新的部署说明。
 
-与之前的章节不同，您需要一些额外的硬件来运行这个应用程序。因为这两个开发板都没有集成摄像头，我们建议购买一个*摄像头模块*。您将在每个设备的部分中找到这些信息。
+与之前的章节不同，您需要一些额外的硬件来运行这个应用程序。因为这两个开发板都没有集成摄像头，我们建议购买一个 *摄像头模块*。您将在每个设备的部分中找到这些信息。
 
 让我们从了解应用程序的结构开始。它比您想象的要简单得多。
 
-# 应用程序架构
+## 应用程序架构
 
 到目前为止，我们已经确定了嵌入式机器学习应用程序执行以下一系列操作：
 
@@ -72,15 +73,15 @@ TensorFlow Lite 定期添加对新设备的支持，因此如果您想要使用�
 
 在我们继续之前，让我们更多地了解一下我们将要使用的模型。
 
-## 介绍我们的模型
+### 介绍我们的模型
 
 在第七章中，我们了解到卷积神经网络是专门设计用于处理多维张量的神经网络，其中信息包含在相邻值组之间的关系中。它们特别适合处理图像数据。
 
-我们的人体检测模型是一个卷积神经网络，训练于[Visual Wake Words 数据集](https://oreil.ly/EC6nd)。该数据集包含 115,000 张图像，每张图像都标记了是否包含人体。
+我们的人体检测模型是一个卷积神经网络，训练于 [Visual Wake Words 数据集](https://oreil.ly/EC6nd)。该数据集包含 115,000 张图像，每张图像都标记了是否包含人体。
 
 该模型大小为 250 KB，比我们的语音模型大得多。除了占用更多内存外，这种额外的大小意味着运行单个推断需要更长的时间。
 
-该模型接受 96×96 像素的灰度图像作为输入。每个图像都以形状为`(96, 96, 1)`的 3D 张量提供，其中最后一个维度包含一个表示单个像素的 8 位值。该值指定像素的阴影，范围从 0（完全黑色）到 255（完全白色）。
+该模型接受 96×96 像素的灰度图像作为输入。每个图像都以形状为 `(96, 96, 1)` 的 3D 张量提供，其中最后一个维度包含一个表示单个像素的 8 位值。该值指定像素的阴影，范围从 0（完全黑色）到 255（完全白色）。
 
 我们的摄像头模块可以以各种分辨率返回图像，因此我们需要确保它们被调整为 96×96 像素。我们还需要将全彩图像转换为灰度图像，以便与模型配合使用。
 
@@ -88,9 +89,9 @@ TensorFlow Lite 定期添加对新设备的支持，因此如果您想要使用�
 
 模型输出两个概率：一个指示输入中是否存在人的概率，另一个指示是否没有人的概率。概率范围从 0 到 255。
 
-我们的人体检测模型使用了*MobileNet*架构，这是一个为移动手机等设备设计的用于图像分类的经过广泛测试的架构。在第十章中，您将学习如何将该模型适配到微控制器上，并且如何训练您自己的模型。现在，让我们继续探索我们的应用程序是如何工作的。
+我们的人体检测模型使用了 *MobileNet* 架构，这是一个为移动手机等设备设计的用于图像分类的经过广泛测试的架构。在第十章中，您将学习如何将该模型适配到微控制器上，并且如何训练您自己的模型。现在，让我们继续探索我们的应用程序是如何工作的。
 
-## 所有的组件
+### 所有的组件
 
 图 9-1 显示了我们人体检测应用程序的结构。
 
@@ -118,7 +119,7 @@ TensorFlow Lite 解释器
 
 模型
 
-该模型作为数据数组包含在内，并由解释器运行。250 KB 的模型太大了，无法提交到 TensorFlow GitHub 存储库。因此，在构建项目时，Makefile 会下载它。如果您想查看，可以自行下载[*tf_lite_micro_person_data_grayscale.zip*](https://oreil.ly/Ylq9m)。
+该模型作为数据数组包含在内，并由解释器运行。250 KB 的模型太大了，无法提交到 TensorFlow GitHub 存储库。因此，在构建项目时，Makefile 会下载它。如果您想查看，可以自行下载 [*tf_lite_micro_person_data_grayscale.zip*](https://oreil.ly/Ylq9m)。
 
 检测响应器
 
@@ -126,9 +127,9 @@ TensorFlow Lite 解释器
 
 为了了解这些部分如何配合，我们将查看它们的测试。
 
-# 通过测试
+## 通过测试
 
-这个应用程序非常简单，因为只有几个测试需要进行。您可以在[GitHub 存储库](https://oreil.ly/31vB5)中找到它们：
+这个应用程序非常简单，因为只有几个测试需要进行。您可以在 [GitHub 存储库](https://oreil.ly/31vB5) 中找到它们：
 
 [*person_detection_test.cc*](https://oreil.ly/r4ny8)
 
@@ -142,11 +143,11 @@ TensorFlow Lite 解释器
 
 展示如何使用检测响应器输出检测结果
 
-让我们从探索*person_detection_test.cc*开始，看看如何对图像数据运行推断。因为这是我们走过的第三个示例，这段代码应该感觉相当熟悉。您已经在成为嵌入式 ML 开发人员的道路上取得了很大进展！
+让我们从探索 *person_detection_test.cc* 开始，看看如何对图像数据运行推断。因为这是我们走过的第三个示例，这段代码应该感觉相当熟悉。您已经在成为嵌入式 ML 开发人员的道路上取得了很大进展！
 
-## 基本流程
+### 基本流程
 
-首先是*person_detection_test.cc*。我们首先引入模型需要的操作：
+首先是 *person_detection_test.cc*。我们首先引入模型需要的操作：
 
 ```cpp
 namespace tflite {
@@ -167,7 +168,7 @@ const int tensor_arena_size = 70 * 1024;
 uint8_t tensor_arena[tensor_arena_size];
 ```
 
-然后我们进行典型的设置工作，准备解释器运行，包括使用`MicroMutableOpResolver`注册必要的操作：
+然后我们进行典型的设置工作，准备解释器运行，包括使用 `MicroMutableOpResolver` 注册必要的操作：
 
 ```cpp
 // Set up logging.
@@ -220,7 +221,7 @@ TF_LITE_MICRO_EXPECT_EQ(kTfLiteUInt8, input->type);
 
 从中我们可以看到，输入技术上是一个 5D 张量。第一个维度只是包含一个元素的包装器。接下来的两个维度表示图像像素的行和列。最后一个维度保存用于表示每个像素的颜色通道的数量。
 
-告诉我们预期维度的常量`kNumRows`、`kNumCols`和`kNumChannels`在[*model_settings.h*](https://oreil.ly/ae2OI)中定义。它们看起来像这样：
+告诉我们预期维度的常量 `kNumRows`、`kNumCols` 和 `kNumChannels` 在 [*model_settings.h*](https://oreil.ly/ae2OI) 中定义。它们看起来像这样：
 
 ```cpp
 constexpr int kNumCols = 96;
@@ -230,7 +231,7 @@ constexpr int kNumChannels = 1;
 
 如您所见，模型预计接受一个 96×96 像素的位图。图像将是灰度的，每个像素有一个颜色通道。
 
-接下来在代码中，我们使用简单的`for`循环将测试图像复制到输入张量中：
+接下来在代码中，我们使用简单的 `for` 循环将测试图像复制到输入张量中：
 
 ```cpp
 // Copy an image with a person into the memory area used for the input.
@@ -240,7 +241,7 @@ for (int i = 0; i < input->bytes; ++i) {
 }
 ```
 
-存储图像数据的变量`g_person_data`由*person_image_data.h*定义。为了避免向存储库添加更多大文件，数据本身会在首次运行测试时作为*tf_lite_micro_person_data_grayscale.zip*的一部分与模型一起下载。
+存储图像数据的变量 `g_person_data` 由 *person_image_data.h* 定义。为了避免向存储库添加更多大文件，数据本身会在首次运行测试时作为 *tf_lite_micro_person_data_grayscale.zip* 的一部分与模型一起下载。
 
 在我们填充了输入张量之后，我们运行推断。这和以往一样简单：
 
@@ -255,6 +256,8 @@ TF_LITE_MICRO_EXPECT_EQ(kTfLiteOk, invoke_status);
 
 现在我们检查输出张量，确保它具有预期的大小和形状：
 
+
+
 ```cpp
 TfLiteTensor* output = interpreter.output(0);
 TF_LITE_MICRO_EXPECT_EQ(4, output->dims->size);
@@ -267,7 +270,7 @@ TF_LITE_MICRO_EXPECT_EQ(kTfLiteUInt8, output->type);
 
 模型的输出有四个维度。前三个只是包装器，围绕第四个维度，其中包含模型训练的每个类别的一个元素。
 
-类别的总数作为常量`kCategoryCount`可用，它位于*model_settings.h*中，还有一些其他有用的值：
+类别的总数作为常量`kCategoryCount`可用，它位于`model_settings.h`中，还有一些其他有用的值：
 
 ```cpp
 constexpr int kCategoryCount = 3;
@@ -278,7 +281,7 @@ extern const char* kCategoryLabels[kCategoryCount];
 
 正如`kCategoryCount`所示，输出中有三个类别。第一个恰好是一个未使用的类别，我们可以忽略。“人”类别排在第二位，我们可以从常量`kPersonIndex`中存储的索引中看到。“不是人”类别排在第三位，其索引由`kNotAPersonIndex`显示。
 
-还有一个类别标签数组`kCategoryLabels`，在[*model_settings.cc*](https://oreil.ly/AB0zS)中实现：
+还有一个类别标签数组`kCategoryLabels`，在[`model_settings.cc`](https://oreil.ly/AB0zS)中实现：
 
 ```cpp
 const char* kCategoryLabels[kCategoryCount] = {
@@ -334,28 +337,28 @@ make -f tensorflow/lite/micro/tools/make/Makefile \
   test_person_detection_test
 ```
 
-第一次运行测试时，将下载模型和图像数据。如果您想查看已下载的文件，可以在*tensorflow/lite/micro/tools/make/downloads/person_model_grayscale*中找到它们。
+第一次运行测试时，将下载模型和图像数据。如果您想查看已下载的文件，可以在`tensorflow/lite/micro/tools/make/downloads/person_model_grayscale`中找到它们。
 
 接下来，我们检查图像提供程序的接口。
 
 ## 图像提供程序
 
-图像提供程序负责从摄像头获取数据，并以适合写入模型输入张量的格式返回数据。文件[*image_provider.h*](https://oreil.ly/5Vjbe)定义了其接口：
+图像提供程序负责从摄像头获取数据，并以适合写入模型输入张量的格式返回数据。文件[`image_provider.h`](https://oreil.ly/5Vjbe)定义了其接口：
 
 ```cpp
 TfLiteStatus GetImage(tflite::ErrorReporter* error_reporter, int image_width,
                       int image_height, int channels, uint8_t* image_data);
 ```
 
-由于其实际实现是特定于平台的，因此在[*person_detection/image_provider.cc*](https://oreil.ly/QoQ3O)中有一个返回虚拟数据的参考实现。
+由于其实际实现是特定于平台的，因此在[`person_detection/image_provider.cc`](https://oreil.ly/QoQ3O)中有一个返回虚拟数据的参考实现。
 
-[*image_provider_test.cc*](https://oreil.ly/Nbl9x)中的测试调用此参考实现以展示其用法。我们的首要任务是创建一个数组来保存图像数据。这发生在以下行中：
+[`image_provider_test.cc`](https://oreil.ly/Nbl9x)中的测试调用此参考实现以展示其用法。我们的首要任务是创建一个数组来保存图像数据。这发生在以下行中：
 
 ```cpp
 uint8_t image_data[kMaxImageSize];
 ```
 
-常量`kMaxImageSize`来自我们的老朋友[*model_settings.h*](https://oreil.ly/5naFK)。
+常量`kMaxImageSize`来自我们的老朋友[`model_settings.h`](https://oreil.ly/5naFK)。
 
 设置了这个数组后，我们可以调用`GetImage()`函数从摄像头捕获图像：
 
@@ -384,11 +387,11 @@ make -f tensorflow/lite/micro/tools/make/Makefile \
   test_image_provider_test
 ```
 
-我们将在本章后面查看*image_provider.cc*的特定于设备的实现；现在，让我们看一下检测响应器的接口。
+我们将在本章后面查看`image_provider.cc`的特定于设备的实现；现在，让我们看一下检测响应器的接口。
 
 ## 检测响应器
 
-我们的最终测试展示了检测响应器的使用方式。这是负责传达推理结果的代码。其接口在[*detection_responder.h*](https://oreil.ly/cTptj)中定义，测试在[*detection_responder_test.cc*](https://oreil.ly/Igx7a)中。
+我们的最终测试展示了检测响应器的使用方式。这是负责传达推理结果的代码。其接口在[`detection_responder.h`](https://oreil.ly/cTptj)中定义，测试在[`detection_responder_test.cc`](https://oreil.ly/Igx7a)中。
 
 接口非常简单：
 
@@ -399,7 +402,7 @@ void RespondToDetection(tflite::ErrorReporter* error_reporter,
 
 我们只需使用“人”和“非人”类别的分数调用它，它将根据情况决定要做什么。
 
-[*detection_responder.cc*](https://oreil.ly/5Wjjt)中的参考实现只是记录这些值。*detection_responder_test.cc*中的测试调用该函数几次：
+[`detection_responder.cc`](https://oreil.ly/5Wjjt)中的参考实现只是记录这些值。`detection_responder_test.cc`中的测试调用该函数几次：
 
 ```cpp
 RespondToDetection(error_reporter, 100, 200);
@@ -417,7 +420,7 @@ make -f tensorflow/lite/micro/tools/make/Makefile \
 
 # 检测人员
 
-应用程序的核心功能位于[*main_functions.cc*](https://oreil.ly/64oHW)中。它们简短而简洁，我们在测试中已经看到了它们的大部分逻辑。
+应用程序的核心功能位于[`main_functions.cc`](https://oreil.ly/64oHW)中。它们简短而简洁，我们在测试中已经看到了它们的大部分逻辑。
 
 首先，我们引入模型所需的所有操作：
 
@@ -527,7 +530,9 @@ void loop() {
 
 在`RespondToDetection()`完成输出结果后，`loop()`函数将返回，准备好被程序的主循环再次调用。
 
-循环本身在程序的`main()`函数中定义，该函数位于[*main.cc*](https://oreil.ly/_PR3L)中。它一次调用`setup()`函数，然后重复调用`loop()`函数，直到无限循环：
+循环本身在程序的`main()`函数中定义，该函数位于[`main.cc`](https://oreil.ly/_PR3L)中。它一次调用`setup()`函数，然后重复调用`loop()`函数，直到无限循环。
+
+
 
 ```cpp
 int main(int argc, char* argv[]) {
@@ -555,7 +560,7 @@ tensorflow/lite/micro/tools/make/gen/osx_x86_64/bin/ \
 person_detection
 ```
 
-您会看到程序的输出在屏幕上滚动，直到按下 Ctrl-C 终止它：
+您会看到程序的输出在屏幕上滚动，直到按下 `Ctrl-C` 终止它：
 
 ```cpp
 person score:129 no person score 202
@@ -576,7 +581,7 @@ person score:129 no person score 202
 
 +   [SparkFun Edge](https://oreil.ly/-hoL-)
 
-这次有一个很大的不同：因为这两个设备都没有内置摄像头，我们建议您为您使用的任何设备购买摄像头模块。每个设备都有自己的*image_provider.cc*实现，它与摄像头模块进行接口，以捕获图像。*detection_responder.cc*中还有特定于设备的输出代码。
+这次有一个很大的不同：因为这两个设备都没有内置摄像头，我们建议您为您使用的任何设备购买摄像头模块。每个设备都有自己的`image_provider.cc`实现，它与摄像头模块进行接口，以捕获图像。`detection_responder.cc`中还有特定于设备的输出代码。
 
 这很简单，所以它将是一个很好的模板，用来创建你自己的基于视觉的 ML 应用程序。
 
@@ -588,7 +593,7 @@ person score:129 no person score 202
 
 ### 要购买哪种摄像头模块
 
-这个例子使用[Arducam Mini 2MP Plus](https://oreil.ly/LAwhb)摄像头模块。它很容易连接到 Arduino Nano 33 BLE Sense，并且可以由 Arduino 板的电源供应提供电力。它有一个大镜头，能够捕获高质量的 200 万像素图像 - 尽管我们将使用其内置的图像重缩放功能来获得较小的分辨率。它并不特别节能，但其高质量的图像使其非常适合构建图像捕获应用程序，比如用于记录野生动物。
+这个例子使用 [Arducam Mini 2MP Plus](https://oreil.ly/LAwhb) 摄像头模块。它很容易连接到 Arduino Nano 33 BLE Sense，并且可以由 Arduino 板的电源供应提供电力。它有一个大镜头，能够捕获高质量的 200 万像素图像 - 尽管我们将使用其内置的图像重缩放功能来获得较小的分辨率。它并不特别节能，但其高质量的图像使其非常适合构建图像捕获应用程序，比如用于记录野生动物。
 
 ### 在 Arduino 上捕获图像
 
@@ -600,9 +605,9 @@ Arducam 相机模块具有一颗 200 万像素的图像传感器，分辨率为 
 
 我们的最后任务是将 Arducam 的彩色图像输出转换为灰度，这是我们的人体检测模型所期望的。我们将灰度数据写入我们模型的输入张量。
 
-图像提供程序实现在[*arduino/image_provider.cc*](https://oreil.ly/kGx0-)中。我们不会解释其每个细节，因为代码是特定于 Arducam 相机模块的。相反，让我们以高层次的方式来看一下发生了什么。
+图像提供程序实现在 [*arduino/image_provider.cc*](https://oreil.ly/kGx0-) 中。我们不会解释其每个细节，因为代码是特定于 Arducam 相机模块的。相反，让我们以高层次的方式来看一下发生了什么。
 
-`GetImage()`函数是图像提供程序与外部世界的接口。在我们的应用程序主循环中调用它以获取一帧图像数据。第一次调用时，我们需要初始化相机。这通过调用`InitCamera()`函数来实现，如下所示：
+`GetImage()` 函数是图像提供程序与外部世界的接口。在我们的应用程序主循环中调用它以获取一帧图像数据。第一次调用时，我们需要初始化相机。这通过调用 `InitCamera()` 函数来实现，如下所示：
 
 ```cpp
   static bool g_is_camera_initialized = false;
@@ -616,9 +621,9 @@ Arducam 相机模块具有一颗 200 万像素的图像传感器，分辨率为 
   }
 ```
 
-`InitCamera()`函数在*image_provider.cc*中进一步定义。我们不会在这里详细介绍它，因为它非常特定于设备，如果您想在自己的代码中使用它，只需复制粘贴即可。它配置 Arduino 的硬件以与 Arducam 通信，然后确认通信正常工作。最后，它指示 Arducam 输出 160×120 像素的 JPEG 图像。
+`InitCamera()` 函数在 `image_provider.cc` 中进一步定义。我们不会在这里详细介绍它，因为它非常特定于设备，如果您想在自己的代码中使用它，只需复制粘贴即可。它配置 Arduino 的硬件以与 Arducam 通信，然后确认通信正常工作。最后，它指示 Arducam 输出 160×120 像素的 JPEG 图像。
 
-`GetImage()`函数调用的下一个函数是`PerformCapture()`：
+`GetImage()` 函数调用的下一个函数是 `PerformCapture()`：
 
 ```cpp
 TfLiteStatus capture_status = PerformCapture(error_reporter);
@@ -626,15 +631,15 @@ TfLiteStatus capture_status = PerformCapture(error_reporter);
 
 我们也不会详细介绍这个函数。它只是向相机模块发送一个命令，指示其捕获图像并将图像数据存储在其内部缓冲区中。然后，它等待确认图像已被捕获。此时，Arducam 的内部缓冲区中有图像数据，但 Arduino 本身还没有任何图像数据。
 
-接下来我们调用的函数是`ReadData()`：
+接下来我们调用的函数是 `ReadData()`：
 
 ```cpp
   TfLiteStatus read_data_status = ReadData(error_reporter);
 ```
 
-`ReadData()`函数使用更多的命令从 Arducam 获取图像数据。函数运行后，全局变量`jpeg_buffer`将填充从相机检索到的 JPEG 编码图像数据。
+`ReadData()` 函数使用更多的命令从 Arducam 获取图像数据。函数运行后，全局变量 `jpeg_buffer` 将填充从相机检索到的 JPEG 编码图像数据。
 
-当我们有 JPEG 编码的图像时，我们的下一步是将其解码为原始图像数据。这发生在`DecodeAndProcessImage()`函数中：
+当我们有 JPEG 编码的图像时，我们的下一步是将其解码为原始图像数据。这发生在 `DecodeAndProcessImage()` 函数中：
 
 ```cpp
   TfLiteStatus decode_status = DecodeAndProcessImage(
@@ -649,9 +654,9 @@ TfLiteStatus capture_status = PerformCapture(error_reporter);
 
 Arduino Nano 33 BLE Sense 内置了 RGB LED，这是一个包含独立红色、绿色和蓝色 LED 的单一组件，您可以分别控制它们。检测响应器的实现在每次推理运行时闪烁蓝色 LED。当检测到人时，点亮绿色 LED；当未检测到人时，点亮红色 LED。
 
-实现在[*arduino/detection_responder.cc*](https://oreil.ly/-WsSN)中。让我们快速浏览一下。
+实现在 [*arduino/detection_responder.cc*](https://oreil.ly/-WsSN) 中。让我们快速浏览一下。
 
-`RespondToDetection()`函数接受两个分数，一个用于“人”类别，另一个用于“非人”。第一次调用时，它设置蓝色、绿色和黄色 LED 为输出：
+`RespondToDetection()` 函数接受两个分数，一个用于“人”类别，另一个用于“非人”。第一次调用时，它设置蓝色、绿色和黄色 LED 为输出：
 
 ```cpp
 void RespondToDetection(tflite::ErrorReporter* error_reporter,
@@ -680,7 +685,7 @@ void RespondToDetection(tflite::ErrorReporter* error_reporter,
   digitalWrite(led_blue, HIGH);
 ```
 
-您会注意到，与 Arduino 内置 LED 不同，这些 LED 使用`LOW`打开，使用`HIGH`关闭。这只是 LED 连接到板上的方式的一个因素。
+您会注意到，与 Arduino 内置 LED 不同，这些 LED 使用 `LOW` 打开，使用 `HIGH` 关闭。这只是 LED 连接到板上的方式的一个因素。
 
 接下来，我们根据哪个类别的分数更高来打开和关闭适当的 LED：
 
@@ -696,7 +701,7 @@ void RespondToDetection(tflite::ErrorReporter* error_reporter,
   }
 ```
 
-最后，我们使用`error_reporter`实例将分数输出到串行端口：
+最后，我们使用 `error_reporter` 实例将分数输出到串行端口：
 
 ```cpp
   error_reporter->Report("Person score: %d No person score: %d", person_score,
@@ -704,7 +709,7 @@ void RespondToDetection(tflite::ErrorReporter* error_reporter,
 }
 ```
 
-就是这样！函数的核心是一个基本的`if`语句，您可以轻松使用类似的逻辑来控制其他类型的输出。将如此复杂的视觉输入转换为一个布尔输出“人”或“非人”是非常令人兴奋的事情。
+就是这样！函数的核心是一个基本的 `if` 语句，您可以轻松使用类似的逻辑来控制其他类型的输出。将如此复杂的视觉输入转换为一个布尔输出“人”或“非人”是非常令人兴奋的事情。
 
 ### 运行示例
 
@@ -727,35 +732,44 @@ void RespondToDetection(tflite::ErrorReporter* error_reporter,
 表 9-1。Arducam Mini 2MP Plus 到 Arduino Nano 33 BLE Sense 的连接
 
 | Arducam 引脚 | Arduino 引脚 |
+
 | --- | --- |
+
 | CS | D7（未标记，紧挨 D6 右侧） |
+
 | MOSI | D11 |
+
 | MISO | D12 |
+
 | SCK | D13 |
+
 | GND | GND（任何一个标记为 GND 的引脚都可以） |
+
 | VCC | 3.3 V |
+
 | SDA | A4 |
+
 | SCL | A5 |
 
 设置硬件后，您可以继续安装软件。
 
 ###### 提示
 
-建立过程可能会有所变化，所以请查看[*README.md*](https://oreil.ly/CR5Pb)获取最新说明。
+建立过程可能会有所变化，所以请查看 [*README.md*](https://oreil.ly/CR5Pb) 获取最新说明。
 
-本书中的项目作为 TensorFlow Lite Arduino 库中的示例代码可用。如果您尚未安装该库，请打开 Arduino IDE 并从“工具”菜单中选择“管理库”。在弹出的窗口中，搜索并安装名为*Arduino_TensorFlowLite*的库。您应该能够使用最新版本，但如果遇到问题，本书测试过的版本是 1.14-ALPHA。
+本书中的项目作为 TensorFlow Lite Arduino 库中的示例代码可用。如果您尚未安装该库，请打开 Arduino IDE 并从“工具”菜单中选择“管理库”。在弹出的窗口中，搜索并安装名为 `Arduino_TensorFlowLite` 的库。您应该能够使用最新版本，但如果遇到问题，本书测试过的版本是 1.14-ALPHA。
 
 ###### 注意
 
-您还可以从*.zip*文件安装库，您可以从 TensorFlow Lite 团队[下载](https://oreil.ly/blgB8)或使用 TensorFlow Lite for Microcontrollers Makefile 自动生成。如果您更喜欢后者，请参阅附录 A。
+您还可以从 `.zip` 文件安装库，您可以从 TensorFlow Lite 团队 [下载](https://oreil.ly/blgB8) 或使用 TensorFlow Lite for Microcontrollers Makefile 自动生成。如果您更喜欢后者，请参阅附录 A。
 
-安装完库后，`person_detection`示例将显示在“文件”菜单下的“示例→Arduino_TensorFlowLite”中，如图 9-2 所示。
+安装完库后，`person_detection` 示例将显示在“文件”菜单下的“示例→Arduino_TensorFlowLite”中，如图 9-2 所示。
 
 ![“示例”菜单的屏幕截图](img/timl_0604.png)
 
 ###### 图 9-2。示例菜单
 
-点击“person_detection”加载示例。它将显示为一个新窗口，每个源文件都有一个选项卡。第一个选项卡中的文件*person_detection*相当于我们之前介绍的*main_functions.cc*。
+点击“person_detection”加载示例。它将显示为一个新窗口，每个源文件都有一个选项卡。第一个选项卡中的文件 `person_detection` 相当于我们之前介绍的 `main_functions.cc`。
 
 ###### 注意
 
@@ -767,11 +781,11 @@ void RespondToDetection(tflite::ErrorReporter* error_reporter,
 
 +   JPEGDecoder 库，以便我们可以解码 JPEG 编码的图像
 
-Arducam Arduino 库可从[GitHub](https://oreil.ly/93OKK)获取。要安装它，请下载或克隆存储库。接下来，将其*ArduCAM*子目录复制到*Arduino/libraries*目录中。要找到您机器上的*libraries*目录，请在 Arduino IDE 的首选项窗口中检查 Sketchbook 位置。
+Arducam Arduino 库可从 [GitHub](https://oreil.ly/93OKK) 获取。要安装它，请下载或克隆存储库。接下来，将其 `ArduCAM` 子目录复制到 `Arduino/libraries` 目录中。要找到您机器上的 `libraries` 目录，请在 Arduino IDE 的首选项窗口中检查 Sketchbook 位置。
 
-下载库后，您需要编辑其中一个文件，以确保为 Arducam Mini 2MP Plus 进行配置。为此，请打开*Arduino/libraries/ArduCAM/memorysaver.h*。
+下载库后，您需要编辑其中一个文件，以确保为 Arducam Mini 2MP Plus 进行配置。为此，请打开 `Arduino/libraries/ArduCAM/memorysaver.h`。
 
-您会看到一堆`#define`语句。确保它们都被注释掉，除了`#define OV2640_MINI_2MP_PLUS`，如此处所示：
+您会看到一堆 `#define` 语句。确保它们都被注释掉，除了 `#define OV2640_MINI_2MP_PLUS`，如此处所示：
 
 ```cpp
 //Step 1: select the hardware platform, only one at a time
@@ -788,11 +802,13 @@ Arducam Arduino 库可从[GitHub](https://oreil.ly/93OKK)获取。要安装它�
 
 ###### 提示
 
-示例是使用 Arducam 库的提交#e216049 开发的。如果您在使用库时遇到问题，可以尝试下载这个特定的提交，以确保您使用的是完全相同的代码。
+示例是使用 Arducam 库的提交 #e216049 开发的。如果您在使用库时遇到问题，可以尝试下载这个特定的提交，以确保您使用的是完全相同的代码。
 
 下一步是安装 JPEGDecoder 库。您可以在 Arduino IDE 中完成这个操作。在工具菜单中，选择管理库选项并搜索 JPEGDecoder。您应该安装库的 1.8.0 版本。
 
-安装完库之后，您需要配置它以禁用一些与 Arduino Nano 33 BLE Sense 不兼容的可选组件。打开*Arduino/libraries/JPEGDecoder/src/User_Config.h*，确保`#define LOAD_SD_LIBRARY`和`#define LOAD_SDFAT_LIBRARY`都被注释掉，如文件中的摘录所示：
+安装完库之后，您需要配置它以禁用一些与 Arduino Nano 33 BLE Sense 不兼容的可选组件。打开 `Arduino/libraries/JPEGDecoder/src/User_Config.h`，确保 `#define LOAD_SD_LIBRARY` 和 `#define LOAD_SDFAT_LIBRARY` 都被注释掉，如文件中的摘录所示：
+
+
 
 ```cpp
 // Comment out the next #defines if you are not using an SD Card to store
@@ -1048,9 +1064,11 @@ tensorflow/lite/micro/tools/make/downloads/AmbiqSuite-Rel2.0.0 \
   /tools/apollo3_scripts/keys_info.py
 ```
 
+
+
 接下来，运行以下命令创建一个已签名的二进制文件。如果需要，将`python3`替换为`python`：
 
-```cpp
+```
 python3 tensorflow/lite/micro/tools/make/downloads/ \
   AmbiqSuite-Rel2.0.0/tools/apollo3_scripts/create_cust_image_blob.py \
   --bin tensorflow/lite/micro/tools/make/gen/ \
@@ -1061,9 +1079,9 @@ python3 tensorflow/lite/micro/tools/make/downloads/ \
   --version 0x0
 ```
 
-这将创建文件*main_nonsecure_ota.bin*。现在运行此命令创建文件的最终版本，您可以使用该文件刷写设备，使用下一步中将使用的脚本：
+这将创建文件`main_nonsecure_ota.bin`。现在运行此命令创建文件的最终版本，您可以使用该文件刷写设备，使用下一步中将使用的脚本：
 
-```cpp
+```
 python3 tensorflow/lite/micro/tools/make/downloads/ \
   AmbiqSuite-Rel2.0.0/tools/apollo3_scripts/create_cust_wireupdate_blob.py \
   --load-address 0x20000 \
@@ -1073,39 +1091,38 @@ python3 tensorflow/lite/micro/tools/make/downloads/ \
   --options 0x1
 ```
 
-现在您应该在运行命令的目录中有一个名为*main_nonsecure_wire.bin*的文件。这是您将要刷写到设备的文件。
+现在您应该在运行命令的目录中有一个名为`main_nonsecure_wire.bin`的文件。这是您将要刷写到设备的文件。
 
-#### 刷写二进制文件
+## 刷写二进制文件
 
 SparkFun Edge 将当前运行的程序存储在其 1 兆字节的闪存中。如果您希望板运行新程序，您需要将其发送到板上，该程序将存储在闪存中，覆盖先前保存的任何程序。
 
 正如我们在本书中早些时候提到的，这个过程被称为*刷写*。
 
-#### 将编程器连接到板上
+## 将编程器连接到板上
 
 要下载新程序到板上，您将使用 SparkFun USB-C 串行基础串行编程器。该设备允许您的计算机通过 USB 与微控制器通信。
 
 将此设备连接到您的板上，执行以下步骤：
 
-1.  在 SparkFun Edge 的一侧，找到六针排针。
-
-1.  将 SparkFun USB-C 串行基础插入这些引脚，确保每个设备上标记为 BLK 和 GRN 的引脚正确对齐，如图 9-6 所示。
+1. 在 SparkFun Edge 的一侧，找到六针排针。
+2. 将 SparkFun USB-C 串行基础插入这些引脚，确保每个设备上标记为 BLK 和 GRN 的引脚正确对齐，如图 9-6 所示。
 
 ![显示 SparkFun Edge 和 USB-C 串行基础如何连接的照片](img/timl_0613.png)
 
-###### 图 9-6\. 连接 SparkFun Edge 和 USB-C 串行基础（由 SparkFun 提供）
+**图 9-6.** 连接 SparkFun Edge 和 USB-C 串行基础（由 SparkFun 提供）
 
-#### 将编程器连接到计算机
+## 将编程器连接到计算机
 
 通过 USB 将板连接到计算机。要对板进行编程，您需要找出计算机给设备的名称。最好的方法是在连接设备之前和之后列出所有计算机的设备，然后查看哪个设备是新的。
 
-###### 警告
+**警告**
 
 一些人报告了他们操作系统的默认驱动程序与编程器存在问题，因此我们强烈建议在继续之前安装[驱动程序](https://oreil.ly/yI-NR)。
 
 在通过 USB 连接设备之前，运行以下命令：
 
-```cpp
+```
 # macOS:
 ls /dev/cu*
 
@@ -1115,7 +1132,7 @@ ls /dev/tty*
 
 这应该输出一个附加设备列表，看起来像以下内容：
 
-```cpp
+```
 /dev/cu.Bluetooth-Incoming-Port
 /dev/cu.MALS
 /dev/cu.SOC
@@ -1123,7 +1140,7 @@ ls /dev/tty*
 
 现在，将编程器连接到计算机的 USB 端口，并再次运行以下命令：
 
-```cpp
+```
 # macOS:
 ls /dev/cu*
 
@@ -1133,7 +1150,7 @@ ls /dev/tty*
 
 您应该在输出中看到一个额外的项目，如下例所示。您的新项目可能有不同的名称。这个新项目是设备的名称：
 
-```cpp
+```
 /dev/cu.Bluetooth-Incoming-Port
 /dev/cu.MALS
 /dev/cu.SOC
@@ -1142,32 +1159,31 @@ ls /dev/tty*
 
 这个名称将用于引用设备。但是，它可能会根据编程器连接的 USB 端口而变化，因此如果您将板子从计算机断开然后重新连接，可能需要再次查找其名称。
 
-###### 提示
+**提示**
 
-一些用户报告列表中出现了两个设备。如果看到两个设备，则要使用的正确设备以“wch”开头；例如，`/dev/wchusbserial-14410.`
+一些用户报告列表中出现了两个设备。如果看到两个设备，则要使用的正确设备以“wch”开头；例如，`/dev/wchusbserial-14410`。
 
 在确定设备名称后，将其放入一个 shell 变量以备后用：
 
-```cpp
+```
 export DEVICENAME=<*your device name here*>
-
 ```
 
 这是在后续过程中运行需要设备名称的命令时可以使用的变量。
 
-#### 运行脚本以刷写您的板子
+## 运行脚本以刷写您的板子
 
 要刷写板子，您需要将其置于特殊的“引导加载程序”状态，以准备接收新的二进制文件。然后，您将运行一个脚本将二进制文件发送到板子。
 
 首先创建一个环境变量来指定波特率，即数据发送到设备的速度：
 
-```cpp
+```
 export BAUD_RATE=921600
 ```
 
 现在将以下命令粘贴到终端中，但*不要立即按 Enter*！命令中的`${DEVICENAME}`和`${BAUD_RATE}`将被替换为您在前面部分设置的值。如有必要，请记得将`python3`替换为`python`。
 
-```cpp
+```
 python3 tensorflow/lite/micro/tools/make/downloads/ \
   AmbiqSuite-Rel2.0.0/tools/apollo3_scripts/uart_wired_update.py -b \
   ${BAUD_RATE} ${DEVICENAME} -r 1 -f main_nonsecure_wire.bin -i 6
@@ -1177,21 +1193,18 @@ python3 tensorflow/lite/micro/tools/make/downloads/ \
 
 执行以下步骤：
 
-1.  确保您的板子连接到编程器，并且整个设备通过 USB 连接到计算机。
-
-1.  在板子上，按住标有`14`的按钮。*继续按住它。*
-
-1.  在仍按住标有`14`的按钮的情况下，按下标有`RST`的按钮重置板子。
-
-1.  在计算机上按 Enter 运行脚本。*继续按住按钮`14`。*
+1. 确保您的板子连接到编程器，并且整个设备通过 USB 连接到计算机。
+2. 在板子上，按住标有`14`的按钮。*继续按住它。*
+3. 在仍按住标有`14`的按钮的情况下，按下标有`RST`的按钮重置板子。
+4. 在计算机上按 Enter 运行脚本。*继续按住按钮`14`。*
 
 ![显示 SparkFun Edge 按钮的照片](img/timl_0614.png)
 
-###### 图 9-7\. SparkFun Edge 的按钮
+**图 9-7.** SparkFun Edge 的按钮
 
 您现在应该在屏幕上看到类似以下内容：
 
-```cpp
+```
 Connecting with Corvette over serial port /dev/cu.usbserial-1440...
 Sending Hello.
 Received response for Hello
@@ -1222,7 +1235,7 @@ Sending Data Packet of length  8180
 
 程序将继续在终端上打印行。最终，您会看到类似以下内容：
 
-```cpp
+```
 [...lots more Sending Data Packet of length  8180...]
 Sending Data Packet of length  8180
 Sending Data Packet of length  6440
@@ -1232,11 +1245,11 @@ Done.
 
 这表示刷写成功。
 
-###### 提示
+**提示**
 
 如果程序输出以错误结束，请检查是否打印了`Sending Reset Command.`。如果是，则尽管出现错误，刷写可能已成功。否则，刷写可能失败。尝试再次运行这些步骤（您可以跳过设置环境变量）。
 
-### 测试程序
+## 测试程序
 
 首先按下`RST`按钮，确保程序正在运行。
 
@@ -1250,17 +1263,17 @@ Done.
 
 如果您得到看似不正确的结果，请确保您处于光线良好的环境中。还要记住，这是一个小模型，它以精度换取了小尺寸。它工作得非常好，但并非始终 100%准确。
 
-### 查看调试数据
+## 查看调试数据
 
 该程序将检测结果记录到串行端口。要查看它们，我们可以使用波特率为 115200 监视板的串行端口输出。在 macOS 和 Linux 上，以下命令应该有效：
 
-```cpp
+```
 screen ${DEVICENAME} 115200
 ```
 
 您应该最初看到类似以下内容的输出：
 
-```cpp
+```
 Apollo3 Burst Mode is Available
 
                                Apollo3 operating in Burst Mode (96MHz)
@@ -1268,24 +1281,22 @@ Apollo3 Burst Mode is Available
 
 当板捕获帧并运行推断时，您应该看到它打印调试信息：
 
-```cpp
+```
 Person score: 130 No person score: 204
 Person score: 220 No person score: 87
 ```
 
 要停止使用`screen`查看调试输出，请按 Ctrl-A，紧接着按 K 键，然后按 Y 键。
 
-### 进行您自己的更改
+## 进行您自己的更改
 
-现在您已经部署了基本应用程序，请尝试玩耍并进行一些更改。您可以在*tensorflow/lite/micro/examples/person_detection*文件夹中找到应用程序的代码。只需编辑并保存，然后重复前面的说明以将修改后的代码部署到设备上。
+现在您已经部署了基本应用程序，请尝试玩耍并进行一些更改。您可以在`tensorflow/lite/micro/examples/person_detection`文件夹中找到应用程序的代码。只需编辑并保存，然后重复前面的说明以将修改后的代码部署到设备上。
 
 以下是您可以尝试的一些事项：
 
-+   修改检测响应器，使其忽略模糊的输入，即“人”和“无人”得分之间没有太大差异的情况。
-
-+   利用人员检测结果来控制其他组件，如额外的 LED 或伺服。
-
-+   构建一个智能安全摄像头，通过存储或传输图像来检测只包含人的图像。
+- 修改检测响应器，使其忽略模糊的输入，即“人”和“无人”得分之间没有太大差异的情况。
+- 利用人员检测结果来控制其他组件，如额外的 LED 或伺服。
+- 构建一个智能安全摄像头，通过存储或传输图像来检测只包含人的图像。
 
 # 总结
 

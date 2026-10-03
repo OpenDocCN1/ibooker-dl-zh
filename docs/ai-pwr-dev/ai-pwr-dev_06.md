@@ -1,14 +1,12 @@
+
 # 第五章：使用 GitHub Copilot 和 Copilot Chat 管理数据
 
 本章涵盖
 
-+   将数据持久化到关系型数据库
-
-+   使用 Apache Kafka 进行数据流
-
-+   集成事件驱动原则
-
-+   使用 Spark 分析数据以监控位置
++ 将数据持久化到关系型数据库
++ 使用 Apache Kafka 进行数据流
++ 集成事件驱动原则
++ 使用 Spark 分析数据以监控位置
 
 上一章为我们信息技术资产管理（ITAM）系统奠定了基础。然而，这个应用程序没有数据将无法满足我们的需求。数据是每个应用程序的生命线。这正是本章的主题：我们可以使用生成式 AI 以各种方式创建数据、流数据、转换数据、对数据做出反应，并从数据中学习。
 
@@ -18,7 +16,7 @@
 
 我们的第一项任务将是构建一个大量的数据集，以帮助我们在本章剩余部分的实验。首先，我们将使用 GitHub Copilot 生成 1,000 行资产信息。然而，我们很快就会发现问题可能不是最适合这个任务的工具。使用这些工具的一个关键驱动因素是发现的想法：测试它们的边界，对抗它们，偶尔甚至反击。但旅程往往就是乐趣所在。一旦我们找到了这个边缘，我们将被介绍到一个新的、以前未见过的工具：GitHub Copilot Chat。最后，当我们创建我们的资产列表后，我们将为这些资产添加位置信息，再次使用 GitHub Copilot Chat。
 
-我们需要在构建初始数据集之前让我们的数据库运行起来。Docker 使得这项任务变得简单，只需最小努力，我们就能快速启动一个空的 PostgreSQL（或其他 RDBMS/NoSQL 服务器）。你忘记了这个命令吗？不用担心——我们可以询问 Copilot。打开一个名为 data/initial_data_load.sql 的新文件，并在你新创建的 SQL 文件顶部输入以下提示：
+我们需要在构建初始数据集之前让我们的数据库运行起来。Docker 使得这项任务变得简单，只需最小努力，我们就能快速启动一个空的 PostgreSQL（或其他 RDBMS/NoSQL 服务器）。你忘记了这个命令吗？不用担心——我们可以询问 Copilot。打开一个名为 `data/initial_data_load.sql` 的新文件，并在你新创建的 SQL 文件顶部输入以下提示：
 
 ```py
 -- Question: What is the command to run a docker container, running PostgreSQL for a database called itam_db. I would like to specify the password for this database.
@@ -32,9 +30,9 @@ Copilot 将逐步揭示 Docker 命令：
     -p 5432:5432 postgres
 ```
 
-一旦你在终端或命令行运行此命令，我们就可以构建我们的数据集。你应该能够连接到本地运行的数据库。注意，一个名为`itam_db`的数据库正在其中运行。然而，这个数据库没有任何模式、表或数据。让我们首先设置一个新的模式。
+一旦你在终端或命令行运行此命令，我们就可以构建我们的数据集。你应该能够连接到本地运行的数据库。注意，一个名为 `itam_db` 的数据库正在其中运行。然而，这个数据库没有任何模式、表或数据。让我们首先设置一个新的模式。
 
-在我们的 initial_data_load.sql 中，我们将添加一个提示让 Copilot 起草创建模式的命令。以下提示（以及 Copilot 的响应）将允许你创建一个名为`itam`的新模式，如果从你的数据库客户端应用程序（例如 DataGrip、SQuirreL、pdAdmin 或甚至使用 Docker 的`exec`命令`docker exec -i itam_db psql -U postgres -c "create schema itam"`）执行：
+在我们的 `initial_data_load.sql` 中，我们将添加一个提示让 Copilot 起草创建模式的命令。以下提示（以及 Copilot 的响应）将允许你创建一个名为 `itam` 的新模式，如果从你的数据库客户端应用程序（例如 DataGrip、SQuirreL、pdAdmin 或甚至使用 Docker 的 `exec` 命令 `docker exec -i itam_db psql -U postgres -c "create schema itam"`）执行：
 
 ```py
 -- create a schema called itam
@@ -60,7 +58,7 @@ grant select, insert, update, delete on all tables in schema itam to itam_admin;
 grant usage, drop on schema itam to itam_admin;
 ```
 
-接下来，我们将此模式的所有权授予`itam_admin`账户。转让此所有权将确保只有此账户可以更改表结构（数据定义）。
+接下来，我们将此模式的所有权授予 `itam_admin` 账户。转让此所有权将确保只有此账户可以更改表结构（数据定义）。
 
 ```py
 -- grant ownership of the itam schema to itam_admin
@@ -69,7 +67,7 @@ alter schema itam owner to itam_admin;
 
 在设置、账户创建和系统所有权问题解决后，我们可以开始关注数据。我们将从添加支持资产的数据参考开始，即折旧策略。这种数据在性质上更静态；如果有的话，变化频率较低。让我们定义并存储这些策略。
 
-列表 5.2 创建`depreciation_strategy`表的提示
+列表 5.2 创建 `depreciation_strategy` 表的提示
 
 ```py
 -- create a table called depreciation_strategy in the itam schema. the table should have the following columns: id (int), name (varchar), and description (varchar). the table should have a primary key on id.
@@ -91,7 +89,7 @@ create table itam.depreciation_strategy (
 create sequence itam.depreciation_strategy_seq start 1 increment 1;
 ```
 
-自然地，在我们传说中的手中有了序列，我们需要知道如何将序列与`depreciation_strategy`表的主键列关联起来。幸运的是，Copilot 有答案。
+自然地，在我们传说中的手中有了序列，我们需要知道如何将序列与 `depreciation_strategy` 表的主键列关联起来。幸运的是，Copilot 有答案。
 
 列表 5.4 询问 Copilot 如何将序列与主键关联
 
@@ -108,7 +106,7 @@ alter table itam.depreciation_strategy
 
 最后，我们通过将以下静态条目插入表中来完成此表。目前我们只使用两种折旧策略：直线法和双倍余额递减法。
 
-列表 5.5 将静态条目添加到`depreciation_strategy`表
+列表 5.5 将静态条目添加到 `depreciation_strategy` 表
 
 ```py
 insert into depreciation_strategy (id, name, description) 
@@ -120,9 +118,9 @@ insert into depreciation_strategy (id, name, description)
     'double declining balance');
 ```
 
-接下来，我们将继续处理`funding_details`表。这些信息告诉我们如何为我们的设备融资，其再销售价值，以及资产使用寿命结束后应如何处理资产的说明。步骤序列将与我们对折旧策略所做的工作相同，唯一的区别是我们不会添加静态条目，因为此数据直接与单个资产相关。我们将定义表，创建序列，并将该序列应用于表，其中它作为主键。
+接下来，我们将继续处理 `funding_details` 表。这些信息告诉我们如何为我们的设备融资，其再销售价值，以及资产使用寿命结束后应如何处理资产的说明。步骤序列将与我们对折旧策略所做的工作相同，唯一的区别是我们不会添加静态条目，因为此数据直接与单个资产相关。我们将定义表，创建序列，并将该序列应用于表，其中它作为主键。
 
-列表 5.6 `funding_details`表的完整代码列表
+列表 5.6 `funding_details` 表的完整代码列表
 
 ```py
 -- create a table called funding_details in the itam schema. the table should have the following columns: id (int), name (varchar),depreciation_strategy_id (int) and depreciation_rate (float). the table should have a primary key on id.
@@ -178,6 +176,24 @@ nextval('itam.assets_seq'::
 
 列表 5.8 为资产表创建数据集
 
+
+
+# 为 ITAM 系统生成资产数据集
+
+以下是一个用于 ITAM 系统的资产数据集生成方案。数据集应包含以下列：`id`（整数）、`name`（字符串）、`status`（字符串）、`category`（字符串）、`cost`（浮点数）、`useful_life`（整数）、`salvage_value`（浮点数）、`purchase_date`（日期）、`funding_details_id`（整数）。数据集应包含 1000 行，按 `id` 排序。每行应具有以下特征：
+
+- `id` 应为唯一整数，从 1 开始顺序递增。
+- `name` 应为长度在 1 到 50 个字符之间的随机字符串。
+- `status` 应从以下有效资产状态中随机选择：`in use`、`in storage`、`disposed of`、`in repair`、`in transit`、`other`。
+- `category` 应从以下有效类别中随机选择：`hardware`、`software`、`other`。
+- `cost` 应为 0 到 100000 之间的随机浮点数。
+- `useful_life` 应为 1 到 10 之间的随机整数。
+- `salvage_value` 应为大于 0 但小于资产成本的随机浮点数。
+- `purchase_date` 应为 2019 年 1 月 1 日至 2022 年 12 月 31 日之间的随机日期。
+- `funding_details_id` 应为 1 或 2 的随机整数。
+
+数据集应保存为 `data` 目录中名为 `assets.csv` 的 CSV 文件。文件应包含标题行，列的数据类型如下：`id`（整数）、`name`（字符串）、`status`（字符串）、`category`（字符串）、`cost`（浮点数）、`useful_life`（浮点数）、`salvage_value`（浮点数）、`funding_details_id`（整数）。
+
 ```py
 -- Generate a dataset of assets for an ITAM system. The dataset should include the following columns: id (int), name (varchar), status (varchar), category (varchar), cost (float), useful_life (int), salvage_value (float), purchase_date (date), funding_details_id (int). The dataset should have 1000 rows, sorted by id. Each row should have the following characteristics:
 -- - id should be a unique integer and sequential starting at 1.
@@ -194,7 +210,7 @@ nextval('itam.assets_seq'::
 
 Copilot 提供的解决方案是新颖的。它使用 Postgres 内置函数构建一个大型序列，这意味着这个解决方案是不可移植的。然而，鉴于这是我们将会使用的数据库，这是一个足够合适的解决方案。生成的数据集已经经过优化。如果我们使用 Python 并请求 Copilot 帮助编写一个脚本来生成一个可以加载到 Postgres 中的文件，我们可能会得到更好的结果。然而，鉴于这个数据集只是为了与应用程序一起使用，我们目前不需要过分关注数据质量——尽管在现实世界中，数据质量是至关重要的。
 
-列表 5.9 Copilot 的响应：基于序列构建的 `insert` 语句
+**列表 5.9 Copilot 的响应：基于序列构建的 `insert` 语句**
 
 ```py
 insert into itam.assets (id, name, status, 
@@ -248,7 +264,7 @@ from (
 
 如果我们切换回 ChatGPT 一分钟，我们可以得到关于如何创建此类数据集的第二意见。ChatGPT 建议使用 Python 库 `faker`。`faker` 包用于生成假数据，例如常见的英语名字。`numpy` 用于生成成本、使用寿命和残值等随机浮点值。`pandas` 用于在 `DataFrame`（表格）中管理数据。此外，我们可以使用 `df.to_csv('assets.csv', index=False)` 方法将 `DataFrame` 保存到 CSV 文件中。
 
-列表 5.10 ChatGPT 建议使用 `Faker` 生成假数据集
+**列表 5.10 ChatGPT 建议使用 `Faker` 生成假数据集**
 
 ```py
 import pandas as pd
@@ -294,7 +310,7 @@ print(df)
 
 对于这些资产中的每一个，我们还需要资金细节：它们是如何融资的（在这个例子中是购买）以及折旧详情。不出所料，我们从 Copilot 得到了一个类似的解决方案：使用与用于资产的类似提示生成一系列条目。我们需要确保对于每个资产标识符（1–1000），我们都有一个相应的资金详情条目。否则，在运行此代码时我们可能会遇到空指针。
 
-列表 5.11 为 `funding_details` 表创建数据集
+**列表 5.11 为 `funding_details` 表创建数据集**
 
 ```py
 -- Generate a dataset of funding details for an ITAM system. The dataset should include the following columns: id (int), name (varchar), depreciation_strategy_id (int), depreciation_rate (float). The dataset should have 1000 rows, sorted by id. 
@@ -328,7 +344,7 @@ from (
 
 在这个阶段，我们已经触及了 Copilot 能力的边缘。我们对接下来会发生什么以及如何解决我们最新的困境感到困惑。尽管很诱人，但我们不能放弃并回家。因此，是时候介绍 Copilot 产品套件中最新的补充：Copilot Chat。Copilot Chat 是一个嵌入在 IDE 中的 GPT-4 模型（目前仅由 Visual Studio Code 支持）。我们将打开聊天对话框，询问如何在仍然使用 SQLAlchemy 的对象关系模型（ORM）功能的同时保持我们的商业模式清洁。图 5.1 显示了 ChatGPT 的响应。
 
-列表 5.12 领域类之外的 ORM 支持
+**列表 5.12 领域类之外的 ORM 支持**
 
 ```py
 Base  = declarative_base()
@@ -367,7 +383,9 @@ class AssetModel(Base):
 
 首先，我们将询问 Copilot Chat 如何使用 Docker 在本地运行 Kafka。Apache Kafka 有一个不应得的声誉，即难以安装和配置，而在 Docker 中运行将使我们能够绕过这一争议。使用 Copilot Chat，我们可以生成一个 Docker Compose 文件。然而，正如通常情况一样，版本非常旧，以至于不支持某些硬件。列表 5.13 是来自 Confluent（提供 Kafka 商业支持的公司的）官方 GitHub 仓库的更新列表。请注意，Docker Compose 文件的内容包括 Kafka 和 Zookeeper。Zookeeper 是 Kafka 用于管理和协调集群中代理的分布式协调服务，至少目前是这样。未来的版本旨在去除对 Zookeeper 的依赖。
 
-列表 5.13 启动 Kafka 与 Zookeeper 的 Docker Compose 文件
+
+
+# 列表 5.13 启动 Kafka 与 Zookeeper 的 Docker Compose 文件
 
 ```py
 version: '2.1'
@@ -418,16 +436,12 @@ DOCKER:PLAINTEXT
 
 随着我们的新 Kafka 实例运行，我们现在需要一个消费者，它会从主题 `asset_location`（我们很快就会创建）中拉取更新的位置，并更新数据库中的库存。再次，我们可以要求 Copilot Chat 提供一个如何使用 Python 订阅主题的建议：
 
-|
-
-![](img/logo-NC.png)
-
-| 在我们的 ITAM 项目中，我们希望有一个用于资产位置 Kafka 主题的 Python 消费者。一旦它接收到新的更新位置，它应该更新领域模型以反映新的位置。我们应该怎么做呢？ |
-| --- |
+| ![](img/logo-NC.png) | 在我们的 ITAM 项目中，我们希望有一个用于资产位置 Kafka 主题的 Python 消费者。一旦它接收到新的更新位置，它应该更新领域模型以反映新的位置。我们应该怎么做呢？ |
+| --- | --- |
 
 Copilot Chat 生成的代码创建了一个消费者，监听主题，并使用 `AssetManager` 类的引用来更新受影响资产的地点。
 
-列表 5.14 Copilot Chat 监控资产位置的代码
+# 列表 5.14 Copilot Chat 监控资产位置的代码
 
 ```py
 from kafka import KafkaConsumer
@@ -453,21 +467,13 @@ for message in consumer:
 
 然而，适配器是否应该知道 `AssetManager`？`AssetManager` 并不直接位于领域模型内部；它是一个关键的中介。`AssetManager` 和适配器之间的这种耦合程度可能会被认为违反了六边形架构模型中的六边形。让我们让 Copilot Chat 评价一下。我们可以这样问它：
 
-|
-
-![](img/logo-NC.png)
-
-| 由于本项目使用六边形架构，让适配器知道 AssetManager 是否是一个好主意？ |
-| --- |
+| ![](img/logo-NC.png) | 由于本项目使用六边形架构，让适配器知道 `AssetManager` 是否是一个好主意？ |
+| --- | --- |
 
 观察图 5.2，Copilot Chat 同意这确实会被视为违反适配器的合同责任。我们可以在 `AssetManager` 类中添加一个新的端口，该端口将使用 Kafka 端口。然而，让我们看看 Copilot Chat 是否有其他建议：
 
-|
-
-![](img/logo-NC.png)
-
-| 我们不希望 Kafka 消费者直接与 AssetManager 交互。有没有什么方法可以完成这个任务？ |
-| --- |
+| ![](img/logo-NC.png) | 我们不希望 Kafka 消费者直接与 `AssetManager` 交互。有没有什么方法可以完成这个任务？ |
+| --- | --- |
 
 ![](img/CH05_F02_Crocker2.png)
 
@@ -475,13 +481,13 @@ for message in consumer:
 
 Copilot Chat 建议我们应用 `Mediator` 模式，这类似于端口和适配器的组合。
 
-中介模式
+## 中介模式
 
 中介者设计模式是一种行为模式，通过封装中介对象中的交互来促进对象之间的松散耦合。中介对象充当中央枢纽，在对象之间促进通信，而无需对象相互了解。
 
 让我们先看看 Copilot Chat 生成的 `Mediator` 类。该类位于 `AssetManager` 和 Kafka 消费者之间。
 
-列表 5.15 `Mediator` 类位于 `AssetManager` 和 Kafka 消费者之间
+# 列表 5.15 `Mediator` 类位于 `AssetManager` 和 Kafka 消费者之间
 
 ```py
 class AssetLocationMediator:
@@ -506,7 +512,7 @@ class AssetLocationMediator:
 
 现在我们有了将 Kafka 消费者从 `AssetManager` 解耦的策略，我们应该更新 Kafka 消费者以利用它。我们需要在构造函数中将中介者传递给类。这样，`AssetManager` 和消费者将能够访问相同的实例，消息可以自由地来回流动——或者更确切地说，在这种情况下，流动将是单向的。你应该注意，我们打算在这个主题上读写 JSON，因此我们的值反序列化器需要理解这一点。
 
-列表 5.16 将中介者集成到 Kafka 消费者类中
+# 列表 5.16 将中介者集成到 Kafka 消费者类中
 
 ```py
 from kafka import KafkaConsumer
@@ -548,7 +554,7 @@ class AssetLocationKafkaConsumer:
 
 对于 `AssetManager` 类有两个必要的更改。首先，我们需要在构造函数中添加 `AssetLocationMediator`，以注册处理 `AssetLocationUpdated` 事件。其次，我们需要添加一个处理此事件的方法。在这种情况下，我们调用方法 `update_asset_location`。简化的代码如下。
 
-列表 5.17 更新的 `AssetManager` 构造函数和事件处理器
+# 列表 5.17 更新的 `AssetManager` 构造函数和事件处理器
 
 ```py
 from itam.infrastructure.mediators.asset_location_mediator import 
@@ -600,7 +606,7 @@ kafka-topics --create --bootstrap-server localhost:9092
 
 如果您再次运行 `kafka-topics --list` 命令，您将看到新主题。我们在创建主题命令中包含的分区和复制因子指令通知 Kafka 我们想要一个分区和一个复制因子为 1。如果我们正在为生产或任何其他非测试目的设置此配置，我们可能希望它们大于这个值，以确保数据的可用性。表 5.1 提供了您将需要用于此和其他项目的常用 Kafka 命令摘要。
 
-表 5.1 Kafka 控制台命令摘要
+## 表 5.1 Kafka 控制台命令摘要
 
 | 操作 | 命令 |
 | --- | --- |
@@ -611,6 +617,8 @@ kafka-topics --create --bootstrap-server localhost:9092
 | 列表 | `kafka-topics --list --bootstrap-server localhost:9092` |
 
 现在是趣味部分：观察应用程序的实际运行。Kafka 附带了一个控制台生产者，它将允许我们从标准输入向 Kafka 发布消息。为此，使用以下命令启动控制台生产者：
+
+
 
 ```py
 kafka-console-producer --broker-list localhost:9092 --topic asset_location
@@ -634,7 +642,7 @@ kafka-console-producer --broker-list localhost:9092 --topic asset_location
 
 当您输入这些消息时，您应该看到应用程序的输出，指示位置已更新。
 
-删除主题
+## 删除主题
 
 为了完整性，您应该了解一个额外的命令。您在输入这些消息时可能会犯错，无效的消息可能会破坏您的消费者。一个可能的解决方案是删除该主题。删除主题听起来可能有些戏剧性，但它会解决问题。因此，以下是该命令：
 
@@ -655,11 +663,7 @@ Spark 还包括几个库来扩展其功能，包括用于机器学习的 MLlib�
 
 首先，我们将要求 Copilot Chat 推荐一个使用 Apache Spark 跟踪我们的资产的战略：
 
-|
-
-![](img/logo-NC.png)
-
-| 让我们假设我们的公司位于芝加哥。我们想要创建一个名为 `AssetLocationSparkAdapter` 的类，该类将从名为 `asset_location` 的 Kafka 主题中持续流式传输 `AssetLocation` JSON 消息。`AssetLocation` 具有以下属性：`asset_id`: int，`latitude`: float，`longitude`: float，和 `timestamp`: datetime。`AssetLocations` 存储在名为 `itam.asset_locations` 的 Postgres 数据库表中。`AssetLocationSparkAdapter` 应该计算新的 `AssetLocation` 是否比芝加哥远 25 英里以上。如果是，则应在控制台写入一条消息。这应该使用 Spark 的最新版本。我们该如何做呢？ |
+| ![](img/logo-NC.png) | 让我们假设我们的公司位于芝加哥。我们想要创建一个名为 `AssetLocationSparkAdapter` 的类，该类将从名为 `asset_location` 的 Kafka 主题中持续流式传输 `AssetLocation` JSON 消息。`AssetLocation` 具有以下属性：`asset_id`: int，`latitude`: float，`longitude`: float，和 `timestamp`: datetime。`AssetLocations` 存储在名为 `itam.asset_locations` 的 Postgres 数据库表中。`AssetLocationSparkAdapter` 应该计算新的 `AssetLocation` 是否比芝加哥远 25 英里以上。如果是，则应在控制台写入一条消息。这应该使用 Spark 的最新版本。我们该如何做呢？ |
 | --- |
 
 Copilot Chat 生成了一个类，你应该能够将其放入名为 `asset_location_spark_adapter.py` 的文件中，位于基础设施包中。它还贴心地为每一行代码提供了注释，因此你应该会发现生成的代码很容易理解。`import` 语句包括 Spark 库以及 `geopy`。

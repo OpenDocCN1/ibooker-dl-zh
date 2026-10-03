@@ -1,3 +1,4 @@
+
 # 前言
 
 要在 AI 领域取得成功，首先掌握 API。由于人工智能、机器学习和数据科学的增长，精通 API 比以往任何时候都更有价值。
@@ -19,17 +20,11 @@
 本书将教授一些你可能还没有学过的技术，例如：
 
 +   开发和部署 API
-
 +   创建软件开发工具包（SDK）和 API 客户端
-
 +   创建并发布 Python 包到 PyPI
-
 +   将机器学习模型作为 API 发布
-
 +   创建 Streamlit 数据应用
-
 +   使用 Airflow 创建数据管道
-
 +   使用 LangChain 和 ChatGPT 创建生成式 AI 应用
 
 ## API 开发者和设计师
@@ -39,13 +34,9 @@ API 开发者和设计师可以学习如何为重要的新受众增强他们的 
 实践中的示例将教授各种新技能：
 
 +   使用 FastAPI、SQLAlchemy 和 Pydantic 创建 Python API
-
 +   使用 Docker 容器化 API
-
 +   将 API 部署到云主机
-
 +   创建 Python SDK 并发布到 PyPI
-
 +   使用 LangChain 和 ChatGPT 创建生成式 AI 应用
 
 ## 求职者和角色转换者
@@ -66,17 +57,15 @@ API 开发者和设计师可以学习如何为重要的新受众增强他们的 
 
 ###### 小贴士
 
-当你完成你的项目时，请通过 ryan@handsonapibook.com 或在 [LinkedIn](https://www.linkedin.com/in/ryanday1) 上联系我，以便我能与你一起庆祝你的成就。我期待看到你将构建什么。
+当你完成你的项目时，请通过 `ryan@handsonapibook.com` 或在 [LinkedIn](https://www.linkedin.com/in/ryanday1) 上联系我，以便我能与你一起庆祝你的成就。我期待看到你将构建什么。
 
 # 使用本书
 
 我建议你不要从头到尾阅读这本书，而是选择你想要学习的技能，并开始学习教授该技能的章节。你可以通过以下方式快速完成：
 
-1.  决定你是想先创建一个 API (第 I 部分)，使用数据科学中的 API (第 II 部分)，还是使用 AI 中的 API (第 III 部分)。
-
-1.  按照该部分的入门章节中的说明执行操作，克隆 GitHub 仓库并启动 Codespace。
-
-1.  按照相关章节中的说明执行代码。
+1.  决定你是想先创建一个 API（第 I 部分），使用数据科学中的 API（第 II 部分），还是使用 AI 中的 API（第 III 部分）。
+2.  按照该部分的入门章节中的说明执行操作，克隆 GitHub 仓库并启动 Codespace。
+3.  按照相关章节中的说明执行代码。
 
 如果我做得恰当，每一章都可以独立存在。在你学会一项技能后，四处看看并找到你想要学习的另一项技能，然后重复同样的过程。本书中的技能就像构建块：你学习的每一部分都为你更深入地理解其他部分做好准备。所有这些加在一起，给你提供了对数据科学和 AI 中 API 的相当深入的理解。
 
@@ -93,18 +82,18 @@ API 开发者和设计师可以学习如何为重要的新受众增强他们的 
 # 为什么是幻想足球？
 
 > 如果你坐下来对人们痴迷于细节的爱好进行排名，幻想体育和软件开发都将接近这个列表的顶端。当你结合这些爱好时，可能性是无限的！
-> 
+>
 > 乔伊·格雷科，Leeger 统计应用程序的创建者
 
 本书中的组合项目遵循一个虚构的幻想体育联赛网站的故事：SportsWorldCentral.com。通过你的项目，你将为数据驱动的用户设计并构建 API，然后切换角色，使用你创建的 API 构建数据科学和生成式 AI 应用。
 
-如乔伊·格雷科所说，幻想体育是这种场景的自然选择。（你将在本书的后面听到更多关于他的内容。）幻想体育是数据科学家的自然游乐场，幻想网站使用了大量的 API。多年来，我作为一个虔诚的（或上瘾的）幻想经理，在这两方面投入了大量的时间。幻想经理也是任何幻想网站提供的预测或规范性分析功能的快速采用者。（如果你对此表示怀疑，你没有看过一个经理挑选两名自由球员并做出三次阵容调整，将他们的获胜概率从 45%提高到 53%。）
+如乔伊·格雷科所说，幻想体育是这种场景的自然选择。（你将在本书的后面听到更多关于他的内容。）幻想体育是数据科学家的自然游乐场，幻想网站使用了大量的 API。多年来，我作为一个虔诚的（或上瘾的）幻想经理，在这两方面投入了大量的时间。幻想经理也是任何幻想网站提供的预测或规范性分析功能的快速采用者。（如果你对此表示怀疑，你没有看过一个经理挑选两名自由球员并做出三次阵容调整，将他们的获胜概率从 45% 提高到 53%。）
 
 幻想体育是一种有趣的方式来探索人工智能、数据科学和 API 之间的重叠。当你通过编写本书的方式前进时，我希望你和我写作本书时一样享受乐趣。
 
 # 获取更多关于 API、AI 和数据科学的提示
 
-本书中的内容将为这些主题提供一个真正坚实的基础，我希望它能提高你对学习更多知识的兴趣。要获取更多关于这个主题的提示，你可以通过访问[*https://handsonapibook.com*](https://handsonapibook.com)订阅我的通讯。
+本书中的内容将为这些主题提供一个真正坚实的基础，我希望它能提高你对学习更多知识的兴趣。要获取更多关于这个主题的提示，你可以通过访问 [*https://handsonapibook.com*](https://handsonapibook.com) 订阅我的通讯。
 
 # 本书使用的约定
 
@@ -143,18 +132,16 @@ API 开发者和设计师可以学习如何为重要的新受众增强他们的 
 补充材料（代码示例、练习等）可在三个存储库中下载，每个部分一个：
 
 +   **第一部分**：[*https://github.com/handsonapibook/api-book-part-one*](https://github.com/handsonapibook/api-book-part-one)
-
 +   **第二部分**：[*https://github.com/handsonapibook/api-book-part-two*](https://github.com/handsonapibook/api-book-part-two)
-
 +   **第三部分**：[*https://github.com/handsonapibook/api-book-part-three*](https://github.com/handsonapibook/api-book-part-three)
 
-如果您有技术问题或使用代码示例时遇到问题，请发送电子邮件到*support@oreilly.com*。
+如果您有技术问题或使用代码示例时遇到问题，请发送电子邮件到 `support@oreilly.com`。
 
 本书旨在帮助您完成任务。如果本书提供了示例代码，您可以在您的程序和文档中使用它。除非您正在复制代码的很大一部分，否则您不需要联系我们获得许可。例如，编写一个使用本书中几个代码片段的程序不需要许可。通过引用本书并引用示例代码来回答问题不需要许可。将本书的大量示例代码纳入您产品的文档中需要许可。
 
 我们感谢，但通常不需要归属。归属通常包括标题、作者、出版社和 ISBN。例如：“*Hands-On APIs for AI and Data Science* by Ryan Day (O’Reilly). Copyright 2025 Ryan Day, 978-1-098-16441-6。”
 
-如果您认为您对代码示例的使用超出了合理使用或上述许可，请随时联系我们*permissions@oreilly.com*。
+如果您认为您对代码示例的使用超出了合理使用或上述许可，请随时联系我们 `permissions@oreilly.com`。
 
 # O’Reilly 在线学习
 
@@ -162,31 +149,24 @@ API 开发者和设计师可以学习如何为重要的新受众增强他们的 
 
 40 多年来，[*O’Reilly 媒体*](https://oreilly.com)一直提供技术和商业培训、知识和见解，以帮助公司成功。
 
-我们独特的专家和创新者网络通过书籍、文章和我们的在线学习平台分享他们的知识和专长。O’Reilly 的在线学习平台为您提供按需访问实时培训课程、深入的学习路径、交互式编码环境以及来自 O’Reilly 和 200 多家其他出版商的大量文本和视频。欲了解更多信息，请访问[*https://oreilly.com*](https://oreilly.com)。
+我们独特的专家和创新者网络通过书籍、文章和我们的在线学习平台分享他们的知识和专长。O’Reilly 的在线学习平台为您提供按需访问实时培训课程、深入的学习路径、交互式编码环境以及来自 O’Reilly 和 200 多家其他出版商的大量文本和视频。欲了解更多信息，请访问 [*https://oreilly.com*](https://oreilly.com)。
 
 # 如何联系我们
 
 请将有关本书的评论和问题寄给出版社：
 
 +   O’Reilly 媒体公司
-
 +   1005 Gravenstein 高速公路北
-
 +   加州塞巴斯蒂波尔，95472
-
 +   800-889-8969（美国或加拿大）
-
 +   707-827-7019（国际或本地）
-
 +   707-829-0104（传真）
-
-+   *support@oreilly.com*
-
++   `support@oreilly.com`
 +   [*https://oreilly.com/about/contact.html*](https://oreilly.com/about/contact.html)
 
-我们为这本书有一个网页，其中列出了勘误表、示例和任何其他附加信息。您可以通过[*https://oreil.ly/hands-on-api*](https://oreil.ly/hands-on-api)访问此页面。
+我们为这本书有一个网页，其中列出了勘误表、示例和任何其他附加信息。您可以通过 [*https://oreil.ly/hands-on-api*](https://oreil.ly/hands-on-api) 访问此页面。
 
-想了解我们书籍和课程的相关新闻和信息，请访问[*https://oreilly.com*](https://oreilly.com)。
+想了解我们书籍和课程的相关新闻和信息，请访问 [*https://oreilly.com*](https://oreilly.com)。
 
 在领英上找到我们：[*https://linkedin.com/company/oreilly-media*](https://linkedin.com/company/oreilly-media)
 

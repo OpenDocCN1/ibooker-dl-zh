@@ -1,12 +1,12 @@
+
+
 # 14 高级构建块
 
 本章涵盖了
 
-+   使用抗锯齿池化提高平移不变性
-
-+   通过改进残差连接更快地收敛
-
-+   通过混合数据来对抗过拟合
++ 使用抗锯齿池化提高平移不变性
++ 通过改进残差连接更快地收敛
++ 通过混合数据来对抗过拟合
 
 本书中的练习迄今为止都是设计得让你可以在最少的计算时间内了解*真实*的技术。但是当你处理现实世界的问题时，它们通常需要数百个 epoch 和比你所训练的更深层次的模型，并且它们必须处理比本书中的示例更大的输入。
 
@@ -87,7 +87,7 @@ to_img(img_tensor_small)          ❸
 
 这并不好。但这是一个问题吗？我们已经构建了几个似乎工作得很好的 CNN，而且人们已经使用了最大池化几十年。也许这并不是一个大问题，除非我们想要构建斑马检测器。虽然我们的 CNN 可以工作，但混叠问题确实是存在的，并且每次我们在架构中添加另一个池化层时，问题都会变得更糟。通过理解为什么混叠是一个问题，我们可以积累起我们需要了解如何解决问题的知识。
 
-### 14.1.1  混叠问题损害了平移不变性
+### 14.1.1 混叠问题损害了平移不变性
 
 为了说明为什么混叠是一个问题，我们将使用 CIFAR-10 数据集，因为与 MNIST 相比，它具有更高的复杂性。CIFAR 图像的高度和宽度为 32 × 32，但我们通过随机裁剪图像选择了一个较小的 24 × 24 像素块。（在获取较小的子图像时，通常的做法是使用随机裁剪进行训练以获得更多样性，并使用中心裁剪进行测试集以获得一致的结果。）这样，我们可以测试我们的卷积神经网络（CNN）在上下或左右方向上最多八像素的平移，以观察图像内容平移对 CNN 预测的影响。池化应该提高平移不变性（即，即使你移动了东西，你也会得到相同的结果），但我们将会展示混叠如何阻止我们获得全部的好处。
 
@@ -110,21 +110,21 @@ test_transform = transforms.Compose(              ❷
         transforms.ToTensor(), 
     ])
 
-trainset = torchvision.datasets.CIFAR10(root=’./data’, train=True, 
+trainset = torchvision.datasets.CIFAR10(root='./data', train=True, 
 ➥ download=True, transform=train_transform) 
 train_loader = torch.utils.data.DataLoader(trainset, batch_size=B, 
 ➥ shuffle=True, num_workers=2) 
 testset_nocrop = torchvision.datasets.CIFAR10(    ❸
-➥ root=’./data’, train=False, download=True, 
+➥ root='./data', train=False, download=True, 
 ➥ transform=transforms.ToTensor())
 
-testset = torchvision.datasets.CIFAR10(root=’./data’, train=False, 
+testset = torchvision.datasets.CIFAR10(root='./data', train=False, 
 ➥ download=True, transform=test_transform)
 
 test_loader = torch.utils.data.DataLoader(testset, ❹ 
 ➥ batch_size=B, shuffle=False, num_workers=2) 
-cifar10_classes = (’plane’, ’car’, ’bird’, ’cat’,  ❺ 
-➥ ’deer’, ’dog’, ’frog’, ’horse’, ’ship’, ’truck’)
+cifar10_classes = ('plane', 'car', 'bird', 'cat',  ❺ 
+➥ 'deer', 'dog', 'frog', 'horse', 'ship', 'truck')
 ```
 
 ❶ 训练时的转换：随机裁剪到 PyTorch 张量
@@ -145,7 +145,7 @@ for i in range(4):
     x, y = trainset[30]                                ❷ 
     axarr[i].imshow(x.numpy().transpose(1,2,0))        ❸ 
     axarr[i].text(0.0, 0.5,cifar10_classes[y].upper(), ❹
-    ➥ dict(size=30, color=’black’))
+    ➥ dict(size=30, color='black'))
 ```
 
 ❶ 制作一个 1 × 4 的网格
@@ -193,7 +193,7 @@ normal_results = train_network(normal_CNN, loss,            ❼
 ➥ train_loader, epochs=epochs, device=device, 
 ➥ test_loader=test_loader, optimizer=optimizer, 
 ➥ lr_schedule=scheduler, 
-➥ score_funcs={’Accuracy’: accuracy_score})
+➥ score_funcs={'Accuracy': accuracy_score})
 ```
 
 ❶ 输入通道的数量
@@ -213,8 +213,8 @@ normal_results = train_network(normal_CNN, loss,            ❼
 我们已经训练了我们的模型，目前看起来没有*问题*。随着每个训练周期的增加，准确率稳步提高，这是正常且好的。这个数据集比 MNIST 更具挑战性，因此获得 74.35%的准确率是合理的。问题出现在我们查看同一图像的不同版本时：
 
 ```
-    sns.lineplot(x=’epoch’, y=’test Accuracy’, data=normal_results, 
-    ➥ label=’Regular’)
+    sns.lineplot(x='epoch', y='test Accuracy', data=normal_results, 
+    ➥ label='Regular')
 
 [13]: <AxesSubplot:xlabel='epoch', ylabel='test Accuracy'>
 ```
@@ -223,36 +223,28 @@ normal_results = train_network(normal_CNN, loss,            ❼
 
 以下代码从测试集中取一个完整的 32 × 32 图像，并对所有 64 个可能的 24 × 24 子图像进行预测。这是通过将`x_crop`变量传递到网络中完成的，并且使用`prob_y`计算正确类别的概率：
 
-```
-test_img_id = 213                                              ❶ 
-x, y = testset_nocrop[test_img_id]                             ❷
-offset_predictions = []                                        ❸ 
-normal_CNN = normal_CNN.eval() 
-    for i in range(8):                                         ❹ 
-        for j in range(8):                                     ❺
 
-            x_crop = x[:,i:i+24, j:j+24].to(device)            ❻ 
-            with torch.no_grad():
-                prob_y = F.softmax(normal_CNN(                 ❼ 
-                ➥ x_crop.unsqueeze(0)), dim=-1) 
-                ➥ .cpu().numpy()[0,y] 
-                offset_predictions.append((x_crop, prob_y))    ❽
-```
 
-❶ 要抓取的测试图像
 
-❷ 获取原始 32 × 32 图像
+`test_img_id = 213` ❶  
+`x, y = testset_nocrop[test_img_id]` ❷  
+`offset_predictions = []` ❸  
+`normal_CNN = normal_CNN.eval()`  
+`for i in range(8):` ❹  
+`for j in range(8):` ❺  
+`x_crop = x[:,i:i+24, j:j+24].to(device)` ❻  
+`with torch.no_grad():`  
+`prob_y = F.softmax(normal_CNN(x_crop.unsqueeze(0)), dim=-1)` ❼  
+`.cpu().numpy()[0,y]`  
+`offset_predictions.append((x_crop, prob_y))` ❽
 
-❸ 保存每个 24 × 24 子图像的预测
-
-❹ 对于上下位移
-
-❺ 对于左右位移
-
-❻ 抓取裁剪的图像
-
-❼ 对图像进行分类并获取正确类别的概率
-
+❶ 要抓取的测试图像  
+❷ 获取原始 32 × 32 图像  
+❸ 保存每个 24 × 24 子图像的预测  
+❹ 对于上下位移  
+❺ 对于左右位移  
+❻ 抓取裁剪的图像  
+❼ 对图像进行分类并获取正确类别的概率  
 ❽ 保存结果分数
 
 现在我们绘制所有 64 张图像，并在每张图像上方显示模型预测正确类别的概率。从视觉上看，这些图像几乎完全相同，因为它们都是相同原始输入的子图像。我们应该对*所有*它们得到相似的预测，因为它们本质上都是相同的：
@@ -261,9 +253,7 @@ normal_CNN = normal_CNN.eval()
 f, axarr = plt.subplots(8,8, figsize=(10,10))                  ❶ 
 for i in range(8):                                             ❷ 
     pos = 0                                                    ❸ 
-
     for x, score in offset_predictions[i*8:][:8]:              ❹
-
         axarr[i, pos].imshow(x.cpu().numpy().transpose(1,2,0)) ❺ 
         axarr[i, pos].text(0.0, 0.5,                           ❻ 
         ➥ str(round(score,2)), 
@@ -271,25 +261,19 @@ for i in range(8):                                             ❷
         pos += 1                                               ❼
 ```
 
-❶ 8 × 8 的图像网格
-
-❷ 对于每一行
-
-❸ 跟踪我们访问的具体位移
-
-❹ 抓取下一个八个图像以填充列
-
-❺ 绘制 24 × 24 的子图像
-
-❻ 在左上角打印正确类别的概率
-
+❶ 8 × 8 的图像网格  
+❷ 对于每一行  
+❸ 跟踪我们访问的具体位移  
+❹ 抓取下一个八个图像以填充列  
+❺ 绘制 24 × 24 的子图像  
+❻ 在左上角打印正确类别的概率  
 ❼ 移动到下一个图像位置
 
 ![](img/CH14_UN05_Raff.png)
 
 你能看到问题吗？虽然模型总是*正确*的（这次），但其置信度可以发生剧烈变化，从 34.84%的置信度波动到 99.48%的置信度，认为图像是一辆卡车。这是最大池化的问题：它实际上并不是平移不变的。如果它是，我们会对这些图像中的每一个得到相同的置信度分数。你可以尝试更改`test_img_id`变量，看看其他测试图像是否也会出现这种情况。现在我们知道最大池化不能提供良好的平移不变性；失败的程度比我们希望的更大。
 
-### 14.1.2  通过模糊进行反走样
+### 14.1.2 通过模糊进行反走样
 
 如果我们不仅仅选择最大值，我们可以构建一个更好的池化版本。记得在第四章我们使用手工卷积来模糊输入吗？模糊的效果是混合相邻位置之间的信息。如果我们首先进行一些模糊以混合信息，我们可以在池化中区分那些通常会导致混叠的模式。让我们看看模糊如何帮助我们构建一个更好的池化操作，它可以抵抗混叠问题，并且可以作为最大池化的直接替代：
 
@@ -364,28 +348,17 @@ class BlurLayer(nn.Module):
             raise Exception()                         ⓫
 ```
 
-❶ 创建一个 1D 二项分布。这计算了所有 k 值的归一化 filter_i 值。
-
-❷ z 是一个 1D 滤波器。
-
-❸ D 的无效选项
-
-❹ 我们做得很好。
-
-❺ 2D 滤波器可以通过乘以两个 1D 滤波器来创建。
-
-❻ 3D 滤波器可以通过将 2D 版本与 1D 版本相乘来创建。
-
-❼ 应用滤波器是一个卷积，因此我们将滤波器作为此层的参数保存。`requires_grad=False`，因为我们不希望它改变。
-
-❽ 有多少个通道？
-
-❾ 我们内部滤波器的宽度是多少？
-
-❿ 使用`groups`参数将单个滤波器应用于每个通道，因为我们没有像正常卷积层那样的多个滤波器。
-
-⓫ 我们永远不应该到达这段代码：如果我们做到了，我们知道我们有一个错误！
-
+❶ 创建一个 1D 二项分布。这计算了所有 k 值的归一化 filter_i 值。  
+❷ z 是一个 1D 滤波器。  
+❸ D 的无效选项  
+❹ 我们做得很好。  
+❺ 2D 滤波器可以通过乘以两个 1D 滤波器来创建。  
+❻ 3D 滤波器可以通过将 2D 版本与 1D 版本相乘来创建。  
+❼ 应用滤波器是一个卷积，因此我们将滤波器作为此层的参数保存。`requires_grad=False`，因为我们不希望它改变。  
+❽ 有多少个通道？  
+❾ 我们内部滤波器的宽度是多少？  
+❿ 使用`groups`参数将单个滤波器应用于每个通道，因为我们没有像正常卷积层那样的多个滤波器。  
+⓫ 我们永远不应该到达这段代码：如果我们做到了，我们知道我们有一个错误！  
 ⓬ 所有三次调用都是相同的：我们只需要知道要调用哪个卷积函数。
 
 使用这个`BlurLayer`，我们可以实现我们之前讨论的用于修复最大池化插值问题的策略。首先，让我们尝试在原始斑马图像上应用它，以证明其有效性。我们再次调用`max_pool2d`，但我们将`stride=1`设置为不缩小图像。之后，我们创建一个`BlurLayer`，并将核大小设置为我们要缩小的因子大小或更大。这意味着如果我们想以 z 的因子进行池化，我们的模糊滤波器的`kernel_size`应该≥ *z*。然后，将`BlurLayer`的`stride`设置为我们要缩小的量：
@@ -399,10 +372,8 @@ BlurLayer(kernel_size=int(1.5*shrink_factor),                     ❷
 to_img(img_tensor_small_better.squeeze())                         ❸
 ```
 
-❶ 以 1 的步长应用最大池化
-
-❷ 模糊最大池化结果
-
+❶ 以 1 的步长应用最大池化  
+❷ 模糊最大池化结果  
 ❸ 展示结果
 
 ![](img/CH14_UN06_Raff.png)
@@ -436,20 +407,17 @@ class MaxPool2dAA(nn.Module):
         return self.blur(tmp)                              ❺
 ```
 
-❶ 使用稍大的滤波器进行模糊
-
-❷ 创建模糊核
-
-❸ 存储池化大小
-
-❹ 使用步长=1 进行池化
-
+❶ 使用稍大的滤波器进行模糊  
+❷ 创建模糊核  
+❸ 存储池化大小  
+❹ 使用步长=1 进行池化  
 ❺ 模糊结果
 
 接下来，我们可以定义来自我们第一个网络的`aaPool_CNN`模型，除了我们将每个池化操作替换为我们的新抗锯齿版本。其余的训练代码也是相同的：
 
-```
-aaPool_CNN = nn.Sequential( ❶ 
+
+
+`aaPool_CNN = nn.Sequential( ❶ 
     cnnLayer(C, h, filter_size), 
     cnnLayer(h, h, filter_size), 
     MaxPool2dAA(2), cnnLayer(h, h, filter_size), 
@@ -459,26 +427,25 @@ aaPool_CNN = nn.Sequential( ❶
     cnnLayer(h, h, filter_size), 
     nn.Flatten(), 
     nn.Linear((24//(2**pooling_rounds))**2*h, len(cifar10_classes)) 
-)
+)`
 
-optimizer = torch.optim.AdamW(aaPool_CNN.parameters()) 
-scheduler = torch.optim.lr_scheduler.CosineAnnealingLR(optimizer, epochs)
+`optimizer = torch.optim.AdamW(aaPool_CNN.parameters()) 
+scheduler = torch.optim.lr_scheduler.CosineAnnealingLR(optimizer, epochs)`
 
-aaPool_results = train_network(aaPool_CNN, loss, train_loader, 
+`aaPool_results = train_network(aaPool_CNN, loss, train_loader, 
 ➥ epochs=epochs, device=device, test_loader=test_loader, 
 ➥ optimizer=optimizer, lr_schedule=scheduler, 
-➥ score_funcs={’Accuracy’: accuracy_score})
-```
+➥ score_funcs={’Accuracy’: accuracy_score})`
 
 ❶ 与常规架构相同，但用我们的抗锯齿版本替换池化
 
 当我们查看训练结果时，抗锯齿模型几乎总是优于网络的常规版本。这两个模型具有相同数量的层和相同数量的参数需要学习，因此这种影响完全是由于改变了池化操作：
 
 ```
-    sns.lineplot(x=’epoch’, y=’test Accuracy’, data=normal_results, 
-    ➥ label=’Regular’) 
-    sns.lineplot(x=’epoch’, y=’test Accuracy’, data=aaPool_results, 
-    ➥ label=’Anti-Alias Pooling’)
+sns.lineplot(x=’epoch’, y=’test Accuracy’, data=normal_results, 
+➥ label=’Regular’) 
+sns.lineplot(x=’epoch’, y=’test Accuracy’, data=aaPool_results, 
+➥ label=’Anti-Alias Pooling’)
 
 [22]: <AxesSubplot:xlabel='epoch', ylabel='test Accuracy'>
 ```
@@ -490,25 +457,25 @@ aaPool_results = train_network(aaPool_CNN, loss, train_loader,
 现在，让我们看看图像移动如何改变我们新模型的预测。以下代码对测试集中的`test_img_id`执行相同的测试，计算模型对所有 64 种可能的移动的正确类别的置信度。然后我们在 y 轴上绘制正确类别的概率；x 轴显示我们移动了多少像素。理想情况下，我们应该在图表上看到一条垂直的实线，表明模型始终返回相同的结果：
 
 ```
-    x, y = testset_nocrop[test_img_id]                         ❶ 
-    offset_predictions_aa = []                                 ❷ 
-    aaPool_CNN = aaPool_CNN.eval()
+x, y = testset_nocrop[test_img_id]                         ❶ 
+offset_predictions_aa = []                                 ❷ 
+aaPool_CNN = aaPool_CNN.eval()
 
-    for i in range(8):                                         ❸ 
-        for j in range(8):                                     ❹ 
+for i in range(8):                                         ❸ 
+    for j in range(8):                                     ❹ 
 
-            x_crop = x[:,i:i+24, j:j+24].to(device)            ❺ 
-            with torch.no_grad(): prob_y =
-                F.softmax(aaPool_CNN(                          ❻ 
-                ➥ x_crop.unsqueeze(0)), dim=-1) 
-                ➥ .cpu().numpy()[0,y] 
-                offset_predictions_aa.append((x_crop, prob_y)) ❼
+        x_crop = x[:,i:i+24, j:j+24].to(device)            ❺ 
+        with torch.no_grad(): prob_y =
+            F.softmax(aaPool_CNN(                          ❻ 
+            ➥ x_crop.unsqueeze(0)), dim=-1) 
+            ➥ .cpu().numpy()[0,y] 
+            offset_predictions_aa.append((x_crop, prob_y)) ❼
 
-    sns.lineplot(x=list(range(8*8)), y=[val for img,val in offset_predictions], 
-    ➥ label=’Regular’) ax =
-    sns.lineplot(x=list(range(8*8)), y=[val for img,val in offset_predictions_aa], 
-    ➥ label=’Anti-Alias Pooling’) ax.set(xlabel=’Pixel shifts’, 
-    ➥ ylabel=’Predicted probability of correct class’)
+sns.lineplot(x=list(range(8*8)), y=[val for img,val in offset_predictions], 
+➥ label=’Regular’) ax =
+sns.lineplot(x=list(range(8*8)), y=[val for img,val in offset_predictions_aa], 
+➥ label=’Anti-Alias Pooling’) ax.set(xlabel=’Pixel shifts’, 
+➥ ylabel=’Predicted probability of correct class’)
 
 [23]: [Text(0.5, 0, 'Pixel shifts'), Text(0, 0.5, 'Predicted probability of correct class')]
 ```
@@ -654,6 +621,12 @@ class ResidualBlock(nn.Module):
 这只是一个简单的更改，现在让我们试试。首先，我们为 CIFAR-10 训练一个相对较深的网络。以下模块包含 28 个`ResidualBlock`，每个`ResidualBlock`包含 2 层卷积，总共 56 层卷积。由于需要使示例运行得更快以便你可以更改它们，所以这比本书中大多数网络都要深。但 ReZero 的优势在于能够学习极其深的网络。如果你想的话，可以将这个网络扩展到数千个隐藏层，它仍然可以学习。
 
 这里是代码：
+
+
+
+# 14.2.3 ReZero 实现与训练
+
+以下代码构建了一个使用 ReZero 方法的 ResNet 模型，用于 CIFAR-10 分类任务：
 
 ```
 resnetReZero_cifar10 = nn.Sequential(                ❶ 
@@ -831,7 +804,9 @@ return self.loss(y_hat, y)        ❹
 
 现在，我们可以定义 `MixupCollator` 作为我们的特殊 `collate_fn`。它接受一个 `collate_fn`，这是用户可以指定的方法，用于改变批次的创建方式。`MixupCollator` 还负责为每个批次采样一个新的 λ 值，因此它需要将变量 α 作为第二个参数，以控制混合的激进程度。我们提供了合理的默认值，以常规方式采样批次，并且混合的激进程度处于中等范围：
 
-```
+
+
+```python
 from torch.utils.data.dataloader import default_collate
 
 class MixupCollator(object): 
@@ -859,19 +834,19 @@ PyTorch’s DataLoader class.
 
 ❶ 批次以列表的形式进入。我们将它转换成实际的数据批次。
 
-❷ 样本 lambda 的值。注意末尾的“_”，因为 lambda 是 Python 中的一个关键字。
+❷ 样本 `lambda` 的值。注意末尾的“_”，因为 `lambda` 是 Python 中的一个关键字。
 
-❸ 创建一个随机打乱的顺序 pi
+❸ 创建一个随机打乱的顺序 `pi`
 
 ❹ 计算输入数据的混合版本
 
 ❺ 获取标签
 
-❻ 返回一个包含两个项目的元组：输入数据和 MixupLoss 需要的另一个包含三个项目的元组
+❻ 返回一个包含两个项目的元组：输入数据和 `MixupLoss` 需要的另一个包含三个项目的元组
 
 使用这两个类，我们可以轻松地将 MixUp 方法集成到几乎任何模型中。需要构建一个新的训练加载器，使用 `collate_fn=MixupCollator()`，并且我们需要将 `MixupLoss()` 传递给我们的 `train_network` 函数作为使用的损失函数。其余的代码与之前一样，但增加了 MixUp 训练：
 
-```
+```python
 train_loader_mixup = torch.utils.data.DataLoader(trainset, batch_size=B, ❶ 
 ➥ num_workers=2, shuffle=True, collate_fn=MixupCollator()) 
 
@@ -889,25 +864,25 @@ resnetReZero_mixup_results = train_network(resnetReZero_cifar10,
 ➥ score_funcs={’Accuracy’: accuracy_score})
 ```
 
-❶ 将数据加载器替换为使用我们的 MixupCollator 的新加载器
+❶ 将数据加载器替换为使用我们的 `MixupCollator` 的新加载器
 
 ❷ 由于懒惰，也重置了权重
 
 ❸ 优化器和调度器保持不变。
 
-❹ 使用 MixUp 训练时，将我们的正常损失函数包装在新的 MixupLoss 中
+❹ 使用 MixUp 训练时，将我们的正常损失函数包装在新的 `MixupLoss` 中
 
 如果我们绘制准确率图，我们会看到我们的 ResNet ReZero 模型结合 MixUp 进一步提高了收敛率，最终准确率为 88.12%：
 
-```
-    sns.lineplot(x=’epoch’, y=’test Accuracy’, data=normal_results, 
-    ➥ label=’Regular’) 
-    sns.lineplot(x=’epoch’, y=’test Accuracy’, data=resnet_results, 
-    ➥ label=’ResNet’) 
-    sns.lineplot(x=’epoch’, y=’test Accuracy’, data=resnetReZero_results, 
-    ➥ label=’ResNet ReZero’) 
-    sns.lineplot(x=’epoch’, y=’test Accuracy’, data=resnetReZero_mixup_results, 
-    ➥ label=’ResNet ReZero + MixUp’)
+```python
+sns.lineplot(x=’epoch’, y=’test Accuracy’, data=normal_results, 
+➥ label=’Regular’) 
+sns.lineplot(x=’epoch’, y=’test Accuracy’, data=resnet_results, 
+➥ label=’ResNet’) 
+sns.lineplot(x=’epoch’, y=’test Accuracy’, data=resnetReZero_results, 
+➥ label=’ResNet ReZero’) 
+sns.lineplot(x=’epoch’, y=’test Accuracy’, data=resnetReZero_mixup_results, 
+➥ label=’ResNet ReZero + MixUp’)
 
 [32]: <AxesSubplot:xlabel='epoch', ylabel='test Accuracy'>
 ```
@@ -916,7 +891,7 @@ resnetReZero_mixup_results = train_network(resnetReZero_cifar10,
 
 将结果视为时间的函数，我们看到 ReZero 和 MixUp 方法只是运行时间的增量增加。仅使用 ResNet 方法更深的模型是大部分计算成本来源。因此，如果您正在构建更深的网络，这两种方法都很容易添加，并且可以提高模型的准确性。
 
-警告：本章我们学到的前两种方法几乎总是值得放心使用。MixUp 有时会损害准确性，但通常是一个不错的改进，所以值得一试一次新的架构，一次带 MixUp，一次不带 MixUp，看看它对你的问题表现如何。MixUp 在应用于像 transformers 和 RNNs 这样的东西时也更为复杂，尽管它的扩展会有帮助（代码可能有些丑陋）。为了简单起见，我现在坚持使用标准的 MixUp，但我知道如果需要，我可以查看它的扩展。
+**警告：** 本章我们学到的前两种方法几乎总是值得放心使用。MixUp 有时会损害准确性，但通常是一个不错的改进，所以值得一试一次新的架构，一次带 MixUp，一次不带 MixUp，看看它对你的问题表现如何。MixUp 在应用于像 transformers 和 RNNs 这样的东西时也更为复杂，尽管它的扩展会有帮助（代码可能有些丑陋）。为了简单起见，我现在坚持使用标准的 MixUp，但我知道如果需要，我可以查看它的扩展。
 
 这些方法的唯一缺点是，它们的益处通常只有在处理更大的模型或我们由于网络的复杂性而已经面临过拟合风险时才能看到。如果它们损害了你的准确性，那么很可能你需要使你的网络更深，或者加宽层，以便它们能够有所帮助。
 
@@ -926,15 +901,15 @@ resnetReZero_mixup_results = train_network(resnetReZero_cifar10,
 
 1.  我们查看了一个特定示例中 CIFAR-10 图像翻译（移动）概率的变化。相反，计算 CIFAR-10 测试集中所有类别概率变化的中间偏差，对于原始 CNN 和抗锯齿版本（即，对于每张图像，计算 64 个概率值及其概率的标准偏差。为每张图像计算该值，并取中间值）。结果是否显示了你预期的，即抗锯齿减少了概率变化的中间值？
 
-1.  根据本章描述，实现具有抗锯齿版本的步长卷积和平均池化的版本。然后实现新的卷积网络，用标准步长卷积和抗锯齿版本的步长卷积以及平均池化来替换最大池化。使用与`MaxPool2dAA`相同的 CIFAR-10 示例自行测试它们。
+2.  根据本章描述，实现具有抗锯齿版本的步长卷积和平均池化的版本。然后实现新的卷积网络，用标准步长卷积和抗锯齿版本的步长卷积以及平均池化来替换最大池化。使用与`MaxPool2dAA`相同的 CIFAR-10 示例自行测试它们。
 
-1.  实现第六章中瓶颈类的 ReZero 版本以及一个全连接残差块的 ReZero 版本。在 CIFAR-100 上对它们进行测试，看看它们与非 ReZero 版本相比如何。
+3.  实现第六章中瓶颈类的 ReZero 版本以及一个全连接残差块的 ReZero 版本。在 CIFAR-100 上对它们进行测试，看看它们与非 ReZero 版本相比如何。
 
-1.  我们的 ReZero 残差网络在其定义的每个部分之间有 6 个残差层块。尝试训练一个具有 18 个块的 ReZero 和一个普通残差块，看看每种方法的表现如何变化？
+4.  我们的 ReZero 残差网络在其定义的每个部分之间有 6 个残差层块。尝试训练一个具有 18 个块的 ReZero 和一个普通残差块，看看每种方法的表现如何变化？
 
-1.  为 ReZero 残差网络实现具有抗锯齿版本的步长卷积，并在 CIFAR-10 上对其进行训练。它如何影响准确性和收敛性？
+5.  为 ReZero 残差网络实现具有抗锯齿版本的步长卷积，并在 CIFAR-10 上对其进行训练。它如何影响准确性和收敛性？
 
-1.  **挑战性：** 论文“Manifold mixup: better representations by interpolating hidden states”⁵描述了 MixUp 的一个改进版本，该版本在网络的随机选择隐藏层而不是输入层进行混合。尝试自己实现它，并在 CIFAR-10 和 CIFAR-100 上测试。提示：通过定义一个自定义的`Module`为网络，并使用`ModuleList`来存储候选混合的层序列（即，你不需要*每一个*可能的隐藏层都是选项）。
+6.  **挑战性：** 论文“Manifold mixup: better representations by interpolating hidden states”⁵描述了 MixUp 的一个改进版本，该版本在网络的随机选择隐藏层而不是输入层进行混合。尝试自己实现它，并在 CIFAR-10 和 CIFAR-100 上测试。提示：通过定义一个自定义的`Module`为网络，并使用`ModuleList`来存储候选混合的层序列（即，你不需要*每一个*可能的隐藏层都是选项）。
 
 ## 摘要
 

@@ -1,11 +1,10 @@
-# 第十三章：个 Transformer
+
+# 第十三章：Transformer
 
 本章涵盖
 
 +   实现一个包含所有组件的完整 Transformer 模型
-
 +   使用 TFHub 中预训练的 BERT 模型实现垃圾邮件分类器
-
 +   使用 Hugging Face 的 Transformer 库实现问答模型
 
 在第十一章和第十二章，你学习了序列到序列模型，这是一类强大的模型家族，允许我们将任意长度的序列映射到另一个任意长度的序列。我们通过一个机器翻译任务来举例说明这种能力。序列到序列模型由一个编码器和一个解码器组成。编码器接收输入序列（源语言中的句子）并创建该序列的紧凑表示（称为上下文向量）。解码器接收上下文向量以生成最终的目标（即目标语言中的句子）。但是我们看到上下文向量的限制如何限制了模型，并研究了两种改进模型性能的技术。首先，教师强制允许解码器不仅在给定时间内查看上下文向量，还可以查看目标语言中先前的单词。这为解码器提供了更多的信息，以准确地生成最终的预测。其次，注意机制允许解码器窥视编码器输出历史中的任何部分，并使用该信息来生成输出。然而，LSTM 和 GRU 模型仍然相当受限制，因为它们一次只能看到一个序列输出，并且需要依赖有限的状态向量（即记忆）来记住它们所看到的内容。
@@ -14,7 +13,7 @@
 
 按设计，Transformer 模型使得记忆或使用长序列数据（例如单词序列）中的信息变得轻而易举。与 LSTM 模型不同，后者必须一次查看一个时间步长，Transformer 模型可以一次看到整个序列。这使得 Transformer 模型比其他模型更好地理解语言。此外，由于纵向（即时间）计算的最小化需要对文本进行顺序处理，Transformer 模型享有高度的可并行性。
 
-在本章中，延续我们在第五章的对话，我们将讨论 Transformer 模型的一些更多细节，以便我们对其有一个全面的理解。我们将看到 Transformer 模型如何使用多个嵌入来表示标记以及这些标记在序列中的位置。然后我们将学习 BERT，这是 Transformer 模型的一个变体，它已经在大型文本语料库上进行了训练，可以作为基础层轻松解决下游 NLP 任务，而不需要复杂的模型。BERT 本质上是 Transformer 模型的编码器部分，使用了两种技术进行大量文本的预训练：掩码语言建模（即，序列中的单词被随机掩码，BERT 必须预测掩码单词）和下一个句子预测（即，给定两个句子 A 和 B，预测 B 是否暗示 A）。当我们使用它在 TensorFlow 中实现一个垃圾邮件分类器时，我们将看到 BERT 在实际中的运行情况。接下来，Hugging Face 的 transformers 库（[`huggingface.co/transformers/`](https://huggingface.co/transformers/)）是实现最先进的 Transformer 模型的热门选择，易于使用。如果您打算在 TensorFlow 中实现 Transformer 模型，那么这是最有价值的库之一。出于这个原因，我们将使用 Hugging Face 的 Transformers 库实现一个问答模型。最后，我们将结束本章，讨论 Transformer 模型在计算机视觉中的应用。
+在本章中，延续我们在第五章的对话，我们将讨论 Transformer 模型的一些更多细节，以便我们对其有一个全面的理解。我们将看到 Transformer 模型如何使用多个嵌入来表示标记以及这些标记在序列中的位置。然后我们将学习 BERT，这是 Transformer 模型的一个变体，它已经在大型文本语料库上进行了训练，可以作为基础层轻松解决下游 NLP 任务，而不需要复杂的模型。BERT 本质上是 Transformer 模型的编码器部分，使用了两种技术进行大量文本的预训练：掩码语言建模（即，序列中的单词被随机掩码，BERT 必须预测掩码单词）和下一个句子预测（即，给定两个句子 A 和 B，预测 B 是否暗示 A）。当我们使用它在 TensorFlow 中实现一个垃圾邮件分类器时，我们将看到 BERT 在实际中的运行情况。接下来，Hugging Face 的 `transformers` 库（[`huggingface.co/transformers/`](https://huggingface.co/transformers/)）是实现最先进的 Transformer 模型的热门选择，易于使用。如果您打算在 TensorFlow 中实现 Transformer 模型，那么这是最有价值的库之一。出于这个原因，我们将使用 Hugging Face 的 Transformers 库实现一个问答模型。最后，我们将结束本章，讨论 Transformer 模型在计算机视觉中的应用。
 
 作为第一步，让我们重新审视一下我们已经学过的关于 Transformer 模型的知识（见图 13.1），并进一步扩展我们的理解。
 
@@ -33,39 +32,30 @@
 编码器由一堆层组成，其中每一层包含两个子层：
 
 +   *自注意力层*—为序列中的每个输入标记生成潜在表示。对于每个输入标记，此层查看整个输入序列，并选择序列中的其他标记，以丰富为该标记生成的隐藏输出的语义（即，*关注表示*）。
-
 +   *全连接层*—生成与关注表示相关的逐元素隐藏表示。
 
 解码器由三个子层组成：
 
 +   *掩码自注意力层*—对于每个输入标记，它查看其左侧的所有标记。解码器需要屏蔽右侧的单词，以防止模型看到未来的单词，使得解码器的预测任务变得简单。
-
 +   *编码器-解码器注意力层*—对于解码器中的每个输入标记，它查看编码器的输出以及解码器的掩码关注输出，以生成一个语义丰富的隐藏输出。
-
 +   *全连接层*—生成解码器关注表示的逐元素隐藏表示。
 
 在我们之前的讨论中，最难理解的是自注意力层。因此，值得重新审视自注意力层中发生的计算。自注意力层中的计算围绕着三个权重矩阵展开：
 
 +   查询权重矩阵（*W*[q]）
-
 +   键权重矩阵（*W*[k]）
-
 +   值权重矩阵（*W*[v]）
 
 这些权重矩阵中的每一个对于给定输入序列中的给定标记（在位置*i*）产生三个输出：查询、键和值。让我们刷新一下我们在第五章中对这些实体所说的话：
 
 +   *查询*（*q*[i]）—帮助构建最终用于索引值（*v*）的概率矩阵。查询影响矩阵的行，并表示正在处理的当前单词的索引。
-
 +   *关键*（*k*[i]）—帮助构建最终用于索引值（*v*）的概率矩阵。关键影响矩阵的列，并表示需要根据查询词混合的候选词。
-
 +   *Value*（*v*[i]) ——输入的隐藏（即潜在）表示，用于通过查询和密钥创建的概率矩阵索引计算最终输出。正如前面解释的那样，在位置 *i* 处的最终输出不仅使用第 *i* 个令牌，还使用输入序列中的其他令牌，这增强了最终表示中捕获的语义。
 
 这些元素的高层目的是生成一个被关注的表示（即给定令牌的潜在或隐藏表示，其由输入序列中其他令牌的信息增强）。为此，模型
 
 +   为输入序列中的每个位置生成一个查询
-
 +   对于每个查询，确定每个密钥应该贡献多少（密钥也代表个别令牌）
-
 +   基于给定查询的密钥的贡献，混合与这些密钥对应的值以生成最终的关注表示
 
 查询、密钥和值都是通过将可训练的权重矩阵与输入令牌的数值表示相乘而生成的。所有这些都需要以可微分的方式进行，以确保梯度可以通过模型进行反向传播。论文提出了以下计算来计算输入令牌的自注意力层的最终表示：
@@ -74,7 +64,7 @@
 
 这里，Q 表示查询，K 表示密钥，V 表示批量数据中所有输入和每个输入中所有令牌的值。这就是使 Transformer 模型如此强大的原因：与 LSTM 模型不同，Transformer 模型将所有令牌在一个序列中聚合到一个矩阵乘法中，使得这些模型高度可并行化。
 
-### Transformer 中的嵌入
+### 13.1.2 Transformer 中的嵌入
 
 当我们讨论 Transformer 模型时，有一件事情被忽略了，那就是它使用的嵌入。我们简要地提到了使用的词嵌入。让我们在这里更详细地讨论这个话题。词嵌入根据单词的上下文提供了语义保持的表示。换句话说，如果两个单词在相同的上下文中使用，它们将具有相似的单词向量。例如，“猫”和“狗”将具有相似的表示，而“猫”和“火山”将具有完全不同的表示。
 
@@ -93,15 +83,12 @@
 现代深度学习模型受到原始词向量算法的启发，将学习词嵌入和实际的决策支持 NLP 问题融合到单个模型训练任务中。换句话说，以下一般方法用于将词嵌入纳入到机器学习模型中：
 
 +   定义一个随机初始化的词嵌入矩阵（或提供免费下载的预训练的嵌入）。
-
 +   定义使用单词嵌入作为输入并产生输出（例如情感、语言翻译等）的模型（随机初始化）。
-
 +   在任务上训练整个模型（嵌入 + 模型）。
 
 Transformer 模型中也使用了相同的技术。但是，Transformer 模型中有两个不同的嵌入：
 
 +   Token 嵌入（为模型在输入序列中看到的每个 token 提供唯一的表示）
-
 +   位置嵌入（为输入序列中的每个位置提供唯一的表示）
 
 Token 嵌入（为模型在输入序列中看到的每个 token 提供唯一的表示）
@@ -144,7 +131,6 @@ transformers 模型的另一个重要特征是残差连接和单个层之间的�
 在 Transformer 模型中，每个层次都会创建残差连接，具体如下：
 
 +   多头自注意力子层的输入被添加到多头自注意力子层的输出中。
-
 +   完全连接子层的输入被添加到完全连接子层的输出中。
 
 接下来，通过残差连接增强的输出经过一层层归一化层。*层归一化*，类似于批归一化，是减少神经网络中“协变量转移”的一种方式，使其能够更快地训练并达到更好的性能。协变量转移是指神经网络激活分布的变化（由数据分布的变化引起），这些变化在模型训练过程中发生。这种分布的变化会在模型训练期间影响一致性，并对模型产生负面影响。层归一化是由 Ba 等人在论文“Layer Normalization”中介绍的（[`arxiv.org/pdf/1607.06450.pdf`](https://arxiv.org/pdf/1607.06450.pdf)）。
@@ -192,31 +178,32 @@ en_out2 = EncoderLayer(d, n_heads)(en_out1)
 model = tf.keras.models.Model(inputs=en_inp, output=en_out2)
 ```
 
-其中 EncoderLayer 定义了一个典型的 Transformer 编码器层，其中包含自注意力子层和全连接子层。你被要求使用以下方程式集成位置编码
+其中 `EncoderLayer` 定义了一个典型的 Transformer 编码器层，其中包含自注意力子层和全连接子层。你被要求使用以下方程式集成位置编码
 
 *PE*(*pos*, 2*i*) = sin(*pos*/10000^(2*i*/d[model]))
 
-*pos* 从 0 到 511（d=512 特征），*i* 从 0 到 24（n_steps=25 时间步），表示时间步。换句话说，我们的位置编码将是一个形状为 [n_steps, d] 的张量。你可以使用 tf.math.sin() 逐元素生成张量的 sin 值。你可以将位置嵌入定义为张量，而不是 tf.keras.layers.Layer 的乘积。最终嵌入应通过将标记嵌入和位置嵌入相加来生成。你会如何做？
+
+
+`pos`从 0 到 511（`d=512`特征），`i`从 0 到 24（`n_steps=25`时间步），表示时间步。换句话说，我们的位置编码将是一个形状为`[n_steps, d]`的张量。你可以使用`tf.math.sin()`逐元素生成张量的 sin 值。你可以将位置嵌入定义为张量，而不是`tf.keras.layers.Layer`的乘积。最终嵌入应通过将标记嵌入和位置嵌入相加来生成。你会如何做？
 
 ## 13.2 使用预训练的 BERT 进行垃圾邮件分类
 
 你正在为一家邮件服务公司担任数据科学家，公司渴望实现垃圾邮件分类功能。他们希望在公司内部实现此功能并节省成本。通过阅读关于 BERT 及其在解决 NLP 任务中的强大性能的文章，你向团队解释，你需要做的就是下载 BERT 模型，在 BERT 顶部拟合一个分类层，并在标记的数据上端到端地训练整个模型。标记的数据包括一个垃圾消息和一个指示消息是否为垃圾或正常的标签。你被委托负责实现此模型。
 
-现在我们已经讨论了 Transformer 架构的所有移动元素，这使得我们非常有能力理解 BERT。BERT 是一种基于 Transformer 的模型，由 Devlin 等人在论文 “BERT: Pre-Training of Deep Bidirectional Transformers for Language Understanding” 中介绍（[`arxiv.org/pdf/1810.04805.pdf`](https://arxiv.org/pdf/1810.04805.pdf)），它代表了自然语言处理历史上的一个非常重要的里程碑，因为它是一个先驱性模型，证明了在 NLP 领域应用 “迁移学习”的能力。
+现在我们已经讨论了 Transformer 架构的所有移动元素，这使得我们非常有能力理解 BERT。BERT 是一种基于 Transformer 的模型，由 Devlin 等人在论文 "BERT: Pre-Training of Deep Bidirectional Transformers for Language Understanding" 中介绍（[`arxiv.org/pdf/1810.04805.pdf`](https://arxiv.org/pdf/1810.04805.pdf)），它代表了自然语言处理历史上的一个非常重要的里程碑，因为它是一个先驱性模型，证明了在 NLP 领域应用 "迁移学习" 的能力。
 
-BERT 是一个在大量文本数据上以无监督方式预训练的 Transformer 模型。因此，你可以使用 BERT 作为基础，获得丰富、语义上准确的文本输入序列的数字表示，这些表示可以直接提供给下游 NLP 模型。由于 BERT 提供的丰富文本表示，你可以让你的决策支持模型不再需要理解语言，而是可以直接专注于手头的问题。从技术角度来看，如果你正在用 BERT 解决分类问题，你所需要做的就是
+BERT 是一个在大量文本数据上以无监督方式预训练的 Transformer 模型。因此，你可以使用 BERT 作为基础，获得丰富、语义上准确的文本输入序列的数字表示，这些表示可以直接提供给下游 NLP 模型。由于 BERT 提供的丰富文本表示，你可以让你的决策支持模型不再需要理解语言，而是可以直接专注于手头的问题。从技术角度来看，如果你正在用 BERT 解决分类问题，你所需要做的就是：
 
 +   在 BERT 之上拟合一个分类器（例如逻辑回归层），将 BERT 的输出作为输入
-
 +   在判别性任务上（即 BERT + 分类器）端到端地训练模型
 
-BERT 的历史
+### BERT 的历史
 
 在像 BERT 这样的模型出现之前，解决自然语言处理（NLP）任务既重复又耗时。每次都需要从头开始训练一个模型。更糟糕的是，大多数模型都无法处理长文本序列，限制了它们理解语言的能力。
 
-2017 年，NLP 任务的 Transformer 模型在论文“Attention Is All You Need”（[`arxiv.org/pdf/1706.03762.pdf`](https://arxiv.org/pdf/1706.03762.pdf)）中提出。Transformer 模型在一系列 NLP 任务上击败了之前的主导者，如 LSTMs 和 GRUs。与逐字逐句查看并维护状态（即内存）的循环模型不同，Transformer 模型一次查看整个序列。
+2017 年，NLP 任务的 Transformer 模型在论文 "Attention Is All You Need"（[`arxiv.org/pdf/1706.03762.pdf`](https://arxiv.org/pdf/1706.03762.pdf)）中提出。Transformer 模型在一系列 NLP 任务上击败了之前的主导者，如 LSTMs 和 GRUs。与逐字逐句查看并维护状态（即内存）的循环模型不同，Transformer 模型一次查看整个序列。
 
-然后，在 2018 年，NLP（即在 NLP 中进行迁移学习）迎来了“ImageNet 时刻”。ImageNet 时刻是指 ML 从业者意识到，在其他任务（如目标检测、图像分割）上使用已经在大型 ImageNet 图像分类数据集上训练过的计算机视觉模型，可以更快地获得更好的性能。这实际上催生了在计算机视觉领域广泛使用的迁移学习概念。因此，直到 2018 年，NLP 领域还没有一个非常好的方法来利用迁移学习来提升任务性能。论文“通用语言模型微调用于文本分类”（[`arxiv.org/pdf/1801.06146.pdf`](https://arxiv.org/pdf/1801.06146.pdf)）介绍了在语言建模任务上预训练然后在判别性任务上训练模型的思想（例如，分类问题）。这种方法的优势在于，你不需要像从头训练模型那样多的样本。
+然后，在 2018 年，NLP（即在 NLP 中进行迁移学习）迎来了 "ImageNet 时刻"。ImageNet 时刻是指 ML 从业者意识到，在其他任务（如目标检测、图像分割）上使用已经在大型 ImageNet 图像分类数据集上训练过的计算机视觉模型，可以更快地获得更好的性能。这实际上催生了在计算机视觉领域广泛使用的迁移学习概念。因此，直到 2018 年，NLP 领域还没有一个非常好的方法来利用迁移学习来提升任务性能。论文 "通用语言模型微调用于文本分类"（[`arxiv.org/pdf/1801.06146.pdf`](https://arxiv.org/pdf/1801.06146.pdf)）介绍了在语言建模任务上预训练然后在判别性任务上训练模型的思想（例如，分类问题）。这种方法的优势在于，你不需要像从头训练模型那样多的样本。
 
 2018 年，BERT 被引入。这是自然语言处理历史上两个最出色时刻的结合。换句话说，BERT 是一个在大量文本数据上以无监督方式预训练的 Transformer 模型。
 
@@ -230,14 +217,13 @@ BERT 的历史
 
 图 13.6 BERT 的高层架构。它接受一组输入标记并生成使用几个隐藏层生成的隐藏表示的序列。
 
-当 BERT 接受一个输入时，它会在输入中插入一些特殊的标记。首先，在开始时，它插入一个[CLS]（分类的缩写形式）标记，用于生成特定类型任务（例如，序列分类）的最终隐藏表示。它表示在关注序列中的所有标记后的输出。接下来，根据输入类型，它还会插入一个[SEP]（即“分隔”）标记。[SEP]标记标记了输入中不同序列的结束和开始。例如，在问答中，模型接受问题和可能包含答案的上下文（例如，段落）作为输入，并且[SEP]在问题和上下文之间使用。
+当 BERT 接受一个输入时，它会在输入中插入一些特殊的标记。首先，在开始时，它插入一个`[CLS]`（分类的缩写形式）标记，用于生成特定类型任务（例如，序列分类）的最终隐藏表示。它表示在关注序列中的所有标记后的输出。接下来，根据输入类型，它还会插入一个`[SEP]`（即 "分隔"）标记。`[SEP]`标记标记了输入中不同序列的结束和开始。例如，在问答中，模型接受问题和可能包含答案的上下文（例如，段落）作为输入，并且`[SEP]`在问题和上下文之间使用。
 
-接下来，使用三种不同的嵌入空间生成标记的最终嵌入。标记嵌入为词汇表中的每个标记提供了一个独特的向量。位置嵌入编码了每个标记的位置，如前面讨论的。最后，段落嵌入为输入的每个子组件提供了一个不同的表示。例如，在问答中，问题将具有作为其段落嵌入向量的唯一向量，而上下文将具有不同的嵌入向量。这通过在输入序列中的每个不同组件的*n*个不同嵌入向量来完成。根据输入中为每个标记指定的组件索引，检索相应的段落嵌入向量。*n*需要事先指定。
+接下来，使用三种不同的嵌入空间生成标记的最终嵌入。标记嵌入为词汇表中的每个标记提供了一个独特的向量。位置嵌入编码了每个标记的位置，如前面讨论的。最后，段落嵌入为输入的每个子组件提供了一个不同的表示。例如，在问答中，问题将具有作为其段落嵌入向量的唯一向量，而上下文将具有不同的嵌入向量。这通过在输入序列中的每个不同组件的`n`个不同嵌入向量来完成。根据输入中为每个标记指定的组件索引，检索相应的段落嵌入向量。`n`需要事先指定。
 
 BERT 的真正价值来自于它是以自监督方式在大型语料库上预训练的事实。在预训练阶段，BERT 在两个不同的任务上进行训练：
 
 +   掩码语言建模（MLM）
-
 +   下一句预测（NSP）
 
 掩码语言建模（MLM）任务灵感来自*填空题*或*填空测验*，其中学生被给出一句带有一个或多个空白的句子，并被要求填写空白。类似地，给定一个文本语料库，单词从句子中被掩码，然后模型被要求预测掩码的标记。例如，句子
@@ -254,12 +240,10 @@ I went to the [MASK] to buy bread
 
 注意：已经有大量基于 Transformer 的模型，每个模型都在前一个模型的基础上进行了构建。您可以在附录 C 中了解更多关于这些模型的信息。
 
-图 13.7 显示了在遮蔽语言建模任务训练过程中 BERT 的主要组成部分。BERT 使用特殊标记（[MASK]）来表示被遮蔽的单词。然后模型的目标将是单词"bakery"。但这给模型带来了实际问题。特殊标记[MASK]在实际文本中不会出现。这意味着模型在关键问题的微调阶段（即在分类问题上训练时）看到的文本将与在预训练阶段看到的文本不同。这有时被称为*预训练-微调不一致性*。因此，BERT 的作者建议采取以下方法来处理这个问题。当屏蔽一个单词时，做以下之一：
+图 13.7 显示了在遮蔽语言建模任务训练过程中 BERT 的主要组成部分。BERT 使用特殊标记（`[MASK]`）来表示被遮蔽的单词。然后模型的目标将是单词 "bakery"。但这给模型带来了实际问题。特殊标记`[MASK]`在实际文本中不会出现。这意味着模型在关键问题的微调阶段（即在分类问题上训练时）看到的文本将与在预训练阶段看到的文本不同。这有时被称为*预训练-微调不一致性*。因此，BERT 的作者建议采取以下方法来处理这个问题。当屏蔽一个单词时，做以下之一：
 
-+   使用[MASK]标记（使用 80％的概率）。
-
++   使用`[MASK]`标记（使用 80％的概率）。
 +   使用随机单词（以 10％的概率）。
-
 +   使用真实的单词（以 10％的概率）。
 
 ![13-07](img/13-07.png)
@@ -269,26 +253,22 @@ I went to the [MASK] to buy bread
 接下来，在下一句预测任务中，模型会得到一对句子 A 和 B（按照顺序），并被要求预测 B 是否是 A 之后的下一句。可以通过在 BERT 之上拟合一个二元分类器，并在选择的句子对上端到端地训练整个模型来完成。以无监督的方式生成模型的输入对是不难的：
 
 +   通过选择相邻的两个句子生成标签为 TRUE 的样本。
-
 +   通过随机选择不相邻的两个句子生成标签为 FALSE 的样本。
 
 按照这种方法，为下一句预测任务生成了一个带标签的数据集。然后，使用带标签的数据集对 BERT 和二元分类器进行端到端的训练。图 13.7 突出显示了下一句预测任务中的数据和模型架构。
 
-您可能已经注意到图 13.6 中输入到 BERT 的是特殊标记。除了我们已讨论过的[MASK]标记之外，还有两个特殊的标记具有特殊的用途。
+您可能已经注意到图 13.6 中输入到 BERT 的是特殊标记。除了我们已讨论过的`[MASK]`标记之外，还有两个特殊的标记具有特殊的用途。
 
-[CLS]标记被附加到输入到 BERT 的任何输入序列上。它表示输入的开始。它还为放置在 BERT 顶部的分类头上使用的输入提供基础。正如您所知，BERT 对序列中的每个输入标记生成一个隐藏表示。按照惯例，与[CLS]标记对应的隐藏表示被用作放置在 BERT 之上的分类模型的输入。
+`[CLS]`标记被附加到输入到 BERT 的任何输入序列上。它表示输入的开始。它还为放置在 BERT 顶部的分类头上使用的输入提供基础。正如您所知，BERT 对序列中的每个输入标记生成一个隐藏表示。按照惯例，与`[CLS]`标记对应的隐藏表示被用作放置在 BERT 之上的分类模型的输入。
 
-BERT 解决的任务特定 NLP 任务可以分为四种不同的类别。这些基于 General Language Understanding Evaluation（GLUE）基准任务套件中的任务 ([`gluebenchmark.com`](https://gluebenchmark.com))：
+BERT 解决的任务特定 NLP 任务可以分为四种不同的类别。这些基于 General Language Understanding Evaluation（GLUE）基准任务套件中的任务（[`gluebenchmark.com`](https://gluebenchmark.com)）：
 
 +   *序列分类*—这里，给定一个单一的输入序列，并要求模型为整个序列预测一个标签（例如，情感分析，垃圾邮件识别）。
-
 +   *令牌分类*—这里，给定一个单一的输入序列，并要求模型为序列中的每个令牌预测一个标签（例如，命名实体识别，词性标注）。
++   *问答*—这里，输入包括两个序列：一个问题和一个上下文。问题和上下文之间由一个`[SEP]`令牌分隔。模型被训练来预测属于答案的令牌范围的起始和结束索引。
++   *多选题*—这里的输入由多个序列组成：一个问题，后跟可能是或可能不是问题答案的多个候选项。这些多个序列由令牌`[SEP]`分隔，并作为单个输入序列提供给模型。模型被训练来预测该问题的正确答案（即，类标签）。
 
-+   *问答*—这里，输入包括两个序列：一个问题和一个上下文。问题和上下文之间由一个 [SEP] 令牌分隔。模型被训练来预测属于答案的令牌范围的起始和结束索引。
-
-+   *多选题*—这里的输入由多个序列组成：一个问题，后跟可能是或可能不是问题答案的多个候选项。这些多个序列由令牌 [SEP] 分隔，并作为单个输入序列提供给模型。模型被训练来预测该问题的正确答案（即，类标签）。
-
-BERT 的设计使得它能够在不对基础模型进行任何修改的情况下用于解决这些任务。在涉及多个序列的任务中（例如，问答，多选题），您需要单独告诉模型不同的输入（例如，问题的令牌和问题回答任务中的上下文的令牌）。为了做出这种区分，使用 [SEP] 令牌。[SEP] 令牌在不同序列之间插入。例如，如果您正在解决一个问答任务，您可能会有一个输入如下：
+BERT 的设计使得它能够在不对基础模型进行任何修改的情况下用于解决这些任务。在涉及多个序列的任务中（例如，问答，多选题），您需要单独告诉模型不同的输入（例如，问题的令牌和问题回答任务中的上下文的令牌）。为了做出这种区分，使用`[SEP]`令牌。`[SEP]`令牌在不同序列之间插入。例如，如果您正在解决一个问答任务，您可能会有一个输入如下：
 
 ```py
 Question: What color is the ball?
@@ -304,18 +284,12 @@ Paragraph: Tippy is a dog. She loves to play with her red ball.
 BERT 还使用段落嵌入空间来表示一个令牌属于哪个序列。例如，只有一个序列的输入对于所有令牌具有相同的段落嵌入向量（例如，垃圾邮件分类任务）。具有两个或更多序列的输入使用第一个或第二个空间，取决于令牌属于哪个序列。例如，在问答中，模型将使用唯一的段落嵌入向量来编码问题的令牌，其中将使用不同的段落嵌入向量来编码上下文的令牌。现在我们已经讨论了使用 BERT 成功解决下游 NLP 任务所需的所有要素。让我们重申一下有关 BERT 的关键要点：
 
 +   BERT 是一种基于编码器的 Transformer，经过大量文本的预训练。
-
 +   BERT 使用掩码语言建模和下一句预测任务进行模型的预训练。
-
 +   BERT 为输入序列中的每个令牌输出隐藏表示。
-
 +   BERT 有三个嵌入空间：令牌嵌入，位置嵌入和段落嵌入。
-
-+   BERT 使用特殊标记[CLS]来表示输入的开始，并用作下游分类模型的输入。
-
++   BERT 使用特殊标记`[CLS]`来表示输入的开始，并用作下游分类模型的输入。
 +   BERT 旨在解决四种类型的 NLP 任务：序列分类、标记分类、自由文本问答和多项选择题答案。
-
-+   BERT 使用特殊标记[SEP]来分隔序列 A 和序列 B。
++   BERT 使用特殊标记`[SEP]`来分隔序列 A 和序列 B。
 
 接下来，我们将学习如何使用 BERT 对垃圾邮件进行分类。
 
@@ -323,7 +297,7 @@ BERT 还使用段落嵌入空间来表示一个令牌属于哪个序列。例如
 
 现在是展示您的技能并以最小的努力实现垃圾邮件分类器的时候了。首先，让我们下载数据。我们将在这个练习中使用的数据是一组垃圾邮件和 ham（非垃圾邮件）短信消息，可在[`mng.bz/GE9v`](http://mng.bz/GE9v)获取。下载数据的 Python 代码已在 Ch13-Transormers-with-TF2-and-Huggingface/13.1_Spam_Classification_with_BERT.ipynb 笔记本中提供。
 
-理解数据
+#### 理解数据
 
 一旦您下载并提取数据，我们就可以快速查看数据中的内容。它将是一个单个的制表符分隔的文本文件。文件的前三个条目如下：
 
@@ -394,20 +368,18 @@ labels = np.array(labels)                   ⓯
 
 ⓯ 将标签列表转换为 NumPy 数组。
 
-您可以打印 n_ham 和 n_spam 变量，并验证有 4827 个 ham 示例和 747 个 spam 示例。换句话说，垃圾邮件示例比 ham 示例少。因此，在训练模型时，我们必须确保考虑到这种不平衡。
+您可以打印`n_ham`和`n_spam`变量，并验证有 4827 个 ham 示例和 747 个 spam 示例。换句话说，垃圾邮件示例比 ham 示例少。因此，在训练模型时，我们必须确保考虑到这种不平衡。
 
-处理数据中的类别不平衡
+#### 处理数据中的类别不平衡
 
 为了抵消类别不平衡，让我们创建平衡的训练/验证和测试数据集。为此，我们将使用 imbalanced-learn 库，这是一个用于操纵不平衡数据集（例如，从不同类别中抽样不同数量的数据）的优秀库。恢复数据集平衡的两种主要策略是：
 
 +   对多数类进行欠采样（从该类中选择较少的样本以用于最终数据集）
-
 +   对少数类进行过采样（为最终数据集生成更多来自该类的样本）
 
 我们将在这里使用第一种策略（即欠采样多数类）。更具体地说，我们将首先
 
 +   通过从数据集中随机抽样数据来创建平衡的测试和验证数据集（每个类别 n 个示例）
-
 +   将剩余的数据分配给训练集，并使用一种称为*near-miss*算法的算法对训练集中的多数类进行欠采样。
 
 创建训练验证和测试数据的过程如图 13.8 所示。
@@ -423,14 +395,16 @@ from imblearn.under_sampling import  NearMiss, RandomUnderSampler
 import numpy as np
 ```
 
-接下来，我们将定义一个变量 n，它表示在验证和测试数据集中每个类别要保留多少个样本：
+接下来，我们将定义一个变量`n`，它表示在验证和测试数据集中每个类别要保留多少个样本：
 
 ```py
 n=100 # Number of instances for each class for test/validation sets
 random_seed = 4321
 ```
 
-接下来我们将定义一个随机欠采样器。最重要的参数是 sampling_strategy 参数，它接受一个字典，其中键是标签，值是该标签所需的样本数量。我们还将通过 random_state 参数传递 random_seed 以确保每次运行代码时都获得相同的结果：
+
+
+接下来我们将定义一个随机欠采样器。最重要的参数是`sampling_strategy`参数，它接受一个字典，其中键是标签，值是该标签所需的样本数量。我们还将通过`random_state`参数传递`random_seed`以确保每次运行代码时都获得相同的结果：
 
 ```py
 rus = RandomUnderSampler(
@@ -438,27 +412,27 @@ rus = RandomUnderSampler(
 )
 ```
 
-然后我们调用欠采样器的 fit_resample()函数，使用我们创建的 inputs 和 labels 数组来采样数据：
+然后我们调用欠采样器的`fit_resample()`函数，使用我们创建的`inputs`和`labels`数组来采样数据：
 
 ```py
 rus.fit_resample(inputs, labels)
 ```
 
-一旦您适应了欠采样器，您可以使用欠采样器的 sample_indices_ 属性获取所选样本的索引。使用这些索引，我们将创建一对新的数组 test_x 和 test_y 来保存测试数据：
+一旦您适应了欠采样器，您可以使用欠采样器的`sample_indices_`属性获取所选样本的索引。使用这些索引，我们将创建一对新的数组`test_x`和`test_y`来保存测试数据：
 
 ```py
 test_inds = rus.sample_indices_
 test_x, test_y = inputs[test_inds], np.array(labels)[test_inds]
 ```
 
-不在测试数据集中的索引被分配到不同的数组：rest_x 和 rest_y。这些将被用来创建验证数据集和训练数据集：
+不在测试数据集中的索引被分配到不同的数组：`rest_x`和`rest_y`。这些将被用来创建验证数据集和训练数据集：
 
 ```py
 rest_inds = [i for i in range(inputs.shape[0]) if i not in test_inds]
 rest_x, rest_y = inputs[rest_inds], labels[rest_inds]
 ```
 
-和之前的方法类似，我们从 rest_x 和 rest_y 中欠采样数据来创建验证数据集（valid_x 和 valid_y）。请注意，我们不使用 inputs 和 labels 数组，而是使用这些数组分离出测试数据后剩余的数据：
+和之前的方法类似，我们从`rest_x`和`rest_y`中欠采样数据来创建验证数据集（`valid_x`和`valid_y`）。请注意，我们不使用`inputs`和`labels`数组，而是使用这些数组分离出测试数据后剩余的数据：
 
 ```py
 rus.fit_resample(rest_x, rest_y)
@@ -473,7 +447,7 @@ train_inds = [i for i in range(rest_x.shape[0]) if i not in valid_inds]
 train_x, train_y = rest_x[train_inds], rest_y[train_inds]
 ```
 
-我们还必须确保训练数据集是平衡的。为了做到这一点，让我们使用比随机选择元素更智能的方式来欠采样数据。我们将在这里使用的欠采样算法称为 near-miss 算法。near-miss 算法会删除与少数类别中的样本太接近的多数类别中的样本。这有助于增加少数类别和多数类别示例之间的距离。在这里，少数类别指的是数据较少的类别，而多数类别指的是数据较多的类别。为了使用 near-miss 算法，它需要能够计算两个样本之间的距离。因此，我们需要将我们的文本转换为一些数值表示。我们将使用 scikit-learn 的 CountVectorizer 来实现这一点：
+我们还必须确保训练数据集是平衡的。为了做到这一点，让我们使用比随机选择元素更智能的方式来欠采样数据。我们将在这里使用的欠采样算法称为 near-miss 算法。near-miss 算法会删除与少数类别中的样本太接近的多数类别中的样本。这有助于增加少数类别和多数类别示例之间的距离。在这里，少数类别指的是数据较少的类别，而多数类别指的是数据较多的类别。为了使用 near-miss 算法，它需要能够计算两个样本之间的距离。因此，我们需要将我们的文本转换为一些数值表示。我们将使用 scikit-learn 的`CountVectorizer`来实现这一点：
 
 ```py
 from sklearn.feature_extraction.text import CountVectorizer
@@ -482,7 +456,7 @@ countvec = CountVectorizer()
 train_bow = countvec.fit_transform(train_x.reshape(-1).tolist())
 ```
 
-train_bow 将包含我们数据的词袋表示。然后我们可以将其传递给 NearMiss 实例。获取数据的方式与之前相同：
+`train_bow`将包含我们数据的词袋表示。然后我们可以将其传递给`NearMiss`实例。获取数据的方式与之前相同：
 
 ```py
 from imblearn.under_sampling import  NearMiss
@@ -514,21 +488,19 @@ dtype: int64
 
 太棒了！我们的数据集都是平衡的，我们准备继续进行工作流的其余部分。
 
-定义模型
+## 定义模型
 
 准备好数据后，我们将下载模型。我们将使用的 BERT 模型来自 TensorFlow hub ([`www.tensorflow.org/hub`](https://www.tensorflow.org/hub))。TensorFlow hub 是各种模型训练任务的模型仓库。您可以获得多种任务的模型，包括图像分类、对象检测、语言建模、问答等等。要查看所有可用模型的完整列表，请访问 [`tfhub.dev/`](https://tfhub.dev/)。
 
 为了成功地利用 BERT 来完成自然语言处理任务，我们需要三个重要的工作：
 
 +   *分词器* —— 确定如何将提供的输入序列分割为标记
-
 +   *编码器* —— 接受标记，计算数值表示，并最终为每个标记生成隐藏表示以及汇总表示（整个序列的单一表示）
-
 +   *分类头* —— 接受汇总表示并为输入生成标签
 
 首先，让我们来看一下分词器。分词器接受单个输入字符串或字符串列表，并将其转换为字符串列表或字符串列表，分别将其拆分为较小的元素。例如，可以通过在空格字符上分割来将句子分割为单词。BERT 中的分词器使用一种称为 *WordPiece* 算法的算法 ([`mng.bz/z40B`](https://static.googleusercontent.com/media/research.google.com/en//pubs/archive/37842.pdf))。它使用迭代方法找到数据集中常见的子词（即单词的部分）。WordPiece 算法的细节超出了本书的范围。欢迎查阅原始论文以了解更多细节。对于本讨论而言，分词器的最重要特征是它将给定的输入字符串（例如，句子）分解为较小标记的列表（例如，子词）。
 
-像 WordPiece 算法这样的子词方法的优点
+### 像 WordPiece 算法这样的子词方法的优点
 
 像 WordPiece 算法这样的子词方法学习单词的较小且常见的部分，并使用它们来定义词汇表。与将整个单词放入词汇表相比，此方法有两个主要优点。
 
@@ -554,7 +526,7 @@ tokenizer = tfm.nlp.layers.FastWordpieceBertTokenizer(
 )
 ```
 
-在这里，你首先需要获取词汇文件的位置，并定义一些配置，比如在对文本进行标记化之前是否应该将其转换为小写。词汇文件是一个文本文件，每行都有一个子词。这个标记器使用了 Fast WordPiece Tokenization（[`arxiv.org/abs/2012.15524.pdf`](https://arxiv.org/abs/2012.15524.pdf)），这是原始 WordPiece 算法的高效实现。请注意，vocab_file 和 do_lower_case 是我们将在下一步从 TensorFlow hub 下载的模型工件中找到的设置。但为了方便理解，我们在这里将它们定义为常量。您将在笔记本中找到自动提取它们的代码。接下来，我们可以按照以下方式使用标记器：
+在这里，你首先需要获取词汇文件的位置，并定义一些配置，比如在对文本进行标记化之前是否应该将其转换为小写。词汇文件是一个文本文件，每行都有一个子词。这个标记器使用了 Fast WordPiece Tokenization（[`arxiv.org/abs/2012.15524.pdf`](https://arxiv.org/abs/2012.15524.pdf)），这是原始 WordPiece 算法的高效实现。请注意，`vocab_file`和`do_lower_case`是我们将在下一步从 TensorFlow hub 下载的模型工件中找到的设置。但为了方便理解，我们在这里将它们定义为常量。您将在笔记本中找到自动提取它们的代码。接下来，我们可以按照以下方式使用标记器：
 
 ```py
 tokens = tf.reshape(
@@ -589,11 +561,11 @@ Token: [MASK] has ID: 103
 Token: [PAD] has ID: 0
 ```
 
-在这里，[PAD]是 BERT 用来表示填充令牌（0）的另一个特殊标记。在 NLP 中，常常使用填充来将不同长度的句子填充到相同的长度，填充的句子是用零填充的。在这里，[PAD]标记对应了零。
+在这里，`[PAD]`是 BERT 用来表示填充令牌（0）的另一个特殊标记。在 NLP 中，常常使用填充来将不同长度的句子填充到相同的长度，填充的句子是用零填充的。在这里，`[PAD]`标记对应了零。
 
-了解了标记器的基本功能后，我们可以定义一个名为 encode_sentence()的函数，将给定的句子编码为 BERT 模型所理解的输入（请参见下一个清单）。
+了解了标记器的基本功能后，我们可以定义一个名为`encode_sentence()`的函数，将给定的句子编码为 BERT 模型所理解的输入（请参见下一个清单）。
 
-清单 13.2 使用 BERT 的标记器对给定的输入字符串进行编码
+**清单 13.2 使用 BERT 的标记器对给定的输入字符串进行编码**
 
 ```py
 def encode_sentence(s):
@@ -605,11 +577,11 @@ def encode_sentence(s):
     return tokens       ❷
 ```
 
-❶ 将特殊的 [CLS] 和 [SEP] 标记添加到序列中并获取标记 ID。
+❶ 将特殊的 `[CLS]` 和 `[SEP]` 标记添加到序列中并获取标记 ID。
 
 ❷ 返回标记 ID。
 
-在这个函数中，我们返回标记化的输出，首先添加 [CLS] 标记，然后将给定的字符串标记化为子词列表，最后添加 [SEP] 标记来标记句子/序列的结束。例如，句子 “I like ice cream”
+在这个函数中，我们返回标记化的输出，首先添加 `[CLS]` 标记，然后将给定的字符串标记化为子词列表，最后添加 `[SEP]` 标记来标记句子/序列的结束。例如，句子 “I like ice cream”
 
 ```py
 encode_sentence("I like ice cream")
@@ -621,7 +593,7 @@ encode_sentence("I like ice cream")
 [101, 1045, 2066, 3256, 6949, 102]
 ```
 
-如我们所见，标记 ID 101（即，[CLS]）在开头，而 102（即，[SEP]）在结尾。其余的标记 ID 对应于我们输入的实际字符串。仅仅为 BERT 标记化输入是不够的；我们还必须为模型定义一些额外的输入。例如，句子
+如我们所见，标记 ID 101（即，`[CLS]`）在开头，而 102（即，`[SEP]`）在结尾。其余的标记 ID 对应于我们输入的实际字符串。仅仅为 BERT 标记化输入是不够的；我们还必须为模型定义一些额外的输入。例如，句子
 
 ```py
 "I like ice cream"
@@ -639,15 +611,13 @@ encode_sentence("I like ice cream")
 
 让我们讨论这个数据结构中的各种元素。BERT 以字典形式接受输入，其中
 
-+   关键 input_ids 表示从之前定义的 encode_sentence 函数中获得的标记 ID
++   关键`input_ids`表示从之前定义的`encode_sentence`函数中获得的标记 ID
++   关键`input_mask`表示一个与`input_ids`相同大小的掩码，其中 1 表示不应屏蔽的值（例如，输入序列中的实际标记和特殊标记，如 `[CLS]` 标记 ID 101 和 `[SEP]` 标记 ID 102），而 0 表示应屏蔽的标记（例如，`[PAD]` 标记 ID 0）。
++   输入关键`input_type_ids`是一个大小与`input_ids`相同的由 1 和 0 组成的矩阵/向量。这表示每个标记属于哪个句子。请记住，BERT 可以接受两种类型的输入：具有一个序列的输入和具有两个序列 A 和 B 的输入。`input_type_ids`矩阵表示每个标记属于哪个序列（A 或 B）。由于我们的输入中只有一个序列，我们简单地创建一个大小与`input_ids`相同的零矩阵。
 
-+   关键 input_mask 表示一个与 input_ids 相同大小的掩码，其中 1 表示不应屏蔽的值（例如，输入序列中的实际标记和特殊标记，如 [CLS] 标记 ID 101 和 [SEP] 标记 ID 102），而 0 表示应屏蔽的标记（例如，[PAD] 标记 ID 0）。
+函数`get_bert_inputs()`将使用一组文档（即，一个字符串列表，其中每个字符串是一个输入；请参见下一个清单）以这种格式生成输入。
 
-+   输入关键 input_type_ids 是一个大小与 input_ids 相同的由 1 和 0 组成的矩阵/向量。这表示每个标记属于哪个句子。请记住，BERT 可以接受两种类型的输入：具有一个序列的输入和具有两个序列 A 和 B 的输入。input_type_ids 矩阵表示每个标记属于哪个序列（A 或 B）。由于我们的输入中只有一个序列，我们简单地创建一个大小与 input_ids 相同的零矩阵。
-
-函数 get_bert_inputs() 将使用一组文档（即，一个字符串列表，其中每个字符串是一个输入；请参见下一个清单）以这种格式生成输入。
-
-列表 13.3 将给定输入格式化为 BERT 接受的格式
+**列表 13.3 将给定输入格式化为 BERT 接受的格式**
 
 ```py
 def get_bert_inputs(tokenizer, docs,max_seq_len=None):
@@ -667,25 +637,25 @@ def get_bert_inputs(tokenizer, docs,max_seq_len=None):
     return packed_numpy                                          ❹
 ```
 
-❶ 使用 BertPackInputs 生成标记 ID、掩码和段 ID。
+❶ 使用 `BertPackInputs` 生成标记 ID、掩码和段 ID。
 
-❷ 为 docs 中的所有消息生成输出。
+❷ 为 `docs` 中的所有消息生成输出。
 
-❸ 将 BertPackInputs 的输出转换为一个键为字符串、值为 numpy 数组的字典。
+❸ 将 `BertPackInputs` 的输出转换为一个键为字符串、值为 numpy 数组的字典。
 
 ❹ 返回结果。
 
-这里我们使用 BertPackInputs 对象，它接受一个数组，其中每个项目都是包含消息的字符串。然后 BertPackInputs 生成一个包含以下处理过的输出的字典：
+这里我们使用`BertPackInputs`对象，它接受一个数组，其中每个项目都是包含消息的字符串。然后`BertPackInputs`生成一个包含以下处理过的输出的字典：
 
-+   input_word_ids ——带有 [CLS] 和 [SEP] 标记 ID 的标记 ID，会自动添加。
++   `input_word_ids` ——带有 `[CLS]` 和 `[SEP]` 标记 ID 的标记 ID，会自动添加。
++   `input_mask` ——一个整数数组，其中每个元素表示该位置是真实标记（1）还是填充标记（0）。
++   `input_type_ids` ——一个整数数组，其中每个元素表示每个标记属于哪个段。在这种情况下，它将是一个全零数组。
 
-+   input_mask ——一个整数数组，其中每个元素表示该位置是真实标记（1）还是填充标记（0）。
+`BertPackInputs`执行了 BERT 模型需要的许多不同的预处理操作。您可以在 [`www.tensorflow.org/api_docs/python/tfm/nlp/layers/BertPackInputs`](https://www.tensorflow.org/api_docs/python/tfm/nlp/layers/BertPackInputs) 上阅读关于此层接受的各种输入的信息。
 
-+   input_type_ids ——一个整数数组，其中每个元素表示每个标记属于哪个段。在这种情况下，它将是一个全零数组。
+要为模型生成准备好的训练、验证和测试数据，只需调用`get_bert_inputs()`函数：
 
-BertPackInputs 执行了 BERT 模型需要的许多不同的预处理操作。您可以在 [`www.tensorflow.org/api_docs/python/tfm/nlp/layers/BertPackInputs`](https://www.tensorflow.org/api_docs/python/tfm/nlp/layers/BertPackInputs) 上阅读关于此层接受的各种输入的信息。
 
-要为模型生成准备好的训练、验证和测试数据，只需调用 get_bert_inputs() 函数：
 
 ```py
 train_inputs = get_bert_inputs(train_x, max_seq_len=80)
@@ -693,7 +663,7 @@ valid_inputs = get_bert_inputs(valid_x, max_seq_len=80)
 test_inputs = get_bert_inputs(test_x, max_seq_len=80)
 ```
 
-完成后，让我们作为预防措施对 train_inputs 中的数据进行洗牌。目前，数据是有序的，即垃圾邮件消息在正常邮件消息之后：
+完成后，让我们作为预防措施对`train_inputs`中的数据进行洗牌。目前，数据是有序的，即垃圾邮件消息在正常邮件消息之后：
 
 ```py
 train_inds = np.random.permutation(len(train_inputs["input_word_ids"]))
@@ -703,7 +673,7 @@ train_inputs = dict(
 train_y = train_y[train_inds]
 ```
 
-记得对输入和标签都使用相同的洗牌方式来保持它们的关联。我们已经做好了为模型准备输入的一切。现在是揭晓模型的大时刻了。我们需要定义一个具有分类头的 BERT，以便模型可以在我们的分类数据集上进行端到端的训练。我们将分两步来完成这个过程。首先，我们将从 TensorFlow hub 下载 BERT 的编码器部分，然后使用 tensorflow-models-official 库中的 tfm.nlp.models.BertClassifier 对象来生成最终的带有分类器头的 BERT 模型。让我们来看看我们如何完成第一部分：
+记得对输入和标签都使用相同的洗牌方式来保持它们的关联。我们已经做好了为模型准备输入的一切。现在是揭晓模型的大时刻了。我们需要定义一个具有分类头的 BERT，以便模型可以在我们的分类数据集上进行端到端的训练。我们将分两步来完成这个过程。首先，我们将从 TensorFlow hub 下载 BERT 的编码器部分，然后使用 `tensorflow-models-official` 库中的 `tfm.nlp.models.BertClassifier` 对象来生成最终的带有分类器头的 BERT 模型。让我们来看看我们如何完成第一部分：
 
 ```py
 import tensorflow_hub as hub
@@ -746,7 +716,7 @@ hub_encoder = tf.keras.models.Model(
 )
 ```
 
-在这里，我们首先定义了三个输入层，每个输入层都映射到 BertPackInputs 的一个输出。例如，input_word_ids 输入层将接收到在 get_bert_inputs() 函数生成的字典中键为 input_word_ids 的输出。接下来，我们通过向 hub.KerasLayer 对象传递一个 URL 来下载预训练的 BERT 编码器。这个层会生成两个输出：sequence_output，其中包含所有时间步长的隐藏表示，和 pooled_output，其中包含与 [CLS] 标记位置对应的隐藏表示。对于这个问题，我们需要后者，将其传递给位于编码器顶部的分类头。最后，我们将使用 Functional API 定义一个 Keras 模型。这个模型需要通过字典定义特定的输入和输出签名，如之前所示。我们将使用这个模型来定义一个基于这个编码器的分类器模型：
+在这里，我们首先定义了三个输入层，每个输入层都映射到 `BertPackInputs` 的一个输出。例如，`input_word_ids` 输入层将接收到在 `get_bert_inputs()` 函数生成的字典中键为 `input_word_ids` 的输出。接下来，我们通过向 `hub.KerasLayer` 对象传递一个 URL 来下载预训练的 BERT 编码器。这个层会生成两个输出：`sequence_output`，其中包含所有时间步长的隐藏表示，和 `pooled_output`，其中包含与 `[CLS]` 标记位置对应的隐藏表示。对于这个问题，我们需要后者，将其传递给位于编码器顶部的分类头。最后，我们将使用 Functional API 定义一个 Keras 模型。这个模型需要通过字典定义特定的输入和输出签名，如之前所示。我们将使用这个模型来定义一个基于这个编码器的分类器模型：
 
 ```py
 # Generating a classifier and the encoder
@@ -755,11 +725,11 @@ bert_classifier = tfm.nlp.models.BertClassifier(
 )
 ```
 
-正如您所见，定义分类器非常简单。我们只需将我们的 hub_encoder 传递给 BertClassifier，并声明我们有两个类别，即垃圾邮件和正常邮件（即 num_classes=2）。
+正如您所见，定义分类器非常简单。我们只需将我们的 `hub_encoder` 传递给 `BertClassifier`，并声明我们有两个类别，即垃圾邮件和正常邮件（即 `num_classes=2`）。
 
-获取 BERT 编码器的另一种方式
+## 获取 BERT 编码器的另一种方式
 
-还有另一种方法可以获得一个 BERT 编码器。然而，它需要手动加载预训练的权重；因此，我们将保留此方法作为另一种选择。首先，你需要使用包含编码器模型各种超参数的配置文件。我已经为你提供了用于该模型的原始配置的 YAML 文件（Ch12/data/bert_en_uncased_base.yaml）。它包含了 BERT 使用的各种超参数（例如，隐藏维度大小，非线性激活等）。请随意查看它们，以了解用于该模型的不同参数。我们将使用 yaml 库将这些配置加载为字典，并将其存储在 config_dict 中。接下来，我们生成 encoder_config，一个使用我们加载的配置初始化的 EncoderConfig 对象。定义了 encoder_config 后，我们将构建一个 BERT 编码器模型，该模型能够生成标记的特征表示，然后使用此编码器作为网络调用 bert.bert_models.classifier_model()。请注意，此方法得到一个随机初始化的 BERT 模型：
+还有另一种方法可以获得一个 BERT 编码器。然而，它需要手动加载预训练的权重；因此，我们将保留此方法作为另一种选择。首先，你需要使用包含编码器模型各种超参数的配置文件。我已经为你提供了用于该模型的原始配置的 YAML 文件（`Ch12/data/bert_en_uncased_base.yaml`）。它包含了 BERT 使用的各种超参数（例如，隐藏维度大小，非线性激活等）。请随意查看它们，以了解用于该模型的不同参数。我们将使用 `yaml` 库将这些配置加载为字典，并将其存储在 `config_dict` 中。接下来，我们生成 `encoder_config`，一个使用我们加载的配置初始化的 `EncoderConfig` 对象。定义了 `encoder_config` 后，我们将构建一个 BERT 编码器模型，该模型能够生成标记的特征表示，然后使用此编码器作为网络调用 `bert.bert_models.classifier_model()`。请注意，此方法得到一个随机初始化的 BERT 模型：
 
 ```py
 import yaml
@@ -779,7 +749,7 @@ bert_classifier = tfm.nlp.models.BertClassifier(
 )
 ```
 
-如果你想要一个类似这样的预训练版本的 BERT，那么你需要下载 TensorFlow checkpoint。你可以通过转到 bert_url 中的链接，然后点击下载来完成这个过程。最后，你使用以下命令加载权重：
+如果你想要一个类似这样的预训练版本的 BERT，那么你需要下载 TensorFlow checkpoint。你可以通过转到 `bert_url` 中的链接，然后点击下载来完成这个过程。最后，你使用以下命令加载权重：
 
 ```py
 checkpoint = tf.train.Checkpoint(encoder=bert_encoder)
@@ -790,11 +760,11 @@ checkpoint.read(<path to .ckpt>).assert_consumed()
 
 接下来，让我们讨论如何编译构建好的模型。
 
-编译模型
+## 编译模型
 
-在这里，我们将定义优化器来训练模型。到目前为止，我们在 TensorFlow/Keras 中提供的默认优化器选项中没有太多变化。这次，让我们使用在 tf-models-official 库中提供的优化器。优化器可以通过调用 nlp.optimization.create_optimizer() 函数进行实例化。这在下一列表中有概述。
+在这里，我们将定义优化器来训练模型。到目前为止，我们在 TensorFlow/Keras 中提供的默认优化器选项中没有太多变化。这次，让我们使用在 `tf-models-official` 库中提供的优化器。优化器可以通过调用 `nlp.optimization.create_optimizer()` 函数进行实例化。这在下一列表中有概述。
 
-列表 13.4 在垃圾邮件分类任务上优化 BERT
+**列表 13.4 在垃圾邮件分类任务上优化 BERT**
 
 ```py
 epochs = 3
@@ -825,13 +795,13 @@ optimizer = tf.keras.optimizers.experimental.Adam(
 )
 ```
 
-作为默认优化器，*带权重衰减的 Adam*（[`arxiv.org/pdf/1711.05101.pdf`](https://arxiv.org/pdf/1711.05101.pdf)）被使用。带权重衰减的 Adam 是原始 Adam 优化器的一个变体，但具有更好的泛化性质。num_warmup_steps 表示学习率预热的持续时间。在预热期间，学习率在 num_warmup_steps 内线性增加，从一个小值线性增加到 init_lr（在 linear_decay 中定义）。之后，在 num_train_steps 期间，学习率使用多项式衰减（[`mng.bz/06lN`](http://mng.bz/06lN)）从 init_lr （在 linear_decay 中定义）衰减到 end_lr。这在图 13.9 中有所描述。
+作为默认优化器，*带权重衰减的 Adam*（[`arxiv.org/pdf/1711.05101.pdf`](https://arxiv.org/pdf/1711.05101.pdf)）被使用。带权重衰减的 Adam 是原始 Adam 优化器的一个变体，但具有更好的泛化性质。`num_warmup_steps` 表示学习率预热的持续时间。在预热期间，学习率在 `num_warmup_steps` 内线性增加，从一个小值线性增加到 `init_lr`（在 `linear_decay` 中定义）。之后，在 `num_train_steps` 期间，学习率使用多项式衰减（[`mng.bz/06lN`](http://mng.bz/06lN)）从 `init_lr` （在 `linear_decay` 中定义）衰减到 `end_lr`。这在图 13.9 中有所描述。
 
 ![13-09](img/13-09.png)
 
-图 13.9 随着训练逐步进行（即迭代步数），学习率的行为
+**图 13.9 随着训练逐步进行（即迭代步数），学习率的行为**
 
-现在我们可以像以前一样编译模型了。我们将定义一个损失（稀疏分类交叉熵损失）和一个指标（使用标签而不是 one-hot 向量计算的准确度），然后将优化器、损失和指标传递给 hub_classifier.compile() 函数：
+现在我们可以像以前一样编译模型了。我们将定义一个损失（稀疏分类交叉熵损失）和一个指标（使用标签而不是 one-hot 向量计算的准确度），然后将优化器、损失和指标传递给 `hub_classifier.compile()` 函数：
 
 ```py
 metrics = [tf.keras.metrics.SparseCategoricalAccuracy('accuracy', 
@@ -844,9 +814,9 @@ hub_classifier.compile(
     metrics=metrics)
 ```
 
-训练模型
+## 训练模型
 
-我们已经走了很长的路，现在剩下的就是训练模型。模型训练非常简单，类似于我们使用 tf.keras.Model.fit() 函数训练模型的方式：
+我们已经走了很长的路，现在剩下的就是训练模型。模型训练非常简单，类似于我们使用 `tf.keras.Model.fit()` 函数训练模型的方式：
 
 ```py
 hub_classifier.fit(
@@ -858,9 +828,9 @@ hub_classifier.fit(
       epochs=epochs)
 ```
 
-我们将使用 get_bert_inputs() 函数准备的 train_inputs 传递给参数 x，将 train_y（即一个由 1 和 0 组成的向量，分别表示输入是垃圾邮件还是正常邮件）传递给 y。类似地，我们将 validation_data 定义为一个包含 valid_inputs 和 valid_y 的元组。我们还传入了 batch_size（训练批量大小）、validation_batch_size 和要训练的 epochs 数量。
+我们将使用 `get_bert_inputs()` 函数准备的 `train_inputs` 传递给参数 `x`，将 `train_y`（即一个由 1 和 0 组成的向量，分别表示输入是垃圾邮件还是正常邮件）传递给 `y`。类似地，我们将 `validation_data` 定义为一个包含 `valid_inputs` 和 `valid_y` 的元组。我们还传入了 `batch_size`（训练批量大小）、`validation_batch_size` 和要训练的 `epochs` 数量。
 
-评估和解释结果
+## 评估和解释结果
 
 当你运行训练时，你应该得到接近以下结果。这里你可以看到训练损失和准确率，以及验证损失和准确率：
 
@@ -878,9 +848,9 @@ Epoch 3/3
 
 控制台输出清楚地显示了训练损失稳步下降，而准确率从 45% 上升到了 76%。模型已达到 85% 的验证准确率。这清楚地展示了像 BERT 这样的模型的强大之处。如果你要从头开始训练一个 NLP 模型，在这么短的时间内达到 85% 的验证准确率是不可能的。由于 BERT 具有非常强的语言理解能力，模型可以专注于学习手头的任务。请注意，由于我们的验证和测试集非常小（每个仅有 200 条记录），你可能会得到与此处所示不同水平的准确率。
 
-注意 在一台配有 NVIDIA GeForce RTX 2070 8 GB 的 Intel Core i5 机器上，训练大约需要 40 秒来运行 3 个 epochs。
+**注意** 在一台配有 NVIDIA GeForce RTX 2070 8 GB 的 Intel Core i5 机器上，训练大约需要 40 秒来运行 3 个 epochs。
 
-最后，让我们通过调用 evaluate() 函数在测试数据上测试模型。
+最后，让我们通过调用 `evaluate()` 函数在测试数据上测试模型。
 
 ```py
 hub_classifier.evaluate(test_inputs, test_y)
@@ -894,15 +864,15 @@ hub_classifier.evaluate(test_inputs, test_y)
 
 再次，这是一个很棒的结果。仅经过三个 epochs，没有进行任何繁琐的参数调整，我们在测试数据上达到了 79.5% 的准确率。我们所做的一切就是在 BERT 之上拟合了一个逻辑回归层。
 
-下一节将讨论我们如何定义一个能够从段落中找到答案的模型。为此，我们将使用到目前为止最流行的 Transformer 模型库之一：Hugging Face 的 transformers 库。
+下一节将讨论我们如何定义一个能够从段落中找到答案的模型。为此，我们将使用到目前为止最流行的 Transformer 模型库之一：Hugging Face 的 `transformers` 库。
 
-练习 2
+## 练习 2
 
-你有一个包含五个类别的分类问题，并且想要修改 bert_classifier。给定正确格式的数据，你将如何更改所定义的 bert_classifier 对象？
+你有一个包含五个类别的分类问题，并且想要修改 `bert_classifier`。给定正确格式的数据，你将如何更改所定义的 `bert_classifier` 对象？
 
 ## 13.3 使用 Hugging Face 的 Transformers 进行问答
 
-你的朋友计划启动一个使用 ML 来找出开放领域问题答案的初创公司。缺乏 ML 背景，他转向你询问是否可以使用 ML 实现这一点。知道问题回答是机器可学习的，只要有标记数据，你决定使用 BERT 变体创建一个问答原型并进行演示。你将使用 SQUAD v1 问答数据集，并在该数据集上训练 DistilBERT（BERT 的一个变体）。为此，你将使用 Hugging Face 的 transformers 库（[`huggingface.co/transformers/`](https://huggingface.co/transformers/)）。Hugging Face 的 transformers 库提供了不同 Transformer 模型的实现和易于使用的 API 来训练/评估数据集上的模型。
+你的朋友计划启动一个使用 ML 来找出开放领域问题答案的初创公司。缺乏 ML 背景，他转向你询问是否可以使用 ML 实现这一点。知道问题回答是机器可学习的，只要有标记数据，你决定使用 BERT 变体创建一个问答原型并进行演示。你将使用 SQUAD v1 问答数据集，并在该数据集上训练 DistilBERT（BERT 的一个变体）。为此，你将使用 Hugging Face 的 `transformers` 库（[`huggingface.co/transformers/`](https://huggingface.co/transformers/)）。Hugging Face 的 `transformers` 库提供了不同 Transformer 模型的实现和易于使用的 API 来训练/评估数据集上的模型。
 
 BERT 旨在解决两种不同类型的任务：
 
@@ -920,13 +890,15 @@ BERT 旨在解决两种不同类型的任务：
 
 +   答案在内容中的结束索引（整数）
 
-首先，我们需要将问题和内容结合起来，并添加几个特殊标记。在开头，我们需要添加一个[CLS]标记，然后添加一个[SEP]来分隔问题和内容，以及一个[SEP]来标记输入的结尾。此外，问题和内容将使用模型的分词器分解为标记（即子词）。对于具有
+首先，我们需要将问题和内容结合起来，并添加几个特殊标记。在开头，我们需要添加一个 `[CLS]` 标记，然后添加一个 `[SEP]` 来分隔问题和内容，以及一个 `[SEP]` 来标记输入的结尾。此外，问题和内容将使用模型的分词器分解为标记（即子词）。对于具有
 
 问题：狗对什么吠叫
 
 答案：狗吠的是邮递员
 
 如果我们将单个单词视为标记，输入将如下所示：
+
+
 
 ```py
 [CLS], What, did, the, dog, barked, at, [SEP], The, dog, barked, at, the, 
@@ -937,27 +909,23 @@ BERT 旨在解决两种不同类型的任务：
 
 BERT 模型将为输入序列中的每个标记输出一个隐藏表示。跨越整个内容范围的标记输出表示被馈送给下游模型。每个分类层然后预测每个标记作为答案的起始/结束标记的概率。这些层的权重在时间维度上共享。换句话说，相同的权重矩阵应用于每个输出表示以预测概率。
 
-对于本节，我们将使用 Hugging Face 的 transformers 库。有关更多详细信息，请参阅侧边栏。
+对于本节，我们将使用 Hugging Face 的 `transformers` 库。有关更多详细信息，请参阅侧边栏。
 
-Hugging Face 的 transformers 库
+## Hugging Face 的 transformers 库
 
-Hugging Face 是一家专注于解决 NLP 问题的公司。该公司提供了用于训练 NLP 模型以及托管数据集并在公开可访问的存储库中训练模型的库。我们将使用 Hugging Face 提供的两个 Python 库：transformers 和 datasets。
+Hugging Face 是一家专注于解决 NLP 问题的公司。该公司提供了用于训练 NLP 模型以及托管数据集并在公开可访问的存储库中训练模型的库。我们将使用 Hugging Face 提供的两个 Python 库：`transformers` 和 `datasets`。
 
-在撰写本书时，transformers 库（[`huggingface.co/transformers/`](https://huggingface.co/transformers/)）是最通用的 Python 库，提供了对许多已发布的 Transformer 模型（例如，BERT，XLNet，DistilBERT，Albert，RoBERT 等）以及社区发布的 NLP 模型（[`huggingface.co/models`](https://huggingface.co/models)）的即时访问，transformers 库支持 TensorFlow 和 PyTorch 两种深度学习框架。PyTorch（[`pytorch.org/`](https://pytorch.org/)）是另一个类似于 TensorFlow 的深度学习框架，提供了全面的功能套件来实现和生产化深度学习模型。我在 transformers 库中看到的关键优势如下：
+在撰写本书时，`transformers` 库（[`huggingface.co/transformers/`](https://huggingface.co/transformers/)）是最通用的 Python 库，提供了对许多已发布的 Transformer 模型（例如，BERT，XLNet，DistilBERT，Albert，RoBERT 等）以及社区发布的 NLP 模型（[`huggingface.co/models`](https://huggingface.co/models)）的即时访问，`transformers` 库支持 TensorFlow 和 PyTorch 两种深度学习框架。PyTorch（[`pytorch.org/`](https://pytorch.org/)）是另一个类似于 TensorFlow 的深度学习框架，提供了全面的功能套件来实现和生产化深度学习模型。我在 `transformers` 库中看到的关键优势如下：
 
 +   一个易于理解的 API，用于预训练和微调模型，这对所有模型都是一致的
-
 +   能够下载各种 Transformer 模型的 TensorFlow 版本，并将其用作 Keras 模型
-
 +   能够转换 TensorFlow 和 PyTorch 模型
-
-+   强大的功能，如 Trainer（[`mng.bz/Kx9j`](http://mng.bz/Kx9j)），允许用户以非常灵活的方式创建和训练模型
-
++   强大的功能，如 `Trainer`（[`mng.bz/Kx9j`](http://mng.bz/Kx9j)），允许用户以非常灵活的方式创建和训练模型
 +   高度活跃的社区-贡献模型和数据集
 
 ### 13.3.1 理解数据
 
-如前所述，我们将使用 SQuAD v1 数据集（[`rajpurkar.github.io/SQuAD-explorer/`](https://rajpurkar.github.io/SQuAD-explorer/)）。这是由斯坦福大学创建的问答数据集。您可以使用 Hugging Face 的 datasets 库轻松下载数据集，如下所示：
+如前所述，我们将使用 SQuAD v1 数据集（[`rajpurkar.github.io/SQuAD-explorer/`](https://rajpurkar.github.io/SQuAD-explorer/)）。这是由斯坦福大学创建的问答数据集。您可以使用 Hugging Face 的 `datasets` 库轻松下载数据集，如下所示：
 
 ```py
 from datasets import load_dataset
@@ -1003,7 +971,7 @@ dataset["train"]["answers"][:5]
 
 我们可以看到每个答案都有一个起始索引（基于字符）和包含答案的文本。有了这些信息，我们可以轻松计算答案的结束索引（即，结束索引 = 起始索引 + 文本长度）。
 
-GLUE 基准任务套件
+## GLUE 基准任务套件
 
 GLUE 基准测试（[`gluebenchmark.com/tasks`](https://gluebenchmark.com/tasks)）是一个用于评估自然语言处理模型的流行任务集合。它在多种任务上测试模型的自然语言理解能力。GLUE 任务集合包括以下任务。
 
@@ -1011,7 +979,7 @@ GLUE 基准测试（[`gluebenchmark.com/tasks`](https://gluebenchmark.com/tasks)
 
 ### 13.3.2 处理数据
 
-此数据集存在几个完整性问题需要解决。我们将解决这些问题，然后创建一个 tf.data 流水线来传输数据。需要解决的第一个问题是给定的 answer_start 和实际的 answer_start 之间的对齐问题。一些示例往往在给定的 answer_start 和实际的 answer_start 位置之间存在大约两个字符的偏移。我们将编写一个函数来纠正此偏移，以及添加结束索引。下一节概述了执行此操作的代码。
+此数据集存在几个完整性问题需要解决。我们将解决这些问题，然后创建一个 `tf.data` 流水线来传输数据。需要解决的第一个问题是给定的 `answer_start` 和实际的 `answer_start` 之间的对齐问题。一些示例往往在给定的 `answer_start` 和实际的 `answer_start` 位置之间存在大约两个字符的偏移。我们将编写一个函数来纠正此偏移，以及添加结束索引。下一节概述了执行此操作的代码。
 
 列表 13.5 修正答案起始/结束索引中的不必要偏移量
 
@@ -1069,13 +1037,13 @@ def correct_indices_add_end_idx(answers, contexts):
 
 ❺ 将答案的起始部分从整数列表转换为整数。
 
-❻ 通过将答案的长度加到 start_idx 上来计算结束索引。
+❻ 通过将答案的长度加到 `start_idx` 上来计算结束索引。
 
-❼ 如果从 start_idx 到 end_idx 的片段与答案文本完全匹配，则不需要更改。
+❼ 如果从 `start_idx` 到 `end_idx` 的片段与答案文本完全匹配，则不需要更改。
 
-❽ 如果从 start_idx 到 end_idx 的片段需要偏移 1 才能与答案匹配，则相应地偏移。
+❽ 如果从 `start_idx` 到 `end_idx` 的片段需要偏移 1 才能与答案匹配，则相应地偏移。
 
-❾ 如果从 start_idx 到 end_idx 的片段需要偏移 2 才能与答案匹配，则相应地偏移。
+❾ 如果从 `start_idx` 到 `end_idx` 的片段需要偏移 2 才能与答案匹配，则相应地偏移。
 
 ❿ 打印正确答案的数量（不需要更改）。
 
@@ -1098,33 +1066,28 @@ test_answers, test_contexts = correct_indices_add_end_idx(
 当您运行此代码时，您将看到以下统计信息：
 
 +   训练数据修正
-
     +   87,341/87,599 个示例的答案索引是正确的。
-
     +   258/87,599 个示例的答案索引是错误的。
-
 +   验证数据修正
-
     +   10,565/10,570 个示例的答案索引是正确的。
-
     +   5/10,570 个示例的答案索引是错误的。
 
 我们必须确保所需的修正数量不是非常高。如果修正数量显着高，通常意味着代码中存在错误或者数据加载逻辑存在问题。在这里，我们可以清楚地看到需要修正的示例数量很少。
 
-定义和使用标记器
+## 定义和使用标记器
 
-解决问题所需的所有数据都已经提供给我们了。现在是时候像以前一样对数据进行分词了。请记住，这些预训练的自然语言处理模型分为两部分：分词器和模型本身。分词器将文本分词为较小的部分（例如，子词），并以 ID 序列的形式呈现给模型。然后，模型接收这些 ID，并在它们上执行嵌入查找，以及各种计算，以得出最终的标记表示，这将作为输入传递给下游分类模型（即问答分类层）。在 transformers 库中，你有分词器对象和模型对象：
+解决问题所需的所有数据都已经提供给我们了。现在是时候像以前一样对数据进行分词了。请记住，这些预训练的自然语言处理模型分为两部分：分词器和模型本身。分词器将文本分词为较小的部分（例如，子词），并以 ID 序列的形式呈现给模型。然后，模型接收这些 ID，并在它们上执行嵌入查找，以及各种计算，以得出最终的标记表示，这将作为输入传递给下游分类模型（即问答分类层）。在 `transformers` 库中，你有分词器对象和模型对象：
 
 ```py
 from transformers import DistilBertTokenizerFast
 tokenizer = DistilBertTokenizerFast.from_pretrained('distilbert-base-uncased')
 ```
 
-你可以看到我们正在使用一个名为 DistilBertTokenizerFast 的分词器。这个分词器来自一个称为 DistilBERT 的模型。DistilBERT 是 BERT 的一个较小版本，表现与 BERT 相似但体积较小。它使用了一种称为*知识蒸馏*的迁移学习技术进行训练（[`devopedia.org/knowledge-distillation`](https://devopedia.org/knowledge-distillation)）。要获得这个分词器，我们只需要调用 DistilBertTokenizerFast.from_pretrained() 函数，传入模型标签（即 distilbert-base-uncased）。这个标签表示模型是一个 DistilBERT 类型的模型，基本大小为（有不同大小的模型可用），并且忽略字符的大小写（由 uncased 表示）。模型标签指向 Hugging Face 的模型仓库中可用的一个模型，并为我们下载它。它将被存储在你的计算机上。
+你可以看到我们正在使用一个名为 `DistilBertTokenizerFast` 的分词器。这个分词器来自一个称为 DistilBERT 的模型。DistilBERT 是 BERT 的一个较小版本，表现与 BERT 相似但体积较小。它使用了一种称为*知识蒸馏*的迁移学习技术进行训练（[`devopedia.org/knowledge-distillation`](https://devopedia.org/knowledge-distillation)）。要获得这个分词器，我们只需要调用 `DistilBertTokenizerFast.from_pretrained()` 函数，传入模型标签（即 `distilbert-base-uncased`）。这个标签表示模型是一个 DistilBERT 类型的模型，基本大小为（有不同大小的模型可用），并且忽略字符的大小写（由 `uncased` 表示）。模型标签指向 Hugging Face 的模型仓库中可用的一个模型，并为我们下载它。它将被存储在你的计算机上。
 
-Hugging Face 提供了两种不同的分词器变体：标准分词器（PreTrainedTokenizer 对象；[`mng.bz/95d7`](http://mng.bz/95d7)）和快速分词器（PreTrainedTokenizerFast 对象；[`mng.bz/j2Xr`](http://mng.bz/j2Xr)）。你可以在[`mng.bz/WxEa`](http://mng.bz/WxEa)中了解它们的区别）。在批量编码（即将字符串转换为标记序列）时，它们的速度明显更快。此外，快速分词器还有一些额外的方法，将帮助我们轻松地处理输入，以供问答模型使用。
+Hugging Face 提供了两种不同的分词器变体：标准分词器（`PreTrainedTokenizer` 对象；[`mng.bz/95d7`](http://mng.bz/95d7)）和快速分词器（`PreTrainedTokenizerFast` 对象；[`mng.bz/j2Xr`](http://mng.bz/j2Xr)）。你可以在[`mng.bz/WxEa`](http://mng.bz/WxEa)中了解它们的区别）。在批量编码（即将字符串转换为标记序列）时，它们的速度明显更快。此外，快速分词器还有一些额外的方法，将帮助我们轻松地处理输入，以供问答模型使用。
 
-什么是 DistilBERT？
+## 什么是 DistilBERT？
 
 跟随 BERT，DistilBERT 是 Hugging Face 在 2019 年的论文“DistilBERT, a distilled version of BERT: smaller, faster, cheaper and lighter” by Sanh et al. ([`arxiv.org/pdf/1910.01108v4.pdf`](https://arxiv.org/pdf/1910.01108v4.pdf))中介绍的模型。它是使用知识蒸馏的迁移学习技术训练的。其核心思想是拥有一个教师模型（即 BERT），其中一个较小的模型（即 DistilBERT）试图模仿教师的输出，这成为 DistilBERT 的学习目标。DistilBERT 比 BERT 要小，只有六层，而 BERT 有 12 层。DistilBERT 另一个关键的不同之处在于它仅在遮蔽语言建模任务上进行训练，而不是下一个句子预测任务。这个决定是基于一些研究的支持，这些研究质疑下一个句子预测任务（相比于遮蔽语言建模任务）对于自然语言理解的贡献。
 
@@ -1160,9 +1123,11 @@ print(tokenizer.convert_ids_to_tokens(token_ids['input_ids'].numpy()[0]))
 ['[CLS]', 'this', 'is', 'the', 'context', '[SEP]', 'this', 'is', 'the', 'question', '[SEP]']
 ```
 
+
+
 现在我们可以使用接下来清单中的代码对所有训练和测试数据进行编码。
 
-清单 13.6 编码训练和测试数据
+**清单 13.6 编码训练和测试数据**
 
 ```py
 train_encodings = tokenizer(                                          ❶
@@ -1180,16 +1145,14 @@ test_encodings = tokenizer(
 print("test_encodings.shape: {}".format(test_encodings["input_ids"].shape))
 ```
 
-❶ 编码 train 数据。
+❶ 编码 `train` 数据。
 
 ❷ 编码测试数据。
 
-注意，我们在调用分词器时使用了几个参数。当启用截断和填充（即设置为 True）时，分词器将根据需要对输入序列进行填充/截断。你可以在创建分词器时传递一个参数（model_max_length）来将文本填充或截断到一定的长度。如果没有提供这个参数，它将使用在预训练时设置的默认长度作为分词器的配置之一。启用填充/截断后，你的输入将经历以下变化之一：
+注意，我们在调用分词器时使用了几个参数。当启用截断和填充（即设置为 `True`）时，分词器将根据需要对输入序列进行填充/截断。你可以在创建分词器时传递一个参数（`model_max_length`）来将文本填充或截断到一定的长度。如果没有提供这个参数，它将使用在预训练时设置的默认长度作为分词器的配置之一。启用填充/截断后，你的输入将经历以下变化之一：
 
-+   如果序列比长度短，则在序列末尾添加特殊令牌[PAD]直到它达到指定的长度。
-
++   如果序列比长度短，则在序列末尾添加特殊令牌 `[PAD]` 直到它达到指定的长度。
 +   如果序列比长度长，就会被截断。
-
 +   如果序列的长度恰好相同，则不会引入任何更改。
 
 当你运行清单 13.6 中的代码时，会打印
@@ -1199,33 +1162,26 @@ train_encodings.shape: (87599, 512)
 test_encodings.shape: (10570, 512)
 ```
 
-我们可以看到，所有序列都被填充或截断，直到达到在模型预训练期间设置的 512 的长度。让我们看一下在使用 transformers 库定义分词器时需要注意的一些重要参数：
+我们可以看到，所有序列都被填充或截断，直到达到在模型预训练期间设置的 512 的长度。让我们看一下在使用 `transformers` 库定义分词器时需要注意的一些重要参数：
 
-+   model_max_length (int, *optional*)—输入进行填充的最大长度（令牌数）。
-
-+   padding_side (str, *optional*)—模型应用填充的一侧。可以是 ['right', 'left']。默认值从同名的类属性中选择。
-
-+   model_input_names（List[string]，*可选*）—模型前向传递接受的输入列表（例如，“token_type_ids”或“attention_mask”）。默认值从同名类属性中选取。
-
-+   bos_token（str 或 tokenizers.AddedToken，*可选*）—表示句子开头的特殊标记。
-
-+   eos_token（str 或 tokenizers.AddedToken，*可选*）—表示句子结尾的特殊标记。
-
-+   unk_token（str 或 tokenizers.AddedToken，*可选*）—表示词汇表外单词的特殊标记。如果模型遇到以前没有见过的单词，词汇表外单词就很重要。
++   `model_max_length` (`int`, *optional*) — 输入进行填充的最大长度（令牌数）。
++   `padding_side` (`str`, *optional*) — 模型应用填充的一侧。可以是 `['right', 'left']`。默认值从同名的类属性中选择。
++   `model_input_names` (`List[string]`, *可选*) — 模型前向传递接受的输入列表（例如，`"token_type_ids"` 或 `"attention_mask"`）。默认值从同名类属性中选取。
++   `bos_token` (`str` 或 `tokenizers.AddedToken`, *可选*) — 表示句子开头的特殊标记。
++   `eos_token` (`str` 或 `tokenizers.AddedToken`, *可选*) — 表示句子结尾的特殊标记。
++   `unk_token` (`str` 或 `tokenizers.AddedToken`, *可选*) — 表示词汇表外单词的特殊标记。如果模型遇到以前没有见过的单词，词汇表外单词就很重要。
 
 大多数这些参数可以安全地忽略，因为我们使用的是预训练的分词器模型，在训练之前已经设置了这些属性。
 
-不幸的是，我们还需要做一些事情。我们必须做的一个重要转换是如何表示模型答案的开始和结束。正如我之前所说的，我们给出了答案的起始和结束字符位置。但是我们的模型只理解标记级别的分解，而不是字符级别的分解。因此，我们必须从给定的字符位置找到标记位置。幸运的是，快速分词器提供了一个方便的函数：char_to_token()。请注意，此函数仅适用于快速分词器（即 PreTrainedTokenizerFast 对象），而不适用于标准分词器（即 PreTrainedTokenizer 对象）。char_to_token()函数接受以下参数：
+不幸的是，我们还需要做一些事情。我们必须做的一个重要转换是如何表示模型答案的开始和结束。正如我之前所说的，我们给出了答案的起始和结束字符位置。但是我们的模型只理解标记级别的分解，而不是字符级别的分解。因此，我们必须从给定的字符位置找到标记位置。幸运的是，快速分词器提供了一个方便的函数：`char_to_token()`。请注意，此函数仅适用于快速分词器（即 `PreTrainedTokenizerFast` 对象），而不适用于标准分词器（即 `PreTrainedTokenizer` 对象）。`char_to_token()` 函数接受以下参数：
 
-+   batch_or_char_index（int）—批处理中的示例索引。如果批处理有一个示例，则将其用作我们感兴趣的要转换为标记索引的字符索引。
++   `batch_or_char_index` (`int`) — 批处理中的示例索引。如果批处理有一个示例，则将其用作我们感兴趣的要转换为标记索引的字符索引。
++   `char_index` (`int`, 可选) — 如果提供了批索引，则表示我们要转换为标记索引的字符索引。
++   `sequence_index` (`int`, 可选) — 如果输入有多个序列，则表示字符/标记所属的序列。
 
-+   char_index（int，可选—如果提供了批索引，则表示我们要转换为标记索引的字符索引。
+使用此函数，我们将编写 `update_char_to_token_positions_inplace()` 函数将基于字符的索引转换为基于标记的索引（见下一个列表）。
 
-+   sequence_index（int，可选—如果输入有多个序列，则表示字符/标记所属的序列。
-
-使用此函数，我们将编写 update_char_to_token_positions_inplace()函数将基于字符的索引转换为基于标记的索引（见下一个列表）。
-
-列表 13.7 将 char 索引转换为基于标记的索引
+**列表 13.7 将 `char` 索引转换为基于标记的索引**
 
 ```py
 def update_char_to_token_positions_inplace(encodings, answers):
@@ -1284,33 +1240,31 @@ update_char_to_token_positions_inplace(test_encodings, test_answers)
 8/10570 had answers truncated
 ```
 
-在列表 13.7 中的代码中，我们遍历数据集中的每个答案，并对每个答案的起始和结束（字符索引）调用 char_to_token()方法。 答案的新起始和结束标记索引分配给新的键 start_positions 和 end_positions。 此外，您可以看到有一个验证步骤，检查起始或结束索引是否为 None（即，在预处理时未找到合适的标记 ID）。 如果是这种情况，我们将序列的最后一个索引分配为位置。
+在列表 13.7 中的代码中，我们遍历数据集中的每个答案，并对每个答案的起始和结束（字符索引）调用 `char_to_token()` 方法。答案的新起始和结束标记索引分配给新的键 `start_positions` 和 `end_positions`。此外，您可以看到有一个验证步骤，检查起始或结束索引是否为 `None`（即，在预处理时未找到合适的标记 ID）。如果是这种情况，我们将序列的最后一个索引分配为位置。
 
-有多少个烂鸡蛋？
+**有多少个烂鸡蛋？**
 
-您可以看到，我们正在打印需要修改的示例数量（例如，需要纠正）或已损坏的示例数量（截断的答案）。 这是一个重要的健全性检查，因为很高的数字可能表明数据质量存在问题或数据处理工作流中存在错误。 因此，始终打印这些数字并确保它们低到可以安全忽略为止。
+您可以看到，我们正在打印需要修改的示例数量（例如，需要纠正）或已损坏的示例数量（截断的答案）。这是一个重要的健全性检查，因为很高的数字可能表明数据质量存在问题或数据处理工作流中存在错误。因此，始终打印这些数字并确保它们低到可以安全忽略为止。
 
-我们现在将看到如何定义 tf.data 流水线。
+我们现在将看到如何定义 `tf.data` 流水线。
 
-从标记到 tf.data 流水线
+**从标记到 `tf.data` 流水线**
 
-经过所有的清洁和必要的转换，我们的数据集就像新的一样好。 我们所剩下的就是从数据创建一个 tf.data.Dataset。 我们的数据流水线将非常简单。 它将创建一个训练数据集，该数据集将被分成两个子集，训练集和验证集，并对数据集进行批处理。 然后创建并批处理测试数据集。 首先让我们导入 TensorFlow：
+经过所有的清洁和必要的转换，我们的数据集就像新的一样好。我们所剩下的就是从数据创建一个 `tf.data.Dataset`。我们的数据流水线将非常简单。它将创建一个训练数据集，该数据集将被分成两个子集，训练集和验证集，并对数据集进行批处理。然后创建并批处理测试数据集。首先让我们导入 `TensorFlow`：
 
 ```py
 import tensorflow as tf
 ```
 
-然后我们将定义一个生成器，将产生模型训练所需的输入和输出。 正如您所看到的，我们的输入是两个项目的元组。 它有
+然后我们将定义一个生成器，将产生模型训练所需的输入和输出。正如您所看到的，我们的输入是两个项目的元组。它有
 
-+   填充的输入标记 ID（形状为[<数据集大小>，512]）
-
-+   注意力掩码（形状为[<数据集大小>，512]）
++   填充的输入标记 ID（形状为 `[<数据集大小>, 512]`）
++   注意力掩码（形状为 `[<数据集大小>, 512]`）
 
 输出将由以下组成
 
-+   起始令牌位置（形状为[<数据集大小>]）
-
-+   结束令牌位置（形状为[<数据集大小>]
++   起始令牌位置（形状为 `[<数据集大小>]`）
++   结束令牌位置（形状为 `[<数据集大小>]`）
 
 ```py
 def data_gen(input_ids, attention_mask, start_positions, end_positions):
@@ -1321,9 +1275,9 @@ def data_gen(input_ids, attention_mask, start_positions, end_positions):
         yield (inps, attn), (start_pos, end_pos)
 ```
 
-我们的数据生成器以非常特定的格式返回数据。 它返回一个输入元组和一个输出元组。 输入元组按顺序具有标记 ID（input_ids）由标记器返回和注意力掩码（attention_mask）。 输出元组具有所有输入的答案的起始位置（start_positions）和结束位置（end_positions）。
+我们的数据生成器以非常特定的格式返回数据。它返回一个输入元组和一个输出元组。输入元组按顺序具有标记 ID（`input_ids`）由标记器返回和注意力掩码（`attention_mask`）。输出元组具有所有输入的答案的起始位置（`start_positions`）和结束位置（`end_positions`）。
 
-我们必须将我们的数据生成器定义为可调用的（即，它返回一个函数，而不是生成器对象）。 这是我们将要定义的 tf.data.Dataset 的要求。 要从我们之前定义的生成器获取可调用函数，让我们使用 partial()函数。 partial()函数接受一个可调用的、可选的可调用关键字参数，并返回一个部分填充的可调用函数，您只需要提供缺少的参数（即，在部分调用期间未指定的参数）：
+我们必须将我们的数据生成器定义为可调用的（即，它返回一个函数，而不是生成器对象）。这是我们将要定义的 `tf.data.Dataset` 的要求。要从我们之前定义的生成器获取可调用函数，让我们使用 `partial()` 函数。`partial()` 函数接受一个可调用的、可选的可调用关键字参数，并返回一个部分填充的可调用函数，您只需要提供缺少的参数（即，在部分调用期间未指定的参数）：
 
 ```py
 from functools import partial
@@ -1337,7 +1291,7 @@ train_data_gen = partial(
 )
 ```
 
-train_data_gen 可以视为一个没有参数的函数，因为我们已经在部分调用中提供了所有参数。由于我们已经将我们的数据定义为一个生成器的形式，我们可以使用 tf.data.Dataset.from_generator()函数生成数据。请记住，在通过生成器定义数据时，我们必须传递 output_types 参数。我们所有的输出都是 int32 类型。但它们作为一对元组出现：
+`train_data_gen` 可以视为一个没有参数的函数，因为我们已经在部分调用中提供了所有参数。由于我们已经将我们的数据定义为一个生成器的形式，我们可以使用 `tf.data.Dataset.from_generator()` 函数生成数据。请记住，在通过生成器定义数据时，我们必须传递 `output_types` 参数。我们所有的输出都是 `int32` 类型。但它们作为一对元组出现：
 
 ```py
 train_dataset = tf.data.Dataset.from_generator(
@@ -1345,20 +1299,20 @@ train_dataset = tf.data.Dataset.from_generator(
 )
 ```
 
-接下来，我们对数据进行洗牌以确保没有顺序。确保传递 buffer_size 参数，该参数指定了有多少样本被带入内存进行洗牌。由于我们计划使用其中的 10000 个样本作为验证样本，我们将 buffer_size 设置为 20000：
+接下来，我们对数据进行洗牌以确保没有顺序。确保传递 `buffer_size` 参数，该参数指定了有多少样本被带入内存进行洗牌。由于我们计划使用其中的 10000 个样本作为验证样本，我们将 `buffer_size` 设置为 20000：
 
 ```py
 train_dataset = train_dataset.shuffle(20000)
 ```
 
-是时候将 train_dataset 分割为训练和验证数据了，因为我们将使用原始验证数据子集作为测试数据。为了将 train_dataset 分割为训练和验证子集，我们将采取以下方法。在洗牌后，将前 10000 个样本定义为验证数据集。我们将使用 tf.data.Dataset.batch()函数进行数据批处理，批处理大小为 8：
+是时候将 `train_dataset` 分割为训练和验证数据了，因为我们将使用原始验证数据子集作为测试数据。为了将 `train_dataset` 分割为训练和验证子集，我们将采取以下方法。在洗牌后，将前 10000 个样本定义为验证数据集。我们将使用 `tf.data.Dataset.batch()` 函数进行数据批处理，批处理大小为 8：
 
 ```py
 valid_dataset = train_dataset.take(10000)
 valid_dataset = valid_dataset.batch(8)
 ```
 
-跳过前 10000 个数据点，因为它们属于验证集，将其余部分作为 train_dataset。我们将使用 tf.data.Dataset.batch()函数对数据进行批处理，批处理大小为 8：
+跳过前 10000 个数据点，因为它们属于验证集，将其余部分作为 `train_dataset`。我们将使用 `tf.data.Dataset.batch()` 函数对数据进行批处理，批处理大小为 8：
 
 ```py
 train_dataset = train_dataset.skip(10000)
@@ -1384,13 +1338,13 @@ test_dataset = test_dataset.batch(8)
 
 ### 13.3.3 定义 DistilBERT 模型
 
-我们仔细查看了数据，使用标记器进行了清理和处理，并定义了一个 tf.data.Dataset，以便快速检索模型将接受的格式的示例批次。现在是定义模型的时候了。为了定义模型，我们将导入以下模块：
+我们仔细查看了数据，使用标记器进行了清理和处理，并定义了一个 `tf.data.Dataset`，以便快速检索模型将接受的格式的示例批次。现在是定义模型的时候了。为了定义模型，我们将导入以下模块：
 
 ```py
 from transformers import TFDistilBertForQuestionAnswering
 ```
 
-transformers 库为您提供了一个出色的现成模型模板选择，您可以下载并在任务上进行训练。换句话说，您不必费心琢磨如何在预训练 transformers 之上插入下游模型。例如，我们正在解决一个问答问题，我们想要使用 DistilBERT 模型。transformers 库具有 DistilBERT 模型的内置问答适配。您只需导入模块并调用 from_pretrained()函数并提供模型标签即可下载它：
+`transformers` 库为您提供了一个出色的现成模型模板选择，您可以下载并在任务上进行训练。换句话说，您不必费心琢磨如何在预训练 `transformers` 之上插入下游模型。例如，我们正在解决一个问答问题，我们想要使用 `DistilBERT` 模型。`transformers` 库具有 `DistilBERT` 模型的内置问答适配。您只需导入模块并调用 `from_pretrained()` 函数并提供模型标签即可下载它：
 
 ```py
 model = TFDistilBertForQuestionAnswering.from_pretrained("distilbert-base-uncased")
@@ -1398,21 +1352,23 @@ model = TFDistilBertForQuestionAnswering.from_pretrained("distilbert-base-uncase
 
 这将下载该模型并保存在您的本地计算机上。
 
-Transformers 库还提供了哪些其他现成模型可用？
+**`Transformers` 库还提供了哪些其他现成模型可用？**
 
-您可以查看[`mng.bz/8Mwz`](http://mng.bz/8Mwz)以了解您可以轻松完成的 DistilBERT 模型的操作。transformers 是一个完整的库，您可以使用它来解决几乎所有常见的 NLP 任务，使用 Transformer 模型。在这里，我们将查看 DistilBERT 模型的选项。
+您可以查看 [`mng.bz/8Mwz`](http://mng.bz/8Mwz) 以了解您可以轻松完成的 `DistilBERT` 模型的操作。`transformers` 是一个完整的库，您可以使用它来解决几乎所有常见的 NLP 任务，使用 `Transformer` 模型。在这里，我们将查看 `DistilBERT` 模型的选项。
 
-**TFDistilBertForMaskedLM**
+**`TFDistilBertForMaskedLM`**
 
-这使您可以使用掩码语言建模任务对 DistilBERT 模型进行预训练。在掩码语言建模任务中，给定文本语料库，单词将被随机屏蔽，并要求模型预测屏蔽的单词。
+这使您可以使用掩码语言建模任务对 `DistilBERT` 模型进行预训练。在掩码语言建模任务中，给定文本语料库，单词将被随机屏蔽，并要求模型预测屏蔽的单词。
 
-**TFDistilBertForSequenceClassification**
+**`TFDistilBertForSequenceClassification`**
 
 如果您的问题具有单个输入序列，并且您希望为输入预测标签（例如，垃圾邮件分类、情感分析等），您可以使用此模型端到端地训练模型。
 
-**TFDistilBertForMultipleChoice**
+**`TFDistilBertForMultipleChoice`**
 
-使用此变体，DistilBERT 可用于解决多项选择问题。输入包括一个问题和几个答案。这些通常组合成单个序列（即，[CLS] [Question] [SEP] [Answer 1] [SEP] [Answer 2] [SEP]等），并且模型被要求预测问题的最佳答案，通常通过将[CLS]标记的表示传递给分类层来完成，该分类层将预测正确答案的索引（例如，第一个答案、第二个答案等）。
+
+
+使用此变体，`DistilBERT`可用于解决多项选择问题。输入包括一个问题和几个答案。这些通常组合成单个序列（即，`[CLS] [Question] [SEP] [Answer 1] [SEP] [Answer 2] [SEP]`等），并且模型被要求预测问题的最佳答案，通常通过将`[CLS]`标记的表示传递给分类层来完成，该分类层将预测正确答案的索引（例如，第一个答案、第二个答案等）。
 
 **TFDistilBertForTokenClassification**
 
@@ -1430,11 +1386,11 @@ Transformers 库还提供了哪些其他现成模型可用？
 
 博客[`jalammar.github.io/illustrated-bert/`](http://jalammar.github.io/illustrated-bert/)提供了一张非常详细的图表，展示了 BERT-like 模型如何用于不同的任务（如“特定任务模型”部分所述）。
 
-对这些模型的训练和评估将非常类似于您如果将它们用作 Keras 模型时的使用方式。只要数据格式符合模型期望的正确格式，您就可以对这些模型调用 model.fit()、model.predict()或 model.evaluate()。
+对这些模型的训练和评估将非常类似于您如果将它们用作 Keras 模型时的使用方式。只要数据格式符合模型期望的正确格式，您就可以对这些模型调用`model.fit()`、`model.predict()`或`model.evaluate()`。
 
-要训练这些模型，您还可以使用高级 Trainer（[`mng.bz/EWZd`](http://mng.bz/EWZd)）。我们将在稍后更详细地讨论 Trainer 对象。
+要训练这些模型，您还可以使用高级`Trainer`（[`mng.bz/EWZd`](http://mng.bz/EWZd)）。我们将在稍后更详细地讨论`Trainer`对象。
 
-这一部分是我在使用该库时的一个警示。通常，一旦定义了模型，你可以像使用 Keras 模型一样使用它。这意味着你可以使用 tf.data.Dataset 调用 model.fit() 并训练模型。当训练模型时，TensorFlow 和 Keras 期望模型输出为张量或张量元组。然而，Transformer 模型的输出是特定对象（继承自 transformers.file_utils.ModelOutput 对象），如 [`mng.bz/N6Rn`](http://mng.bz/N6Rn) 中所述。这将引发类似以下的错误
+这一部分是我在使用该库时的一个警示。通常，一旦定义了模型，你可以像使用 Keras 模型一样使用它。这意味着你可以使用`tf.data.Dataset`调用`model.fit()`并训练模型。当训练模型时，TensorFlow 和 Keras 期望模型输出为张量或张量元组。然而，Transformer 模型的输出是特定对象（继承自`transformers.file_utils.ModelOutput`对象），如 [`mng.bz/N6Rn`](http://mng.bz/N6Rn) 中所述。这将引发类似以下的错误：
 
 ```py
 TypeError: The two structures don't have the same sequence type. 
@@ -1442,7 +1398,7 @@ Input structure has type <class 'tuple'>, while shallow structure has type
 <class 'transformers.modeling_tf_outputs.TFQuestionAnsweringModelOutput'>.
 ```
 
-为了修复这个问题，transformers 库允许你设置一个名为 return_dict 的特定配置，并确保模型返回一个元组，而不是一个对象。然后，我们定义一个 Config 对象，该对象具有 return_dict=False，并用新的 config 对象覆盖模型的默认 config。例如，对于 DistilBERT 模型，可以这样做
+为了修复这个问题，`transformers`库允许你设置一个名为`return_dict`的特定配置，并确保模型返回一个元组，而不是一个对象。然后，我们定义一个`Config`对象，该对象具有`return_dict=False`，并用新的`config`对象覆盖模型的默认`config`。例如，对于`DistilBERT`模型，可以这样做：
 
 ```py
 from transformers import DistilBertConfig, TFDistilBertForQuestionAnswering
@@ -1455,7 +1411,7 @@ model = TFDistilBertForQuestionAnswering.from_pretrained(
 )
 ```
 
-不幸的是，我无法通过使用这种配置使模型表现出我预期的行为。这表明，在编写代码时，即使使用一流的库，你也需要预料到可能出现的问题。最简单的解决方法是让 transformers 库输出一个 ModelOutput 对象，并编写一个包装函数，该函数将提取该对象的所需输出，并从这些输出创建一个 tf.keras.Model。以下清单中的函数为我们执行了这个任务。
+不幸的是，我无法通过使用这种配置使模型表现出我预期的行为。这表明，在编写代码时，即使使用一流的库，你也需要预料到可能出现的问题。最简单的解决方法是让`transformers`库输出一个`ModelOutput`对象，并编写一个包装函数，该函数将提取该对象的所需输出，并从这些输出创建一个`tf.keras.Model`。以下清单中的函数为我们执行了这个任务。
 
 [将模型包装在 tf.keras.models.Model 对象中以防止错误](https://wiki.example.org/wrapping_the_model_in_a_tf_keras_model_object_to_prevent_errors)
 
@@ -1505,33 +1461,33 @@ optimizer = tf.keras.optimizers.Adam(learning_rate=1e-5)
 model_v2.compile(optimizer=optimizer, loss=loss, metrics=[acc])
 ```
 
-视觉中的 Transformer
+## 视觉中的 Transformer
 
 Transformer 模型通常在自然语言处理领域表现出色。直到最近，人们才开始努力了解它们在计算机视觉领域的位置。然后谷歌和 Facebook AI 发表了几篇重要论文，研究了 Transformer 模型如何在计算机视觉领域中使用。
 
-**视觉 Transformer（ViT）**
+### 视觉 Transformer（ViT）
 
 想法是将图像分解成 16×16 个小块，并将每个小块视为一个单独的令牌。每个图像路径被展平为一个 1D 向量，并使用位置编码机制对其位置进行编码，类似于原始的 Transformer。需要注意的是，原始 Transformer 中的位置编码是 1D 的。然而，图像是 2D 的。作者认为 1D 的位置编码已足够，且 1D 和 2D 位置编码之间没有太大的性能差异。一旦图像被分成 16×16 的块并展平，每个图像就可以被表示为一个令牌序列，就像文本输入序列一样。
 
-然后，该模型以一种自监督的方式在一个名为 JFT-300M（[`paperswithcode.com/dataset/jft-300m`](https://paperswithcode.com/dataset/jft-300m)）的视觉数据集中进行预训练。在视觉中制定自监督任务并不是一件微不足道的事情，就像在 NLP 中那样。在 NLP 中，您可以简单地形成一个目标，即预测文本序列中的掩蔽令牌。但是，在计算机视觉的上下文中，令牌是一系列连续的值（归一化的像素值）。因此，ViT 预先训练以预测给定图像补丁的平均三位 RGB 颜色。每个通道（即红色，绿色和蓝色）都用三位表示（即每个位的值为 0 或 1），这给出 512 个可能或类。换句话说，对于给定的图像，补丁将被随机遮盖（使用与 BERT 相同的方法），并且要求模型预测该图像补丁的平均三位 RGB 颜色。
+然后，该模型以一种自监督的方式在一个名为 JFT-300M（[`paperswithcode.com/dataset/jft-300m`](https://paperswithcode.com/dataset/jft-300m)）的视觉数据集中进行预训练。在视觉中制定自监督任务并不是一件微不足道的事情，就像在 NLP 中那样。在 NLP 中，您可以简单地形成一个目标，即预测文本序列中的掩蔽令牌。但是，在计算机视觉的上下文中，令牌是一系列连续的值（归一化的像素值）。因此，`ViT`预先训练以预测给定图像补丁的平均三位 RGB 颜色。每个通道（即红色，绿色和蓝色）都用三位表示（即每个位的值为 0 或 1），这给出 512 个可能或类。换句话说，对于给定的图像，补丁将被随机遮盖（使用与 BERT 相同的方法），并且要求模型预测该图像补丁的平均三位 RGB 颜色。
 
-首先，Dosovitskiy 等人在 2020 年 10 月发表了题为“一张图片值 16x16 个单词：用于大规模图像识别的 transformers”（An Image Is Worth 16X16 Words: Transformers for Image Recognition at Scale）的文章（[`arxiv.org/pdf/2010.11929.pdf`](https://arxiv.org/pdf/2010.11929.pdf)）。这可以被认为是走向视觉变换器的第一步。在这篇论文中，作者将原始 Transformer 模型适应于计算机视觉，对架构进行了最小限度的修改。这个模型被称为视觉变换器（ViT）。
+首先，Dosovitskiy 等人在 2020 年 10 月发表了题为“一张图片值 16x16 个单词：用于大规模图像识别的 transformers”（An Image Is Worth 16X16 Words: Transformers for Image Recognition at Scale）的文章（[`arxiv.org/pdf/2010.11929.pdf`](https://arxiv.org/pdf/2010.11929.pdf)）。这可以被认为是走向视觉变换器的第一步。在这篇论文中，作者将原始 Transformer 模型适应于计算机视觉，对架构进行了最小限度的修改。这个模型被称为视觉变换器（`ViT`）。
 
-在预训练后，可以通过在 ViT 的顶部适配一个分类或回归头来针对特定任务的问题进行微调，就像 BERT 一样。ViT 还在序列的开头有[CLS]令牌，该令牌将用作插入到 ViT 上面的下游视觉模型的输入表示。以下图示说明了 ViT 的机制。
+在预训练后，可以通过在`ViT`的顶部适配一个分类或回归头来针对特定任务的问题进行微调，就像 BERT 一样。`ViT`还在序列的开头有`[CLS]`令牌，该令牌将用作插入到`ViT`上面的下游视觉模型的输入表示。以下图示说明了`ViT`的机制。
 
-ViT 的原始代码是使用一个称为 Jax 的框架编写的（[`github.com/google-research/vision_transformer`](https://github.com/google-research/vision_transformer)）。然而，该模型有几个第三方 TensorFlow 包装器（例如[`github.com/emla2805/vision-transformer`](https://github.com/emla2805/vision-transformer)）。如果使用第三方版本，请确保阅读代码并验证正确性，因为第三方与原始研究团队没有关联。
+`ViT`的原始代码是使用一个称为 Jax 的框架编写的（[`github.com/google-research/vision_transformer`](https://github.com/google-research/vision_transformer)）。然而，该模型有几个第三方 TensorFlow 包装器（例如[`github.com/emla2805/vision-transformer`](https://github.com/emla2805/vision-transformer)）。如果使用第三方版本，请确保阅读代码并验证正确性，因为第三方与原始研究团队没有关联。
 
 ![13-09-unnumb-1](img/13-09-unnumb-1.png)
 
 视觉 Transformer（ViT）模型架构及其在下游图像分类任务中的使用方式
 
-统一 Transformer（UniT）
+### 统一 Transformer（UniT）
 
-随后，Facebook AI 的一篇更具突破性的论文问世，题为“Transformer 就是你所需要的一切：统一 Transformer 实现多模态多任务学习”（作者：Hu 等）（[`arxiv.org/pdf/2102.10772.pdf`](https://arxiv.org/pdf/2102.10772.pdf)）。该模型被称为统一 Transformer（UniT）。UniT 可以在计算机视觉和自然语言处理领域执行大量任务，只需改变分类头即可。
+随后，Facebook AI 的一篇更具突破性的论文问世，题为“Transformer 就是你所需要的一切：统一 Transformer 实现多模态多任务学习”（作者：Hu 等）（[`arxiv.org/pdf/2102.10772.pdf`](https://arxiv.org/pdf/2102.10772.pdf)）。该模型被称为统一 Transformer（`UniT`）。`UniT`可以在计算机视觉和自然语言处理领域执行大量任务，只需改变分类头即可。
 
 即使模型很复杂，整体上还是很直观的。有三个 Transformer 模型。一个 Transformer 对图像输入（如果有）进行编码，以生成图像的编码表示。下一个 Transformer 对文本输入（如果有）进行编码。最后，另一个 Transformer 将任务索引作为输入，获取嵌入并将其传递给一个跨自注意力层，该层以连接的图像和文本编码作为查询和键，并将任务嵌入（经过自注意力层后）作为值。这类似于 Transformer 解码器在其编码器-解码器注意力层中使用最后一个编码器输出生成查询和键，并使用解码器的输入作为值。该模型在下一页的图中表示。
 
-UniT 在涉及八个数据集的七项任务上进行了评估。这些任务包括对象检测、视觉问答、对象注释和四个仅语言任务。这四个仅语言任务来自 GLUE 基准数据集，其中包括以下内容：
+`UniT`在涉及八个数据集的七项任务上进行了评估。这些任务包括对象检测、视觉问答、对象注释和四个仅语言任务。这四个仅语言任务来自 GLUE 基准数据集，其中包括以下内容：
 
 **任务**
 
@@ -1557,7 +1513,7 @@ UniT 的整体架构。该模型由三个组件组成：图像编码器、文本
 
 ### 13.3.4 训练模型
 
-我们一直在耐心地解决这个问题，最终，我们可以训练我们刚刚定义的模型，使用之前创建的 train_dataset 数据集，并使用 valid_dataset 来监视模型的准确度：
+我们一直在耐心地解决这个问题，最终，我们可以训练我们刚刚定义的模型，使用之前创建的`train_dataset`数据集，并使用`valid_dataset`来监视模型的准确度：
 
 ```py
 model_v2.fit(
@@ -1568,6 +1524,8 @@ model_v2.fit(
 ```
 
 这将打印以下输出：
+
+
 
 ```py
 Epoch 1/3
@@ -1613,23 +1571,23 @@ Epoch 3/3
 
 训练更新内容相当长，因此让我们将它们分解一下。有两个损失：
 
-+   tf_distil_bert_for_question_answering_loss——测量起始索引预测头的损失
++   `tf_distil_bert_for_question_answering_loss`——测量起始索引预测头的损失
 
-+   tf_distil_bert_for_question_answering_1_loss——测量结束索引预测头的损失
++   `tf_distil_bert_for_question_answering_1_loss`——测量结束索引预测头的损失
 
 正如之前提到的，对于问答问题，我们有两个分类头：一个用于预测起始索引，另一个用于预测结束索引。对于准确度也有类似的情况。有两个准确度来衡量各自头部的性能：
 
-+   tf_distil_bert_for_question_answering_sparse_categorical_accuracy——测量分类头预测起始索引的准确度
++   `tf_distil_bert_for_question_answering_sparse_categorical_accuracy`——测量分类头预测起始索引的准确度
 
-+   tf_distil_bert_for_question_answering_1_sparse_categorical_accuracy——测量分类头预测终结索引的准确度
++   `tf_distil_bert_for_question_answering_1_sparse_categorical_accuracy`——测量分类头预测终结索引的准确度
 
 我们可以看到模型对于起始和结束索引预测的训练准确度大约为 77%，而验证准确度分别为 70%和 72%。鉴于我们只对该模型进行了三次 epochs 的训练，这些准确度是不错的。
 
 注意在一台配备了 NVIDIA GeForce RTX 2070 8GB 的 Intel Core i5 机器上，训练大约需要 2 小时 45 分钟来运行三个 epochs。
 
-您可以看到模型训练过程中产生了几个警告。由于这是一个新库，非常重要的一点是要注意这些警告是否在我们使用这些模型的上下文中具有意义。如果看到错误，你不必担心这些警告，因为警告并不总是指示问题。根据我们要解决的问题，一些警告是不适用的，可以安全地忽略。第一个警告表示在调用模型时无法更新参数 output_attentions、output_hidden_states 和 use_cache，而需要作为 config 对象传递。我们对此并不担心，因为我们对模型不感兴趣引入任何自定义修改，并且我们使用的模型已经设计用于问答问题。
+您可以看到模型训练过程中产生了几个警告。由于这是一个新库，非常重要的一点是要注意这些警告是否在我们使用这些模型的上下文中具有意义。如果看到错误，你不必担心这些警告，因为警告并不总是指示问题。根据我们要解决的问题，一些警告是不适用的，可以安全地忽略。第一个警告表示在调用模型时无法更新参数 `output_attentions`、`output_hidden_states` 和 `use_cache`，而需要作为 `config` 对象传递。我们对此并不担心，因为我们对模型不感兴趣引入任何自定义修改，并且我们使用的模型已经设计用于问答问题。
 
-第二个警告表示 return_dict 将始终设置为 TRUE。设置 return_dict=True 意味着 Transformer 模型将返回一个 TensorFlow 或 Keras 无法理解的 ModelOutput 对象。当我们希望使用 Keras API 与模型一起使用时，这将在后续过程中造成问题。这就是我们创建 tf_wrap_model()函数的原因之一：确保我们获得一个总是输出元组而不是 ModelOutput 对象的 tf.keras.Model。
+第二个警告表示 `return_dict` 将始终设置为 `True`。设置 `return_dict=True` 意味着 Transformer 模型将返回一个 TensorFlow 或 Keras 无法理解的 `ModelOutput` 对象。当我们希望使用 Keras API 与模型一起使用时，这将在后续过程中造成问题。这就是我们创建 `tf_wrap_model()` 函数的原因之一：确保我们获得一个总是输出元组而不是 `ModelOutput` 对象的 `tf.keras.Model`。
 
 最后，我们将保存模型：
 
@@ -1651,11 +1609,11 @@ model_v2.get_layer(
 )
 ```
 
-确保保存分词器和模型。要保存分词器，你可以简单地调用 save_pretrained() 函数并提供一个文件夹路径。分词器将保存在该目录中。保存模型需要更多的工作。我们无法直接保存模型（model_v2），因为当你的模型有一个自定义层时，为了正确保存，该层需要实现 get_config() 函数并指定该层的所有属性。然而，对于作为自定义层存在的 Transformer 模型，这样做将会非常困难。因此，我们只会通过调用 model_v2.get_layer() 函数和层名称（即 tf_distil_bert_for_question_answering）来保存 Transformer 模型，然后使用文件夹路径调用 save_pretrained() 方法。每当我们需要构建完整模型时，我们只需在保存的模型上调用 tf_wrap_model() 函数即可。
+确保保存分词器和模型。要保存分词器，你可以简单地调用 `save_pretrained()` 函数并提供一个文件夹路径。分词器将保存在该目录中。保存模型需要更多的工作。我们无法直接保存模型（`model_v2`），因为当你的模型有一个自定义层时，为了正确保存，该层需要实现 `get_config()` 函数并指定该层的所有属性。然而，对于作为自定义层存在的 Transformer 模型，这样做将会非常困难。因此，我们只会通过调用 `model_v2.get_layer()` 函数和层名称（即 `tf_distil_bert_for_question_answering`）来保存 Transformer 模型，然后使用文件夹路径调用 `save_pretrained()` 方法。每当我们需要构建完整模型时，我们只需在保存的模型上调用 `tf_wrap_model()` 函数即可。
 
 ### 13.3.5 询问 BERT 一个问题
 
-评估模型也是调用 model_v2.evaluate() 函数与我们之前创建的测试数据集相关的事情：
+评估模型也是调用 `model_v2.evaluate()` 函数与我们之前创建的测试数据集相关的事情：
 
 ```py
 model_v2.evaluate(test_dataset)
@@ -1733,11 +1691,11 @@ print('='*50,'\n')
 
 ❼ 打印模型的输入。
 
-❽ 在定义的输入上调用 ask_bert 函数。
+❽ 在定义的输入上调用 `ask_bert` 函数。
 
 ❾ 打印答案。
 
-让我们详细说明清单 13.9 中代码的细节。首先，我们定义一个索引 i。这个索引将用于从测试集中检索一个样本。sample_q、sample_c 和 sample_a 代表我们选择的样本的问题、上下文和答案。有了这些，我们可以定义 sample_input，它将包含模型理解的输入的编码表示。函数 ask_bert()接受一个使用 tokenizer 为模型准备的输入（用 sample_input 表示），以将答案的标记 ID 转换回可读的标记。该函数首先预测输入的输出，并获取答案的起始和结束标记 ID。最后，该函数将这些 ID 以及其中的单词转换为一个可理解的答案并返回文本。如果你打印这个过程的输出，你会得到以下结果：
+让我们详细说明清单 13.9 中代码的细节。首先，我们定义一个索引 `i`。这个索引将用于从测试集中检索一个样本。`sample_q`、`sample_c` 和 `sample_a` 代表我们选择的样本的问题、上下文和答案。有了这些，我们可以定义 `sample_input`，它将包含模型理解的输入的编码表示。函数 `ask_bert()` 接受一个使用 `tokenizer` 为模型准备的输入（用 `sample_input` 表示），以将答案的标记 ID 转换回可读的标记。该函数首先预测输入的输出，并获取答案的起始和结束标记 ID。最后，该函数将这些 ID 以及其中的单词转换为一个可理解的答案并返回文本。如果你打印这个过程的输出，你会得到以下结果：
 
 ```py
 Question
@@ -1769,13 +1727,15 @@ golden anniversary
 ================================================== 
 ```
 
-这结束了我们关于使用 Hugging Face 的 Transformer 库实现 Transformer 模型的讨论。我们已经逐步介绍了您在解决任何 NLP 任务时可能遇到的所有步骤。Hugging Face 的 transformers 库仍然以在 TensorFlow 或 PyTorch 中实现 Transformer 模型而享有盛誉。
+这结束了我们关于使用 Hugging Face 的 Transformer 库实现 Transformer 模型的讨论。我们已经逐步介绍了您在解决任何 NLP 任务时可能遇到的所有步骤。Hugging Face 的 `transformers` 库仍然以在 TensorFlow 或 PyTorch 中实现 Transformer 模型而享有盛誉。
 
 可视化注意力头
 
+
+
 每当我们有机会解释深度学习模型并理解模型为何做出某种决定时，充分利用这个机会就显得很重要。拥有解剖和解释模型的能力有助于在用户之间建立信任。由于存在自注意力层，解释 Transformer 模型变得非常容易。使用自注意力层，我们可以找出模型在生成一个令牌的隐藏表示时注意到了哪些单词。
 
-我们可以使用 bert_viz 库（[`github.com/jessevig/bertviz`](https://github.com/jessevig/bertviz)）来可视化任意层中任意注意力头中的注意力模式。重要的是要注意，bert_viz 不支持 TensorFlow，而是使用 PyTorch 库。尽管有这个小小的技术差异，但使用 bert_viz 很容易和直观。
+我们可以使用 `bert_viz` 库（[`github.com/jessevig/bertviz`](https://github.com/jessevig/bertviz)）来可视化任意层中任意注意力头中的注意力模式。重要的是要注意，`bert_viz` 不支持 TensorFlow，而是使用 PyTorch 库。尽管有这个小小的技术差异，但使用 `bert_viz` 很容易和直观。
 
 首先，导入所需的库：
 
@@ -1784,7 +1744,7 @@ import torch
 from bertviz import head_view
 ```
 
-接下来，定义一个 BERT 模型。确保将 output_attentions=True 配置传递给输出注意力输出，因为默认情况下它是关闭的：
+接下来，定义一个 BERT 模型。确保将 `output_attentions=True` 配置传递给输出注意力输出，因为默认情况下它是关闭的：
 
 ```py
 config = BertConfig.from_pretrained(
@@ -1802,7 +1762,7 @@ encoded_input = tokenizer(text, return_tensors='tf')
 output = model(encoded_input)
 ```
 
-最后调用 head_view()函数。你可以通过简单调用 output.attentions 来获取注意力输出，它将返回一个包含 12 个张量的元组。每个张量对应于 BERT 中的一个单独层。此外，确保将它们转换为 torch 张量。否则，该函数会出错。输出在图 13.10 中可视化。
+最后调用 `head_view()` 函数。你可以通过简单调用 `output.attentions` 来获取注意力输出，它将返回一个包含 12 个张量的元组。每个张量对应于 BERT 中的一个单独层。此外，确保将它们转换为 torch 张量。否则，该函数会出错。输出在图 13.10 中可视化。
 
 ```py
 head_view(
@@ -1815,11 +1775,11 @@ head_view(
 
 ![13-10](img/13-10.png)
 
-图 13.10 bert_viz 库的注意力输出。您可以从下拉菜单中选择不同的层。不同的阴影代表该层中不同的注意力头，可以打开或关闭。两列之间的线表示模型在生成给定标记的隐藏表示时关注哪些词。
+图 13.10 `bert_viz` 库的注意力输出。您可以从下拉菜单中选择不同的层。不同的阴影代表该层中不同的注意力头，可以打开或关闭。两列之间的线表示模型在生成给定标记的隐藏表示时关注哪些词。
 
-**练习 3**
+## 练习 3
 
-您被要求实现一个命名实体识别模型。命名实体识别是一个标记分类任务，其中为每个标记分配一个标签（例如，人物、组织、地理、其他等）。有七种不同的标签。如果您想要使用 distilbert-base-uncased 模型进行此操作，您将如何定义模型？请记住，在 transformers 库中，您可以将 num_labels 作为关键字传递以定义输出类的数量。例如，如果您有一个要设置为 "abc" 的配置 "a"，您可以这样做
+您被要求实现一个命名实体识别模型。命名实体识别是一个标记分类任务，其中为每个标记分配一个标签（例如，人物、组织、地理、其他等）。有七种不同的标签。如果您想要使用 `distilbert-base-uncased` 模型进行此操作，您将如何定义模型？请记住，在 `transformers` 库中，您可以将 `num_labels` 作为关键字传递以定义输出类的数量。例如，如果您有一个要设置为 `"abc"` 的配置 `"a"`，您可以这样做：
 
 ```py
 <model>.from_pretrained(<model_tag>, *"*a*"*= *"*abc*"*)
@@ -1831,17 +1791,17 @@ head_view(
 
 +   BERT 是一个 Transformer 编码器模型，为输入传递的每个标记生成一个隐藏的（关注的）表示。
 
-+   BERT 使用特殊标记，如 [CLS]（表示开始并用于生成分类头的输出）、[SEP]（用于标记两个子序列之间的分隔；例如，在问答中标记问题和上下文之间的分隔）、[PAD]（表示填充的标记，将所有序列都调整为固定长度）、以及 [MASK]（用于在输入序列中屏蔽标记；例如，填充的标记）。
++   BERT 使用特殊标记，如 `[CLS]`（表示开始并用于生成分类头的输出）、`[SEP]`（用于标记两个子序列之间的分隔；例如，在问答中标记问题和上下文之间的分隔）、`[PAD]`（表示填充的标记，将所有序列都调整为固定长度）、以及 `[MASK]`（用于在输入序列中屏蔽标记；例如，填充的标记）。
 
 +   BERT 可以通过在 BERT 的最终输出之上适配一个分类头（例如，逻辑回归层）来用于下游、任务特定的分类任务。根据任务类型，可能需要多个分类头，并且分类头的利用可能有所不同。
 
-+   Hugging Face 的 transformers 库提供了所有与 NLP 相关的 Transformer 模型的实现，并且可以轻松下载和在工作流中使用。可下载的预训练模型具有两个主要组件：分词器，将提供的字符串标记为标记序列；模型，接受标记序列以生成最终的隐藏输出。
++   Hugging Face 的 `transformers` 库提供了所有与 NLP 相关的 Transformer 模型的实现，并且可以轻松下载和在工作流中使用。可下载的预训练模型具有两个主要组件：分词器，将提供的字符串标记为标记序列；模型，接受标记序列以生成最终的隐藏输出。
 
 ## 练习答案
 
-**练习 1**
+### 练习 1
 
-*PE*(*pos*,2*i* ) = sin(*pos*/10000^(21/d[model]))
+`*PE*(*pos*,2*i* ) = sin(*pos*/10000^(21/d[model]))`
 
 ```py
 import tensorflow as tf
@@ -1874,7 +1834,7 @@ en_out2 = EncoderLayer(d, n_heads)(en_out1)
 model = tf.keras.models.Model(inputs=en_inp, output=en_out2)
 ```
 
-**练习 2**
+### 练习 2
 
 ```py
 hub_classifier, hub_encoder = bert.bert_models.classifier_model(
@@ -1882,7 +1842,7 @@ hub_classifier, hub_encoder = bert.bert_models.classifier_model(
 )
 ```
 
-**练习 3**
+### 练习 3
 
 ```py
 from transformers import TFDistilBertForTokenClassification

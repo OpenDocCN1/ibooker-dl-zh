@@ -1,12 +1,11 @@
+
 # 第二章：管理生成型 AI
 
-### 本章内容包括
+## 本章内容包括
 
-+   掌握如何以最高效的方式访问和使用 AI 模型进行交互
-
-+   配置模型以尽可能地满足你的具体需求
-
-+   利用 OpenAI Playground 来更好地了解控制 AI 的关键工具
++ 掌握如何以最高效的方式访问和使用 AI 模型进行交互
++ 配置模型以尽可能地满足你的具体需求
++ 利用 OpenAI Playground 来更好地了解控制 AI 的关键工具
 
 把巧妙的提示投给一个 AI 聊天界面肯定会产生令人印象深刻的结果。但是如果忽视模型配置中的细节，你就会错过大部分 AI 的潜在价值。所以在本章中，我们将开始找出应该转动哪些旋钮以及转动到什么程度的过程。（以及你绝对应该避免的哪个大红按钮！）
 
@@ -16,7 +15,7 @@
 
 ## 2.1 访问 GPT 模型
 
-如果你还没有这个荣幸，大多数流行的交互式 AI 平台在你尝试它们之前都需要你创建一个帐户。对于 OpenAI 的 ChatGPT，你可以在 chat.openai.com/auth/login 进行注册。即使你被要求提供信用卡信息，你在实际上被收费之前会有足够的警告。只要别忽略了这些警告。
+如果你还没有这个荣幸，大多数流行的交互式 AI 平台在你尝试它们之前都需要你创建一个帐户。对于 OpenAI 的 ChatGPT，你可以在 `chat.openai.com/auth/login` 进行注册。即使你被要求提供信用卡信息，你在实际上被收费之前会有足够的警告。只要别忽略了这些警告。
 
 一旦你注册成功，ChatGPT 的界面在这里。
 
@@ -66,7 +65,7 @@ Playground，如下图所示，甚至在 ChatGPT 之前就已经存在了，那�
 
 ## 2.4 访问 CURL 代码示例
 
-下一个图像向我们展示了如果我决定使用命令行工具 curl 而不是 Python，那么完全相同的提示会如何工作。除了 Python 和 curl，您还可以在 node.js 和 JSON 中显示代码。
+下一个图像向我们展示了如果我决定使用命令行工具 `curl` 而不是 Python，那么完全相同的提示会如何工作。除了 Python 和 `curl`，您还可以在 `node.js` 和 JSON 中显示代码。
 
 ##### 图 2.4 Playground 的查看代码工具显示的 curl 代码
 
@@ -78,14 +77,14 @@ Playground，如下图所示，甚至在 ChatGPT 之前就已经存在了，那�
 
 | 终端点 | 模型名称 |
 | --- | --- |
-| /v1/chat/completions | gpt-4, gpt-4-0314, gpt-4-32k, gpt-4-32k-0314, gpt-3.5-turbo, gpt-3.5-turbo-0301 |
-| /v1/completions | text-davinci-003, text-davinci-002, text-curie-001, text-babbage-001, text-ada-001 |
-| /v1/edits | text-davinci-edit-001, code-davinci-edit-001 |
-| /v1/audio/transcriptions | whisper-1 |
-| /v1/audio/translations | whisper-1 |
-| /v1/fine-tunes | davinci, curie, babbage, ada |
-| /v1/embeddings | text-embedding-ada-002, text-search-ada-doc-001 |
-| /v1/moderations | text-moderation-stable, text-moderation-latest |
+| `/v1/chat/completions` | `gpt-4`, `gpt-4-0314`, `gpt-4-32k`, `gpt-4-32k-0314`, `gpt-3.5-turbo`, `gpt-3.5-turbo-0301` |
+| `/v1/completions` | `text-davinci-003`, `text-davinci-002`, `text-curie-001`, `text-babbage-001`, `text-ada-001` |
+| `/v1/edits` | `text-davinci-edit-001`, `code-davinci-edit-001` |
+| `/v1/audio/transcriptions` | `whisper-1` |
+| `/v1/audio/translations` | `whisper-1` |
+| `/v1/fine-tunes` | `davinci`, `curie`, `babbage`, `ada` |
+| `/v1/embeddings` | `text-embedding-ada-002`, `text-search-ada-doc-001` |
+| `/v1/moderations` | `text-moderation-stable`, `text-moderation-latest` |
 
 ##### 要点
 
@@ -111,21 +110,14 @@ Playground，如下图所示，甚至在 ChatGPT 之前就已经存在了，那�
 
 现在让我们看看这些到底是什么。为了让你保持方向，我们将涵盖每个配置类别：
 
-+   模式
-
-+   温度
-
-+   最高 P 值
-
-+   停止序列
-
-+   频率惩罚
-
-+   存在惩罚
-
-+   最佳选择
-
-+   注入起始文本
++ 模式
++ 温度
++ 最高 P 值
++ 停止序列
++ 频率惩罚
++ 存在惩罚
++ 最佳选择
++ 注入起始文本
 
 为了让你有些背景，想象一下你正在构建一个 Web 应用程序，为用户提供关于你的酒店的问题的即时响应。你可能最初会要求用户从一系列类别中进行选择（“餐饮和娱乐”，“旅行规划”等）。根据他们选择的类别，你希望微调你的聊天工具，以便响应与用户的期望相匹配。
 
@@ -236,6 +228,8 @@ Top P 0.8（更多样化）：助手：“今天的天气晴朗、温暖、令�
 **存在惩罚** 是 GPT 模型中的一个参数，有助于控制生成文本中短语和单词的重复。它旨在防止模型在生成的输出中过于频繁地重复相同的短语或单词。存在惩罚修改概率分布，以减少输入提示或种子文本中存在的单词。这鼓励模型生成未明确存在于输入中的单词和涉及的主题。
 
 尽管`存在`和`频率`惩罚似乎有重叠之处，但它们并不相同。频率惩罚是与特定标记已被采样的频率成比例的贡献。它阻止模型在生成文本中过于频繁地重复相同的单词或短语。另一方面，存在惩罚是一次性的、增加的贡献，适用于至少被采样一次的所有标记。它修改概率分布，以减少输入提示或种子文本中存在的单词。这鼓励模型生成未在输入中的单词。
+
+
 
 我们可以探索不同存在惩罚值对响应生成的影响，同时与频率惩罚进行比较。想象一下，您提示模型：“告诉我关于我最喜欢的体育队最近的表现。”
 

@@ -1,30 +1,26 @@
+
+
 # 5 准备和构建模型
 
 本章涵盖
 
-+   重新审视数据集，并确定用于训练模型的特征
++ 重新审视数据集，并确定用于训练模型的特征
++ 对数据集进行重构，包括没有延误的时间段
++ 将数据集转换为 `Keras` 模型期望的格式
++ 根据数据结构自动构建 `Keras` 模型
++ 检查模型结构
++ 设置参数，包括激活函数和优化函数以及学习率
 
-+   对数据集进行重构，包括没有延误的时间段
+本章首先快速回顾数据集，以考虑哪些列可以合法用于训练模型。然后，我们将讨论将数据从我们一直在操作的形式（`Pandas` 数据框）转换为深度学习模型期望的形式所需的转换。接下来，我们将查看模型的代码本身，并了解模型是如何根据输入列的类别逐层构建的。最后，我们将回顾你可以用来检查模型结构的方法以及你可以用来调整模型训练参数的方法。
 
-+   将数据集转换为 Keras 模型期望的格式
-
-+   根据数据结构自动构建 Keras 模型
-
-+   检查模型结构
-
-+   设置参数，包括激活函数和优化函数以及学习率
-
-本章首先快速回顾数据集，以考虑哪些列可以合法用于训练模型。然后，我们将讨论将数据从我们一直在操作的形式（Pandas 数据框）转换为深度学习模型期望的形式所需的转换。接下来，我们将查看模型的代码本身，并了解模型是如何根据输入列的类别逐层构建的。最后，我们将回顾你可以用来检查模型结构的方法以及你可以用来调整模型训练参数的方法。
-
-本书的所有前几章都为这一刻做准备。在检查问题、准备数据之后，我们终于准备好深入研究深度学习模型本身了。在阅读本章时要注意的一点是：如果你之前没有直接与深度学习模型工作过，你可能会发现模型的代码在完成所有详细的数据准备工作之后显得有些平淡无奇。这种感觉可能与你使用 Python 库进行经典机器学习算法时相似。将逻辑回归或线性回归应用于已准备好的训练数据集的代码并不令人兴奋，尤其是如果你不得不编写非平凡的代码来驯服现实世界的数据集。你可以在这章中看到描述的代码，在 streetcar_model_training 笔记本中。
+本书的所有前几章都为这一刻做准备。在检查问题、准备数据之后，我们终于准备好深入研究深度学习模型本身了。在阅读本章时要注意的一点是：如果你之前没有直接与深度学习模型工作过，你可能会发现模型的代码在完成所有详细的数据准备工作之后显得有些平淡无奇。这种感觉可能与你使用 `Python` 库进行经典机器学习算法时相似。将逻辑回归或线性回归应用于已准备好的训练数据集的代码并不令人兴奋，尤其是如果你不得不编写非平凡的代码来驯服现实世界的数据集。你可以在这章中看到描述的代码，在 `streetcar_model_training` 笔记本中。
 
 ## 5.1 数据泄露和可用于训练模型的公平特征
 
 在我们深入探讨构成模型的代码细节之前，我们需要回顾哪些列（无论是原始数据集的列还是从原始列派生出的列）是合法用于训练模型的。如果我们需要使用模型来预测电车延误，我们需要确保避免数据泄露。*数据泄露*发生在你使用训练数据集之外的数据（包括你试图预测的结果）来训练模型时。如果你在训练模型时依赖于在你想要做出预测时不可用的数据，你可能会遇到以下问题：
 
-+   削弱你做出预测的能力
-
-+   获得过于乐观的模型性能度量
++ 削弱你做出预测的能力
++ 获得过于乐观的模型性能度量
 
 为了理解数据泄露的问题，考虑一个简单的模型，该模型预测特定房地产市场中的房屋销售价格。对于这个模型，你有一组关于该市场最近售出的房屋的信息。你可以使用这些信息来训练一个模型，你稍后可以使用这个模型来预测即将上市房屋的销售价格，如图 5.1 所示。
 
@@ -40,19 +36,15 @@
 
 我们的目的是在房屋首次上市时对其销售价格进行预测，这可能在它售出之前几周。当房屋准备上市时，以下特征将可用：
 
-+   卧室数量
-
-+   卫生间数量
-
-+   层面积
-
-+   前景
++ 卧室数量
++ 卫生间数量
++ 层面积
++ 前景
 
 我们知道销售价格（我们想要预测的特征）将不可用。那么这些特征呢？
 
-+   市场时间
-
-+   出售价格
++ 市场时间
++ 出售价格
 
 当我们想要进行预测时，市场时间将不可用，因为房屋尚未上市，因此我们不应使用此特征来训练模型。要价有些模糊；在我们想要进行预测的时候，它可能可用也可能不可用。这个例子表明，在我们确定给定特征是否会导致数据泄露之前，我们需要对现实世界的业务情况有更深入的了解。
 
@@ -76,35 +68,30 @@
 
 从另一个角度来看这个问题，哪些列包含在我们想要为特定行程或一系列行程做出延误预测时将合法可用的信息？用户在预测时提供的信息在第八章中描述。用户提供的信息取决于部署的类型：
 
-+   *Web*（图 5.4）——在模型的 Web 部署中，用户选择七个评分参数（路线、方向和日期/时间细节），这些参数将被输入到训练好的模型中以获得预测。
++ *Web*（图 5.4）——在模型的 `Web` 部署中，用户选择七个评分参数（路线、方向和日期/时间细节），这些参数将被输入到训练好的模型中以获得预测。
 
-    ![CH05_F04_Ryan](img/CH05_F04_Ryan.png)
+  ![CH05_F04_Ryan](img/CH05_F04_Ryan.png)
 
-    图 5.4 Web 部署中用户提供的信息
+  图 5.4 `Web` 部署中用户提供的信息
 
-+   *Facebook Messenger*（图 5.5）——在 Facebook Messenger 模型的部署中，如果用户没有明确提供，日期/时间细节默认为预测时的当前时间。在这个部署中，用户只需要提供两个评分参数：他们打算乘坐的电车行程的路线和方向。
++ *Facebook Messenger*（图 5.5）——在 `Facebook Messenger` 模型的部署中，如果用户没有明确提供，日期/时间细节默认为预测时的当前时间。在这个部署中，用户只需要提供两个评分参数：他们打算乘坐的电车行程的路线和方向。
 
-    ![CH05_F05_Ryan](img/CH05_F05_Ryan.png)
+  ![CH05_F05_Ryan](img/CH05_F05_Ryan.png)
 
-    图 5.5 Facebook Messenger 模型部署中用户提供的信息
+  图 5.5 `Facebook Messenger` 模型部署中用户提供的信息
 
 让我们检查这些参数以确保我们不会冒着数据泄露的风险：
 
-+   *路线* —当我们想要预测街车行程是否会延误时，我们将知道行程将采取哪条路线（例如 501 王后路线或 503 金斯顿路）。
++ *路线* —当我们想要预测街车行程是否会延误时，我们将知道行程将采取哪条路线（例如 501 王后路线或 503 金斯顿路）。
++ *方向* —当我们想要预测行程是否会延误时，我们将知道行程的方向（北行、南行、东行或西行）。
 
-+   *方向* —当我们想要预测行程是否会延误时，我们将知道行程的方向（北行、南行、东行或西行）。
+我们还将知道以下日期/时间信息（因为用户在 `Web` 部署中明确设置了值，或者因为我们假设 `Facebook Messenger` 部署中的当前日期/时间）：
 
-我们还将知道以下日期/时间信息（因为用户在 Web 部署中明确设置了值，或者因为我们假设 Facebook Messenger 部署中的当前日期/时间）：
-
-+   小时
-
-+   天（星期几，例如星期一）
-
-+   月份中的某一天
-
-+   月份
-
-+   年份
++ 小时
++ 天（星期几，例如星期一）
++ 月份中的某一天
++ 月份
++ 年份
 
 我们希望在预测数据输入中包含一个额外的特征：位置。这个特征有点复杂。如果我们查看图 5.6 中源数据集中的位置信息，我们知道在我们要预测街车行程是否会延误时，我们不会有这些信息。但我们将知道行程的起点和终点（例如，501 王后路线的行程从女王街和舍伯恩街出发，到女王街和斯帕丁纳街）。
 
@@ -116,11 +103,11 @@
 
 如果我们将训练街车延误模型限制在我们已识别的列（路线、方向和日期/时间列），我们可以防止数据泄露，并确信我们正在训练的模型将能够对新街车行程做出预测。
 
-## 5.4 探索 Keras 和构建模型的代码
+## 5.4 探索 `Keras` 和构建模型的代码
 
-当你克隆了与本书相关的 GitHub 仓库 ([`mng.bz/v95x`](http://mng.bz/v95x)) 后，你将在 notebooks 子目录中找到与探索 Keras 和构建街车延误预测模型相关的代码。下一条列表显示了包含本章描述的代码的文件。
+当你克隆了与本书相关的 `GitHub` 仓库 ([`mng.bz/v95x`](http://mng.bz/v95x)) 后，你将在 `notebooks` 子目录中找到与探索 `Keras` 和构建街车延误预测模型相关的代码。下一条列表显示了包含本章描述的代码的文件。
 
-列表 5.1 与探索 Keras 和构建模型相关的代码
+列表 5.1 与探索 `Keras` 和构建模型相关的代码
 
 ```
 ├── data                                          ❶ 
@@ -132,25 +119,23 @@
 │ keras_functional_api_mnist.py         ❺ 
 ```
 
-❶ 数据准备步骤输出为 pickled dataframe 的目录
+❶ 数据准备步骤输出为 `pickled dataframe` 的目录
 
 ❷ 包含重构输入数据集和构建模型的代码的笔记本
 
-❸ 模型训练笔记本的配置文件，包括输入到模型训练笔记本的 pickled dataframe 的名称
+❸ 模型训练笔记本的配置文件，包括输入到模型训练笔记本的 `pickled dataframe` 的名称
 
-❹ 使用 Keras 顺序 API 定义简单深度学习模型的示例（详细信息请见第 5.10 节）
+❹ 使用 `Keras` 顺序 `API` 定义简单深度学习模型的示例（详细信息请见第 5.10 节）
 
-❺ 使用 Keras 功能 API 定义简单深度学习模型的示例（详细信息请见第 5.10 节）
+❺ 使用 `Keras` 功能 `API` 定义简单深度学习模型的示例（详细信息请见第 5.10 节）
 
-## 5.5 推导用于训练模型的 dataframe
+## 5.5 推导用于训练模型的 `dataframe`
 
 在第 1-4 章中，我们经历了许多步骤来清洗和转换数据，包括
 
-+   将冗余值替换为单个一致值，例如在方向列中将 `eastbound`、`e/b` 和 `eb` 替换为 e
-
-+   移除具有无效值的记录，例如具有无效路线值的记录
-
-+   将分类值替换为数值标识符
++ 将冗余值替换为单个一致值，例如在方向列中将 `eastbound`、`e/b` 和 `eb` 替换为 `e`
++ 移除具有无效值的记录，例如具有无效路线值的记录
++ 将分类值替换为数值标识符
 
 图 5.7 显示了这些转换的结果。
 
@@ -176,48 +161,48 @@
 
 ![CH05_F10_Ryan](img/CH05_F10_Ryan.png)
 
-图 5.10 重构 dataframe
+图 5.10 重构 `dataframe`
 
 以下步骤：
 
-1.  创建一个包含每个路线/方向组合的行 `routedirection_frame` 数据框（图 5.11）。
+1. 创建一个包含每个路线/方向组合的行 `routedirection_frame` 数据框（图 5.11）。
 
 ![CH05_F11_Ryan](img/CH05_F11_Ryan.png)
 
 图 5.11 路向帧数据框
 
-1.  创建一个包含从中选择训练数据的日期范围的每个日期的 `date_frame` 数据框（图 5.12）。
+2. 创建一个包含从中选择训练数据的日期范围的每个日期的 `date_frame` 数据框（图 5.12）。
 
 ![CH05_F12_Ryan](img/CH05_F12_Ryan.png)
 
-图 5.12 date_frame 数据框
+图 5.12 `date_frame` 数据框
 
-1.  创建一个包含每天每小时一行数据的 `hour_frame` 数据框（图 5.13）。
+3. 创建一个包含每天每小时一行数据的 `hour_frame` 数据框（图 5.13）。
 
 ![CH05_F13_Ryan](img/CH05_F13_Ryan.png)
 
-图 5.13 hour_frame 数据框
+图 5.13 `hour_frame` 数据框
 
-1.  将这三个数据框合并以获得 `result2` 数据框（图 5.14）。
+4. 将这三个数据框合并以获得 `result2` 数据框（图 5.14）。
 
 ![CH05_F14_Ryan](img/CH05_F14_Ryan.png)
 
-图 5.14 result2 数据框
+图 5.14 `result2` 数据框
 
-1.  将日期的组成部分的派生列添加到 `result2` 数据框中：
+5. 将日期的组成部分的派生列添加到 `result2` 数据框中：
 
-    ```
-    result2['year'] = pd.DatetimeIndex(result2['Report Date']).year
-        result2['month'] = pd.DatetimeIndex(result2['Report Date']).month
-        result2['daym'] = pd.DatetimeIndex(result2['Report Date']).day
-        result2['day'] = pd.DatetimeIndex(result2['Report Date']).weekday 
-    ```
+```
+result2['year'] = pd.DatetimeIndex(result2['Report Date']).year
+result2['month'] = pd.DatetimeIndex(result2['Report Date']).month
+result2['daym'] = pd.DatetimeIndex(result2['Report Date']).day
+result2['day'] = pd.DatetimeIndex(result2['Report Date']).weekday 
+```
 
-1.  从输入数据集（`merged_data` 数据框）中删除多余的列，并将其与 `result2` 数据框合并，以获得完成重构的数据框（图 5.15）。
+6. 从输入数据集（`merged_data` 数据框）中删除多余的列，并将其与 `result2` 数据框合并，以获得完成重构的数据框（图 5.15）。
 
-    ![CH05_F15_Ryan](img/CH05_F15_Ryan.png)
+![CH05_F15_Ryan](img/CH05_F15_Ryan.png)
 
-    图 5.15 完成重构的数据框
+图 5.15 完成重构的数据框
 
 为了比较重构前后的数据集大小，一个包含 56,000 行的数据集在重构后变成了包含 2.5 百万行以覆盖五年期间的数据集。这个重构数据集覆盖的时间段的开始和结束由以下变量控制，这些变量定义在整体参数块中：
 
@@ -228,74 +213,74 @@ end_date = date(config['general']['end_year'], \
 config['general']['end_month'], config['general']['end_day'])
 ```
 
-开始日期与 2014 年 1 月延迟数据集的开始相对应。你可以通过更新配置文件 streetcar_model_training_config.yml 中的参数来更改结束日期，但请注意，你希望 `end_date` 不晚于原始来源的最新延迟数据（[`mng.bz/4B2B`](http://mng.bz/4B2B)）。
+开始日期与 2014 年 1 月延迟数据集的开始相对应。你可以通过更新配置文件 `streetcar_model_training_config.yml` 中的参数来更改结束日期，但请注意，你希望 `end_date` 不晚于原始来源的最新延迟数据（[`mng.bz/4B2B`](http://mng.bz/4B2B)）。
 
-## 5.6 将数据框转换为 Keras 模型期望的格式
+## 5.6 将数据框转换为 `Keras` 模型期望的格式
 
-Keras 模型期望输入张量。你可以将张量视为矩阵的推广。矩阵是一个二维张量，而向量是一个一维张量。图 5.16 总结了按维度总结的张量常见术语。
+`Keras` 模型期望输入张量。你可以将张量视为矩阵的推广。矩阵是一个二维张量，而向量是一个一维张量。图 5.16 总结了按维度总结的张量常见术语。
 
 ![CH05_F16_Ryan](img/CH05_F16_Ryan.png)
 
 图 5.16 张量摘要
 
-当我们在 Pandas 数据框中完成所有需要进行的所有数据转换后，在将数据输入模型进行训练之前的最后一步是将数据放入 Keras 模型所需的张量格式。通过将这种转换作为训练模型之前的最后一步，我们可以在需要将数据放入 Keras 模型期望的格式之前，享受到 Pandas 数据框的便利性和熟悉感。执行此转换的代码位于 `prep_for_keras_input` 类的 `transform` 方法中，如下所示。这个类是第八章中描述的管道的一部分，该管道对训练和评分的数据进行转换。
+当我们在 `Pandas` 数据框中完成所有需要进行的所有数据转换后，在将数据输入模型进行训练之前的最后一步是将数据放入 `Keras` 模型所需的张量格式。通过将这种转换作为训练模型之前的最后一步，我们可以在需要将数据放入 `Keras` 模型期望的格式之前，享受到 `Pandas` 数据框的便利性和熟悉感。执行此转换的代码位于 `prep_for_keras_input` 类的 `transform` 方法中，如下所示。这个类是第八章中描述的管道的一部分，该管道对训练和评分的数据进行转换。
 
 列表 5.2 将数据放入模型所需的张量格式的代码
 
 ```
 def __init__(self):
-        self.dictlist = []                               ❶ 
-        return None
+    self.dictlist = []                               ❶ 
+    return None
 
 def transform(self, X, y=None, **tranform_params):
-        for col in self.collist:
-            print("cat col is",col)
-            self.dictlist.append(np.array(X[col]))       ❷ 
-        for col in self.textcols:
-            print("text col is",col)
-            self.dictlist.append(pad_sequences(X[col], \
-            ➥ maxlen=max_dict[col]))                    ❸ 
-        for col in self.continuouscols:
-            print("cont col is",col)
-            self.dictlist.append(np.array(X[col]))       ❹ 
-        return self.dictlis.t
+    for col in self.collist:
+        print("cat col is",col)
+        self.dictlist.append(np.array(X[col]))       ❷ 
+    for col in self.textcols:
+        print("text col is",col)
+        self.dictlist.append(pad_sequences(X[col], \
+        ➥ maxlen=max_dict[col]))                    ❸ 
+    for col in self.continuouscols:
+        print("cont col is",col)
+        self.dictlist.append(np.array(X[col]))       ❹ 
+    return self.dictlis.t
 ```
 
-❶ 将包含每个列的 numpy 数组的列表
+❶ 将包含每个列的 `numpy` 数组的列表
 
-❷ 将当前分类列的 numpy 数组追加到整体列表中。
+❷ 将当前分类列的 `numpy` 数组追加到整体列表中。
 
-❸ 将当前文本列的 numpy 数组追加到整体列表中。
+❸ 将当前文本列的 `numpy` 数组追加到整体列表中。
 
-❹ 将当前连续列的 numpy 数组追加到整体列表中。
+❹ 将当前连续列的 `numpy` 数组追加到整体列表中。
 
 这段代码是灵活的。像本例中的其他代码一样，只要输入数据集的列被正确分类，这段代码就可以与各种表格结构化数据一起工作。它并不特定于电车数据集。
 
-## 5.7 Keras 和 TensorFlow 的简要历史
+## 5.7 `Keras` 和 `TensorFlow` 的简要历史
+
+
+
 
 我们已经审查了数据集在准备训练深度学习模型之前需要经历的最终转换集。本节提供了关于 Keras 的背景信息，Keras 是用于创建本书主要示例中模型的通用深度学习框架。我们将从本节开始，简要回顾 Keras 的历史及其与低级深度学习框架 TensorFlow 的关系。在第 5.8 节中，我们将回顾从 TensorFlow 1.x 迁移到 TensorFlow 2（本书代码示例所使用的后端深度学习框架）所需的步骤。在第 5.9 节中，我们将简要对比 Keras/TensorFlow 框架与其他主要深度学习框架 PyTorch。在第 5.10 节中，我们将回顾两个代码示例，展示如何在 Keras 中构建深度学习模型的层。有了关于 Keras 的这些背景知识，我们就可以准备检查 Keras 框架是如何用于实现第 5.11 节中的电车延迟预测深度学习模型的了。
 
 Keras 最初是作为各种后端深度学习框架的前端而诞生的，包括 TensorFlow ([`www.tensorflow.org`](https://www.tensorflow.org/)) 和 Theano。Keras 的目的是提供一套易于访问、易于使用的 API，开发者可以使用这些 API 来探索深度学习。当 Keras 在 2015 年发布时，它所支持的深度学习后端库（最初是 Theano，然后是 TensorFlow）提供了一系列广泛的功能，但对于初学者来说可能难以掌握。有了 Keras，开发者可以通过使用熟悉的语法开始深度学习，而无需担心后端库中暴露的所有细节。
 
-如果你是在 2017 年开始一个深度学习项目，你的选择包括
+如果你是在 2017 年开始一个深度学习项目，你的选择包括：
 
 +   直接使用 TensorFlow 库
-
 +   将 Keras 作为 TensorFlow 的前端使用
-
 +   使用 Keras 与其他后端，如 Theano（尽管到 2017 年，除了 TensorFlow 之外的后端变得越来越少见）
 
 尽管大多数使用 Keras 进行深度学习项目的人使用了 TensorFlow 作为后端，但 Keras 和 TensorFlow 是两个独立的项目。所有这些都在 2019 年随着 TensorFlow 2 的发布而改变：
 
-+   鼓励使用 Keras 进行深度学习的程序员使用集成到 TensorFlow 中的 `tf.keras` 包，而不是独立的 Keras。
-
-+   鼓励 TensorFlow 用户使用 Keras（通过 TensorFlow 中的 `tf.keras` 包）作为 TensorFlow 的高层 API。截至 TensorFlow 2，Keras 是 TensorFlow 的官方高层 API ([`mng.bz/xrWY`](http://mng.bz/xrWY))。
++   鼓励使用 Keras 进行深度学习的程序员使用集成到 TensorFlow 中的`tf.keras`包，而不是独立的 Keras。
++   鼓励 TensorFlow 用户使用 Keras（通过 TensorFlow 中的`tf.keras`包）作为 TensorFlow 的高层 API。截至 TensorFlow 2，Keras 是 TensorFlow 的官方高层 API ([`mng.bz/xrWY`](http://mng.bz/xrWY))。
 
 简而言之，原本是独立但相关的项目 Keras 和 TensorFlow 已经合并。特别是，随着新的 TensorFlow 点版本发布（例如，2020 年 5 月发布的 TensorFlow 2.2.0 [[`mng.bz/yrnJ`](http://mng.bz/yrnJ)]），它们将包括后端以及 Keras 前端的改进。您可以在 Keras 和 TensorFlow 的 *Python 深度学习* 章节中找到有关 Keras 和 TensorFlow 之间关系的更多详细信息，特别是 TensorFlow 在使用 Keras 定义的深度学习模型整体操作中扮演的角色（[`mng.bz/AzA7`](http://mng.bz/AzA7)）。
 
 ## 5.8 从 TensorFlow 1.x 迁移到 TensorFlow 2
 
-本章和第六章中描述的深度学习模型代码最初是编写为使用独立的 Keras，以 TensorFlow 1.x 作为后端。在本书编写期间，TensorFlow 2 已发布，因此我决定迁移到 TensorFlow 2 中的集成 Keras 环境。因此，要在 streetcar_model_training .ipynb 中运行代码，您需要在 Python 环境中安装 TensorFlow 2。如果您有尚未迁移到 TensorFlow 2 的其他深度学习项目，您可以为此书中的代码示例创建一个特定的 Python 虚拟环境，并在其中安装 TensorFlow 2。这样，您就不会在您的其他深度学习项目中引入更改。
+本章和第六章中描述的深度学习模型代码最初是编写为使用独立的 Keras，以 TensorFlow 1.x 作为后端。在本书编写期间，TensorFlow 2 已发布，因此我决定迁移到 TensorFlow 2 中的集成 Keras 环境。因此，要在`streetcar_model_training.ipynb`中运行代码，您需要在 Python 环境中安装 TensorFlow 2。如果您有尚未迁移到 TensorFlow 2 的其他深度学习项目，您可以为此书中的代码示例创建一个特定的 Python 虚拟环境，并在其中安装 TensorFlow 2。这样，您就不会在您的其他深度学习项目中引入更改。
 
 本节总结了我在模型训练笔记本中需要进行的代码更改，以将其从使用 TensorFlow 1.x 作为后端的独立 Keras 迁移到 TensorFlow 2 上下文中的 Keras。TensorFlow 文档中包含了全面的迁移步骤，网址为 [`www.tensorflow.org/guide/migrate`](https://www.tensorflow.org/guide/migrate)。以下是我在以下步骤中采取的简要总结：
 
@@ -305,17 +290,17 @@ Keras 最初是作为各种后端深度学习框架的前端而诞生的，包�
     pip install tensorflow==1.1.5
     ```
 
-1.  完整运行模型训练笔记本以验证在最新版本的 TensorFlow 1.x 中一切是否正常工作。
+2.  完整运行模型训练笔记本以验证在最新版本的 TensorFlow 1.x 中一切是否正常工作。
 
-1.  在模型训练笔记本上运行升级脚本 tf_upgrade_v2。
+3.  在模型训练笔记本上运行升级脚本`tf_upgrade_v2`。
 
-1.  将所有 Keras 导入语句更改为引用 tf.keras 包（包括将 `from keras import regularizers` 更改为 `from tensorflow.keras import regularizers`）。
+4.  将所有 Keras 导入语句更改为引用`tf.keras`包（包括将`from keras import regularizers`更改为`from tensorflow.keras import regularizers`）。
 
-1.  使用更新的导入语句完整运行模型训练笔记本以验证一切是否正常工作。
+5.  使用更新的导入语句完整运行模型训练笔记本以验证一切是否正常工作。
 
-1.  按照以下网址的说明创建了 Python 虚拟环境：[`janakiev.com/blog/jupyter-virtual-envs`](https://janakiev.com/blog/jupyter-virtual-envs)。
+6.  按照以下网址的说明创建了 Python 虚拟环境：[`janakiev.com/blog/jupyter-virtual-envs`](https://janakiev.com/blog/jupyter-virtual-envs)。
 
-1.  在 Python 虚拟环境中安装了 TensorFlow 2。这一步骤是必要的，因为第八章中描述的 Facebook Messenger 部署方法的一部分 Rasa 聊天机器人框架需要 TensorFlow 1.x。通过在虚拟环境中安装 TensorFlow 2，我们可以利用虚拟环境进行模型训练步骤，而不会破坏 TensorFlow 1.x 的部署先决条件。以下是安装 TensorFlow 2 的命令：
+7.  在 Python 虚拟环境中安装了 TensorFlow 2。这一步骤是必要的，因为第八章中描述的 Facebook Messenger 部署方法的一部分 Rasa 聊天机器人框架需要 TensorFlow 1.x。通过在虚拟环境中安装 TensorFlow 2，我们可以利用虚拟环境进行模型训练步骤，而不会破坏 TensorFlow 1.x 的部署先决条件。以下是安装 TensorFlow 2 的命令：
 
     ```
     pip install tensorflow==2.0.0
@@ -333,13 +318,13 @@ Keras 最初是作为各种后端深度学习框架的前端而诞生的，包�
 
 定义 Keras 模型的层有两种方式：顺序 API 和功能 API。顺序 API 是更简单的方法，但灵活性较低；功能 API 更灵活，但使用起来稍微复杂一些。
 
-为了说明这两个 API，我们将探讨如何使用两种方法创建最小的 Keras 深度学习模型，用于 MNIST ([`www.tensorflow.org/datasets/catalog/mnist`](https://www.tensorflow.org/datasets/catalog/mnist))。如果你之前没有遇到过 MNIST，它是由手写数字的标记图像组成的数据库。`x` 值来自图像文件，标签（`y` 值）是数字的文本表示。MNIST 模型的目标是正确识别手写图像中的数字。MNIST 通常用作练习深度学习模型的简化数据集。如果你想要更多关于 MNIST 以及它是如何用于练习深度学习框架的背景信息，一篇优秀的文章在 [`mng.bz/Zr2a`](http://mng.bz/Zr2a) 提供了更多细节。
+为了说明这两个 API，我们将探讨如何使用两种方法创建最小的 Keras 深度学习模型，用于 MNIST ([`www.tensorflow.org/datasets/catalog/mnist`](https://www.tensorflow.org/datasets/catalog/mnist))。如果你之前没有遇到过 MNIST，它是由手写数字的标记图像组成的数据库。`x`值来自图像文件，标签（`y`值）是数字的文本表示。MNIST 模型的目标是正确识别手写图像中的数字。MNIST 通常用作练习深度学习模型的简化数据集。如果你想要更多关于 MNIST 以及它是如何用于练习深度学习框架的背景信息，一篇优秀的文章在 [`mng.bz/Zr2a`](http://mng.bz/Zr2a) 提供了更多细节。
 
 值得注意的是，MNIST 并不是一个根据第一章中结构化数据的定义所定义的结构化数据集。尽管它不是一个结构化数据集，但选择 MNIST 作为本节示例的原因有两个：Keras API 的已发布入门示例使用 MNIST，并且没有公认的与 MNIST 相当的结构化数据集用于训练深度学习模型。
 
 使用顺序 API，模型定义接受一个有序的层列表作为参数。您可以从 TensorFlow 2 中支持的 Keras 层列表中选择您想要包含在模型中的层（[`mng.bz/awaJ`](http://mng.bz/awaJ)）。列表 5.3 中的代码片段来自`keras_sequential_api_mnist.py`，它改编自 TensorFlow 2 文档（[`mng.bz/RMAO`](http://mng.bz/RMAO)），并展示了一个简单的 MNIST 深度学习模型，该模型使用 Keras 顺序 API。
 
-列表 5.3 使用 Keras 顺序 API 的 MNIST 模型代码
+**列表 5.3 使用 Keras 顺序 API 的 MNIST 模型代码**
 
 ```
 import tensorflow as tf
@@ -391,55 +376,59 @@ print('Test accuracy:', test_scores[1])
 这个 Keras 深度学习模型的简单示例与您已经看到的非深度学习模型有几个共同特点：
 
 +   输入数据集被分为训练集和测试集。训练集用于训练过程中调整模型中的权重。测试数据集应用于训练好的模型以评估其性能；在这个例子中，根据准确率（即模型的预测与实际输出值的接近程度）。
-
 +   训练集和测试集都由输入`x`值（对于 MNIST，手写数字的图像）和标签或`y`值（对于 MNIST，对应手写数字的 ASCII 数字）组成。
-
 +   非深度学习和深度学习模型在定义和拟合模型时都有类似的语句。下一列表中的代码片段对比了定义和拟合逻辑回归模型和 Keras 深度学习模型的语句。
 
-+   列表 5.4 对比逻辑回归模型和 Keras 模型的代码
+**列表 5.4 对比逻辑回归模型和 Keras 模型的代码**
 
-    ```
-    from sklearn.linear_model import LogisticRegression
+```
+from sklearn.linear_model import LogisticRegression
 
-    clf_lr = LogisticRegression(solver = 'lbfgs')         ❶ 
-    model = clf_lr.fit(X_train, y_train)                  ❷ 
+clf_lr = LogisticRegression(solver = 'lbfgs')         ❶ 
+model = clf_lr.fit(X_train, y_train)                  ❷ 
 
-    model = tf.keras.models.Sequential([                  ❸ 
-      tf.keras.layers.Flatten(input_shape=(28, 28)),
-      tf.keras.layers.Dense(128, activation='relu'), 
-      tf.keras.layers.Dropout(0.2), 
-      tf.keras.layers.Dense(10) 
-    ])
-    model.compile(optimizer='adam', \                     ❹ loss=tf.keras.losses.SparseCategoricalCrossentropy(from_logits=True),\
-                  metrics=['accuracy']) 
+model = tf.keras.models.Sequential([                  ❸ 
+  tf.keras.layers.Flatten(input_shape=(28, 28)),
+  tf.keras.layers.Dense(128, activation='relu'), 
+  tf.keras.layers.Dropout(0.2), 
+  tf.keras.layers.Dense(10) 
+])
+model.compile(optimizer='adam', \                     ❹ loss=tf.keras.losses.SparseCategoricalCrossentropy(from_logits=True),\
+              metrics=['accuracy']) 
 
-    history = model.fit(x_train, y_train, \               ❺ 
-                        batch_size=64, \
-                        epochs=5, \
-                        validation_split=0.2)
-    ```
+history = model.fit(x_train, y_train, \               ❺ 
+                    batch_size=64, \
+                    epochs=5, \
+                    validation_split=0.2)
+```
 
-    ❶ 定义逻辑回归模型。
+❶ 定义逻辑回归模型。
 
-    ❷ 调整逻辑回归模型。
+❷ 调整逻辑回归模型。
 
-    ❸ 定义 Keras 深度学习模型的第一部分：定义层
+❸ 定义 Keras 深度学习模型的第一部分：定义层
 
-    ❹ 定义 Keras 深度学习模型的第二部分：设置编译参数
+❹ 定义 Keras 深度学习模型的第二部分：设置编译参数
 
-    ❺ 拟合 Keras 深度学习模型。
+❺ 拟合 Keras 深度学习模型。
 
 图 5.17 显示了`plot_model`函数对 MNIST 顺序 API 模型的输出。
 
 ![CH05_F17_Ryan](img/CH05_F17_Ryan.png)
 
-图 5.17 简单顺序 API Keras 模型的 plot_model 输出
+**图 5.17 简单顺序 API Keras 模型的 plot_model 输出**
 
 与序列 API 相比，Keras 功能 API 的语法更复杂，但提供了更大的灵活性。特别是，功能 API 允许您定义具有多个输入的模型。正如您将在第 5.13 节中看到的，本书中的扩展示例利用了功能 API，因为它需要多个输入。
 
-列表 5.5 中的代码片段来自 keras_ functional_api_mnist.py。它改编自[`www .tensorflow.org/guide/keras/functional`](https://www.tensorflow.org/guide/keras/functional)，展示了如何使用 Keras 功能 API 定义一个简单的深度学习模型，用于解决我们之前展示的序列 API 解决方案相同的 MNIST 问题。
+列表 5.5 中的代码片段来自`keras_functional_api_mnist.py`。它改编自[`www.tensorflow.org/guide/keras/functional`](https://www.tensorflow.org/guide/keras/functional)，展示了如何使用 Keras 功能 API 定义一个简单的深度学习模型，用于解决我们之前展示的序列 API 解决方案相同的 MNIST 问题。
 
-列表 5.5 使用 Keras 功能 API 的 MNIST 模型代码
+**列表 5.5 使用 Keras 功能 API 的 MNIST 模型代码**
+
+
+
+# 5.10 功能 API 示例
+
+以下代码演示了如何使用 Keras 功能 API 构建一个简单的 MNIST 模型：
 
 ```
 import numpy as np
@@ -689,33 +678,31 @@ for col in collist:
 
 列表 5.9 将适当的层应用于文本列的代码
 
+
+
 ```
 for col in textcols:
-textinputs[col] = \
-Input(shape=[X_train[col].shape[1]], name=col)                         ❶ 
-inputlayerlist.append(textinputs[col])                                 ❷ 
-textembeddings[col] = (Embedding(textmax,textemb) (textinputs[col]))   ❸ 
-textembeddings[col] = (BatchNormalization() (textembeddings[col]))     ❹ 
-textembeddings[col] = \
-Dropout(dropout_rate)( GRU(16,kernel_regularizer=l2(l2_lambda)) \
-(textembeddings[col]))                                                 ❺ 
+    textinputs[col] = \
+        Input(shape=[X_train[col].shape[1]], name=col)                         ❶ 
+    inputlayerlist.append(textinputs[col])                                     ❷ 
+    textembeddings[col] = (Embedding(textmax,textemb) (textinputs[col]))       ❸ 
+    textembeddings[col] = (BatchNormalization() (textembeddings[col]))         ❹ 
+    textembeddings[col] = \
+        Dropout(dropout_rate)( GRU(16,kernel_regularizer=l2(l2_lambda)) \
+        (textembeddings[col]))                                                 ❺ 
 ```
 
 ❶ 从输入开始。
-
 ❷ 将此列的输入层追加到输入层列表中，该列表将在模型定义语句中使用。
-
 ❸ 添加嵌入层。
-
 ❹ 添加批归一化层。默认情况下，样本是单独归一化的。
-
 ❺ 添加 dropout 层和 GRU 层。
 
 在本节中，我们探讨了构成街车延误预测问题的 Keras 深度学习模型核心的代码。我们看到了`get_model()`函数如何根据输入列的类型（连续、分类和文本）构建模型的层。由于`get_model()`函数不依赖于任何特定输入数据集的表格结构，因此此函数可以与各种输入数据集一起使用。像本例中的其他代码一样，只要输入数据集的列被正确分类，`get_model()`函数就会为各种表格结构数据生成 Keras 模型。
 
 ## 5.14 探索你的模型
 
-我们创建的用于预测街车延误的模型相对简单，但如果之前没有遇到过 Keras，理解起来可能仍然有些令人困惑。幸运的是，你可以使用一些工具来检查模型。在本节中，我们将回顾三个你可以用来探索模型的工具：`model.summary` `()`、`plot_model` `()`和 TensorBoard。
+我们创建的用于预测街车延误的模型相对简单，但如果之前没有遇到过 Keras，理解起来可能仍然有些令人困惑。幸运的是，你可以使用一些工具来检查模型。在本节中，我们将回顾三个你可以用来探索模型的工具：`model.summary()`、`plot_model()`和 TensorBoard。
 
 `model.summary()` API 列出了模型中的每一层，其输出形状、参数数量以及输入到其中的层。图 5.23 中的 `model.summary()` 输出片段显示了输入层 daym、year、Route 和 hour。你可以看到 daym 如何连接到 embedding_1，而 embedding_1 又连接到 batch_normalization_1，batch_normalization_1 再连接到 flatten_1。
 
@@ -750,26 +737,18 @@ if save_model_plot:                                              ❶
 ```
 
 ❶ 检查在街车模型训练配置文件中是否设置了 save_model_plot 开关。
-
 ❷ 如果设置了，请设置模型图将保存的文件名和路径。
-
 ❸ 使用模型对象和完全限定的文件名作为参数调用 `plot_model`。
 
 图 5.24 和 5.25 显示了街车延迟预测模型的 `plot_model` 输出。每个列的层开始处用数字突出显示：
 
 1.  方向
-
-1.  小时
-
-1.  年
-
-1.  路线
-
-1.  月
-
-1.  月份的日
-
-1.  日
+2.  小时
+3.  年
+4.  路线
+5.  月
+6.  月份的日
+7.  日
 
 ![CH05_F24_Ryan](img/CH05_F24_Ryan.png)
 
@@ -781,7 +760,7 @@ if save_model_plot:                                              ❶
 
 图 5.26 显示了 `plot_model` 对日列输出的近距离视图。
 
-除了`model` `.summary()` 和 `plot_model`，您还可以使用 TensorBoard 实用程序来检查训练模型的特性。TensorBoard ([`www.tensorflow.org/tensorboard/get_started`](https://www.tensorflow.org/tensorboard/get_started)) 是 TensorFlow 提供的一个工具，它允许您图形化跟踪指标，如损失和准确率，并生成模型图的图表。
+除了`model.summary()` 和 `plot_model`，您还可以使用 TensorBoard 实用程序来检查训练模型的特性。TensorBoard ([`www.tensorflow.org/tensorboard/get_started`](https://www.tensorflow.org/tensorboard/get_started)) 是 TensorFlow 提供的一个工具，它允许您图形化跟踪指标，如损失和准确率，并生成模型图的图表。
 
 ![CH05_F26_Ryan](img/CH05_F26_Ryan.png)
 
@@ -795,7 +774,7 @@ if save_model_plot:                                              ❶
     from tensorflow.python.keras.callbacks import TensorBoard
     ```
 
-1.  定义一个 TensorBoard 回调，包括 TensorBoard 日志的路径，如从电车 _ 模型训练笔记本中的`set_early_stop`函数此片段所示。
+2.  定义一个 TensorBoard 回调，包括 TensorBoard 日志的路径，如从电车 _ 模型训练笔记本中的`set_early_stop`函数此片段所示。
 
     列表 5.11 定义回调的代码
 
@@ -809,14 +788,11 @@ if save_model_plot:                                              ❶
     ```
 
     ❶ 如果在电车 _model_training 配置文件中将 tensorboard_callback 参数设置为 True，则定义一个 TensorBoard 回调。
-
     ❷ 定义一个使用当前日期的日志文件路径。
-
     ❸ 使用日志目录路径作为参数定义 tensorboard 回调。
-
     ❹ 将 tensorboard 回调添加到整体回调列表中。请注意，只有当 early_stop 为 True 时，tensorboard 回调才会被调用。
 
-1.  将模型训练时`early_stop`设置为`True`，以便将回调列表（包括 TensorBoard 回调）作为参数包含在内。
+3.  将模型训练时`early_stop`设置为`True`，以便将回调列表（包括 TensorBoard 回调）作为参数包含在内。
 
 当您使用已定义 TensorBoard 回调的训练模型时，您可以在终端中使用以下命令启动 TensorBoard，如下所示。
 
@@ -831,7 +807,6 @@ TensorBoard 2.0.2 at http://localhost:6006/ (Press CTRL+C to quit)         ❷
 ```
 
 ❶ 启动 TensorBoard 的命令。logdir 值与 TensorBoard 回调定义中设置的目录相对应。
-
 ❷ 命令返回用于启动此训练运行的 TensorBoard 的 URL。
 
 现在如果您在浏览器中打开 TensorBoard 命令返回的 URL，您将看到 TensorBoard 界面。图 5.27 显示了 TensorBoard，其中包含了针对电车延误预测模型训练运行的每个 epoch 的准确率结果。
@@ -840,7 +815,7 @@ TensorBoard 2.0.2 at http://localhost:6006/ (Press CTRL+C to quit)         ❷
 
 图 5.27 显示模型准确率的 TensorBoard
 
-在本节中，您已经看到了获取模型信息的三种选项：`model` `.summary()`，`plot_model` 和 TensorBoard。特别是 TensorBoard 具有丰富的功能，用于探索您的模型。您可以在 TensorFlow 文档中找到 TensorBoard 的许多可视化选项的详细描述（[`www.tensorflow.org/tensorboard/get_started`](https://www.tensorflow.org/tensorboard/get_started)）。
+在本节中，您已经看到了获取模型信息的三种选项：`model.summary()`，`plot_model` 和 TensorBoard。特别是 TensorBoard 具有丰富的功能，用于探索您的模型。您可以在 TensorFlow 文档中找到 TensorBoard 的许多可视化选项的详细描述（[`www.tensorflow.org/tensorboard/get_started`](https://www.tensorflow.org/tensorboard/get_started)）。
 
 ## 5.15 模型参数
 

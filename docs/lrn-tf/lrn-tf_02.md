@@ -1,16 +1,16 @@
+
 # 第二章：随波逐流：TensorFlow 快速入门
 
 在本章中，我们将从两个可工作的 TensorFlow 示例开始我们的旅程。第一个（传统的“hello world”程序），虽然简短简单，但包含了我们在后续章节中深入讨论的许多重要元素。通过第二个，一个首个端到端的机器学习模型，您将开始您的 TensorFlow 最新机器学习之旅。
 
 在开始之前，我们简要介绍 TensorFlow 的安装。为了方便快速启动，我们仅安装 CPU 版本，并将 GPU 安装推迟到以后。如果你不知道这意味着什么，那没关系！如果你已经安装了 TensorFlow，请跳到第二部分。
 
-# 安装 TensorFlow
+## 安装 TensorFlow
 
 如果您使用的是干净的 Python 安装（可能是为学习 TensorFlow 而设置的），您可以从简单的`pip`安装开始：
 
 ```py
 $ pip install tensorflow
-
 ```
 
 然而，这种方法的缺点是 TensorFlow 将覆盖现有软件包并安装特定版本以满足依赖关系。如果您还将此 Python 安装用于其他目的，这样做将不起作用。一个常见的解决方法是在一个由*virtualenv*管理的虚拟环境中安装 TensorFlow。
@@ -19,10 +19,9 @@ $ pip install tensorflow
 
 ```py
 $ pip install virtualenv
-
 ```
 
-查看[*http://virtualenv.pypa.io*](http://virtualenv.pypa.io)获取更多说明。
+查看[http://virtualenv.pypa.io](http://virtualenv.pypa.io)获取更多说明。
 
 为了在虚拟环境中安装 TensorFlow，您必须首先创建虚拟环境——在本书中，我们选择将其放在*~/envs*文件夹中，但请随意将其放在您喜欢的任何位置：
 
@@ -30,14 +29,12 @@ $ pip install virtualenv
 $ cd ~
 $ mkdir envs
 $ virtualenv ~/envs/tensorflow
-
 ```
 
 这将在*~/envs*中创建一个名为*tensorflow*的虚拟环境（将显示为*~/envs/tensorflow*文件夹）。要激活环境，请使用：
 
 ```py
 $ source ~/envs/tensorflow/bin/activate
-
 ```
 
 提示现在应该改变以指示已激活的环境：
@@ -49,7 +46,7 @@ $ source ~/envs/tensorflow/bin/activate
 此时`pip install`命令：
 
 ```py
-(tensorflow)$ pip install tensorflow​
+(tensorflow)$ pip install tensorflow
 ```
 
 将在虚拟环境中安装 TensorFlow，而不会影响您计算机上安装的其他软件包。
@@ -58,30 +55,27 @@ $ source ~/envs/tensorflow/bin/activate
 
 ```py
 (tensorflow)$ deactivate
-
 ```
 
 此时，您应该会得到常规提示符：
 
 ```py
 $
-
 ```
 
-# 在~/.bashrc 中添加别名
+### 在~/.bashrc 中添加别名
 
 描述进入和退出虚拟环境的过程可能会太繁琐，如果您打算经常使用它。在这种情况下，您可以简单地将以下命令附加到您的*~/.bashrc*文件中：
 
 ```py
 alias tensorflow="source ~/envs/tensorflow/bin/activate"
-
 ```
 
 并使用命令`tensorflow`来激活虚拟环境。要退出环境，您仍然会使用`deactivate`。
 
 现在我们已经基本安装了 TensorFlow，我们可以继续进行我们的第一个工作示例。我们将遵循已经建立的传统，并从一个“hello world”程序开始。
 
-# Hello World
+## Hello World
 
 我们的第一个示例是一个简单的程序，将单词“Hello”和“ World!”组合在一起并显示输出——短语“Hello World!”。虽然简单直接，但这个示例介绍了 TensorFlow 的许多核心元素以及它与常规 Python 程序的不同之处。
 
@@ -92,7 +86,6 @@ alias tensorflow="source ~/envs/tensorflow/bin/activate"
 ```py
 import tensorflow as tf
 print(tf.__version__)
-
 ```
 
 如果正确，输出将是您在系统上安装的 TensorFlow 版本。版本不匹配是后续问题的最有可能原因。
@@ -109,7 +102,7 @@ w = tf.constant(" World!")
 hw = h + w
 
 with tf.Session() as sess:
-ans = sess.run(hw)
+    ans = sess.run(hw)
 
 print (ans)
 ```
@@ -118,12 +111,11 @@ print (ans)
 
 ```py
 import tensorflow as tf
-
 ```
 
 不需要解释。
 
-# IDE 配置
+### IDE 配置
 
 如果您从 IDE 运行 TensorFlow 代码，请确保重定向到安装包的虚拟环境。否则，您将收到以下导入错误：
 
@@ -138,8 +130,7 @@ import tensorflow as tf
 
 h = tf.constant("Hello")
 w = tf.constant(" World!")
-hw = h + w 
-
+hw = h + w
 ```
 
 此时，您可能会想知道这与用于执行此操作的简单 Python 代码有何不同（如果有的话）：
@@ -148,19 +139,20 @@ hw = h + w
 ph = "Hello"
 pw = " World!"
 phw = h + w
-
 ```
 
 这里的关键点是每种情况下变量`hw`包含的内容。我们可以使用`print`命令来检查这一点。在纯 Python 情况下，我们得到这个：
 
 ```py
->`print``phw`HelloWorld!
+> print phw
+HelloWorld!
 ```
 
 然而，在 TensorFlow 情况下，输出完全不同：
 
 ```py
->`print``hw`Tensor("add:0",shape=(),dtype=string)
+> print hw
+Tensor("add:0",shape=(),dtype=string)
 ```
 
 可能不是您期望的！
@@ -168,8 +160,7 @@ phw = h + w
 在下一章中，我们将详细解释 TensorFlow 的计算图模型，到那时这个输出将变得完全清晰。TensorFlow 中计算图的关键思想是，我们首先定义应该发生的计算，然后在外部机制中触发计算。因此，TensorFlow 代码行：
 
 ```py
-hw = h + w 
-
+hw = h + w
 ```
 
 *不*计算`h`和`w`的总和，而是将求和操作添加到稍后要执行的计算图中。
@@ -184,7 +175,7 @@ ans = sess.run(hw)
 
 这完成了第一个 TensorFlow 示例。接下来，我们将立即进行一个简单的机器学习示例，这个示例已经展示了 TensorFlow 框架的许多潜力。
 
-# MNIST
+## MNIST
 
 *MNIST*（混合国家标准技术研究所）手写数字数据集是图像处理和机器学习中最研究的数据集之一，并在人工神经网络（现在通常称为*深度学习*）的发展中发挥了重要作用。
 
@@ -194,7 +185,7 @@ ans = sess.run(hw)
 
 ###### 图 2-1. 100 个随机 MNIST 图像
 
-# Softmax 回归
+### Softmax 回归
 
 在这个示例中，我们将使用一个称为*softmax 回归*的简单分类器。我们不会详细介绍模型的数学公式（有很多好的资源可以找到这些信息，如果您以前从未见过这些信息，我们强烈建议您这样做）。相反，我们将尝试提供一些关于模型如何解决数字识别问题的直觉。
 
@@ -204,9 +195,9 @@ ans = sess.run(hw)
 
 由于我们在这一点上不打算使用空间信息，我们将我们的图像像素展开为一个长向量表示为*x*（Figure 2-2）。然后
 
-*xw*⁰ = ∑*x*[*i*] 
+*xw*⁰ = ∑*x*[*i*]
 
-将是包含数字 0 的图像的证据（同样地，我们将为其他每个数字有<math alttext="w Superscript d"><msup><mi>w</mi> <mi>d</mi></msup></math> 个权重向量，<math><mrow><mi>d</mi> <mo>=</mo> <mn>1</mn> <mo>,</mo> <mo>.</mo> <mo>.</mo> <mo>.</mo> <mo>,</mo> <mn>9</mn></mrow></math>）。
+将是包含数字 0 的图像的证据（同样地，我们将为其他每个数字有*w*⁰ 个权重向量，*d* = 1, ..., 9）。
 
 ![MNIST100](img/letf_0202.png)
 
@@ -245,7 +236,7 @@ y_true = tf.placeholder(tf.float32, [None, 10])
 y_pred = tf.matmul(x, W)
 
 cross_entropy = tf.reduce_mean(tf.nn.softmax_cross_entropy_with_logits(
-logits=y_pred, labels=y_true))
+    logits=y_pred, labels=y_true))
 
 gd_step = tf.train.GradientDescentOptimizer(0.5).minimize(cross_entropy)
 
@@ -254,19 +245,18 @@ accuracy = tf.reduce_mean(tf.cast(correct_mask, tf.float32))
 
 with tf.Session() as sess:
 
-# Train
-sess.run(tf.global_variables_initializer())
+    # Train
+    sess.run(tf.global_variables_initializer())
 
-for _ in range(NUM_STEPS):
-batch_xs, batch_ys = data.train.next_batch(MINIBATCH_SIZE)
-sess.run(gd_step, feed_dict={x: batch_xs, y_true: batch_ys})
+    for _ in range(NUM_STEPS):
+        batch_xs, batch_ys = data.train.next_batch(MINIBATCH_SIZE)
+        sess.run(gd_step, feed_dict={x: batch_xs, y_true: batch_ys})
 
-# Test
-ans = sess.run(accuracy, feed_dict={x: data.test.images, 
-                                    y_true: data.test.labels})
+    # Test
+    ans = sess.run(accuracy, feed_dict={x: data.test.images, 
+                                        y_true: data.test.labels})
 
-print "Accuracy: {:.4}%".format(ans*100)
-
+    print "Accuracy: {:.4}%".format(ans*100)
 ```
 
 如果您在您的机器上运行代码，您应该会得到如下输出：
@@ -277,7 +267,6 @@ Extracting /tmp/data/train-labels-idx1-ubyte.gz
 Extracting /tmp/data/t10k-images-idx3-ubyte.gz
 Extracting /tmp/data/t10k-labels-idx1-ubyte.gz
 Accuracy: 91.83%
-
 ```
 
 就是这样！如果您之前在其他平台上组合过类似的模型，您可能会欣赏到其简单性和可读性。然而，这些只是附加的好处，我们真正感兴趣的是从 TensorFlow 的计算图模型中获得的效率和灵活性。
@@ -292,7 +281,6 @@ Accuracy: 91.51%
 Accuracy: 91.62%
 Accuracy: 91.93%
 Accuracy: 91.88%
-
 ```
 
 现在我们将简要地查看这个示例的代码，并看看与之前的“hello world”示例有什么新的地方。我们将逐行分解它：
@@ -300,23 +288,20 @@ Accuracy: 91.88%
 ```py
 import tensorflow as tf
 from tensorflow.examples.tutorials.mnist import input_data
-
 ```
 
-这个示例中的第一个新元素是我们使用外部数据！我们不再下载 MNIST 数据集（在[*http://yann.lecun.com/exdb/mnist/*](http://yann.lecun.com/exdb/mnist/)免费提供），然后加载到我们的程序中，而是使用内置工具来动态检索数据集。对于大多数流行的数据集，存在这样的工具，当处理小数据集时（在这种情况下只有几 MB），这种方式非常合理。第二个导入加载了我们稍后将使用的工具，用于自动下载数据，并根据需要管理和分区数据：
+这个示例中的第一个新元素是我们使用外部数据！我们不再下载 MNIST 数据集（在[http://yann.lecun.com/exdb/mnist/](http://yann.lecun.com/exdb/mnist/)免费提供），然后加载到我们的程序中，而是使用内置工具来动态检索数据集。对于大多数流行的数据集，存在这样的工具，当处理小数据集时（在这种情况下只有几 MB），这种方式非常合理。第二个导入加载了我们稍后将使用的工具，用于自动下载数据，并根据需要管理和分区数据：
 
 ```py
 DATA_DIR = '/tmp/data'
 NUM_STEPS = 1000
 MINIBATCH_SIZE = 100
-
 ```
 
 在这里，我们定义了一些在程序中使用的常量，它们将在首次使用时的上下文中进行解释：
 
 ```py
 data = input_data.read_data_sets(DATA_DIR, one_hot=True)
-
 ```
 
 MNIST 阅读工具的`read_data_sets()`方法会下载数据集并将其保存在本地，为程序后续使用做好准备。第一个参数`DATA_DIR`是我们希望数据保存在本地的位置。我们将其设置为`'/tmp/data'`，但任何其他位置也同样适用。第二个参数告诉工具我们希望数据如何标记；我们现在不会深入讨论这个问题。
@@ -326,7 +311,6 @@ MNIST 阅读工具的`read_data_sets()`方法会下载数据集并将其保存�
 ```py
 x = tf.placeholder(tf.float32, [None, 784])
 W = tf.Variable(tf.zeros([784, 10]))
-
 ```
 
 在之前的示例中，我们看到了 TensorFlow 的常量元素，现在它被`placeholder`和`Variable`元素补充。现在，知道变量是计算中操作的元素，而占位符在触发时必须提供。图像本身（`x`）是一个占位符，因为当运行计算图时，我们将提供它。大小[`None, 784`]表示每个图像的大小为 784（28×28 像素展开成一个单独的向量），`None`表示我们目前没有指定一次使用多少个这样的图像：
@@ -337,6 +321,8 @@ y_pred = tf.matmul(x, W)
 ```
 
 在下一章中，这些概念将会更深入地讨论。
+
+
 
 在大类机器学习任务中的一个关键概念是，我们希望从数据示例（在我们的情况下是数字图像）到它们已知标签（图像中数字的身份）的函数。这种设置被称为*监督学习*。在大多数监督学习模型中，我们尝试学习一个模型，使得真实标签和预测标签在某种意义上接近。在这里，`y_true`和`y_pred`分别表示真实标签和预测标签的元素：
 

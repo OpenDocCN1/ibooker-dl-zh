@@ -1,14 +1,12 @@
+
 # 第六章：动态图：时空 GNN
 
-### 本章涵盖
+## 本章涵盖
 
-+   将记忆引入你的深度学习模型
-
-+   理解使用图神经网络建模时序关系的不同方法
-
-+   实现动态图神经网络
-
-+   评估你的时序图神经网络模型
+- 将记忆引入你的深度学习模型
+- 理解使用图神经网络建模时序关系的不同方法
+- 实现动态图神经网络
+- 评估你的时序图神经网络模型
 
 到目前为止，我们所有的模型和数据都只是时间上的单一快照。在实践中，世界是动态的，并且处于不断变化之中。物体可以物理移动，在我们眼前沿着轨迹移动，我们能够根据这些观察到的轨迹预测它们的未来位置。交通流量、天气模式和疾病在人群网络中的传播都是当使用时空图而不是静态图建模时可以获取更多信息的情况。
 
@@ -16,23 +14,20 @@
 
 在本章中，我们考虑如何构建适合动态事件的模型。虽然这并不意味着它们可以处理 OOD 数据，但我们的动态模型将能够利用最近过去的数据对未来未见的事件进行预测。
 
-为了构建我们的基于动态图的 学习模型，我们将考虑姿态估计的问题。*姿态估计*与那些预测身体（人类、动物或机器人）随时间移动的类问题相关。在本章中，我们将考虑一个行走的人体，并构建几个模型来学习如何从一系列视频帧中预测下一步。为此，我们首先将更详细地解释这个问题，以及如何将其理解为一个关系问题，然后再深入探讨基于图的学习方法是如何处理这个问题的。与本书的其他部分一样，更详细的技术细节留到本章末尾的 6.5 节。
+为了构建我们的基于动态图的学习模型，我们将考虑姿态估计的问题。*姿态估计*与那些预测身体（人类、动物或机器人）随时间移动的类问题相关。在本章中，我们将考虑一个行走的人体，并构建几个模型来学习如何从一系列视频帧中预测下一步。为此，我们首先将更详细地解释这个问题，以及如何将其理解为一个关系问题，然后再深入探讨基于图的学习方法是如何处理这个问题的。与本书的其他部分一样，更详细的技术细节留到本章末尾的 6.5 节。
 
 我们将使用本书中已经覆盖的大部分材料。如果你已经跳到了这一章，请确保你对“建立在所学知识的基础上”侧边栏中描述的概念有很好的理解。
 
-备注：本章的代码以笔记本形式可在 GitHub 仓库（[`mng.bz/4a8D`](https://mng.bz/4a8D)）中找到。
+> 备注：本章的代码以笔记本形式可在 GitHub 仓库（[`mng.bz/4a8D`](https://mng.bz/4a8D)）中找到。
 
-##### 建立在所学知识的基础上
+### 建立在所学知识的基础上
 
 要将时序更新引入我们的 GNN，我们可以基于之前章节中学到的某些概念。作为一个快速回顾，我们已经总结了每个章节的一些主要重要特性：
 
-+   *消息传递*——在第二章中，你了解到 GNN（图神经网络）从关系数据中学习的主要方法是结合消息传递与人工神经网络。GNN 的每一层都可以理解为消息传递的一个步骤。
-
-+   **图卷积网络（GCNs）**—在第三章中，你看到消息传递本身可以理解为卷积算子的关系形式（如卷积神经网络 [CNNs] 中的那样），这是 GCNs 背后的核心思想。消息也可以通过仅采样最近邻的子集来在邻域内平均。这用于 GraphSAGE，并且可以显著减少所需的总体计算量。
-
-+   **注意**—在第四章中，我们展示了消息传递的聚合函数不需要仅限于求和、平均或最大操作（尽管操作必须是排列不变的）。注意力机制允许在训练过程中学习权重，从而为消息传递聚合函数提供更大的灵活性。使用图注意力网络（GAT）是向消息传递添加注意力的基本形式。
-
-+   **生成模型**—虽然判别模型试图学习数据类之间的分离，但生成模型试图学习底层的数据生成过程。自动编码器是设计生成模型中最受欢迎的框架之一，其中数据通过神经网络瓶颈传递以创建数据的低维表示，也称为潜在空间。这些通常作为图自动编码器（GAEs）或变分图自动编码器（VGAEs）在图中实现，正如我们在第五章中讨论的那样。
+- *消息传递*——在第二章中，你了解到 GNN（图神经网络）从关系数据中学习的主要方法是结合消息传递与人工神经网络。GNN 的每一层都可以理解为消息传递的一个步骤。
+- **图卷积网络（GCNs）**——在第三章中，你看到消息传递本身可以理解为卷积算子的关系形式（如卷积神经网络 [CNNs] 中的那样），这是 GCNs 背后的核心思想。消息也可以通过仅采样最近邻的子集来在邻域内平均。这用于 GraphSAGE，并且可以显著减少所需的总体计算量。
+- **注意**——在第四章中，我们展示了消息传递的聚合函数不需要仅限于求和、平均或最大操作（尽管操作必须是排列不变的）。注意力机制允许在训练过程中学习权重，从而为消息传递聚合函数提供更大的灵活性。使用图注意力网络（GAT）是向消息传递添加注意力的基本形式。
+- **生成模型**——虽然判别模型试图学习数据类之间的分离，但生成模型试图学习底层的数据生成过程。自动编码器是设计生成模型中最受欢迎的框架之一，其中数据通过神经网络瓶颈传递以创建数据的低维表示，也称为潜在空间。这些通常作为图自动编码器（GAEs）或变分图自动编码器（VGAEs）在图中实现，正如我们在第五章中讨论的那样。
 
 ## 6.1 时间模型：通过时间的关系
 
@@ -46,7 +41,7 @@
 
 ![figure](img/6-1.png)
 
-##### 图 6.1 不同动态问题的示例
+**图 6.1 不同动态问题的示例**
 
 这些例子只是我们需要对时间变化进行建模的应用的冰山一角。实际上，我们确信你们可以想到很多其他的例子。鉴于了解如何结合关系学习和时间学习的重要性，我们将介绍三种构建动态模型的不同方法，其中两种使用 GNN：一个循环神经网络（RNN）模型，一个 GAT 模型，以及一个神经关系推理（NRI）模型。我们将通过估计人类姿态随时间的变化来构建“学习走路”的机器学习模型。这些模型通常被部署在例如医疗咨询、远程家庭安全服务和电影制作中。这些模型也是我们在能够奔跑之前学习走路的绝佳玩具问题。本着这种精神，让我们首先更多地了解数据并构建我们的第一个基准模型。
 
@@ -62,7 +57,7 @@
 
 ![figure](img/6-2.png)
 
-##### 图 6.2 展示了一个人体受试者行走的时间快照（t = 秒）。这些点代表放置在人体关键关节上的传感器。这些快照跨越了 30 秒。为了将这些图像表示为图，传感器的放置（关节）可以表示为节点，而身体关节之间的连接是边。
+**图 6.2 展示了一个人体受试者行走的时间快照（t = 秒）。这些点代表放置在人体关键关节上的传感器。这些快照跨越了 30 秒。为了将这些图像表示为图，传感器的放置（关节）可以表示为节点，而身体关节之间的连接是边。**
 
 ### 6.2.1 设置问题
 
@@ -72,7 +67,7 @@
 
 我们在我们的代码仓库中包含了下载和预处理数据的步骤。数据包含在一个 zip 文件中，其中每个不同的试验都保存为高级系统格式(.asf)文件。这些.asf 文件基本上只是包含每个传感器在每个时间步的标签及其 xyz 坐标的文本文件。在下面的列表中，我们展示了一段文本的片段。
 
-##### 列表 6.1 传感器数据文本文件示例
+**列表 6.1 传感器数据文本文件示例**
 
 ```py
    1
@@ -88,19 +83,19 @@
 
 ![图](img/6-3.png)
 
-##### 图 6.3 传感器的预构建空间轨迹
+**图 6.3 传感器的预构建空间轨迹**
 
 除了空间数据，我们还可以计算速度数据。这些数据以每个电影帧的单独文件提供。速度数据变化的一个例子如图 6.4 所示。如图所示，速度数据在一个较小的范围内变化。空间和速度数据都将作为我们机器学习问题中的特征。在这里，我们现在有 31 个传感器和 33 个不同试验的每个传感器的 50 帧，共有六个特征。我们可以将此视为一个多元时间序列问题。我们试图预测一个六维（三个空间和三个速度）对象（每个传感器）的未来演化。我们的第一个方法将它们视为独立的，试图根据过去的传感器数据预测未来的位置和速度。然后我们将转向将其视为一个图，其中我们可以将所有传感器耦合在一起。
 
 ![图](img/6-4.png)
 
-##### 图 6.4 传感器的预构建速度数据
+**图 6.4 传感器的预构建速度数据**
 
 目前，这是一个关系问题，但我们只考虑节点数据，而不是边数据。当存在节点数据而没有边数据时，我们必须小心不要做出太多的假设。例如，如果我们选择根据节点之间的距离来连接节点，那么我们可能会得到一个非常奇怪的骨架，如图 6.5 所示。幸运的是，我们还有边数据，这些数据是使用 CMU 数据集构建的，并包含在提供的数据中。这是一个警示故事，说明 GNN 的强大程度取决于它们训练的图，我们必须小心确保图结构正确。然而，如果边数据完全缺失，那么我们可以尝试从节点数据本身推断边数据。虽然我们在这里不会这样做，但请注意，我们将使用的 NRI 模型具有这种能力。
 
 ![figure](img/6-5.png)
 
-##### 图 6.5 显示错误推断图结构的传感器网络。节点是人体骨骼连接。左图显示了一个具有从节点邻近性推断的边（最近的节点相互连接）的网络。此图并不反映真实的人体骨骼。真正的边集在右图中显示。
+**图 6.5 显示错误推断图结构的传感器网络。节点是人体骨骼连接。左图显示了一个具有从节点邻近性推断的边（最近的节点相互连接）的网络。此图并不反映真实的人体骨骼。真正的边集在右图中显示。**
 
 我们现在已经加载了所有数据。总共有三个数据集（训练、验证、测试），每个数据集包含 31 个单个传感器位置。每个传感器包含六个特征（空间坐标），并通过一个随时间恒定的邻接矩阵连接。传感器图是无向的，边是无权的。训练和验证集包含 49 帧，测试集包含 99 帧。
 
@@ -112,7 +107,7 @@
 
 ![figure](img/6-6.png)
 
-##### 图 6.6 仅使用传感器数据预测未来位置
+**图 6.6 仅使用传感器数据预测未来位置**
 
 为了将记忆引入我们的神经网络，我们首先考虑循环神经网络（RNN）。与卷积和注意力神经网络类似，RNN 是一类广泛的架构，是研究人员和实践者共同的基本工具。有关 RNN 的更多信息，请参阅例如《用 TensorFlow 进行机器学习》（Manning，2020 年，[`mng.bz/VVOW`](https://mng.bz/VVOW)）。RNN 可以被视为多个相互连接的独立网络。这些重复的子网络允许“记住”过去的信息，以及过去数据对未来预测的影响。初始化后，每个子网络都会接收输入数据以及最后一个子网络的输出，并使用这些信息进行新的预测。换句话说，每个子网络都会接收来自最近过去的信息和输入，以构建关于数据的推理。然而，普通的 RNN 只会记住前一步。它们的记忆非常短暂。为了增强过去对未来影响的效果，我们需要更强大的东西。
 
@@ -130,67 +125,69 @@
 
 ![图](img/6-7.png)
 
-##### 图 6.7 本章我们将遵循的深度学习模型的标准训练流程
+**图 6.7 本章我们将遵循的深度学习模型的标准训练流程**
 
 这里使用的训练循环相当标准，所以我们首先描述它。在列表 6.2 中显示的训练循环定义中，我们遵循与之前章节相同的惯例，通过固定数量的时代在模型预测和损失更新之间循环。在这里，我们的损失将包含在我们的标准函数中，我们将其定义为简单的均方误差（MSE）损失。我们将使用学习率调度器，该调度器将在验证损失开始平台期后降低学习率参数。我们将最佳损失初始化为无穷大，并在验证损失小于最佳损失`N`步之后降低学习率。
 
-##### 列表 6.2 训练循环
+**列表 6.2 训练循环**
+
+
 
 ```py
-   num_epochs = 200  
-   train_losses = []
-   valid_losses = []
+num_epochs = 200  
+train_losses = []
+valid_losses = []
 
-   pbar = tqdm(range(num_epochs))
+pbar = tqdm(range(num_epochs))
 
-   for epoch in pbar:
+for epoch in pbar:
 
-        train_loss = 0.0  #1
-        valid_loss = 0.0  #1
+    train_loss = 0.0  #1
+    valid_loss = 0.0  #1
 
-        modelRNN.train()  #2
-        for i, (inputs, labels) in enumerate(trainloader):
-             inputs = inputs.to(device)
-             labels = labels.to(device)
+    modelRNN.train()  #2
+    for i, (inputs, labels) in enumerate(trainloader):
+        inputs = inputs.to(device)
+        labels = labels.to(device)
 
-        optimizer.zero_grad()  #3
+    optimizer.zero_grad()  #3
 
-        outputs = modelRNN(inputs)  #4
-        loss = criterion(outputs, labels)  #4
-        loss.backward()  #4
-        optimizer.step()  #4
+    outputs = modelRNN(inputs)  #4
+    loss = criterion(outputs, labels)  #4
+    loss.backward()  #4
+    optimizer.step()  #4
 
-        train_loss += loss.item() * inputs.size(0)  #5
+    train_loss += loss.item() * inputs.size(0)  #5
 
-        modelRNN.eval()   #6
-        with torch.no_grad():
-             for i, (inputs, labels) in enumerate(validloader):
-                  inputs = inputs.to(device)
-                  labels = labels.to(device)
+    modelRNN.eval()   #6
+    with torch.no_grad():
+        for i, (inputs, labels) in enumerate(validloader):
+            inputs = inputs.to(device)
+            labels = labels.to(device)
 
-                  outputs = modelRNN(inputs) 
-                  loss = criterion(outputs, labels)
-                  valid_loss += loss.item() * inputs.size(0)
+            outputs = modelRNN(inputs) 
+            loss = criterion(outputs, labels)
+            valid_loss += loss.item() * inputs.size(0)
 
-         if valid_loss < best_loss:  #7
-              best_loss = valid_loss
-              counter = 0
-         else:
-              counter += 1
+    if valid_loss < best_loss:  #7
+        best_loss = valid_loss
+        counter = 0
+    else:
+        counter += 1
 
-         scheduler.step(best_loss)  #8
+    scheduler.step(best_loss)  #8
 
-         if counter == early_stop:
-         print(f"\n\nEarly stopping \
+    if counter == early_stop:
+        print(f"\n\nEarly stopping \
 initiated, no change \
 after {early_stop} steps")
-         break
+        break
 
-        train_loss = train_loss/len(trainloader.dataset)  #9
-        valid_loss = valid_loss/len(validloader.dataset)  #9
+    train_loss = train_loss/len(trainloader.dataset)  #9
+    valid_loss = valid_loss/len(validloader.dataset)  #9
 
-        train_losses.append(train_loss)  #9
-        valid_losses.append(valid_loss)  #9
+    train_losses.append(train_loss)  #9
+    valid_losses.append(valid_loss)  #9
 ```
 
 #1 初始化损失和准确率变量
@@ -218,32 +215,32 @@ after {early_stop} steps")
 ##### 列表 6.3 测试循环
 
 ```py
-   model.eval()   #1
-   predictions = [] 
-   test_losses = [] 
-   seq_len = 40 
+model.eval()   #1
+predictions = [] 
+test_losses = [] 
+seq_len = 40 
 
-   with torch.no_grad():
-        for i, (inputs, targets) in enumerate(testloader):
-             inputs = inputs.to(device)
-             targets = targets.to(device)
+with torch.no_grad():
+    for i, (inputs, targets) in enumerate(testloader):
+        inputs = inputs.to(device)
+        targets = targets.to(device)
 
-             preds = []
-             for _ in range(seq_len):
-                  output = model(inputs)
-                  preds.append(output)
+        preds = []
+        for _ in range(seq_len):
+            output = model(inputs)
+            preds.append(output)
 
-             inputs = torch.cat([inputs[:, 1:]\
+        inputs = torch.cat([inputs[:, 1:]\
 , output.unsqueeze(1)], dim=1) \ #2
 
-        preds = torch.cat(preds, dim=1)  #3
-           loss = criterion(preds, targets)  #3
-           test_losses.append(loss.item())  #3
+    preds = torch.cat(preds, dim=1)  #3
+    loss = criterion(preds, targets)  #3
+    test_losses.append(loss.item())  #3
 
-           predictions.append(preds.detach().cpu().numpy())
+    predictions.append(preds.detach().cpu().numpy())
 
-    predictions = np.concatenate(predictions, axis=0)  #4
-   test_loss = np.mean(test_losses)  #5
+predictions = np.concatenate(predictions, axis=0)  #4
+test_loss = np.mean(test_losses)  #5
 ```
 
 #1 将模型设置为评估模式
@@ -275,15 +272,15 @@ after {early_stop} steps")
 ##### 列表 6.4 以图形式加载数据
 
 ```py
-   class PoseDataset(Dataset):
-        def __init__(self, loc_path, 
-                          vel_path, 
-                          edge_path, 
-                          mask_path, 
-                          mask_size, 
-                          transform=True):
+class PoseDataset(Dataset):
+    def __init__(self, loc_path, 
+                      vel_path, 
+                      edge_path, 
+                      mask_path, 
+                      mask_size, 
+                      transform=True):
 
-       self.locations = np.load(loc_path)  #1
+        self.locations = np.load(loc_path)  #1
         self.velocities = np.load(vel_path)  #1
         self.edges = np.load(edge_path)
 
@@ -304,44 +301,44 @@ after {early_stop} steps")
 ##### 列表 6.5 使用位置和速度数据设置节点特征
 
 ```py
-   def __getitem__(self, idx):
-        nodes = np.concatenate((self.locations[idx], 
-   self.velocities[idx]), axis=2)  #1
-        nodes = nodes.reshape(-1, nodes.shape[-1])  #2
+def __getitem__(self, idx):
+    nodes = np.concatenate((self.locations[idx], 
+                            self.velocities[idx]), axis=2)  #1
+    nodes = nodes.reshape(-1, nodes.shape[-1])  #2
 
-        if self.transform:  #3
-             nodes, node_min, node_max\
-    = normalize_array(nodes) 
+    if self.transform:  #3
+        nodes, node_min, node_max\
+            = normalize_array(nodes) 
 
-        total_timesteps = self.window_size + self.mask_size  #4
-        edge_index = np.repeat(self.\
+    total_timesteps = self.window_size + self.mask_size  #4
+    edge_index = np.repeat(self.\
 edges[None, :], total_timesteps, axis=0) 
 
-         N_dims = self.locations.shape[2]
-        shift = np.arange(total_\
-   timesteps)[:, None, None]*N_dims  #5
-         edge_index += shift
-         edge_index = edge_index.reshape(2, -1)   #6
+    N_dims = self.locations.shape[2]
+    shift = np.arange(total_\
+timesteps)[:, None, None]*N_dims  #5
+    edge_index += shift
+    edge_index = edge_index.reshape(2, -1)   #6
 
-         x = torch.tensor(nodes, dtype=torch.float)  #7
-         edge_index = torch.tensor\
+    x = torch.tensor(nodes, dtype=torch.float)  #7
+    edge_index = torch.tensor\
 (edge_index, dtype=torch.long) 
-          mask_indices = np.arange(         #8
-               self.window_size * self.\
+    mask_indices = np.arange(         #8
+        self.window_size * self.\
 locations.shape[2],                        
-               total_timesteps * \
+        total_timesteps * \
 self.locations.shape[2]                    
-                    )                      
-           mask_indices = torch.tensor(mask_indices, dtype=torch.long)
+    )                      
+    mask_indices = torch.tensor(mask_indices, dtype=torch.long)
 
-           if self.transform:
-                  trnsfm_data = [node_min, node_max]
-                  return Data(x=x, 
-                       edge_index=edge_index, 
-                       mask_indices=mask_indices,  
-                       trnsfm=trnsfm_data
-                        )
-            return Data(x=x, edge_index=\
+    if self.transform:
+        trnsfm_data = [node_min, node_max]
+        return Data(x=x, 
+                    edge_index=edge_index, 
+                    mask_indices=mask_indices,  
+                    trnsfm=trnsfm_data
+                    )
+    return Data(x=x, edge_index=\
 edge_index, mask_indices=mask_indices)
 ```
 
@@ -380,15 +377,15 @@ edge_index, mask_indices=mask_indices)
 ##### 列表 6.6 构建邻接矩阵
 
 ```py
-       total_timesteps = self.\
+total_timesteps = self.\
 window_size + self.mask_size  #1
-       edge_index = np.repeat(self.edges[None, :],\
- total_timesteps, axis=0) 
+edge_index = np.repeat(self.edges[None, :],\
+total_timesteps, axis=0) 
 
-       shift = np.arange(total_timesteps)[:, None, \
+shift = np.arange(total_timesteps)[:, None, \
 None] * num_nodes_per_timestep  #2
-       edge_index += shift  #3
-       edge_index = edge_index.reshape(2, -1)  #4
+edge_index += shift  #3
+edge_index = edge_index.reshape(2, -1)  #4
 ```
 
 #1 重复边以匹配总时间步数（过去 + 未来）
@@ -403,136 +400,122 @@ None] * num_nodes_per_timestep  #2
 
 ##### 列表 6.7 定义 GAT 模型
 
+
+
+# GAT 模型
+
+以下代码定义了一个基于图注意力网络（GAT）的模型类，用于处理图结构数据。
+
 ```py
-  class GAT(torch.nn.Module):
-        def __init__(self, n_feat,
-                      hidden_size=32,
-                      num_layers=3,
-                      num_heads=1,
-                      dropout=0.2,
-                      mask_size=10):
-             super(GAT, self).__init__()
+class GAT(torch.nn.Module):
+    def __init__(self, n_feat,
+                 hidden_size=32,
+                 num_layers=3,
+                 num_heads=1,
+                 dropout=0.2,
+                 mask_size=10):
+        super(GAT, self).__init__()
 
-             self.num_layers = num_layers
-             self.heads = num_heads
-             self.n_feat = n_feat
-             self.hidden_size = hidden_size
-             self.gat_layers = torch.nn.ModuleList()
-             self.batch_norms = torch.nn.ModuleList()
-             self.dropout = nn.Dropout(dropout)
-             self.mask_size = mask_size
+        self.num_layers = num_layers
+        self.heads = num_heads
+        self.n_feat = n_feat
+        self.hidden_size = hidden_size
+        self.gat_layers = torch.nn.ModuleList()
+        self.batch_norms = torch.nn.ModuleList()
+        self.dropout = nn.Dropout(dropout)
+        self.mask_size = mask_size
 
-             gat_layer = GATv2Conv(self.n_feat,\
- self.hidden_size, heads=num_heads)  #1
-             self.gat_layers.append(gat_layer)  #1
-             middle_size = self.hidden_size*num_heads 
-             batch_layer = nn.BatchNorm1d\
-(num_features=middle_size)  #2
-             self.batch_norms.append(batch_layer) #2
+        gat_layer = GATv2Conv(self.n_feat, self.hidden_size, heads=num_heads)  #1
+        self.gat_layers.append(gat_layer)  #1
+        middle_size = self.hidden_size * num_heads
+        batch_layer = nn.BatchNorm1d(num_features=middle_size)  #2
+        self.batch_norms.append(batch_layer)  #2
 
-             for _ in range(num_layers-2):  #3
-                  gat_layer = GATv2Conv(input_size,\
- self.hidden_size, heads=num_heads) 
-                  self.gat_layers.append(gat_layer) 
-                  batch_layer = nn.BatchNorm1d(num_features\
-=middle_size)                                           #4
-                  self.batch_norms.append(batch_layer) 
+        for _ in range(num_layers - 2):  #3
+            gat_layer = GATv2Conv(input_size, self.hidden_size, heads=num_heads)
+            self.gat_layers.append(gat_layer)
+            batch_layer = nn.BatchNorm1d(num_features=middle_size)  #4
+            self.batch_norms.append(batch_layer)
 
-             gat_layer = GATv2Conv(middle_size, self.n_feat)
-             self.gat_layers.append(gat_layer)  #5
+        gat_layer = GATv2Conv(middle_size, self.n_feat)
+        self.gat_layers.append(gat_layer)  #5
 
-        def forward(self, data):
-             x, edge_index = data.x, data.edge_index
-             for i in range(self.num_layers):
-                  x = self.gat_layersi
-                  if i < self.num_layers - 1:  #6
-                       x = self.batch_normsi  #6
-                       x = torch.relu(x)  #6
-                       x = self.dropout(x)  #6
+    def forward(self, data):
+        x, edge_index = data.x, data.edge_index
+        for i in range(self.num_layers):
+            x = self.gat_layers[i]
+            if i < self.num_layers - 1:  #6
+                x = self.batch_norms[i]  #6
+                x = torch.relu(x)  #6
+                x = self.dropout(x)  #6
 
-             n_nodes = edge_index.max().item() + 1  #7
-             x = x.view(-1, n_nodes, self.n_feat)
-             return x[-self.mask_size:].view(-1, self.n_feat)
+        n_nodes = edge_index.max().item() + 1  #7
+        x = x.view(-1, n_nodes, self.n_feat)
+        return x[-self.mask_size:].view(-1, self.n_feat)
 ```
 
-#1 第一个 GAT 层
-
-#2 第一个 GAT 层的 BatchNorm 层
-
-#3 中间 GAT 层
-
-#4 中间 GAT 层的 BatchNorm 层
-
-#5 最后一个 GAT 层
-
-#6 不要将批归一化和 dropout 应用于最后一个 GAT 层的输出。
-
-#7 仅输出最后一帧
+- #1 第一个 GAT 层
+- #2 第一个 GAT 层的 BatchNorm 层
+- #3 中间 GAT 层
+- #4 中间 GAT 层的 BatchNorm 层
+- #5 最后一个 GAT 层
+- #6 不要将批归一化和 dropout 应用于最后一个 GAT 层的输出。
+- #7 仅输出最后一帧
 
 此模型遵循第四章中概述的基本结构。我们定义了模型的层数和头数，以及相关的输入大小，这取决于我们预测的特征数量。我们每个 GAT 层都有一个隐藏大小，并包括 dropout 和批量归一化来提高性能。然后我们遍历模型中的层数，确保维度正确以匹配我们的目标输出。我们还定义了我们的前向函数，该函数预测掩码节点的节点特征。通过将每个时间步展开到更大的图中，我们开始引入时序效应，作为模型可以学习的额外网络结构。
 
-在定义了模型和数据集之后，让我们开始训练我们的模型并看看它的表现如何。回想一下，RNN 和 GRU 在测试准确率上分别达到了 60%和 65%。在列表 6.8 中，我们展示了 GAT 模型的训练循环。这个训练循环遵循了之前章节中使用的相同结构。我们使用均方误差（MSE）作为损失函数，并将学习率设置为 0.0005。我们使用 GAT 计算掩码节点的节点特征，并将其与存储在`data`中的真实数据进行比较。我们首先训练我们的模型，然后使用验证集比较模型预测。请注意，由于我们现在预测了多个图序列，这个训练循环比之前的模型花费了更多的时间。在 Google Colab 的 V100 GPU 上，这需要不到一个小时来训练。
+在定义了模型和数据集之后，让我们开始训练我们的模型并看看它的表现如何。回想一下，RNN 和 GRU 在测试准确率上分别达到了 60% 和 65%。在列表 6.8 中，我们展示了 GAT 模型的训练循环。这个训练循环遵循了之前章节中使用的相同结构。我们使用均方误差（MSE）作为损失函数，并将学习率设置为 0.0005。我们使用 GAT 计算掩码节点的节点特征，并将其与存储在 `data` 中的真实数据进行比较。我们首先训练我们的模型，然后使用验证集比较模型预测。请注意，由于我们现在预测了多个图序列，这个训练循环比之前的模型花费了更多的时间。在 Google Colab 的 V100 GPU 上，这需要不到一个小时来训练。
 
-##### 列表 6.8 GAT 训练循环
+## 列表 6.8 GAT 训练循环
 
 ```py
-   lr = 0.001
-   criterion = torch.nn.MSELoss()                            #1
-   optimizer = torch.optim.Adam(model.parameters(), lr=lr)  
+lr = 0.001
+criterion = torch.nn.MSELoss()                            #1
+optimizer = torch.optim.Adam(model.parameters(), lr=lr)
 
-   for epoch in tqdm(range(epochs), ncols=300):
-        model.train()
-        train_loss = 0.0
-        for data in train_dataset:
-             optimizer.zero_grad()
-             out = model(data)  #2
+for epoch in tqdm(range(epochs), ncols=300):
+    model.train()
+    train_loss = 0.0
+    for data in train_dataset:
+        optimizer.zero_grad()
+        out = model(data)  #2
 
-        loss = criterion(out, \
-data.y.reshape(out.shape[0], -1))  #3
-        loss.backward() 
-        optimizer.step()
-        train_loss += loss.item()
+    loss = criterion(out, data.y.reshape(out.shape[0], -1))  #3
+    loss.backward()
+    optimizer.step()
+    train_loss += loss.item()
 
-        model.eval()  #4
-        val_loss = 0.0  #4
-        with torch.no_grad():  #4
-             for val_data in val_dataset:  #4
-               val_out = model(val_data)  #5
-                  val_loss += criterion(out, \
-data.y.reshape(out.shape[0],\
- -1)).item()  #6
+    model.eval()  #4
+    val_loss = 0.0  #4
+    with torch.no_grad():  #4
+        for val_data in val_dataset:  #4
+            val_out = model(val_data)  #5
+            val_loss += criterion(out, data.y.reshape(out.shape[0], -1)).item()  #6
 
-        val_loss /= len(val_dataset)
-        train_loss /= len(train_dataset)
+    val_loss /= len(val_dataset)
+    train_loss /= len(train_dataset)
 ```
 
-#1 初始化损失和优化器，设置学习率
-
-#2 生成模型对输入的预测
-
-#3 计算输出和目标之间的损失
-
-#4 验证循环
-
-#5 生成模型对输入的预测
-
-#6 计算输出和目标之间的损失
+- #1 初始化损失和优化器，设置学习率
+- #2 生成模型对输入的预测
+- #3 计算输出和目标之间的损失
+- #4 验证循环
+- #5 生成模型对输入的预测
+- #6 计算输出和目标之间的损失
 
 最后，我们使用以下列表中所示的训练集和代码测试我们的训练好的模型。
 
-##### 列表 6.9 GAT 测试循环
+## 列表 6.9 GAT 测试循环
 
 ```py
-   test_loss = 0
-   for test_data in test_dataset:
-        test_out = model(test_data)  #1
-        test_loss += criterion(out,\
- data.y.reshape(out.shape[0], -1)).item()  #2
+test_loss = 0
+for test_data in test_dataset:
+    test_out = model(test_data)  #1
+    test_loss += criterion(out, data.y.reshape(out.shape[0], -1)).item()  #2
 ```
 
-#1 生成模型对输入的预测
-
-#2 计算输出和目标之间的损失
+- #1 生成模型对输入的预测
+- #2 计算输出和目标之间的损失
 
 我们发现这种朴素的方法无法预测姿态。我们的整体测试准确率为 55%，预测的图表与我们对姿态外观的预期大相径庭。这是由于我们在单个图中存储了大量的数据。我们将节点特征和时序数据压缩到一个图中，并且在定义我们的模型时没有强调时序属性。有方法可以改进这一点，例如使用时序编码来提取未使用的边数据，就像在时序 GAT（TGAT）模型中那样。TGAT 将边视为动态的而不是静态的，这样每条边也编码了一个时间戳。
 
@@ -540,7 +523,7 @@ data.y.reshape(out.shape[0],\
 
 ![figure](img/6-10.png)
 
-##### 图 6.10 GAT 模型的输出
+### 图 6.10 GAT 模型的输出
 
 ## 6.4 神经关系推理
 
@@ -550,7 +533,7 @@ data.y.reshape(out.shape[0],\
 
 ![figure](img/6-11.png)
 
-##### 图 6.11 NRI 的示意图（来源：Kipf 等人[2]）。该模型由一个编码器和解码器层以及几个消息传递步骤组成。然而，在这里，消息是从节点传递到边，然后从边传递回节点，再从节点传递回边。对于解码器，消息是从节点传递到边，然后从边传递回节点。最后一步使用潜在表示来预测身体时间演变的下一步。
+### 图 6.11 NRI 的示意图（来源：Kipf 等人[2]）。该模型由一个编码器和解码器层以及几个消息传递步骤组成。然而，在这里，消息是从节点传递到边，然后从边传递回节点，再从节点传递回边。对于解码器，消息是从节点传递到边，然后从边传递回节点。最后一步使用潜在表示来预测身体时间演变的下一步。
 
 让我们探索这个模型如何应用于我们的姿态估计问题，以便我们最好地理解模型中的不同组件。我们将在训练期间对一些数据进行掩码，然后在测试日识别这些掩码节点。回想一下，这相当于推断我们的视频中的未来帧。然而，我们现在需要改变模型架构和损失。我们需要改变模型架构以考虑新的自动编码器结构，并且需要调整损失以包括最小化重建损失以及 Kullback-Leibler 散度（KL 散度）。有关 NRI 模型和相关更改的更多信息，请参阅本章末尾的 6.5 节。
 
@@ -558,97 +541,92 @@ NRI 模型基类的代码在列表 6.10 中提供。从代码中可以看出，�
 
 我们将假设节点或传感器的连接方式不会改变，也就是说，图结构是静态的。请注意，此模型还允许动态图，其中连接性随时间变化，例如，当不同的球员在篮球场周围移动时。球员的总数是固定的，但可以传球的球员数量会变化。实际上，此模型也被用来预测 NBA 球员如何传球。
 
-最后，这个模型需要设置一些超参数，包括 Gumbel 温度和先验方差。*Gumbel 温度*控制在进行离散采样时探索和利用之间的权衡。在这里，我们需要使用一个离散概率分布来预测边类型。我们将在第 6.5 节中更详细地讨论这个问题。*先验方差*反映了我们在开始之前对图连接性的不确定性。我们需要设置这个参数，因为模型假设我们*不知道*连接性。实际上，模型学习的是最能帮助它改进预测的连接性。这正是我们在调用`_initialize_log_prior`函数时所做的设置。我们告诉模型我们对可能连接模式的最佳猜测。例如，如果我们将此模型应用于一个运动队，我们可能会使用高均值的高斯分布来表示经常互相传球或甚至同一队球员之间的边。
+最后，这个模型需要设置一些超参数，包括 Gumbel 温度和先验方差。*Gumbel 温度*控制在进行离散采样时探索和利用之间的权衡。在这里，我们需要使用一个离散概率分布来预测边类型。我们将在第 6.5 节中更详细地讨论这个问题。*先验方差*反映了我们在开始之前对图连接性的不确定性。我们需要设置这个参数，因为模型假设我们*不知道*连接性。实际上，模型学习的是最能帮助它改进预测的连接性。这正是我们在调用 `_initialize_log_prior` 函数时所做的设置。我们告诉模型我们对可能连接模式的最佳猜测。例如，如果我们将此模型应用于一个运动队，我们可能会使用高均值的高斯分布来表示经常互相传球或甚至同一队球员之间的边。
 
 为了展示我们的模型，我们将假设一个均匀先验，这意味着所有边与其他边一样可能，或者用日常用语来说，“我们不知道。”先验方差为每个边设置我们的不确定性界限。在下面的列表中，我们将其设置为 5 × 10^(–5)，以保持数值稳定性，但鉴于我们的先验是均匀的，它不应有太大影响。
 
-##### 列表 6.10 NRI 模型基类
+## 列表 6.10 NRI 模型基类
 
 ```py
-   class BaseNRI(nn.Module):
-        def __init__(self, num_vars, encoder, decoder,
-                num_edge_types=2,
-                gumbel_temp=0.5, 
-                prior_variance=5e-5):
-           super(BaseNRI, self).__init__()
-           self.num_vars = num_vars  #1
-           self.encoder = encoder  #2
-           self.decoder = decoder  #3
-           self.num_edge_types = num_edge_types 
-           self.gumbel_temp = gumbel_temp  #4
-           self.prior_variance = prior_variance  #5
+class BaseNRI(nn.Module):
+    def __init__(self, num_vars, encoder, decoder,
+                 num_edge_types=2,
+                 gumbel_temp=0.5,
+                 prior_variance=5e-5):
+        super(BaseNRI, self).__init__()
+        self.num_vars = num_vars  #1
+        self.encoder = encoder  #2
+        self.decoder = decoder  #3
+        self.num_edge_types = num_edge_types
+        self.gumbel_temp = gumbel_temp  #4
+        self.prior_variance = prior_variance  #5
 
-           self.log_prior = self._initialize_log_prior()
+        self.log_prior = self._initialize_log_prior()
 
-        def _initialize_log_prior(self): 
-             prior = torch.zeros(self.num_edge_types)
-             prior.fill_(1.0 / self.num_edge_types)  #6
-             log_prior = torch.log(prior)\
-   .unsqueeze(0).unsqueeze(0)  #7
-             return log_prior.cuda(non_blocking=True)
+    def _initialize_log_prior(self):
+        prior = torch.zeros(self.num_edge_types)
+        prior.fill_(1.0 / self.num_edge_types)  #6
+        log_prior = torch.log(prior).unsqueeze(0).unsqueeze(0)  #7
+        return log_prior.cuda(non_blocking=True)
 ```
 
-#1 模式中的变量数量
-
-#2 编码器神经网络
-
-#3 解码器神经网络
-
-#4 用于采样分类变量的 Gumbel 温度
-
-#5 先验方差
-
-#6 用均匀概率填充先验张量
-
-#7 对数并添加两个单例维度
+- #1 模式中的变量数量
+- #2 编码器神经网络
+- #3 解码器神经网络
+- #4 用于采样分类变量的 Gumbel 温度
+- #5 先验方差
+- #6 用均匀概率填充先验张量
+- #7 对数并添加两个单例维度
 
 正如我们在第五章中发现的，VAEs 有两个组成部分的损失——重建误差和表示数据分布特性的误差——由 KL 散度捕捉。总损失函数在列表 6.11 中给出。
 
 我们的编码器接收边缘嵌入，然后输出边缘类型的对数概率。Gumbel-Softmax 函数将这些离散的 logits 转换为可微的连续分布。解码器接收这个分布和边缘表示，然后将这些转换回节点数据。在这个时候，我们就可以使用 VAE 的标准损失机制了，所以我们计算重建损失为均方误差 (MSE) 和 KL 散度。对于 VAE 损失和 KL 散度如何计算的进一步了解，请回顾第五章。
 
-##### 列表 6.11 NRI 模型的损失
+## 列表 6.11 NRI 模型的损失
+
+
 
 ```py
-   def calculate_loss(self, inputs,
-       is_train=False,
-       teacher_forcing=True,
-       return_edges=False,
-       return_logits=False):
+def calculate_loss(self, inputs,
+    is_train=False,
+    teacher_forcing=True,
+    return_edges=False,
+    return_logits=False):
 
-       encoder_results = self.encoder(inputs)
-       logits = encoder_results['logits']
-       hard_sample = not is_train
-       edges = F.gumbel_softmax\
-               (logits.view(-1, self.num_edge_types),
-               tau=self.gumbel_temp,
-               hard=hard_sample).view\
-                       (logits.shape)  #1
+    encoder_results = self.encoder(inputs)
+    logits = encoder_results['logits']
+    hard_sample = not is_train
+    edges = F.gumbel_softmax\
+            (logits.view(-1, self.num_edge_types),
+            tau=self.gumbel_temp,
+            hard=hard_sample).view\
+                    (logits.shape)  #1
 
-       output = self.decoder(inputs[:, :-1], edges)
+    output = self.decoder(inputs[:, :-1], edges)
 
-       if len(inputs.shape) == 3: \
+    if len(inputs.shape) == 3: \
 target = inputs[:, 1:] 
-       else:
-           Target = inputs[:, 1:, :, :]
+    else:
+        Target = inputs[:, 1:, :, :]
 
-       loss_nll = F.mse_loss(\
+    loss_nll = F.mse_loss(\
 output, target) / (2 * \
 self.prior_variance)  #2
 
-       probs = F.softmax(logits, dim=-1)
-       log_probs = torch.log(probs + 1e-16)  #3
-       loss_kl = (probs * \
+    probs = F.softmax(logits, dim=-1)
+    log_probs = torch.log(probs + 1e-16)  #3
+    loss_kl = (probs * \
 (log_probs - torch.log(\
 torch.tensor(1.0 /  #4
-       self.num_edge_types)))).\
+    self.num_edge_types)))).\
 sum(-1).mean() 
 
-        loss = loss_nll + loss_kl
+    loss = loss_nll + loss_kl
 
-        return loss, loss_nll, loss_kl, logits, output
+    return loss, loss_nll, loss_kl, logits, output
 ```
 
-#1 使用 PyTorch 的功能 API 计算 Gumbel-Softmax，在代码中导入为 F
+#1 使用 PyTorch 的功能 API 计算 Gumbel-Softmax，在代码中导入为 `F`
 
 #2 高斯分布的负对数似然 (NLL)
 
@@ -661,38 +639,38 @@ sum(-1).mean()
 ##### 列表 6.12 预测未来
 
 ```py
-   def predict_future(self, inputs, prediction_steps, 
-      return_edges=False, 
-      return_everything=False): #1
-       encoder_dict = self.encoder(inputs) #1
-       logits = encoder_dict['logits'] 
-       edges = nn.functional.gumbel_softmax(  #2
-           logits.view(-1, \
-           self.num_edge_types),  
-           tau=self.gumbel_temp,\
-           hard=True).view(logits.shape\ 
-           ) 
-       tmp_predictions, decoder_state =\
-          self.decoder(  #3
-          inputs[:, :-1],  #3
-          edges,  #3
-          return_state=True  #3
-       )  #3
-       predictions = self.decoder(  #4
-          inputs[:, -1].unsqueeze(1),   #4
-          edges,   #4
-          prediction_steps=prediction_steps,   #4
-          teacher_forcing=False,  #4
-          state=decoder_state  #4
-          ) #4
-       if return_everything:  #5
-           predictions = torch.cat([\  #4
-              tmp_predictions,\  #5
-              Predictions\  #5
-              ], dim=1)  #5
+def predict_future(self, inputs, prediction_steps, 
+   return_edges=False, 
+   return_everything=False): #1
+    encoder_dict = self.encoder(inputs) #1
+    logits = encoder_dict['logits'] 
+    edges = nn.functional.gumbel_softmax(  #2
+        logits.view(-1, \
+        self.num_edge_types),  
+        tau=self.gumbel_temp,\
+        hard=True).view(logits.shape\ 
+        ) 
+    tmp_predictions, decoder_state =\
+       self.decoder(  #3
+       inputs[:, :-1],  #3
+       edges,  #3
+       return_state=True  #3
+    )  #3
+    predictions = self.decoder(  #4
+       inputs[:, -1].unsqueeze(1),   #4
+       edges,   #4
+       prediction_steps=prediction_steps,   #4
+       teacher_forcing=False,  #4
+       state=decoder_state  #4
+       ) #4
+    if return_everything:  #5
+        predictions = torch.cat([\  #4
+           tmp_predictions,\  #5
+           Predictions\  #5
+           ], dim=1)  #5
 
-       return (predictions, edges)\
-          if return_edges else predictions  #6
+    return (predictions, edges)\
+       if return_edges else predictions  #6
 ```
 
 #1 运行编码器以获取边缘类型的 logits
@@ -722,35 +700,35 @@ sum(-1).mean()
 ##### 列表 6.13 编码器基类
 
 ```py
-   class BaseEncoder(nn.Module):
-       def __init__(self, num_vars):
-           super(BaseEncoder, self).__init__()
-           self.num_vars = num_vars
-           edges = torch.ones(num_vars)\
- - torch.eye(num_vars)  #1
-           self.send_edges, self.\
+class BaseEncoder(nn.Module):
+    def __init__(self, num_vars):
+        super(BaseEncoder, self).__init__()
+        self.num_vars = num_vars
+        edges = torch.ones(num_vars)\
+- torch.eye(num_vars)  #1
+        self.send_edges, self.\
 recv_edges = torch.where(edges)  #2
 
-           one_hot_recv = torch.nn.functional.one_hot(  #3
-              self.recv_edges,  #3
-              num_classes=num_vars  #3
-                                                ) #3
-           self.edge2node_mat = \
+        one_hot_recv = torch.nn.functional.one_hot(  #3
+           self.recv_edges,  #3
+           num_classes=num_vars  #3
+                                           ) #3
+        self.edge2node_mat = \
 nn.Parameter(one_hot_recv.\
 float().T, requires_grad=False)  #4
 
-       def node2edge(self, node_embeddings):
-           send_embed = \
+    def node2edge(self, node_embeddings):
+        send_embed = \
 node_embeddings[:, self.send_edges]  #5
-           recv_embed = \
+        recv_embed = \
 node_embeddings[:, self.recv_edges] 
-           return torch.\
+        return torch.\
 cat([send_embed, recv_embed], dim=2)  #6
 
-       def edge2node(self, edge_embeddings):
-           incoming = torch.\
+    def edge2node(self, edge_embeddings):
+        incoming = torch.\
 matmul(self.edge2node_mat, edge_embeddings)  #7
-           return incoming / (self.num_vars - 1)  #8
+        return incoming / (self.num_vars - 1)  #8
 ```
 
 #1 创建表示变量之间边的矩阵
@@ -803,57 +781,59 @@ recv_edges = tensor([1, 2, 0, 2, 0, 1])
 ##### 列表 6.14 NRI MLP 编码器
 
 ```py
-   class RefMLPEncoder(BaseEncoder):
-       def __init__(self, 
-               num_vars=31, 
-               input_size=6, 
-               input_time_steps=50, 
-               encoder_mlp_hidden=256, 
-               encoder_hidden=256, 
-               num_edge_types=2, 
-               encoder_dropout=0.):
-           super(RefMLPEncoder, self).__init__(num_vars)
-           inp_size = input_size * input_time_steps
-           hidden_size = encoder_hidden
-           num_layers = 3
-           self.input_time_steps = input_time_steps
+class RefMLPEncoder(BaseEncoder):
+    def __init__(self, 
+            num_vars=31, 
+            input_size=6, 
+            input_time_steps=50, 
+            encoder_mlp_hidden=256, 
+            encoder_hidden=256, 
+            num_edge_types=2, 
+            encoder_dropout=0.):
+        super(RefMLPEncoder, self).__init__(num_vars)
+        inp_size = input_size * input_time_steps
+        hidden_size = encoder_hidden
+        num_layers = 3
+        self.input_time_steps = input_time_steps
 
-           self.mlp1 = RefNRIMLP\
+        self.mlp1 = RefNRIMLP\
 (inp_size, hidden_size, \
 hidden_size, encoder_dropout)  #1
-           self.mlp2 = RefNRIMLP\
+        self.mlp2 = RefNRIMLP\
 (hidden_size*2, hidden_size,\
  hidden_size, encoder_dropout) 
-           self.mlp3 = RefNRIMLP\
+        self.mlp3 = RefNRIMLP\
 (hidden_size, hidden_size,\
  hidden_size, encoder_dropout) 
-           mlp4_inp_size = hidden_size * 2
-           self.mlp4 = RefNRIMLP\
+        mlp4_inp_size = hidden_size * 2
+        self.mlp4 = RefNRIMLP\
 (mlp4_inp_size, hidden_size,\
  hidden_size, encoder_dropout)
 
-           layers = [nn.Linear\
+        layers = [nn.Linear\
 (hidden_size, encoder_mlp_hidden), \
 nn.ELU(inplace=True)]  #2
-           layers += [nn.Linear\
+        layers += [nn.Linear\
 (encoder_mlp_hidden, \
 encoder_mlp_hidden),\ 
-   nn.ELU(inplace=True)] \
-   * (num_layers - 2) 
-           layers.append(nn.\
+nn.ELU(inplace=True)] \
+* (num_layers - 2) 
+        layers.append(nn.\
 Linear(encoder_mlp_hidden, \
 num_edge_types)) 
-           self.fc_out = nn.Sequential(*layers) 
-           self.init_weights()
+        self.fc_out = nn.Sequential(*layers) 
+        self.init_weights()
 ```
 
-#1 定义了 MLP 层。RefNRIMLP 是一个 2 层全连接 ELU 网络，带有批归一化。
+#1 定义了 MLP 层。`RefNRIMLP`是一个 2 层全连接 ELU 网络，带有批归一化。
 
 #2 定义了最终的完全连接层
 
+
+
 在这里，我们定义与编码器相关的架构细节。如前所述，我们使用`num_vars`变量表示 31 个传感器。特征数量为 6，这是网络的`input_size`。我们的训练和验证集的时间步数为 50，编码器网络的大小将为 256。`edge_types`的数量为 2，我们假设权重没有 dropout。然后我们初始化我们的网络，这些是典型的 MLP，在共享的代码库中描述。网络包括一个批归一化层和两个全连接层。一旦定义了网络，我们也预先初始化权重，如列表 6.15 所示。在这里，我们遍历所有不同的层，然后使用 Xavier 初始化方法初始化权重。这确保了层中的梯度都大致处于相似的比例，从而降低了损失迅速发散的风险——即爆炸。当我们像这里这样组合具有不同架构的多个网络时，这是一个重要的步骤。我们还设置了初始偏置为 0.1，这有助于提高训练的稳定性。
 
-##### 列表 6.15 权重初始化
+### 列表 6.15 权重初始化
 
 ```py
     def init_weights(self):
@@ -871,7 +851,7 @@ num_edge_types))
 
 最后，我们需要定义我们的前向传递方法，如列表 6.16 所示。这就是我们的消息传递步骤发生的地方。
 
-##### 列表 6.16 编码器前向传递
+### 列表 6.16 编码器前向传递
 
 ```py
    def forward(self, inputs, state=None, return_state=False):
@@ -906,7 +886,7 @@ num_edge_types))
        return result_dict
 ```
 
-#1 新形状：[num_sims, num_atoms, num_timesteps*num_dims]
+#1 新形状：`[num_sims, num_atoms, num_timesteps*num_dims]`
 
 #2 通过第一个 MLP 层（每个节点两个 ELU 网络层）
 
@@ -922,7 +902,7 @@ num_edge_types))
 
 我们的编码器允许我们的模型将我们的传感器图的帧集转换为边概率的潜在表示。接下来，让我们探索如何构建一个解码器，该解码器使用最近的传感器数据将潜在边概率转换为轨迹。
 
-### 6.4.2 使用 GRU 解码姿态数据
+## 6.4.2 使用 GRU 解码姿态数据
 
 为了将潜在表示转换为未来帧，我们需要考虑轨迹的时间演化。为此，我们训练一个解码器网络。在这里，我们将遵循 NRI 论文[2]的原始结构，并使用 GRU 作为我们的 RNN。
 
@@ -934,7 +914,7 @@ num_edge_types))
 
 一旦我们定义了输入参数，我们就可以引入网络架构。第一层是一个简单的线性网络，需要具有两倍的输入维度，以考虑由编码器提供的均值和方差，并且我们为每种边类型定义了这个网络。然后我们定义第二层以进一步提高我们网络的表达能力。这两个线性层的输出传递给我们的 RNN，即 GRU。在这里，我们必须使用自定义 GRU 来考虑节点数据和边数据。GRU 的输出传递给三个更多的神经网络层以提供未来预测。最后，我们需要定义我们的`edge2node`矩阵以及发送和接收节点，就像我们处理编码器时那样。
 
-##### 列表 6.17 RNN 解码器
+### 列表 6.17 RNN 解码器
 
 ```py
    class GraphRNNDecoder(nn.Module):
@@ -994,7 +974,7 @@ range(self.edge_types)])  #1
 
 我们的解码器接收我们图的最后一个时间帧。从编码器输出的边数据也传递给解码器。
 
-##### 列表 6.18 自定义 GRU 网络
+### 列表 6.18 自定义 GRU 网络
 
 ```py
    class CustomGRU(nn.Module):
@@ -1060,307 +1040,57 @@ r*self.hidden_h(agg_msgs))  #5
 
 现在我们来讨论预测过程。首先，我们预测一个临时预测集。然后，我们使用隐藏表示来预测所需的所有未来步骤。当我们想要预测多个时间步时，这特别有用，正如我们在该模型的测试阶段所展示的。这由`prediction_steps`变量控制，它告诉我们 RNN 要循环多少次，即我们想要预测多少未来的时间步。最后，我们有一个`state`变量，用于控制传递给解码器的信息。当它为空时，我们初始化一个零张量，以便没有信息被传递。否则，我们将使用之前时间步的信息。
 
-##### 列表 6.19 解码器正向传递
+### 列表 6.19 解码器正向传递
 
-```py
-     def forward(self, inputs, sampled_edges,
-         teacher_forcing=False,
-         return_state=False,
-         prediction_steps=-1,
-         state=None):
 
-         batch_size, time_steps, num_vars, num_feats = inputs.size()
-         pred_steps = prediction_steps if \
-            prediction_steps > 0 else time_steps  #1
 
-         if len(sampled_edges.shape) == 3:  #2
-             sampled_edges = sampled_edges.unsqueeze(1) 
-             sampled_edges = sampled_edges.expand\
-                (batch_size, pred_steps, -1, -1) 
+进入`/path/to/xxx`目录，找到`xxx.json`。
 
-         if state is None:  #3
-             hidden = torch.zeros(batch_size,  #3
-                Num_vars,  #3
-                Self.msg_out_shape,  #3
-                device=inputs.device)  #3
-         else:  #3
-             hidden = state  #3
-             teacher_forcing_steps = time_steps  #4
+在表达式`cvar = avar + bvar`中，加法运算符（`+`）将`avar`与`bvar`相加，得到它们的和`cvar`
 
-         pred_all = []
-         for step in range(pred_steps):  #5
-         if step == 0 or (teacher_forcing \
-            and step < teacher_forcing_steps): 
-             ins = inputs[:, step, :] 
-         else: 
-             ins = pred_all[-1] 
+在`List.of(arg0, arg1, arg2)`中，`List`接口的工厂方法`of()`接受一系列的元素，返回包含它们的只读列表。
 
-         pred, hidden = self.single_step_forward(  #6
-              ins,   #6
-              sampled_edges[:, step, :],   #6
-              hidden  #6
-              )  #6
-              pred_all.append(pred)
+之后我们这样调用`cmd`命令：`cmd arg0 arg1 arg2`。
 
-         preds = torch.stack(pred_all, dim=1)
-
-         return (preds, hidden) if return_state else preds  #7
+```
+if (condVar > someVal) {console.log("xxx")}
 ```
 
-#1 确定预测步骤的数量
 
-#2 如有必要扩展 sampled_edges 张量
 
-#3 如果未提供，初始化隐藏状态
-
-#4 确定应用教师强制的步骤数量
-
-#5 根据教师强制决定这一步的输入
-
-#6 使用从输入或 pred_all 计算出的 ins 执行单个正向步骤（见上一条注释）
-
-#7 返回预测和隐藏状态
-
-为了预测未来的时间步，我们进行一个基于单个时间步的额外正向传递，如第 6.20 列所示。这是我们的网络执行额外消息传递步骤的地方。我们取我们的接收节点和发送节点，这些节点是从编码器的边概率中定义的。我们忽略第一个边，因为这些是无连接的节点，然后网络遍历不同类型的边，从网络中获取所有与边相关的消息。这是使我们的预测依赖于图数据的临界步骤。我们的 GRU 随后从连接节点接收消息，以告知其对轨迹的预测。在这一步，我们正在学习如何根据我们对身体连接的了解来预测身体的行走方式。输出包括身体上传感器的预测轨迹以及为什么做出这些预测的网络数据，这些数据编码在隐藏权重中。这完成了估计姿态的 NRI 模型。
-
-##### 列表 6.20 解码器单步正向
-
-```py
-     def single_step_forward(self, inputs, rel_type, hidden):
-         receivers = hidden[:, self.recv_edges, :]  #1
-         senders = hidden[:, self.send_edges, :]  #1
-
-         pre_msg = torch.cat([receivers, senders], dim=-1)  #2
-
-         all_msgs = torch.zeros(
-             pre_msg.size(0), 
-             pre_msg.size(1), 
-             self.msg_out_shape, 
-             device=inputs.device
-             )
-
-         start_idx = 1 if self.skip_first_edge_type else 0
-         norm = float(len(self.msg_fc2) - start_idx)
-
-         for i in range(start_idx, len(self.msg_fc2)):  #3
-             msg = torch.tanh(self.msg_fc1i)  #3
-             msg = F.dropout(msg, p=self.dropout_prob)  #3
-             msg = torch.tanh(self.msg_fc2i)  #3
-             msg = msg * rel_type[:, :, i:i+1]  #3
-             all_msgs += msg / norm  #3
-
-         agg_msgs = all_msgs.transpose(-2, -1)  #4
-         agg_msgs = agg_msgs.matmul(self.edge2node_mat) 
-         agg_msgs = agg_msgs.transpose\
-            (-2, -1) / (self.num_vars - 1) 
-
-         hidden = self.custom_gru(inputs, agg_msgs, hidden)  #5
-
-         pred = F.dropout(F.relu\
-           (self.out_fc1(hidden)), \
-           p=self.dropout_prob)  #6
-         pred = F.dropout(F.relu\
-         (self.out_fc2(pred)), \
-         p=self.dropout_prob) 
-         pred = self.out_fc3(pred) 
-
-         pred = inputs + pred   
-         return pred, hidden
-```
-
-#1 节点到边步骤
-
-#2 消息大小：[batch, num_edges, 2*msg_out]
-
-#3 为每种边类型运行一个单独的 MLP
-
-#4 对每个节点求所有消息的总和
-
-#5 GRU 风格的门控聚合
-
-#6 构建输出多层感知器（MLP）
-
-### 6.4.3 训练 NRI 模型
-
-现在我们已经定义了模型的各个部分，让我们训练模型并看看它的表现。为了训练我们的模型，我们将采取以下步骤：
-
-1.  训练一个编码器，将传感器数据转换为边概率的表示，指示传感器是否连接到另一个。
-
-1.  训练一个解码器，根据不同传感器之间存在边的概率来预测未来的轨迹。
-
-1.  运行解码器，使用 GRU 预测未来轨迹，GRU 接收到的边缘概率。
-
-1.  基于重建姿态减少损失。这种损失有两个组成部分：重建损失和 KL 散度。
-
-1.  重复步骤 1 至 4，直到训练收敛。
-
-这也在图 6.14 中显示，训练循环在列表 6.21 中给出。
-
-![figure](img/6-14.png)
-
-##### 图 6.14 NRI 模型的流程
-
-##### 列表 6.21 NRI 训练循环
-
-```py
-   pbar = tqdm(range(start_epoch, num_epochs + 1), desc='Epochs')
-   for epoch in pbar:
-       model.train()  #1
-       model.train_percent = epoch / num_epochs
-       total_training_loss = 0
-       for batch in train_data_loader:
-           inputs = batch['inputs'].cuda(non_blocking=True)
-           loss, _, _, _, _ = model.\
-              calculate_loss(inputs, 
-              is_train=True, 
-              return_logits=True)
-           loss.backward()  #2
-           optimizer.step() 
-           optimizer.zero_grad()  #3
-           total_training_loss += loss.item()
-
-      if training_scheduler is not None:
-          training_scheduler.step()
-
-      total_nll, total_kl = 0, 0
-      for batch in val_data_loader:
-          inputs = batch['inputs'].cuda(non_blocking=True)
-            , loss_nll, loss_kl, _, _ = model.calculate_loss(inputs,
-            is_train=False, 
-            teacher_forcing=True, 
-            return_logits=True)
-          total_kl += loss_kl.sum().item()
-          total_nll += loss_nll.sum().item()
-
-          total_kl /= len(val_data)
-          total_nll /= len(val_data)
-          total_loss = total_kl + total_nll
-          tuning_loss = total_nll 
-
-      if tuning_loss < best_val_result:
-          best_val_epoch, best_val_result = epoch, tuning_loss
-```
-
-#1 训练循环
-
-#2 更新权重。
-
-#3 验证过程中的梯度为零
-
-我们将使用学习率为 0.0005，学习率调度器在 500 次正向传递后减少学习率因子为 0.5，批大小为 8 进行 50 个 epoch 的训练。大部分训练基于我们之前在列表 6.14 中定义的`calculate_loss`方法调用。我们发现我们的模型损失随着验证损失下降，基于负对数似然(`nll`)达到验证损失 1.21。这看起来不错，但让我们看看它在测试数据上的表现，它需要预测未来的多个步骤。为此，我们需要定义一个新的函数，如下面的列表所示。
-
-##### 列表 6.22 评估未来预测
-
-```py
-def eval_forward_prediction(model, 
-  dataset, 
-  burn_in, 
-  forward_steps, 
-  gpu=True, batch_size=8, 
-  return_total_errors=False):
-
-  dataset.return_edges = False
-
-  data_loader = DataLoader\
-    (dataset, batch_size=\
-    batch_size, pin_memory=gpu)
-  model.eval()
-  total_se = 0
-  batch_count = 0
-  all_errors = []
-
-  for batch_ind, batch in enumerate(data_loader):
-    inputs = batch['inputs']
-    with torch.no_grad():
-      model_inputs = inputs[:, :burn_in]
-      gt_predictions = inputs[:, burn_in:burn_in+forward_steps]
-      model_inputs = model_inputs.cuda(non_blocking=True)
-      model_preds = model.predict_future(
-          model_inputs,
-          forward_pred_steps
-          ).cpu()
-      batch_count += 1
-      if return_total_errors:
-          all_errors.append(
-            F.mse_loss(
-              model_preds, 
-              gt_predictions,
-              reduction='none'
-             ).view(
-               model_preds.size(0), 
-               model_preds.size(1), -1
-             ).mean(dim=-1)
-          )
-      else:
-          total_se += F.mse_loss(
-            model_preds, 
-            gt_predictions,
-            reduction='none'
-          ).view(
-            model_preds.size(0),
-            model_preds.size(1),
-            -1
-          ).mean(dim=-1).sum(dim=0)
-
-  if return_total_errors:
-         return torch.cat(all_errors, dim=0)
-     else:
-            return total_se / len(dataset)
-```
-
-此函数加载我们的测试数据，然后根据不同的时间范围计算我们的预测的均方误差(MSE)。当我们测试我们的模型时，我们发现它能够以均方误差 0.00008 预测下一个时间步。更好的是，它能够以 94%的准确度预测 40 个时间步的未来。这显著优于我们的 LSTM 和 GAT 模型，分别达到了 65%和 55%。未来时间步的准确度降低如图 6.15 所示，示例输出如图 6.16 所示。
-
-![figure](img/6-15.png)
-
-##### 图 6.15 预测未来时准确度的降低
-
-![figure](img/6-16.png)
-
-##### 图 6.16 NRI 模型的示例输出
-
-我们已经涵盖了 NRI 模型的所有核心组件，完整的可工作代码已提供在 GitHub 仓库([`mng.bz/4a8D`](https://mng.bz/4a8D))中。准确度令人印象深刻，突出了结合生成和基于图的方法与时间模型的强大功能。这如图 6.15 所示，我们看到预测姿态和结果估计姿态之间有很好的吻合。
-
-此外，这种方法不仅能够预测图，而且在所有图数据不可用的情况下，也能学习底层结构，因此非常稳健。在这个问题中，我们知道预期的交互网络。然而，有许多情况下我们并不知道交互网络。一个例子是处于封闭空间中运动的粒子。当它们在某个交互半径内时，它们会相互影响，但当它们距离更远时则不会。这种情况适用于从细胞到运动员的所有生物体。事实上，世界上大多数情况都涉及具有秘密交互网络的交互代理。NRI 模型不仅提供了一种预测这些代理的行为和运动的方法，还能了解它们与其他代理的交互模式。确实，原始的 NRI 论文通过篮球比赛的视频跟踪数据展示了这一点，并表明该模型可以学习球、球手、挡拆者和不同球员之间的典型模式。（更多信息，请参阅 Kipf 等人[2]的研究。）
-
-## 6.5 内部机制
-
-在本章中，我们展示了如何处理时间或动态问题。在这里，我们更详细地讨论了我们使用的一些关键模型组件。
-
-### 6.5.1 循环神经网络
-
-在图 6.16 中，我们展示了 RNN 模型的示意图。与我们所见过的所有其他模型相比，RNN 模型的主要区别在于模型可以处理序列数据。这意味着每个时间步都有一个隐藏层，并且从该隐藏层输出的结果会在后续时间步与新的输入相结合。在图 6.17 中，这以两种方式展示。首先，在左侧，我们展示时间更新作为一个单独的自我循环，用 Whh 表示。为了更好地理解这个自我循环的作用，我们已经“展开”了模型在时间上的表现，以便我们可以明确地看到我们的模型是如何更新的。在这里，我们将我们的输入、输出和隐藏层（x, y, h）更改为时间变量（xt, yt, ht）。在我们的初始步骤 t，我们使用 xt 的数据和从我们之前的隐藏层 ht–1 的权重来更新我们的当前隐藏层，然后使用这个来输出 yt。然后，ht 的权重会传递给 ht+1，并伴随着新的输入 xt+1 来推断 yt+1。
+在图 6.16 中，我们展示了 RNN 模型的示意图。与我们所见过的所有其他模型相比，RNN 模型的主要区别在于模型可以处理序列数据。这意味着每个时间步都有一个隐藏层，并且从该隐藏层输出的结果会在后续时间步与新的输入相结合。在图 6.17 中，这以两种方式展示。首先，在左侧，我们展示时间更新作为一个单独的自我循环，用`Whh`表示。为了更好地理解这个自我循环的作用，我们已经“展开”了模型在时间上的表现，以便我们可以明确地看到我们的模型是如何更新的。在这里，我们将我们的输入、输出和隐藏层（`x`, `y`, `h`）更改为时间变量（`xt`, `yt`, `ht`）。在我们的初始步骤`t`，我们使用`xt`的数据和从我们之前的隐藏层`ht–1`的权重来更新我们的当前隐藏层，然后使用这个来输出`yt`。然后，`ht`的权重会传递给`ht+1`，并伴随着新的输入`xt+1`来推断`yt+1`。
 
 该模型的一个关键特性是，当我们反向传播以更新我们的权重时，我们需要进行时间反向传播（BPTT）。这是所有 RNN 的一个特定特性。然而，大多数现代深度学习包都使这一过程变得非常简单，并隐藏了所有复杂的计算细节，以便于实践者使用。
 
 ![figure](img/6-17.png)
 
-##### 图 6.17 RNN 的结构。时间更新作为一个单环自我循环，由 Whh 表示（左侧）。展开的时间模型显示了模型更新（右侧）。在这里，我们将输入、输出和隐藏层（x、y、h）更改为时间变量（x[t]、y[t]、h[t]）。在初始步骤 t，我们使用来自 x[t] 的输入数据和来自先前隐藏层 h[t–1] 的权重来更新当前隐藏层，然后使用它来输出 y[t]。然后，ht 的权重与新的输入 x[t+1] 一起传递到 h[t+1]，以推断 y[t+1]。
+##### 图 6.17 RNN 的结构。时间更新作为一个单环自我循环，由`Whh`表示（左侧）。展开的时间模型显示了模型更新（右侧）。在这里，我们将输入、输出和隐藏层（`x`、`y`、`h`）更改为时间变量（`x[t]`、`y[t]`、`h[t]`）。在初始步骤`t`，我们使用来自`x[t]`的输入数据和来自先前隐藏层`h[t–1]`的权重来更新当前隐藏层，然后使用它来输出`y[t]`。然后，`ht`的权重与新的输入`x[t+1]`一起传递到`h[t+1]`，以推断`y[t+1]`。
 
 让我们看看如何使用 PyTorch 实现一个 RNN。这就像定义一个神经网络类，然后在网络中引入特定的 RNN 层一样简单。例如，在列表 6.23 中，我们展示了定义具有单个 RNN 层的网络的代码。这是一个非常基本的 RNN 定义，因为只有一个隐藏层。然而，看到这个例子对于了解模型如何训练有一些直观的帮助。对于每个时间步，我们的输入都传递到隐藏层和输出。当我们执行前向传递时，输出返回到输出和隐藏层。最后，我们需要用某物初始化我们的隐藏层，所以我们使用全连接层。
 
 ##### 列表 6.23 定义 RNN
 
 ```py
-   class PoseEstimationRNN(nn.Module):
-       def __init__(self, input_size, hidden_size, output_size, num_layers):
-           super(PoseEstimationRNN, self).__init__()
+class PoseEstimationRNN(nn.Module):
+    def __init__(self, input_size, hidden_size, output_size, num_layers):
+        super(PoseEstimationRNN, self).__init__()
 
-           self.hidden_size = hidden_size
-           self.num_layers = num_layers
+        self.hidden_size = hidden_size
+        self.num_layers = num_layers
 
-           self.rnn = nn.RNN\
+        self.rnn = nn.RNN\
 (input_size, hidden_size, \
 num_layers, batch_first=True)  #1
-           self.fc = nn.Linear(hidden_size, output_size)  #2
+        self.fc = nn.Linear(hidden_size, output_size)  #2
 
-       def forward(self, x):    
-           h0 = torch.zeros(self.num_layers,\ #3
-             x.size(0), self.hidden_size)  #3
-           H0 = h0.to(x.device) 
+    def forward(self, x):    
+        h0 = torch.zeros(self.num_layers,\ #3
+          x.size(0), self.hidden_size)  #3
+        H0 = h0.to(x.device) 
 
-           out, _ = self.rnn(x, h0)  #4
-           out = self.fc(out[:, -10:, :]) #5
-           return out
+        out, _ = self.rnn(x, h0)  #4
+        out = self.fc(out[:, -10:, :]) #5
+        return out
 ```
 
 #1 RNN 层
@@ -1373,36 +1103,36 @@ num_layers, batch_first=True)  #1
 
 #5 将最后一个时间步的输出传递到全连接层
 
-在实践中，我们经常想要使用更复杂的 RNN。这包括 RNN 的扩展，如 LSTM 网络或 GRU 网络。我们甚至可以使用我们选择的深度学习库将 RNN、LSTMs 和 GRUs 堆叠起来。GRU 与 RNN 类似，因为它对数据序列很有用。它们被特别设计来解决 RNN 的一个关键缺点，即梯度消失问题。它使用两个门，这些门决定了保留多少过去信息（更新门）以及忘记或丢弃多少（重置门）。我们在图 6.18 中展示了 GRU 的一个示例设计。在这里，*z**[t]* 表示更新门，r*[t]* 表示重置门。*~h**[t]* 术语被称为候选激活，反映了表示的新状态的候选，而 *h**[t]* 术语是实际的隐藏状态。
+在实践中，我们经常想要使用更复杂的 RNN。这包括 RNN 的扩展，如 LSTM 网络或 GRU 网络。我们甚至可以使用我们选择的深度学习库将 RNN、LSTMs 和 GRUs 堆叠起来。GRU 与 RNN 类似，因为它对数据序列很有用。它们被特别设计来解决 RNN 的一个关键缺点，即梯度消失问题。它使用两个门，这些门决定了保留多少过去信息（更新门）以及忘记或丢弃多少（重置门）。我们在图 6.18 中展示了 GRU 的一个示例设计。在这里，`*z**[t]*`表示更新门，`r*[t]*`表示重置门。`*~h**[t]*`术语被称为候选激活，反映了表示的新状态的候选，而 `*h**[t]*`术语是实际的隐藏状态。
 
 ![图像](img/6-18.png)
 
-##### 图 6.18 GRU 层的设计，其中 r*[t]* 表示重置门，z*[t]* 是更新门，~h*[t]* 是候选函数，h*[t]* 是最终的实际隐藏状态
+##### 图 6.18 GRU 层的设计，其中`r*[t]*`表示重置门，`z*[t]*`是更新门，`~h*[t]*`是候选函数，`h*[t]*`是最终的实际隐藏状态
 
 在列表 6.24 中，我们展示了如何使用 GRU 层构建模型。在这里，大多数实现由 PyTorch 处理，其中层是从标准 PyTorch 库导入的。模型定义的其余部分是典型的神经网络。
 
 ##### 列表 6.24 GRU
 
 ```py
-   class PoseEstimationGRU(nn.Module):
-       def __init__(self, input_size, hidden_size, output_size, num_layers):
-           super(PoseEstimationGRU, self).__init__()
-           self.hidden_size = hidden_size
-           self.num_layers = num_layers
-           self.gru = nn.GRU\
+class PoseEstimationGRU(nn.Module):
+    def __init__(self, input_size, hidden_size, output_size, num_layers):
+        super(PoseEstimationGRU, self).__init__()
+        self.hidden_size = hidden_size
+        self.num_layers = num_layers
+        self.gru = nn.GRU\
 (input_size, hidden_size, \
 num_layers, batch_first=True)  #1
-           self.fc = nn.Linear(hidden_size, output_size)  #2
+        self.fc = nn.Linear(hidden_size, output_size)  #2
 
-        def forward(self, x):
+    def forward(self, x):
 
-            h0 = torch.zeros\
+        h0 = torch.zeros\
 (self.num_layers, \
 x.size(0), self.hidden_size)  #3
-            h0 = h0.to(x.device)  #3
-            out, _ = self.gru(x, h0)  #4
-            out = self.fc(out[:, -10:, :])  #5
-            return out
+        h0 = h0.to(x.device)  #3
+        out, _ = self.gru(x, h0)  #4
+        out = self.fc(out[:, -10:, :])  #5
+        return out
 ```
 
 #1 GRU 层
@@ -1431,29 +1161,29 @@ x.size(0), self.hidden_size)  #3
 
 ##### 图 6.19 NRI 的示意图（来源：Kipf 等人[2]）。该模型由编码器和解码器层以及几个消息传递步骤组成。然而，在这里，消息是从节点传递到边，然后从边传递回节点，然后再从节点传递回边。对于解码器，消息是从节点传递到边，然后从边传递回节点。最后一步使用潜在表示，并用于预测身体时间演变的下一步。
 
-在这个模型中，有两个关键组件。首先，我们训练一个编码器将每个帧的图编码到潜在空间中。具体来说，我们使用编码器来预测给定初始图（x）的潜在交互（z）的概率分布 qj。一旦我们训练了编码器，我们就使用解码器将这个概率分布的样本转换为轨迹，使用潜在编码以及之前的时间步长。在实践中，我们使用编码器-解码器结构来推断具有不同交互类型（或边）的节点的轨迹。
+在这个模型中，有两个关键组件。首先，我们训练一个编码器将每个帧的图编码到潜在空间中。具体来说，我们使用编码器来预测给定初始图（`x`）的潜在交互（`z`）的概率分布`qj`。一旦我们训练了编码器，我们就使用解码器将这个概率分布的样本转换为轨迹，使用潜在编码以及之前的时间步长。在实践中，我们使用编码器-解码器结构来推断具有不同交互类型（或边）的节点的轨迹。
 
 在本章中，我们只考虑了两种边类型：传感器之间是否存在物理连接。然而，这种方法可以扩展到考虑许多不同的连接，所有这些连接都会随时间变化。此外，解码器模型需要一个 RNN 来有效地捕获我们图中的时间数据。为了对 NRI 模型有一个直观的了解，让我们再次重复这个过程。
 
-1.  *输入*—节点数据。
+1. *输入*—节点数据。
 
-1.  *编码*—
+1. *编码*—
 
-    1.  编码器接收节点数据。
+    1. 编码器接收节点数据。
 
-    1.  编码器将节点数据转换为边数据。
+    1. 编码器将节点数据转换为边数据。
 
-    1.  编码器在潜在空间中表示边数据。
+    1. 编码器在潜在空间中表示边数据。
 
-1.  *潜在空间*—潜在空间表示不同边类型的概率。在这里，我们有两种边类型（连接和不连接），尽管对于更复杂的关系，可能存在多种边类型。我们始终需要包括至少两种类型，否则模型会假设所有节点都是连接的，或者更糟糕的是，没有任何节点是连接的。
+1. *潜在空间*—潜在空间表示不同边类型的概率。在这里，我们有两种边类型（连接和不连接），尽管对于更复杂的关系，可能存在多种边类型。我们始终需要包括至少两种类型，否则模型会假设所有节点都是连接的，或者更糟糕的是，没有任何节点是连接的。
 
-1.  *解码*—
+1. *解码*—
 
-    1.  解码器从潜在空间中获取边类型概率。
+    1. 解码器从潜在空间中获取边类型概率。
 
-    1.  解码器学习根据这些概率重建未来的图状态。
+    1. 解码器学习根据这些概率重建未来的图状态。
 
-1.  *预测*—模型通过学习预测图连通性来预测未来的轨迹。
+1. *预测*—模型通过学习预测图连通性来预测未来的轨迹。
 
 注意，这个模型同时给出了图和轨迹预测！虽然这可能对我们的问题没有帮助，但对于我们不知道底层图结构的情况，例如社交媒体网络或体育队伍，这可以提供发现系统中新交互模式的方法。
 
@@ -1467,14 +1197,14 @@ Gumbel 分布的温度，作为我们的超参数之一，反映了分布的“�
 
 ## 摘要
 
-+   虽然一些系统可以使用单一数据快照进行预测，但其他系统需要考虑时间的变化以避免错误或漏洞。
++ 虽然一些系统可以使用单一数据快照进行预测，但其他系统需要考虑时间的变化以避免错误或漏洞。
 
-+   空间时间 GNNs 考虑之前的时刻来模拟图随时间演变的方式。
++ 空间时间 GNNs 考虑之前的时刻来模拟图随时间演变的方式。
 
-+   空间时间 GNNs 可以解决姿态估计问题，其中我们根据身体在最近过去的位置数据预测身体的下一个位置。在这种情况下，节点代表放置在身体关节上的传感器，边代表关节之间的身体连接。
++ 空间时间 GNNs 可以解决姿态估计问题，其中我们根据身体在最近过去的位置数据预测身体的下一个位置。在这种情况下，节点代表放置在身体关节上的传感器，边代表关节之间的身体连接。
 
-+   邻接矩阵可以通过沿对角线连接不同的邻接矩阵来调整，以考虑时间信息。
++ 邻接矩阵可以通过沿对角线连接不同的邻接矩阵来调整，以考虑时间信息。
 
-+   记忆可以被引入模型中，包括图神经网络（GNNs），例如通过使用循环神经网络（RNN）或门控循环单元网络（GRU）。
++ 记忆可以被引入模型中，包括图神经网络（GNNs），例如通过使用循环神经网络（RNN）或门控循环单元网络（GRU）。
 
-+   神经关系推理（NRI）模型结合了循环网络，如 GRU，与自动编码器 GNNs。这些模型可以推断时间模式，即使相邻信息未知。
++ 神经关系推理（NRI）模型结合了循环网络，如 GRU，与自动编码器 GNNs。这些模型可以推断时间模式，即使相邻信息未知。

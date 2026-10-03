@@ -1,25 +1,18 @@
+
 # 6 超大规模的诞生
 
 ## 本章涵盖
 
-*   扩展准则：Kaplan、Chinchilla 和后 Chinchilla 扩展定律
-
-*   通用人工智能的火花和涌现行为
-
-*   平滑损失、锯齿评估和逆扩展
-
-*   隐蔽的工作：数据和模型并行性
-
-*   GPipe 和流水线并行性
+- 扩展准则：Kaplan、Chinchilla 和后 Chinchilla 扩展定律
+- 通用人工智能的火花和涌现行为
+- 平滑损失、锯齿评估和逆扩展
+- 隐蔽的工作：数据和模型并行性
+- GPipe 和流水线并行性
 
 ## 论文
 
-*   *神经语言模型的扩展定律* (2020) Kaplan 等人。
-
-*   *GPipe：使用微批次流水线并行性的轻松扩展* (2019) Huang 等人。
-
-
-
+- *神经语言模型的扩展定律* (2020) Kaplan 等人。
+- *GPipe：使用微批次流水线并行性的轻松扩展* (2019) Huang 等人。
 
 现代人工智能表明，更大的模型表现更好。最明显的例证来自从 GPT-2（2019 年）到 GPT-3（2020 年）的性能飞跃。以今天的标准来看，GPT-2 相当普通：它拥有 15 亿个参数，并在一个相对狭窄的数据集 Reddit 上进行训练。尽管如此，它还是凭借诸如奥维德的独角兽（第 1 章）这样的例子吸引了公众的想象力。这篇文章在语气和风格上如此令人信服，以至于它重置了人们对机器生成文本的期望，几乎所有人都忽略了它是经过精选的，并且包含了诸如“四角独角兽”这样的矛盾修辞参考。
 
@@ -45,7 +38,7 @@ Kaplan 缩放定律解释说，当模型大小、数据和计算协同缩放时�
 
 ![figure](img/CH06_F01_Heimann.png)
 
-**Figure 6.1** Language modeling performance improves smoothly as model size, dataset size, and amount of compute used for training increase. For optimal performance, all three factors must be scaled up in tandem. Empirical performance has a power-law relationship with each factor when it isn’t bottlenecked by the other two. *Used with permission granted by a coauthor (Ben Cross).*
+**Figure 6.1** Language modeling performance improves smoothly as model size, dataset size, and amount of compute used for training increase. For optimal performance, all three factors must be scaled up in tandem. Empirical performance has a power-law relationship with each factor when it isn't bottlenecked by the other two. *Used with permission granted by a coauthor (Ben Cross).*
 
 尽管如此，有一个重要的约束。在固定大小的数据集上，通过添加参数来缩放模型最终会阻止测试损失的改善，并且推动模型收敛可能会加速收益递减，甚至引入过拟合。Kaplan 及其同事发现，这种平衡遵循其自身的方程，其中数据随模型大小次线性增长（大致为 `D α N^(0.74)`）。也就是说，如果模型参数的数量翻倍，数据集不需要翻倍。相反，它应该增长约 1.7 倍。将模型大小增加三倍，相应的数据集应该增长约 2.3 倍以保持同步。如果模型被缩放 117 倍（GPT-2 → GPT-3），数据集应该增加约 34 倍。这种关系帮助研究人员使更大的模型更高效。
 
@@ -56,9 +49,6 @@ Kaplan 缩放定律解释说，当模型大小、数据和计算协同缩放时�
 **Figure 6.2** Models larger than the compute-efficient size require fewer training steps, potentially enabling faster training if sufficient additional parallelism is possible. *Used with permission granted by a coauthor (Ben Cross).*
 
 这项研究专注于仅解码器的 transformers。谷歌在 2018 年引入了仅解码器的 transformer，即在原始 Transformer 之后的一年。它比原始版本更好地处理长输入序列，并且比其编码器-解码器对应物更容易扩展 [10]。作者在仅解码器的模型旁边训练了几个基线 [11]。
-
-
-
 
 实验涵盖了广泛的模型和数据集规模，从 7.68 亿到 15 亿非嵌入参数，以及从 2200 万到近 230 亿训练令牌。作者将模型大小定义为非嵌入参数的数量，因为令牌和位置嵌入在较小模型中可能主导参数数量，而不会显著增加模型容量。相比之下，非嵌入参数的数量取决于网络的深度和层宽度。批大小（在每个训练步骤中并行处理的令牌数量）随模型和数据集规模而变化；最大的运行使用了约 500,000 令牌的批。
 
@@ -90,9 +80,6 @@ Kaplan 量化了如何保持该曲线的弯曲不过早出现。每次模型参�
 
 其次，存在*数据量的极限*，这指导如何在增加模型大小和延长训练时间之间分配计算预算。对于任何固定预算，都有一个合适大小的模型和一个合适长度的训练运行。构建一个太大的模型并训练它太短暂，你会为未使用的容量付费。保持一个太小的模型并永远训练它，你是在打磨一个无法表达其训练数据的模型。这些边界之间的路径描绘了一条前沿。随着预算增长，必须同时增加模型大小和训练时间以保持平衡。后来的工作表明，许多前沿模型处于大但训练不足的一侧，需要重新平衡以每个参数更多数据来产生更好的结果。我们稍后会讨论这一点。
 
-
-
-
 在语言建模的计算最优区间内，将总计算量翻倍只会使损失降低 3%至 4%，这小于通过扩展数据或参数所带来的收益。然而，更大的模型更具样本效率。也就是说，它们可以用更少的标记和更少的参数更新达到给定的损失，从每个单位数据中提取更多信息。关键结论是，将计算分配用于延长小模型的训练是低效的，而将其分配用于容量（并相应增加数据）则会产生复合收益。
 
 Kaplan 还表明，计算高效的训练在远未达到收敛之前就停止。收敛意味着训练运行已基本稳定，额外的周期几乎不产生任何改进。计算高效的模型训练的步数较少，但可以优于一直训练到完成的更小模型。在这种情况下，早停起到了正则化的作用，抑制了记忆化，同时仍允许更大的网络利用其容量 [15]。净效果是直觉的逆转。进展并非来自训练到收敛，而是来自规模。聪明的投入应该用于容量，而不是将一个小模型拖过终点线。
@@ -121,12 +108,11 @@ Kaplan 团队将仅解码器的 transformer 与 GPT-1（另一个仅解码器模
 
 ### 6.1.7 Chinchilla 和后 Chinchilla
 
+
+
 扩展的清晰图景并没有持续太久。2022 年，DeepMind 的 Jordan Hoffman 和同事们用 Chinchilla 扩展定律挑战了卡普兰的处方。卡普兰已经表明，训练步数更少的大模型可以优于训练到完成的小模型。这推动了领域向更大的模型和比例更多的数据发展，而不是更长的训练运行。但 Chinchilla 揭示，许多这些模型训练不足，添加数据可以释放架构中的空间 [25]。
 
 通过分析超过 400 个 transformer 模型，大小从 7000 万到 160 亿不等，训练标记高达 5000 亿，DeepMind 发现对于那个时代的 transformer，最优的标记到参数比大约是 20:1 [26]。这一结论挑战了卡普兰对模型大小的偏见。但教训本身并不新鲜。“不要让模型挨饿数据”正是 Halevy、Norvig 和 Pereira 在 2009 年关于“数据的不合理有效性”的文章中给出的建议，与 Efros 的“花哨”叙事精神相呼应。发生改变的是现在可以测量这些权衡的规模和精度。
-
-
-
 
 使用这种最优的 token 与参数比例，作者们证明，拥有 1750 亿参数、在 3000 亿 token 上训练的 GPT-3 远非最优，每个参数大约有 1.7 个 token。根据 Chinchilla 论文，GPT-3 本应要么小得多，大约 150 亿参数，要么在大约 3.5 万亿 token 上训练，以充分利用其参数。这种不匹配解释了为什么 Chinchilla 最优模型经常优于更大的同类模型，包括 Megatron-Turing NLG（530B）、Gopher（280B）、Jurassic-1（178B），甚至 GPT-3（175B），所有这些模型都曾饱受数据匮乏之苦。
 
@@ -157,9 +143,6 @@ Marcus 是对的。缩放定律不像引力，尽管没有人认为它们像引�
 缩放定律描述了随着参数、数据和计算资源的增加，训练损失如何下降，但仅在特定的体制内。最终，训练运行会遇到障碍：它可能耗尽数据，分词器或优化器可能改变，或者规则本身可能改变。在对数-对数图上，这看起来像拼接在一起的直线段。然而，它不是一条单一的通用直线；它是分段的，有扭结和新段。关于*断裂缩放定律*的工作将这些体制变化形式化，并展示了为什么即使在体制内损失曲线看起来稳定，能力也可能跳跃 [44]。
 
 这也解释了为什么能力似乎出现涌现。大多数评估是阈值化的，包括精确匹配和胜率。交叉熵的微小平滑下降可以使许多临界项目从几乎正确翻转为正确，因此测试分数跳跃，即使训练曲线看起来良好。OpenAI 联合创始人 Greg Brockman 推文说：“评估令人惊讶地往往就是你需要的一切” [45]。虽然曲线大致平滑，但重要的是评估所揭示的内容。曲线告诉你在哪里投入计算；评估告诉你何时跨越体制边界以及哪些能力真正开启了。
-
-
-
 
 模型级评估，如测量大规模多任务语言理解（MMLU）、小学数学 8K（GSM8K）、BIG-bench 和人类最后的考试，报告了在问答、数学、指令遵循和代码方面的准确率或通过率[46][47][48][49][50][51]。在数千个项目中，即使训练损失仍然平滑，这样的波动也会导致任务性能出现台阶、平台和下降。进步感觉就像在爬一个缺了台阶的楼梯，而不是一条平滑的下坡路。对于更广泛的受众，这些分数被进一步重新表述为人类可读的阈值，这些阈值隐藏的和暴露的一样多：“通过了律师资格考试”[52]、“SAT 分数”、“博士水平”[53]、“比放射科医生更好”[54]。这些标签将多维的能力概况压缩为单一的社会信号。它们有用但不完整。
 
@@ -199,15 +182,13 @@ Marcus 是对的。缩放定律不像引力，尽管没有人认为它们像引�
 
 早期的缩放策略是*数据并行*。数据通过在每个 GPU 上复制整个网络来保持模型同步。通常，每个模型副本被喂入一批不同的数据，然后梯度通过“全归约”操作求和，以确保每个副本保持同步[65][66]。数据并行是高效且直接的，但一旦参数数量超过单个设备的内存容量，复制就变得不可行[67]。
 
+与数据并行（在每个 GPU 上复制整个模型）不同，*模型并行*将单个模型拆分到多个设备上。AlexNet 展示了模型并行的一种早期形式。ImageNet 足够大，足以证明更大模型的合理性，因此 Krizhevsky、Sutskever 和 Hinton 将 AlexNet 拆分到两个 GPU 上，每个 GPU 处理一半的特征图，跨 GPU 通信仅限于第三个卷积层，两个半部分在此重新连接。他们限制通信到特定层以保持其廉价。更多连接意味着更多通信；更少连接意味着更便宜的传输。他们选择了一种模式，使通信保持为总计算的一小部分，同时在需要时仍允许信息混合。这是一种手工完成的粗略的早期张量分片形式。
 
-
-
-
-Unlike data parallelism, which replicates the whole model on every GPU, *model parallelism* splits a single model across multiple devices. AlexNet demonstrated an early form of model parallelism. ImageNet was large enough to justify a larger model, so Krizhevsky, Sutskever, and Hinton split AlexNet across two GPUs, with each GPU handling half of the feature maps and cross-GPU communication limited to the third convolutional layer, where the two halves reconnect. They limited communication to specific layers to keep it inexpensive. More connections meant more communication; fewer connections meant cheaper transfers. They chose a pattern that kept communication a small fraction of the total computation while still allowing information to mix when needed. This was a crude early form of tensor sharding done by hand.
-
-A quick note on tensors: a *tensor* is a container for numbers. A single number is a zero-dimensional tensor, a list of numbers is a one-dimensional tensor (that is, a vector), a grid of numbers is a two-dimensional tensor (that is, a matrix), and higher-dimensional tensors are stacks or cubes of numbers. Deep learning models store their weights, activations, and data in tensors. *Sharding a tensor* means splitting those numbers across devices so no single GPU has to store everything. AlexNet hand-rolled this sharding, which suggests that early scaling limits emerged first in VRAM and interconnect bandwidth. Later systems, such as GPipe (2018) and Megatron-LM (2019), generalized these ad hoc tricks into principled forms of pipeline and tensor parallelism.
+关于张量的快速说明：*张量*是数字的容器。单个数字是零维张量，数字列表是一维张量（即向量），数字网格是二维张量（即矩阵），更高维张量是数字的堆叠或立方体。深度学习模型将其权重、激活和数据存储在张量中。*分片张量*意味着将这些数字拆分到设备上，以便没有单个 GPU 必须存储所有内容。AlexNet 手工完成了这种分片，这表明早期的缩放限制首先出现在 VRAM 和互连带宽中。后来的系统，如 GPipe（2018）和 Megatron-LM（2019），将这些临时的技巧推广为流水线并行和张量并行的原则性形式。
 
 ## 6.3.1 GPipe
+
+
 
 GPipe introduced pipeline parallelism. Instead of having every GPU carry the full model, GPipe sliced the model into stages and spread them across devices. Training batches were then split into many smaller “micro-batches” that moved through the stages in a steady stream. While one stage was handling one micro-batch, another stage was already working on the next. This overlapping schedule kept accelerators busy and increased throughput. See figure 6.6.
 
@@ -237,9 +218,6 @@ The paper also demonstrated GPipe’s ability to achieve state-of-the-art result
 
 The team also tested transfer learning. The 557-million-parameter AmoebaNet-B, trained on ImageNet, was fine-tuned on a range of other vision datasets, including CIFAR-10 and CIFAR-100, Stanford Cars, Oxford Pets, Food-101, FGVC Aircraft, and Birdsnap. The large ImageNet-pretrained model consistently outperformed or matched the state of the art, often by comfortable margins. On CIFAR-100, for example, the error rate dropped from 10.7% to 8.7%. These findings reinforced the idea that a better ImageNet model yields better transfer results, and GPipe enabled the training of even better ImageNet models by easing size constraints [69].
 
-
-
-
 Transformer 实验扩展到了多语言机器翻译。团队训练了一个单一的 Transformer 来将 102 种语言翻译成英语。数据集包括 250 亿个示例，涵盖了高资源语言和低资源语言。在 GPipe 之前，完成这项任务所需的模型规模太大，无法高效训练。借助 GPipe，研究人员训练了几个规模逐渐增大的模型。他们从一个基线 Transformer 开始，大约有 4 亿参数，约为 Transformer-big（“Attention Is All You Need”中介绍的最大模型）的两倍，然后进一步扩展。其他模型规模包括一个深度为 128 层的 Transformer，拥有 13 亿参数；一个宽度为 13 亿参数的模型，具有更大的隐藏维度但层数更少；一个 30 亿参数的模型；以及最后一个结合了深度和宽度的 60 亿参数模型。结果很明确：更大的模型在几乎每对语言上都产生了更好的翻译质量。最大的改进出现在从 4 亿参数增加到 13 亿参数时，尽管收益持续到 60 亿参数，但回报递减。
 
 最显著的结果出现在低资源语言上。虽然高资源语言对如预期那样有所提升，但低数据语言相比双语基线看到了“巨大的质量改进”。在这些场景中，深度 13 亿参数模型优于宽度模型，表明额外的层——而不是简单地更宽的层——为更具挑战性的泛化任务提供了所需的表示深度。支持 GPipe 的 60 亿参数多语言 Transformer 在超过 100 个语言对上优于所有单独的双语模型。这表明，在足够的规模下，单个模型可以同时学习 100 多个任务，并优于针对每个任务专门设计的模型。
@@ -256,21 +234,21 @@ NVIDIA 的 Megatron-LM (2019) 提供了管道并行的替代方案。Megatron �
 
 然而，Megatron 的张量切片仍然是针对特定类型 transformer 层的手工配方。因此，Google 的一条并行工作线推广了这一想法。Mesh-TensorFlow (2018) 允许工程师决定将哪些张量轴分片到哪些网格轴上。拆分批次产生数据并行。拆分词汇表或前馈维度产生张量并行。在专家混合模型中拆分专家维度产生专家并行。管道并行略有不同，因为它拆分计算阶段而不是张量轴，但它属于同一个更广泛的网格家族。
 
-结果是戏剧性的。Megatron-LM 在 512 个 GPU 上训练了一个 83 亿参数的 GPT-2 风格 transformer。它实现了大约 76% 的效率和 15 petaflops 的吞吐量。浮点运算 (FLOP) 是大规模 AI 训练中的标准衡量指标。作为吞吐量指标，一个 petaflop 是 1 quadrillion FLOPs。这一成就不仅证明了数十亿参数模型的可行性，还建立了 GPT-3 将用来扩展到数千个 GPU 的模板。
+
+
+结果是戏剧性的。`Megatron-LM`在 512 个 GPU 上训练了一个 83 亿参数的 GPT-2 风格 `transformer`。它实现了大约 76% 的效率和 15 petaflops 的吞吐量。浮点运算 (`FLOP`) 是大规模 AI 训练中的标准衡量指标。作为吞吐量指标，一个 petaflop 是 1 quadrillion `FLOPs`。这一成就不仅证明了数十亿参数模型的可行性，还建立了 GPT-3 将用来扩展到数千个 GPU 的模板。
 
 但这并没有解决根本的内存问题，因为一个 500 亿参数模型的 16 位精度副本仅参数就需要 100 GB 的存储。这超过了单个 GPU 所能提供的，甚至在考虑梯度和优化器状态之前。并行性有助于分配计算，但没有减少内存冗余。在数据并行设置中，每个 GPU 仍然承载着模型的全部重量。
 
-内存分片有所帮助。Microsoft 的 Zero Redundancy Optimizer (ZeRO) 直接解决了这个问题，在数据并行进程中消除了重复存储 [75]。而不是让每个 GPU 保存完整的参数、梯度和优化器状态集，ZeRO (2019) 将它们在设备间分区。每个 GPU 只存储一个分片，按需进行通信以重新创建完整性的幻觉。
+内存分片有所帮助。Microsoft 的 `Zero Redundancy Optimizer` (`ZeRO`) 直接解决了这个问题，在数据并行进程中消除了重复存储 [75]。而不是让每个 GPU 保存完整的参数、梯度和优化器状态集，`ZeRO` (2019) 将它们在设备间分区。每个 GPU 只存储一个分片，按需进行通信以重新创建完整性的幻觉。
 
-借助 ZeRO，一个由 16 个 GPU 组成的集群原则上可以训练比以前大 16 倍的模型，因为每个 GPU 只承担一部分内存负担。Microsoft 展示了在仅 400 个 GPU 上训练 1000 亿参数的模型，达到 15 PFLOPs 的吞吐量，甚至显示出超线性扩展。换句话说，随着更多设备的加入，效率得到了提高，因为并行性得到了更好的平衡。
+借助 `ZeRO`，一个由 16 个 GPU 组成的集群原则上可以训练比以前大 16 倍的模型，因为每个 GPU 只承担一部分内存负担。Microsoft 展示了在仅 400 个 GPU 上训练 1000 亿参数的模型，达到 15 `PFLOPs` 的吞吐量，甚至显示出超线性扩展。换句话说，随着更多设备的加入，效率得到了提高，因为并行性得到了更好的平衡。
 
-ZeRO 还使得无需模型并行即可训练 130 亿参数的模型，这一壮举以前被认为是不可能的。打破内存墙也使访问民主化。那些发现管道或模型并行代码令人畏惧的研究人员现在可以用更熟悉的工作流程训练大模型。不久之后，这些技术为 Turing-NLG 提供了动力，这是一个 170 亿参数的模型，是当时最大的模型，但四个月后就被 GPT-3 超越 [76]。
+`ZeRO` 还使得无需模型并行即可训练 130 亿参数的模型，这一壮举以前被认为是不可能的。打破内存墙也使访问民主化。那些发现管道或模型并行代码令人畏惧的研究人员现在可以用更熟悉的工作流程训练大模型。不久之后，这些技术为 `Turing-NLG` 提供了动力，这是一个 170 亿参数的模型，是当时最大的模型，但四个月后就被 GPT-3 超越 [76]。
 
-尽管如此，拆分层是有代价的。GPU 必须不断交换部分结果，这些通信成本不断累积。研究人员转向更智能的调度。广度优先管道并行 (2022) 重新想象了微批次流 [77]。而不是经典的单向前向、单向后向 (1F1B) 调度，它遍历模型“逐层”，在最早的阶段并行处理微批次（即“广度优先”）。这种重新排序最大化了计算和通信之间的重叠，与完全分片的数据并行自然结合。在使用小的每 GPU 批次时，它在 520 亿参数的模型上实现了比 Megatron 的调度高 43% 的吞吐量。教训是，更好的管道编排——不仅仅是蛮力——可以带来真正的效率提升。
+尽管如此，拆分层是有代价的。GPU 必须不断交换部分结果，这些通信成本不断累积。研究人员转向更智能的调度。广度优先管道并行 (2022) 重新想象了微批次流 [77]。而不是经典的单向前向、单向后向 (`1F1B`) 调度，它遍历模型“逐层”，在最早的阶段并行处理微批次（即“广度优先”）。这种重新排序最大化了计算和通信之间的重叠，与完全分片的数据并行自然结合。在使用小的每 GPU 批次时，它在 520 亿参数的模型上实现了比 `Megatron` 的调度高 43% 的吞吐量。教训是，更好的管道编排——不仅仅是蛮力——可以带来真正的效率提升。
 
-
-
-综合来看，流水线分段、张量切片和内存分片将缩放定律转化为实际工程。GPipe 展示了如何让微批次在流水线中错峰流动；Megatron 展示了如何高效地手工切分 Transformer 层；Mesh-TensorFlow 则将分片变成了网格上的布局问题。ZeRO 消除了冗余存储，并提高了内存上限。每一项突破都扩展了模型规模和性能的可行边界。现代 AI 继承了所有这些思想。它们共同将愿景变成了万亿参数训练运行。
+综合来看，流水线分段、张量切片和内存分片将缩放定律转化为实际工程。`GPipe` 展示了如何让微批次在流水线中错峰流动；`Megatron` 展示了如何高效地手工切分 `Transformer` 层；`Mesh-TensorFlow` 则将分片变成了网格上的布局问题。`ZeRO` 消除了冗余存储，并提高了内存上限。每一项突破都扩展了模型规模和性能的可行边界。现代 AI 继承了所有这些思想。它们共同将愿景变成了万亿参数训练运行。
 
 缩放定律本身可能很简单，但将其落地并不简单。通信必须与计算仔细重叠，以让加速器保持忙碌；集合操作需要调优到微秒级；而运行数周的作业必须经受住不可避免的硬件故障和网络抖动 \[78\]。缩放定律图表中看起来平滑的东西，实际上是艰苦工程的结果，这些工程让每台设备都持续获得数据并具备容错能力。
 
@@ -278,9 +256,8 @@ ZeRO 还使得无需模型并行即可训练 130 亿参数的模型，这一壮�
 
 ## 6.4 舍入误差
 
-Epoch AI 在 2024 年的一项研究估计，近期语言模型性能提升中有三分之二归因于数据和算力的扩展 \[79\]。虽然这似乎印证了“苦涩的教训”，但我们也必须记得问一句：“扩展什么？”尽管如此，规模化的理由已经确立。更大的模型、更多的数据、更多的算力，确实能可靠地带来更好的结果。
+`Epoch AI` 在 2024 年的一项研究估计，近期语言模型性能提升中有三分之二归因于数据和算力的扩展 \[79\]。虽然这似乎印证了“苦涩的教训”，但我们也必须记得问一句：“扩展什么？”尽管如此，规模化的理由已经确立。更大的模型、更多的数据、更多的算力，确实能可靠地带来更好的结果。
 
-然而，许多人对这意味着什么有话要说，而缩放已成为 AI 领域最嘈杂的讨论之一。Gwern Branwen 和微软的研究人员将其重新解释为智能的一种假设（或火花），许多热心者在其失败时说：“这已经是最差的时候了” \[80\] \[81\]\[82\]\[83\]。奇点主义者说：“我们正在创造上帝” \[84\]。活动人士希望冻结比当今更大的系统 \[85\]。大部分噪音源于表现的不均衡。结果，有些人将 AI 贬低为“随机鹦鹉”，或将其拔高为准备取代人类思维的原始人 \[86\] \[87\]。有人说它只是互联网的压缩版本，尽管它有时会生成从未出现在互联网上的内容 \[88\]\[89\]。
+然而，许多人对这意味着什么有话要说，而缩放已成为 AI 领域最嘈杂的讨论之一。`Gwern Branwen` 和微软的研究人员将其重新解释为智能的一种假设（或火花），许多热心者在其失败时说：“这已经是最差的时候了” \[80\] \[81\]\[82\]\[83\]。奇点主义者说：“我们正在创造上帝” \[84\]。活动人士希望冻结比当今更大的系统 \[85\]。大部分噪音源于表现的不均衡。结果，有些人将 AI 贬低为“随机鹦鹉”，或将其拔高为准备取代人类思维的原始人 \[86\] \[87\]。有人说它只是互联网的压缩版本，尽管它有时会生成从未出现在互联网上的内容 \[88\]\[89\]。
 
 然而，规模化既没有造出上帝，也没有造出鹦鹉。规模化为机器学习提供了有史以来最接近免费午餐的东西，带来了稳定的进步，并将进步转化为工程问题。这与 Ilya 两个最深层的直觉一致：（1）务实的工程，以及（2）在规模上以更少做更多。规模化既非神圣也非琐碎，但它促成了该领域历史上最成功的时期。七十年后，AI 终于成为主流，而这一切都归功于规模化。即便如此，规模化并未产生可靠的多步推理或规划能力。这一局限为从扩展预训练转向承诺推理的系统奠定了基础。这一转向是下一章的重点。
-

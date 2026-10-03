@@ -1,3 +1,5 @@
+
+
 # 第八章：使 transformers 在生产中更高效
 
 在之前的章节中，您已经看到了 transformers 如何被微调以在各种任务上产生出色的结果。然而，在许多情况下，准确性（或者您正在优化的任何指标）是不够的；如果您的最先进模型太慢或太大，无法满足应用程序的业务需求，那么它就不是很有用。一个明显的替代方案是训练一个更快、更紧凑的模型，但模型容量的减少通常会伴随着性能的下降。那么当您需要一个快速、紧凑但高度准确的模型时，您该怎么办呢？
@@ -10,7 +12,7 @@
 
 为了说明与每种技术相关的好处和权衡，我们将以意图检测为案例研究；这是基于文本的助手的重要组成部分，低延迟对于实时维持对话至关重要。在学习的过程中，您将学习如何创建自定义训练器，执行高效的超参数搜索，并了解实施最前沿研究所需的内容，使用![nlpt_pin01](img/nlpt_pin01.png) Transformers。让我们开始吧！
 
-# 以意图检测为案例研究
+## 以意图检测为案例研究
 
 假设我们正在尝试为公司的呼叫中心构建一个基于文本的助手，以便客户可以在不需要与人类代理交谈的情况下请求其账户余额或进行预订。为了理解客户的目标，我们的助手需要能够将各种自然语言文本分类为一组预定义的动作或*意图*。例如，客户可能会发送以下关于即将到来的旅行的消息：
 
@@ -47,7 +49,7 @@ pipe(query)
 
 很好，`car_rental`意图是有意义的。现在让我们看看创建一个基准，我们可以用来评估我们基准模型的性能。
 
-# 创建性能基准
+## 创建性能基准
 
 与其他机器学习模型一样，在生产环境中部署 transformers 涉及在几个约束条件之间进行权衡，最常见的是：
 
@@ -132,7 +134,7 @@ from datasets import load_metric
 accuracy_score = load_metric("accuracy")
 ```
 
-准确度指标期望预测和参考（即，真实标签）是整数。我们可以使用管道从`text`字段中提取预测，然后使用我们的`intents`对象的“str2int（）”方法将每个预测映射到其相应的 ID。以下代码在返回数据集的准确度之前收集所有的预测和标签。让我们也将其添加到我们的“PerformanceBenchmark”类中：
+准确度指标期望预测和参考（即，真实标签）是整数。我们可以使用管道从`text`字段中提取预测，然后使用我们的`intents`对象的`str2int()`方法将每个预测映射到其相应的 ID。以下代码在返回数据集的准确度之前收集所有的预测和标签。让我们也将其添加到我们的`PerformanceBenchmark`类中：
 
 ```py
 def compute_accuracy(self):
@@ -150,7 +152,7 @@ def compute_accuracy(self):
 PerformanceBenchmark.compute_accuracy = compute_accuracy
 ```
 
-接下来，让我们使用 PyTorch 的“torch.save（）”函数来计算我们模型的大小，将模型序列化到磁盘上。在内部，“torch.save（）”使用 Python 的`pickle`模块，可以用来保存从模型到张量到普通 Python 对象的任何东西。在 PyTorch 中，保存模型的推荐方式是使用它的`state_dict`，这是一个 Python 字典，将模型中的每一层映射到它的可学习参数（即，权重和偏置）。让我们看看我们基准模型的`state_dict`中存储了什么：
+接下来，让我们使用 PyTorch 的`torch.save()`函数来计算我们模型的大小，将模型序列化到磁盘上。在内部，`torch.save()`使用 Python 的`pickle`模块，可以用来保存从模型到张量到普通 Python 对象的任何东西。在 PyTorch 中，保存模型的推荐方式是使用它的`state_dict`，这是一个 Python 字典，将模型中的每一层映射到它的可学习参数（即，权重和偏置）。让我们看看我们基准模型的`state_dict`中存储了什么：
 
 ```py
 list(pipe.model.state_dict().items())[42]
@@ -179,7 +181,7 @@ list(pipe.model.state_dict().items())[42]
 torch.save(pipe.model.state_dict(), "model.pt")
 ```
 
-我们可以使用 Python 的`pathlib`模块中的“Path.stat（）”函数来获取有关底层文件的信息。特别是，“Path（"model.​pt"）.​stat（）.​st_size”将给出模型的大小（以字节为单位）。让我们将所有这些放在“compute_​size（）”函数中，并将其添加到`PerformanceBenchmark`中：
+我们可以使用 Python 的`pathlib`模块中的`Path.stat()`函数来获取有关底层文件的信息。特别是，`Path("model.pt").stat().st_size`将给出模型的大小（以字节为单位）。让我们将所有这些放在`compute_size()`函数中，并将其添加到`PerformanceBenchmark`中：
 
 ```py
 import torch
@@ -200,9 +202,9 @@ def compute_size(self):
 PerformanceBenchmark.compute_size = compute_size
 ```
 
-最后，让我们实现“time_pipeline（）”函数，以便我们可以计算每个查询的平均延迟时间。对于这个应用程序，延迟时间指的是将文本查询输入到管道中并从模型返回预测意图所需的时间。在内部，管道还会对文本进行标记化，但这比生成预测快了大约一千倍，因此对整体延迟时间的贡献可以忽略不计。衡量代码片段的执行时间的一个简单方法是使用 Python 的`time`模块中的“perf_counter（）”函数。这个函数比“time.time（）”函数具有更好的时间分辨率，非常适合获取精确的结果。
+最后，让我们实现`time_pipeline()`函数，以便我们可以计算每个查询的平均延迟时间。对于这个应用程序，延迟时间指的是将文本查询输入到管道中并从模型返回预测意图所需的时间。在内部，管道还会对文本进行标记化，但这比生成预测快了大约一千倍，因此对整体延迟时间的贡献可以忽略不计。衡量代码片段的执行时间的一个简单方法是使用 Python 的`time`模块中的`perf_counter()`函数。这个函数比`time.time()`函数具有更好的时间分辨率，非常适合获取精确的结果。
 
-我们可以使用“perf_counter（）”通过传递我们的测试查询来计时我们的管道，并计算开始和结束之间的毫秒时间差：
+我们可以使用`perf_counter()`通过传递我们的测试查询来计时我们的管道，并计算开始和结束之间的毫秒时间差：
 
 ```py
 from time import perf_counter
@@ -221,6 +223,9 @@ Latency (ms) - 87.275
 ```
 
 这些结果展示了延迟时间的相当大的差异，并且表明通过管道的单次计时可能每次运行代码时都会得到完全不同的结果。因此，我们将收集多次运行的延迟时间，然后使用得到的分布来计算均值和标准差，这将让我们对数值的差异有一个概念。以下代码实现了我们需要的功能，并包括了在执行实际计时运行之前预热 CPU 的阶段：
+
+
+
 
 ```py
 import numpy as np
@@ -277,33 +282,43 @@ Accuracy on test set - 0.867
 
 那么在训练过程中，知识实际上是如何从教师传递给学生的呢？对于微调等监督任务，主要思想是用教师的“软概率”分布来增强地面真实标签，为学生提供补充信息。例如，如果我们的 BERT-base 分类器为多个意图分配高概率，那么这可能表明这些意图在特征空间中相互靠近。通过训练学生模仿这些概率，目标是蒸馏教师学到的一些“暗知识”——也就是，仅从标签中无法获得的知识。
 
-从数学上讲，这是如何工作的。假设我们将输入序列*x*提供给教师，以生成一个对数向量<math alttext="bold z left-parenthesis x right-parenthesis"><mrow><mi>𝐳</mi> <mo>(</mo> <mi>x</mi> <mo>)</mo></mrow></math> = [ <math alttext="z 1 left-parenthesis x right-parenthesis comma ellipsis comma z Subscript upper N Baseline left-parenthesis x right-parenthesis"><mrow><msub><mi>z</mi> <mn>1</mn></msub> <mrow><mo>(</mo> <mi>x</mi> <mo>)</mo></mrow> <mo>,</mo> <mo>...</mo> <mo>,</mo> <msub><mi>z</mi> <mi>N</mi></sub> <mrow><mo>(</mo> <mi>x</mi> <mo>)</mo></mrow></mrow></math> ]。我们可以通过应用 softmax 函数将这些对数转换为概率：
+从数学上讲，这是如何工作的。假设我们将输入序列`x`提供给教师，以生成一个对数向量`z(x) = [z1(x), ..., zN(x)]`。我们可以通过应用 softmax 函数将这些对数转换为概率：
 
-<math alttext="StartFraction exp left-parenthesis z Subscript i Baseline left-parenthesis x right-parenthesis right-parenthesis Over sigma-summation Underscript j Endscripts exp left-parenthesis z Subscript i Baseline left-parenthesis x right-parenthesis right-parenthesis EndFraction" display="block"><mrow><mfrac><mrow><mo form="prefix">exp</mo><mo>(</mo><msub><mi>z</mi> <mi>i</mi></msub> <mrow><mo>(</mo><mi>x</mi><mo>)</mo></mrow><mo>)</mo></mrow> <mrow><msub><mo>∑</mo> <mi>j</mi></msub> <mo form="prefix">exp</mo><mrow><mo>(</mo><msub><mi>z</mi> <mi>i</mi></msub> <mrow><mo>(</mo><mi>x</mi><mo>)</mo></mrow><mo>)</mo></mrow></mrow></mfrac></mrow></math>
+```
+exp(zi(x)) / Σj exp(zi(x))
+```
 
-然而，这并不是我们想要的，因为在许多情况下，教师会为一个类分配高概率，而其他类的概率接近于零。当发生这种情况时，教师除了地面真实标签外并没有提供太多额外信息，因此我们会在应用 softmax 之前，通过一个温度超参数*T*来缩放对数，从而“软化”概率。
+然而，这并不是我们想要的，因为在许多情况下，教师会为一个类分配高概率，而其他类的概率接近于零。当发生这种情况时，教师除了地面真实标签外并没有提供太多额外信息，因此我们会在应用 softmax 之前，通过一个温度超参数`T`来缩放对数，从而“软化”概率。
 
-<math alttext="p Subscript i Baseline left-parenthesis x right-parenthesis equals StartFraction exp left-parenthesis z Subscript i Baseline left-parenthesis x right-parenthesis slash upper T right-parenthesis Over sigma-summation Underscript j Endscripts exp left-parenthesis z Subscript i Baseline left-parenthesis x right-parenthesis slash upper T right-parenthesis EndFraction" display="block"><mrow><msub><mi>p</mi> <mi>i</mi></msub> <mrow><mo>(</mo> <mi>x</mi> <mo>)</mo></mrow> <mo>=</mo> <mfrac><mrow><mo form="prefix">exp</mo><mo>(</mo><msub><mi>z</mi> <mi>i</mi></msub> <mrow><mo>(</mo><mi>x</mi><mo>)</mo></mrow><mo>/</mo><mi>T</mi><mo>)</mo></mrow> <mrow><msub><mo>∑</mo> <mi>j</mi></msub> <mo form="prefix">exp</mo><mrow><mo>(</mo><msub><mi>z</mi> <mi>i</mi></msub> <mrow><mo>(</mo><mi>x</mi><mo>)</mo></mrow><mo>/</mo><mi>T</mi><mo>)</mo></mrow></mrow></mfrac></mrow></math>
+```
+pi(x) = exp(zi(x)/T) / Σj exp(zi(x)/T)
+```
 
-如图 8-3 所示，*T*的值越高，类别上的软化概率分布就越软，可以更多地揭示老师对每个训练示例学习的决策边界。当<math alttext="upper T equals 1"><mrow><mi>T</mi> <mo>=</mo> <mn>1</mn></mrow></math>时，我们恢复了原始的 softmax 分布。
+如图 8-3 所示，`T`的值越高，类别上的软化概率分布就越软，可以更多地揭示老师对每个训练示例学习的决策边界。当`T = 1`时，我们恢复了原始的 softmax 分布。
 
 ![软概率](img/nlpt_0803.png)
 
 ###### 图 8-3。一个使用 one-hot 编码的硬标签（左）、softmax 概率（中）和软化类别概率（右）的比较。
 
-由于学生还产生了自己的软化概率<math alttext="q Subscript i Baseline left-parenthesis x right-parenthesis"><mrow><msub><mi>q</mi> <mi>i</mi></msub> <mrow><mo>(</mo> <mi>x</mi> <mo>)</mo></mrow></mrow></math>，我们可以使用[Kullback-Leibler（KL）](https://oreil.ly/8nKQG)散度来衡量两个概率分布之间的差异：
+由于学生还产生了自己的软化概率`qi(x)`，我们可以使用 [Kullback-Leibler（KL）](https://oreil.ly/8nKQG) 散度来衡量两个概率分布之间的差异：
 
-<math alttext="upper D Subscript upper K upper L Baseline left-parenthesis p comma q right-parenthesis equals sigma-summation Underscript i Endscripts p Subscript i Baseline left-parenthesis x right-parenthesis log StartFraction p Subscript i Baseline left-parenthesis x right-parenthesis Over q Subscript i Baseline left-parenthesis x right-parenthesis EndFraction" display="block"><mrow><msub><mi>D</mi> <mrow><mi>K</mi><mi>L</mi></mrow></msub> <mrow><mo>(</mo> <mi>p</mi> <mo>,</mo> <mi>q</mi> <mo>)</mo></mrow> <mo>=</mo> <munder><mo>∑</mo> <mi>i</mi></munder> <msub><mi>p</mi> <mi>i</mi></msub> <mrow><mo>(</mo> <mi>x</mi> <mo>)</mo></mrow> <mo form="prefix">log</mo> <mfrac><mrow><msub><mi>p</mi> <mi>i</mi></msub> <mrow><mo>(</mo><mi>x</mi><mo>)</mo></mrow></mrow> <mrow><msub><mi>q</mi> <mi>i</mi></msub> <mrow><mo>(</mo><mi>x</mi><mo>)</mo></mrow></mrow></mfrac></mrow></math>
+```
+DKL(p, q) = Σi pi(x) log(pi(x) / qi(x))
+```
 
 通过 KL 散度，我们可以计算当我们用学生来近似老师的概率分布时损失了多少。这使我们能够定义知识蒸馏损失：
 
-<math alttext="upper L Subscript upper K upper D Baseline equals upper T squared upper D Subscript upper K upper L" display="block"><mrow><msub><mi>L</mi> <mrow><mi>K</mi><mi>D</mi></mrow></msub> <mo>=</mo> <msup><mi>T</mi> <mn>2</mn></msup> <msub><mi>D</mi> <mrow><mi>K</mi><mi>L</mi></mrow></msub></mrow></math>
+```
+LKD = T^2 * DKL
+```
 
-其中<math alttext="upper T squared"><msup><mi>T</mi> <mn>2</mn></msup></math>是一个归一化因子，用于考虑软标签产生的梯度大小按<math alttext="1 slash upper T squared"><mrow><mn>1</mn> <mo>/</mo> <msup><mi>T</mi> <mn>2</mn></msup></mrow></math>缩放的事实。对于分类任务，学生的损失是蒸馏损失和地面真实标签的交叉熵损失<math alttext="upper L Subscript upper C upper E"><msub><mi>L</mi> <mrow><mi>C</mi><mi>E</mi></mrow></msub></math>的加权平均：
+其中`T^2`是一个归一化因子，用于考虑软标签产生的梯度大小按`1/T^2`缩放的事实。对于分类任务，学生的损失是蒸馏损失和地面真实标签的交叉熵损失`LCE`的加权平均：
 
-<math alttext="upper L Subscript normal s normal t normal u normal d normal e normal n normal t Baseline equals alpha upper L Subscript upper C upper E Baseline plus left-parenthesis 1 minus alpha right-parenthesis upper L Subscript upper K upper D" display="block"><mrow><msub><mi>L</mi> <mi>student</mi></msub> <mo>=</mo> <mi>α</mi> <msub><mi>L</mi> <mrow><mi>C</mi><mi>E</mi></mrow></msub> <mo>+</mo> <mrow><mo>(</mo> <mn>1</mn> <mo>-</mo> <mi>α</mi> <mo>)</mo></mrow> <msub><mi>L</mi> <mrow><mi>K</mi><mi>D</mi></mrow></msub></mrow></math>
+```
+Lstudent = α * LCE + (1 - α) * LKD
+```
 
-其中<math alttext="alpha"><mi>α</mi></math>是一个控制每个损失相对强度的超参数。整个过程的图表如图 8-4 所示；在推断时，温度被设置为 1，以恢复标准的 softmax 概率。
+其中`α`是一个控制每个损失相对强度的超参数。整个过程的图表如图 8-4 所示；在推断时，温度被设置为 1，以恢复标准的 softmax 概率。
 
 ![知识蒸馏](img/nlpt_0804.png)
 
@@ -311,20 +326,20 @@ Accuracy on test set - 0.867
 
 ## 预训练的知识蒸馏
 
-知识蒸馏也可以在预训练期间使用，以创建一个通用的学生模型，随后可以在下游任务上进行精细调整。在这种情况下，教师是一个预训练的语言模型，如 BERT，它将其关于掩码语言建模的知识转移到学生身上。例如，在 DistilBERT 论文中，⁸掩码语言建模损失<math alttext="upper L Subscript m l m"><msub><mi>L</mi> <mrow><mi>m</mi><mi>l</mi><mi>m</mi></mrow></msub></math>被知识蒸馏的一个项和余弦嵌入损失<math alttext="upper L Subscript c o s Baseline equals 1 minus cosine left-parenthesis h Subscript s Baseline comma h Subscript t Baseline right-parenthesis"><mrow><msub><mi>L</mi> <mrow><mi>c</mi><mi>o</mi><mi>s</mi></mrow></msub> <mo>=</mo> <mn>1</mn> <mo>-</mo> <mo form="prefix">cos</mo> <mrow><mo>(</mo> <msub><mi>h</mi> <mi>s</mi></msub> <mo>,</mo> <msub><mi>h</mi> <mi>t</mi></msub> <mo>)</mo></mrow></mrow></math>来对齐教师和学生之间的隐藏状态向量的方向：
+知识蒸馏也可以在预训练期间使用，以创建一个通用的学生模型，随后可以在下游任务上进行精细调整。在这种情况下，教师是一个预训练的语言模型，如 BERT，它将其关于掩码语言建模的知识转移到学生身上。例如，在 DistilBERT 论文中，⁸掩码语言建模损失`Lmlm`被知识蒸馏的一个项和余弦嵌入损失`Lcos = 1 - cos(hs, ht)`来对齐教师和学生之间的隐藏状态向量的方向：
 
-<math alttext="upper L Subscript normal upper D normal i normal s normal t normal i normal l normal upper B normal upper E normal upper R normal upper T Baseline equals alpha upper L Subscript m l m Baseline plus beta upper L Subscript upper K upper D Baseline plus gamma upper L Subscript c o s" display="block"><mrow><msub><mi>L</mi> <mi>DistilBERT</mi></msub> <mo>=</mo> <mi>α</mi> <msub><mi>L</mi> <mrow><mi>m</mi><mi>l</mi><mi>m</mi></mrow></msub> <mo>+</mo> <mi>β</mi> <msub><mi>L</mi> <mrow><mi>K</mi><mi>D</mi></mrow></msub> <mo>+</mo> <mi>γ</mi> <msub><mi>L</mi> <mrow><mi>c</mi><mi>o</mi><mi>s</mi></mrow></msub></mrow></math>
 
-由于我们已经有了一个经过精细调整的 BERT-base 模型，让我们看看如何使用知识蒸馏来对一个更小更快的模型进行精细调整。为了做到这一点，我们需要一种方法来将交叉熵损失与<math alttext="upper L Subscript upper K upper D"><msub><mi>L</mi> <mrow><mi>K</mi><mi>D</mi></mrow></msub></math>项相结合。幸运的是，我们可以通过创建自己的训练器来实现这一点！
+
+`L_DistilBERT = αL_mlm + βL_KD + γL_cos`
+
+由于我们已经有了一个经过精细调整的 BERT-base 模型，让我们看看如何使用知识蒸馏来对一个更小更快的模型进行精细调整。为了做到这一点，我们需要一种方法来将交叉熵损失与`L_KD`项相结合。幸运的是，我们可以通过创建自己的训练器来实现这一点！
 
 ## 创建知识蒸馏训练器
 
 要实现知识蒸馏，我们需要向`Trainer`基类添加一些内容：
 
-+   新的超参数<math alttext="alpha"><mi>α</mi></math>和*T*，它们控制蒸馏损失的相对权重以及标签的概率分布应该被平滑的程度
-
++   新的超参数`α`和`T`，它们控制蒸馏损失的相对权重以及标签的概率分布应该被平滑的程度
 +   经过精细调整的教师模型，我们的情况下是 BERT-base
-
 +   结合交叉熵损失和知识蒸馏损失的新损失函数
 
 添加新的超参数非常简单，因为我们只需要对`TrainingArguments`进行子类化，并将它们包含为新的属性：
@@ -339,7 +354,7 @@ class DistillationTrainingArguments(TrainingArguments):
         self.temperature = temperature
 ```
 
-对于训练器本身，我们需要一个新的损失函数。实现这一点的方法是通过对`Trainer`进行子类化，并覆盖`compute_loss()`方法，以包括知识蒸馏损失项<math alttext="upper L Subscript upper K upper D"><msub><mi>L</mi> <mrow><mi>K</mi><mi>D</mi></mrow></msub></math>：
+对于训练器本身，我们需要一个新的损失函数。实现这一点的方法是通过对`Trainer`进行子类化，并覆盖`compute_loss()`方法，以包括知识蒸馏损失项`L_KD`：
 
 ```py
 import torch.nn as nn
@@ -374,7 +389,7 @@ class DistillationTrainer(Trainer):
 
 ###### 提示
 
-您还可以使用![nlpt_pin01](img/nlpt_pin01.png) Transformers 库的 Keras API 进行知识蒸馏。为此，您需要实现一个自定义的`Distiller`类，覆盖`tf.keras.Model()`的`train_step()`、`test_step()`和`compile()`方法。请参阅[Keras 文档](https://oreil.ly/6qp0F)了解如何实现。
+您还可以使用 Transformers 库的 Keras API 进行知识蒸馏。为此，您需要实现一个自定义的`Distiller`类，覆盖`tf.keras.Model()`的`train_step()`、`test_step()`和`compile()`方法。请参阅[Keras 文档](https://oreil.ly/6qp0F)了解如何实现。
 
 ## 选择一个好的学生初始化
 
@@ -416,7 +431,7 @@ def compute_metrics(pred):
 
 在这个函数中，序列建模头部的预测以 logits 的形式出现，因此我们使用`np.argmax()`函数找到最有信心的类别预测，并将其与地面真相标签进行比较。
 
-接下来我们需要定义训练参数。为了热身，我们将设置<math alttext="alpha equals 1"><mrow><mi>α</mi> <mo>=</mo> <mn>1</mn></mrow></math>，以查看 DistilBERT 在没有来自教师的任何信号的情况下的表现。¹¹然后我们将我们的微调模型推送到一个名为`distilbert-base-uncased-finetuned-clinc`的新存储库，所以我们只需要在`DistillationTrainingArguments`的`output_dir`参数中指定它：
+接下来我们需要定义训练参数。为了热身，我们将设置`α = 1`，以查看 DistilBERT 在没有来自教师的任何信号的情况下的表现。¹¹然后我们将我们的微调模型推送到一个名为`distilbert-base-uncased-finetuned-clinc`的新存储库，所以我们只需要在`DistillationTrainingArguments`的`output_dir`参数中指定它：
 
 ```py
 batch_size = 48
@@ -483,7 +498,6 @@ distilbert_trainer.train()
 
 | Epoch | Training Loss | Validation Loss | Accuracy |
 | --- | --- | --- | --- |
-| --- | --- | --- | --- |
 | 1 | 4.2923 | 3.289337 | 0.742258 |
 | 2 | 2.6307 | 1.883680 | 0.828065 |
 | 3 | 1.5483 | 1.158315 | 0.896774 |
@@ -504,6 +518,8 @@ pipe = pipeline("text-classification", model=finetuned_ckpt)
 ```
 
 然后我们可以将这个流水线传递给我们的`PerformanceBenchmark`类，以计算与这个模型相关的指标：
+
+
 
 ```py
 optim_type = "DistilBERT"
@@ -553,11 +569,11 @@ plot_metrics(perf_metrics, optim_type)
 
 ![](img/nlpt_08in01.png)
 
-从图中我们可以看到，通过使用一个更小的模型，我们成功地显著降低了平均延迟。而这一切只需牺牲了略微超过 1%的准确性！让我们看看是否可以通过包括教师的蒸馏损失并找到<math alttext="alpha"><mi>α</mi></math>和*T*的良好值来缩小最后的差距。
+从图中我们可以看到，通过使用一个更小的模型，我们成功地显著降低了平均延迟。而这一切只需牺牲了略微超过 1%的准确性！让我们看看是否可以通过包括教师的蒸馏损失并找到<math alttext="alpha"><mi>α</mi></math>和`T`的良好值来缩小最后的差距。
 
 ## 使用 Optuna 找到良好的超参数
 
-为了找到<math alttext="alpha"><mi>α</mi></math>和*T*的良好值，我们可以在 2D 参数空间上进行网格搜索。但一个更好的选择是使用*Optuna*，¹²这是一个专为这种任务设计的优化框架。Optuna 通过多次*trials*优化目标函数来制定搜索问题。例如，假设我们希望最小化 Rosenbrock 的[“香蕉函数”](https://oreil.ly/hPk8h)：
+为了找到<math alttext="alpha"><mi>α</mi></math>和`T`的良好值，我们可以在 2D 参数空间上进行网格搜索。但一个更好的选择是使用`Optuna`，¹²这是一个专为这种任务设计的优化框架。`Optuna`通过多次`trials`优化目标函数来制定搜索问题。例如，假设我们希望最小化 Rosenbrock 的[“香蕉函数”](https://oreil.ly/hPk8h)：
 
 <math alttext="f left-parenthesis x comma y right-parenthesis equals left-parenthesis 1 minus x right-parenthesis squared plus 100 left-parenthesis y minus x squared right-parenthesis squared" display="block"><mrow><mi>f</mi> <mrow><mo>(</mo> <mi>x</mi> <mo>,</mo> <mi>y</mi> <mo>)</mo></mrow> <mo>=</mo> <msup><mrow><mo>(</mo><mn>1</mn><mo>-</mo><mi>x</mi><mo>)</mo></mrow> <mn>2</mn></msup> <mo>+</mo> <mn>100</mn> <msup><mrow><mo>(</mo><mi>y</mi><mo>-</mo><msup><mi>x</mi> <mn>2</mn></msup> <mo>)</mo></mrow> <mn>2</mn></msup></mrow></math>
 
@@ -567,7 +583,7 @@ plot_metrics(perf_metrics, optim_type)
 
 ###### 图 8-5。两个变量的 Rosenbrock 函数的绘图
 
-在 Optuna 中，我们可以通过定义一个`objective()`函数来找到<math alttext="f left-parenthesis x comma y right-parenthesis"><mrow><mi>f</mi> <mo>(</mo> <mi>x</mi> <mo>,</mo> <mi>y</mi> <mo>)</mo></mrow></math>的最小值，该函数返回<math alttext="f left-parenthesis x comma y right-parenthesis"><mrow><mi>f</mi> <mo>(</mo> <mi>x</mi> <mo>,</mo> <mi>y</mi> <mo>)</mo></mrow></math>的值：
+在`Optuna`中，我们可以通过定义一个`objective()`函数来找到<math alttext="f left-parenthesis x comma y right-parenthesis"><mrow><mi>f</mi> <mo>(</mo> <mi>x</mi> <mo>,</mo> <mi>y</mi> <mo>)</mo></mrow></math>的最小值，该函数返回<math alttext="f left-parenthesis x comma y right-parenthesis"><mrow><mi>f</mi> <mo>(</mo> <mi>x</mi> <mo>,</mo> <mi>y</mi> <mo>)</mo></mrow></math>的值：
 
 ```py
 def objective(trial):
@@ -576,7 +592,7 @@ def objective(trial):
     return (1 - x) ** 2 + 100 * (y - x ** 2) ** 2
 ```
 
-`trial.suggest_float`对象指定要均匀采样的参数范围；Optuna 还提供`suggest_int`和`suggest_categorical`用于整数和分类参数。Optuna 将多个试验收集为一个*study*，因此我们只需将`objective()`函数传递给`study.optimize()`来创建一个如下：
+`trial.suggest_float`对象指定要均匀采样的参数范围；`Optuna`还提供`suggest_int`和`suggest_categorical`用于整数和分类参数。`Optuna`将多个试验收集为一个`study`，因此我们只需将`objective()`函数传递给`study.optimize()`来创建一个如下：
 
 ```py
 import optuna
@@ -595,7 +611,7 @@ study.best_params
 {'x': 1.003024865971437, 'y': 1.00315167589307}
 ```
 
-通过一千次试验，Optuna 已经成功找到了* x *和* y *的值，这些值与全局最小值相当接近。要在![nlpt_pin01](img/nlpt_pin01.png) Transformers 中使用 Optuna，我们首先定义要优化的超参数空间。除了<math alttext="alpha"> <mi>α</mi> </math>和*T*之外，我们还将包括训练周期的数量如下：
+通过一千次试验，`Optuna`已经成功找到了`x`和`y`的值，这些值与全局最小值相当接近。要在![nlpt_pin01](img/nlpt_pin01.png) Transformers 中使用`Optuna`，我们首先定义要优化的超参数空间。除了<math alttext="alpha"> <mi>α</mi> </math>和`T`之外，我们还将包括训练周期的数量如下：
 
 ```py
 def hp_space(trial):
@@ -604,7 +620,7 @@ def hp_space(trial):
         "temperature": trial.suggest_int("temperature", 2, 20)}
 ```
 
-使用`Trainer`进行超参数搜索非常简单；我们只需要指定要运行的试验次数和要优化的方向。因为我们希望获得最佳准确度，所以在训练器的`hyper​para⁠meter_​search()`方法中指定`direction="maximize"`，并按如下方式传递超参数搜索空间：
+使用`Trainer`进行超参数搜索非常简单；我们只需要指定要运行的试验次数和要优化的方向。因为我们希望获得最佳准确度，所以在训练器的`hyperparameter_search()`方法中指定`direction="maximize"`，并按如下方式传递超参数搜索空间：
 
 ```py
 best_run = distilbert_trainer.hyperparameter_search(
@@ -643,7 +659,6 @@ distil_trainer.train();
 ```
 
 | Epoch | Training Loss | Validation Loss | Accuracy |
-| --- | --- | --- | --- |
 | --- | --- | --- | --- |
 | 1 | 0.9031 | 0.574540 | 0.736452 |
 | 2 | 0.4481 | 0.285621 | 0.874839 |
@@ -694,7 +709,11 @@ plot_metrics(perf_metrics, optim_type)
 
 我们现在已经看到，通过知识蒸馏，我们可以通过将信息从教师传递到更小的学生来减少运行推断的计算和内存成本。量化采用了不同的方法；它不是减少计算的数量，而是通过使用低精度数据类型（如 8 位整数（INT8））代替通常的 32 位浮点数（FP32）来使它们更加高效。减少位数意味着结果模型需要更少的内存存储，并且像矩阵乘法这样的操作可以通过整数运算更快地执行。值得注意的是，这些性能增益可以在几乎没有准确性损失的情况下实现！
 
-量化背后的基本思想是，我们可以通过将张量中的浮点值*f*的范围[ <math alttext="f Subscript normal m normal a normal x Baseline comma f Subscript normal m normal i normal n Baseline"><mrow><msub><mi>f</mi> <mi>max</mi></msub> <mo>,</mo> <msub><mi>f</mi> <mi>min</mi></msub></mrow></math> ]映射到一个较小的范围[ <math alttext="q Subscript normal m normal a normal x Baseline comma q Subscript normal m normal i normal n Baseline"><mrow><msub><mi>q</mi> <mi>max</mi></msub> <mo>,</mo> <msub><mi>q</mi> <mi>min</mi></msub></mrow></math> ]中的固定点数<math alttext="q"><mi>q</mi></math>，并线性分布所有值。从数学上讲，这种映射由以下方程描述：
+量化背后的基本思想是，我们可以通过将张量中的浮点值`f`的范围[ <math alttext="f Subscript normal m normal a normal x Baseline comma f Subscript normal m normal i normal n Baseline"><mrow><msub><mi>f</mi> <mi>max</mi></msub> <mo>,</mo> <msub><mi>f</mi> <mi>min</mi></msub></mrow></math> ]映射到一个较小的范围[ <math alttext="q Subscript normal m normal a normal x Baseline comma q Subscript normal m normal i normal n Baseline"><mrow><msub><mi>q</mi> <mi>max</mi></msub> <mo>,</mo> <msub><mi>q</mi> <mi>min</mi></msub></mrow></math> ]中的固定点数<math alttext="q"><mi>q</mi></math>，并线性分布所有值。从数学上讲，这种映射由以下方程描述：
+
+
+
+# 量化简介
 
 <math alttext="f equals left-parenthesis StartFraction f Subscript normal m normal a normal x Baseline minus f Subscript normal m normal i normal n Baseline Over q Subscript normal m normal a normal x Baseline minus q Subscript normal m normal i normal n Baseline EndFraction right-parenthesis left-parenthesis q minus upper Z right-parenthesis equals upper S left-parenthesis q minus upper Z right-parenthesis" display="block"><mrow><mi>f</mi> <mo>=</mo> <mfenced open="(" close=")"><mfrac><mrow><msub><mi>f</mi> <mi>max</mi></msub> <mo>-</mo><msub><mi>f</mi> <mi>min</mi></msub></mrow> <mrow><msub><mi>q</mi> <mi>max</mi></msub> <mo>-</mo><msub><mi>q</mi> <mi>min</mi></msub></mrow></mfrac></mfenced> <mrow><mo>(</mo> <mi>q</mi> <mo>-</mo> <mi>Z</mi> <mo>)</mo></mrow> <mo>=</mo> <mi>S</mi> <mrow><mo>(</mo> <mi>q</mi> <mo>-</mo> <mi>Z</mi> <mo>)</mo></mrow></mrow></math>
 
@@ -818,15 +837,15 @@ sys.getsizeof(weights.storage()) / sys.getsizeof(quantized_weights.storage())
 
 那么量化有什么问题？改变模型中所有计算的精度会在模型的计算图中的每个点引入小的扰动，这可能会影响模型的性能。量化模型有几种方法，各有利弊。对于深度神经网络，通常有三种主要的量化方法：
 
-动态量化
+**动态量化**
 
 使用动态量化时，在训练期间不会发生任何变化，调整只会在推断期间进行。与我们将讨论的所有量化方法一样，模型的权重在推断时间之前被转换为 INT8。除了权重，模型的激活也被量化。这种方法是动态的，因为量化是即时发生的。这意味着所有矩阵乘法都可以使用高度优化的 INT8 函数进行计算。在这里讨论的所有量化方法中，动态量化是最简单的方法。然而，使用动态量化时，激活以浮点格式写入和读取到内存中。整数和浮点之间的转换可能成为性能瓶颈。
 
-静态量化
+**静态量化**
 
 我们可以避免在推断期间将激活量化为浮点数，而是预先计算量化方案。静态量化通过观察数据的代表性样本上的激活模式来实现这一点。理想的量化方案被计算然后保存。这使我们能够跳过 INT8 和 FP32 值之间的转换，并加快计算速度。然而，这需要访问一个良好的数据样本，并且在管道中引入了一个额外的步骤，因为现在我们需要在执行推断之前训练和确定量化方案。静态量化没有解决的一个方面是：训练和推断期间精度之间的差异，这导致模型指标（例如准确性）下降。
 
-量化感知训练
+**量化感知训练**
 
 通过“伪”量化 FP32 值来有效模拟训练期间的量化效果。在训练期间，不使用 INT8 值，而是将 FP32 值四舍五入以模拟量化效果。这在前向和后向传递过程中都会进行，可以改善模型指标的性能，超过静态和动态量化。
 
@@ -847,7 +866,7 @@ model_quantized = quantize_dynamic(model, {nn.Linear}, dtype=torch.qint8)
 
 在这里，我们将完整精度模型传递给`quantize_dynamic()`，并指定我们要量化的 PyTorch 层类的集合。`dtype`参数指定目标精度，可以是`fp16`或`qint8`。一个好的做法是选择您的评估指标所能容忍的最低精度。在本章中，我们将使用 INT8，很快就会看到它对我们模型的准确性几乎没有影响。
 
-# 对我们的量化模型进行基准测试
+## 对我们的量化模型进行基准测试
 
 我们的模型现在已经量化，让我们通过基准测试并可视化结果：
 
@@ -873,7 +892,7 @@ plot_metrics(perf_metrics, optim_type)
 
 不错，量化模型几乎是我们精简模型大小的一半，甚至还略微提高了准确性！让我们看看是否可以通过一个强大的框架 ONNX Runtime 将我们的优化推向极限。
 
-# 使用 ONNX 和 ONNX Runtime 优化推断
+## 使用 ONNX 和 ONNX Runtime 优化推断
 
 [ONNX](https://onnx.ai)是一个开放标准，定义了一组通用的操作符和一种通用的文件格式，用于在各种框架中表示深度学习模型，包括 PyTorch 和 TensorFlow。¹⁴当模型导出为 ONNX 格式时，这些操作符用于构建一个计算图（通常称为*中间表示*），表示数据通过神经网络的流动。例如，BERT-base 的这样一个图示例显示在图 8-8 中，其中每个节点接收一些输入，应用操作如`Add`或`Squeeze`，然后将输出馈送到下一组节点。
 
@@ -889,15 +908,15 @@ plot_metrics(perf_metrics, optim_type)
 
 ###### 图 8-9\. ONNX 和 ONNX Runtime 生态系统的架构（由 ONNX Runtime 团队提供）
 
-要看到 ORT 的运行情况，我们需要做的第一件事是将我们的精炼模型转换为 ONNX 格式。![nlpt_pin01](img/nlpt_pin01.png) Transformers 库有一个内置函数叫做`con⁠vert_graph_to_onnx.convert()`，它简化了这个过程，采取以下步骤：
+要看到 ORT 的运行情况，我们需要做的第一件事就是将我们的精炼模型转换为 ONNX 格式。![nlpt_pin01](img/nlpt_pin01.png) Transformers 库有一个内置函数叫做`con⁠vert_graph_to_onnx.convert()`，它简化了这个过程，采取以下步骤：
 
 1.  将模型初始化为`Pipeline`。
 
-1.  通过管道运行占位符输入，以便 ONNX 可以记录计算图。
+2.  通过管道运行占位符输入，以便 ONNX 可以记录计算图。
 
-1.  定义动态轴以处理动态序列长度。
+3.  定义动态轴以处理动态序列长度。
 
-1.  保存具有网络参数的图。
+4.  保存具有网络参数的图。
 
 要使用这个函数，我们首先需要为 ONNX 设置一些[OpenMP](https://openmp.org)环境变量：
 
@@ -911,7 +930,9 @@ os.environ["OMP_WAIT_POLICY"] = "ACTIVE"
 
 OpenMP 是一个为开发高度并行化应用程序而设计的 API。`OMP_NUM_THREADS`环境变量设置并行计算中使用的线程数，在 ONNX Runtime 中，`OMP_WAIT_POLICY=ACTIVE`指定等待线程应处于活动状态（即使用 CPU 处理器周期）。
 
-接下来，让我们将我们的精炼模型转换为 ONNX 格式。在这里，我们需要指定参数`pipeline_name="text-classification"`，因为`convert()`在转换过程中将模型包装在一个![nlpt_pin01](img/nlpt_pin01.png) Transformers `pipeline()`函数中。除了`model_ckpt`之外，我们还传递了 tokenizer 来初始化管道：
+
+
+接下来，让我们将我们的精炼模型转换为 ONNX 格式。在这里，我们需要指定参数`pipeline_name="text-classification"`，因为`convert()`在转换过程中将模型包装在一个 Transformers `pipeline()`函数中。除了`model_ckpt`之外，我们还传递了 tokenizer 来初始化管道：
 
 ```py
 from transformers.convert_graph_to_onnx import convert
@@ -1007,7 +1028,7 @@ pipe(query)
 [{'label': 'car_rental', 'score': 0.7848334}]
 ```
 
-很好，我们的流水线按预期工作。下一步是为 ONNX 模型创建性能基准测试。在这里，我们可以借鉴我们与`Per⁠formanceBenchmark`类一起完成的工作，只需重写`compute_size()`方法，保留`compute_accuracy()`和`time_pipeline()`方法。我们需要重写`compute_size()`方法的原因是，我们不能依赖`state_dict`和`torch.save()`来测量模型的大小，因为`onnx_model`在技术上是一个 ONNX`InferenceSession`对象，无法访问 PyTorch 的`nn.Module`的属性。无论如何，结果逻辑很简单，可以实现如下：
+很好，我们的流水线按预期工作。下一步是为 ONNX 模型创建性能基准测试。在这里，我们可以借鉴我们与`PerformanceBenchmark`类一起完成的工作，只需重写`compute_size()`方法，保留`compute_accuracy()`和`time_pipeline()`方法。我们需要重写`compute_size()`方法的原因是，我们不能依赖`state_dict`和`torch.save()`来测量模型的大小，因为`onnx_model`在技术上是一个 ONNX`InferenceSession`对象，无法访问 PyTorch 的`nn.Module`的属性。无论如何，结果逻辑很简单，可以实现如下：
 
 ```py
 class OnnxPerformanceBenchmark(PerformanceBenchmark):
@@ -1044,7 +1065,7 @@ plot_metrics(perf_metrics, optim_type)
 
 值得注意的是，转换为 ONNX 格式并使用 ONNX Runtime 为我们的蒸馏模型（即图中的“蒸馏”圈）提供了延迟增益！让我们看看是否可以通过添加量化来挤出更多性能。
 
-与 PyTorch 类似，ORT 提供了三种模型量化的方式：动态量化、静态量化和量化感知训练。与 PyTorch 一样，我们将对我们的蒸馏模型应用动态量化。在 ORT 中，量化是通过`quan⁠tize_dynamic()`函数应用的，该函数需要一个 ONNX 模型的路径进行量化，一个目标路径来保存量化后的模型，以及要将权重减少到的数据类型：
+与 PyTorch 类似，ORT 提供了三种模型量化的方式：动态量化、静态量化和量化感知训练。与 PyTorch 一样，我们将对我们的蒸馏模型应用动态量化。在 ORT 中，量化是通过`quantize_dynamic()`函数应用的，该函数需要一个 ONNX 模型的路径进行量化，一个目标路径来保存量化后的模型，以及要将权重减少到的数据类型：
 
 ```py
 from onnxruntime.quantization import quantize_dynamic, QuantType
@@ -1095,13 +1116,13 @@ plot_metrics(perf_metrics, optim_type)
 
 ## 权重修剪方法
 
-在数学上，大多数权重修剪方法的工作方式是计算一个*重要性分数*矩阵<math alttext="bold upper S"><mi>𝐒</mi></math>，然后按重要性选择前<math alttext="k"><mi>k</mi></math>百分比的权重：
+在数学上，大多数权重修剪方法的工作方式是计算一个*重要性分数*矩阵**S**，然后按重要性选择前*k*百分比的权重：
 
-<math alttext="normal upper T normal o normal p Subscript k Baseline left-parenthesis bold upper S right-parenthesis Subscript i j Baseline equals StartLayout Enlarged left-brace 1st Row 1st Column 1 2nd Column Blank 3rd Column normal i normal f upper S Subscript i j Baseline normal i normal n normal t normal o normal p k percent-sign 2nd Row 1st Column 0 2nd Column Blank 3rd Column normal o normal t normal h normal e normal r normal w normal i normal s normal e EndLayout" display="block"><mrow><msub><mi>Top</mi> <mi>k</mi></msub> <msub><mrow><mo>(</mo><mi>𝐒</mi><mo>)</mo></mrow> <mrow><mi>i</mi><mi>j</mi></mrow></msub> <mo>=</mo> <mfenced separators="" open="{" close=""><mtable><mtr><mtd columnalign="left"><mrow><mn>1</mn></mrow></mtd> <mtd><mrow><mi>if</mi> <msub><mi>S</mi> <mrow><mi>i</mi><mi>j</mi></mrow></msub> <mi>in</mi> <mi>top</mi> <mi>k</mi> <mo>%</mo></mrow></mtd></mtr> <mtr><mtd columnalign="left"><mrow><mn>0</mn></mrow></mtd> <mtd><mi>otherwise</mi></mtd></mtr></mtable></mfenced></mrow></math>
+**Top_k(S)_ij = { 1 if S_ij in top k%; 0 otherwise }**
 
-实际上，<math alttext="k"><mi>k</mi></math> 作为一个新的超参数，用来控制模型中稀疏性的程度，即权重为零值的比例。较低的 <math alttext="k"><mi>k</mi></math> 值对应着更稀疏的矩阵。从这些分数中，我们可以定义一个*掩码矩阵* <math alttext="bold upper M"><mi>𝐌</mi></math>，在前向传播过程中，用一些输入 <math alttext="x Subscript i"><msub><mi>x</mi> <mi>i</mi></msub></math> 掩盖权重 <math alttext="upper W Subscript i j"><msub><mi>W</mi> <mrow><mi>i</mi><mi>j</mi></mrow></msub></math>，从而有效地创建一个稀疏的激活网络 <math alttext="a Subscript i"><msub><mi>a</mi> <mi>i</mi></msub></math>：
+实际上，*k* 作为一个新的超参数，用来控制模型中稀疏性的程度，即权重为零值的比例。较低的 *k* 值对应着更稀疏的矩阵。从这些分数中，我们可以定义一个*掩码矩阵* **M**，在前向传播过程中，用一些输入 *x_i* 掩盖权重 *W_ij*，从而有效地创建一个稀疏的激活网络 *a_i*：
 
-<math alttext="a Subscript i Baseline equals sigma-summation Underscript k Endscripts upper W Subscript i k Baseline upper M Subscript i k Baseline x Subscript k" display="block"><mrow><msub><mi>a</mi> <mi>i</mi></msub> <mo>=</mo> <munder><mo>∑</mo> <mi>k</mi></munder> <msub><mi>W</mi> <mrow><mi>i</mi><mi>k</mi></mrow></msub> <msub><mi>M</mi> <mrow><mi>i</mi><mi>k</mi></mrow></msub> <msub><mi>x</mi> <mi>k</mi></msub></mrow></math>
+**a_i = Σ_k W_ik M_ik x_k**
 
 正如“最佳脑外科医生”论文中所讨论的那样，每种剪枝方法的核心都是一组需要考虑的问题：
 
@@ -1111,17 +1132,21 @@ plot_metrics(perf_metrics, optim_type)
 
 +   如何以计算有效的方式进行网络剪枝？
 
-这些问题的答案告诉了我们如何计算得分矩阵 <math alttext="bold upper S"><mi>𝐒</mi></math>，因此让我们首先看一下最早和最流行的剪枝方法之一：幅度剪枝。
+这些问题的答案告诉了我们如何计算得分矩阵 **S**，因此让我们首先看一下最早和最流行的剪枝方法之一：幅度剪枝。
 
 ### 幅度剪枝
 
-顾名思义，幅度剪枝根据权重的幅度计算得分 <math alttext="bold upper S equals left-parenthesis bar upper W Subscript i j Baseline bar right-parenthesis Subscript 1 less-than-or-equal-to j comma j less-than-or-equal-to n"><mrow><mi>𝐒</mi> <mo>=</mo> <msub><mfenced separators="" open="(" close=")"><mo>∣</mo> <msub><mi>W</mi> <mrow><mi>i</mi><mi>j</mi></mrow></msub> <mo>∣</mo></mfenced> <mrow><mn>1</mn><mo>≤</mo><mi>j</mi><mo>,</mo><mi>j</mi><mo>≤</mo><mi>n</mi></mrow></msub></mrow></math>，然后从 <math alttext="bold upper M equals normal upper T normal o normal p Subscript k Baseline left-parenthesis bold upper S right-parenthesis"><mrow><mi>𝐌</mi> <mo>=</mo> <msub><mi>Top</mi> <mi>k</mi></msub> <mrow><mo>(</mo> <mi>𝐒</mi> <mo>)</mo></mrow></mrow></math> 中得出掩码。在文献中，通常通过迭代的方式应用幅度剪枝，首先训练模型学习哪些连接是重要的，然后剪枝最不重要的权重。稀疏模型然后被重新训练，并且重复这个过程，直到达到期望的稀疏度。
 
-这种方法的一个缺点是计算需求量大：在每一步修剪中，我们都需要将模型训练到收敛。因此，通常最好逐渐增加初始稀疏度<math alttext="s Subscript i"><msub><mi>s</mi> <mi>i</mi></msub></math>（通常为零）到一定步数<math alttext="upper N"><mi>N</mi></math>后的最终值<math alttext="s Subscript f"><msub><mi>s</mi> <mi>f</mi></msub></math>。¹⁹
 
-<math alttext="s Subscript t Baseline equals s Subscript f Baseline plus left-parenthesis s Subscript i Baseline minus s Subscript f Baseline right-parenthesis left-parenthesis 1 minus StartFraction t minus t 0 Over upper N normal upper Delta t EndFraction right-parenthesis cubed normal f normal o normal r t element-of StartSet t 0 comma t 0 plus normal upper Delta t comma ellipsis comma t 0 plus upper N normal upper Delta t EndSet" display="block"><mrow><msub><mi>s</mi> <mi>t</mi></msub> <mo>=</mo> <msub><mi>s</mi> <mi>f</mi></msub> <mo>+</mo> <mrow><mo>(</mo> <msub><mi>s</mi> <mi>i</mi></msub> <mo>-</mo> <msub><mi>s</mi> <mi>f</mi></msub> <mo>)</mo></mrow> <msup><mfenced separators="" open="(" close=")"><mn>1</mn> <mo>-</mo> <mfrac><mrow><mi>t</mi><mo>-</mo><msub><mi>t</mi> <mn>0</mn></msub></mrow> <mrow><mi>N</mi><mi>Δ</mi><mi>t</mi></mrow></mfrac></mfenced> <mn>3</mn></msup> <mi>for</mi> <mi>t</mi> <mo>∈</mo> <mrow><mo>{</mo> <msub><mi>t</mi> <mn>0</mn></msub> <mo>,</mo> <msub><mi>t</mi> <mn>0</mn></msub> <mo>+</mo> <mi>Δ</mi> <mi>t</mi> <mo>,</mo> <mo>...</mo> <mo>,</mo> <msub><mi>t</mi> <mn>0</mn></msub> <mo>+</mo> <mi>N</mi> <mi>Δ</mi> <mi>t</mi> <mo>}</mo></mrow></mrow></math>
+## 幅度剪枝
 
-这里的想法是每隔<math alttext="normal upper Delta t"><mrow><mi>Δ</mi> <mi>t</mi></mrow></math>步更新一次二进制掩码<math alttext="bold upper M"><mi>𝐌</mi></math>，以允许被屏蔽的权重在训练过程中重新激活，并从修剪过程中可能导致的任何精度损失中恢复过来。如图 8-11 所示，立方因子意味着权重修剪的速率在早期阶段最高（当冗余权重数量较大时），并逐渐减小。
+顾名思义，幅度剪枝根据权重的幅度计算得分 **S** = (|**W**ᵢⱼ|)₁≤ⱼ,ⱼ≤ₙ，然后从 **M** = Topₖ(**S**) 中得出掩码。在文献中，通常通过迭代的方式应用幅度剪枝，首先训练模型学习哪些连接是重要的，然后剪枝最不重要的权重。稀疏模型然后被重新训练，并且重复这个过程，直到达到期望的稀疏度。
+
+这种方法的一个缺点是计算需求量大：在每一步修剪中，我们都需要将模型训练到收敛。因此，通常最好逐渐增加初始稀疏度 sᵢ（通常为零）到一定步数 N 后的最终值 s_f。¹⁹
+
+sₜ = s_f + (sᵢ - s_f)(1 - (t - t₀)/(NΔt))³ for t ∈ {t₀, t₀ + Δt, ..., t₀ + NΔt}
+
+这里的想法是每隔 Δt 步更新一次二进制掩码 **M**，以允许被屏蔽的权重在训练过程中重新激活，并从修剪过程中可能导致的任何精度损失中恢复过来。如图 8-11 所示，立方因子意味着权重修剪的速率在早期阶段最高（当冗余权重数量较大时），并逐渐减小。
 
 ![稀疏调度器](img/nlpt_0811.png)
 
@@ -1131,9 +1156,9 @@ plot_metrics(perf_metrics, optim_type)
 
 ### 移动修剪
 
-移动修剪背后的基本思想是*逐渐*在微调过程中移除权重，使模型逐渐变得*更稀疏*。关键的新颖之处在于，在微调过程中，权重和分数都是可学习的。因此，与幅度修剪直接从权重派生（如幅度修剪）不同，移动修剪中的分数是任意的，并且通过梯度下降学习，就像任何其他神经网络参数一样。这意味着在反向传播中，我们还要跟踪损失<math alttext="upper L"><mi>L</mi></math>相对于分数<math alttext="upper S Subscript i j"><msub><mi>S</mi> <mrow><mi>i</mi><mi>j</mi></mrow></msub></math>的梯度。
+移动修剪背后的基本思想是*逐渐*在微调过程中移除权重，使模型逐渐变得*更稀疏*。关键的新颖之处在于，在微调过程中，权重和分数都是可学习的。因此，与幅度修剪直接从权重派生（如幅度修剪）不同，移动修剪中的分数是任意的，并且通过梯度下降学习，就像任何其他神经网络参数一样。这意味着在反向传播中，我们还要跟踪损失 L 相对于分数 Sᵢⱼ 的梯度。
 
-一旦学习了分数，就很容易使用<math alttext="bold upper M equals normal upper T normal o normal p Subscript k Baseline left-parenthesis bold upper S right-parenthesis"><mrow><mi>𝐌</mi> <mo>=</mo> <msub><mi>Top</mi> <mi>k</mi></msub> <mrow><mo>(</mo> <mi>𝐒</mi> <mo>)</mo></mrow></mrow></math>生成二进制掩码。²¹
+一旦学习了分数，就很容易使用 **M** = Topₖ(**S**) 生成二进制掩码。²¹
 
 运动剪枝背后的直觉是，“移动”离零最远的权重是最重要的。换句话说，正权重在精细调整期间增加（负权重相反），这相当于说分数随着权重远离零而增加。如图 8-12 所示，这种行为与幅值剪枝不同，后者选择离零最远的权重作为最重要的权重。
 
@@ -1149,7 +1174,7 @@ plot_metrics(perf_metrics, optim_type)
 
 ###### 图 8-13。剩余权重的分布，用于幅值剪枝（MaP）和运动剪枝（MvP）
 
-# 结论
+## 结论
 
 我们已经看到，优化 Transformer 以部署到生产环境中涉及沿两个维度的压缩：延迟和内存占用。从经过精细调整的模型开始，我们应用了蒸馏、量化和 ORT 优化，显著减少了这两者。特别是，我们发现量化和 ORT 中的转换给出了最大的收益，而付出的努力最小。
 
@@ -1183,13 +1208,13 @@ plot_metrics(perf_metrics, optim_type)
 
 ¹² T. Akiba 等人，[“Optuna: A Next-Generation Hyperparameter Optimization Framework”](https://arxiv.org/abs/1907.10902)，(2019)。
 
-¹³ 仿射映射只是神经网络线性层中你熟悉的 <math alttext="y equals upper A x plus b"><mrow><mi>y</mi> <mo>=</mo> <mi>A</mi> <mi>x</mi> <mo>+</mo> <mi>b</mi></mrow></math> 映射的一个花哨的名字。
+¹³ 仿射映射只是神经网络线性层中你熟悉的 y = Ax + b 映射的一个花哨的名字。
 
 ¹⁴ 还有一个名为 ONNX-ML 的标准，专门为传统的机器学习模型（如随机森林）和 Scikit-learn 等框架设计。
 
 ¹⁵ 其他流行的加速器包括[NVIDIA 的 TensorRT](https://oreil.ly/HnNZx)和[Apache TVM](https://oreil.ly/7KUyt)。
 
-¹⁶ 融合操作涉及将一个运算符（通常是激活函数）合并到另一个运算符中，以便它们可以一起执行。例如，假设我们想将激活函数 *f* 应用于矩阵乘积 *A* × *B*。通常，乘积的结果需要写回到 GPU 存储器，然后再计算激活函数。运算符融合允许我们一步计算 <math alttext="f left-parenthesis upper A times upper B right-parenthesis"><mrow><mi>f</mi> <mo>(</mo> <mi>A</mi> <mo>×</mo> <mi>B</mi> <mo>)</mo></mrow></math>。常量折叠是指在编译时评估常量表达式，而不是在运行时。
+¹⁶ 融合操作涉及将一个运算符（通常是激活函数）合并到另一个运算符中，以便它们可以一起执行。例如，假设我们想将激活函数 *f* 应用于矩阵乘积 *A* × *B*。通常，乘积的结果需要写回到 GPU 存储器，然后再计算激活函数。运算符融合允许我们一步计算 f(A × B)。常量折叠是指在编译时评估常量表达式，而不是在运行时。
 
 ¹⁷ B. Hassibi and D. Stork，“Second Order Derivatives for Network Pruning: Optimal Brain Surgeon,” *Proceedings of the 5th International Conference on Neural Information Processing Systems* (November 1992): 164–171，[*https://papers.nips.cc/paper/1992/hash/303ed4c69846ab36c2904d3ba8573050-Abstract.html*](https://papers.nips.cc/paper/1992/hash/303ed4c69846ab36c2904d3ba8573050-Abstract.html)。
 
@@ -1199,4 +1224,4 @@ plot_metrics(perf_metrics, optim_type)
 
 ²⁰ V. Sanh, T. Wolf, and A.M. Rush，[“Movement Pruning: Adaptive Sparsity by Fine-Tuning”](https://arxiv.org/abs/2005.07683)，(2020)。
 
-²¹ 还有一种“软”版本的移动修剪，其中不是选择权重的前<math alttext="k"><mi>k</mi></math> %，而是使用全局阈值<math alttext="tau"><mi>τ</mi></math>来定义二进制掩码：<math alttext="bold upper M equals left-parenthesis bold upper S greater-than tau right-parenthesis"><mrow><mi>𝐌</mi> <mo>=</mo> <mo>(</mo> <mi>𝐒</mi> <mo>></mo> <mi>τ</mi> <mo>)</mo></mrow></math>。
+²¹ 还有一种“软”版本的移动修剪，其中不是选择权重的前 k %，而是使用全局阈值 τ 来定义二进制掩码：**M** = (**S** > τ)。

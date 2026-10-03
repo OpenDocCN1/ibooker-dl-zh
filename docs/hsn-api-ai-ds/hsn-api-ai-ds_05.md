@@ -1,3 +1,5 @@
+
+
 # 第四章\. 开发 FastAPI 代码
 
 在第三章中，你创建了数据库和访问数据库的 Python 代码。在本章中，你将在这些基础代码的基础上构建一个可工作的 API。表 4-1 列出了你将创建以实现这些用户故事的端点。
@@ -6,18 +8,18 @@
 
 | 端点描述 | HTTP 方法 | URL |
 | --- | --- | --- |
-| API 健康检查 | GET | */* |
-| 读取球员列表 | GET | */v0/players/* |
-| 读取单个球员 | GET | */v0/players/{player_id}/* |
-| 读取表现列表 | GET | */v0/performances/* |
-| 读取联赛列表 | GET | */v0/leagues/* |
-| 读取单个联赛 | GET | */v0/leagues/{league_id}/* |
-| 读取团队列表 | GET | */v0/teams/* |
-| 读取计数 | GET | */v0/counts/* |
+| API 健康检查 | GET | `/*` |
+| 读取球员列表 | GET | `/v0/players/` |
+| 读取单个球员 | GET | `/v0/players/{player_id}/` |
+| 读取表现列表 | GET | `/v0/performances/` |
+| 读取联赛列表 | GET | `/v0/leagues/` |
+| 读取单个联赛 | GET | `/v0/leagues/{league_id}/` |
+| 读取团队列表 | GET | `/v0/teams/` |
+| 读取计数 | GET | `/v0/counts/` |
 
 你正在使用 API 的版本 0。这将通知 API 消费者产品正在快速变化，他们应该注意潜在的*破坏性变更*——这些变更会导致功能停止工作，并可能要求消费者更改其程序代码。
 
-# 继续你的项目组合
+## 继续你的项目组合
 
 图 4-1 显示了之前看到的相同 API 组件，增加了一个：Uvicorn 网络服务器。Uvicorn 将执行你的 API 代码并与 API 请求交互。
 
@@ -27,7 +29,7 @@
 
 在第三章中，你完成了 API 的两个非常重要的部分：SQLite 数据库和使 Python 能够与数据交互的 SQLAlchemy 类。在本章中，你将完成其余的组件。你将创建 Pydantic *模式*来定义请求和响应消息的结构。然后，你将创建控制 FastAPI 应用程序，将所有其他组件连接起来以完成 API。
 
-# 本章使用的软件
+## 本章使用的软件
 
 本章中引入的软件将专注于处理来自消费者的 API 请求。表 4-2 列出了你将使用的新工具。
 
@@ -41,18 +43,15 @@
 | Pydantic | 2 | 验证库 |
 | Uvicorn | 0 | 运行 API 的 Web 服务器 |
 
-## FastAPI
+### FastAPI
 
 FastAPI 是一个专为构建 API 而设计的 Python Web 框架。*Web 框架*是一组库，它简化了 Web 应用程序的常见任务。其他常见的 Web 框架包括 Express、Flask、Django 和 Ruby on Rails。
 
 FastAPI 旨在在应用程序性能和开发者生产力方面都快速运行。因为 FastAPI 专注于 API 开发，它简化了与 API 构建和发布相关的多个任务：
 
 +   它使用几行代码处理 HTTP 流量、请求/响应和其他“管道”工作。
-
 +   它会自动为你 API 生成 OpenAPI 规范文件，这对于与其他产品的集成很有用。
-
 +   它包括你 API 的交互式文档。
-
 +   它支持 API 版本控制、安全性和许多其他功能。
 
 正如你在完成投资组合项目时会看到的，所有这些功能都为你的 API 用户提供了好处。
@@ -63,11 +62,11 @@ FastAPI 还包括 FastAPI CLI。这是一个独立的 Python 库，用于从命�
 
 到我写这篇文章的时候，FastAPI 的最新版本是 0.x 版本（例如，0.115）。这个版本号很重要，因为根据语义版本控制，0.x 表示软件可能会发生破坏性更改。
 
-## HTTPX
+### HTTPX
 
-HTTPX 是一个 Python HTTP 客户端。它与非常流行的 requests 库类似，但它支持 *异步调用*，这允许一些任务在等待其他任务处理时完成。requests 库只支持 *同步调用*，它们在收到响应之前会等待。HTTPX 被 pytest 用于测试 FastAPI 程序。你也会在第七章中使用这个库来创建你的 Python SDK。
+HTTPX 是一个 Python HTTP 客户端。它与非常流行的 `requests` 库类似，但它支持 *异步调用*，这允许一些任务在等待其他任务处理时完成。`requests` 库只支持 *同步调用*，它们在收到响应之前会等待。HTTPX 被 `pytest` 用于测试 FastAPI 程序。你也会在第七章中使用这个库来创建你的 Python SDK。
 
-## Pydantic
+### Pydantic
 
 Pydantic 是一个数据验证库，它将在你构建的 API 中扮演关键角色。因为 API 用于系统之间的通信，它们功能的一个关键部分是对输入和输出的验证。API 开发者和数据科学家通常花费大量时间编写代码来检查数据类型和验证进入和离开 API 端点的值。
 
@@ -77,15 +76,15 @@ Pydantic 是专门为解决这个重要任务而构建的。Pydantic 在两个�
 
 对于你的项目，你将使用 Pydantic 版本 2。
 
-## Uvicorn
+### Uvicorn
 
 所有网络应用程序，包括 API，都依赖于一个网络服务器来处理与请求和响应相关的各种管理任务。你将使用开源的 Uvicorn 网络服务器。Uvicorn 基于 *ASGI 规范*，它为 *同步进程*（在等待任务执行时阻塞进程）和 *异步进程*（在等待时允许其他进程继续）提供支持。
 
 对于您的项目，您将使用 Uvicorn 0.x。
 
-# 从第三章复制文件
+## 从第三章复制文件
 
-要继续您在上一章中留下的项目组合，请将目录更改为*chapter4*，然后将上一章的文件复制到其中。以下显示了命令和预期输出：
+要继续您在上一章中留下的项目组合，请将目录更改为 `chapter4`，然后将上一章的文件复制到其中。以下显示了命令和预期输出：
 
 ```py
 .../portfolio-project (main) $ cd chapter4
@@ -97,11 +96,11 @@ crud.py  database.py  fantasy_data.db  models.py  readme.md  requirements.txt
 test_crud.py
 ```
 
-# 在您的 Codespace 中安装新库
+## 在您的 Codespace 中安装新库
 
-在上一章中，您创建了*requirements.txt*文件，并使用 Python 的`pip3`包管理器指定了要安装的库。您现在将使用此过程安装 Pydantic、FastAPI 和 Uvicorn。
+在上一章中，您创建了 `requirements.txt` 文件，并使用 Python 的 `pip3` 包管理器指定了要安装的库。您现在将使用此过程安装 Pydantic、FastAPI 和 Uvicorn。
 
-更新*requirements.txt*以匹配以下内容：
+更新 `requirements.txt` 以匹配以下内容：
 
 ```py
 #Chapter 4 pip requirements
@@ -126,7 +125,7 @@ Installing collected packages: uvicorn, pydantic, httpx, fastapi
 Successfully installed fastapi-0.115.4 httpx-0.26.0 pydantic-2.4.2 uvicorn-0.23.2
 ```
 
-# 为您的 API 创建 Python 文件
+## 为您的 API 创建 Python 文件
 
 您将创建两个新的 Python 文件，具体细节在表 4-3 中。
 
@@ -134,21 +133,21 @@ Successfully installed fastapi-0.115.4 httpx-0.26.0 pydantic-2.4.2 uvicorn-0.23.
 
 | 文件名 | 目的 |
 | --- | --- |
-| *main.py* | 定义路由并控制 API 的 FastAPI 文件 |
-| *schemas.py* | 定义验证发送到 API 的数据的 Pydantic 类 |
-| *test_main.py* | FastAPI 程序的 pytest 文件 |
+| `main.py` | 定义路由并控制 API 的 FastAPI 文件 |
+| `schemas.py` | 定义验证发送到 API 的数据的 Pydantic 类 |
+| `test_main.py` | FastAPI 程序的 pytest 文件 |
 
-## 创建 Pydantic 模式
+### 创建 Pydantic 模式
 
 Pydantic 类定义了消费者将在他们的 API 响应中接收的数据结构。这使用了一种名为*数据传输对象*（DTO）的软件设计模式，其中您定义了在生产者和消费者之间传输数据格式的格式，而无需消费者了解后端格式。在您的项目组合中，后端和前端类看起来不会有显著差异，但使用 DTO 允许在这方面有完全的灵活性。
 
-虽然您使用 Python 代码定义类，并且您的代码将它们作为完整的 Python 对象与之交互，但消费者将以 JSON 对象的形式在 HTTP 请求中接收它们。FastAPI 使用 Pydantic 执行*序列化*过程，即将 Python 对象转换为 API 响应的 JSON。这意味着您不需要在 Python 代码中管理序列化，这简化了您的程序。Pydantic 2 是用 Rust 编写的，并且比 Python 执行此任务要快得多。除了执行此反序列化任务外，Python 还在*openapi.json*文件中定义了响应格式。这是一个使用 OpenAPI 和 JSON Schema 的标准合同。这将为您带来多方面的好处，您将在随后的章节中看到。Pydantic 将从 SQLAlchemy 类中获取数据，并将其提供给 API 用户。
+虽然您使用 Python 代码定义类，并且您的代码将它们作为完整的 Python 对象与之交互，但消费者将以 JSON 对象的形式在 HTTP 请求中接收它们。FastAPI 使用 Pydantic 执行*序列化*过程，即将 Python 对象转换为 API 响应的 JSON。这意味着您不需要在 Python 代码中管理序列化，这简化了您的程序。Pydantic 2 是用 Rust 编写的，并且比 Python 执行此任务要快得多。除了执行此反序列化任务外，Python 还在 `openapi.json` 文件中定义了响应格式。这是一个使用 OpenAPI 和 JSON Schema 的标准合同。这将为您带来多方面的好处，您将在随后的章节中看到。Pydantic 将从 SQLAlchemy 类中获取数据，并将其提供给 API 用户。
 
 ###### 注意
 
 SQLAlchemy 和 Pydantic 文档有时将它们的类称为模型，这可能会令人困惑。对于数据科学工作来说，这一点尤其令人困惑，因为模型有额外的含义。为了清晰起见，本书将引用 Pydantic 模式和 SQLAlchemy 模型。
 
-创建一个包含以下内容的文件，并将其命名为 *schemas.py*：
+创建一个包含以下内容的文件，并将其命名为 `schemas.py`：
 
 ```py
 """Pydantic schemas"""
@@ -202,20 +201,20 @@ class Counts(BaseModel):
     player_count : int
 ```
 
-此文件中的模式将用于形成你将定义的 API 端点的响应。主要模式直接返回到端点，而二级模式作为主要模式的一个属性返回。例如，*/v0/players/* 端点 URL 返回一个 `Player` 对象的列表（主要），该对象具有 `Player.performances` 属性（二级）。表 4-4 显示了 API 端点和模式之间的映射。
+此文件中的模式将用于形成你将定义的 API 端点的响应。主要模式直接返回到端点，而二级模式作为主要模式的一个属性返回。例如，`/v0/players/` 端点 URL 返回一个 `Player` 对象的列表（主要），该对象具有 `Player.performances` 属性（二级）。表 4-4 显示了 API 端点和模式之间的映射。
 
 表 4-4\. 模式到端点的映射
 
 | 端点 URL | 主要模式 | 二级模式 |
 | --- | --- | --- |
-| */* | 无 | 无 |
-| */v0/players/* | 球员 | Performance |
-| */v0/players/{player_id}/* | 球员 | Performance |
-| */v0/performances/* | Performance | 无 |
-| */v0/leagues/* | 联赛 | TeamBase |
-| */v0/leagues/*{league_id} | 联赛 | TeamBase |
-| */v0/teams/* | 队伍 | PlayerBase |
-| */v0/counts/* | 计数 | 无 |
+| `/*` | 无 | 无 |
+| `/v0/players/` | 球员 | Performance |
+| `/v0/players/{player_id}/` | 球员 | Performance |
+| `/v0/performances/` | Performance | 无 |
+| `/v0/leagues/` | 联赛 | TeamBase |
+| `/v0/leagues/{league_id}` | 联赛 | TeamBase |
+| `/v0/teams/` | 队伍 | PlayerBase |
+| `/v0/counts/` | 计数 | 无 |
 
 `Performance` 类是第一个也是最简单的模式：
 
@@ -254,11 +253,14 @@ class Player(PlayerBase):
     performances: List[Performance] = []
 ```
 
-性能数据有一个单一的 `Performance` 模式，但玩家数据有两个模式。`PlayerBase` 是 `BaseModel` 的子类，并且包含所有玩家字段，除了一个：`Performance` 列表。表 4-4 显示 `PlayerBase` 将被用作 */v0/teams/* 端点的二级模式。原因很简单：为了减少 API 调用中传输的数据量。当 API 用户重试 `Team` 模式的列表时，他们想看到该队伍上的所有球员，而不想同时获取所有球员的得分表现列表。
+性能数据有一个单一的 `Performance` 模式，但玩家数据有两个模式。`PlayerBase` 是 `BaseModel` 的子类，并且包含所有玩家字段，除了一个：`Performance` 列表。表 4-4 显示 `PlayerBase` 将被用作 `/v0/teams/` 端点的二级模式。原因很简单：为了减少 API 调用中传输的数据量。当 API 用户重试 `Team` 模式的列表时，他们想看到该队伍上的所有球员，而不想同时获取所有球员的得分表现列表。
 
-完整的 `Player` 模式是 `PlayerBase` 的子类，并添加了 `Performance` 对象的列表。此模式直接用于 */v0/players/* 和 */v0/players/{player_id}/* 端点。在这些情况下，API 用户希望看到与球员相关的得分表现列表。
+完整的 `Player` 模式是 `PlayerBase` 的子类，并添加了 `Performance` 对象的列表。此模式直接用于 `/v0/players/` 和 `/v0/players/{player_id}/` 端点。在这些情况下，API 用户希望看到与球员相关的得分表现列表。
 
-要查看`PlayerBase`的次要用途，请检查接下来的两个模式：
+要查看 `PlayerBase` 的次要用途，请检查接下来的两个模式：
+
+
+
 
 ```py
 class TeamBase(BaseModel):
@@ -520,7 +522,9 @@ def read_players(skip: int = 0,
 
 +   *URL*：*{base URL}/v0/players/?first_name=Bryce&last_name=Young*
 
-在 `read_players()` 函数体内部，FastAPI 调用了你在 *crud.py* 中定义的 `get_players()` 函数。它执行了一个数据库查询。`players` 对象接收这个函数调用的结果。FastAPI 验证这个对象是否与定义 `list[schemas.Player]` 匹配。如果是，FastAPI 使用 Pydantic 将 Python 对象序列化为文本 JSON 字符串，并将响应发送给消费者。
+
+
+在`read_players()`函数体内部，FastAPI 调用了你在`crud.py`中定义的`get_players()`函数。它执行了一个数据库查询。`players`对象接收这个函数调用的结果。FastAPI 验证这个对象是否与定义`list[schemas.Player]`匹配。如果是，FastAPI 使用 Pydantic 将 Python 对象序列化为文本 JSON 字符串，并将响应发送给消费者。
 
 下一个端点添加了两个额外的 FastAPI 功能：
 
@@ -542,7 +546,7 @@ def read_player(player_id: int,
 
 +   *URL*：*{base URL}/v0/players/12345?skip=10&limit=50*
 
-函数检查是否有记录从辅助函数返回，如果没有，则抛出一个*HTTPException*。这是一个网络应用程序用来通信状态的标准方法。使用标准的[HTTP 状态码](https://oreil.ly/cTnfI)与消费者通信是良好的 RESTful API 设计。这使得操作更加可预测和可靠。此端点返回 HTTP 状态码 404，即*未找到*代码。它还添加了额外的消息，指出未找到的项目是正在搜索的玩家。
+函数检查是否有记录从辅助函数返回，如果没有，则抛出一个`HTTPException`。这是一个网络应用程序用来通信状态的标准方法。使用标准的[HTTP 状态码](https://oreil.ly/cTnfI)与消费者通信是良好的 RESTful API 设计。这使得操作更加可预测和可靠。此端点返回 HTTP 状态码 404，即*未找到*代码。它还添加了额外的消息，指出未找到的项目是正在搜索的玩家。
 
 接下来的四个端点不使用任何新功能。但它们共同完成了我们为您第一次 API 所包含的所有用户故事：
 
@@ -611,9 +615,9 @@ def get_count(db: Session = Depends(get_db)):
 
 # 测试您的 API
 
-您将使用 pytest 来测试*main.py*文件。与上一章中的*crud.py*文件一样，您将测试每个 API 端点返回的正确记录数。记录数可以通过“加载数据”中的 SQL 查询进行验证。
+您将使用 pytest 来测试`main.py`文件。与上一章中的`crud.py`文件一样，您将测试每个 API 端点返回的正确记录数。记录数可以通过“加载数据”中的 SQL 查询进行验证。
 
-要实现您 API 的测试，创建一个包含以下内容的文件，并将其命名为*test_main.py*：
+要实现您 API 的测试，创建一个包含以下内容的文件，并将其命名为`test_main.py`：
 
 ```py
 from fastapi.testclient import TestClient
@@ -709,7 +713,7 @@ client = TestClient(app) ![3](img/3.png)
 
 ![2](img/#co_developing_the_fastapi_code_CO2-2)
 
-这引用了您在*main.py*中创建的 FastAPI 对象。
+这引用了您在`main.py`中创建的 FastAPI 对象。
 
 ![3](img/#co_developing_the_fastapi_code_CO2-3)
 
@@ -775,6 +779,8 @@ test_main.py                                              [100%]
 
 这是你一直等待的时刻：现在是时候运行你的 API 了。从命令行输入以下命令：
 
+
+
 ```py
 .../chapter4 (main) $ fastapi run main.py
 ```
@@ -791,7 +797,7 @@ test_main.py                                              [100%]
 
 ###### 图 4-3\. Codespaces 浏览器窗口弹出
 
-点击“在浏览器中打开”以在 Codespaces 外部打开一个浏览器标签页。此浏览器将显示以 *app.github.dev* 结尾的基本 URL，其中包含在 Codespaces 上运行的 API 的响应。你应该在你的网页浏览器中看到以下健康检查信息：
+点击“在浏览器中打开”以在 Codespaces 外部打开一个浏览器标签页。此浏览器将显示以 `app.github.dev` 结尾的基本 URL，其中包含在 Codespaces 上运行的 API 的响应。你应该在你的网页浏览器中看到以下健康检查信息：
 
 ```py
 {"message":"API health check successful"}
@@ -799,7 +805,7 @@ test_main.py                                              [100%]
 
 这确认了你的 API 正在运行，这是一个很好的开始。
 
-下一个测试是调用一个检索数据的端点。通过将以下内容复制并粘贴到浏览器的基本 URL 的末尾来尝试：***/v0/performances/?skip=0&limit=1***。例如，完整的 URL 可能是 *[*https://happy-pine-tree-1234-8000.app.github.dev/v0/performances/?skip=0&limit=1*](https://happy-pine-tree-1234-8000.app.github.dev/v0/performances/?skip=0&limit=1)*。
+下一个测试是调用一个检索数据的端点。通过将以下内容复制并粘贴到浏览器的基本 URL 的末尾来尝试：`/v0/performances/?skip=0&limit=1`。例如，完整的 URL 可能是 `https://happy-pine-tree-1234-8000.app.github.dev/v0/performances/?skip=0&limit=1`。
 
 如果一切正常，你应该在你的浏览器中看到以下数据：
 
@@ -812,7 +818,7 @@ test_main.py                                              [100%]
 
 本章涵盖了大量的内容，所以可能发生了错误，或者你没有得到成功的结果。别担心，这发生在我们所有人身上。以下是一些如何解决你遇到的问题的建议：
 
-+   再次运行 **`pip3 install -r requirements.txt`** 命令以确保你拥有所有更新的软件。
++   再次运行 `pip3 install -r requirements.txt` 命令以确保你拥有所有更新的软件。
 
 +   花一分钟验证浏览器地址栏中的路径。小事情很重要，比如斜杠和问号。
 
@@ -826,15 +832,15 @@ test_main.py                                              [100%]
 
 # 其他资源
 
-要探索 FastAPI 超出了本书的范围，官方的[FastAPI 教程](https://oreil.ly/SFN3w)和[FastAPI 参考文档](https://oreil.ly/MVgVk)都非常有用。
+要探索 FastAPI 超出了本书的范围，官方的 [FastAPI 教程](https://oreil.ly/SFN3w) 和 [FastAPI 参考文档](https://oreil.ly/MVgVk) 都非常有用。
 
 要了解使用 FastAPI 构建项目的方方面面，我推荐 Bill Lubanovic 的《FastAPI：现代 Python Web 开发》（O’Reilly，2023）。
 
-要获取来自官方 FastAPI 专家的更多实用技巧列表，请查看[Marcelo Trylesinski 的 FastAPI 技巧](https://oreil.ly/kludex)。
+要获取来自官方 FastAPI 专家的更多实用技巧列表，请查看 [Marcelo Trylesinski 的 FastAPI 技巧](https://oreil.ly/kludex)。
 
-官方的[Pydantic 2.4 文档](https://oreil.ly/2OE-8)提供了关于本章中使用的 Pydantic 特定版本的信息。
+官方的 [Pydantic 2.4 文档](https://oreil.ly/2OE-8) 提供了关于本章中使用的 Pydantic 特定版本的信息。
 
-官方的[Uvicorn 文档](https://oreil.ly/uvicorn)提供了关于此软件功能的更多信息。
+官方的 [Uvicorn 文档](https://oreil.ly/uvicorn) 提供了关于此软件功能的更多信息。
 
 # 摘要
 

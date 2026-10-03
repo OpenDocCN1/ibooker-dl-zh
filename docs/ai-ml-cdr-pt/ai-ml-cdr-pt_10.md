@@ -1,3 +1,4 @@
+
 # 第九章\. 理解序列和时间序列数据
 
 时间序列无处不在。你可能已经在天气预报、股价和像摩尔定律这样的历史趋势中看到过它们。如果你不熟悉**摩尔定律**，它预测的是，每两年晶体管数量将大致翻倍——而且近 50 年来，它一直被证明是计算能力和成本未来趋势的准确预测者（参见图 9-1）。
@@ -126,7 +127,6 @@ series += noise(time, noise_level, seed=42)
 
 ```py
 naive_forecast = series[split_time – 1:–1]
-
 ```
 
 图 9-7 显示了验证集（从时间步骤 1,000 开始，通过将 `split_time` 设置为 `1000` 获取）以及简单预测的叠加。
@@ -158,7 +158,6 @@ print(mse)
 # Mean Absolute Error
 mae = F.l1_loss(torch.tensor(x_valid), torch.tensor(naive_forecast)).item()
 print(mae)
-
 ```
 
 我得到了均方误差为 76.47 和平均绝对误差为 6.89。与任何预测一样，如果你能减少误差，你就可以提高预测的准确性。我们将在下一节中看看如何做到这一点。
@@ -181,7 +180,6 @@ moving_avg = moving_average_forecast(series, 30)[split_time - 30:]
 plt.figure(figsize=(10, 6))
 plot_series(time_valid, x_valid)
 plot_series(time_valid, moving_avg)
-
 ```
 
 图 9-8 显示了移动平均与数据的对比图。
@@ -199,7 +197,6 @@ plot_series(time_valid, moving_avg)
 ```py
 diff_series = (series[365:] – series[:-365])
 diff_time = time[365:]
-
 ```
 
 现在，你可以计算这些值的移动平均值，并将过去的价值加回：
@@ -211,7 +208,6 @@ diff_moving_avg =
 diff_moving_avg_plus_smooth_past = 
     moving_average_forecast(series[split_time – 370:–360], 10) + 
     diff_moving_avg
-
 ```
 
 当你绘制这个图表时（见图 9-9），你就可以看到预测值的改进：趋势线非常接近实际值，尽管噪声已经被平滑处理。季节性似乎有效，趋势也是如此。

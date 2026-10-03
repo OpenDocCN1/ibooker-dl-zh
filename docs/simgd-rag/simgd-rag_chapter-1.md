@@ -1,32 +1,30 @@
+
+
 # 第一章：LLMs 和 RAG 的需求
 
-### 本章涵盖
+## 本章涵盖
 
 +   LLMs 的局限性和 RAG 的需求
-
 +   RAG 基础知识
-
 +   RAG 的流行用例
 
-在短时间内，大型语言模型（LLMs）在现代语言处理任务和自主 AI 代理中得到了广泛应用。OpenAI 的 GPT、Anthropic 的 Claude、Google 的 Gemini 和 Meta 的 Llama 系列是值得注意的 LLMs，它们被集成到各种平台和技术中。检索增强生成（RAG）在 LLM 应用中发挥着关键作用，通过提高响应的准确性和相关性。根据 Grand View Research([`mng.bz/BzKg`](https://mng.bz/BzKg))，到 2023 年，全球 RAG 市场规模估计约为 10 亿美元，预计年增长率为 44.7%，这使得它成为增长最快的 AI 方法之一。
+在短时间内，大型语言模型（LLMs）在现代语言处理任务和自主 AI 代理中得到了广泛应用。OpenAI 的 GPT、Anthropic 的 Claude、Google 的 Gemini 和 Meta 的 Llama 系列是值得注意的 LLMs，它们被集成到各种平台和技术中。检索增强生成（RAG）在 LLM 应用中发挥着关键作用，通过提高响应的准确性和相关性。根据 Grand View Research（[`mng.bz/BzKg`](https://mng.bz/BzKg)），到 2023 年，全球 RAG 市场规模估计约为 10 亿美元，预计年增长率为 44.7%，这使得它成为增长最快的 AI 方法之一。
 
 本书旨在揭示 RAG 及其应用的概念。章节逐一介绍 RAG 的定义、设计、实现、评估和演变。为了开篇，本章首先强调了 LLMs 的局限性以及需要像 RAG 这样的方法。然后介绍了 RAG 的概念，并逐步构建定义。本章最后列出了 RAG 带来的流行用例。
 
-到本章结束时，你将获得对 RAG 系统组件进行更深入探索的基础知识。此外，你还应该
+到本章结束时，你将获得对 RAG 系统组件进行更深入探索的基础知识。此外，你还应该：
 
 +   对 RAG 的定义要有深刻的理解。
-
 +   理解 LLMs 的局限性和对 RAG 的需求。
-
 +   准备深入了解 RAG 系统的组成部分。
 
 2022 年 11 月 30 日将被铭记为人工智能领域的一个分水岭时刻。这是 OpenAI 发布 ChatGPT 的那一天，全世界都被它迷住了。ChatGPT 成为有史以来最快达到百万用户的 APP。在接下来的 12 个月里，对之前鲜为人知的术语如生成 AI 和 LLMs 的兴趣急剧上升（见图 1.1）。
 
 ![包含线条和橙色点的图形](img/CH01_F01_Kimothi.png)
 
-AI 生成的内容可能是不正确的。(图片来源：[trends.google.com](https://trends.google.com/trends/))
+AI 生成的内容可能是不正确的。（图片来源：[trends.google.com](https://trends.google.com/trends/)）
 
-##### 图 1.1  “生成 AI”和“大型语言模型”的 Google 趋势图，时间范围从 2022 年 11 月到 2024 年 11 月。来源：作者根据[trends.google.com](https://trends.google.com/trends/)的数据创建。
+##### 图 1.1 “生成 AI”和“大型语言模型”的 Google 趋势图，时间范围从 2022 年 11 月到 2024 年 11 月。来源：作者根据 [trends.google.com](https://trends.google.com/trends/) 的数据创建。
 
 随着 ChatGPT 等平台的使用激增，LLMs 的弱点被暴露出来。
 
@@ -34,17 +32,17 @@ AI 生成的内容可能是不正确的。(图片来源：[trends.google.com](ht
 
 驱动 ChatGPT、Ask Gemini 和类似应用的 LLMs 已被证明可以存储知识。你可以向它们提问，它们往往会以看似正确的答案回应。然而，尽管它们在生成文本方面具有前所未有的能力，但它们的回答并不总是准确的。经过更仔细的观察，你可能会注意到 LLMs 的回应受到次优信息和固有的记忆限制的困扰。
 
-为了理解局限性，我们将使用一个简单的例子。那些熟悉这项美妙运动板球的人会记得，2023 年男子 ODI 板球世界杯锦标赛在 2023 年举行。澳大利亚板球队获得了冠军。现在，想象你正在与 ChatGPT 互动，你问，“*谁赢得了 2023 年板球世界杯*？”实际上，你是在与 GPT-4o 或 o1 LLM 互动，这是 OpenAI 开发和维护的，为 ChatGPT 提供动力。在本章的前几节中，为了简单起见，我们将交替使用 ChatGPT 和 LLMs 这两个术语。所以，你提出问题，很可能会得到如图 1.2 所示的回答。
+为了理解局限性，我们将使用一个简单的例子。那些熟悉这项美妙运动板球的人会记得，2023 年男子 ODI 板球世界杯锦标赛在 2023 年举行。澳大利亚板球队获得了冠军。现在，想象你正在与 ChatGPT 互动，你问，“谁赢得了 2023 年板球世界杯？”实际上，你是在与 GPT-4o 或 o1 LLM 互动，这是 OpenAI 开发和维护的，为 ChatGPT 提供动力。在本章的前几节中，为了简单起见，我们将交替使用 ChatGPT 和 LLMs 这两个术语。所以，你提出问题，很可能会得到如图 1.2 所示的回答。
 
 ![A screenshot of a computerAI-generated content may be incorrect.](img/CH01_F02_Kimothi.png)
 
-##### 图 1.2  ChatGPT (GPT 3.5) response to the question, “Who won the 2023 Cricket World Cup?” Source: Screenshot of the author’s account on [`chat.openai.com`](https://chat.openai.com).
+##### 图 1.2 ChatGPT (GPT 3.5) response to the question, “Who won the 2023 Cricket World Cup?” Source: Screenshot of the author’s account on [`chat.openai.com`](https://chat.openai.com).
 
-ChatGPT does not have any memory of the 2023 Cricket World Cup, and it tells you to check the information from other sources. This is not ideal, but at least ChatGPT is honest in its response. The same question asked again might also provide a factually inaccurate result. Look at the response in figure 1.3\. ChatGPT falsely responds that India was the winner of the tournament.
+ChatGPT does not have any memory of the 2023 Cricket World Cup, and it tells you to check the information from other sources. This is not ideal, but at least ChatGPT is honest in its response. The same question asked again might also provide a factually inaccurate result. Look at the response in figure 1.3. ChatGPT falsely responds that India was the winner of the tournament.
 
 ![A screenshot of a computerAI-generated content may be incorrect.](img/CH01_F03_Kimothi.png)
 
-##### 图 1.3  An example of hallucination. ChatGPT’s (GPT 3.5) inaccurate response to the question, “Who won the 2023 cricket World Cup?” Source: Screenshot of the author’s account on [`chat.openai.com`](https://chat.openai.com).
+##### 图 1.3 An example of hallucination. ChatGPT’s (GPT 3.5) inaccurate response to the question, “Who won the 2023 cricket World Cup?” Source: Screenshot of the author’s account on [`chat.openai.com`](https://chat.openai.com).
 
 这是有问题的。尽管 ChatGPT 没有关于 2023 年板球世界杯的记忆，但它仍然以一种看似自信的语气生成答案，但这是不准确的。这被称为“幻觉”，并且已经成为 LLMs 的主要批评点。
 
@@ -70,7 +68,7 @@ ChatGPT does not have any memory of the 2023 Cricket World Cup, and it tells you
 
 ![图片](img/CH01_F05_Kimothi.png)
 
-##### 图 1.5  “老师”之后的词语概率分布示意图
+##### 图 1.5 “老师”之后的词语概率分布示意图
 
 #### 知识截止日期
 
@@ -106,17 +104,15 @@ ChatGPT does not have any memory of the 2023 Cricket World Cup, and it tells you
 
 ![聊天截图人工智能生成的内容可能是错误的。](img/CH01_F07_Kimothi.png)
 
-##### 图 1.7  ChatGPT（GPT 3.5）对问题的响应，增加了外部上下文。来源：作者在 [`chat.openai.com`](https://chat.openai.com) 的账户截图）。
+##### 图 1.7 ChatGPT（GPT 3.5）对问题的响应，增加了外部上下文。来源：作者在 [`chat.openai.com`](https://chat.openai.com) 的账户截图）。
 
 RAG 以编程方式做同样的事情。它通过提供先前未知的信息来克服 LLM 的局限性，从而增强系统的整体记忆。
 
 正如其名所示，“检索增强生成”（RAG）可以通过以下三个步骤来解释：
 
 1.  它从 LLM 外部的数据源（在我们的例子中是维基百科）**检索**相关信息。
-
-1.  它通过添加外部信息来**增强**LLM 的输入。
-
-1.  最后，LLM 生成的结果更加准确。
+2.  它通过添加外部信息来**增强**LLM 的输入。
+3.  最后，LLM 生成的结果更加准确。
 
 RAG 的简单定义，如图 1.8 所示，可以如下所示：
 
@@ -124,7 +120,7 @@ RAG 的简单定义，如图 1.8 所示，可以如下所示：
 
 ![数据流图人工智能生成的内容可能是错误的。](img/CH01_F08_Kimothi.png)
 
-##### 图 1.8  RAG（简单定义）：信息检索、查询增强以及使用 LLM 生成形成 RAG 的三个焦点
+##### 图 1.8 RAG（简单定义）：信息检索、查询增强以及使用 LLM 生成形成 RAG 的三个焦点
 
 我们迄今为止所看到的例子过于简化。我们手动搜索外部信息，而且搜索仅针对这个问题。在实践中，所有这些过程都是自动化的，这使得系统可以扩展到各种查询和数据源。我们现在将进一步阐述这个想法。
 
@@ -133,9 +129,7 @@ RAG 的简单定义，如图 1.8 所示，可以如下所示：
 主要思想是为 LLM 提供额外的上下文或知识。本质上，这意味着创建一个具有三个主要目标的 ChatGPT 类似系统：
 
 +   使 LLM 能够响应最新信息。
-
 +   使大型语言模型（LLM）能够响应事实准确的信息。
-
 +   使 LLM 了解专有信息。
 
 可以使用不同的技术来实现这些目标。可以从头开始训练一个新的 LLM，其中包括新的数据。也可以使用额外的数据对现有模型进行微调。然而，这两种方法都需要大量的数据和计算资源。此外，定期用新信息更新模型成本高昂。
@@ -159,9 +153,7 @@ RAG 是一种更便宜、更有效、更动态的技术，用于实现三个目�
 由于克服了参数化内存有限的挑战，RAG 还增强了用户对 LLM 响应的信心。RAG 的三个优点如下：
 
 +   *深度上下文意识*—添加的信息有助于 LLM 生成上下文适当的响应，用户可以相对更有信心。例如，如果非参数化内存包含有关特定公司产品的信息，用户可以确信 LLM 将从提供的来源生成有关这些产品的响应，而不是从其他地方。
-
 +   *来源引用*—除了上下文意识外，由于信息是从已知来源检索的，这些来源可以在响应中引用。这使得响应更加可靠，因为用户可以选择从来源验证信息。
-
 +   *较少的幻觉*—通过上下文意识，LLM 响应中出现事实不准确性的倾向大大减少。在 RAG 系统中，LLM 的幻觉更少。
 
 我们已经看到了一个简单的 RAG 定义。现在让我们扩展这个定义：
@@ -176,13 +168,16 @@ RAG 在 LLM 驱动的应用的传播和接受中起到了催化剂的作用。�
 
 人工智能生成的内容可能是错误的。
 
-##### 图 1.9  RAG 通过创建对非参数化内存的访问来增强 LLM 的参数化内存。
+##### 图 1.9 RAG 通过创建对非参数化内存的访问来增强 LLM 的参数化内存。
 
 ## 1.3 流行的 RAG 应用场景
 
 RAG 不仅仅是一个理论概念，它是一种与 LLM 技术本身一样流行的技术。软件开发商自 2018 年 Google 发布 BERT 以来就开始使用语言模型。如今，有成千上万的应用程序使用 LLM 来解决语言密集型任务。每当您遇到使用 LLM 的应用程序时，它通常会在某种形式下拥有一个内部 RAG 系统。常见应用将在以下章节中描述。
 
 ### 1.3.1 搜索引擎体验
+
+
+
 
 传统搜索结果以按相关性排序的页面链接列表形式显示。现代搜索引擎整合 RAG，将实时信息检索与生成式答案相结合。谷歌的搜索生成体验（SGE）通过相关结果和引文增强查询。基于 AI 的搜索引擎，如 Perplexity.ai 和 ChatGPT 的搜索，建立在 RAG 框架之上，该框架检索最新的网络信息，然后生成带有来源的响应。通过将答案建立在实时结果之上，这些搜索引擎提供了比独立 LLM 更准确、有来源支持的答案。
 

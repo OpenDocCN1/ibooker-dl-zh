@@ -1,3 +1,5 @@
+
+
 # 前言
 
 OpenAI 在 2022 年 11 月推出的 ChatGPT 标志着新一轮技术革命的开始。这推动了全球范围内组织对生成式人工智能应用的快速需求。随着需求的爆炸性增长，出现了许多使用生成式人工智能的方法，这些方法与搜索引擎优化（SEO）相交。
@@ -67,3 +69,4 @@ OpenAI 在 2022 年 11 月推出的 ChatGPT 标志着新一轮技术革命的开
 在 LinkedIn 上找到我们：[*https://linkedin.com/company/oreilly-media*](https://linkedin.com/company/oreilly-media)
 
 在 YouTube 上关注我们：[*https://youtube.com/oreillymedia*](https://youtube.com/oreillymedia)
+

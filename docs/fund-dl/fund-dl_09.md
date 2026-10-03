@@ -1,8 +1,9 @@
+
 # 第九章：序列分析模型
 
 Surya Bhupatiraju
 
-# 分析可变长度输入
+## 分析可变长度输入
 
 到目前为止，我们只处理了具有固定大小的数据：来自 MNIST、CIFAR-10 和 ImageNet 的图像。这些模型非常强大，但在许多情况下，固定长度模型是不够的。我们日常生活中绝大多数的互动都需要对序列有深入的理解——无论是阅读早报、准备一碗麦片、听收音机、观看演示还是决定在股市上执行交易。为了适应可变长度的输入，我们必须更加聪明地设计深度学习模型的方法。
 
@@ -16,7 +17,7 @@ Surya Bhupatiraju
 
 然而，并非一切希望都已失去。在接下来的几节中，我们将探讨几种策略，可以利用“黑客”前馈网络来处理序列。在本章后面，我们将分析这些黑客的局限性，并讨论新的架构来解决这些问题。我们将通过讨论迄今为止探索的一些最先进的架构来结束本章，以解决复制人类级别逻辑推理和认知的一些最困难挑战。
 
-# 使用神经 N-Grams 解决 seq2seq
+## 使用神经 N-Grams 解决 seq2seq
 
 在本节中，我们将开始探索一个前馈神经网络架构，可以处理一段文本并生成一系列词性（POS）标签。换句话说，我们希望适当地标记输入文本中的每个单词，如名词、动词、介词等。这在图 9-2 中有一个示例。虽然构建一个可以阅读故事后回答问题的人工智能的复杂性不同，但这是朝着开发一个能够理解单词在句子中如何使用含义的算法的坚实第一步。这个问题也很有趣，因为它是一类问题的一个实例，被称为*seq2seq*，目标是将输入序列转换为相应的输出序列。其他著名的 seq2seq 问题包括在语言之间翻译文本（我们将在本章后面处理）、文本摘要和将语音转录为文本。
 
@@ -24,7 +25,7 @@ Surya Bhupatiraju
 
 ###### 图 9-2。英语句子准确的 POS 解析示例
 
-正如我们讨论过的，如何一次性处理一段文本以预测完整的 POS 标签序列并不明显。相反，我们利用了一种类似于我们在上一章中开发单词的分布式向量表示的技巧。关键观察是：*不需要考虑长期依赖性来预测任何给定单词的 POS*。 
+正如我们讨论过的，如何一次性处理一段文本以预测完整的 POS 标签序列并不明显。相反，我们利用了一种类似于我们在上一章中开发单词的分布式向量表示的技巧。关键观察是：*不需要考虑长期依赖性来预测任何给定单词的 POS*。
 
 这一观察的含义是，我们可以通过使用固定长度的子序列，而不是使用整个序列同时预测所有 POS 标签，逐个预测每个 POS 标签。特别是，我们利用从感兴趣的单词开始并向过去扩展 n 个单词的子序列。这种*神经 n-gram 策略*在图 9-3 中有所描述。
 
@@ -36,7 +37,7 @@ Surya Bhupatiraju
 
 利用上一章的词嵌入策略，我们将使用单词的压缩表示，而不是独热向量。这将使我们能够减少模型中的参数数量，并加快学习速度。
 
-# 实现词性标注器
+## 实现词性标注器
 
 现在我们对词性网络架构有了深入的理解，我们可以深入实现。在高层次上，网络由一个利用三元上下文窗口的输入层组成。我们将使用 300 维的词嵌入，从而得到一个大小为 900 的上下文窗口。前馈网络将有两个隐藏层，分别为 512 个神经元和 256 个神经元。然后，输出层将是一个 softmax，计算 POS 标签输出在 44 个可能标签空间上的概率分布。像往常一样，我们将使用 Adam 优化器和默认的超参数设置，总共训练 1000 个时代，并利用批量归一化进行正则化。
 
@@ -46,7 +47,6 @@ Surya Bhupatiraju
 $ pip install gensim
 $ wget https://s3.amazonaws.com/dl4j-distribution/
   GoogleNews-vectors-negative300.bin.gz -O googlenews.bin.gz
-
 ```
 
 接下来，我们可以使用以下命令将这些向量加载到内存中：
@@ -56,7 +56,6 @@ from gensim.models import KeyedVectors
 
 model = KeyedVectors.load_word2vec_format('./googlenews.bin.gz',
                                           binary=True)
-
 ```
 
 然而，这种操作的问题在于它非常慢（根据您的机器规格，可能需要长达一小时）。为了避免每次运行程序时都将整个数据集加载到内存中，特别是在调试代码或尝试不同超参数时，我们使用轻量级数据库[LevelDB](http://leveldb.org)将相关子集的向量缓存到磁盘上。为了构建适当的 Python 绑定（允许我们从 Python 与 LevelDB 实例交互），我们只需使用以下命令：
@@ -75,7 +74,6 @@ $ wget http://www.cnts.ua.ac.be/conll2000/chunking/train.txt.gz
 $ wget http://www.cnts.ua.ac.be/conll2000/chunking/test.txt.gz 
   -O - | gunzip |
   cut -f1,2 -d " " > pos.test.txt
-
 ```
 
 数据集由格式化为一系列行的连续文本组成，其中第一个元素是一个单词，第二个元素是相应的词性。以下是训练数据集的前几行：
@@ -156,7 +154,6 @@ train_pos_dataset = create_pos_dataset('./pos.train.txt',
                                        './pos.train.processed.txt')
 test_pos_dataset = create_pos_dataset('./pos.test.txt',
                                       './pos.test.processed.txt')
-
 ```
 
 现在我们已经适当处理了用于加载的数据集，我们可以加载 LevelDB 中的单词。如果`gensim`模型中存在单词或短语，我们可以将其缓存到 LevelDB 实例中。如果没有，我们会随机选择一个向量来表示该标记，并将其缓存，以便在再次遇到时记得使用相同的向量：
@@ -196,7 +193,6 @@ for word in dataset_vocab:
                                              300).astype(np.float32)
     db.Put(bytes(word,'utf-8'), nonmodel_cache[word])
   counter += 1
-
 ```
 
 第一次运行脚本后，如果数据已经存在，我们可以直接从数据库加载数据：
@@ -207,7 +203,6 @@ db = leveldb.LevelDB("./word2vecdb")
 x = db.Get(bytes('Confidence','utf-8'))
 print(np.frombuffer(x,dtype='float32').shape)
 # out: (300,)
-
 ```
 
 接下来，我们为训练和测试数据集构建数据集对象，我们可以使用这些对象生成用于训练和测试的小批量数据。构建数据集对象需要访问 LevelDB `db`，`dataset`，将 POS 标记映射到输出向量中的索引的字典`tags_to_index`，以及一个布尔值`get_all`，用于确定获取小批量数据时是否应默认检索完整集合：
@@ -242,7 +237,6 @@ class NgramPOSDataset(Dataset):
 
 trainset = NgramPOSDataset(db, train_pos_dataset, tags_to_index, 3)
 trainloader = DataLoader(trainset, batch_size=4, shuffle=True)
-
 ```
 
 最后，我们设计我们的前馈网络与之前章节中的方法类似。我们省略了代码的讨论，并参考文件*Ch09_01_POS_Tagger.ipynb*在[书的存储库](https://github.com/darksigma/Fundamentals-of-Deep-Learning-Book)中。
@@ -255,27 +249,29 @@ POS 标记模型是一个很好的练习，但它主要是重复我们在之前�
 
 ###### 图 9-4。我们前馈 POS 标记模型的 TensorBoard 可视化
 
-# 依存句法分析和 SyntaxNet
+## 依存句法分析和 SyntaxNet
 
 我们用来解决 POS 标记任务的框架相当简单。有时候，我们需要更有创意地解决 seq2seq 问题，特别是在问题复杂性增加时。在本节中，我们将探讨采用创造性数据结构来解决困难的 seq2seq 问题的策略。作为一个说明性例子，我们将探讨依存句法分析问题。
 
 构建依存句法分析树的想法是映射句子中单词之间的关系。例如，看一下图 9-5 中的依存关系。单词“I”和“taxi”是单词“took”的子节点，具体来说是动词的主语和直接宾语。
 
+
+
 ![](img/fdl2_0905.png)
 
-###### 图 9-5。一个依存句法分析的示例，生成句子中单词之间关系的树
+###### 图 9-5：一个依存句法分析的示例，生成句子中单词之间关系的树
 
 将树表示为序列的一种方法是将其线性化。让我们考虑图 9-6 中的示例。基本上，如果您有一个以根`R`为根，子节点`A`（通过边`r_a`连接），`B`（通过边`r_b`连接）和`C`（通过边`r_c`连接）的图，我们可以将表示线性化为`(R, r_a, A, r_b, B, r_c, C)`。我们甚至可以表示更复杂的图。例如，假设节点`B`实际上有两个名为`D`（通过边`b_d`连接）和`E`（通过边`b_e`连接）的子节点。我们可以将这个新图表示为`(R, r_a, A, r_b, [B, b_d, D, b_e, E], r_c, C)`。
 
 ![](img/fdl2_0906.png)
 
-###### 图 9-6。我们线性化了两个示例树：为了视觉清晰起见，图中省略了边标签
+###### 图 9-6：我们线性化了两个示例树：为了视觉清晰起见，图中省略了边标签
 
 使用这种范式，我们可以将我们的示例依赖解析线性化，如图 9-7 所示。
 
 ![](img/fdl2_0907.png)
 
-###### 图 9-7。依赖解析树示例的线性化
+###### 图 9-7：依赖解析树示例的线性化
 
 这个 seq2seq 问题的一个解释是读取输入句子并生成一个代表输入依赖解析线性化的输出令牌序列。然而，我们可能不太清楚如何将我们从前一节中的策略移植过来，那里单词和它们的 POS 标签之间有明确的一对一映射。此外，我们可以通过查看附近的上下文轻松地做出关于 POS 标签的决定。对于依赖解析，句子中单词的顺序与线性化中的令牌的顺序之间没有明确的关系。看起来依赖解析任务要求我们识别可能跨越大量单词的边缘。因此，乍一看，这种设置似乎直接违反了我们不需要考虑任何长期依赖的假设。
 
@@ -283,21 +279,13 @@ POS 标记模型是一个很好的练习，但它主要是重复我们在之前�
 
 ![](img/fdl2_0908.png)
 
-###### 图 9-8。弧-标准系统中的三个选项：将一个词从缓冲区移动到堆栈，从右元素到左元素绘制弧（左弧），或从左元素到右元素绘制弧（右弧）
+###### 图 9-8：弧-标准系统中的三个选项：将一个词从缓冲区移动到堆栈，从右元素到左元素绘制弧（左弧），或从左元素到右元素绘制弧（右弧）
 
 在任何步骤中，我们可以采取三种可能的行动类别之一：
 
-Shift
-
-将一个词从缓冲区移动到堆栈的前面。
-
-左弧
-
-将堆栈前面的两个元素合并为一个单元，其中最右边元素的根是父节点，最左边元素的根是子节点。
-
-右弧
-
-将堆栈前面的两个元素合并为一个单元，其中左元素的根是父节点，右元素的根是子节点。
+- **Shift**：将一个词从缓冲区移动到堆栈的前面。
+- **左弧**：将堆栈前面的两个元素合并为一个单元，其中最右边元素的根是父节点，最左边元素的根是子节点。
+- **右弧**：将堆栈前面的两个元素合并为一个单元，其中左元素的根是父节点，右元素的根是子节点。
 
 我们注意到，虽然执行 shift 只有一种方法，但弧动作可以有许多不同的风格，每种风格由分配给生成的弧的依赖标签区分。也就是说，在本节中，我们将简化我们的讨论和说明，将每个决策视为三种行动中的一种选择（而不是数十种行动）。
 
@@ -305,13 +293,13 @@ Shift
 
 ![](img/fdl2_0909.png)
 
-###### 图 9-9。一系列动作的序列，导致正确的依赖解析；我们省略标签
+###### 图 9-9：一系列动作的序列，导致正确的依赖解析；我们省略标签
 
 将这个决策框架重新表述为一个学习问题并不太困难。在每一步，我们采取当前的配置，并通过提取描述配置的大量特征（堆栈/缓冲区中特定位置的单词，这些位置单词的特定子节点，词性标签等）对配置进行向量化。在训练时，我们可以将这个向量输入到一个前馈网络中，并将其对下一步要采取的行动的预测与人类语言学家做出的黄金标准决策进行比较。在实际应用中，我们可以采取网络推荐的行动，将其应用于配置，并将这个新配置作为下一步的起点（特征提取，行动预测和行动应用）。这个过程在图 9-10 中显示。
 
 ![](img/fdl2_0910.png)
 
-###### 图 9-10。用于 arc-standard 依赖解析的神经框架
+###### 图 9-10：用于 arc-standard 依赖解析的神经框架
 
 综上所述，这些想法构成了谷歌的 SyntaxNet 的核心，这是用于依赖解析的最先进的开源实现。深入讨论实现的细节超出了本文的范围，但我们建议您参考[开源存储库](https://oreil.ly/UT1ga)，其中包含 Parsey McParseface 的实现，这是截至本文发表时最准确的公开报告的英语解析器。
 
@@ -327,7 +315,7 @@ Shift
 
 ![](img/fdl2_0911.png)
 
-###### 图 9-11。在部署经过训练的 SyntaxNet 模型时使用束搜索（束大小为 2）
+###### 图 9-11：在部署经过训练的 SyntaxNet 模型时使用束搜索（束大小为 2）
 
 在*扩展*步骤中，我们将每个假设视为 SyntaxNet 的可能输入。假设 SyntaxNet 对总共 <math alttext="StartAbsoluteValue upper A EndAbsoluteValue"><mrow><mo>|</mo> <mi>A</mi> <mo>|</mo></mrow></math> 个操作空间产生一个概率分布。然后，我们计算前 <math alttext="k plus 1"><mrow><mi>k</mi> <mo>+</mo> <mn>1</mn></mrow></math> 个操作序列的每个可能假设的概率。然后，在*修剪*步骤中，我们仅保留具有最大概率的*b*个假设，而不是总共 <math alttext="b StartAbsoluteValue upper A EndAbsoluteValue"><mrow><mi>b</mi> <mo>|</mo> <mi>A</mi> <mo>|</mo></mrow></math> 个选项。正如图 9-11 所示，束搜索使 SyntaxNet 能够通过在句子中早期考虑可能性较小的假设来纠正不正确的预测。事实上，深入研究所示例子，贪婪方法会建议正确的移动序列应该是一个移动，然后是一个左弧。实际上，最佳（最高概率）选项应该是使用左弧后跟右弧。束搜索与束大小为 2 呈现了这个结果。
 
@@ -339,7 +327,7 @@ Shift
 
 ![](img/fdl2_0912.png)
 
-###### 图 9-12. 训练和束搜索的耦合可以使 SyntaxNet 中的全局归一化可解
+###### 图 9-12：训练和束搜索的耦合可以使 SyntaxNet 中的全局归一化可解
 
 # 有关有状态深度学习模型的案例
 
@@ -349,7 +337,7 @@ Shift
 
 ![](img/fdl2_0913.png)
 
-###### 图 9-13. 用于序列分析的理想模型可以在长时间内存储信息，从而产生一个连贯的“思考”向量，可以用来生成答案
+###### 图 9-13：用于序列分析的理想模型可以在长时间内存储信息，从而产生一个连贯的“思考”向量，可以用来生成答案
 
 这个想法很简单。我们希望我们的模型在阅读输入序列的过程中保持某种记忆。当它阅读输入时，模型应该能够修改这个记忆库，考虑到它观察到的信息。当它到达输入序列的末尾时，内部记忆包含一个代表原始输入的关键信息，即意义的“思考”。然后，如图 9-13 所示，我们应该能够使用这个思考向量来为原始序列产生一个标签，或者产生一个适当的输出序列（翻译、描述、抽象摘要等）。
 
@@ -359,11 +347,11 @@ Shift
 
 RNNs 最早在 1980 年代引入，但最近由于几项智力和硬件突破，使得它们易于训练而重新流行起来。RNNs 与前馈网络不同，因为它们利用一种特殊类型的神经层，称为循环层，使得网络能够在使用网络之间保持状态。
 
-图 9-14 展示了循环层的神经结构。所有神经元都有(1)来自前一层所有神经元的传入连接和(2)指向后续层所有神经元的传出连接。然而，我们注意到循环层神经元并不只有这些连接。与前馈层不同，循环层还具有循环连接，用于在同一层神经元之间传播信息。一个完全连接的循环层使得每个神经元都与其层中的每个其他神经元(包括自身)之间有信息流。因此，一个具有  <math alttext="r"><mi>r</mi></math>  个神经元的循环层共有  <math alttext="r squared"><msup><mi>r</mi> <mn>2</mn></msup></math>  个循环连接。
+图 9-14 展示了循环层的神经结构。所有神经元都有(1)来自前一层所有神经元的传入连接和(2)指向后续层所有神经元的传出连接。然而，我们注意到循环层神经元并不只有这些连接。与前馈层不同，循环层还具有循环连接，用于在同一层神经元之间传播信息。一个完全连接的循环层使得每个神经元都与其层中的每个其他神经元(包括自身)之间有信息流。因此，一个具有 <math alttext="r"><mi>r</mi></math> 个神经元的循环层共有 <math alttext="r squared"><msup><mi>r</mi> <mn>2</mn></msup></math> 个循环连接。
 
 ![](img/fdl2_0914.png)
 
-###### 图 9-14。循环层包含循环连接，即位于同一层的神经元之间的连接
+###### 图 9-14：循环层包含循环连接，即位于同一层的神经元之间的连接
 
 为了更好地理解 RNNs 的工作原理，让我们探讨一下在适当训练后一个 RNN 是如何运作的。每当我们想要处理一个新序列时，我们会创建一个模型的新实例。我们可以通过将网络实例的生命周期划分为离散的时间步来推理包含循环层的网络。在每个时间步，我们将输入的下一个元素提供给模型。前馈连接表示从一个神经元到另一个神经元的信息流，传输的数据是当前时间步的计算神经元激活。然而，循环连接表示数据是*上一个*时间步存储的神经元激活的信息流。因此，循环网络中神经元的激活表示网络实例的累积状态。循环层中神经元的初始激活是我们模型的参数，我们像确定每个连接的权重的最佳值一样确定它们的最佳值在训练过程中。
 
@@ -371,7 +359,7 @@ RNNs 最早在 1980 年代引入，但最近由于几项智力和硬件突破，
 
 ![](img/fdl2_0915.png)
 
-###### 图 9-15. 我们可以通过时间运行 RNN 来将其表示为一个可以使用反向传播训练的前馈网络
+###### 图 9-15：我们可以通过时间运行 RNN 来将其表示为一个可以使用反向传播训练的前馈网络
 
 我们现在也可以通过计算展开版本的梯度来训练 RNN。这意味着我们为前馈网络使用的所有反向传播技术也适用于训练 RNN。然而，我们遇到了一个问题。在使用每批训练示例之后，我们需要根据计算的误差导数修改权重。在我们的展开网络中，我们有一组连接，它们都对应于原始 RNN 中的同一连接。然而，为这些展开连接计算的误差导数不能保证是相等的（实际上，可能不会相等）。我们可以通过对属于同一组的所有连接的误差导数进行平均或求和来规避这个问题。这使我们能够利用一个考虑到所有作用于连接权重的动态的误差导数，以便我们试图迫使网络构建准确的输出。
 
@@ -383,47 +371,65 @@ RNNs 最早在 1980 年代引入，但最近由于几项智力和硬件突破，
 
 ![](img/fdl2_0916.png)
 
-###### 图 9-16. 一个单神经元，完全连接的循环层（压缩和展开），用于研究基于梯度的学习算法
+###### 图 9-16：一个单神经元，完全连接的循环层（压缩和展开），用于研究基于梯度的学习算法
 
-让我们从简单的开始。给定非线性 <math alttext="f"><mi>f</mi></math>，我们可以将循环层中隐藏神经元在时间步 *t* 的激活 <math alttext="h Superscript left-parenthesis t right-parenthesis"><msup><mi>h</mi> <mrow><mo>(</mo><mi>t</mi><mo>)</mo></mrow></msup></math> 表示为以下形式，其中 <math alttext="i Superscript left-parenthesis t right-parenthesis"><msup><mi>i</mi> <mrow><mo>(</mo><mi>t</mi><mo>)</mo></mrow></msup></math> 是来自时间步*t*的输入神经元的传入逻辑：
+让我们从简单的开始。给定非线性 <math alttext="f"><mi>f</mi></math>，我们可以将循环层中隐藏神经元在时间步 *t* 的激活 <math alttext="h Superscript left-parenthesis t right-parenthesis"><msup><mi>h</mi> <mrow><mo>(</mo><mi>t</mi><mo>)</mo></mrow></msup></math> 表示为以下形式，其中 <math alttext="i Superscript left-parenthesis t right-parenthesis"><msup><mi>i</mi> <mrow><mo>(</mo><mi>t</mi><mo>)</mo></mrow></msup></math> 是来自时间步*t*的输入神经元的传入逻辑：
 
-<math alttext="h Superscript left-parenthesis t right-parenthesis Baseline equals f left-parenthesis w Subscript i n Superscript left-parenthesis t right-parenthesis Baseline i Superscript left-parenthesis t right-parenthesis Baseline plus w Subscript r e c Superscript left-parenthesis t minus 1 right-parenthesis Baseline h Superscript left-parenthesis t minus 1 right-parenthesis Baseline right-parenthesis"><mrow><msup><mi>h</mi> <mrow><mo>(</mo><mi>t</mi><mo>)</mo></mrow></msup> <mo>=</mo> <mi>f</mi> <mfenced separators="" open="(" close=")"><msubsup><mi>w</mi> <mrow><mi>i</mi><mi>n</mi></mrow> <mrow><mo>(</mo><mi>t</mi><mo>)</mo></mrow></msubsup> <msup><mi>i</mi> <mrow><mo>(</mo><mi>t</mi><mo>)</mo></mrow></msup> <mo>+</mo> <msubsup><mi>w</mi> <mrow><mi>r</mi><mi>e</mi><mi>c</mi></mrow> <mrow><mo>(</mo><mi>t</mi><mo>-</mo><mn>1</mn><mo>)</mo></mrow></msubsup> <msup><mi>h</mi> <mrow><mo>(</mo><mi>t</mi><mo>-</mo><mn>1</mn><mo>)</mo></mrow></msup></mfenced></mrow></math>
 
-让我们尝试计算隐藏神经元的激活如何响应过去*k*个时间步的输入逻辑的变化。在分析反向传播梯度表达式的这个组件时，我们可以开始量化从过去输入中保留多少“记忆”。我们首先取偏导数并应用链式法则：
 
-<math alttext="StartFraction normal partial-differential h Superscript left-parenthesis t right-parenthesis Baseline Over normal partial-differential i Superscript left-parenthesis t minus k right-parenthesis Baseline EndFraction equals f prime left-parenthesis w Subscript i n Superscript left-parenthesis t right-parenthesis Baseline i Superscript left-parenthesis t right-parenthesis Baseline plus w Subscript r e c Superscript left-parenthesis t minus 1 right-parenthesis Baseline h Superscript left-parenthesis t minus 1 right-parenthesis Baseline right-parenthesis StartFraction normal partial-differential Over normal partial-differential i Superscript left-parenthesis t minus k right-parenthesis Baseline EndFraction left-parenthesis w Subscript i n Superscript left-parenthesis t right-parenthesis Baseline i Superscript left-parenthesis t right-parenthesis Baseline plus w Subscript r e c Superscript left-parenthesis t minus 1 right-parenthesis Baseline h Superscript left-parenthesis t minus 1 right-parenthesis Baseline right-parenthesis"><mrow><mfrac><mrow><mi>∂</mi><msup><mi>h</mi> <mrow><mo>(</mo><mi>t</mi><mo>)</mo></mrow></msup></mrow> <mrow><mi>∂</mi><msup><mi>i</mi> <mrow><mo>(</mo><mi>t</mi><mo>-</mo><mi>k</mi><mo>)</mo></mrow></msup></mrow></mfrac> <mo>=</mo> <msup><mi>f</mi> <mo>'</mo></msup> <mfenced separators="" open="(" close=")"><msubsup><mi>w</mi> <mrow><mi>i</mi><mi>n</mi></mrow> <mrow><mo>(</mo><mi>t</mi><mo>)</mo></mrow></msubsup> <msup><mi>i</mi> <mrow><mo>(</mo><mi>t</mi><mo>)</mo></mrow></msup> <mo>+</mo> <msubsup><mi>w</mi> <mrow><mi>r</mi><mi>e</mi><mi>c</mi></mrow> <mrow><mo>(</mo><mi>t</mi><mo>-</mo><mn>1</mn><mo>)</mo></mrow></msubsup> <msup><mi>h</mi> <mrow><mo>(</mo><mi>t</mi><mo>-</mo><mn>1</mn><mo>)</mo></mrow></msup></mfenced> <mfrac><mi>∂</mi> <mrow><mi>∂</mi><msup><mi>i</mi> <mrow><mo>(</mo><mi>t</mi><mo>-</mo><mi>k</mi><mo>)</mo></mrow></msup></mrow></mfrac> <mfenced separators="" open="(" close=")"><msubsup><mi>w</mi> <mrow><mi>i</mi><mi>n</mi></mrow> <mrow><mo>(</mo><mi>t</mi><mo>)</mo></mrow></msubsup> <msup><mi>i</mi> <mrow><mo>(</mo><mi>t</mi><mo>)</mo></mrow></msup> <mo>+</mo> <msubsup><mi>w</mi> <mrow><mi>r</mi><mi>e</mi><mi>c</mi></mrow> <mrow><mo>(</mo><mi>t</mi><mo>-</mo><mn>1</mn><mo>)</mo></mrow></msubsup> <msup><mi>h</mi> <mrow><mo>(</mo><mi>t</mi><mo>-</mo><mn>1</mn><mo>)</mo></mrow></msup></mfenced></mrow></math>
+让我们尝试计算隐藏神经元的激活如何响应过去`k`个时间步的输入逻辑的变化。在分析反向传播梯度表达式的这个组件时，我们可以开始量化从过去输入中保留多少“记忆”。我们首先取偏导数并应用链式法则：
 
-因为输入和循环权重的值与时间步 <math alttext="t minus k"><mrow><mi>t</mi> <mo>-</mo> <mi>k</mi></mrow></math> 的输入逻辑无关，我们可以进一步简化这个表达式：
+```
+∂h(t)/∂i(t-k) = f'(w_in(t)i(t) + w_rec(t-1)h(t-1)) * ∂/∂i(t-k)(w_in(t)i(t) + w_rec(t-1)h(t-1))
+```
 
-<math alttext="StartFraction normal partial-differential h Superscript left-parenthesis t right-parenthesis Baseline Over normal partial-differential i Superscript left-parenthesis t minus k right-parenthesis Baseline EndFraction equals f prime left-parenthesis w Subscript i n Superscript left-parenthesis t right-parenthesis Baseline i Superscript left-parenthesis t right-parenthesis Baseline plus w Subscript r e c Superscript left-parenthesis t minus 1 right-parenthesis Baseline h Superscript left-parenthesis t minus 1 right-parenthesis Baseline right-parenthesis w Subscript r e c Superscript left-parenthesis t minus 1 right-parenthesis Baseline StartFraction normal partial-differential h Superscript left-parenthesis t minus 1 right-parenthesis Baseline Over normal partial-differential i Superscript left-parenthesis t minus k right-parenthesis Baseline EndFraction"><mrow><mfrac><mrow><mi>∂</mi><msup><mi>h</mi> <mrow><mo>(</mo><mi>t</mi><mo>)</mo></mrow></msup></mrow> <mrow><mi>∂</mi><msup><mi>i</mi> <mrow><mo>(</mo><mi>t</mi><mo>-</mo><mi>k</mi><mo>)</mo></mrow></msup></mrow></mfrac> <mo>=</mo> <msup><mi>f</mi> <mo>'</mo></msup> <mfenced separators="" open="(" close=")"><msubsup><mi>w</mi> <mrow><mi>i</mi><mi>n</mi></mrow> <mrow><mo>(</mo><mi>t</mi><mo>)</mo></mrow></msubsup> <msup><mi>i</mi> <mrow><mo>(</mo><mi>t</mi><mo>)</mo></mrow></msup> <mo>+</mo> <msubsup><mi>w</mi> <mrow><mi>r</mi><mi>e</mi><mi>c</mi></mrow> <mrow><mo>(</mo><mi>t</mi><mo>-</mo><mn>1</mn><mo>)</mo></mrow></msubsup> <msup><mi>h</mi> <mrow><mo>(</mo><mi>t</mi><mo>-</mo><mn>1</mn><mo>)</mo></mrow></msup></mfenced> <msubsup><mi>w</mi> <mrow><mi>r</mi><mi>e</mi><mi>c</mi></mrow> <mrow><mo>(</mo><mi>t</mi><mo>-</mo><mn>1</mn><mo>)</mo></mrow></msubsup> <mfrac><mrow><mi>∂</mi><msup><mi>h</mi> <mrow><mo>(</mo><mi>t</mi><mo>-</mo><mn>1</mn><mo>)</mo></mrow></msup></mrow> <mrow><mi>∂</mi><msup><mi>i</mi> <mrow><mo>(</mo><mi>t</mi><mo>-</mo><mi>k</mi><mo>)</mo></mrow></msup></mrow></mfrac></mrow></math>
+因为输入和循环权重的值与时间步`t - k`的输入逻辑无关，我们可以进一步简化这个表达式：
 
-因为我们关心这个导数的大小，我们可以对两边取绝对值。我们也知道对于所有常见的非线性（tanh、logistic 和 ReLU 非线性）， <math alttext="StartAbsoluteValue f prime EndAbsoluteValue"><mfenced separators="" open="|" close="|"><msup><mi>f</mi> <mo>'</mo></msup></mfenced></math> 的最大值最多为 1。这导致以下递归不等式：
+```
+∂h(t)/∂i(t-k) = f'(w_in(t)i(t) + w_rec(t-1)h(t-1)) * w_rec(t-1) * ∂h(t-1)/∂i(t-k)
+```
 
-<math alttext="StartAbsoluteValue StartFraction normal partial-differential h Superscript left-parenthesis t right-parenthesis Baseline Over normal partial-differential i Superscript left-parenthesis t minus k right-parenthesis Baseline EndFraction EndAbsoluteValue less-than-or-equal-to StartAbsoluteValue w Subscript r e c Superscript left-parenthesis t minus 1 right-parenthesis Baseline EndAbsoluteValue dot StartAbsoluteValue StartFraction normal partial-differential h Superscript left-parenthesis t minus 1 right-parenthesis Baseline Over normal partial-differential i Superscript left-parenthesis t minus k right-parenthesis Baseline EndFraction EndAbsoluteValue"><mrow><mfenced separators="" open="|" close="|"><mfrac><mrow><mi>∂</mi><msup><mi>h</mi> <mrow><mo>(</mo><mi>t</mi><mo>)</mo></mrow></msup></mrow> <mrow><mi>∂</mi><msup><mi>i</mi> <mrow><mo>(</mo><mi>t</mi><mo>-</mo><mi>k</mi><mo>)</mo></mrow></msup></mrow></mfrac></mfenced> <mo>≤</mo> <mfenced separators="" open="|" close="|"><msubsup><mi>w</mi> <mrow><mi>r</mi><mi>e</mi><mi>c</mi></mrow> <mrow><mo>(</mo><mi>t</mi><mo>-</mo><mn>1</mn><mo>)</mo></mrow></msubsup></mfenced> <mo>·</mo> <mfenced separators="" open="|" close="|"><mfrac><mrow><mi>∂</mi><msup><mi>h</mi> <mrow><mo>(</mo><mi>t</mi><mo>-</mo><mn>1</mn><mo>)</mo></mrow></msup></mrow> <mrow><mi>∂</mi><msup><mi>i</mi> <mrow><mo>(</mo><mi>t</mi><mo>-</mo><mi>k</mi><mo>)</mo></mrow></msup></mrow></mfrac></mfenced></mrow></math>
+因为我们关心这个导数的大小，我们可以对两边取绝对值。我们也知道对于所有常见的非线性（`tanh`、`logistic`和`ReLU`非线性），`|f'|`的最大值最多为 1。这导致以下递归不等式：
 
-我们可以继续递归地扩展这个不等式，直到达到基本情况，在步骤 <math alttext="t minus k"><mrow><mi>t</mi> <mo>-</mo> <mi>k</mi></mrow></math> 处：
+```
+|∂h(t)/∂i(t-k)| ≤ |w_rec(t-1)| · |∂h(t-1)/∂i(t-k)|
+```
 
-<math alttext="StartAbsoluteValue StartFraction normal partial-differential h Superscript left-parenthesis t right-parenthesis Baseline Over normal partial-differential i Superscript left-parenthesis t minus k right-parenthesis Baseline EndFraction EndAbsoluteValue less-than-or-equal-to StartAbsoluteValue w Subscript r e c Superscript left-parenthesis t minus 1 right-parenthesis Baseline EndAbsoluteValue dot ellipsis dot StartAbsoluteValue w Subscript r e c Superscript left-parenthesis t minus k right-parenthesis Baseline EndAbsoluteValue dot StartAbsoluteValue StartFraction normal partial-differential h Superscript left-parenthesis t minus k right-parenthesis Baseline Over normal partial-differential i Superscript left-parenthesis t minus k right-parenthesis Baseline EndFraction EndAbsoluteValue"><mrow><mfenced separators="" open="|" close="|"><mfrac><mrow><mi>∂</mi><msup><mi>h</mi> <mrow><mo>(</mo><mi>t</mi><mo>)</mo></mrow></msup></mrow> <mrow><mi>∂</mi><msup><mi>i</mi> <mrow><mo>(</mo><mi>t</mi><mo>-</mo><mi>k</mi><mo>)</mo></mrow></msup></mrow></mfrac></mfenced> <mo>≤</mo> <mfenced separators="" open="|" close="|"><msubsup><mi>w</mi> <mrow><mi>r</mi><mi>e</mi><mi>c</mi></mrow> <mrow><mo>(</mo><mi>t</mi><mo>-</mo><mn>1</mn><mo>)</mo></mrow></msubsup></mfenced> <mo>·</mo> <mo>...</mo> <mo>·</mo> <mfenced separators="" open="|" close="|"><msubsup><mi>w</mi> <mrow><mi>r</mi><mi>e</mi><mi>c</mi></mrow> <mrow><mo>(</mo><mi>t</mi><mo>-</mo><mi>k</mi><mo>)</mo></mrow></msubsup></mfenced> <mo>·</mo> <mfenced separators="" open="|" close="|"><mfrac><mrow><mi>∂</mi><msup><mi>h</mi> <mrow><mo>(</mo><mi>t</mi><mo>-</mo><mi>k</mi><mo>)</mo></mrow></msup></mrow> <mrow><mi>∂</mi><msup><mi>i</mi> <mrow><mo>(</mo><mi>t</mi><mo>-</mo><mi>k</mi><mo>)</mo></mrow></msup></mrow></mfrac></mfenced></mrow></math>
+我们可以继续递归地扩展这个不等式，直到达到基本情况，在步骤`t - k`处：
+
+
 
 我们可以类似地评估这个偏导数：
 
-<math alttext="h Superscript left-parenthesis t minus k right-parenthesis Baseline equals f left-parenthesis w Subscript i n Superscript left-parenthesis t minus k right-parenthesis Baseline i Superscript left-parenthesis t minus k right-parenthesis Baseline plus w Subscript r e c Superscript left-parenthesis t minus k minus 1 right-parenthesis Baseline h Superscript left-parenthesis t minus k minus 1 right-parenthesis Baseline right-parenthesis"><mrow><msup><mi>h</mi> <mrow><mo>(</mo><mi>t</mi><mo>-</mo><mi>k</mi><mo>)</mo></mrow></msup> <mo>=</mo> <mi>f</mi> <mfenced separators="" open="(" close=")"><msubsup><mi>w</mi> <mrow><mi>i</mi><mi>n</mi></mrow> <mrow><mo>(</mo><mi>t</mi><mo>-</mo><mi>k</mi><mo>)</mo></mrow></msubsup> <msup><mi>i</mi> <mrow><mo>(</mo><mi>t</mi><mo>-</mo><mi>k</mi><mo>)</mo></mrow></msup> <mo>+</mo> <msubsup><mi>w</mi> <mrow><mi>r</mi><mi>e</mi><mi>c</mi></mrow> <mrow><mo>(</mo><mi>t</mi><mo>-</mo><mi>k</mi><mo>-</mo><mn>1</mn><mo>)</mo></mrow></msubsup> <msup><mi>h</mi> <mrow><mo>(</mo><mi>t</mi><mo>-</mo><mi>k</mi><mo>-</mo><mn>1</mn><mo>)</mo></mrow></msup></mfenced></mrow></math>
+$$
+\left| \frac{\partial h^{(t)}}{\partial i^{(t-k)}} \right| \leq \left| w_{rec}^{(t-1)} \right| \cdot \ldots \cdot \left| w_{rec}^{(t-k)} \right| \cdot \left| \frac{\partial h^{(t-k)}}{\partial i^{(t-k)}} \right|
+$$
 
-<math alttext="StartFraction normal partial-differential h Superscript left-parenthesis t minus k right-parenthesis Baseline Over normal partial-differential i Superscript left-parenthesis t minus k right-parenthesis Baseline EndFraction equals f prime left-parenthesis w Subscript i n Superscript left-parenthesis t minus k right-parenthesis Baseline i Superscript left-parenthesis t minus k right-parenthesis Baseline plus w Subscript r e c Superscript left-parenthesis t minus k minus 1 right-parenthesis Baseline h Superscript left-parenthesis t minus k minus 1 right-parenthesis Baseline right-parenthesis StartFraction normal partial-differential Over normal partial-differential i Superscript left-parenthesis t minus k right-parenthesis Baseline EndFraction left-parenthesis w Subscript i n Superscript left-parenthesis t minus k right-parenthesis Baseline i Superscript left-parenthesis t minus k right-parenthesis Baseline plus w Subscript r e c Superscript left-parenthesis t minus k minus 1 right-parenthesis Baseline h Superscript left-parenthesis t minus k minus 1 right-parenthesis Baseline right-parenthesis"><mrow><mfrac><mrow><mi>∂</mi><msup><mi>h</mi> <mrow><mo>(</mo><mi>t</mi><mo>-</mo><mi>k</mi><mo>)</mo></mrow></msup></mrow> <mrow><mi>∂</mi><msup><mi>i</mi> <mrow><mo>(</mo><mi>t</mi><mo>-</mo><mi>k</mi><mo>)</mo></mrow></msup></mrow></mfrac> <mo>=</mo> <msup><mi>f</mi> <mo>'</mo></msup> <mfenced separators="" open="(" close=")"><msubsup><mi>w</mi> <mrow><mi>i</mi><mi>n</mi></mrow> <mrow><mo>(</mo><mi>t</mi><mo>-</mo><mi>k</mi><mo>)</mo></mrow></msubsup> <msup><mi>i</mi> <mrow><mo>(</mo><mi>t</mi><mo>-</mo><mi>k</mi><mo>)</mo></mrow></msup> <mo>+</mo> <msubsup><mi>w</mi> <mrow><mi>r</mi><mi>e</mi><mi>c</mi></mrow> <mrow><mo>(</mo><mi>t</mi><mo>-</mo><mi>k</mi><mo>-</mo><mn>1</mn><mo>)</mo></mrow></msubsup> <msup><mi>h</mi> <mrow><mo>(</mo><mi>t</mi><mo>-</mo><mi>k</mi><mo>-</mo><mn>1</mn><mo>)</mo></mrow></msup></mfenced> <mfrac><mi>∂</mi> <mrow><mi>∂</mi><msup><mi>i</mi> <mrow><mo>(</mo><mi>t</mi><mo>-</mo><mi>k</mi><mo>)</mo></mrow></msup></mrow></mfrac> <mfenced separators="" open="(" close=")"><msubsup><mi>w</mi> <mrow><mi>i</mi><mi>n</mi></mrow> <mrow><mo>(</mo><mi>t</mi><mo>-</mo><mi>k</mi><mo>)</mo></mrow></msubsup> <msup><mi>i</mi> <mrow><mo>(</mo><mi>t</mi><mo>-</mo><mi>k</mi><mo>)</mo></mrow></msup> <mo>+</mo> <msubsup><mi>w</mi> <mrow><mi>r</mi><mi>e</mi><mi>c</mi></mrow> <mrow><mo>(</mo><mi>t</mi><mo>-</mo><mi>k</mi><mo>-</mo><mn>1</mn><mo>)</mo></mrow></msubsup> <msup><mi>h</mi> <mrow><mo>(</mo><mi>t</mi><mo>-</mo><mi>k</mi><mo>-</mo><mn>1</mn><mo>)</mo></mrow></msup></mfenced></mrow></math>
+$$
+h^{(t-k)} = f\left( w_{in}^{(t-k)} i^{(t-k)} + w_{rec}^{(t-k-1)} h^{(t-k-1)} \right)
+$$
 
-在这个表达式中，时间为 <math alttext="t minus k minus 1"><mrow><mi>t</mi> <mo>-</mo> <mi>k</mi> <mo>-</mo> <mn>1</mn></mrow></math> 的隐藏激活与时间为 <math alttext="t minus k"><mrow><mi>t</mi> <mo>-</mo> <mi>k</mi></mrow></math> 的输入值无关。因此我们可以将这个表达式重写为：
+$$
+\frac{\partial h^{(t-k)}}{\partial i^{(t-k)}} = f'\left( w_{in}^{(t-k)} i^{(t-k)} + w_{rec}^{(t-k-1)} h^{(t-k-1)} \right) \frac{\partial}{\partial i^{(t-k)}} \left( w_{in}^{(t-k)} i^{(t-k)} + w_{rec}^{(t-k-1)} h^{(t-k-1)} \right)
+$$
 
-<math alttext="StartFraction normal partial-differential h Superscript left-parenthesis t minus k right-parenthesis Baseline Over normal partial-differential i Superscript left-parenthesis t minus k right-parenthesis Baseline EndFraction equals f prime left-parenthesis w Subscript i n Superscript left-parenthesis t minus k right-parenthesis Baseline i Superscript left-parenthesis t minus k right-parenthesis Baseline plus w Subscript r e c Superscript left-parenthesis t minus k minus 1 right-parenthesis Baseline h Superscript left-parenthesis t minus k minus 1 right-parenthesis Baseline right-parenthesis w Subscript i n Superscript left-parenthesis t minus k right-parenthesis"><mrow><mfrac><mrow><mi>∂</mi><msup><mi>h</mi> <mrow><mo>(</mo><mi>t</mi><mo>-</mo><mi>k</mi><mo>)</mo></mrow></msup></mrow> <mrow><mi>∂</mi><msup><mi>i</mi> <mrow><mo>(</mo><mi>t</mi><mo>-</mo><mi>k</mi><mo>)</mo></mrow></msup></mrow></mfrac> <mo>=</mo> <msup><mi>f</mi> <mo>'</mo></msup> <mfenced separators="" open="(" close=")"><msubsup><mi>w</mi> <mrow><mi>i</mi><mi>n</mi></mrow> <mrow><mo>(</mo><mi>t</mi><mo>-</mo><mi>k</mi><mo>)</mo></mrow></msubsup> <msup><mi>i</mi> <mrow><mo>(</mo><mi>t</mi><mo>-</mo><mi>k</mi><mo>)</mo></mrow></msup> <mo>+</mo> <msubsup><mi>w</mi> <mrow><mi>r</mi><mi>e</mi><mi>c</mi></mrow> <mrow><mo>(</mo><mi>t</mi><mo>-</mo><mi>k</mi><mo>-</mo><mn>1</mn><mo>)</mo></mrow></msubsup> <msup><mi>h</mi> <mrow><mo>(</mo><mi>t</mi><mo>-</mo><mi>k</mi><mo>-</mo><mn>1</mn><mo>)</mo></mrow></msup></mfenced> <msubsup><mi>w</mi> <mrow><mi>i</mi><mi>n</mi></mrow> <mrow><mo>(</mo><mi>t</mi><mo>-</mo><mi>k</mi><mo>)</mo></mrow></msubsup></mrow></math>
+在这个表达式中，时间为 `t - k - 1` 的隐藏激活与时间为 `t - k` 的输入值无关。因此我们可以将这个表达式重写为：
 
-最后，对两边取绝对值，并再次应用关于 <math alttext="StartAbsoluteValue f prime EndAbsoluteValue"><mfenced separators="" open="|" close="|"><msup><mi>f</mi> <mo>'</mo></msup></mfenced></math> 最大值的观察，我们可以写成：
+$$
+\frac{\partial h^{(t-k)}}{\partial i^{(t-k)}} = f'\left( w_{in}^{(t-k)} i^{(t-k)} + w_{rec}^{(t-k-1)} h^{(t-k-1)} \right) w_{in}^{(t-k)}
+$$
 
-<math alttext="StartAbsoluteValue StartFraction normal partial-differential h Superscript left-parenthesis t minus k right-parenthesis Baseline Over normal partial-differential i Superscript left-parenthesis t minus k right-parenthesis Baseline EndFraction EndAbsoluteValue less-than-or-equal-to StartAbsoluteValue w Subscript i n Superscript left-parenthesis t minus k right-parenthesis Baseline EndAbsoluteValue"><mrow><mfenced separators="" open="|" close="|"><mfrac><mrow><mi>∂</mi><msup><mi>h</mi> <mrow><mo>(</mo><mi>t</mi><mo>-</mo><mi>k</mi><mo>)</mo></mrow></msup></mrow> <mrow><mi>∂</mi><msup><mi>i</mi> <mrow><mo>(</mo><mi>t</mi><mo>-</mo><mi>k</mi><mo>)</mo></mrow></msup></mrow></mfrac></mfenced> <mo>≤</mo> <mfenced separators="" open="|" close="|"><msubsup><mi>w</mi> <mrow><mi>i</mi><mi>n</mi></mrow> <mrow><mo>(</mo><mi>t</mi><mo>-</mo><mi>k</mi><mo>)</mo></mrow></msubsup></mfenced></mrow></math>
+最后，对两边取绝对值，并再次应用关于 `|f'|` 最大值的观察，我们可以写成：
+
+
+
+|∂h⁽ᵗ⁻ᵏ⁾ / ∂i⁽ᵗ⁻ᵏ⁾| ≤ |wᵢₙ⁽ᵗ⁻ᵏ⁾|
 
 这导致最终的不等式（我们可以简化，因为我们约束不同时间步的连接具有相等的值）：
 
-<math alttext="StartAbsoluteValue StartFraction normal partial-differential h Superscript left-parenthesis t right-parenthesis Baseline Over normal partial-differential i Superscript left-parenthesis t minus k right-parenthesis Baseline EndFraction EndAbsoluteValue less-than-or-equal-to StartAbsoluteValue w Subscript r e c Superscript left-parenthesis t minus 1 right-parenthesis Baseline EndAbsoluteValue dot ellipsis dot StartAbsoluteValue w Subscript r e c Superscript left-parenthesis t minus k right-parenthesis Baseline EndAbsoluteValue dot StartAbsoluteValue w Subscript i n Superscript left-parenthesis t minus k right-parenthesis Baseline EndAbsoluteValue equals StartAbsoluteValue w Subscript r e c Baseline EndAbsoluteValue Superscript k Baseline dot w Subscript i n"><mrow><mfenced separators="" open="|" close="|"><mfrac><mrow><mi>∂</mi><msup><mi>h</mi> <mrow><mo>(</mo><mi>t</mi><mo>)</mo></mrow></msup></mrow> <mrow><mi>∂</mi><msup><mi>i</mi> <mrow><mo>(</mo><mi>t</mi><mo>-</mo><mi>k</mi><mo>)</mo></mrow></msup></mrow></mfrac></mfenced> <mo>≤</mo> <mfenced separators="" open="|" close="|"><msubsup><mi>w</mi> <mrow><mi>r</mi><mi>e</mi><mi>c</mi></mrow> <mrow><mo>(</mo><mi>t</mi><mo>-</mo><mn>1</mn><mo>)</mo></mrow></msubsup></mfenced> <mo>·</mo> <mo>...</mo> <mo>·</mo> <mfenced separators="" open="|" close="|"><msubsup><mi>w</mi> <mrow><mi>r</mi><mi>e</mi><mi>c</mi></mrow> <mrow><mo>(</mo><mi>t</mi><mo>-</mo><mi>k</mi><mo>)</mo></mrow></msubsup></mfenced> <mo>·</mo> <mfenced separators="" open="|" close="|"><msubsup><mi>w</mi> <mrow><mi>i</mi><mi>n</mi></mrow> <mrow><mo>(</mo><mi>t</mi><mo>-</mo><mi>k</mi><mo>)</mo></mrow></msubsup></mfenced> <mo>=</mo> <msup><mfenced separators="" open="|" close="|"><msub><mi>w</mi> <mrow><mi>r</mi><mi>e</mi><mi>c</mi></mrow></msub></mfenced> <mi>k</mi></msup> <mo>·</mo> <msub><mi>w</mi> <mrow><mi>i</mi><mi>n</mi></mrow></msub></mrow></math>
+|∂h⁽ᵗ⁾ / ∂i⁽ᵗ⁻ᵏ⁾| ≤ |w_rec⁽ᵗ⁻¹⁾| · ... · |w_rec⁽ᵗ⁻ᵏ⁾| · |wᵢₙ⁽ᵗ⁻ᵏ⁾| = |w_rec|ᵏ · wᵢₙ
 
-这个关系在很大程度上限制了时间为 <math alttext="t minus k"><mrow><mi>t</mi> <mo>-</mo> <mi>k</mi></mrow></math> 的输入变化对时间为*t*的隐藏状态的影响。因为我们模型的权重在训练开始时被初始化为小值，所以这个导数的值随着*k*的增加而接近零。换句话说，当计算与过去几个时间步的输入相关时，梯度迅速减小，严重限制了我们模型学习长期依赖关系的能力。这个问题通常被称为*梯度消失*问题，严重影响了普通 RNN 的学习能力。为了解决这个限制，我们将在下一节中探讨对循环层的一个极具影响力的变化，即长短期记忆。
+这个关系在很大程度上限制了时间为`t - k`的输入变化对时间为`t`的隐藏状态的影响。因为我们模型的权重在训练开始时被初始化为小值，所以这个导数的值随着`k`的增加而接近零。换句话说，当计算与过去几个时间步的输入相关时，梯度迅速减小，严重限制了我们模型学习长期依赖关系的能力。这个问题通常被称为*梯度消失*问题，严重影响了普通 RNN 的学习能力。为了解决这个限制，我们将在下一节中探讨对循环层的一个极具影响力的变化，即长短期记忆。
 
 # 长短期记忆单元
 
@@ -475,14 +481,14 @@ PyTorch 提供了几个原语，我们可以直接使用它们来构建 RNN 模�
 import torch.nn as nn
 
 cell_1 = nn.RNNCell(input_size = 10,
-                    hidden_size = 20,
-                    nonlinearity='tanh')
+                    hidden_size = 20,
+                    nonlinearity='tanh')
 
 cell_2 = nn.LSTMCell(input_size = 10,
-                     hidden_size = 20)
+                     hidden_size = 20)
 
 cell_3 = nn.GRUCell(input_size = 10,
-                    hidden_size = 20)
+                    hidden_size = 20)
 
 ```
 
@@ -492,13 +498,13 @@ cell_3 = nn.GRUCell(input_size = 10,
 
 ```py
 multi_layer_rnn = nn.RNN(input_size = 10,
-                         hidden_size = 20,
-                         num_layers = 2,
-                         nonlinearity = 'tanh')
+                         hidden_size = 20,
+                         num_layers = 2,
+                         nonlinearity = 'tanh')
 
 multi_layer_lstm = nn.LSTM(input_size = 10,
-                           hidden_size = 20,
-                           num_layers = 2)
+                           hidden_size = 20,
+                           num_layers = 2)
 
 ```
 
@@ -506,17 +512,17 @@ multi_layer_lstm = nn.LSTM(input_size = 10,
 
 ```py
 multi_layer_rnn = nn.RNN(input_size = 10,
-                         hidden_size = 20,
-                         num_layers = 2,
-                         nonlinearity = 'tanh',
-                         batch_first = False,
-                         dropout = 0.5)
+                         hidden_size = 20,
+                         num_layers = 2,
+                         nonlinearity = 'tanh',
+                         batch_first = False,
+                         dropout = 0.5)
 
 multi_layer_lstm = nn.LSTM(input_size = 10,
-                           hidden_size = 20,
-                           num_layers = 2,
-                           batch_first = False,
-                           dropout = 0.5)
+                           hidden_size = 20,
+                           num_layers = 2,
+                           batch_first = False,
+                           dropout = 0.5)
 
 ```
 
@@ -549,6 +555,8 @@ $ pip install torchtext
 
 ```
 
+
+
 安装完包后，我们可以下载数据集并定义一个分词器。Torchtext 通过`torchtext.datasets`和`torchtext.data.utils`子模块提供了许多自然语言处理（NLP）数据集和分词器。我们将使用内置的 IMDb 数据集和 PyTorch 提供的标准`'basic_english'`分词器。
 
 ```py
@@ -568,14 +576,13 @@ tokenizer = get_tokenizer('basic_english')
 from torchtext.vocab import build_vocab_from_iterator
 
 def yield_tokens(data_iter):
-    for _, text in data_iter:
-        yield tokenizer(text)
+    for _, text in data_iter:
+        yield tokenizer(text)
 
 # build vocab from iterator and add a list of any special tokens
 text_vocab = build_vocab_from_iterator(yield_tokens(train_iter),
-                                       specials=['<unk>', '<pad>'])
+                                       specials=['<unk>', '<pad>'])
 text_vocab.set_default_index(text_vocab['<unk>'])
-
 ```
 
 如上所示，Torchtext 提供了一个函数`build_vocab_from_iterator`来创建词汇表。但是，该函数期望以标记列表作为输入，其中`next(train_iter)`会返回一个元组`(label_string, review_string)`。为了满足这一要求，我们定义了一个函数，在数据集被迭代时产生标记。最后，我们添加了未知和填充的特殊标记，并设置了默认值。
@@ -584,21 +591,21 @@ text_vocab.set_default_index(text_vocab['<unk>'])
 
 ```py
 def text_pipeline(x, max_size=512):
-   text = tokenizer(x)
+   text = tokenizer(x)
 
-   # reduce vocab size
-   pruned_text = []
-   for token in text:
-     if text_vocab.get_stoi()[token] >= 30000:
-       token = '<unk>'
-     pruned_text.append(token)
+   # reduce vocab size
+   pruned_text = []
+   for token in text:
+     if text_vocab.get_stoi()[token] >= 30000:
+       token = '<unk>'
+     pruned_text.append(token)
 
-   # pad sequence or truncate
-   if len(pruned_text) <= max_size:
-     pruned_text += ['<pad>'] * (max_size - len(pruned_text))
-   else:
-     pruned_text = pruned_text[0:max_size]
-   return text_vocab(pruned_text)
+   # pad sequence or truncate
+   if len(pruned_text) <= max_size:
+     pruned_text += ['<pad>'] * (max_size - len(pruned_text))
+   else:
+     pruned_text = pruned_text[0:max_size]
+   return text_vocab(pruned_text)
 
 label_pipeline = lambda x: (0 if (x == 'neg') else 1)
 ```
@@ -609,13 +616,12 @@ label_pipeline = lambda x: (0 if (x == 'neg') else 1)
 
 ```py
 def collate_batch(batch):
-  label_list, text_list = [], []
-  for label, review in batch:
-    label_list.append(label_pipeline(label))
-    text_list.append(text_pipeline(review))
-  return (torch.tensor(label_list, dtype=torch.long),
-          torch.tensor(text_list, dtype=torch.int32))
-
+  label_list, text_list = [], []
+  for label, review in batch:
+    label_list.append(label_pipeline(label))
+    text_list.append(text_pipeline(review))
+  return (torch.tensor(label_list, dtype=torch.long),
+          torch.tensor(text_list, dtype=torch.int32))
 ```
 
 `collate_batch`函数只是通过每个相应的管道运行标签和评论字符串，并将批处理作为张量元组`(labels_batch, reviews_batch)`返回。一旦定义了`collate_fn`，我们只需使用 IMDb 构造函数加载数据集，并使用`DataLoader`构造函数配置数据加载器：
@@ -625,14 +631,13 @@ from torch.utils.data import DataLoader
 
 train_iter, val_iter = IMDB(split=('train','test'))
 trainloader = DataLoader(train_iter,
-                         batch_size = 4,
-                         shuffle=False,
-                         collate_fn=collate_batch)
+                         batch_size = 4,
+                         shuffle=False,
+                         collate_fn=collate_batch)
 valloader = DataLoader(val_iter,
-                       batch_size = 4,
-                       shuffle=False,
-                       collate_fn=collate_batch)
-
+                       batch_size = 4,
+                       shuffle=False,
+                       collate_fn=collate_batch)
 ```
 
 我们使用`torchtext.datasets.IMDB` Python 类来为我们在训练情感分析模型时使用的训练和验证集提供服务。
@@ -645,46 +650,43 @@ valloader = DataLoader(val_iter,
 import torch.nn as nn
 
 embedding = nn.Embedding(
-                      num_embeddings=30000,
-                      embedding_dim=512,
-                      padding_idx=text_vocab.get_stoi()['<pad>'])
-
+                      num_embeddings=30000,
+                      embedding_dim=512,
+                      padding_idx=text_vocab.get_stoi()['<pad>'])
 ```
 
 然后，我们将嵌入层的结果传递给使用我们在前一节中看到的原语构建带有丢失的 LSTM。LSTM 的实现可以如下实现：
 
 ```py
 class TextClassifier(nn.Module):
-  def __init__(self):
-    super(TextClassifier,self).__init__()
-    self.layer_1 = nn.Embedding(
-                      num_embeddings=30000,
-                      embedding_dim=512,
-                      padding_idx=1)                      
-    self.layer_2 = nn.LSTMCell(input_size=512, hidden_size=512)
-    self.layer_3 = nn.Dropout(p=0.5)
-    self.layer_4 = nn.Sequential(
-                      nn.Linear(512, 2),
-                      nn.Sigmoid(),
-                      nn.BatchNorm1d(2))
+  def __init__(self):
+    super(TextClassifier,self).__init__()
+    self.layer_1 = nn.Embedding(
+                      num_embeddings=30000,
+                      embedding_dim=512,
+                      padding_idx=1)                      
+    self.layer_2 = nn.LSTMCell(input_size=512, hidden_size=512)
+    self.layer_3 = nn.Dropout(p=0.5)
+    self.layer_4 = nn.Sequential(
+                      nn.Linear(512, 2),
+                      nn.Sigmoid(),
+                      nn.BatchNorm1d(2))
 
-  def forward(self, x):
-    x = self.layer_1(x)
-    x = x.permute(1,0,2)
-    h = torch.rand(x.shape[1], 512)
-    c = torch.rand(x.shape[1], 512)
-    for t in range(x.shape[0]):
-      h, c = self.layer_2(x[t], (h,c))
-      h = self.layer_3(h)
-    return self.layer_4(h)
-
+  def forward(self, x):
+    x = self.layer_1(x)
+    x = x.permute(1,0,2)
+    h = torch.rand(x.shape[1], 512)
+    c = torch.rand(x.shape[1], 512)
+    for t in range(x.shape[0]):
+      h, c = self.layer_2(x[t], (h,c))
+      h = self.layer_3(h)
+    return self.layer_4(h)
 ```
 
 我们最后使用一个批归一化的隐藏层，与我们在以前的例子中一次又一次使用的隐藏层相同。将所有这些组件串联在一起，我们可以通过调用`TextClassifier`来构建模型：
 
 ```py
 model = TextClassifier()
-
 ```
 
 我们省略了设置摘要统计信息、保存中间快照和创建会话所涉及的其他样板，因为它与本书中构建的其他模型相同（请参阅[GitHub 存储库](https://github.com/darksigma/Fundamentals-of-Deep-Learning-Book)）。然后，我们可以使用 TensorBoard 运行和可视化我们模型的性能（参见图 9-23）。
@@ -695,13 +697,13 @@ model = TextClassifier()
 
 在训练开始时，模型稍微稳定性不佳，而在训练结束时，模型明显开始过拟合，训练成本和验证成本明显分歧。然而，在其最佳性能时，模型表现相当有效，并且在测试集上大约达到 86%的准确率。恭喜！您已经构建了您的第一个 RNN。
 
-# 使用循环神经网络解决 seq2seq 任务
+## 使用循环神经网络解决 seq2seq 任务
 
 现在我们已经建立了对 RNN 的深入理解，我们准备重新审视 seq2seq 问题。我们在本章开始时以一个 seq2seq 任务的示例开始：将句子中的单词序列映射到 POS 标签序列。解决这个问题是可行的，因为我们不需要考虑长期依赖性来生成适当的标签。但是有几个 seq2seq 问题，例如语言之间的翻译或为视频创建摘要，其中长期依赖性对模型的成功至关重要。这就是 RNN 的用武之地。
 
 seq2seq 的 RNN 方法看起来很像我们在上一章中讨论的自动编码器。seq2seq 模型由两个独立的网络组成。第一个网络称为*编码器*网络。编码器网络是一个循环网络（通常使用 LSTM 单元），它消耗整个输入序列。编码器网络的目标是生成对输入的简洁理解，并将其总结为由编码器网络的最终状态表示的一个单一思想。然后我们使用一个*解码器*网络，其起始状态由编码器网络的最终状态初始化，逐个标记地生成目标输出序列。在每一步中，解码器网络将其上一个时间步的输出作为当前时间步的输入。整个过程在图 9-24 中可视化。
 
-！[](Images/fdl2_0924.png)
+![](Images/fdl2_0924.png)
 
 ###### 图 9-24。我们如何使用编码器/解码器循环网络架构来解决 seq2seq 问题
 
@@ -709,7 +711,7 @@ seq2seq 的 RNN 方法看起来很像我们在上一章中讨论的自动编码�
 
 seq2seq RNN 架构也可以重新用于学习序列的良好嵌入。例如，2015 年 Kiros 等人发明了*skip-thought 向量*的概念，借鉴了自动编码器框架和第八章中讨论的 Skip-Gram 模型的结构特征。skip-thought 向量通过将一段话分成一组由连续句子组成的三元组来生成。作者使用了一个编码器网络和两个解码器网络，如图 9-25 所示。
 
-！[](Images/fdl2_0925.png)
+![](Images/fdl2_0925.png)
 
 ###### 图 9-25。skip-thought seq2seq 架构用于生成整个句子的嵌入表示
 
@@ -729,7 +731,7 @@ kyrian shook his head
 
 现在我们已经了解了如何利用 RNN 来解决 seq2seq 问题，我们几乎准备好尝试构建自己的模型了。然而，在那之前，我们还有一个重要的挑战要解决，在下一节中我们将直面讨论 seq2seq RNN 中的注意力概念。
 
-# 用注意力增强循环网络
+## 用注意力增强循环网络
 
 让我们更深入地思考翻译问题。如果你曾尝试学习一门外语，你会知道在完成翻译时有几个有用的步骤。首先，阅读完整的句子以理解你想要传达的概念是有帮助的。然后，逐字逐句地写出翻译，每个词都逻辑地跟在你之前写的词后面。但翻译的一个重要方面是，当你构成新句子时，你经常会参考原始文本，关注与当前翻译相关的特定部分。在每一步中，你都在关注原始“输入”的最相关部分，以便能够做出关于下一个要写在页面上的词的最佳决定。
 
@@ -753,29 +755,31 @@ kyrian shook his head
 
 掌握了将注意力引入 seq2seq 架构的策略后，我们终于准备好使用 RNN 模型将英语句子翻译成法语。但在我们开始之前，值得注意的是，注意力在超越语言翻译的问题中非常适用。在语音转文本问题中，注意力可以帮助算法动态关注音频的相应部分，同时将音频转录为文本。同样，注意力可以用于改进图像字幕算法，帮助字幕算法在撰写字幕时专注于输入图像的特定部分。每当输入的特定部分与正确生成相应输出的部分高度相关时，注意力都可以显著提高性能。
 
-# 剖析神经翻译网络
+## 剖析神经翻译网络
 
-最先进的神经翻译网络使用了许多不同的技术和进展，这些技术和进展建立在基本的 seq2seq 编码器-解码器架构之上。注意力机制，如前一节所详细介绍的，是一个重要且关键的架构改进。在本节中，我们将剖析一个完全实现的神经机器翻译系统，包括数据处理步骤，构建模型，训练模型，最终将其用作翻译系统，将英语短语转换为法语短语。
+
+
+最先进的神经翻译网络使用了许多不同的技术和进展，这些技术和进展建立在基本的 `seq2seq` 编码器-解码器架构之上。注意力机制，如前一节所详细介绍的，是一个重要且关键的架构改进。在本节中，我们将剖析一个完全实现的神经机器翻译系统，包括数据处理步骤，构建模型，训练模型，最终将其用作翻译系统，将英语短语转换为法语短语。
 
 在训练和最终使用神经机器翻译系统的流程与大多数机器学习流程类似：收集数据，准备数据，构建模型，训练模型，评估模型的进展，最终使用训练好的模型来预测或推断一些有用的东西。我们在这里回顾每个步骤。
 
 我们首先从[国际口语翻译研讨会（IWSLT2016）存储库](https://wit3.fbk.eu/2016-01)中收集数据，该存储库包含用于训练翻译系统的大型语料库。对于我们的用例，我们将使用英语到法语的数据。请注意，如果我们想要能够翻译不同语言，我们将不得不使用新数据从头开始训练模型。然后，我们将数据预处理为在训练和推断时我们的模型可以轻松使用的格式。这将涉及对英语和法语短语中的句子进行一定程度的清理和标记化。接下来是一系列用于准备数据的技术，稍后我们将介绍这些技术的实现。
 
-第一步是通过*标记化*将句子和短语解析为更适合模型的格式。这是将特定的英语或法语句子离散化为其组成标记的过程。例如，一个简单的单词级标记器将消耗句子“I read.”来生成数组["I", "read", "."]，或者它将消耗法语句子“Je lis.”来生成数组["Je", "lis", "."]。
+第一步是通过*标记化*将句子和短语解析为更适合模型的格式。这是将特定的英语或法语句子离散化为其组成标记的过程。例如，一个简单的单词级标记器将消耗句子“I read.”来生成数组 `["I", "read", "."]`，或者它将消耗法语句子“Je lis.”来生成数组 `["Je", "lis", "."]`。
 
-字符级标记化可能会将句子分解为单个字符或成对字符，如["I", " ", "r", "e", "a", "d", "."]和["I ", "re", "ad", "."]。一种标记化方式可能比另一种更好，每种都有其优缺点。例如，单词级标记化将确保模型生成来自某个字典的单词，但字典的大小可能太大，以至于在解码过程中难以有效地选择。这实际上是一个已知的问题，我们将在接下来的讨论中解决。
+字符级标记化可能会将句子分解为单个字符或成对字符，如 `["I", " ", "r", "e", "a", "d", "."]` 和 `["I ", "re", "ad", "."]`。一种标记化方式可能比另一种更好，每种都有其优缺点。例如，单词级标记化将确保模型生成来自某个字典的单词，但字典的大小可能太大，以至于在解码过程中难以有效地选择。这实际上是一个已知的问题，我们将在接下来的讨论中解决。
 
-另一方面，使用字符级标记化的解码器可能不会产生可理解的输出，但解码器必须选择的总字典要小得多，因为它只是所有可打印 ASCII 字符的集合。在本教程中，我们使用单词级标记化，但我们鼓励您尝试不同的标记化以观察其影响。值得注意的是，我们还必须在所有输出序列的末尾添加一个特殊的 EOS 字符，因为我们需要提供一种明确的方式让解码器指示它已经解码结束。我们不能使用常规标点，因为我们不能假设我们正在翻译完整的句子。请注意，我们在源序列中不需要 EOS 字符，因为我们正在预先格式化地喂入这些数据，不需要一个 EOS 字符来表示我们源序列的结束。
+另一方面，使用字符级标记化的解码器可能不会产生可理解的输出，但解码器必须选择的总字典要小得多，因为它只是所有可打印 ASCII 字符的集合。在本教程中，我们使用单词级标记化，但我们鼓励您尝试不同的标记化以观察其影响。值得注意的是，我们还必须在所有输出序列的末尾添加一个特殊的 `EOS` 字符，因为我们需要提供一种明确的方式让解码器指示它已经解码结束。我们不能使用常规标点，因为我们不能假设我们正在翻译完整的句子。请注意，我们在源序列中不需要 `EOS` 字符，因为我们正在预先格式化地喂入这些数据，不需要一个 `EOS` 字符来表示我们源序列的结束。
 
-下一个优化涉及进一步修改我们如何表示每个源序列和目标序列的方式，并引入了一个称为*桶装*的概念。这是一种主要用于序列到序列任务，特别是机器翻译的方法，可以帮助模型有效地处理不同长度的句子或短语。我们首先描述了喂入训练数据的朴素方法，并说明了这种方法的缺点。通常，在喂入编码器和解码器标记时，源序列和目标序列的长度在不同示例对之间并不总是相等。例如，源序列可能长度为*X*，目标序列可能长度为*Y*。看起来我们需要不同的 seq2seq 网络来适应每个(*X, Y*)对，但这似乎立即显得浪费和低效。相反，我们可以稍微改进，如果我们将每个序列*填充*到一定长度，如图 9-28 所示，假设我们使用单词级的标记化，并且我们已经在目标序列中添加了 EOS 标记。
+下一个优化涉及进一步修改我们如何表示每个源序列和目标序列的方式，并引入了一个称为*桶装*的概念。这是一种主要用于序列到序列任务，特别是机器翻译的方法，可以帮助模型有效地处理不同长度的句子或短语。我们首先描述了喂入训练数据的朴素方法，并说明了这种方法的缺点。通常，在喂入编码器和解码器标记时，源序列和目标序列的长度在不同示例对之间并不总是相等。例如，源序列可能长度为*X*，目标序列可能长度为*Y*。看起来我们需要不同的 `seq2seq` 网络来适应每个(*X, Y*)对，但这似乎立即显得浪费和低效。相反，我们可以稍微改进，如果我们将每个序列*填充*到一定长度，如图 9-28 所示，假设我们使用单词级的标记化，并且我们已经在目标序列中添加了 `EOS` 标记。
 
 ![](img/fdl2_0928.png)
 
 ###### 图 9-28。填充序列的朴素策略
 
-这一步省去了为每对源和目标长度构建不同的 seq2seq 模型的麻烦。然而，这引入了另一个问题：如果有一个非常长的序列，那意味着我们必须将每个其他序列*填充到该长度*。这将使一个短序列填充到末尾所需的计算资源与一个带有少量填充标记的长序列一样多，这是浪费的，可能会给我们的模型带来重大性能损失。我们可以考虑将语料库中的每个句子分解为短语，使得每个短语的长度不超过某个最大限制，但如何分解相应的翻译并不清楚。这就是桶装如何帮助我们的地方。
+这一步省去了为每对源和目标长度构建不同的 `seq2seq` 模型的麻烦。然而，这引入了另一个问题：如果有一个非常长的序列，那意味着我们必须将每个其他序列*填充到该长度*。这将使一个短序列填充到末尾所需的计算资源与一个带有少量填充标记的长序列一样多，这是浪费的，可能会给我们的模型带来重大性能损失。我们可以考虑将语料库中的每个句子分解为短语，使得每个短语的长度不超过某个最大限制，但如何分解相应的翻译并不清楚。这就是桶装如何帮助我们的地方。
 
-分桶是一个想法，我们可以将编码器和解码器对放入相似大小的桶中，并且只填充到每个桶中序列的最大长度。例如，我们可以表示一组桶，[(5, 10), (10, 15), (20, 25), (30, 40)]，列表中的每个元组分别是源序列和目标序列的最大长度。借用前面的例子，我们可以将序列对(["I", "read", "."], ["Je", "lis", ".", "EOS"])放入第一个桶中，因为源序列小于 5 个标记，目标序列小于 10 个标记。然后我们将(["See", "you", "in", "a", "little", "while"], ["A", "tout", "a", "l’heure", "EOS"])放入第二个桶，依此类推。这种技术允许我们在两个极端之间取得折衷，只填充必要的部分，如图 9-29 所示。
+分桶是一个想法，我们可以将编码器和解码器对放入相似大小的桶中，并且只填充到每个桶中序列的最大长度。例如，我们可以表示一组桶，`[(5, 10), (10, 15), (20, 25), (30, 40)]`，列表中的每个元组分别是源序列和目标序列的最大长度。借用前面的例子，我们可以将序列对 `(["I", "read", "."], ["Je", "lis", ".", "EOS"])` 放入第一个桶中，因为源序列小于 5 个标记，目标序列小于 10 个标记。然后我们将 `(["See", "you", "in", "a", "little", "while"], ["A", "tout", "a", "l’heure", "EOS"])` 放入第二个桶，依此类推。这种技术允许我们在两个极端之间取得折衷，只填充必要的部分，如图 9-29 所示。
 
 ![](img/fdl2_0929.png)
 
@@ -783,7 +787,7 @@ kyrian shook his head
 
 使用分桶在训练和测试时显示出显著的加速，并且允许开发人员和框架编写非常优化的代码，以利用任何来自桶的序列将具有相同的大小，并以一种允许进一步 GPU 效率的方式打包数据。
 
-在正确填充序列后，我们需要为目标序列添加一个额外的标记：*一个 GO 标记*。这个 GO 标记将向解码器发出信号，表示解码需要开始，在这一点上，解码器将接管并开始解码。
+在正确填充序列后，我们需要为目标序列添加一个额外的标记：*一个 GO 标记*。这个 `GO` 标记将向解码器发出信号，表示解码需要开始，在这一点上，解码器将接管并开始解码。
 
 在数据准备方面我们做的最后一个改进是反转源序列。研究人员发现这样做可以提高性能，这已经成为训练神经机器翻译模型时尝试的标准技巧。这有点工程上的技巧，但考虑到我们的固定大小神经状态只能容纳有限信息，处理句子开头时编码的信息可能会在处理句子后部时被覆盖。在许多语言对中，句子开头比句子结尾更难翻译，因此通过反转句子的这种技巧可以通过让句子开头最后发言来提高翻译准确性。有了这些想法，最终的序列看起来如图 9-30 所示。
 
@@ -791,25 +795,23 @@ kyrian shook his head
 
 ###### 图 9-30。最终的填充方案，使用桶，反转输入，并添加 GO 标记
 
-使用这些描述的技术，我们现在可以详细说明实现。首先，我们加载数据集，然后定义我们的分词器和词汇表。我们不在这里定义词嵌入，因为我们将训练我们的模型来计算它们。PyTorch 的 Torchtext 库支持`torch.text.datasets`中的 IWSLT2016：
+使用这些描述的技术，我们现在可以详细说明实现。首先，我们加载数据集，然后定义我们的分词器和词汇表。我们不在这里定义词嵌入，因为我们将训练我们的模型来计算它们。PyTorch 的 `Torchtext` 库支持 `torch.text.datasets` 中的 `IWSLT2016`：
 
 ```py
 from torchtext.datasets import IWSLT2016
 
 train_iter = IWSLT2016(split=('train'),
-                       language_pair=('en','fr'))
-
+                       language_pair=('en','fr'))
 ```
 
-数据集构造函数返回一个可迭代样式数据集，可以使用`next(train_iter)`检索英语和法语句子对。我们将使用这种可迭代样式数据集在代码中稍后创建分桶数据集以进行批处理。
+数据集构造函数返回一个可迭代样式数据集，可以使用 `next(train_iter)` 检索英语和法语句子对。我们将使用这种可迭代样式数据集在代码中稍后创建分桶数据集以进行批处理。
 
-现在，让我们为每种语言定义分词器和词汇表。PyTorch 提供了一个`get_tokenizer`函数，可用于常见的分词器。在这里，我们将为每种语言使用`spacy`分词器。您可能需要先下载`spacy`语言文件：
+现在，让我们为每种语言定义分词器和词汇表。PyTorch 提供了一个 `get_tokenizer` 函数，可用于常见的分词器。在这里，我们将为每种语言使用 `spacy` 分词器。您可能需要先下载 `spacy` 语言文件：
 
 ```py
 pip install -U spacy
 python -m spacy download en_core_web_sm
 python -m spacy download fr_core_news_sm
-
 ```
 
 一旦我们有了语言文件，我们可以按以下方式创建分词器：
@@ -819,155 +821,150 @@ from torchtext.data.utils import get_tokenizer
 
 tokenizer_en = get_tokenizer('spacy',language='en_core_web_sm')
 tokenizer_fr = get_tokenizer('spacy',language='fr_core_news_sm')
-
 ```
 
-接下来，我们将使用 PyTorch 的`build_vocab_from_iterator`函数为英语和法语创建词汇表。该函数从单一语言的可迭代样式数据集中获取标记并创建词汇表。由于我们的数据集包含英语和法语句子，我们创建一个`yield_tokens`函数，仅返回英语或法语标记，并将其传递给`build_vocab_from_iterator`：
+接下来，我们将使用 PyTorch 的 `build_vocab_from_iterator` 函数为英语和法语创建词汇表。该函数从单一语言的可迭代样式数据集中获取标记并创建词汇表。由于我们的数据集包含英语和法语句子，我们创建一个 `yield_tokens` 函数，仅返回英语或法语标记，并将其传递给 `build_vocab_from_iterator`：
 
 ```py
 def yield_tokens(data_iter, language):
-    if language == 'en':
-      for data_sample in data_iter:
-          yield tokenizer_en(data_sample[0])
-    else:
-      for data_sample in data_iter:
-        yield tokenizer_fr(data_sample[1])
+    if language == 'en':
+      for data_sample in data_iter:
+          yield tokenizer_en(data_sample[0])
+    else:
+      for data_sample in data_iter:
+        yield tokenizer_fr(data_sample[1])
 
 UNK_IDX, PAD_IDX, GO_IDX, EOS_IDX = 0, 1, 2, 3
 special_symbols = ['<unk>', '<pad>', '<go>', '<eos>']
 
 # Create Vocabs
 train_iter = IWSLT2016(root='.data', split=('train'),
-                             language_pair=('en', 'fr'))
+                             language_pair=('en', 'fr'))
 
 vocab_en = build_vocab_from_iterator(
-                  yield_tokens(train_iter, 'en'),
-                  min_freq=1,
-                  specials=special_symbols,
-                  special_first=True)
+                  yield_tokens(train_iter, 'en'),
+                  min_freq=1,
+                  specials=special_symbols,
+                  special_first=True)
 
 train_iter = IWSLT2016(root='.data', split=('train'),
-                             language_pair=('en', 'fr'))
+                             language_pair=('en', 'fr'))
 vocab_fr = build_vocab_from_iterator(
-                  yield_tokens(train_iter, 'fr'),
-                  min_freq=1,
-                  specials=special_symbols,
-                  special_first=True)
-
+                  yield_tokens(train_iter, 'fr'),
+                  min_freq=1,
+                  specials=special_symbols,
+                  special_first=True)
 ```
 
-请注意，在构建法语词汇表之前，我们需要重新加载`train_iter`以重新启动可迭代样式数据集。我们还添加了特殊标记及其索引。
+请注意，在构建法语词汇表之前，我们需要重新加载 `train_iter` 以重新启动可迭代样式数据集。我们还添加了特殊标记及其索引。
 
-现在我们有了数据集、分词器和词汇表，我们需要创建函数来预处理标记并生成分桶数据的批次。首先让我们定义一个`process_tokens`函数来应用我们之前讨论的改进：
+现在我们有了数据集、分词器和词汇表，我们需要创建函数来预处理标记并生成分桶数据的批次。首先让我们定义一个 `process_tokens` 函数来应用我们之前讨论的改进：
 
 ```py
 def process_tokens(source, target, bucket_sizes):
-  # find bucket_index
-  for i in range(len(bucket_sizes)+2):
-    # truncate if we exhauset list of buckets
-    if i >= len(bucket_sizes):
-      bucket = bucket_sizes[i-1]
-      bucket_id = i-1
-      if len(source) > bucket[0]:
-        source = source[:bucket[0]]
-      if len(target) > (bucket[1]-2):
-        target = target[:bucket[1]-2]
-      break
+  # find bucket_index
+  for i in range(len(bucket_sizes)+2):
+    # truncate if we exhauset list of buckets
+    if i >= len(bucket_sizes):
+      bucket = bucket_sizes[i-1]
+      bucket_id = i-1
+      if len(source) > bucket[0]:
+        source = source[:bucket[0]]
+      if len(target) > (bucket[1]-2):
+        target = target[:bucket[1]-2]
+      break
 
-    bucket = bucket_sizes[i]
-    if (len(source) < bucket[0]) and ((len(target)+1) < bucket[1]):
-      bucket_id = i
-      break
+    bucket = bucket_sizes[i]
+    if (len(source) < bucket[0]) and ((len(target)+1) < bucket[1]):
+      bucket_id = i
+      break
 
-  source += ((bucket_sizes[bucket_id][0] - len(source)) * ['<pad>'])
-  source = list(reversed(source))
+  source += ((bucket_sizes[bucket_id][0] - len(source)) * ['<pad>'])
+  source = list(reversed(source))
 
-  target.insert(0,'<go>')
-  target.append('<eos>')
-  target += (bucket_sizes[bucket_id][1] - len(target)) * ['<pad>']
+  target.insert(0,'<go>')
+  target.append('<eos>')
+  target += (bucket_sizes[bucket_id][1] - len(target)) * ['<pad>']
 
-  return vocab_en(source), vocab_fr(target), bucket_id
-
+  return vocab_en(source), vocab_fr(target), bucket_id
 ```
 
-在这个函数中，我们传入变量大小的源标记和目标标记列表，以及一个桶大小列表。首先，我们决定适合源标记和目标标记列表的最小桶大小。然后，我们通过填充和反转序列来处理源标记，如前面所述。对于目标标记，我们在开头添加一个`<go>`标记，并在末尾添加一个`<eos>`标记，然后填充到桶大小。在确定最小桶大小时，我们考虑了两个添加的标记`<go>`和`<eos>`。
+在这个函数中，我们传入变量大小的源标记和目标标记列表，以及一个桶大小列表。首先，我们决定适合源标记和目标标记列表的最小桶大小。然后，我们通过填充和反转序列来处理源标记，如前面所述。对于目标标记，我们在开头添加一个 `<go>` 标记，并在末尾添加一个 `<eos>` 标记，然后填充到桶大小。在确定最小桶大小时，我们考虑了两个添加的标记 `<go>` 和 `<eos>`。
 
-现在我们有一个函数，它接受源标记和目标标记的列表，并适当地准备它们。接下来，我们需要为我们的模型和训练循环收集一批数据。为此，我们将使用内置的 PyTorch`Dataset`和`DataLoader`类。
+现在我们有一个函数，它接受源标记和目标标记的列表，并适当地准备它们。接下来，我们需要为我们的模型和训练循环收集一批数据。为此，我们将使用内置的 PyTorch `Dataset` 和 `DataLoader` 类。
 
-我们将为每个桶大小分开`Dataset`和`DataLoader`。这种方法将使我们能够利用`DataLoader`的内置功能进行随机分批和并行处理。
+我们将为每个桶大小分开 `Dataset` 和 `DataLoader`。这种方法将使我们能够利用 `DataLoader` 的内置功能进行随机分批和并行处理。
 
-首先，我们通过对 PyTorch 的`Dataset`类进行子类化来创建一个`BucketedDataset`类。由于这将是一个映射样式的数据集，我们需要为数据访问定义`__getitem__`和`__len__`方法：
+首先，我们通过对 PyTorch 的 `Dataset` 类进行子类化来创建一个 `BucketedDataset` 类。由于这将是一个映射样式的数据集，我们需要为数据访问定义 `__getitem__` 和 `__len__` 方法：
 
 ```py
 from torch.utils.data import Dataset
 
 class BucketedDataset(Dataset):
-  def __init__(self, bucketed_dataset, bucket_size):
-    super(BucketedDataset, self).__init__()
-    self.length = len(bucketed_dataset)
-    self.input_len = bucket_size[0]
-    self.target_len = bucket_size[1]
-    self.bucketed_dataset = bucketed_dataset
+  def __init__(self, bucketed_dataset, bucket_size):
+    super(BucketedDataset, self).__init__()
+    self.length = len(bucketed_dataset)
+    self.input_len = bucket_size[0]
+    self.target_len = bucket_size[1]
+    self.bucketed_dataset = bucketed_dataset
 
-  def __getitem__(self, index):
-    return (torch.tensor(self.bucketed_dataset[index][0],
-                         dtype=torch.float32),
-            torch.tensor(self.bucketed_dataset[index][1],
-                         dtype=torch.float32))
+  def __getitem__(self, index):
+    return (torch.tensor(self.bucketed_dataset[index][0],
+                         dtype=torch.float32),
+            torch.tensor(self.bucketed_dataset[index][1],
+                         dtype=torch.float32))
 
-  def __len__(self):
-    return self.length
+  def __len__(self):
+    return self.length
 
 bucketed_datasets = []
 for i, dataset in enumerate(datasets):
-  bucketed_datasets.append(BucketedDataset(dataset,
-                                           bucket_sizes[i]))
-
+  bucketed_datasets.append(BucketedDataset(dataset,
+                                           bucket_sizes[i]))
 ```
 
-我们在`bucketed_datasets`中创建了一个`BucketedDataset`对象的列表，每个桶大小一个。`BucketedDataset`构造函数还将我们的词汇整数转换为 PyTorch 张量，以便我们稍后可以将它们传递给我们的模型。
+我们在 `bucketed_datasets` 中创建了一个 `BucketedDataset` 对象的列表，每个桶大小一个。`BucketedDataset` 构造函数还将我们的词汇整数转换为 PyTorch 张量，以便我们稍后可以将它们传递给我们的模型。
 
-接下来，我们使用 PyTorch 的`DataLoader`类为`bucketed_datasets`中的每个数据集创建数据加载器。由于我们创建了`Dataset`对象，我们可以在不编写任何额外代码的情况下获得`DataLoader`类的批处理能力：
+接下来，我们使用 PyTorch 的 `DataLoader` 类为 `bucketed_datasets` 中的每个数据集创建数据加载器。由于我们创建了 `Dataset` 对象，我们可以在不编写任何额外代码的情况下获得 `DataLoader` 类的批处理能力：
 
 ```py
 from torch.utils.data import DataLoader
 
 dataloaders = []
 for dataset in bucketed_datasets:
-  dataloaders.append(DataLoader(dataset,
-                                batch_size=32,
-                                shuffle=True))
-
+  dataloaders.append(DataLoader(dataset,
+                                batch_size=32,
+                                shuffle=True))
 ```
 
-数据加载器列表保存了每个桶大小的数据加载器，因此当我们运行训练或测试循环时，我们将选择一个桶大小（对于训练是随机的），并使用相应的数据加载器来获取一批编码器和解码器输入：
+数据加载器列表保存了每个桶大小的数据加载器，因此当我们运行训练或测试循环时，我们将选择一个桶大小（对于训练是随机的），并使用相应的数据加载器来获取一批编码器和解码器输入。
+
+
 
 ```py
 for epoch in range(n_epochs):
-  # exhaust all dataloaders randomly
-  # keep track of when we used up all values
-  dataloader_sizes = []
-  for dataloader in dataloaders:
-    dataloader_sizes.append(len(dataloader))
+  # exhaust all dataloaders randomly
+  # keep track of when we used up all values
+  dataloader_sizes = []
+  for dataloader in dataloaders:
+    dataloader_sizes.append(len(dataloader))
 
-  while np.array(dataloader_sizes).sum() != 0:
-    bucket_id = torch.randint(0,len(bucket_sizes),(1,1)).item()
-    if dataloader_sizes[bucket_id] == 0:
-      continue
-    source, target = next(iter(dataloaders[bucket_id]))
-    dataloader_sizes[bucket_id] -= 1
+  while np.array(dataloader_sizes).sum() != 0:
+    bucket_id = torch.randint(0,len(bucket_sizes),(1,1)).item()
+    if dataloader_sizes[bucket_id] == 0:
+      continue
+    source, target = next(iter(dataloaders[bucket_id]))
+    dataloader_sizes[bucket_id] -= 1
     loss = train(encoder_inputs,
-                 decoder_inputs,
-                 target_weights,
-                 bucket_id)
-
+                 decoder_inputs,
+                 target_weights,
+                 bucket_id)
 ```
 
 我们测量预测时间产生的损失，同时跟踪其他运行指标：
 
 ```py
 loss += step_loss / steps_per_checkpoint current_step += 1
-
 ```
 
 最后，根据全局变量的指示，我们会定期执行一些任务。首先，我们打印出先前批次的统计信息，如损失、学习率和困惑度。如果发现损失没有减少，模型可能已经陷入局部最优解。为了帮助模型摆脱这种情况，我们会降低学习率，以便它不会朝任何特定方向大幅跳跃。在这一点上，我们还会将模型及其权重和激活保存到磁盘上。
@@ -988,9 +985,9 @@ loss += step_loss / steps_per_checkpoint current_step += 1
 
 为了更明确地展示注意力模型，我们可以可视化解码器 LSTM 在将句子从英语翻译成法语时计算的注意力。特别是，我们知道当编码器 LSTM 更新其单元状态以将句子压缩为连续的向量表示时，它还会在每个时间步计算隐藏状态。我们知道解码器 LSTM 对这些隐藏状态进行凸组求和，我们可以将这个求和看作是注意力机制；当某个隐藏状态上有更多的权重时，我们可以将其解释为模型更多地关注在该时间步输入的标记上。这正是我们在图 9-33 中可视化的内容。
 
-要翻译的英语句子在顶行，结果的法语翻译在第一列。方块颜色越浅，解码器在解码该行元素时对该特定列付出的注意力越多。也就是说，注意力图中的*(i, j)^(th)*元素显示了在将法语句子的*i^(th)*标记翻译为英语句子的*j^(th)*标记时，对英语句子的*j^(th)*标记付出的注意力量。
+要翻译的英语句子在顶行，结果的法语翻译在第一列。方块颜色越浅，解码器在解码该行元素时对该特定列付出的注意力越多。也就是说，注意力图中的`(i, j)^(th)`元素显示了在将法语句子的`i^(th)`标记翻译为英语句子的`j^(th)`标记时，对英语句子的`j^(th)`标记付出的注意力量。
 
-我们立即看到注意力机制似乎运作得相当不错。尽管模型的预测中存在轻微噪音，但通常会在正确的区域放置大量注意力。添加网络层可能有助于产生更清晰的注意力。一个令人印象深刻的方面是，“the European Economic”这个短语在法语中被翻译为“zone économique européenne”，因此注意力权重反映了这种翻转。当从英语翻译到不从左到右顺畅解析的不同语言时，这种注意力模式可能会更有趣。
+我们立即看到注意力机制似乎运作得相当不错。尽管模型的预测中存在轻微噪音，但通常会在正确的区域放置大量注意力。添加网络层可能有助于产生更清晰的注意力。一个令人印象深刻的方面是，"the European Economic"这个短语在法语中被翻译为"zone économique européenne"，因此注意力权重反映了这种翻转。当从英语翻译到不从左到右顺畅解析的不同语言时，这种注意力模式可能会更有趣。
 
 ![](img/fdl2_0933.png)
 
@@ -1004,23 +1001,23 @@ loss += step_loss / steps_per_checkpoint current_step += 1
 
 点积注意力实际上就像听起来的那样简单——这种方法计算编码器隐藏状态之间的点积作为对齐分数。这些权重用于计算上下文向量，这是编码器隐藏状态的凸组合（通过 softmax）。为什么使用点积来衡量对齐？正如我们在第一章中学到的，两个向量的点积可以表示为两个向量的范数和它们之间夹角的余弦的乘积。当两个向量之间的夹角趋近于零时，余弦趋近于一。此外，从三角学中我们知道，当输入角度在 0 度到 180 度之间时，余弦的范围是 1 到-1，这是我们需要考虑的角度域的唯一部分。点积具有一个很好的性质，即当两个向量之间的夹角变小时，点积变大。这使我们能够将点积作为相似性的自然度量。
 
-2017 年，Vaswani 等人⁷通过引入一个缩放因子——隐藏状态维度的平方根，对现有的点积注意力框架进行了修改。Vaswani 等人承认，随着隐藏状态表示在维度上变得越来越大，我们预计会看到更多高幅度的点积。为了理解包含这个缩放因子的原因，假设每个 <math alttext="h Subscript i"><msub><mi>h</mi> <mi>i</mi></msub></math> 的索引都是从均值为零、单位方差的随机变量中独立且相同地抽取的。让我们计算它们的点积的期望和方差：
+2017 年，Vaswani 等人⁷通过引入一个缩放因子——隐藏状态维度的平方根，对现有的点积注意力框架进行了修改。Vaswani 等人承认，随着隐藏状态表示在维度上变得越来越大，我们预计会看到更多高幅度的点积。为了理解包含这个缩放因子的原因，假设每个 `h_i` 的索引都是从均值为零、单位方差的随机变量中独立且相同地抽取的。让我们计算它们的点积的期望和方差：
 
-<math alttext="double-struck upper E left-bracket s Subscript t Superscript upper T Baseline h Subscript i Baseline right-bracket equals sigma-summation Underscript j equals 1 Overscript k Endscripts double-struck upper E left-bracket s Subscript t comma j Baseline asterisk h Subscript i comma j Baseline right-bracket"><mrow><mi>𝔼</mi> <mrow><mo>[</mo> <msubsup><mi>s</mi> <mi>t</mi> <mi>T</mi></msubsup> <msub><mi>h</mi> <mi>i</mi></msub> <mo>]</mo></mrow> <mo>=</mo> <msubsup><mo>∑</mo> <mrow><mi>j</mi><mo>=</mo><mn>1</mn></mrow> <mi>k</mi></msubsup> <mi>𝔼</mi> <mrow><mo>[</mo> <msub><mi>s</mi> <mrow><mi>t</mi><mo>,</mo><mi>j</mi></mrow></msub> <mo>*</mo> <msub><mi>h</mi> <mrow><mi>i</mi><mo>,</mo><mi>j</mi></mrow></msub> <mo>]</mo></mrow></mrow></math>
+`𝔼[s_t^T h_i] = ∑_{j=1}^k 𝔼[s_{t,j} * h_{i,j}]`
 
-= <math alttext="sigma-summation Underscript j equals 1 Overscript k Endscripts double-struck upper E left-bracket s Subscript t comma j Baseline right-bracket double-struck upper E left-bracket h Subscript i comma j Baseline right-bracket"><mrow><msubsup><mo>∑</mo> <mrow><mi>j</mi><mo>=</mo><mn>1</mn></mrow> <mi>k</mi></msubsup> <mi>𝔼</mi> <mrow><mo>[</mo> <msub><mi>s</mi> <mrow><mi>t</mi><mo>,</mo><mi>j</mi></mrow></msub> <mo>]</mo></mrow> <mi>𝔼</mi> <mrow><mo>[</mo> <msub><mi>h</mi> <mrow><mi>i</mi><mo>,</mo><mi>j</mi></mrow></msub> <mo>]</mo></mrow></mrow></math>
+`= ∑_{j=1}^k 𝔼[s_{t,j}] 𝔼[h_{i,j}]`
 
-<math alttext="equals 0"><mrow><mo>=</mo> <mn>0</mn></mrow></math>
+`= 0`
 
-<math alttext="upper V a r left-parenthesis s Subscript t Superscript upper T Baseline h Subscript i Baseline right-parenthesis equals sigma-summation Underscript j equals 1 Overscript k Endscripts upper V a r left-parenthesis s Subscript t comma j Baseline asterisk h Subscript i comma j Baseline right-parenthesis"><mrow><mi>V</mi> <mi>a</mi> <mi>r</mi> <mrow><mo>(</mo> <msubsup><mi>s</mi> <mi>t</mi> <mi>T</mi></msubsup> <msub><mi>h</mi> <mi>i</mi></msub> <mo>)</mo></mrow> <mo>=</mo> <msubsup><mo>∑</mo> <mrow><mi>j</mi><mo>=</mo><mn>1</mn></mrow> <mi>k</mi></msubsup> <mi>V</mi> <mi>a</mi> <mi>r</mi> <mrow><mo>(</mo> <msub><mi>s</mi> <mrow><mi>t</mi><mo>,</mo><mi>j</mi></mrow></msub> <mo>*</mo> <msub><mi>h</mi> <mrow><mi>i</mi><mo>,</mo><mi>j</mi></mrow></msub> <mo>)</mo></mrow></mrow></math>
+`Var(s_t^T h_i) = ∑_{j=1}^k Var(s_{t,j} * h_{i,j})`
 
-<math alttext="equals sigma-summation Underscript j equals 1 Overscript k Endscripts double-struck upper E left-bracket left-parenthesis s Subscript t comma j Superscript 2 Baseline asterisk h Subscript i comma j Superscript 2 Baseline right-parenthesis right-bracket minus double-struck upper E left-bracket s Subscript t comma j Baseline asterisk h Subscript i comma j Baseline right-bracket squared"><mrow><mo>=</mo> <msubsup><mo>∑</mo> <mrow><mi>j</mi><mo>=</mo><mn>1</mn></mrow> <mi>k</mi></msubsup> <mi>𝔼</mi> <mrow><mo>[</mo> <mrow><mo>(</mo> <msubsup><mi>s</mi> <mrow><mi>t</mi><mo>,</mo><mi>j</mi></mrow> <mn>2</mn></msubsup> <mo>*</mo> <msubsup><mi>h</mi> <mrow><mi>i</mi><mo>,</mo><mi>j</mi></mrow> <mn>2</mn></msubsup> <mo>)</mo></mrow> <mo>]</mo></mrow> <mo>-</mo> <mi>𝔼</mi> <msup><mrow><mo>[</mo><msub><mi>s</mi> <mrow><mi>t</mi><mo>,</mo><mi>j</mi></mrow></msub> <mo>*</mo><msub><mi>h</mi> <mrow><mi>i</mi><mo>,</mo><mi>j</mi></mrow></msub> <mo>]</mo></mrow> <mn>2</mn></msup></mrow></math>
+`= ∑_{j=1}^k 𝔼[(s_{t,j}^2 * h_{i,j}^2)] - 𝔼[s_{t,j} * h_{i,j}]^2`
 
-<math alttext="equals sigma-summation Underscript j equals 1 Overscript k Endscripts double-struck upper E left-bracket s Subscript t comma j Superscript 2 Baseline right-bracket double-struck upper E left-bracket h Subscript i comma j Superscript 2 Baseline right-bracket"><mrow><mo>=</mo> <msubsup><mo>∑</mo> <mrow><mi>j</mi><mo>=</mo><mn>1</mn></mrow> <mi>k</mi></msubsup> <mi>𝔼</mi> <mrow><mo>[</mo> <msubsup><mi>s</mi> <mrow><mi>t</mi><mo>,</mo><mi>j</mi></mrow> <mn>2</mn></msubsup> <mo>]</mo></mrow> <mi>𝔼</mi> <mrow><mo>[</mo> <msubsup><mi>h</mi> <mrow><mi>i</mi><mo>,</mo><mi>j</mi></mrow> <mn>2</mn></msubsup> <mo>]</mo></mrow></mrow></math>
+`= ∑_{j=1}^k 𝔼[s_{t,j}^2] 𝔼[h_{i,j}^2]`
 
-<math alttext="equals sigma-summation Underscript j equals 1 Overscript k Endscripts 1"><mrow><mo>=</mo> <msubsup><mo>∑</mo> <mrow><mi>j</mi><mo>=</mo><mn>1</mn></mrow> <mi>k</mi></msubsup> <mn>1</mn></mrow></math>
+`= ∑_{j=1}^k 1`
 
-<math alttext="equals k"><mrow><mo>=</mo> <mi>k</mi></mrow></math>
+`= k`
 
 让我们回顾一下导致我们对期望和方差得出这些结论的步骤。期望中的第一个等式是由于期望的线性性，因为点积可以表示为每个索引的乘积之和。第二个等式来自于每个期望中的两个随机变量是独立的这一事实，因此我们可以将乘积的期望分离为期望的乘积。最后一步直接来自于这些单独期望都为零的事实。
 
@@ -1032,11 +1029,17 @@ loss += step_loss / steps_per_checkpoint current_step += 1
 
 现在我们已经介绍了缩放的点积注意力，我们将注意力转向自注意力。在前面的章节中，我们通过机器翻译的背景看到了注意力，其中我们有一个包含英语和法语句子的训练集，目标是能够将看不见的英语句子翻译成法语。在这类特定问题中，通过目标法语句子存在直接监督。然而，注意力也可以完全自包含地使用。直觉是，给定一个英语句子，我们可能能够通过学习句子或段落中标记之间的关系来执行更深入的情感分析、更有效的机器阅读和更好的理解。
 
+
+
+# 转换器
+
 转换器，我们本节的最后一个主题，利用了缩放的点积注意力和自注意力。转换器架构（Vaswani 等人，2017）具有编码器和解码器架构，其中编码器和解码器内部都存在自注意力，以及编码器和解码器之间的标准注意力。编码器和解码器中的自注意力层允许每个位置在其各自架构中关注当前位置之前的所有位置。标准注意力允许解码器关注每个编码器隐藏状态，如前文所述。
 
 # 摘要
 
-在本章中，我们深入探讨了序列分析的世界。我们分析了如何修改前馈网络以处理序列，发展了对 RNN 的深刻理解，并探讨了注意力机制如何实现从语言翻译到音频转录等令人难以置信的应用。序列分析是一个领域，不仅涉及自然语言问题，还涉及金融领域的主题，比如对金融资产回报的时间序列分析。任何涉及纵向分析或跨时间分析的领域都可以使用本章描述的序列分析应用。我们建议您通过在不同领域实施序列分析来加深对其的理解，并通过将自然语言技术的结果与各领域的最新技术进行比较。在某些情况下，本文介绍的技术可能不是最合适的建模选择，我们建议您深入思考为什么这里所做的建模假设可能不适用于广泛应用。序列分析是一个强大的工具，在几乎所有技术应用中都有一席之地，不仅仅是自然语言。
+在本章中，我们深入探讨了序列分析的世界。我们分析了如何修改前馈网络以处理序列，发展了对`RNN`的深刻理解，并探讨了注意力机制如何实现从语言翻译到音频转录等令人难以置信的应用。序列分析是一个领域，不仅涉及自然语言问题，还涉及金融领域的主题，比如对金融资产回报的时间序列分析。任何涉及纵向分析或跨时间分析的领域都可以使用本章描述的序列分析应用。我们建议您通过在不同领域实施序列分析来加深对其的理解，并通过将自然语言技术的结果与各领域的最新技术进行比较。在某些情况下，本文介绍的技术可能不是最合适的建模选择，我们建议您深入思考为什么这里所做的建模假设可能不适用于广泛应用。序列分析是一个强大的工具，在几乎所有技术应用中都有一席之地，不仅仅是自然语言。
+
+## 参考文献
 
 ¹ Nivre, Joakim. “Incrementality in Deterministic Dependency Parsing.” *Proceedings of the Workshop on Incremental Parsing: Bringing Engineering and Cognition Together*. Association for Computational Linguistics, 2004; Chen, Danqi, and Christopher D. Manning. “A Fast and Accurate Dependency Parser Using Neural Networks.” *EMNLP*. 2014.
 

@@ -1,3 +1,5 @@
+
+
 ## 参考文献
 
 ### 第 1 章
@@ -9,9 +11,6 @@
 \[3\] R. Kalvapalle，《“AI 教父” Geoffrey Hinton 的诺贝尔奖成为全球头条》，*University of Toronto News,*，2024 年 10 月 9 日。[`www.utoronto.ca/news/godfather-ai-geoffrey-hinton-s-nobel-prize-draws-headlines-around-world`](https://www.utoronto.ca/news/godfather-ai-geoffrey-hinton-s-nobel-prize-draws-headlines-around-world)
 
 \[4\] A. Krizhevsky, I. Sutskever, and G. E. Hinton，《使用深度卷积神经网络进行 ImageNet 分类》，载于 *Proceedings of the 26th International Conference on Neural Information Processing Systems*，第 1 卷，Lake Tahoe, NV，2012 年，第 1097–1105 页。
-
-
-
 
 \[5\] M. Ford, *智能的建筑师：来自构建人工智能的人们关于人工智能的真相*。英国伯明翰：Packt 出版社，2018 年 11 月（第 4 页）。
 
@@ -89,11 +88,12 @@
 
 \[42\] “OpenAI 联合创始人 Sutskever 的新安全 focus AI 初创公司 SSI 筹集了 10 亿美元”，Reuters，2024 年 9 月 4 日。[`https://www.reuters.com/technology/artificial-intelligence/openai-co-founder-sutskevers-new-safety-focused-ai-startup-ssi-raises-1-billion-2024-0-04`](https://www.reuters.com/technology/artificial-intelligence/openai-co-founder-sutskevers-new-safety-focused-ai-startup-ssi-raises-1-billion-2024-0-04)
 
-
-
 ## 参考文献
 
 ### 萨姆·奥特曼被罢免与 OpenAI 董事会危机 ([43]–[58])
+
+
+
 
 [43] “萨姆·奥特曼在 OpenAI 被罢免是由一封关于 AI 突破的致董事会信件引发的，”路透社，2023 年 11 月 22 日。 [`www.reuters.com/technology/sam-altmans-ouster-openai-was-precipitated-by-letter-board-about-ai-breakthrough-2023-11-22`](https://www.reuters.com/technology/sam-altmans-ouster-openai-was-precipitated-by-letter-board-about-ai-breakthrough-2023-11-22)
 
@@ -127,7 +127,7 @@
 
 [58] 同 [29]
 
-### GPT-2“危险 AI”争议 ([59]–[75])
+## GPT-2“危险 AI”争议 ([59]–[75])
 
 [59] “人工智能、OpenAI 和自然语言处理，”Vox（Future Perfect），2019 年 2 月 14 日。 [`www.vox.com/future-perfect/2019/2/14/18222270/artificial-intelligence-open-ai-natural-language-processing`](https://www.vox.com/future-perfect/2019/2/14/18222270/artificial-intelligence-open-ai-natural-language-processing)
 
@@ -163,7 +163,7 @@
 
 [75] OpenAI，“GPT-2：1.5B 版本发布，”OpenAI，2019 年 11 月 5 日。 [`openai.com/index/gpt-2-1-5b-release/`](https://openai.com/index/gpt-2-1-5b-release/)
 
-### 其他 AI 发展与来源 ([76]–[86])
+## 其他 AI 发展与来源 ([76]–[86])
 
 [76] “Meta 的大语言模型 AI 在互联网上仅存活了三天就被下架，”*麻省理工科技评论*，2022 年 11 月 18 日。 [`www.technologyreview.com/2022/11/18/1063487/meta-large-language-model-ai-only-survived-three-days-gpt-3-science/`](https://www.technologyreview.com/2022/11/18/1063487/meta-large-language-model-ai-only-survived-three-days-gpt-3-science/)
 
@@ -187,20 +187,19 @@
 
 [86] keshavchan（@keshavchan），“X 上的帖子，”X，2024 年 5 月 7 日。 [`x.com/keshavchan/status/1787861946173186062`](https://x.com/keshavchan/status/1787861946173186062)
 
+[87] W. D. Heaven，《独家：伊利亚·苏茨克维，OpenAI 首席科学家，谈他对 AI 未来的希望与恐惧》，*《麻省理工科技评论》*，2023 年 10 月 26 日。 [`www.technologyreview.com/2023/10/26/1082398/exclusive-ilya-sutskever-openais-chief-scientist-on-his-hopes-and-fears-for-the-future-of-ai/`](http://www.technologyreview.com/2023/10/26/1082398/exclusive-ilya-sutskever-openais-chief-scientist-on-his-hopes-and-fears-for-the-future-of-ai/)
+
+[88] V. Kuka，《神秘的 AI 阅读清单：伊利亚·苏茨克维的推荐》，*《图灵邮报》*，2024 年 5 月 19 日。 [`www.turingpost.com/p/ilya-sutskever-reading-list`](https://www.turingpost.com/p/ilya-sutskever-reading-list)
+
+[89] 微软研究院，《NIPS：口头报告 4 – 伊利亚·苏茨克维》，视频，2014 年 12 月 9 日（9:23）。 [`t.co/sJa4QJJVu2`](https://t.co/sJa4QJJVu2)
+
+## 第二章
+
+[1] J.J. Hopfield，《具有涌现集体计算能力的神经网络与物理系统》，*《美国国家科学院院刊》* 79, no. 8 (1982): 2554-2558。 [`doi.org/10.1073/pnas.79.8.2554`](https://doi.org/10.1073/pnas.79.8.2554)
+
+[2] Y. LeCun, L. Bottou, Y. Bengio, P. Haffner，《基于梯度的学习应用于文档识别》，*《IEEE 会议录》* 86, no. 11 (1998 年 11 月): 2278–2324, doi: 10.1109/5.726791。 [`vision.stanford.edu/cs598\_spring07/papers/Lecun98.pdf`](http://vision.stanford.edu/cs598\_spring07/papers/Lecun98.pdf)
 
 
-
-\[87\] W. D. Heaven，《独家：伊利亚·苏茨克维，OpenAI 首席科学家，谈他对 AI 未来的希望与恐惧》，*《麻省理工科技评论》*，2023 年 10 月 26 日。[www.technologyreview.com/2023/10/26/1082398/exclusive-ilya-sutskever-openais-chief-scientist-on-his-hopes-and-fears-for-the-future-of-ai/](http://www.technologyreview.com/2023/10/26/1082398/exclusive-ilya-sutskever-openais-chief-scientist-on-his-hopes-and-fears-for-the-future-of-ai/)
-
-\[88\] V. Kuka，《神秘的 AI 阅读清单：伊利亚·苏茨克维的推荐》，*《图灵邮报》*，2024 年 5 月 19 日。[`www.turingpost.com/p/ilya-sutskever-reading-list`](https://www.turingpost.com/p/ilya-sutskever-reading-list)
-
-\[89\] 微软研究院，《NIPS：口头报告 4 – 伊利亚·苏茨克维》，视频，2014 年 12 月 9 日（9:23）。[`t.co/sJa4QJJVu2`](https://t.co/sJa4QJJVu2)
-
-### 第二章
-
-\[1\] J.J. Hopfield，《具有涌现集体计算能力的神经网络与物理系统》，*《美国国家科学院院刊》* 79, no. 8 (1982): 2554-2558。[`doi.org/10.1073/pnas.79.8.2554`](https://doi.org/10.1073/pnas.79.8.2554)
-
-\[2\] Y. LeCun, L. Bottou, Y. Bengio, P. Haffner，《基于梯度的学习应用于文档识别》，*《IEEE 会议录》* 86, no. 11 (1998 年 11 月): 2278–2324, doi: 10.1109/5.726791。[`vision.stanford.edu/cs598\_spring07/papers/Lecun98.pdf`](http://vision.stanford.edu/cs598\_spring07/papers/Lecun98.pdf)
 
 \[3\] J. Schmidhuber，《DanNet 触发深度 CNN 革命》，IDSIA，2011 年。[`people.idsia.ch/~juergen/DanNet-triggers-deep-CNN-revolution-2011.xhtml`](https://people.idsia.ch/~juergen/DanNet-triggers-deep-CNN-revolution-2011.xhtml)
 
@@ -264,8 +263,6 @@
 
 \[33\] 同 \[24\]
 
-
-
 \[34\] *The Guardian*，"科技巨头数据"，2013 年 8 月 23 日。 [`https://www.theguardian.com/technology/2013/aug/23/tech-giants-data`](https://www.theguardian.com/technology/2013/aug/23/tech-giants-data)
 
 \[35\] Medium，"数据是新的石油：一个荒谬的命题"。 [`https://medium.com/project-2030/data-is-the-new-oil-a-ludicrous-proposition-1d91bba4f294`](https://medium.com/project-2030/data-is-the-new-oil-a-ludicrous-proposition-1d91bba4f294)
@@ -302,51 +299,53 @@
 
 \[51\] D. C. Ciresan, U. Meier, J. Masci, J. Schmidhuber. "A Committee of neural networks for traffic sign classification," International Joint Conference on Neural Networks (IJCNN-2011), San Francisco, CA, 2011
 
-\[52\] D. C. Ciresan, U. Meier, and J. Schmidhuber，"Multi-column deep neural networks for image classification"，in *Proceedings of the IEEE Conference on Computer Vision and Pattern Recognition (CVPR 2012)*, Jul. 2012, pp. 3642–3649
 
-\[53\] M. Everingham, S. M. A. Eslami, L. Van Gool, C. K. I. Williams, J. Winn, and A. Zisserman，"The PASCAL Visual Object Classes (VOC) challenge: A retrospective"，*International Journal of Computer Vision* 111, no. 1 (Jan. 2015): 98–136, doi: `10.1007/s11263 -014-0733-5`。 [`https://link.springer.com/article/10.1007/s11263-014-0733-5`](https://link.springer.com/article/10.1007/s11263-014-0733-5)
+
+## 参考文献
+
+\[52\] D. C. Ciresan, U. Meier, and J. Schmidhuber, "Multi-column deep neural networks for image classification", in *Proceedings of the IEEE Conference on Computer Vision and Pattern Recognition (CVPR 2012)*, Jul. 2012, pp. 3642–3649
+
+\[53\] M. Everingham, S. M. A. Eslami, L. Van Gool, C. K. I. Williams, J. Winn, and A. Zisserman, "The PASCAL Visual Object Classes (VOC) challenge: A retrospective", *International Journal of Computer Vision* 111, no. 1 (Jan. 2015): 98–136, doi: `10.1007/s11263-014-0733-5`. [`https://link.springer.com/article/10.1007/s11263-014-0733-5`](https://link.springer.com/article/10.1007/s11263-014-0733-5)
 
 \[54\] 同 [49]
 
-\[55\] Cross Validated (Stack Exchange)，"在反向传播中将所有初始权重设为零的危险"。 [`https://stats.stackexchange.com/questions/27112/danger-of-setting-all-initial-weights-to-zero-in-backpropagation`](https://stats.stackexchange.com/questions/27112/danger-of-setting-all-initial-weights-to-zero-in-backpropagation)
+\[55\] Cross Validated (Stack Exchange), "在反向传播中将所有初始权重设为零的危险". [`https://stats.stackexchange.com/questions/27112/danger-of-setting-all-initial-weights-to-zero-in-backpropagation`](https://stats.stackexchange.com/questions/27112/danger-of-setting-all-initial-weights-to-zero-in-backpropagation)
 
-\[56\] G. Philipp, D. Song, and J. G. Carbonell，"The exploding gradient problem demystified—definition, prevalence, impact, origin, tradeoffs, and solutions"，*arXiv* [*cs.LG*], 2017。 [`https://arxiv.org/abs/1712.05577`](https://arxiv.org/abs/1712.05577)
+\[56\] G. Philipp, D. Song, and J. G. Carbonell, "The exploding gradient problem demystified—definition, prevalence, impact, origin, tradeoffs, and solutions", *arXiv* [*cs.LG*], 2017. [`https://arxiv.org/abs/1712.05577`](https://arxiv.org/abs/1712.05577)
 
-\[57\] G. E. Hinton and R. R. Salakhutdinov，"Reducing the dimensionality of data with neural networks"，*Science* 313, no. 5786 (Jul. 2006): 504–507, doi: `10.1126/science .1127647`。 [`https://www.cs.toronto.edu/~hinton/absps/science.pdf`](https://www.cs.toronto.edu/~hinton/absps/science.pdf)
+\[57\] G. E. Hinton and R. R. Salakhutdinov, "Reducing the dimensionality of data with neural networks", *Science* 313, no. 5786 (Jul. 2006): 504–507, doi: `10.1126/science.1127647`. [`https://www.cs.toronto.edu/~hinton/absps/science.pdf`](https://www.cs.toronto.edu/~hinton/absps/science.pdf)
 
-\[58\] D. Erhan, Y. Bengio, A. Courville, P. Manzagol, P. Vincent, and S. Bengio，"Why does unsupervised pre-training help deep learning?"，*Journal of Machine Learning Research*, 2010。
+\[58\] D. Erhan, Y. Bengio, A. Courville, P. Manzagol, P. Vincent, and S. Bengio, "Why does unsupervised pre-training help deep learning?", *Journal of Machine Learning Research*, 2010.
 
-\[59\] G. E. Hinton and R. R. Salakhutdinov，"Reducing the dimensionality of data with neural networks"，*Science*, July 2006
+\[59\] G. E. Hinton and R. R. Salakhutdinov, "Reducing the dimensionality of data with neural networks", *Science*, July 2006
 
-\[60\] Y. Bengio, P. Lamblin, D. Popovici, and H. Larochelle，"Greedy layer-wise training of deep networks"，In NIPS, 2007
+\[60\] Y. Bengio, P. Lamblin, D. Popovici, and H. Larochelle, "Greedy layer-wise training of deep networks", In NIPS, 2007
 
-\[61\] 例如，Lex Fridman Podcast。 [`https://youtu.be/13CZPWmke6A?si=sSJdJMX67OGeINFZ&t=209`](https://youtu.be/13CZPWmke6A?si=sSJdJMX67OGeINFZ&t=209)
+\[61\] 例如，Lex Fridman Podcast. [`https://youtu.be/13CZPWmke6A?si=sSJdJMX67OGeINFZ&t=209`](https://youtu.be/13CZPWmke6A?si=sSJdJMX67OGeINFZ&t=209)
 
-\[62\] 正如 Martens 所说："The difficulty associated with learning deep autoencoders is better explained by regions of pathological curvature, which to first-order optimization methods resemble bad local minima." J. Martens，"Deep learning via Hessian-free optimization"，in *Proceedings of the 27th International Conference on Machine Learning* (ICML), 2010
+\[62\] 正如 Martens 所说："The difficulty associated with learning deep autoencoders is better explained by regions of pathological curvature, which to first-order optimization methods resemble bad local minima." J. Martens, "Deep learning via Hessian-free optimization", in *Proceedings of the 27th International Conference on Machine Learning* (ICML), 2010
 
 \[63\] 同 [58]
 
-\[64\] ICML，"Learning recurrent neural Nntworks with Hessian-free optimization"，2011。 [`https://icml.cc/Conferences/2011/papers/532_icmlpaper.pdf`](https://icml.cc/Conferences/2011/papers/532\_icmlpaper.pdf)
+\[64\] ICML, "Learning recurrent neural networks with Hessian-free optimization", 2011. [`https://icml.cc/Conferences/2011/papers/532_icmlpaper.pdf`](https://icml.cc/Conferences/2011/papers/532_icmlpaper.pdf)
 
-\[65\] Semantic Scholar，"PDF."。 [`https://pdfs.semanticscholar.org/6503/e264e4fdecb22ab0f5d081123814ec242d86.pdf`](https://pdfs.semanticscholar.org/6503/e264e4fdecb22ab0f5d081123814ec242d86.pdf)
+\[65\] Semantic Scholar, "PDF." [`https://pdfs.semanticscholar.org/6503/e264e4fdecb22ab0f5d081123814ec242d86.pdf`](https://pdfs.semanticscholar.org/6503/e264e4fdecb22ab0f5d081123814ec242d86.pdf)
 
-\[66\] YouTube，"Ilya Sutskever: Deep learning | Lex Fridman Podcast #94" (5:13)。 [`https://youtu.be/13CZPWmke6A?si=pnioUssu8jioetYP`](https://youtu.be/13CZPWmke6A?si=pnioUssu8jioetYP)
+\[66\] YouTube, "Ilya Sutskever: Deep learning | Lex Fridman Podcast #94" (5:13). [`https://youtu.be/13CZPWmke6A?si=pnioUssu8jioetYP`](https://youtu.be/13CZPWmke6A?si=pnioUssu8jioetYP)
 
-\[67\] A. Krizhevsky, I. Sutskever, and G. E. Hinton，"ImageNet classification with deep convolutional neural networks"，*Advances in Neural Information Processing Systems (NIPS)* 25 (2012): 1097–1105。 [`https://proceedings.neurips.cc/paper_files/paper/2012/file/c399862d3b9d6b76c8436e924a68c45b-Paper.pdf`](https://proceedings.neurips.cc/paper\_files/paper/2012/file/c399862d3b9d6b76c8436e924a68c45b-Paper.pdf)
+\[67\] A. Krizhevsky, I. Sutskever, and G. E. Hinton, "ImageNet classification with deep convolutional neural networks", *Advances in Neural Information Processing Systems (NIPS)* 25 (2012): 1097–1105. [`https://proceedings.neurips.cc/paper_files/paper/2012/file/c399862d3b9d6b76c8436e924a68c45b-Paper.pdf`](https://proceedings.neurips.cc/paper_files/paper/2012/file/c399862d3b9d6b76c8436e924a68c45b-Paper.pdf)
 
-\[68\] G. E. Hinton, N. Srivastava, A. Krizhevsky, I. Sutskever, and R. R. Salakhutdinov，"Improving neural networks by preventing co-adaptation of feature detectors"，arXiv:1207.0580, 2012。 [`https://arxiv.org/pdf/1207.0580`](https://arxiv.org/pdf/1207.0580)
+\[68\] G. E. Hinton, N. Srivastava, A. Krizhevsky, I. Sutskever, and R. R. Salakhutdinov, "Improving neural networks by preventing co-adaptation of feature detectors", arXiv:1207.0580, 2012. [`https://arxiv.org/pdf/1207.0580`](https://arxiv.org/pdf/1207.0580)
 
-\[69\] Nair 和 Hinton (2010) 的早期研究为受限玻尔兹曼机引入了 ReLU，而 Jarrett 等人 (2009) 在较小的 CNN 中探索了替代激活函数。V. Nair and G. E. Hinton，"Rectified linear units improve restricted Boltzmann machines"，in *Proceedings of the 27th International Conference on Machine Learning (ICML)*, 2010；and K. Jarrett, K. Kavukcuoglu, M. Ranzato, and Y. LeCun，"What is the best multi-stage architecture for object recognition?"，in *Proceedings on the IEEE International Conference on Computer Vision (ICCV)*, 2009
+\[69\] Nair 和 Hinton (2010) 的早期研究为受限玻尔兹曼机引入了 ReLU，而 Jarrett 等人 (2009) 在较小的 CNN 中探索了替代激活函数。V. Nair and G. E. Hinton, "Rectified linear units improve restricted Boltzmann machines", in *Proceedings of the 27th International Conference on Machine Learning (ICML)*, 2010；and K. Jarrett, K. Kavukcuoglu, M. Ranzato, and Y. LeCun, "What is the best multi-stage architecture for object recognition?", in *Proceedings on the IEEE International Conference on Computer Vision (ICCV)*, 2009
 
 \[70\] 此外，ReLU 诱导了稀疏激活，意味着许多神经元输出为零，这减少了神经元间的协同适应，并有助于 ReLU 在训练中的整体效果。
-
-
 
 \[71\] N. 斯里瓦斯塔瓦、G. 辛顿、A. 克里热夫斯基、I. 苏茨克维和 R. 萨拉赫丁诺夫，《Dropout：防止神经网络过拟合的简单方法》，*《机器学习研究杂志》* 第 15 卷第 1 期（2014 年），第 1929–1958 页。[`www.cs.toronto.edu/~rsalakhu/papers/srivastava14a.pdf`](https://www.cs.toronto.edu/~rsalakhu/papers/srivastava14a.pdf)
 
 \[72\] 同\[67\]
 
-\[73\] Sutskever 列表中的 CS231n 讨论了反向 dropout：斯坦福 CS231n，《神经网络第 2 部分：设置数据和损失》。[`cs231n.github.io/neural-networks-2/#reg`](https://cs231n.github.io/neural-networks-2/#reg)；以及斯坦福 CS231n，《第 6 讲幻灯片（2016 年冬季）》，[`cs231n.stanford.edu/slides/2016/winter1516\_lecture6.pdf`](https://cs231n.stanford.edu/slides/2016/winter1516_lecture6.pdf)
+\[73\] Sutskever 列表中的 CS231n 讨论了反向 dropout：斯坦福 CS231n，《神经网络第 2 部分：设置数据和损失》。[`cs231n.github.io/neural-networks-2/#reg`](https://cs231n.github.io/neural-networks-2/#reg)；以及斯坦福 CS231n，《第 6 讲幻灯片（2016 年冬季）》，[`cs231n.stanford.edu/slides/2016/winter1516_lecture6.pdf`](https://cs231n.stanford.edu/slides/2016/winter1516_lecture6.pdf)
 
 \[74\] S. 约费和 C. 谢格迪，《批归一化：通过减少内部协变量偏移加速深度网络训练》，载于*《第 32 届国际机器学习会议论文集（ICML），2015 年》*，第 448–456 页。[`arxiv.org/abs/1502.03167`](https://arxiv.org/abs/1502.03167)
 
@@ -364,7 +363,7 @@
 
 \[81\] L. 卢、Y. 申、Y. 苏和 G. 埃姆·卡尼亚达基斯，《死亡 ReLU 与初始化：理论与数值示例》，*《计算物理通讯》* 第 28 卷第 5 期（2020 年 6 月），第 1671–1706 页。[`arxiv.org/abs/1903.06733`](https://arxiv.org/abs/1903.06733)
 
-\[82\] M. D. 泽勒和 R. 弗格斯，《可视化与理解卷积网络》，载于*《计算机视觉–ECCV 2014》*，D. 弗利特、T. 帕伊德拉、B. 谢勒和 T. 图伊特拉尔斯（编），瑞士查姆：斯普林格出版社，2014 年，第 818–833 页，doi: 10.1007/978-3-319-10590-1\_53。[`arxiv.org/abs/1311.2901`](https://arxiv.org/abs/1311.2901)
+\[82\] M. D. 泽勒和 R. 弗格斯，《可视化与理解卷积网络》，载于*《计算机视觉–ECCV 2014》*，D. 弗利特、T. 帕伊德拉、B. 谢勒和 T. 图伊特拉尔斯（编），瑞士查姆：斯普林格出版社，2014 年，第 818–833 页，doi: 10.1007/978-3-319-10590-1_53。[`arxiv.org/abs/1311.2901`](https://arxiv.org/abs/1311.2901)
 
 \[83\] *《经济学人》*，《从不工作到神经网络》，2016 年 6 月 23 日。[`www.economist.com/special-report/2016/06/23/from-not-working-to-neural-networking`](https://www.economist.com/special-report/2016/06/23/from-not-working-to-neural-networking)
 
@@ -372,17 +371,19 @@
 
 \[85\] 雅各布·阿伦，《放弃图灵测试——有更好的方法来评判 AI》，*《新科学家》*，2015 年 9 月 21 日。[`www.newscientist.com/article/dn28206-forget-the-turing-test-there-are-better-ways-of-judging-ai/`](https://www.newscientist.com/article/dn28206-forget-the-turing-test-there-are-better-ways-of-judging-ai/)
 
-\[86\] R. 吉尔希克、J. 多纳休、T. 达雷尔和 J. 马利克，《用于精确物体检测和语义分割的丰富特征层次》，载于*《IEEE 计算机视觉与模式识别会议论文集（CVPR）》*，2014 年，第 580–587 页，doi: 10.1109/CVPR.2014.81。[`www.cv-foundation.org/openaccess/content\_cvpr\_2014/papers/Girshick\_Rich\_Feature\_Hierarchies\_2014\_CVPR\_paper.pdf`](https://www.cv-foundation.org/openaccess/content_cvpr_2014/papers/Girshick_Rich_Feature_Hierarchies_2014_CVPR_paper.pdf)
+\[86\] R. 吉尔希克、J. 多纳休、T. 达雷尔和 J. 马利克，《用于精确物体检测和语义分割的丰富特征层次》，载于*《IEEE 计算机视觉与模式识别会议论文集（CVPR）》*，2014 年，第 580–587 页，doi: 10.1109/CVPR.2014.81。[`www.cv-foundation.org/openaccess/content_cvpr_2014/papers/Girshick_Rich_Feature_Hierarchies_2014_CVPR_paper.pdf`](https://www.cv-foundation.org/openaccess/content_cvpr_2014/papers/Girshick_Rich_Feature_Hierarchies_2014_CVPR_paper.pdf)
 
 \[87\] 《ACM 通讯》，《技术视角：是什么引领计算机视觉走向深度学习？》[`cacm.acm.org/research/technical-perspective-what-led-computer-vision-to-deep-learning/`](https://cacm.acm.org/research/technical-perspective-what-led-computer-vision-to-deep-learning/)
 
-\[88\] YouTube，《吉滕德拉·马利克：计算机视觉 | 莱克斯·弗里德曼播客第 110 期》（01:26:57）。[`youtu.be/LRYkH-fAVGE?si=B0Bg0BDOuXAJZ\_jO&t=5214`](https://youtu.be/LRYkH-fAVGE?si=B0Bg0BDOuXAJZ_jO&t=5214)
+\[88\] YouTube，《吉滕德拉·马利克：计算机视觉 | 莱克斯·弗里德曼播客第 110 期》（01:26:57）。[`youtu.be/LRYkH-fAVGE?si=B0Bg0BDOuXAJZ_jO&t=5214`](https://youtu.be/LRYkH-fAVGE?si=B0Bg0BDOuXAJZ_jO&t=5214)
 
 \[89\] M.D. 泽勒和 R. 弗格斯，《可视化与理解卷积网络》，CoRR，abs/1311.2901，2013 年。
 
 \[90\] *《MIT 技术评论》*，《2013 年十大突破性技术》，2013 年 4 月 23 日。[`www.technologyreview.com/2013/04/23/178729/the-10-breakthrough-technologies-of-2013/`](https://www.technologyreview.com/2013/04/23/178729/the-10-breakthrough-technologies-of-2013/)
 
 \[91\] *《纽约时报》*，《类脑计算机从经验中学习》，2013 年 12 月 29 日。[`www.nytimes.com/2013/12/29/science/brainlike-computers-learning-from-experience.xhtml`](https://www.nytimes.com/2013/12/29/science/brainlike-computers-learning-from-experience.xhtml)
+
+
 
 \[92\] *《卫报》*，《AI：尤金·古斯特曼人工智能》，2014 年 6 月 11 日。[`www.theguardian.com/commentisfree/2014/jun/11/ai-eugene-goostman-artificial-intelligence`](https://www.theguardian.com/commentisfree/2014/jun/11/ai-eugene-goostman-artificial-intelligence)
 
@@ -407,8 +408,6 @@
 \[8\] S. 谢、R. 吉尔希克、P. 多拉尔、Z. 涂和 K. 何，《用于深度神经网络的聚合残差变换》，arXiv:1611.05431，2016 年 11 月。[`arxiv.org/pdf/1611.05431`](https://arxiv.org/pdf/1611.05431)
 
 \[9\] C. 谢格迪等人，《Going deeper with convolutions》，arXiv:1409.4842，2014 年 9 月。[`arxiv.org/abs/1409.4842`](https://arxiv.org/abs/1409.4842)
-
-
 
 \[10\] C. Szegedy, S. Ioffe, V. Vanhoucke, and A. Alemi, “Inception-v4、Inception-ResNet 以及残差连接对学习的影响,” arXiv:1602.07261, 2016 年 2 月. [`arxiv.org/abs/1602.07261`](https://arxiv.org/abs/1602.07261)
 
@@ -480,13 +479,13 @@
 
 \[44\] 斯坦福大学, “CS231n（2016 年春季）课程表,” [`cs231n.stanford.edu/schedule.xhtml`](https://cs231n.stanford.edu/schedule.xhtml)
 
+
+
 \[45\] 斯坦福大学, “CS231n 第 6 讲幻灯片,” 2025 年. [`cs231n.stanford.edu/slides/2025/lecture\_6.pdf`](https://cs231n.stanford.edu/slides/2025/lecture_6.pdf)
 
 \[46\] *《斯坦福日报》*, “斯坦福大学计算机科学课程中人工智能的崛起,” 2021 年 2 月 4 日. [`stanforddaily.com/2021/02/04/the-rise-of-ai-in-stanfords-cs-curricula/`](https://stanforddaily.com/2021/02/04/the-rise-of-ai-in-stanfords-cs-curricula/)
 
 \[47\] R. S. Sutton, “痛苦的教训,” 2019 年 3 月 13 日. [`www.incompleteideas.net/IncIdeas/BitterLesson.xhtml`](http://www.incompleteideas.net/IncIdeas/BitterLesson.xhtml)
-
-
 
 \[48\] 路透社，“伊利亚·苏茨克维：人工智能将如何改变他的新创业公司 Safe Superintelligence”，2024 年 9 月 5 日。 [`www.reuters.com/technology/artificial-intelligence/ilya-sutskever-how-ai-will-change-his-new-startup-safe-superintelligence-2024-09-05/`](https://www.reuters.com/technology/artificial-intelligence/ilya-sutskever-how-ai-will-change-his-new-startup-safe-superintelligence-2024-09-05/)
 
@@ -496,7 +495,7 @@
 
 \[51\] H. Pearson, H. Ledford, M. Hutson, and R. Van Noorden，“独家：二十一世纪被引用最多的论文，”*《自然》* 640 (2025 年 4 月 15 日): 588–592, doi: 10.1038/d41586-025-01125-9. [`www.nature.com/articles/d41586-025-01125-9`](https://www.nature.com/articles/d41586-025-01125-9)
 
-### 第四章
+## 第四章
 
 \[1\] A. Karpathy，“循环神经网络的不合理有效性，” Andrej Karpathy 博客，2015 年 5 月 21 日。 [`karpathy.github.io/2015/05/21/rnn-effectiveness/`](https://karpathy.github.io/2015/05/21/rnn-effectiveness/)
 
@@ -570,50 +569,79 @@
 
 \[36\] 由 Srivastava、Hinton、Krizhevsky、Sutskever 和 Salakhutdinov 于 2013 年正式提出（在 AlexNet 之后）。 N. Srivastava, G. Hinton, A. Krizhevsky, I. Sutskever, and R. Salakhutdinov，“Dropout：防止神经网络过拟合的简单方法，” *《机器学习研究期刊》* 15 (2014): 1929–1958. [`www.cs.toronto.edu/~hinton/absps/JMLRdropout.pdf`](https://www.cs.toronto.edu/~hinton/absps/JMLRdropout.pdf)
 
+\[37\] J. Bayer、C. Osendorfer、D. Korhammer、N. Chen、S. Urban 和 P. van der Smagt，《快速丢弃及其在循环网络中的应用》，arXiv:1311.0701，2013 年 11 月。[`arxiv.org/abs/1311.0701`](https://arxiv.org/abs/1311.0701)
+
+\[38\] N. Srivastava，《通过丢弃改进神经网络》，博士论文，多伦多大学，2013 年
+
+\[39\] A. Graves，《基于循环神经网络的序列生成》，arXiv:1308.0850，2013 年 8 月。[`arxiv.org/abs/1308.0850`](https://arxiv.org/abs/1308.0850)
+
+\[40\] 微软研究院，《rnn\_ctxt\_TR.sav\_.pdf》，2012 年 7 月。[`www.microsoft.com/en-us/research/wp-content/uploads/2012/07/rnn\_ctxt\_TR.sav\_.pdf`](https://www.microsoft.com/en-us/research/wp-content/uploads/2012/07/rnn_ctxt_TR.sav_.pdf)
+
+\[41\] 同\[35\]
+
+\[42\] M. Sundermeyer、R. Schlüter 和 H. Ney，《用于语言建模的 LSTM 神经网络》，2012 年。[`www-i6.informatik.rwth-aachen.de/publications/download/820/Sundermeyer-2012.pdf`](https://www-i6.informatik.rwth-aachen.de/publications/download/820/Sundermeyer-2012.pdf)
+
+\[43\] I. Sutskever、O. Vinyals 和 Q. V. Le，《基于神经网络的序列到序列学习》，arXiv:1409.3215，2014 年 9 月。[`arxiv.org/pdf/1409.3215`](https://arxiv.org/pdf/1409.3215)
 
 
 
-[37] J. Bayer、C. Osendorfer、D. Korhammer、N. Chen、S. Urban 和 P. van der Smagt，《快速丢弃及其在循环网络中的应用》，arXiv:1311.0701，2013 年 11 月。[`arxiv.org/abs/1311.0701`](https://arxiv.org/abs/1311.0701)
-[38] N. Srivastava，《通过丢弃改进神经网络》，博士论文，多伦多大学，2013 年
-[39] A. Graves，《基于循环神经网络的序列生成》，arXiv:1308.0850，2013 年 8 月。[`arxiv.org/abs/1308.0850`](https://arxiv.org/abs/1308.0850)
-[40] 微软研究院，《rnn\_ctxt\_TR.sav\_.pdf》，2012 年 7 月。[`www.microsoft.com/en-us/research/wp-content/uploads/2012/07/rnn\_ctxt\_TR.sav\_.pdf`](https://www.microsoft.com/en-us/research/wp-content/uploads/2012/07/rnn_ctxt_TR.sav_.pdf)
-[41] 同[35]
-[42] M. Sundermeyer、R. Schlüter 和 H. Ney，《用于语言建模的 LSTM 神经网络》，2012 年。[`www-i6.informatik.rwth-aachen.de/publications/download/820/Sundermeyer-2012.pdf`](https://www-i6.informatik.rwth-aachen.de/publications/download/820/Sundermeyer-2012.pdf)
-[43] I. Sutskever、O. Vinyals 和 Q. V. Le，《基于神经网络的序列到序列学习》，arXiv:1409.3215，2014 年 9 月。[`arxiv.org/pdf/1409.3215`](https://arxiv.org/pdf/1409.3215)
 [44] D. Bahdanau、K. Cho 和 Y. Bengio，《通过联合学习对齐和翻译的神经机器翻译》，arXiv:1409.0473，2014 年 9 月。[`arxiv.org/abs/1409.0473`](https://arxiv.org/abs/1409.0473)
+
 [45] Marcus Liwicki、Alex Graves、Horst Bunke 和 Jürgen Schmidhuber，《一种基于双向长短期记忆网络的在线手写识别新方法》，载于*《第九届文档分析与识别国际会议论文集，ICDAR》*，2007 年
+
 [46] A. Hannun 等，《深度语音：扩展端到端语音识别》，arXiv:1412.5567，2014 年 12 月。[`arxiv.org/pdf/1412.5567`](https://arxiv.org/pdf/1412.5567)
+
 [47] S. Ioffe 和 C. Szegedy，《批量归一化：通过减少内部协变量偏移加速深度网络训练》，arXiv:1502.03167，2015 年 2 月。[`arxiv.org/abs/1502.03167`](https://arxiv.org/abs/1502.03167)
+
 [48] M. Marge、S. Banerjee 和 A. I. Rudnicky，《使用 Amazon Mechanical Turk 转录和标注会议语音以进行抽取式摘要》，载于*《NAACL HLT 2010 研讨会：使用 Amazon's Mechanical Turk 创建语音和语言数据》*，洛杉矶，加利福尼亚州，2010 年 6 月，第 99–107 页。
+
 [49] A. Gulati 等，《Conformer：用于语音识别的卷积增强变换器》，arXiv:2005.08100，2020 年 5 月。[`arxiv.org/abs/2005.08100`](https://arxiv.org/abs/2005.08100)
+
 [50] X. Song 和 D. Zhou，《快速 WordPiece 分词系统》，谷歌研究博客，2021 年 12 月 10 日。[在线]。可获取：[`research.google/blog/a-fast-wordpiece-tokenization-system/`](https://research.google/blog/a-fast-wordpiece-tokenization-system/)
+
 [51] Hugging Face，《字节对编码分词》，Hugging Face LLM 课程。[在线]。可获取：[`huggingface.co/learn/llm-course/en/chapter6/5`](https://huggingface.co/learn/llm-course/en/chapter6/5)
+
 [52] T. Kudo 和 J. Richardson，《SentencePiece：一种用于神经文本处理的简单且语言无关的子词分词器和逆分词器》，arXiv:1808.06226，2018 年 8 月。[在线]。可获取：[`arxiv.org/abs/1808.06226`](https://arxiv.org/abs/1808.06226)
+
 [53] A. Zhang、Z. C. Lipton、M. Li 和 A. J. Smola，《深度卷积神经网络（AlexNet）》，载于《深入学习》第 1.0.3 版。[`d2l.ai/chapter\_convolutional-modern/alexnet.xhtml`](http://d2l.ai/chapter_convolutional-modern/alexnet.xhtml)
+
 [54] *《纽约客》*，《“深度学习”是人工智能的革命吗？》[`www.newyorker.com/news/news-desk/is-deep-learning-a-revolution-in-artificial-intelligence`](https://www.newyorker.com/news/news-desk/is-deep-learning-a-revolution-in-artificial-intelligence)
+
 [55] *《麻省理工科技评论》*，《对话界面》。[`www.technologyreview.com/technology/conversational-interfaces/`](https://www.technologyreview.com/technology/conversational-interfaces/)
+
 [56] *国际机器学习会议（ICML）*，《论文评审（论文 ID：76）》，2016 年。[`icml.cc/2016/reviews/76.txt`](https://icml.cc/2016/reviews/76.txt)
+
 [57] D. Patel，《Ilya Sutskever（OpenAI 首席科学家）——为什么下一个词预测可能超越人类智能》，Dwarkesh 播客。[`www.dwarkesh.com/p/ilya-sutskever`](https://www.dwarkesh.com/p/ilya-sutskever)
+
 [58] YouTube，《采访 OPEN AI 联合创始人 Ilya Sutskever 博士，于开放大学演播室，英语》，视频。[`youtu.be/H1YoNlz2LxA?si=03KgI1XB\_LxVb0V7&t=595`](https://youtu.be/H1YoNlz2LxA?si=03KgI1XB\_LxVb0V7&t=595)
+
 [59] 同[58]
+
 [60] L. Fridman，《#309–John Carmack: Doom, Quake, VR, AGI, programming, video games, and rockets》，Lex Fridman 播客，2022 年 8 月 4 日。[`lexfridman.com/john-carmack/`](https://lexfridman.com/john-carmack/)
+
 [61] 同[46]
+
 [62] REWORK，《百度 Adam Coates 谈 Deep Speech 2、新的开源 AI 工具等》，2016 年 1 月 14 日。[`blog.re-work.co/deep-learning-baidu-adam-coates`](https://blog.re-work.co/deep-learning-baidu-adam-coates)
+
 [63] T. Petzinger Jr.，《数学家将心灵视为公司内网模型》，*《华尔街日报》*，1998 年 5 月 22 日。[`www.wsj.com/articles/SB895791428926727000`](https://www.wsj.com/articles/SB895791428926727000)。
+
 [64] B. Goertzel，《从梦境经济中醒来》，2001 年 4 月 9 日。`https://goertzel .org/benzine/WakingUpFromTheEconomyOfDreams.htm`。
+
 [65] M. Cave，《一个拥有光明未来的愚蠢婴儿》，*《澳大利亚金融评论》*，2000 年 5 月 11 日。[`www.afr.com/politics/one-dumb-baby-with-a-brilliant-future-20000511-k9g4u`](https://www.afr.com/politics/one-dumb-baby-with-a-brilliant-future-20000511-k9g4u)
+
 [66] Goertzel 的新公司 TrueAGI 将专注于为企业提供“心灵即服务”。
+
 [67] S. Shead，《Alphabet 的 DeepMind 亏损在 2018 年飙升至 5.7 亿美元》，*《福布斯》*，2019 年 8 月 7 日。[`www.forbes.com/sites/samshead/2019/08/07/deepmind-losses-soared-to-570-million-in-2018/`](https://www.forbes.com/sites/samshead/2019/08/07/deepmind-losses-soared-to-570-million-in-2018/)；A. Thomson，《谷歌免除 15 亿美元 DeepMind 贷款，因 AI 成本上升》，*《彭博》*，2020 年 12 月 17 日。[`www.bloomberg.com/news/articles/2020-12-17/deepmind-says-2019-revenue-jumped-158-on-ai-research-work`](https://www.bloomberg.com/news/articles/2020-12-17/deepmind-says-2019-revenue-jumped-158-on-ai-research-work)
 
 ### 第 5 章
 
 [1] Jakob Uszkoreit 提出用自注意力替代 RNN，并开始评估该想法。J. Uszkoreit，《Transformer：一种用于语言理解的新型神经网络架构》，谷歌研究博客，2017 年 8 月 31 日。[`research.google/blog/transformer-a-novel-neural-network-architecture-for-language-understanding/`](https://research.google/blog/transformer-a-novel-neural-network-architecture-for-language-understanding/)
+
 [2] A. Vaswani、N. Shazeer、N. Parmar、J. Uszkoreit、L. Jones、A. N. Gomez、L. Kaiser 和 I. Polosukhin，《注意力就是你需要的全部》，arXiv 预印本，arXiv:1706.03762，2017 年
+
 [3] D. Bahdanau、K. Cho 和 Y. Bengio，《通过联合学习对齐和翻译的神经机器翻译》，arXiv:1409.0473，2014 年 9 月。[`arxiv.org/pdf/1409.0473`](https://arxiv.org/pdf/1409.0473)
+
 [4] A. Graves、G. Wayne 和 I. Danihelka，《神经图灵机》，arXiv:1410.5401，2014 年 10 月。[`arxiv.org/abs/1410.5401`](https://arxiv.org/abs/1410.5401)
-
-
-
 
 ### References
 
@@ -657,6 +685,8 @@
 
 [24] B. Yang、L. Wang、D. F. Wong、L. S. Chao 和 Z. Tu，《评估自注意力网络学习词序的能力》，arXiv:1906.00592，2019 年 6 月。[`arxiv.org/abs/1906.00592`](https://arxiv.org/abs/1906.00592)
 
+
+
 [25] Google Research，《使用通用变换器超越翻译》，Google Research 博客。[`research.google/blog/moving-beyond-translation-with-the-universal-transformer`](https://research.google/blog/moving-beyond-translation-with-the-universal-transformer)
 
 [26] YouTube，《无先验第 39 集 | 与 OpenAI 联合创始人兼首席科学家 Ilya Sutskever 对谈》。[`www.youtube.com/watch?v=Ft0gTO2K85A`](https://www.youtube.com/watch?v=Ft0gTO2K85A)
@@ -688,8 +718,6 @@
 [39] Pathmind，《思维向量》，Pathmind 维基。[`wiki.pathmind.com/thought-vectors`](https://wiki.pathmind.com/thought-vectors)
 
 [40] 同 [39]
-
-
 
 [41] Reddit，r/MachineLearning，"AMA：我们是 Google Brain 团队。" `https://www.reddit.com/r/MachineLearning/comments/4w6tsv/ama_we_are_the_google_brain_team_wed_love_to/`
 
@@ -765,20 +793,19 @@
 
 [77] OpenAI，"Microsoft invests in and partners with OpenAI"，OpenAI。 `https://openai.com/index/microsoft-invests-in-and-partners-with-openai/`
 
+[78] VentureBeat，《Sakana AI 的 CTO 声称他对驱动……的 Transformer 感到极其厌烦》，VentureBeat。 [`venturebeat.com/ai/sakana-ais-cto-says-hes-absolutely-sick-of-transformers-the-tech-that-powers`](https://venturebeat.com/ai/sakana-ais-cto-says-hes-absolutely-sick-of-transformers-the-tech-that-powers)
+
+[79] O. Kuchaiev 和 B. Ginsburg，《LSTM 网络的因子分解技巧》，`arXiv:1703.10722`，2017 年 3 月。
+
+[80] Noam Shazeer、Azalia Mirhoseini、Krzysztof Maziarz、Andy Davis、Quoc Le、Geoffrey Hinton 和 Jeff Dean，《超大规模神经网络：稀疏门控的专家混合层》，arXiv 预印本，`arXiv:1701.06538`，2017 年。
+
+[81] N. Kalchbrenner、L. Espeholt、K. Simonyan、A. van den Oord、A. Graves 和 K. Kavukcuoglu，《线性时间的神经机器翻译》，`arXiv:1610.10099`，2016 年 10 月。 [`arxiv.org/pdf/1610.10099`](https://arxiv.org/pdf/1610.10099)
+
+[82] J. Gehring、M. Auli、D. Grangier、D. Yarats 和 Y. N. Dauphin，《卷积序列到序列学习》，2017 年 5 月。 [`arxiv.org/pdf/1705.03122`](https://arxiv.org/pdf/1705.03122)
+
+[83] 《独家：21 世纪被引用次数最多的论文》，*《自然》*，2025 年 4 月 15 日。 [`www.nature.com/articles/d41586-025-01125-9`](https://www.nature.com/articles/d41586-025-01125-9)
 
 
-
-\[78\] VentureBeat，《Sakana AI 的 CTO 声称他对驱动……的 Transformer 感到极其厌烦》，VentureBeat。 [`venturebeat.com/ai/sakana-ais-cto-says-hes-absolutely-sick-of-transformers-the-tech-that-powers`](https://venturebeat.com/ai/sakana-ais-cto-says-hes-absolutely-sick-of-transformers-the-tech-that-powers)
-
-\[79\] O. Kuchaiev 和 B. Ginsburg，《LSTM 网络的因子分解技巧》，`arXiv:1703.10722`，2017 年 3 月。
-
-\[80\] Noam Shazeer、Azalia Mirhoseini、Krzysztof Maziarz、Andy Davis、Quoc Le、Geoffrey Hinton 和 Jeff Dean，《超大规模神经网络：稀疏门控的专家混合层》，arXiv 预印本，`arXiv:1701.06538`，2017 年。
-
-\[81\] N. Kalchbrenner、L. Espeholt、K. Simonyan、A. van den Oord、A. Graves 和 K. Kavukcuoglu，《线性时间的神经机器翻译》，`arXiv:1610.10099`，2016 年 10 月。 [`arxiv.org/pdf/1610.10099`](https://arxiv.org/pdf/1610.10099)
-
-\[82\] J. Gehring、M. Auli、D. Grangier、D. Yarats 和 Y. N. Dauphin，《卷积序列到序列学习》，2017 年 5 月。 [`arxiv.org/pdf/1705.03122`](https://arxiv.org/pdf/1705.03122)
-
-\[83\] 《独家：21 世纪被引用次数最多的论文》，*《自然》*，2025 年 4 月 15 日。 [`www.nature.com/articles/d41586-025-01125-9`](https://www.nature.com/articles/d41586-025-01125-9)
 
 \[84\] Makebot AI，《调查：美国半数成年人现已使用类似 ChatGPT 的 AI 大语言模型》，Makebot AI 博客。 [`www.makebot.ai/blog-en/survey-half-of-u-s-adults-now-use-ai-large-language-models-like-chatgpt`](https://www.makebot.ai/blog-en/survey-half-of-u-s-adults-now-use-ai-large-language-models-like-chatgpt)
 
@@ -846,23 +873,21 @@
 
 \[30\] Espadrine，《Chinchilla 的死亡》，Espadrine 博客，无日期。 [`espadrine.github.io/blog/posts/chinchilla-s-death.xhtml`](https://espadrine.github.io/blog/posts/chinchilla-s-death.xhtml)
 
-
-
 ### References
 
-[31] P. Zhang 等人，“TinyLlama：一个开源的小型语言模型”，arXiv:2401.02385，2024。 [`arxiv.org/abs/2401.02385`](https://arxiv.org/abs/2401.02385)
+[31] P. Zhang 等人，“TinyLlama：一个开源的小型语言模型”，`arXiv:2401.02385`，2024。 [`arxiv.org/abs/2401.02385`](https://arxiv.org/abs/2401.02385)
 
-[32] A. Grattafiori 等人，“Llama 3 模型系列”，arXiv:2407.21783，2024。 [`arxiv.org/pdf/2407.21783`](https://arxiv.org/pdf/2407.21783)
+[32] A. Grattafiori 等人，“Llama 3 模型系列”，`arXiv:2407.21783`，2024。 [`arxiv.org/pdf/2407.21783`](https://arxiv.org/pdf/2407.21783)
 
 [33] 路透社，“什么是 DeepSeek，它为何扰乱人工智能领域？”2025 年 1 月 27 日。 [`www.reuters.com/technology/artificial-intelligence/what-is-deepseek-why-is-it-disrupting-ai-sector-2025-01-27`](https://www.reuters.com/technology/artificial-intelligence/what-is-deepseek-why-is-it-disrupting-ai-sector-2025-01-27)
 
-[34] DeepSeek-AI 等人，“DeepSeek-R1：通过强化学习激励 LLM 的推理能力”，arXiv:2501.12948，2025。 [`arxiv.org/pdf/2501.12948`](https://arxiv.org/pdf/2501.12948)
+[34] DeepSeek-AI 等人，“DeepSeek-R1：通过强化学习激励 LLM 的推理能力”，`arXiv:2501.12948`，2025。 [`arxiv.org/pdf/2501.12948`](https://arxiv.org/pdf/2501.12948)
 
-[35] W. Fedus、B. Zoph 和 N. Shazeer，“Switch Transformers：使用简单高效的稀疏性扩展到万亿参数模型”，arXiv:2101.03961，2021。 [`arxiv.org/abs/2101.03961`](https://arxiv.org/abs/2101.03961)
+[35] W. Fedus、B. Zoph 和 N. Shazeer，“Switch Transformers：使用简单高效的稀疏性扩展到万亿参数模型”，`arXiv:2101.03961`，2021。 [`arxiv.org/abs/2101.03961`](https://arxiv.org/abs/2101.03961)
 
-[36] 模型压缩、蒸馏、专家混合等稀疏模型以及算法优化都可以降低缩放成本。Y. Cheng、D. Wang、P. Zhou 和 T. Zhang，“深度神经网络的模型压缩与加速综述”，arXiv:1710.09282，2017。 [`arxiv.org/abs/1710.09282`](https://arxiv.org/abs/1710.09282)
+[36] 模型压缩、蒸馏、专家混合等稀疏模型以及算法优化都可以降低缩放成本。Y. Cheng、D. Wang、P. Zhou 和 T. Zhang，“深度神经网络的模型压缩与加速综述”，`arXiv:1710.09282`，2017。 [`arxiv.org/abs/1710.09282`](https://arxiv.org/abs/1710.09282)
 
-[37] “立场：别再扩展 LLM 了！让我们关注缩小规模”，arXiv:2505.00985，2025。 [`arxiv.org/abs/2505.00985`](https://arxiv.org/abs/2505.00985)
+[37] “立场：别再扩展 LLM 了！让我们关注缩小规模”，`arXiv:2505.00985`，2025。 [`arxiv.org/abs/2505.00985`](https://arxiv.org/abs/2505.00985)
 
 [38] 例如，H. Pathak，“导航前沿：精选的 LLM 推荐系统与论文列表（2018–2025）”，Medium，无日期。 [`medium.com/@harshnpathak/navigating-the-frontier-a-curated-list-of-essential-llm-recsys-and-papers-2018-2025-2fd7861d9ce1`](https://medium.com/@harshnpathak/navigating-the-frontier-a-curated-list-of-essential-llm-recsys-and-papers-2018-2025-2fd7861d9ce1)
 
@@ -872,25 +897,27 @@
 
 [41] 马库斯真正攻击的是格温恩对规模的更大胆的重新框架，即将其视为关于智能的假设，尽管他的批评直接针对缩放定律本身。同 [37]
 
-[42] N. Lourie、M. Y. Hu 和 K. Cho，“缩放定律对下游任务不可靠：现实检验”，arXiv:2507.00885，2025。 [`arxiv.org/pdf/2507.00885`](https://arxiv.org/pdf/2507.00885)
+[42] N. Lourie、M. Y. Hu 和 K. Cho，“缩放定律对下游任务不可靠：现实检验”，`arXiv:2507.00885`，2025。 [`arxiv.org/pdf/2507.00885`](https://arxiv.org/pdf/2507.00885)
 
-[43] S. Y. Gadre 等人，“语言模型在过度训练和下游任务上可靠地扩展”，arXiv:2403.08540，2024。 [`arxiv.org/abs/2403.08540`](https://arxiv.org/abs/2403.08540)
+[43] S. Y. Gadre 等人，“语言模型在过度训练和下游任务上可靠地扩展”，`arXiv:2403.08540`，2024。 [`arxiv.org/abs/2403.08540`](https://arxiv.org/abs/2403.08540)
 
-[44] E. Caballero、K. Gupta、I. Rish 和 D. Krueger，“破碎的神经缩放定律”，arXiv:2210.14891，2022。 [`www.arxiv.org/abs/2210.14891`](https://www.arxiv.org/abs/2210.14891)
+[44] E. Caballero、K. Gupta、I. Rish 和 D. Krueger，“破碎的神经缩放定律”，`arXiv:2210.14891`，2022。 [`www.arxiv.org/abs/2210.14891`](https://www.arxiv.org/abs/2210.14891)
 
 [45] GDB，“帖子”，X，2023 年 12 月 9 日。 [`x.com/gdb/status/1733553161884127435`](https://x.com/gdb/status/1733553161884127435)
 
-[46] A. Srivastava 等人，“超越模仿游戏：量化与外推语言模型的能力”，arXiv:2206.04615，2022。 [`arxiv.org/abs/2206.04615`](https://arxiv.org/abs/2206.04615)
+[46] A. Srivastava 等人，“超越模仿游戏：量化与外推语言模型的能力”，`arXiv:2206.04615`，2022。 [`arxiv.org/abs/2206.04615`](https://arxiv.org/abs/2206.04615)
 
-[47] P. Liang 等人，“语言模型的全面评估”，arXiv:2211.09110，2022。 [`arxiv.org/abs/2211.09110`](https://arxiv.org/abs/2211.09110)
+[47] P. Liang 等人，“语言模型的全面评估”，`arXiv:2211.09110`，2022。 [`arxiv.org/abs/2211.09110`](https://arxiv.org/abs/2211.09110)
 
-[48] D. Hendrycks 等人，“测量大规模多任务语言理解”，arXiv:2009.03300，2020。 [`arxiv.org/pdf/2009.03300`](https://arxiv.org/pdf/2009.03300)
+[48] D. Hendrycks 等人，“测量大规模多任务语言理解”，`arXiv:2009.03300`，2020。 [`arxiv.org/pdf/2009.03300`](https://arxiv.org/pdf/2009.03300)
 
-[49] M. Kazemi 等人，“BIG-Bench 极难”，arXiv:2502.19187，2025。 [`arxiv.org/abs/2502.19187`](https://arxiv.org/abs/2502.19187)
+[49] M. Kazemi 等人，“BIG-Bench 极难”，`arXiv:2502.19187`，2025。 [`arxiv.org/abs/2502.19187`](https://arxiv.org/abs/2502.19187)
 
-[50] K. Cobbe 等人，“训练验证者解决数学应用题”，arXiv:2110.14168，2021。 [`arxiv.org/abs/2110.14168`](https://arxiv.org/abs/2110.14168)
+[50] K. Cobbe 等人，“训练验证者解决数学应用题”，`arXiv:2110.14168`，2021。 [`arxiv.org/abs/2110.14168`](https://arxiv.org/abs/2110.14168)
 
-[51] R. Schaeffer 等人，“为什么用规模预测前沿 AI 模型的下游能力仍然难以捉摸？”arXiv:2406.04391，2024。 [`arxiv.org/abs/2406.04391`](https://arxiv.org/abs/2406.04391)
+
+
+[51] R. Schaeffer 等人，“为什么用规模预测前沿 AI 模型的下游能力仍然难以捉摸？”`arXiv:2406.04391`，2024。 [`arxiv.org/abs/2406.04391`](https://arxiv.org/abs/2406.04391)
 
 [52] 斯坦福大学法学院，“GPT-4 通过律师考试：这对法律行业的人工智能工具意味着什么”，2023 年 4 月 19 日。 [`law.stanford.edu/2023/04/19/gpt-4-passes-the-bar-exam-what-that-means-for-artificial-intelligence-tools-in-the-legal-industry/`](https://law.stanford.edu/2023/04/19/gpt-4-passes-the-bar-exam-what-that-means-for-artificial-intelligence-tools-in-the-legal-industry/)
 
@@ -920,62 +947,61 @@
 
 [65] J. Dean 等人，“大规模分布式深度网络”，*神经信息处理系统进展* 25 (2012)。 [`papers.nips.cc/paper_files/paper/2012/file/6aca97005c68f1206823815f66102863-Paper.pdf`](https://papers.nips.cc/paper_files/paper/2012/file/6aca97005c68f1206823815f66102863-Paper.pdf)
 
+[66] A. Krizhevsky，《一个用于并行化卷积神经网络的奇怪技巧》，`arXiv:1404.5997`，2014 年。[`https://arxiv.org/abs/1404.5997`](https://arxiv.org/abs/1404.5997)
+
+[67] S. Rajbhandari 等，《ZeRO：面向训练万亿参数模型的内存优化》，`arXiv:1910.02054`，2019 年。[`https://arxiv.org/abs/1910.02054`](https://arxiv.org/abs/1910.02054)
+
+[68] AmoebaNet-B 是一种通过神经架构搜索发现的卷积网络架构。E. Real 等，《用于图像分类器架构搜索的正则化进化》，`arXiv:1802.01548`，2018 年。[`https://arxiv.org/abs/1802.01548`](https://arxiv.org/abs/1802.01548)
+
+[69] S. Kornblith、J. Shlens 和 Q. V. Le，《更好的 ImageNet 模型是否迁移得更好？》，`arXiv:1805.08974`，2018 年。[`https://arxiv.org/abs/1805.08974`](https://arxiv.org/abs/1805.08974)
+
+[70] 克尔凯郭尔日记中一句流行的改写版本：“生活只能倒着理解，但必须正着过。” P. Jorgensen，《生活只能倒着理解；但必须正着过（克尔凯郭尔来源注释）》，爱荷华大学，未标注日期。[`https://homepage.divms.uiowa.edu/~jorgen/quotes/abbreviation.xhtml`](https://homepage.divms.uiowa.edu/~jorgen/quotes/abbreviation.xhtml)
+
+[71] 《可视化六维》。[`https://main-horse.github.io/posts/visualizing-6d`](https://main-horse.github.io/posts/visualizing-6d)
+
+[72] D. Arfeen 等，《PipeFill：在流水线并行 LLM 训练的气泡期间使用 GPU》，`arXiv:2410.07192`，2024 年。[`https://www.pdl.cmu.edu/PDL-FTP/BigLearning/Pipefill-2410.07192v1.pdf`](https://www.pdl.cmu.edu/PDL-FTP/BigLearning/Pipefill-2410.07192v1.pdf)
+
+[73] 同[72]
+
+[74] M. Shoeybi 等，《Megatron-LM：使用模型并行训练数十亿参数语言模型》，`arXiv:1909.08053`，2019 年。[`https://arxiv.org/abs/1909.08053`](https://arxiv.org/abs/1909.08053)
+
+[75] 同[69]
+
+[76] J. Rosset，《Turing-NLG：微软的 170 亿参数语言模型》，微软研究博客，2020 年 2 月 11 日。[`https://www.microsoft.com/en-us/research/blog/turing-nlg-a-17-billion-parameter-language-model-by-microsoft/`](https://www.microsoft.com/en-us/research/blog/turing-nlg-a-17-billion-parameter-language-model-by-microsoft/)
+
+[77] 《广度优先流水线并行》，`arXiv:2211.05953`，2022 年。[`https://arxiv.org/abs/2211.05953`](https://arxiv.org/abs/2211.05953)
+
+[78] 其中一项概括这些挑战的工作是《MegaScale：将大语言模型训练扩展到超过 10,000 个 GPU》，`arXiv:2402.15627`，2024 年。[`https://arxiv.org/pdf/2402.15627`](https://arxiv.org/pdf/2402.15627)
+
+[79] Anson Ho、Tamay Besiroglu、Ege Erdil、David Owen、Robi Rahman、Zifan Carl Guo、David Atkinson、Neil Thompson 和 Jaime Sevilla，《语言模型中的算法进展》，arXiv 预印本，`arXiv:2403.05812`，2024 年。[`https://arxiv.org/abs/2403.05812`](https://arxiv.org/abs/2403.05812)
+
+[80] G. Branwen，《Clippy》（小说），Gwern.net，未标注日期。[`https://gwern.net/fiction/clippy`](https://gwern.net/fiction/clippy)
+
+[81] OpenAI，《根据人类偏好微调 GPT-2》，OpenAI，未标注日期。[`https://openai.com/index/fine-tuning-gpt-2/`](https://openai.com/index/fine-tuning-gpt-2/)
+
+[82] N. Bilton，《人工智能可能是人类最巧妙的发明——也是最后一个》，*名利场*，2023 年 9 月 13 日。[`https://www.vanityfair.com/news/2023/09/artificial-intelligence-industry-future?srsltid=AfmBOooDFNXFYIHUkwc4Muom9FbnCLSHYVa6y6XBwwFcXXO-nzpIMzQz`](https://www.vanityfair.com/news/2023/09/artificial-intelligence-industry-future?srsltid=AfmBOooDFNXFYIHUkwc4Muom9FbnCLSHYVa6y6XBwwFcXXO-nzpIMzQz)
+
+[83] 在“根据人类偏好微调 GPT-2”的研究中，一个翻转的奖励 bug 导致模型生成尽可能糟糕但仍然流畅的文本。这表明大型语言模型在追求不一致的目标时能够保持表面上的能力。它还说明神经网络不会显著失败；它们会适应，通常以微妙且误导的方式，适应它们实际接收到的任何信号。这对 [84] 也是如此。
+
+[84] Mind Matters News，《播客嘉宾声称他不会死，说我们正在用 AI 创造上帝》，2025 年 1 月。[`https://mindmatters.ai/2025/01/podcast-guest-claims-he-wont-die-says-were-creating-god-with-ai/`](https://mindmatters.ai/2025/01/podcast-guest-claims-he-wont-die-says-were-creating-god-with-ai/)
+
+[85] 生命未来研究所，《暂停大型 AI 实验：一封公开信》，2023 年 3 月 22 日。[`https://futureoflife.org/open-letter/pause-giant-ai-experiments/`](https://futureoflife.org/open-letter/pause-giant-ai-experiments/)
+
+[86] E. Bender 等，《关于随机鹦鹉的危险：语言模型是否可能太大？》，载于 *2021 年 ACM 公平性、问责制和透明度会议论文集 (FAccT)*，2021 年，第 610–623 页。
+
+[87] Radiology Business，《纽约时报回顾诺贝尔奖得主关于 AI 将使放射科医生过时的预测》，未标注日期。[`https://radiologybusiness.com/topics/artificial-intelligence/ny-times-revisits-nobel-prize-winners-prediction-ai-will-render-radiologists-obsolete`](https://radiologybusiness.com/topics/artificial-intelligence/ny-times-revisits-nobel-prize-winners-prediction-ai-will-render-radiologists-obsolete)
+
+[88] T. Chiang，《ChatGPT 是网页的模糊 JPEG》，*纽约客*，2023 年 2 月 9 日。[`https://www.newyorker.com/tech/annals-of-technology/chatgpt-is-a-blurry-jpeg-of-the-web`](https://www.newyorker.com/tech/annals-of-technology/chatgpt-is-a-blurry-jpeg-of-the-web)
+
+[89] A. Fawzi 等，《用强化学习发现更快的矩阵乘法算法》，*自然*，2022 年。[`https://www.nature.com/articles/s41586-022-05172-4`](https://www.nature.com/articles/s41586-022-05172-4)
+
+## 第 7 章
+
+[1] Singh, Aaditya, Adam Fry, Adam Perelman, Adam Tart, Adi Ganesh, Ahmed El-Kishky, Aidan McLaughlin 等，《OpenAI GPT-5 系统卡》，arXiv [Cs.CL]，2025 年。[`http://arxiv.org/abs/2601.03267`](http://arxiv.org/abs/2601.03267)
+
+[2] 路透社，《OpenAI 及其竞争对手寻求通往更智能 AI 的新路径，因为当前方法遇到瓶颈》，2024 年 11 月 11 日。[`https://www.reuters.com/technology/artificial-intelligence/openai-rivals-seek-new-path-smarter-ai-current-methods-hit-limitations-2024-11-11/`](https://www.reuters.com/technology/artificial-intelligence/openai-rivals-seek-new-path-smarter-ai-current-methods-hit-limitations-2024-11-11/)
 
 
-
-\[66\] A. Krizhevsky，《一个用于并行化卷积神经网络的奇怪技巧》，`arXiv:1404.5997`，2014 年。[`https://arxiv.org/abs/1404.5997`](https://arxiv.org/abs/1404.5997)
-
-\[67\] S. Rajbhandari 等，《ZeRO：面向训练万亿参数模型的内存优化》，`arXiv:1910.02054`，2019 年。[`https://arxiv.org/abs/1910.02054`](https://arxiv.org/abs/1910.02054)
-
-\[68\] AmoebaNet-B 是一种通过神经架构搜索发现的卷积网络架构。E. Real 等，《用于图像分类器架构搜索的正则化进化》，`arXiv:1802.01548`，2018 年。[`https://arxiv.org/abs/1802.01548`](https://arxiv.org/abs/1802.01548)
-
-\[69\] S. Kornblith、J. Shlens 和 Q. V. Le，《更好的 ImageNet 模型是否迁移得更好？》，`arXiv:1805.08974`，2018 年。[`https://arxiv.org/abs/1805.08974`](https://arxiv.org/abs/1805.08974)
-
-\[70\] 克尔凯郭尔日记中一句流行的改写版本：“生活只能倒着理解，但必须正着过。” P. Jorgensen，《生活只能倒着理解；但必须正着过（克尔凯郭尔来源注释）》，爱荷华大学，未标注日期。[`https://homepage.divms.uiowa.edu/~jorgen/quotes/abbreviation.xhtml`](https://homepage.divms.uiowa.edu/~jorgen/quotes/abbreviation.xhtml)
-
-\[71\] 《可视化六维》。[`https://main-horse.github.io/posts/visualizing-6d`](https://main-horse.github.io/posts/visualizing-6d)
-
-\[72\] D. Arfeen 等，《PipeFill：在流水线并行 LLM 训练的气泡期间使用 GPU》，`arXiv:2410.07192`，2024 年。[`https://www.pdl.cmu.edu/PDL-FTP/BigLearning/Pipefill-2410.07192v1.pdf`](https://www.pdl.cmu.edu/PDL-FTP/BigLearning/Pipefill-2410.07192v1.pdf)
-
-\[73\] 同\[72\]
-
-\[74\] M. Shoeybi 等，《Megatron-LM：使用模型并行训练数十亿参数语言模型》，`arXiv:1909.08053`，2019 年。[`https://arxiv.org/abs/1909.08053`](https://arxiv.org/abs/1909.08053)
-
-\[75\] 同\[69\]
-
-\[76\] J. Rosset，《Turing-NLG：微软的 170 亿参数语言模型》，微软研究博客，2020 年 2 月 11 日。[`https://www.microsoft.com/en-us/research/blog/turing-nlg-a-17-billion-parameter-language-model-by-microsoft/`](https://www.microsoft.com/en-us/research/blog/turing-nlg-a-17-billion-parameter-language-model-by-microsoft/)
-
-\[77\] 《广度优先流水线并行》，`arXiv:2211.05953`，2022 年。[`https://arxiv.org/abs/2211.05953`](https://arxiv.org/abs/2211.05953)
-
-\[78\] 其中一项概括这些挑战的工作是《MegaScale：将大语言模型训练扩展到超过 10,000 个 GPU》，`arXiv:2402.15627`，2024 年。[`https://arxiv.org/pdf/2402.15627`](https://arxiv.org/pdf/2402.15627)
-
-\[79\] Anson Ho、Tamay Besiroglu、Ege Erdil、David Owen、Robi Rahman、Zifan Carl Guo、David Atkinson、Neil Thompson 和 Jaime Sevilla，《语言模型中的算法进展》，arXiv 预印本，`arXiv:2403.05812`，2024 年。[`https://arxiv.org/abs/2403.05812`](https://arxiv.org/abs/2403.05812)
-
-\[80\] G. Branwen，《Clippy》（小说），Gwern.net，未标注日期。[`https://gwern.net/fiction/clippy`](https://gwern.net/fiction/clippy)
-
-\[81\] OpenAI，《根据人类偏好微调 GPT-2》，OpenAI，未标注日期。[`https://openai.com/index/fine-tuning-gpt-2/`](https://openai.com/index/fine-tuning-gpt-2/)
-
-\[82\] N. Bilton，《人工智能可能是人类最巧妙的发明——也是最后一个》，*名利场*，2023 年 9 月 13 日。[`https://www.vanityfair.com/news/2023/09/artificial-intelligence-industry-future?srsltid=AfmBOooDFNXFYIHUkwc4Muom9FbnCLSHYVa6y6XBwwFcXXO-nzpIMzQz`](https://www.vanityfair.com/news/2023/09/artificial-intelligence-industry-future?srsltid=AfmBOooDFNXFYIHUkwc4Muom9FbnCLSHYVa6y6XBwwFcXXO-nzpIMzQz)
-
-\[83\] 在“根据人类偏好微调 GPT-2”的研究中，一个翻转的奖励 bug 导致模型生成尽可能糟糕但仍然流畅的文本。这表明大型语言模型在追求不一致的目标时能够保持表面上的能力。它还说明神经网络不会显著失败；它们会适应，通常以微妙且误导的方式，适应它们实际接收到的任何信号。这对 \[84\] 也是如此。
-
-\[84\] Mind Matters News，《播客嘉宾声称他不会死，说我们正在用 AI 创造上帝》，2025 年 1 月。[`https://mindmatters.ai/2025/01/podcast-guest-claims-he-wont-die-says-were-creating-god-with-ai/`](https://mindmatters.ai/2025/01/podcast-guest-claims-he-wont-die-says-were-creating-god-with-ai/)
-
-\[85\] 生命未来研究所，《暂停大型 AI 实验：一封公开信》，2023 年 3 月 22 日。[`https://futureoflife.org/open-letter/pause-giant-ai-experiments/`](https://futureoflife.org/open-letter/pause-giant-ai-experiments/)
-
-\[86\] E. Bender 等，《关于随机鹦鹉的危险：语言模型是否可能太大？》，载于 *2021 年 ACM 公平性、问责制和透明度会议论文集 (FAccT)*，2021 年，第 610–623 页。
-
-\[87\] Radiology Business，《纽约时报回顾诺贝尔奖得主关于 AI 将使放射科医生过时的预测》，未标注日期。[`https://radiologybusiness.com/topics/artificial-intelligence/ny-times-revisits-nobel-prize-winners-prediction-ai-will-render-radiologists-obsolete`](https://radiologybusiness.com/topics/artificial-intelligence/ny-times-revisits-nobel-prize-winners-prediction-ai-will-render-radiologists-obsolete)
-
-\[88\] T. Chiang，《ChatGPT 是网页的模糊 JPEG》，*纽约客*，2023 年 2 月 9 日。[`https://www.newyorker.com/tech/annals-of-technology/chatgpt-is-a-blurry-jpeg-of-the-web`](https://www.newyorker.com/tech/annals-of-technology/chatgpt-is-a-blurry-jpeg-of-the-web)
-
-\[89\] A. Fawzi 等，《用强化学习发现更快的矩阵乘法算法》，*自然*，2022 年。[`https://www.nature.com/articles/s41586-022-05172-4`](https://www.nature.com/articles/s41586-022-05172-4)
-
-### 第 7 章
-
-\[1\] Singh, Aaditya, Adam Fry, Adam Perelman, Adam Tart, Adi Ganesh, Ahmed El-Kishky, Aidan McLaughlin 等，《OpenAI GPT-5 系统卡》，arXiv [Cs.CL]，2025 年。[`http://arxiv.org/abs/2601.03267`](http://arxiv.org/abs/2601.03267)
-
-\[2\] 路透社，《OpenAI 及其竞争对手寻求通往更智能 AI 的新路径，因为当前方法遇到瓶颈》，2024 年 11 月 11 日。[`https://www.reuters.com/technology/artificial-intelligence/openai-rivals-seek-new-path-smarter-ai-current-methods-hit-limitations-2024-11-11/`](https://www.reuters.com/technology/artificial-intelligence/openai-rivals-seek-new-path-smarter-ai-current-methods-hit-limitations-2024-11-11/)
 
 \[3\] 为了保持梯度流动，使用重参数化技巧。D. P. Kingma 和 M. Welling，《自动编码变分贝叶斯》，arXiv 预印本 `arXiv:1312.6114`，2013 年。[在线]. 可获取：[`https://arxiv.org/abs/1312.6114`](https://arxiv.org/abs/1312.6114)
 
@@ -989,18 +1015,15 @@
 
 \[8\] Adam Santoro 等，《一个用于关系推理的简单神经网络模块》，2017 年。[`https://arxiv.org/abs/1706.01427`](https://arxiv.org/abs/1706.01427)
 
-
-
-
 \[9\] J. Johnson 等人，《CLEVR：一个用于组合语言和初级视觉推理的诊断数据集》，载于 *IEEE 计算机视觉与模式识别会议会议录 (CVPR)*，2017 年，第 1988–1997 页，doi: 10.1109/CVPR.2017.215。 [`openaccess.thecvf.com/content\_cvpr\_2017/papers/Johnson\_CLEVR\_A\_Diagnostic\_CVPR\_2017\_paper.pdf`](https://openaccess.thecvf.com/content_cvpr_2017/papers/Johnson_CLEVR_A_Diagnostic_CVPR_2017_paper.pdf)
 
-\[10\] J. Weston、A. Bordes、S. Chopra 和 T. Mikolov，《迈向完整人工智能问答：一组先决条件玩具任务》，arXiv 预印本，arXiv:1502.05698，2015 年。 https://arxiv.org/abs/1502.05698
+\[10\] J. Weston、A. Bordes、S. Chopra 和 T. Mikolov，《迈向完整人工智能问答：一组先决条件玩具任务》，arXiv 预印本，`arXiv:1502.05698`，2015 年。 [`https://arxiv.org/abs/1502.05698`](https://arxiv.org/abs/1502.05698)
 
 \[11\] K. Quach，《DeepMind 教授 AI 推理》，*The Register*，2017 年 6 月 9 日， [`www.theregister.com/2017/06/09/deepmind\_teaches\_ai\_to\_reason`](https://www.theregister.com/2017/06/09/deepmind_teaches_ai_to_reason)
 
-\[12\] J. Andreas、M. Rohrbach、T. Darrell 和 D. Klein，《使用神经模块网络的深度组合问答》，arXiv 预印本，arXiv:1511.02799，2015 年。 [`arxiv.org/pdf/1511.02799`](https://arxiv.org/pdf/1511.02799)
+\[12\] J. Andreas、M. Rohrbach、T. Darrell 和 D. Klein，《使用神经模块网络的深度组合问答》，arXiv 预印本，`arXiv:1511.02799`，2015 年。 [`arxiv.org/pdf/1511.02799`](https://arxiv.org/pdf/1511.02799)
 
-\[13\] R. Hu、J. Andreas、M. Rohrbach、T. Darrell 和 K. Saenko，《学习推理：用于视觉问答的端到端模块网络》，arXiv 预印本，arXiv:1704.05526，2017 年。 [`arxiv.org/pdf/1704.05526`](https://arxiv.org/pdf/1704.05526)
+\[13\] R. Hu、J. Andreas、M. Rohrbach、T. Darrell 和 K. Saenko，《学习推理：用于视觉问答的端到端模块网络》，arXiv 预印本，`arXiv:1704.05526`，2017 年。 [`arxiv.org/pdf/1704.05526`](https://arxiv.org/pdf/1704.05526)
 
 \[14\] J. J. Irwin，《凝视化学空间》，*Nature Chemical Biology* 第 5 卷第 8 期（2009 年），第 536–537 页，doi:10.1038/nchembio0809-536
 
@@ -1008,7 +1031,7 @@
 
 \[16\] R. Ramakrishnan、P. Dral、M. Rupp 等人。134 千分子的量子化学结构与性质。*Scientific Data* 第 1 卷（2014 年），140022。 [`doi.org/10.1038/sdata.2014.22`](https://doi.org/10.1038/sdata.2014.22)
 
-\[17\] J. Gilmer、S. S. Schoenholz、P. F. Riley、O. Vinyals 和 G. E. Dahl，《用于量子化学的神经消息传递》，arXiv 预印本，arXiv:1704.01212，2017 年
+\[17\] J. Gilmer、S. S. Schoenholz、P. F. Riley、O. Vinyals 和 G. E. Dahl，《用于量子化学的神经消息传递》，arXiv 预印本，`arXiv:1704.01212`，2017 年
 
 \[18\] P. Hohenberg 和 W. Kohn，《非均匀电子气体》，*Physical Review* 第 136 卷（1964 年），B864
 
@@ -1016,7 +1039,7 @@
 
 \[20\] Li, Yujia、Daniel Tarlow、Marc Brockschmidt 和 Richard Zemel，《门控图序列神经网络》，*arXiv* [*cs.LG*]，2017 年。 [`arxiv.org/abs/1511.05493`](http://arxiv.org/abs/1511.05493)
 
-\[21\] F. A. Faber 等人，《机器学习预测误差优于 DFT 精度》，arXiv 预印本，arXiv:1702.05532，2017 年。 [`arxiv.org/pdf/1702.05532`](https://arxiv.org/pdf/1702.05532)
+\[21\] F. A. Faber 等人，《机器学习预测误差优于 DFT 精度》，arXiv 预印本，`arXiv:1702.05532`，2017 年。 [`arxiv.org/pdf/1702.05532`](https://arxiv.org/pdf/1702.05532)
 
 \[22\] Kristof T. Schütt、Pieter-Jan Kindermans、Huziel E. Sauceda、Stefan Chmiela、Alexandre Tkatchenko 和 Klaus-Robert Müller，《SchNet：用于量子相互作用建模的连续滤波卷积神经网络》，arXiv [stat.ML]，2017 年。 [`arxiv.org/abs/1706.08566`](http://arxiv.org/abs/1706.08566)；K.T. Schütt、F. Arbabzadah、S. Chmiela、K.-R. Müller 和 A. Tkatchenko，《从深度张量神经网络获得的量子化学见解》，*Nature Communications* 第 8 卷（2017 年），13890
 
@@ -1024,33 +1047,33 @@
 
 \[24\] Alex Graves、Greg Wayne、Malcolm Reynolds 等人，《使用具有动态外部记忆的神经网络进行混合计算》，*Nature* 第 538 卷第 7626 期（2016 年），第 471 页
 
-\[25\] W. Zaremba 和 I. Sutskever，《学习执行》，arXiv 预印本，arXiv:1410.4615，2015 年。 [`arxiv.org/abs/1410.4615`](https://arxiv.org/abs/1410.4615)
+\[25\] W. Zaremba 和 I. Sutskever，《学习执行》，arXiv 预印本，`arXiv:1410.4615`，2015 年。 [`arxiv.org/abs/1410.4615`](https://arxiv.org/abs/1410.4615)
 
 \[26\] Mikael Henaff、Jason Weston、Arthur Szlam、Antoine Bordes 和 Yann LeCun，《使用循环实体网络追踪世界状态》，载于 *第五届国际学习表征会议*，2017 年。
 
-\[27\] Edouard Grave、Armand Joulin 和 Nicolas Usunier，《使用连续缓存改进神经语言模型》，arXiv 预印本，arXiv:1612.04426，2016 年
+\[27\] Edouard Grave、Armand Joulin 和 Nicolas Usunier，《使用连续缓存改进神经语言模型》，arXiv 预印本，`arXiv:1612.04426`，2016 年
 
 \[28\] S. Bai、J. Z. Kolter 和 V. Koltun，《卷积序列建模再探讨》，OpenReview (ICLR Workshop)，2018 年。 [`openreview.net/forum?id=rk8wKk-R-`](https://openreview.net/forum?id=rk8wKk-R-)
 
-\[29\] Y. N. Dauphin、A. Fan、M. Auli 和 D. Grangier，《使用门控卷积网络进行语言建模》，arXiv 预印本，arXiv:1612.08083，2016 年。 [`arxiv.org/abs/1612.08083`](http://arxiv.org/abs/1612.08083)
+\[29\] Y. N. Dauphin、A. Fan、M. Auli 和 D. Grangier，《使用门控卷积网络进行语言建模》，arXiv 预印本，`arXiv:1612.08083`，2016 年。 [`arxiv.org/abs/1612.08083`](http://arxiv.org/abs/1612.08083)
 
-\[30\] J. W. Rae、C. Dyer、P. Dayan 和 T. P. Lillicrap，《使用激活记忆的快速参数学习》，arXiv 预印本，arXiv:1803.10049，2018 年。 http://arxiv.org/abs/1803.10049.
+\[30\] J. W. Rae、C. Dyer、P. Dayan 和 T. P. Lillicrap，《使用激活记忆的快速参数学习》，arXiv 预印本，`arXiv:1803.10049`，2018 年。 [`http://arxiv.org/abs/1803.10049`](http://arxiv.org/abs/1803.10049)
 
 \[31\] S. Merity、N. S. Keskar、J. Bradbury 和 R. Socher，《可扩展语言建模：在单块 GPU 上 12 小时完成 WikiText-103》，2018 年，doi: 10.1002/j.2334-1234.2018.12159.x。 [`mlsys.org/Conferences/doc/2018/50.pdf`](https://mlsys.org/Conferences/doc/2018/50.pdf)
 
-\[32\] H. Liu 等人，《评估 ChatGPT 和 GPT-4 的逻辑推理能力》，arXiv 预印本，arXiv:2304.03439，2023 年。 [`arxiv.org/pdf/2304.03439`](https://arxiv.org/pdf/2304.03439)
+\[32\] H. Liu 等人，《评估 ChatGPT 和 GPT-4 的逻辑推理能力》，arXiv 预印本，`arXiv:2304.03439`，2023 年。 [`arxiv.org/pdf/2304.03439`](https://arxiv.org/pdf/2304.03439)
 
-\[33\] OpenAI，《GPT-4 技术报告》，arXiv 预印本，arXiv:2303.08774，2023 年。 [`arxiv.org/pdf/2303.08774`](https://arxiv.org/pdf/2303.08774)
+\[33\] OpenAI，《GPT-4 技术报告》，arXiv 预印本，`arXiv:2303.08774`，2023 年。 [`arxiv.org/pdf/2303.08774`](https://arxiv.org/pdf/2303.08774)
 
 \[34\] V. Kocijan、E. Davis、T. Lukasiewicz、G. Marcus 和 L. Morgenstern，《Winograd 模式挑战赛的失败》，*Artificial Intelligence* 第 325 卷（2023 年），文章编号 103971。 [`www.sciencedirect.com/science/article/abs/pii/S0004370223001170`](https://www.sciencedirect.com/science/article/abs/pii/S0004370223001170)
 
 \[35\] Qihuang Zhong、Kang Wang、Ziyang Xu、Juhua Liu、Liang Ding 和 Bo Du，《在 GSM8K 上达到 >97%：“深入理解问题使 LLM 成为更好的数学应用题求解器”》，arXiv [cs.CL]，2024 年。 [`arxiv.org/abs/2404.14963`](http://arxiv.org/abs/2404.14963)
 
-\[36\] A. Lewkowycz 等人，《Minerva：使用语言模型解决定量推理问题》，arXiv 预印本，arXiv:2206.14858，2022 年。 [`arxiv.org/pdf/2206.14858`](https://arxiv.org/pdf/2206.14858)
+\[36\] A. Lewkowycz 等人，《Minerva：使用语言模型解决定量推理问题》，arXiv 预印本，`arXiv:2206.14858`，2022 年。 [`arxiv.org/pdf/2206.14858`](https://arxiv.org/pdf/2206.14858)
 
 \[37\] J. Hart，《OpenAI 在数学竞赛中夺得金牌，这正在推动 AGI 猜测》，*Business Insider*，2025 年 7 月。 [`www.businessinsider.com/openai-gold-iom-math-competition-2025-7`](https://www.businessinsider.com/openai-gold-iom-math-competition-2025-7)
 
-\[38\] C. Yang 等人，《作为优化器的大型语言模型》，arXiv 预印本，arXiv:2309.03409，2023 年。 [`arxiv.org/abs/2309.03409`](https://arxiv.org/abs/2309.03409)
+\[38\] C. Yang 等人，《作为优化器的大型语言模型》，arXiv 预印本，`arXiv:2309.03409`，2023 年。 [`arxiv.org/abs/2309.03409`](https://arxiv.org/abs/2309.03409)
 
 \[39\] Wikipedia 贡献者，《狼、山羊和卷心菜问题》，Wikipedia。 [`en.wikipedia.org/wiki/Wolf,\_goat\_and\_cabbage\_problem`](https://en.wikipedia.org/wiki/Wolf,_goat_and_cabbage_problem)
 
@@ -1060,9 +1083,7 @@
 
 \[42\] J. McCarthy，《限定：一种非单调推理的形式》，*Artificial Intelligence* 第 13 卷第 1–2 期（1980 年），第 27–39 页，doi:10.1016/0004-3702(80)90011-9
 
-
-
-[44] L. Berglund、M. Tong、M. Kaufmann、M. Balesni、A. C. Stickland、T. Korbak 和 O. Evans，《逆转诅咒：在"A 是 B"上训练的 LLM 学不会"B 是 A"》，arXiv 预印本，arXiv:2309.12288，2023 年。[`research.google/blog/open-sourcing-bert-state-of-the-art-pre-training-for-natural-language-processing/`](https://research.google/blog/open-sourcing-bert-state-of-the-art-pre-training-for-natural-language-processing/)
+[44] L. Berglund、M. Tong、M. Kaufmann、M. Balesni、A. C. Stickland、T. Korbak 和 O. Evans，《逆转诅咒：在"A 是 B"上训练的 LLM 学不会"B 是 A"》，arXiv 预印本，`arXiv:2309.12288`，2023 年。[`research.google/blog/open-sourcing-bert-state-of-the-art-pre-training-for-natural-language-processing/`](https://research.google/blog/open-sourcing-bert-state-of-the-art-pre-training-for-natural-language-processing/)
 
 [45] J. McCarthy，《将限定推理应用于常识知识的形式化》，*人工智能* 28，第 1 期（1986 年）：89–116，doi: 10.1016/0004-3702(86) 90032-9
 
@@ -1073,6 +1094,8 @@
 [48] Takeshi Kojima、Shixiang Shane Gu、Machel Reid、Yutaka Matsuo 和 Yusuke Iwasawa，《大语言模型是零样本推理者》，arXiv \[cs.CL\]，2023 年。[`arxiv.org/abs/2205.11916`](https://arxiv.org/abs/2205.11916)
 
 [49] Google Research，《语言模型通过思维链进行推理》，2022 年 5 月 11 日。[`research.google/blog/language-models-perform-reasoning-via-chain-of-thought`](https://research.google/blog/language-models-perform-reasoning-via-chain-of-thought)
+
+
 
 [50] X. Wang 等人，《自一致性提升语言模型中的思维链推理》，arXiv 预印本，arXiv:2203.11171，2022 年。[`arxiv.org/abs/2203.11171`](https://arxiv.org/abs/2203.11171)
 
@@ -1122,7 +1145,7 @@
 
 [73] W. James，《实用主义：旧有思维方式的新名称》。纽约：Longmans，Green，1907 年，第六讲（"实用主义的真理观"）
 
-### 第 8 章
+## 第 8 章
 
 [1] Mind Cathedral，《黄仁勋（NVIDIA）与 Ilya Sutskever（OpenAI）会议。AI Conferenza SUB ITA》，YouTube 视频，2023 年。[`www.youtube.com/watch?v=ZZ0atq2yYJw`](https://www.youtube.com/watch?v=ZZ0atq2yYJw)
 
@@ -1130,50 +1153,49 @@
 
 [3] 热力学第二定律是指孤立系统的熵不会减少。按照 Aaronson、Carroll 和 Ouellette 的说法，在研究熵如何增加而表观复杂性暂时上升和下降的过程中，咖啡杯模型被视为一个"封闭系统"。
 
-
-
-
 [4] A. Shen、V. A. Uspensky 和 N. Vereshchagin，《*Kolmogorov Complexity and Algorithmic Randomness, Mathematical Surveys and Monographs*》，第 220 卷。罗德岛州普罗维登斯：美国数学学会，2017 年。[`bookstore.ams.org/surv-220`](https://bookstore.ams.org/surv-220)
 
-[5] F. Green，“书评专栏”，*ACM SIGACT News* 第 50 卷第 4 期（2019 年）。[`mathcs.clarku.edu/~fgreen/SIGACTReviews/bookrev/50-4.pdf`](https://mathcs.clarku.edu/~fgreen/SIGACTReviews/bookrev/50-4.pdf)
+[5] F. Green，"书评专栏"，*ACM SIGACT News* 第 50 卷第 4 期（2019 年）。[`mathcs.clarku.edu/~fgreen/SIGACTReviews/bookrev/50-4.pdf`](https://mathcs.clarku.edu/~fgreen/SIGACTReviews/bookrev/50-4.pdf)
 
-[6] L. Fortnow，“莫斯科的压缩”，Computational Complexity 博客，2019 年 6 月 12 日。[`blog.computationalcomplexity.org/2019/06/compressing-in-moscow.xhtml`](https://blog.computationalcomplexity.org/2019/06/compressing-in-moscow.xhtml)
+[6] L. Fortnow，"莫斯科的压缩"，Computational Complexity 博客，2019 年 6 月 12 日。[`blog.computationalcomplexity.org/2019/06/compressing-in-moscow.xhtml`](https://blog.computationalcomplexity.org/2019/06/compressing-in-moscow.xhtml)
 
 [7] 例如，他们证明了每一个对经典香农熵成立的线性不等式也对柯尔莫哥洛夫复杂度成立，从而在概率信息论与算法信息之间建立了牢固的联系。沈还以计算复杂性方面的一项著名成果（IP = PSPACE 的另一种证明）而闻名，但他已在算法信息论领域深耕数十年。到 2017 年，沈在法国国家科学研究中心（CNRS），Vereshchagin 在莫斯科国立大学。他们与 Uspensky 一起，将毕生所学凝练成了这卷著作。
 
-[8] Claude E. Shannon，“通信的数学理论”，*Bell System Technical Journal* 第 27 卷第 3 期（1948 年 7 月）：379–423
+[8] Claude E. Shannon，"通信的数学理论"，*Bell System Technical Journal* 第 27 卷第 3 期（1948 年 7 月）：379–423
 
 [9] 请注意，仅靠不重复并不等同于算法随机性。0.0% 或 √2 的数字并不会陷入重复模式，但它们是可计算的，因为一个简短的算法就能生成其各位数字。用柯尔莫哥洛夫的术语来说，因此与同等长度的典型随机字符串相比，它们的有限前缀具有很高的可压缩性。
 
-[10] C. E. Shannon，“通信的数学理论”，*Bell System Technical Journal* 第 27 卷第 3 期（1948 年 7 月）：379–423；第 27 卷第 4 期（1948 年 10 月）：623–656
+[10] C. E. Shannon，"通信的数学理论"，*Bell System Technical Journal* 第 27 卷第 3 期（1948 年 7 月）：379–423；第 27 卷第 4 期（1948 年 10 月）：623–656
 
-[11] R. J. Solomonoff，“Ray Solomonoff 的主页”，raysolomonoff.com，未注明日期。[`raysolomonoff.com`](https://raysolomonoff.com)
+[11] R. J. Solomonoff，"Ray Solomonoff 的主页"，raysolomonoff.com，未注明日期。[`raysolomonoff.com`](https://raysolomonoff.com)
 
-[12] 停机问题问是否存在一种通用算法，能够针对任意程序和输入判断该程序最终是会停止还是永远运行。艾伦·图灵证明了不存在这样的算法，并且某些计算问题是不可判定的。A. M. Turing，“论可计算数，及其在判定问题上的应用”，*Proceedings of the London Mathematical Society Series 2* 第 42 卷（1937 年）：230–265。[`doi.org/10.1112/plms/s2-42.1.230`](https://doi.org/10.1112/plms/s2-42.1.230)
+[12] 停机问题问是否存在一种通用算法，能够针对任意程序和输入判断该程序最终是会停止还是永远运行。艾伦·图灵证明了不存在这样的算法，并且某些计算问题是不可判定的。A. M. Turing，"论可计算数，及其在判定问题上的应用"，*Proceedings of the London Mathematical Society Series 2* 第 42 卷（1937 年）：230–265。[`doi.org/10.1112/plms/s2-42.1.230`](https://doi.org/10.1112/plms/s2-42.1.230)
 
-[13] Hacker News，“Ilya Sutskever：‘如果你把这些都学会，你就会知道 90% 重要的东西’”，2024 年 5 月 18 日。[`news.ycombinator.com/item?id=40397806`](https://news.ycombinator.com/item?id=40397806)
+[13] Hacker News，"Ilya Sutskever：‘如果你把这些都学会，你就会知道 90% 重要的东西’"，2024 年 5 月 18 日。[`news.ycombinator.com/item?id=40397806`](https://news.ycombinator.com/item?id=40397806)
 
-[14] ErdosProblems.com 论坛，“Erdős 问题 #481——讨论帖”，最后编辑于 2025 年 12 月 3 日。[`www.erdosproblems.com/forum/thread/481#post-1934`](https://www.erdosproblems.com/forum/thread/481#post-1934)
+[14] ErdosProblems.com 论坛，"Erdős 问题 #481——讨论帖"，最后编辑于 2025 年 12 月 3 日。[`www.erdosproblems.com/forum/thread/481#post-1934`](https://www.erdosproblems.com/forum/thread/481#post-1934)
 
-[15] L. de Moura 和 S. Ullrich，“The Lean 4 定理证明器与编程语言”，载于 A. Platzer 和 G. Sutcliffe（编），*Automated Deduction*—*CADE 28*。Lecture Notes in *Computer Science*，第 12699 卷。瑞士沙姆：Springer，2021 年。[`doi.org/10.1007/978-3-030-79876-5_37`](https://doi.org/10.1007/978-3-030-79876-5_37)
+[15] L. de Moura 和 S. Ullrich，"The Lean 4 定理证明器与编程语言"，载于 A. Platzer 和 G. Sutcliffe（编），*Automated Deduction*—*CADE 28*。Lecture Notes in *Computer Science*，第 12699 卷。瑞士沙姆：Springer，2021 年。[`doi.org/10.1007/978-3-030-79876-5_37`](https://doi.org/10.1007/978-3-030-79876-5_37)
 
 [16] 同 [1]
 
-[17] M. Chen 等人，“从像素进行生成式预训练”，载于*第 37 届国际机器学习会议论文集*，第 119 卷，2020 年，第 1691–1703 页。[`cdn.openai.com/papers/Generative_Pretraining_from_Pixels_V2.pdf`](https://cdn.openai.com/papers/Generative_Pretraining_from_Pixels_V2.pdf)
+[17] M. Chen 等人，"从像素进行生成式预训练"，载于*第 37 届国际机器学习会议论文集*，第 119 卷，2020 年，第 1691–1703 页。[`cdn.openai.com/papers/Generative_Pretraining_from_Pixels_V2.pdf`](https://cdn.openai.com/papers/Generative_Pretraining_from_Pixels_V2.pdf)
 
-[18] 采访者 C. S. Smith 与受访者 I. Sutskever，“Ilya Sutskever：GPT-4 背后的策划者与人工智能的未来”，Eye on A.I. 播客，第 2 季第 118 集，2023 年 3 月 15 日，43 分钟（08:36、26:02、29:40）。[`podcasts.apple.com/us/podcast/ilya-sutskever-the-mastermind-behind-gpt-4-and/id1438378439?i=1000604382855`](https://podcasts.apple.com/us/podcast/ilya-sutskever-the-mastermind-behind-gpt-4-and/id1438378439?i=1000604382855)
+[18] 采访者 C. S. Smith 与受访者 I. Sutskever，"Ilya Sutskever：GPT-4 背后的策划者与人工智能的未来"，Eye on A.I. 播客，第 2 季第 118 集，2023 年 3 月 15 日，43 分钟（08:36、26:02、29:40）。[`podcasts.apple.com/us/podcast/ilya-sutskever-the-mastermind-behind-gpt-4-and/id1438378439?i=1000604382855`](https://podcasts.apple.com/us/podcast/ilya-sutskever-the-mastermind-behind-gpt-4-and/id1438378439?i=1000604382855)
 
-[19] Meta AI，“V-JEPA：迈向高级机器智能的下一步”，2024 年 2 月 15 日。[`ai.meta.com/blog/v-jepa-yann-lecun-ai-model-video-joint-embedding-predictive-architecture/`](https://ai.meta.com/blog/v-jepa-yann-lecun-ai-model-video-joint-embedding-predictive-architecture/)
+[19] Meta AI，"V-JEPA：迈向高级机器智能的下一步"，2024 年 2 月 15 日。[`ai.meta.com/blog/v-jepa-yann-lecun-ai-model-video-joint-embedding-predictive-architecture/`](https://ai.meta.com/blog/v-jepa-yann-lecun-ai-model-video-joint-embedding-predictive-architecture/)
 
-[20] R. Caruana、S. Lawrence 和 C. L. Giles，“神经网络中的过拟合：反向传播、共轭梯度与提前停止”，载于*神经信息处理系统进展*，第 13 卷，2000 年，第 402–408 页。[`proceedings.neurips.cc/paper_files/paper/2000/file/059fdcd96baeb75112f09fa1dcc740cc-Paper.pdf`](https://proceedings.neurips.cc/paper_files/paper/2000/file/059fdcd96baeb75112f09fa1dcc740cc-Paper.pdf)
+[20] R. Caruana、S. Lawrence 和 C. L. Giles，"神经网络中的过拟合：反向传播、共轭梯度与提前停止"，载于*神经信息处理系统进展*，第 13 卷，2000 年，第 402–408 页。[`proceedings.neurips.cc/paper_files/paper/2000/file/059fdcd96baeb75112f09fa1dcc740cc-Paper.pdf`](https://proceedings.neurips.cc/paper_files/paper/2000/file/059fdcd96baeb75112f09fa1dcc740cc-Paper.pdf)
 
-[21] A. Krogh 和 J. A. Hertz，“简单的权重衰减可以提升泛化能力”，载于*神经信息处理系统进展*，第 4 卷，1991 年，第 950–957 页。[`proceedings.neurips.cc/paper_files/paper/1991/file/8eefcfdf5990e441f0fb6f3fad709e21-Paper.pdf`](https://proceedings.neurips.cc/paper_files/paper/1991/file/8eefcfdf5990e441f0fb6f3fad709e21-Paper.pdf)
+[21] A. Krogh 和 J. A. Hertz，"简单的权重衰减可以提升泛化能力"，载于*神经信息处理系统进展*，第 4 卷，1991 年，第 950–957 页。[`proceedings.neurips.cc/paper_files/paper/1991/file/8eefcfdf5990e441f0fb6f3fad709e21-Paper.pdf`](https://proceedings.neurips.cc/paper_files/paper/1991/file/8eefcfdf5990e441f0fb6f3fad709e21-Paper.pdf)
 
-[22] A. Power、Y. Burda、H. Edwards、I. Babuschkin 和 V. Misra，“Grokking：小规模算法数据集上超越过拟合的泛化”，arXiv:2201.02177，2022 年 1 月 6 日。[`arxiv.org/abs/2201.02177`](https://arxiv.org/abs/2201.02177)
+[22] A. Power、Y. Burda、H. Edwards、I. Babuschkin 和 V. Misra，"Grokking：小规模算法数据集上超越过拟合的泛化"，arXiv:2201.02177，2022 年 1 月 6 日。[`arxiv.org/abs/2201.02177`](https://arxiv.org/abs/2201.02177)
 
-[23] 罗伯特·海因莱因（Robert Heinlein）创造了“grok”一词，用来指代外星概念体系中固有的理解。它传达的是一种无需置身于赋予其意义的世界便能说出口的语言。
+[23] 罗伯特·海因莱因（Robert Heinlein）创造了"grok"一词，用来指代外星概念体系中固有的理解。它传达的是一种无需置身于赋予其意义的世界便能说出口的语言。
 
-[24] B. DeMoss、S. Sapora、J. Foerster、N. Hawes 和 I. Posner，“grokking 的复杂性动力学”，arXiv:2412.09810v2，2025 年 8 月 21 日。[`arxiv.org/pdf/2412.09810`](https://arxiv.org/pdf/2412.09810)
+[24] B. DeMoss、S. Sapora、J. Foerster、N. Hawes 和 I. Posner，"grokking 的复杂性动力学"，arXiv:2412.09810v2，2025 年 8 月 21 日。[`arxiv.org/pdf/2412.09810`](https://arxiv.org/pdf/2412.09810)
+
+
 
 [25] N. Nanda、L. Chan、T. Lieberum、J. Smith 和 J. Steinhardt，“通过机制可解释性衡量 grokking 的进展”，arXiv:2301.05217，2023 年。[`arxiv.org/pdf/2301.05217`](https://arxiv.org/pdf/2301.05217)
 
@@ -1194,9 +1216,6 @@
 [33] T. Chiang，“ChatGPT 是网页的模糊 JPEG”，*The New Yorker*，2023 年 2 月 9 日。[`www.newyorker.com/tech/annals-of-technology/chatgpt-is-a-blurry-jpeg-of-the-web`](https://www.newyorker.com/tech/annals-of-technology/chatgpt-is-a-blurry-jpeg-of-the-web)
 
 ### Chapter 9
-
-
-
 
 \[1\] “智能的定义”，伊利诺伊大学心理学系。`https://labs.psychology.illinois.edu/~lyubansk/IQdef.htm`
 
@@ -1264,9 +1283,6 @@
 
 \[33\] 大卫·西尔弗、萨廷德·辛格、多伊娜·普雷库普和理查德·萨顿在“奖励足够”中认为，“强化学习问题与行为主义的不同之处在于，它允许一个智能体构建和使用内部状态。”
 
-
-
-
 ## 参考文献
 
 \[34\] 加州大学伯克利分校，《心灵哲学，第 3 讲（哲学 132，2011 年春季）》，YouTube 视频，2011 年。[链接](https://youtu.be/qJ9YQ5IHzrI?t=1745)。
@@ -1313,115 +1329,115 @@
 
 \[55\] John McCarthy、Marvin Minsky、Nathaniel Rochester 和 Claude E. Shannon，“关于 1955 年 8 月 31 日达特茅斯人工智能夏季研究项目的提案”，《人工智能杂志》27 卷（2006 年）：12–14
 
-\[56\] “意识的难题”这一短语是由 David Chalmers 创造的。David J. Chalmers，《意识心灵：寻找基础理论》。纽约：牛津大学出版社，1996 年
 
-\[57\] Hermann Haken 著中的 Johansson，《作为隐喻和工具的机器》。柏林，德国：Springer，1993 年，第 38 页
 
-\[58\] 路德维希·维特根斯坦，《哲学研究》，G. E. M. Anscombe（编）。纽约：Wiley-Blackwell，1953 年
+## 注释
 
-\[59\] Anthropic，“Claude Opus 4 和 4.1 现在可以结束一小部分对话”，2025 年 8 月 15 日。[链接](https://www.anthropic.com/research/end-subset-conversations)
+\[56\] “意识的难题”这一短语是由 `David Chalmers` 创造的。`David J. Chalmers`，《意识心灵：寻找基础理论》。纽约：牛津大学出版社，1996 年
+
+\[57\] `Hermann Haken` 著中的 `Johansson`，《作为隐喻和工具的机器》。柏林，德国：`Springer`，1993 年，第 38 页
+
+\[58\] 路德维希·维特根斯坦，《哲学研究》，`G. E. M. Anscombe`（编）。纽约：`Wiley-Blackwell`，1953 年
+
+\[59\] `Anthropic`，“`Claude Opus 4` 和 `4.1` 现在可以结束一小部分对话”，2025 年 8 月 15 日。[链接](https://www.anthropic.com/research/end-subset-conversations)
 
 ### 尾声
 
-\[1\] Volodymyr Mnih 等人，“用深度强化学习玩 Atari 游戏”，2013 年。
+\[1\] `Volodymyr Mnih` 等人，“用深度强化学习玩 `Atari` 游戏”，2013 年。
 
-\[2\] DeepMind，“深度强化学习”，Google DeepMind 博客，2016 年 6 月 17 日。[链接](https://deepmind.google/blog/deep-reinforcement-learning/)
+\[2\] `DeepMind`，“深度强化学习”，`Google DeepMind` 博客，2016 年 6 月 17 日。[链接](https://deepmind.google/blog/deep-reinforcement-learning/)
 
-\[3\] V. Mnih、K. Kavukcuoglu、D. Silver 等人，“通过深度强化学习实现人类水平的控制”，《自然》518 卷（2015 年）：529–533。[链接](https://doi.org/10.1038/nature14236)
+\[3\] `V. Mnih`、`K. Kavukcuoglu`、`D. Silver` 等人，“通过深度强化学习实现人类水平的控制”，《自然》518 卷（2015 年）：529–533。[链接](https://doi.org/10.1038/nature14236)
 
-\[4\] AI Rev，“AlphaGo：技术深度解析”，AI Rev。[链接](https://airev.us/alpha-go)
+\[4\] `AI Rev`，“`AlphaGo`：技术深度解析”，`AI Rev`。[链接](https://airev.us/alpha-go)
 
-\[5\] D. Silver、J. Schrittwieser、K. Simonyan 等人，“在没有人类知识的情况下掌握围棋”，《自然》550 卷，第 7676 期（2017 年 10 月）：354–359
+\[5\] `D. Silver`、`J. Schrittwieser`、`K. Simonyan` 等人，“在没有人类知识的情况下掌握围棋”，《自然》550 卷，第 7676 期（2017 年 10 月）：354–359
 
-\[6\] J. Schrittwieser、I. Antonoglou、T. Hubert、K. 等人，“通过学习模型的规划掌握 Atari、围棋、国际象棋和将棋”，《自然》588 卷（2020 年 12 月）：604–609
+\[6\] `J. Schrittwieser`、`I. Antonoglou`、`T. Hubert`、`K.` 等人，“通过学习模型的规划掌握 `Atari`、围棋、国际象棋和将棋”，《自然》588 卷（2020 年 12 月）：604–609
 
-\[7\] Google Research，“开源 BERT：自然语言处理的最先进预训练”，Google Research 博客，2018 年 11 月 2 日。[链接](https://research.google/blog/open-sourcing-bert-state-of-the-art-pre-training-for-natural-language-processing/)
+\[7\] `Google Research`，“开源 `BERT`：自然语言处理的最先进预训练”，`Google Research` 博客，2018 年 11 月 2 日。[链接](https://research.google/blog/open-sourcing-bert-state-of-the-art-pre-training-for-natural-language-processing/)
 
-\[8\] J. Devlin、M.-W. Chang、K. Lee 和 K. Toutanova，“BERT：用于语言理解的深度双向 Transformer 的预训练”，arXiv 预印本，arXiv:1810.04805，2018 年。[链接](https://arxiv.org/abs/1810.04805)
+\[8\] `J. Devlin`、`M.-W. Chang`、`K. Lee` 和 `K. Toutanova`，“`BERT`：用于语言理解的深度双向 `Transformer` 的预训练”，`arXiv` 预印本，`arXiv:1810.04805`，2018 年。[链接](https://arxiv.org/abs/1810.04805)
 
-\[9\] C. Raffel、N. Shazeer、A. Roberts、K. Lee、S. Narang、M. Matena、Y. Zhou、W. Li、P. J. Liu，“探索统一文本到文本 Transformer 的迁移学习极限”，《机器学习研究杂志》*21*卷，第 140 期（2020 年）：1–67。[链接](https://arxiv.org/abs/1910.10683)
+\[9\] `C. Raffel`、`N. Shazeer`、`A. Roberts`、`K. Lee`、`S. Narang`、`M. Matena`、`Y. Zhou`、`W. Li`、`P. J. Liu`，“探索统一文本到文本 `Transformer` 的迁移学习极限”，《机器学习研究杂志》*21*卷，第 140 期（2020 年）：1–67。[链接](https://arxiv.org/abs/1910.10683)
 
-\[10\] N. Shibuya，“ViT：视觉 Transformer（2020）”，Naoki Shibuya 博客，2022 年 11 月 2 日。[链接](https://naokishibuya.github.io/blog/2022-11-02-vit-vision-transformer-image-classifier-2020/)
+\[10\] `N. Shibuya`，“`ViT`：视觉 `Transformer`（2020）”，`Naoki Shibuya` 博客，2022 年 11 月 2 日。[链接](https://naokishibuya.github.io/blog/2022-11-02-vit-vision-transformer-image-classifier-2020/)
 
-\[11\] A. Dosovitskiy 等人，“一张图像值 16x16 个词：用于大规模图像识别的 Transformer”，arXiv 预印本，arXiv:2010.11929，2020 年。[链接](https://arxiv.org/abs/2010.11929)
+\[11\] `A. Dosovitskiy` 等人，“一张图像值 16x16 个词：用于大规模图像识别的 `Transformer`”，`arXiv` 预印本，`arXiv:2010.11929`，2020 年。[链接](https://arxiv.org/abs/2010.11929)
 
-\[12\] T. Chen、S. Kornblith、M. Norouzi 和 G. Hinton，“用于视觉表征对比学习的简单框架”，载于《国际机器学习会议论文集（ICML）》，2020 年，第 1597–1607 页。[链接](https://arxiv.org/abs/2002.05709)
+\[12\] `T. Chen`、`S. Kornblith`、`M. Norouzi` 和 `G. Hinton`，“用于视觉表征对比学习的简单框架”，载于《国际机器学习会议论文集（`ICML`）》，2020 年，第 1597–1607 页。[链接](https://arxiv.org/abs/2002.05709)
 
-\[13\] K. He、H. Fan、Y. Wu、S. Xie 和 R. Girshick，“用于无监督视觉表征学习的动量对比”，载于《IEEE/CVF 计算机视觉与模式识别会议论文集（CVPR）》，2020 年，第 9729–9738 页。[链接](https://arxiv.org/abs/1911.05722)
-
-
-
-
+\[13\] `K. He`、`H. Fan`、`Y. Wu`、`S. Xie` 和 `R. Girshick`，“用于无监督视觉表征学习的动量对比”，载于《`IEEE/CVF` 计算机视觉与模式识别会议论文集（`CVPR`）》，2020 年，第 9729–9738 页。[链接](https://arxiv.org/abs/1911.05722)
 
 ## 参考文献
 
-\[14\] T. Chen, S. Kornblith, M. Norouzi, and G. Hinton, "视觉表征对比学习的简单框架," arXiv \[cs.LG\], 2020
+\[14\] `T. Chen`, `S. Kornblith`, `M. Norouzi`, and `G. Hinton`, "视觉表征对比学习的简单框架," `arXiv` \[`cs.LG`\], 2020
 
-\[15\] J.-B. Grill, F. Strub, F. Altché, et al., "自举潜在表示：自监督学习的新方法," in *Advances in Neural Information Processing Systems*, vol. 33, 2020. [`arxiv.org/abs/2006.07733`](https://arxiv.org/abs/2006.07733)
+\[15\] `J.-B. Grill`, `F. Strub`, `F. Altché`, et al., "自举潜在表示：自监督学习的新方法," in *Advances in Neural Information Processing Systems*, vol. 33, 2020. [`arxiv.org/abs/2006.07733`](https://arxiv.org/abs/2006.07733)
 
-\[16\] M. Caron, I. Misra, J. Mairal, P. Goyal, P. Bojanowski, and A. Joulin, "通过对比聚类分配进行无监督视觉特征学习," in *Advances in Neural Information Processing Systems*, vol. 33, 2020. [`arxiv.org/abs/2006.09882`](https://arxiv.org/abs/2006.09882)
+\[16\] `M. Caron`, `I. Misra`, `J. Mairal`, `P. Goyal`, `P. Bojanowski`, and `A. Joulin`, "通过对比聚类分配进行无监督视觉特征学习," in *Advances in Neural Information Processing Systems*, vol. 33, 2020. [`arxiv.org/abs/2006.09882`](https://arxiv.org/abs/2006.09882)
 
-\[17\] A. Radford et al., "从自然语言监督中学习可迁移的视觉模型," arXiv preprint, arXiv:2103.00020, 2021. [`arxiv.org/abs/2103.00020`](https://arxiv.org/abs/2103.00020)
+\[17\] `A. Radford` et al., "从自然语言监督中学习可迁移的视觉模型," `arXiv` preprint, `arXiv:2103.00020`, 2021. [`arxiv.org/abs/2103.00020`](https://arxiv.org/abs/2103.00020)
 
-\[18\] A. Nichol, P. Dhariwal, P. Ramesh, P. Shyam, M. Mishkin, B. McGrew, and I. Sutskever, "GLIDE：使用文本引导扩散模型进行逼真图像生成与编辑," arXiv preprint, arXiv:2112.10741, 2021. [`arxiv.org/abs/2112.10741`](https://arxiv.org/abs/2112.10741)
+\[18\] `A. Nichol`, `P. Dhariwal`, `P. Ramesh`, `P. Shyam`, `M. Mishkin`, `B. McGrew`, and `I. Sutskever`, "`GLIDE`：使用文本引导扩散模型进行逼真图像生成与编辑," `arXiv` preprint, `arXiv:2112.10741`, 2021. [`arxiv.org/abs/2112.10741`](https://arxiv.org/abs/2112.10741)
 
-\[19\] A. Ramesh, P. Dhariwal, A. Nichol, C. Chu, and M. Chen, "使用 CLIP 潜在表示的层次化文本条件图像生成," arXiv preprint, arXiv:2204.06125, 2022. [`arxiv.org/abs/2204.06125`](https://arxiv.org/abs/2204.06125)
+\[19\] `A. Ramesh`, `P. Dhariwal`, `A. Nichol`, `C. Chu`, and `M. Chen`, "使用 `CLIP` 潜在表示的层次化文本条件图像生成," `arXiv` preprint, `arXiv:2204.06125`, 2022. [`arxiv.org/abs/2204.06125`](https://arxiv.org/abs/2204.06125)
 
-\[20\] R. Rombach, A. Blattmann, D. Lorenz, P. Esser, and B. Ommer, "使用潜在扩散模型的高分辨率图像合成," in *Proceedings of the IEEE/CVF Conference on Computer Visual Pattern Recognition (CVPR)*, 2022, pp. 10684–10695. [`arxiv.org/abs/2112.10752`](https://arxiv.org/abs/2112.10752)
+\[20\] `R. Rombach`, `A. Blattmann`, `D. Lorenz`, `P. Esser`, and `B. Ommer`, "使用潜在扩散模型的高分辨率图像合成," in *Proceedings of the `IEEE/CVF` Conference on Computer Visual Pattern Recognition (`CVPR`)`, 2022, pp. 10684–10695. [`arxiv.org/abs/2112.10752`](https://arxiv.org/abs/2112.10752)
 
-\[21\] J. Jumper, R. Evans, A. Pritzel, T. Green, et al., "使用 AlphaFold 进行高精度蛋白质结构预测," *Nature*. 596, no. 7873 (Aug. 2021): 583–589
+\[21\] `J. Jumper`, `R. Evans`, `A. Pritzel`, `T. Green`, et al., "使用 `AlphaFold` 进行高精度蛋白质结构预测," *Nature*. 596, no. 7873 (Aug. 2021): 583–589
 
-\[22\] DeepMind, "AlphaFold：解决生物学 50 年重大挑战的方案," Google DeepMind Blog, Nov. 30, 2020. [`deepmind.google/blog/alphafold-a-solution-to-a-50-year-old-grand-challenge-in-biology/`](https://deepmind.google/blog/alphafold-a-solution-to-a-50-year-old-grand-challenge-in-biology/)
+\[22\] `DeepMind`, "`AlphaFold`：解决生物学 50 年重大挑战的方案," `Google DeepMind` Blog, Nov. 30, 2020. [`deepmind.google/blog/alphafold-a-solution-to-a-50-year-old-grand-challenge-in-biology/`](https://deepmind.google/blog/alphafold-a-solution-to-a-50-year-old-grand-challenge-in-biology/)
 
-\[23\] J. Jumper et al., "使用 AlphaFold 进行高精度蛋白质结构预测," *Nature* 596 (2021): 583–589
+\[23\] `J. Jumper` et al., "使用 `AlphaFold` 进行高精度蛋白质结构预测," *Nature* 596 (2021): 583–589
 
-\[24\] K. Tunyasuvunakool, J. Adler, Z. Wu, et al., "人类蛋白质组的高精度蛋白质结构预测," *Nature* 596, no. 7873 (Aug. 2021): 590–596
+\[24\] `K. Tunyasuvunakool`, `J. Adler`, `Z. Wu`, et al., "人类蛋白质组的高精度蛋白质结构预测," *Nature* 596, no. 7873 (Aug. 2021): 590–596
 
-\[25\] E. Callaway, "'这将改变一切'：DeepMind 的 AI 在解决蛋白质结构问题上迈出巨大步伐," *Nature* 588 (Dec. 2020): 203–204
+\[25\] `E. Callaway`, "'这将改变一切'：`DeepMind` 的 `AI` 在解决蛋白质结构问题上迈出巨大步伐," *Nature* 588 (Dec. 2020): 203–204
 
-\[26\] Q. V. Le et al., "使用大规模无监督学习构建高级特征," arXiv preprint, arXiv:1112.6209, 2011. [`arxiv.org/abs/1112.6209`](https://arxiv.org/abs/1112.6209)
+\[26\] `Q. V. Le` et al., "使用大规模无监督学习构建高级特征," `arXiv` preprint, `arXiv:1112.6209`, 2011. [`arxiv.org/abs/1112.6209`](https://arxiv.org/abs/1112.6209)
 
-\[27\] J. Schmidhuber, "使用历史压缩原理学习复杂、扩展序列", 1992
+\[27\] `J. Schmidhuber`, "使用历史压缩原理学习复杂、扩展序列", 1992
 
-\[28\] C. Bucila, R. Caruana, and A. Niculescu-Mizil, "模型压缩", on Knowledge Discovery and Data Mining conference, 2006.
+\[28\] `C. Bucila`, `R. Caruana`, and `A. Niculescu-Mizil`, "模型压缩", on Knowledge Discovery and Data Mining conference, 2006.
 
-\[29\] L. J. Ba and R. Caruana, "深度网络真的需要深度吗？" arXiv \[cs.LG\], 2014
+\[29\] `L. J. Ba` and `R. Caruana`, "深度网络真的需要深度吗？" `arXiv` \[`cs.LG`\], 2014
 
-\[30\] G. Hinton, O. Vinyals, J. Dean (2015). "神经网络中的知识蒸馏"
+\[30\] `G. Hinton`, `O. Vinyals`, `J. Dean` (2015). "神经网络中的知识蒸馏"
 
-\[31\] G. Hinton, "暗知识," YouTube video, TTIC Distinguished Lecture Series, 2014. [`www.youtube.com/watch?v=F5gXXubLo9s`](https://www.youtube.com/watch?v=F5gXXubLo9s)
+\[31\] `G. Hinton`, "暗知识," `YouTube` video, `TTIC` Distinguished Lecture Series, 2014. [`www.youtube.com/watch?v=F5gXXubLo9s`](https://www.youtube.com/watch?v=F5gXXubLo9s)
 
-\[32\] G. Hinton, "暗知识," TTIC Distinguished Lecture Series, 2014. [`www.ttic.edu/dl/dark14.pdf`](https://www.ttic.edu/dl/dark14.pdf)
+\[32\] `G. Hinton`, "暗知识," `TTIC` Distinguished Lecture Series, 2014. [`www.ttic.edu/dl/dark14.pdf`](https://www.ttic.edu/dl/dark14.pdf)
 
-\[33\] W. Knight, "蒸馏如何使 AI 模型更小、更便宜," *WIRED,* Sep. 20, 2025. [`www.wired.com/story/how-distillation-makes-ai-models-smaller-and-cheaper/`](http://www.wired.com/story/how-distillation-makes-ai-models-smaller-and-cheaper/)
+\[33\] `W. Knight`, "蒸馏如何使 `AI` 模型更小、更便宜," *WIRED,* Sep. 20, 2025. [`www.wired.com/story/how-distillation-makes-ai-models-smaller-and-cheaper/`](http://www.wired.com/story/how-distillation-makes-ai-models-smaller-and-cheaper/)
 
-\[34\] V. Sanh, L. Debut, J. Chaumond, and T. Wolf, "DistilBERT，BERT 的蒸馏版本：更小、更快、更便宜、更轻," arXiv preprint, arXiv:1910.01108, 2019. [`arxiv.org/abs/1910.01108`](https://arxiv.org/abs/1910.01108)
+\[34\] `V. Sanh`, `L. Debut`, `J. Chaumond`, and `T. Wolf`, "`DistilBERT`，`BERT` 的蒸馏版本：更小、更快、更便宜、更轻," `arXiv` preprint, `arXiv:1910.01108`, 2019. [`arxiv.org/abs/1910.01108`](https://arxiv.org/abs/1910.01108)
 
-\[35\] OpenAI, "使语言模型遵循指令," OpenAI, Jan. 27, 2022. [`openai.com/index/instruction-following/`](https://openai.com/index/instruction-following/)
+\[35\] `OpenAI`, "使语言模型遵循指令," `OpenAI`, Jan. 27, 2022. [`openai.com/index/instruction-following/`](https://openai.com/index/instruction-following/)
 
-\[36\] L. Ouyang et al., "使用人类反馈训练语言模型遵循指令," arXiv preprint, arXiv:2203.02155, 2022. [`arxiv.org/abs/2203.02155`](https://arxiv.org/abs/2203.02155)
+\[36\] `L. Ouyang` et al., "使用人类反馈训练语言模型遵循指令," `arXiv` preprint, `arXiv:2203.02155`, 2022. [`arxiv.org/abs/2203.02155`](https://arxiv.org/abs/2203.02155)
 
-\[37\] C. R. Wolfe, "直接偏好优化（DPO）," Deep (Learning) Focus, Substack, Jul. 28, 2025. [`cameronrwolfe.substack.com/p/direct-preference-optimization`](https://cameronrwolfe.substack.com/p/direct-preference-optimization)
+\[37\] `C. R. Wolfe`, "直接偏好优化（`DPO`）," Deep (Learning) Focus, `Substack`, Jul. 28, 2025. [`cameronrwolfe.substack.com/p/direct-preference-optimization`](https://cameronrwolfe.substack.com/p/direct-preference-optimization)
 
-\[38\] R. Rafailov, A. Sharma, E. Mitchell, S. Ermon, C. D. Manning, and C. Finn, "直接偏好优化：你的语言模型实际上是一个奖励模型," arXiv preprint, arXiv:2305.18290, 2023. [`arxiv.org/abs/2305.18290`](https://arxiv.org/abs/2305.18290)
+\[38\] `R. Rafailov`, `A. Sharma`, `E. Mitchell`, `S. Ermon`, `C. D. Manning`, and `C. Finn`, "直接偏好优化：你的语言模型实际上是一个奖励模型," `arXiv` preprint, `arXiv:2305.18290`, 2023. [`arxiv.org/abs/2305.18290`](https://arxiv.org/abs/2305.18290)
 
-\[39\] Y. Bai et al., "宪法 AI：来自 AI 反馈的无害性," arXiv preprint, arXiv:2212.08073, 2022. [`arxiv.org/abs/2212.08073`](https://arxiv.org/abs/2212.08073)
+\[39\] `Y. Bai` et al., "宪法 `AI`：来自 `AI` 反馈的无害性," `arXiv` preprint, `arXiv:2212.08073`, 2022. [`arxiv.org/abs/2212.08073`](https://arxiv.org/abs/2212.08073)
 
-\[40\] J. Johnson, M. Douze, and H. Jégou, "使用 GPU 进行十亿级相似度搜索," *IEEE Transactions on Big Data*, 2019
+\[40\] `J. Johnson`, `M. Douze`, and `H. Jégou`, "使用 `GPU` 进行十亿级相似度搜索," *IEEE Transactions on Big Data*, 2019
 
-\[41\] S. Yao et al., "ReAct：在语言模型中协同推理与行动," arXiv \[cs.CL\], 2023
+\[41\] `S. Yao` et al., "`ReAct`：在语言模型中协同推理与行动," `arXiv` \[`cs.CL`\], 2023
 
-\[42\] T. Schick et al., "Toolformer：语言模型可以自学使用工具," arXiv \[cs.CL\], 2023
+\[42\] `T. Schick` et al., "`Toolformer`：语言模型可以自学使用工具," `arXiv` \[`cs.CL`\], 2023
 
 \[43\] [`github.com/deepseek-ai/DeepSeek-R1/blob/main/DeepSeek\_R1.pdf`](https://github.com/deepseek-ai/DeepSeek-R1/blob/main/DeepSeek_R1.pdf)
 
-\[44\] OpenAI, "介绍 OpenAI o1," OpenAI, Sep. 12, 2024. [`openai.com/o1/`](https://openai.com/o1/)
+\[44\] `OpenAI`, "介绍 `OpenAI o1`," `OpenAI`, Sep. 12, 2024. [`openai.com/o1/`](https://openai.com/o1/)
 
-\[45\] OpenAI, "使用 LLM 学习推理," OpenAI, Sep. 12, 2024. [`openai.com/index/learning-to-reason-with-llms/`](https://openai.com/index/learning-to-reason-with-llms/)
+\[45\] `OpenAI`, "使用 `LLM` 学习推理," `OpenAI`, Sep. 12, 2024. [`openai.com/index/learning-to-reason-with-llms/`](https://openai.com/index/learning-to-reason-with-llms/)
 
-\[46\] OpenAI, "OpenAI o1 系统卡," OpenAI, Dec. 5, 2024. [`openai.com/index/openai-o1-system-card/`](https://openai.com/index/openai-o1-system-card/)
+\[46\] `OpenAI`, "`OpenAI o1` 系统卡," `OpenAI`, Dec. 5, 2024. [`openai.com/index/openai-o1-system-card/`](https://openai.com/index/openai-o1-system-card/)
 
-\[47\] K. Robison, "OpenAI 发布 o1，其首个具有'推理'能力的模型," *The Verge*, Sep. 12, 2024. [`www.theverge.com/2024/9/12/24242439/openai-o1-model-reasoning-strawberry-chatgpt`](https://www.theverge.com/2024/9/12/24242439/openai-o1-model-reasoning-strawberry-chatgpt)
+\[47\] `K. Robison`, "`OpenAI` 发布 `o1`，其首个具有'推理'能力的模型," *The Verge*, Sep. 12, 2024. [`www.theverge.com/2024/9/12/24242439/openai-o1-model-reasoning-strawberry-chatgpt`](https://www.theverge.com/2024/9/12/24242439/openai-o1-model-reasoning-strawberry-chatgpt)
 
 \[48\] 同\[47\]
 
@@ -1429,57 +1445,89 @@
 
 ## 符号
 
-- 1F1B（一次前向、一次后向）调度
+- `1F1B`（一次前向、一次后向）调度
 
 ## A
 
-- ARC-AGI（抽象与推理语料库）
+- `ARC-AGI`（抽象与推理语料库）
+
 - 算法随机性
-- 通用人工智能（AGI）
-- ARC-AGI-2
-- AI（人工智能）
-- Sutskever 列表，定义, 第 2 版
-- AI 安全
-- AGI（作为领域）
-- AI foom
+
+- 通用人工智能（`AGI`）
+
+- `ARC-AGI-2`
+
+- `AI`（人工智能）
+
+- `Sutskever` 列表，定义, 第 2 版
+
+- `AI` 安全
+
+- `AGI`（作为领域）
+
+- `AI` foom
+
 - 效果, 第 2 版
+
 - 智能爆炸
-- 带注释的 Transformer
-- AlexNet, 第 2 版, 第 3 版, 第 4 版, 第 5 版, 第 6 版
+
+- 带注释的 `Transformer`
+
+- `AlexNet`, 第 2 版, 第 3 版, 第 4 版, 第 5 版, 第 6 版
+
 - 效果, 第 2 版
+
 - 高效可扩展训练, 第 2 版
+
 - 网络架构, 第 2 版
-- 前 AlexNet 怀疑, 第 2 版
+
+- 前 `AlexNet` 怀疑, 第 2 版
+
 - 训练创新
-- Attention Is All You Need（Vaswani et al.），效果, 第 2 版
-- all-reduce 例程
-- Altman, Sam
+
+- `Attention Is All You Need`（`Vaswani` et al.），效果, 第 2 版
+
+- `all-reduce` 例程
+
+- `Altman`, `Sam`
+
 - 表面复杂性
 
-
-
-
-
 ## A
 
-- AGI（通用人工智能）, 第 2 次, 第 3 次, 第 4 次
-- 人工神经网络（ANNs）
+- `AGI`（通用人工智能）, 第 2 次, 第 3 次, 第 4 次
+
+- 人工神经网络（`ANNs`）
+
   - 保持简单
-- AlphaGo
-- ASR（自动语音识别）
+
+- `AlphaGo`
+
+- `ASR`（自动语音识别）
+
 - 注意力, 第 2 次
 
 ## B
 
 - 忙碌海狸函数
-- Bahdanau 注意力, 第 2 次
+
+- `Bahdanau` 注意力, 第 2 次
+
   - 实验结果
+
   - 模型架构
+
   - 意义
+
 - 批量调度
-- Blockhead
-- BPE（字节对编码）
-- 二进制序列预测任务
+
+- `Blockhead`
+
+
+
+# BPE（字节对编码）
+
+# 二进制序列预测任务
 
 ## C
 
@@ -1647,9 +1695,6 @@
 - 流形外采样
 - OpenAI Gym
 
-
-
-
 ## P
 
 - 过拟合
@@ -1681,6 +1726,7 @@
 - `ResNet v2`
 - 消融研究, 第 2 次
 - 后激活到先激活
+
 ### 关系循环神经网络（RNN）
 
   - 实验方法与实证结果, 第 2 次
@@ -1716,6 +1762,7 @@
 ## S
 
 - SGD（随机梯度下降）, 第 2 次
+
 ### 缩放
 
   - 深度学习
@@ -1749,6 +1796,7 @@
 - `TensorFlow`
 - 马克斯·泰格马克
 - `Transformer-XL`
+
 ### 训练
 
   - ……的挑战, 第 2 次
@@ -1767,6 +1815,7 @@
 
 - `VLAEs`（变分有损自编码器）, 第 2 次
 - `VAEs`（变分自编码器）
+
 ### `VLAE`（变分有损自编码器）
 
   - 自回归先验
@@ -1774,6 +1823,7 @@
   - 结果
 
 - 梯度消失问题, 第 2 次
+
 ### `VGGNet`（视觉几何组网络）
 
   - `ResNet`对比

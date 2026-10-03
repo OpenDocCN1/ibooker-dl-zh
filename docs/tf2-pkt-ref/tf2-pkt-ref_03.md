@@ -1,10 +1,12 @@
+
+
 # 第三章：数据预处理
 
 在本章中，您将学习如何为训练准备和设置数据。机器学习工作中最常见的数据格式是表格、图像和文本。与每种数据格式相关的常见实践技术，尽管如何设置数据工程流水线当然取决于您的问题陈述是什么以及您试图预测什么。
 
 我将详细查看所有三种格式，使用具体示例来引导您了解这些技术。所有数据都可以直接读入 Python 运行时内存；然而，这并不是最有效的使用计算资源的方式。当讨论文本数据时，我将特别关注标记和字典。通过本章结束时，您将学会如何准备表格、图像和文本数据进行训练。
 
-# 为训练准备表格数据
+## 为训练准备表格数据
 
 在表格数据集中，重要的是要确定哪些列被视为分类列，因为您必须将它们的值编码为类或类的二进制表示（独热编码），而不是数值值。表格数据集的另一个方面是多个特征之间的相互作用的潜力。本节还将查看 TensorFlow 提供的 API，以便更容易地建模列之间的交互。
 
@@ -33,7 +35,6 @@ tf-datasets/titanic/eval.csv"
 train_file_path = tf.keras.utils.get_file("train.csv", 
 TRAIN_DATA_URL)
 test_file_path = tf.keras.utils.get_file("eval.csv", TEST_DATA_URL)
-
 ```
 
 现在看看`train_file_path`：
@@ -56,7 +57,7 @@ titanic_df = pd.read_csv(train_file_path, header='infer')
 
 ###### 图 3-1。*泰坦尼克*数据集作为 pandas DataFrame
 
-## 标记列
+### 标记列
 
 如您在图 3-1 中所见，这些数据中既有数值列，也有分类列。目标列，或者用于预测的列，是“survived”列。您需要将其标记为目标，并将其余列标记为特征。
 
@@ -106,13 +107,10 @@ for batch, label in train_ds.take(1):
 
 以下是训练范式消耗训练数据集的主要步骤：
 
-1.  按特征类型指定列。
-
-1.  决定是否嵌入或交叉列。
-
-1.  选择感兴趣的列，可能作为一个实验。
-
-1.  为训练范式创建一个“特征层”以供使用。
+1. 按特征类型指定列。
+2. 决定是否嵌入或交叉列。
+3. 选择感兴趣的列，可能作为一个实验。
+4. 为训练范式创建一个“特征层”以供使用。
 
 现在您已经将数据设置为数据集，可以根据其特征类型指定每列，例如数字或分类，如果需要的话可以进行分桶。如果唯一类别太多且降维会有帮助，还可以嵌入列。
 
@@ -206,7 +204,6 @@ categorical_column_with_vocabulary_list(
       'Type', h.get('alone').tolist())
 alone_one_hot = feature_column.
 indicator_column(alone_type)
-
 ```
 
 您还可以嵌入“deck”列，因为有八个唯一值，比任何其他分类列都多。将其维度减少到 3：
@@ -226,22 +223,19 @@ class_hashed = feature_column.categorical_column_with_hash_bucket(
       'class', hash_bucket_size=4)
 ```
 
-## 将列交互编码为可能的特征
+### 将列交互编码为可能的特征
 
 现在来到最有趣的部分：您将找到不同特征之间的交互（这被称为*交叉列*），并将这些交互编码为可能的特征。这也是您的直觉和领域知识可以有益于您的特征工程努力的地方。例如，基于*泰坦尼克号*灾难的历史背景，一个问题是：一等舱的女性是否比二等或三等舱的女性更有可能生存？为了将这个问题重新表述为一个数据科学问题，您需要考虑乘客的性别和舱位等级之间的交互。然后，您需要选择一个起始维度大小来表示数据的变化性。假设您任意决定将变化性分成五个维度（`hash_bucket_size`）：
 
 ```py
-
 cross_type_feature = feature_column.
 crossed_column(['sex', 'class'], hash_bucket_size=5)
-
 ```
 
 现在您已经创建了所有特征，需要将它们组合在一起，并可能进行实验以决定在训练过程中包含哪些特征。为此，您首先要创建一个列表来保存您想要使用的所有特征：
 
 ```py
 feature_columns = []
-
 ```
 
 然后，您将每个感兴趣的特征附加到列表中：
@@ -265,8 +259,7 @@ for col_name in indicator_column_names:
   categorical_column_with_vocabulary_list(
       col_name, titanic_df[col_name].unique())
   indicator_column = feature_column.
-
-indicator_column(categorical_column)
+  indicator_column(categorical_column)
   feature_columns.append(indicator_column)
 
 # append embedding columns
@@ -279,7 +272,6 @@ feature_columns.append(deck_embedding)
 # append crossed columns
 feature_columns.
 append(feature_column.indicator_column(cross_type_feature))
-
 ```
 
 现在创建一个特征层：
@@ -290,7 +282,7 @@ feature_layer = tf.keras.layers.DenseFeatures(feature_columns)
 
 这一层将作为您即将构建和训练的模型的第一（输入）层。这是您为模型的训练过程提供所有特征工程框架的方式。
 
-## 创建一个交叉验证数据集
+### 创建一个交叉验证数据集
 
 在开始训练之前，您需要为交叉验证目的创建一个小数据集。由于一开始只有两个分区（训练和测试），生成一个交叉验证数据集的一种方法是简单地将其中一个分区细分：
 
@@ -311,6 +303,9 @@ working_ds = working_ds.shuffle(buffer_size=len(train_df))
 train_ds = working_ds.batch(batch_size)
 ```
 
+
+
+
 如前面的代码所示，首先您将任意决定要包含在一个批次中的样本数量（`batch_size`）。然后，您需要设置一个标签指定（`survived`）。`tf.data.Dataset.from_tensor_slices`方法接受一个元组作为参数。在这个元组中，有两个元素：特征列和标签列。
 
 第一个元素是`dict(train_df)`。这个`dict`操作实质上将 DataFrame 转换为键值对，其中每个键代表一个列名，相应的值是该列中的值数组。另一个元素是`labels`。
@@ -321,8 +316,7 @@ train_ds = working_ds.batch(batch_size)
 def pandas_to_dataset(dataframe, shuffle=True, batch_size=32):
   dataframe = dataframe.copy()
   labels = dataframe.pop('survived')
-  ds = tf.data.Dataset.
-from_tensor_slices((dict(dataframe), labels))
+  ds = tf.data.Dataset.from_tensor_slices((dict(dataframe), labels))
   if shuffle:
     ds = ds.shuffle(buffer_size=len(dataframe))
   ds = ds.batch(batch_size)
@@ -332,10 +326,8 @@ from_tensor_slices((dict(dataframe), labels))
 现在您可以将此函数应用于验证和测试数据：
 
 ```py
-val_ds = pandas_to_dataset(val_df, shuffle=False, 
-batch_size=batch_size)
-test_ds = pandas_to_dataset(test_df, shuffle=False, 
-batch_size=batch_size)
+val_ds = pandas_to_dataset(val_df, shuffle=False, batch_size=batch_size)
+test_ds = pandas_to_dataset(test_df, shuffle=False, batch_size=batch_size)
 ```
 
 ## 开始模型训练过程
@@ -360,8 +352,7 @@ model = tf.keras.Sequential([
 
 ```py
 model.compile(optimizer='adam',
-              loss=tf.keras.losses.BinaryCrossentropy(
-from_logits=True),
+              loss=tf.keras.losses.BinaryCrossentropy(from_logits=True),
               metrics=['accuracy'])
 ```
 
@@ -409,8 +400,7 @@ import pathlib
 ```py
 data_dir = tf.keras.utils.get_file(
     'flower_photos',
-'https://storage.googleapis.com/download.tensorflow.org/
-example_images/flower_photos.tgz',
+    'https://storage.googleapis.com/download.tensorflow.org/example_images/flower_photos.tgz',
     untar=True)
 ```
 
@@ -467,8 +457,7 @@ def display_image_in_actual_size(im_path):
 让我们用它来显示一张图像（如图 3-8 所示）：
 
 ```py
-IMAGE_PATH = "/root/.keras/datasets/flower_photos/roses/
-7409458444_0bfc9a0682_n.jpg"
+IMAGE_PATH = "/root/.keras/datasets/flower_photos/roses/7409458444_0bfc9a0682_n.jpg"
 display_image_in_actual_size(IMAGE_PATH)
 ```
 
@@ -479,8 +468,7 @@ display_image_in_actual_size(IMAGE_PATH)
 现在尝试不同的图像（如图 3-9 所示）：
 
 ```py
-IMAGE_PATH = "/root/.keras/datasets/flower_photos/roses/
-5736328472_8f25e6f6e7.jpg"
+IMAGE_PATH = "/root/.keras/datasets/flower_photos/roses/5736328472_8f25e6f6e7.jpg"
 display_image_in_actual_size(IMAGE_PATH)
 ```
 
@@ -504,7 +492,7 @@ display_image_in_actual_size(IMAGE_PATH)
 my_datagen = tf.keras.preprocessing.image.ImageDataGenerator(
     **datagen_kwargs)
 my_generator = my_datagen.flow_from_directory(
-data_dir, **dataflow_kwargs)
+    data_dir, **dataflow_kwargs)
 ```
 
 在这两种情况下，关键字参数选项或`kwargs`为您的代码提供了很大的灵活性。（关键字参数在 Python 中经常见到。）这些参数使您能够将可选参数传递给函数。事实证明，在`ImageDataGenerator`中，有两个与您需求相关的参数：`rescale`和`validation_split`。`rescale`参数用于将像素值归一化为有限范围，`validation_split`允许您将数据的一个分区细分，例如用于交叉验证。
@@ -514,21 +502,21 @@ data_dir, **dataflow_kwargs)
 您可以将这些关键字参数定义如下。稍后将把它们传递给它们的函数调用：
 
 ```py
-pixels =224
+pixels = 224
 BATCH_SIZE = 32
 IMAGE_SIZE = (pixels, pixels)
 
 datagen_kwargs = dict(rescale=1./255, validation_split=.20)
 dataflow_kwargs = dict(target_size=IMAGE_SIZE, 
-batch_size=BATCH_SIZE,
-interpolation="bilinear")
+                       batch_size=BATCH_SIZE,
+                       interpolation="bilinear")
 ```
 
 创建一个生成器对象：
 
 ```py
 valid_datagen = tf.keras.preprocessing.image.ImageDataGenerator(
-**datagen_kwargs)
+    **datagen_kwargs)
 ```
 
 现在您可以指定此生成器将从中流式传输数据的源目录。此生成器将仅流式传输 20%的数据，并将其指定为验证数据集：
@@ -544,7 +532,7 @@ valid_generator = valid_datagen.flow_from_directory(
 ```py
 train_datagen = valid_datagen
 train_generator = train_datagen.flow_from_directory(
-data_dir, subset="training", shuffle=True, **dataflow_kwargs)
+    data_dir, subset="training", shuffle=True, **dataflow_kwargs)
 ```
 
 检查生成器的输出：
@@ -569,7 +557,7 @@ idx_labels = dict((v,k) for k,v in labels_idx.items())
 print(idx_labels)
 
 {0: 'daisy', 1: 'dandelion', 2: 'roses', 3: 'sunflowers', 
-4: 'tulips'}
+ 4: 'tulips'}
 ```
 
 我们分类模型的典型输出将类似于以下的 NumPy 数组：
@@ -584,7 +572,7 @@ print(idx_labels)
 import pickle
 with open('prediction_lookup.pickle', 'wb') as handle:
     pickle.dump(idx_labels, handle, 
-    protocol=pickle.HIGHEST_PROTOCOL)
+                protocol=pickle.HIGHEST_PROTOCOL)
 ```
 
 这是如何加载它的方法：
@@ -603,10 +591,9 @@ import tensorflow_hub as hub
 NUM_CLASSES = 5
 mdl = tf.keras.Sequential([
     tf.keras.layers.InputLayer(input_shape=IMAGE_SIZE + (3,)),
-         hub.KerasLayer("https://tfhub.dev/google/imagenet/
-resnet_v1_101/feature_vector/4", trainable=False),
-tf.keras.layers.Dense(NUM_CLASSES, activation='softmax', 
- name = 'custom_class')
+    hub.KerasLayer("https://tfhub.dev/google/imagenet/resnet_v1_101/feature_vector/4", trainable=False),
+    tf.keras.layers.Dense(NUM_CLASSES, activation='softmax', 
+                          name = 'custom_class')
 ])
 mdl.build([None, 224, 224, 3])
 ```
@@ -637,6 +624,10 @@ mdl.summary()
 
 使用`optimizers`和相应的`losses`函数编译模型：
 
+
+
+# 编译与训练模型
+
 ```py
 mdl.compile(
   optimizer=tf.keras.optimizers.SGD(lr=0.005, momentum=0.9),
@@ -664,7 +655,7 @@ mdl.fit(
 
 ![训练图像分类模型的输出](img/t2pr_0311.png)
 
-###### 图 3-11\. 训练图像分类模型的输出
+###### 图 3-11. 训练图像分类模型的输出
 
 ## 摘要
 
@@ -730,7 +721,7 @@ There are 65 unique characters
 
 ![《科里奥兰纳斯》词汇列表的一部分](img/t2pr_0313.png)
 
-###### 图 3-13.《科里奥兰纳斯》词汇列表的一部分
+###### 图 3-13. 《科里奥兰纳斯》词汇列表的一部分
 
 这些标记包括标点符号，以及大写和小写字符。不一定需要同时包含大写和小写字符；如果不想要，可以在执行`set`操作之前将每个字符转换为小写。由于您对标记列表进行了排序，您可以看到特殊字符也被标记化了。在某些情况下，这是不必要的；这些标记可以手动删除。以下代码将所有字符转换为小写，然后执行`set`操作：
 

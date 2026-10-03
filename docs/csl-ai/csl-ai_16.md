@@ -1,12 +1,11 @@
+
 # 第十三章：因果关系与大型语言模型
 
-### 本章涵盖
+## 本章涵盖
 
-+   在 LLMs 中使用因果信息来增强因果分析
-
-+   将 LLM 的组件与因果理念相连接
-
-+   构建因果 LLM
++ 在 LLMs 中使用因果信息来增强因果分析
++ 将 LLM 的组件与因果理念相连接
++ 构建因果 LLM
 
 大型语言模型（LLMs）在人工智能领域取得了重大进步。这些模型是设计用来生成和理解人类可读文本的大型神经网络。它们之所以被称为“大型”，是因为它们的规模确实令人印象深刻——最前沿的 LLMs 拥有数十亿甚至数万亿的参数。作为生成模型，它们的主要功能是生成连贯且与上下文相关的自然语言。它们还可以生成结构化文本，如编程代码、标记语言、数学符号、数据库查询以及许多其他以文本形式的有用事物。
 
@@ -26,61 +25,42 @@ LLMs（大型语言模型）只是广泛类别的生成式 AI 的一个例子。
 
 **![image](img/init.png)**您是一位有用的因果分析助手。我对建模吸烟与肺癌之间的关系感兴趣。请提供一个捕捉这种因果关系的因果 DAG。
 
-****![image](img/Response.png)****当然！有向无环图（DAG）是表示因果关系的有力工具。以下是一个基本的因果 DAG，用于表示吸烟和肺癌之间的关系：
+**![image](img/Response.png)**当然！有向无环图（DAG）是表示因果关系的有力工具。以下是一个基本的因果 DAG，用于表示吸烟和肺癌之间的关系：
 
-1.  节点：
+1. 节点：
+   + **S**: 吸烟行为（例如，吸烟者、非吸烟者或吸烟频率）
+   + **LC**: 肺癌（存在或不存在）
 
-    +   **S**: 吸烟行为（例如，吸烟者、非吸烟者或吸烟频率）
+2. 有向边：
+   + 从**S**到**LC**的有向边表示吸烟行为可以导致或影响肺癌的发生。
 
-    +   **LC**: 肺癌（存在或不存在）
+3. 可能的混淆因素：
+   + 可以将其他节点引入 DAG，以考虑潜在的混淆因素。一些可能的混淆因素可能包括：
+     1. **G**: 遗传学（有肺癌家族史）
+     2. **A**: 年龄（年龄较大可能意味着更高的风险）
+     3. **E**: 环境暴露（如石棉、污染等）
+     4. **O**: 其他健康行为（如饮食、锻炼）
 
-1.  有向边：
-
-    +   从**S**到**LC**的有向边表示吸烟行为可以导致或影响肺癌的发生。
-
-1.  可能的混淆因素：
-
-    +   可以将其他节点引入 DAG，以考虑潜在的混淆因素。一些可能的混淆因素可能包括：
-
-        1.  **G**: 遗传学（有肺癌家族史）
-
-        1.  **A**: 年龄（年龄较大可能意味着更高的风险）
-
-        1.  **E**: 环境暴露（如石棉、污染等）
-
-        1.  **O**: 其他健康行为（如饮食、锻炼）
-
-1.  可能的中介变量：
-
-    +   中介变量是原因通过其影响结果的中介变量。
-
-    +   例如，可以假设吸烟可能引起肺损伤，进而导致肺癌。在这种情况下：
-
-        1.  **LD**: 肺损伤
+4. 可能的中介变量：
+   + 中介变量是原因通过其影响结果的中介变量。
+   + 例如，可以假设吸烟可能引起肺损伤，进而导致肺癌。在这种情况下：
+     1. **LD**: 肺损伤
 
 DAG 可能看起来是这样的，包括混淆因素和中介变量：
 
-1.  **S** <- **G** –> **LC**
-
-1.  **S** <- **A** –> **LC**
-
-1.  **S** <- **E** –> **LC**
-
-1.  **S** <- **O** –> **LC**
-
-1.  **S** –> **LC**
-
-1.  **S** –> **LD** –> **LC**
+1. **S** <- **G** –> **LC**
+2. **S** <- **A** –> **LC**
+3. **S** <- **E** –> **LC**
+4. **S** <- **O** –> **LC**
+5. **S** –> **LC**
+6. **S** –> **LD** –> **LC**
 
 在建模过程中，重要的是：
 
-+   **识别所有可能的混淆因素**以避免结果偏差。**记住，相关性不等于因果关系**。仅仅因为两个节点相关并不意味着一个导致另一个。
-
-+   **与领域专家验证你的 DAG**。他们可以提供你可能没有考虑到的见解。
-
-+   **使用数据**来测试和验证 DAG 中的因果关系，例如，通过控制实验或当实验不可行时，使用工具变量或倾向得分匹配等统计方法。
-
-+   请记住，这是一个简化的吸烟和肺癌之间关系的 DAG。根据你研究的粒度和深度，你可能需要调整和扩展这个框架。
++ **识别所有可能的混淆因素**以避免结果偏差。**记住，相关性不等于因果关系**。仅仅因为两个节点相关并不意味着一个导致另一个。
++ **与领域专家验证你的 DAG**。他们可以提供你可能没有考虑到的见解。
++ **使用数据**来测试和验证 DAG 中的因果关系，例如，通过控制实验或当实验不可行时，使用工具变量或倾向得分匹配等统计方法。
++ 请记住，这是一个简化的吸烟和肺癌之间关系的 DAG。根据你研究的粒度和深度，你可能需要调整和扩展这个框架。
 
 继续下去，我可以提示 LLM 提供潜在的工具变量。
 
@@ -88,17 +68,15 @@ DAG 可能看起来是这样的，包括混淆因素和中介变量：
 
 **![image](img/Response.png)**当然。对于吸烟和肺癌之间的关系，两个可能的工具变量（IVs）可以是：
 
-1.  **烟草税或价格**：如果某些地区或时期烟草价格或税收较高，这可以影响吸烟行为，而不直接影响肺癌率，除非通过减少吸烟的影响。这里的假设是，烟草价格影响肺癌的唯一方式是通过影响吸烟行为。
-
-1.  **反吸烟运动或立法**：某些地区或时间反吸烟运动或立法的介绍或强度可以用作工具变量。如果这些运动或法律是外生决定的（不是基于当前的肺癌率），它们可以影响吸烟率，而不会对肺癌产生直接影响，除非通过其对吸烟行为的影响。
+1. **烟草税或价格**：如果某些地区或时期烟草价格或税收较高，这可以影响吸烟行为，而不直接影响肺癌率，除非通过减少吸烟的影响。这里的假设是，烟草价格影响肺癌的唯一方式是通过影响吸烟行为。
+2. **反吸烟运动或立法**：某些地区或时间反吸烟运动或立法的介绍或强度可以用作工具变量。如果这些运动或法律是外生决定的（不是基于当前的肺癌率），它们可以影响吸烟率，而不会对肺癌产生直接影响，除非通过其对吸烟行为的影响。
 
 对于两个工具变量，验证两个关键假设的工具有效性至关重要：
 
-1.  工具变量与暴露相关（例如，香烟税影响吸烟行为）。
+1. 工具变量与暴露相关（例如，香烟税影响吸烟行为）。
+2. 工具变量只通过其对暴露的影响影响结果（例如，肺癌），而不是通过其他途径。
 
-1.  工具变量只通过其对暴露的影响影响结果（例如，肺癌），而不是通过其他途径。
-
-##### 提示最佳实践
+#### 提示最佳实践
 
 提示前缀“你是一个有用的因果分析助手”是所谓的“系统提示”的一个例子。系统提示提供了关于从 LLM 期望得到的内容的一般背景。系统提示和其他提示工程技术（例如，思维链提示、情境学习）是获得 LLM 良好输出的最佳实践。为了简洁起见，我将使用系统提示，但在此部分省略了一些其他提示工程最佳实践——在实际环境中包含它们是明智的。
 
@@ -159,22 +137,16 @@ print(estimate)
 ```
 
 #1 这一行是错误的，但如果你删除它，代码就可以运行。
-
 #2 模拟吸烟状态：0 表示非吸烟者，1 表示吸烟者。
-
 #3 模拟肺癌状态：0 表示无肺癌，1 表示有肺癌。
-
 #4 以 5 美元的平均价格模拟香烟价格。
 
 **![image](img/Response.png)**这是一个简化的例子。在实际应用中：
 
-1.  你的数据将导入而不是像上面那样模拟。
-
-1.  确保你的 DAG 正确地根据领域知识建模关系。
-
-1.  工具变量背后的假设需要严格检查。
-
-1.  进一步的分析步骤（例如，统计测试，检查稳健性）将是必要的。
+1. 你的数据将导入而不是像上面那样模拟。
+2. 确保你的 DAG 正确地根据领域知识建模关系。
+3. 工具变量背后的假设需要严格检查。
+4. 进一步的分析步骤（例如，统计测试，检查稳健性）将是必要的。
 
 当你生成代码时，可能会出现错误。例如，DoWhy 已经经过几次迭代，没有任何东西迫使 LLM 跟上库的最新版本。在这种情况下，`from dowhy.do_why import CausalModel`这一行有错误。没有名为`do_why`的模块，并且`CausalModel`已经在之前的行中导入。我们将在第 13.1.7 节中解决 LLM 产生的错误。现在，如果你删除那一行，代码就可以运行。
 
@@ -194,17 +166,12 @@ LLM 利用常见和专业知识提供超越 DAG 的机制解释，但形式比�
 
 **![image](img/Response.png)**广告支出与品牌知名度之间的因果关系
 
-+   **直接因果关系**：随着广告支出的增加，品牌知名度通常会上升。
-
-    1.  **机制**：更大的广告支出意味着品牌对目标受众的曝光更加频繁和广泛。
-
-+   **收益递减**：在某个点上，额外的广告支出可能不会导致品牌知名度的成比例增加。
-
-    1.  **原因**：市场饱和、广告疲劳或受众覆盖的冗余。
-
-+   **外部因素**：广告效率并不仅仅基于支出。
-
-    1.  **影响因素**：广告质量、位置、目标受众的相关性、竞争和市场条件都可能影响结果。
++ **直接因果关系**：随着广告支出的增加，品牌知名度通常会上升。
+  1. **机制**：更大的广告支出意味着品牌对目标受众的曝光更加频繁和广泛。
++ **收益递减**：在某个点上，额外的广告支出可能不会导致品牌知名度的成比例增加。
+  1. **原因**：市场饱和、广告疲劳或受众覆盖的冗余。
++ **外部因素**：广告效率并不仅仅基于支出。
+  1. **影响因素**：广告质量、位置、目标受众的相关性、竞争和市场条件都可能影响结果。
 
 考虑到可以识别出一些反事实查询，它们对原因和效果之间功能关系的简单分类假设。例如，从干预数据中可以识别出必要性的概率，如果 X 和 Y 之间的关系是单调的，那么从观察数据中部分可识别：
 
@@ -220,11 +187,9 @@ LLM 利用常见和专业知识提供超越 DAG 的机制解释，但形式比�
 
 **观察结果**：一位 48 岁的女性出现复视、眼部疼痛、闭经、潮热、体重减轻、心动过速、高血压、湿润的手掌、甲状腺肿大、突出眼睛、眼睑退缩、结膜充血和无法聚视。视力为双眼 20/20。
 
-1.  **![image](img/Response.png)**患者可能患有格雷夫斯病，这是一种影响甲状腺的自身免疫性疾病，导致甲状腺功能亢进及其相关症状，包括眼部表现。
-
-1.  2. 女性的症状，包括闭经和潮热，表明可能存在早期更年期或影响其生殖激素的另一种内分泌疾病。
-
-1.  3. 眼部症状，包括复视、眼睑退缩和无法聚视，暗示可能存在甲状腺眼病或眶周肌病。
+1. **![image](img/Response.png)**患者可能患有格雷夫斯病，这是一种影响甲状腺的自身免疫性疾病，导致甲状腺功能亢进及其相关症状，包括眼部表现。
+2. 女性的症状，包括闭经和潮热，表明可能存在早期更年期或影响其生殖激素的另一种内分泌疾病。
+3. 眼部症状，包括复视、眼睑退缩和无法聚视，暗示可能存在甲状腺眼病或眶周肌病。
 
 因果建模的一个挑战是与领域专家合作，将领域假设编码到模型的框架中。这类生成的解释和假设是宝贵的资产，可用于与可能同意或更好地迭代这些生成解释的领域专家沟通。
 
@@ -242,27 +207,25 @@ Jake 在一个办公室网络中。服务器上有一个开放的共享文件夹
 
 **![image](img/Response.png)**基于提供的故事，让我们使用因果推理来分析这种情况：
 
-1.  **直接原因**：Jake 通过意外点击一个文件启动了一个消耗大量带宽的过程。
-
-1.  **影响**：由于消耗了带宽，网络变慢了。
+1. **直接原因**：Jake 通过意外点击一个文件启动了一个消耗大量带宽的过程。
+2. **影响**：由于消耗了带宽，网络变慢了。
 
 基于这些事实，我们可以确定 Jake 的行为是网络减速的直接原因。
 
 然而，可以从不同的维度来考虑责任：
 
-1.  **意图**：Jake 的行为是意外的。他并没有意图减慢网络。
-
-1.  **预防机制**：故事没有说明在启动这种消耗大量带宽的过程之前是否有任何警告或用户提示。如果没有警告，有人可能会认为系统没有设计来防止这种意外行为。
-
-1.  **知识与培训**：Jake 是否接受了关于传输大文件或关于消耗大量带宽的特定文件的培训或通知？如果没有，他的知识差距导致了这次事故。
-
-1.  **系统设计**：服务器上的开放共享文件夹对 Jake 可访问。如果文件已知是带宽消耗者，那么值得问的是为什么这样的文件会被放在一个没有任何警告或限制的开放共享文件夹中。
+1. **意图**：Jake 的行为是意外的。他并没有意图减慢网络。
+2. **预防机制**：故事没有说明在启动这种消耗大量带宽的过程之前是否有任何警告或用户提示。如果没有警告，有人可能会认为系统没有设计来防止这种意外行为。
+3. **知识与培训**：Jake 是否接受了关于传输大文件或关于消耗大量带宽的特定文件的培训或通知？如果没有，他的知识差距导致了这次事故。
+4. **系统设计**：服务器上的开放共享文件夹对 Jake 可访问。如果文件已知是带宽消耗者，那么值得问的是为什么这样的文件会被放在一个没有任何警告或限制的开放共享文件夹中。
 
 直接回答问题：杰克对网络速度减慢负有责任，因为他的行为是直接原因。然而，如果存在系统设计缺陷、缺乏培训或缺乏预防措施，他的责任程度可能会减轻。如果上述提到的其他因素在事件中发挥了作用，那么责任将在杰克和其他因素之间分担。
 
 在这里，响应包括系统设计缺陷、缺乏培训或缺乏预防措施作为与因果关系框架相关的因素，尽管我在提示中并未提及这些因素。
 
 更重要的是，考虑 LLM 可能包括但未包括的许多因素：或许杰克的鼠标出现了物理故障，导致他点击了文件，或许黑客移除了该文件的安全功能，或者任何其他可能的减轻因素。人类可能会排除这些因素，除非明确提及，LLM 也是如此。
+
+
 
 如果人类已经擅长建立因果关系框架，我们为什么还要关心 LLM 能否做到这一点呢？考虑从网络日志中进行根本原因分析的问题。假设关于杰克的相同故事被改写成网络日志的形式，如下所示：
 
@@ -512,19 +475,23 @@ print(generated_text)   #3
 
 这将打印出以下内容：
 
-```py
+
+
+反事实推理将使 AI 能够在人们提出要求之前就弄清楚他们想要什么。它还将实现自我意识。
+
+```
 Counterfactual reasoning would enable AI to figure out what people want before they ask them. It would also enable self-awareness
 ```
 
 再次注意，ChatGPT 的生成具有随机性，因此这可能会产生不同的结果。
 
-##### 关于混淆术语的说明
+## 关于混淆术语的说明
 
 类似于 GPT 模型的模型通常被称为“因果语言模型”，但它们并不是本书中讨论的那种因果模型。它们不是 DGP 的因果模型。“因果”在这里指的是模型的自回归性质——模型仅根据前面的标记来评估序列中标记的概率。
 
-所有这些都意味着 LLM 在基本层面上是一个标记序列的联合概率模型。这些模型的典型训练程序试图拟合标记的联合概率分布。像 GPT 这样的模型优化了在训练文档中根据前面的标记预测给定标记的能力。理解 LLM 是一个标记的概率模型并不能解释为什么 LLM 可以生成 *连贯* 的文本（即具有逻辑和一致思想相互关系、形成可理解整体的文本）。为此，我们需要理解 *注意力*。
+所有这些都意味着 LLM 在基本层面上是一个标记序列的联合概率模型。这些模型的典型训练程序试图拟合标记的联合概率分布。像 GPT 这样的模型优化了在训练文档中根据前面的标记预测给定标记的能力。理解 LLM 是一个标记的概率模型并不能解释为什么 LLM 可以生成*连贯*的文本（即具有逻辑和一致思想相互关系、形成可理解整体的文本）。为此，我们需要理解*注意力*。
 
-### 13.2.2 注意力机制
+### 注意力机制
 
 LLMs（大型语言模型）成功的主要驱动力之一是使用*Transformer 架构*和其他依赖称为*注意力机制*的神经网络架构。注意力机制允许模型对输入序列的不同部分赋予不同的重要性。这使得模型能够学习“聚焦”于与特定任务更相关的序列的特定部分，同时“忽略”或赋予不太相关的部分较小的权重。
 
@@ -538,13 +505,13 @@ LLMs（大型语言模型）成功的主要驱动力之一是使用*Transformer 
 
 后续层可以表示句子的主题或主题以及更广泛文本的更广泛主题，将“劳动节周末的森林大火”与有关其蔓延的信息联系起来。
 
-### 13.2.3 从标记符到因果表示
+### 从标记符到因果表示
 
 从因果关系的角度来看，关于注意力如何使 LLM 学习高级抽象的能力对我们来说变得有趣。回想一下图 13.1，它首次出现在第五章（如图 5.4）。
 
 ![figure](img/CH13_F01_Ness.png)
 
-##### 图 13.1 来自第五章的示例，其中*digit*和*is-handwritten*是低级*X**[i]*像素的高级因果驱动因素
+##### 图 13.1 来自第五章的示例，其中*digit*和*is-handwritten*是低级*X*[*i*]像素的高级因果驱动因素
 
 小方块代表图像中的像素，而*digit*和*is-handwritten*方块分别代表图像中描绘的数字以及它是否是手写的。在那个例子（第 5.1.2 节）中，我建议个体像素之间存在的任何因果关系对我们来说并不重要；我们感兴趣的是在图像中描绘的物体层面上进行推理。
 
@@ -560,7 +527,7 @@ LLMs（大型语言模型）成功的主要驱动力之一是使用*Transformer 
 
 为了考虑这一点，我们可以回顾 LLM 的幻觉问题，并将其与因果识别联系起来。
 
-### 13.2.4 幻觉、注意力和因果识别
+### 幻觉、注意力和因果识别
 
 关于必要性的概率的幻觉是由 GPT-4 生成的。同样的模型在 Netflix 关于必要性的概率问题上也给出了正确的答案。事实上，如果幻觉的答案仅仅陈述了正确的识别假设，那么这个答案就是正确的。我相信 GPT 和类似模型未来的版本可能会在第一次尝试时就正确回答这个问题。
 
@@ -570,11 +537,11 @@ LLMs（大型语言模型）成功的主要驱动力之一是使用*Transformer 
 
 我们需要设计解决方案来回答这些问题和其他期望，以构建向因果 AI 未来的发展。在下一节中，我们将从这个简单的因果 LLM 开始。
 
-## 13.3 打造你自己的因果 LLM
+## 打造你自己的因果 LLM
 
 在本节中，我们将绕过“最前沿的 LLM 能否进行因果推理？”这个问题，转而构建一个能够进行因果推理的因果 LLM。我们将从零开始构建因果性，而不是作为事后考虑。
 
-### 13.3.1 用于脚本编写的 LLM
+### 用于脚本编写的 LLM
 
 我们的数据通常具有一些隐含的因果结构。当我们将这种结构在训练中明确化时，基础模型可以学习更好的因果表示。
 
@@ -598,7 +565,7 @@ LLMs（大型语言模型）成功的主要驱动力之一是使用*Transformer 
 
 图 13.4 以因果有向图的形式显示了这种原型空间。
 
-这只描述了 3 × 3 × 3 = 27 种可能的原型，但正如你所预期的，一些原型更常见，而一些原型则不太常见。我们可以很容易地通过在 pgmpy 或 Pyro 中显式编码因果马尔可夫核来对这些原型和联合概率分布进行建模。但这将只是一种基于原型的因果生成模型。如果我们想要一个剧本生成器，我们想要一个基于剧本的因果生成模型。 
+这只描述了 3 × 3 × 3 = 27 种可能的原型，但正如你所预期的，一些原型更常见，而一些原型则不太常见。我们可以很容易地通过在 `pgmpy` 或 `Pyro` 中显式编码因果马尔可夫核来对这些原型和联合概率分布进行建模。但这将只是一种基于原型的因果生成模型。如果我们想要一个剧本生成器，我们想要一个基于剧本的因果生成模型。
 
 为了展示这个想法的证明概念，我们将使用短故事片段的训练数据集，而不是完整的剧本。让我们加载并检查训练数据。
 
@@ -661,7 +628,7 @@ however, a series of misfortunes and disastrous decisions plunge their once pros
 
 有 21,000 组三个故事片段。前面的输出显示了数据集中的前三个组。
 
-### 13.3.2 使用预训练模型进行因果马尔可夫核
+### 使用预训练模型进行因果马尔可夫核
 
 为了训练我们 DAG 中每个节点的因果马尔可夫核，我们将从 Hugging Face Transformers 库中获取预训练模型，然后进一步使用我们的故事片段进行训练（也称为“微调”）。预训练处理了学习生成连贯自然语言文本的重活。微调将使模型朝着表示我们的因果马尔可夫核的方向调整。
 
@@ -689,7 +656,7 @@ however, a series of misfortunes and disastrous decisions plunge their once pros
 
 ##### 图 13.8 一个 BART 序列到序列模型也经过微调，以模拟国王和王子行动情况下的王国命运。
 
-让我们运行训练过程。首先，我们将设置我们的导入和分词器。我们将使用 Bart 作为我们所有模型的分词器。
+让我们运行训练过程。首先，我们将设置我们的导入和分词器。我们将使用 `Bart` 作为我们所有模型的分词器。
 
 ##### 列表 13.7 训练因果 LLM
 
@@ -754,13 +721,15 @@ def create_king_dataset(input_phrases):     #2
     return king_dataset    #2
 ```
 
-#1 当通过索引访问时，ModelDataset 返回一个包含该索引的标记编码及其相关标签的字典。
+#1 当通过索引访问时，`ModelDataset`返回一个包含该索引的标记编码及其相关标签的字典。
 
-#2 为 King 片段创建一个 ModelDataset 实例。
+#2 为 King 片段创建一个`ModelDataset`实例。
 
 接下来，我们将对 Prince 和 Kingdom 的片段进行分词。此代码还将生成用于训练序列到序列模型的验证数据集。
 
 ##### 列表 13.9 对 Prince 和 Kingdom 片段进行分词
+
+
 
 ```py
 def create_seq2seq_datasets(input_phrases, target_phrases):
@@ -791,7 +760,7 @@ def create_seq2seq_datasets(input_phrases, target_phrases):
 
 接下来，我们将编写 King 模型的训练算法。此函数使用指定的参数初始化 GPT-2 模型，设置训练参数，并在提供的数据集上训练模型，最后将训练好的模型保存到指定的目录。
 
-##### 列表 13.10 训练 King 模型
+### 列表 13.10 训练 King 模型
 
 ```py
 def train_king_model(output_dir, train_dataset,
@@ -828,7 +797,7 @@ def train_king_model(output_dir, train_dataset,
 
 接下来，我们将编写序列到序列模型的训练算法。该函数将提供的输入和目标短语分割成训练集和验证集，对它们进行分词，然后使用`ModelDataset`类创建并返回两个集合的 PyTorch `Dataset`对象。`train_seq2seq_model`函数使用指定的参数初始化序列到序列模型，配置其训练设置，然后使用训练集和验证数据集训练模型，最后返回训练好的模型。
 
-##### 列表 13.11 训练序列到序列模型的函数
+### 列表 13.11 训练序列到序列模型的函数
 
 ```py
 def train_seq2seq_model(output_dir, train_dataset, val_dataset,
@@ -868,7 +837,7 @@ def train_seq2seq_model(output_dir, train_dataset, val_dataset,
 
 注意：在列表 13.14 中，我将提供从 Hugging Face 下载预训练模型的代码，所以如果你不想训练模型，可以跳过此步骤。
 
-##### 列表 13.12 训练 King、Prince 和 Kingdom 模型
+### 列表 13.12 训练 King、Prince 和 Kingdom 模型
 
 ```py
 import os
@@ -910,13 +879,11 @@ kingdom_model = train_seq2seq_model(    #4
 
 #3 使用 Seq2Seq 训练 Prince 模型。King 片段用于预测 Prince 片段。
 
-#4 使用 Seq2Seq 训练 Prince 模型。King 片段用于预测 Prince 片段。
-
-#5 使用 Seq2Seq 训练 Kingdom 模型。结合 King 和 Prince 的片段用于预测 Kingdom 片段。
+#4 使用 Seq2Seq 训练 Kingdom 模型。结合 King 和 Prince 的片段用于预测 Kingdom 片段。
 
 最后，我们将训练另一个模型，用于根据 Prince 片段推断 King 片段。我们将在推理阶段使用这个模型。
 
-##### 列表 13.13 用于训练 Prince 到 King 模型的函数
+### 列表 13.13 用于训练 Prince 到 King 模型的函数
 
 ```py
 p2k_data = create_seq2seq_datasets(    
@@ -932,7 +899,7 @@ prince2king_model = train_seq2seq_model(
 
 运行前面的训练过程将需要一些时间，尤其是如果你没有使用 GPU。幸运的是，Hugging Face Hub 中有训练好的模型的保存版本。以下代码从 Hugging Face Hub 获取 Transformer 模型并从中生成。它还提供了一个计算每个生成序列对数概率的函数。
 
-##### 列表 13.14 从 Hugging Face Hub 获取 Transformer 模型并生成
+### 列表 13.14 从 Hugging Face Hub 获取 Transformer 模型并生成
 
 ```py
 import matplotlib.pyplot as plt
@@ -960,13 +927,11 @@ tokenizer.pad_token = tokenizer.eos_token  #2
 
 #1 加载我们模型的组件。
 
-#2 加载我们模型的组件。
-
-#3 加载 Bart-base 分词器，并将填充标记设置为序列结束标记。
+#2 加载 Bart-base 分词器，并将填充标记设置为序列结束标记。
 
 接下来，我们将编写一些函数来编码文本为标记，解码标记为文本，以及根据输入文本从模型生成文本。
 
-##### 列表 13.15 编码、解码和生成辅助函数
+### 列表 13.15 编码、解码和生成辅助函数
 
 ```py
 def encode(text:str, device=DEVICE) -> torch.tensor:    #1
@@ -1009,7 +974,23 @@ def convert_to_text(output):
 
 我们希望使用我们的概率机器学习方法，因此我们需要一种计算生成序列对数概率的方法，这样我们就可以在推理中使用这些值。以下函数基于 GPT-2 和 BART 模型产生的相关值计算生成序列的对数概率。
 
-##### 列表 13.16 计算生成序列的对数概率
+### 列表 13.16 计算生成序列的对数概率
+
+
+
+进入`/path/to/xxx`目录，找到`xxx.json`。
+
+在表达式`cvar = avar + bvar`中，加法运算符（`+`）将`avar`与`bvar`相加，得到它们的和`cvar`。
+
+在`List.of(arg0, arg1, arg2)`中，`List`接口的工厂方法`of()`接受一系列的元素，返回包含它们的只读列表。
+
+之后我们这样调用`cmd`命令：`cmd arg0 arg1 arg2`。
+
+```
+if (condVar > someVal) {console.log("xxx")}
+```
+
+---
 
 ```py
 def compute_log_probs(model, output_sequence):
@@ -1093,11 +1074,11 @@ Log probability of generated inference text: tensor(-297.3446)
 
 注意，生成的输出并不完美——例如，第一个生成的陈述理想情况下应该在“…王国的领土”之后停止。我们可以尝试进一步训练它或切换到一个更强大的模型，但作为开始来说这已经相当不错了。
 
-接下来，我们将使用这些 Transformers 库模型在 Pyro 中定义分布，然后使用 Pyro 构建一个因果生成模型。首先，我们将使用 Pyro 的 `TorchDistributionMixin` 来使用语言模型对因果马尔可夫核进行建模。我们将使用国王短篇故事的 GPT-2 模型来创建 `King` 变量的因果马尔可夫核。
+接下来，我们将使用这些 Transformers 库模型在 Pyro 中定义分布，然后使用 Pyro 构建一个因果生成模型。首先，我们将使用 Pyro 的`TorchDistributionMixin`来使用语言模型对因果马尔可夫核进行建模。我们将使用国王短篇故事的 GPT-2 模型来创建`King`变量的因果马尔可夫核。
 
-接下来，我们将使用 BART 模型为 `Prince` 变量创建因果马尔可夫核。`King` 变量导致这个变量，因此 seq2seq 模型使用 `King` 变量的值为此模型生成一个值。
+接下来，我们将使用 BART 模型为`Prince`变量创建因果马尔可夫核。`King`变量导致这个变量，因此 seq2seq 模型使用`King`变量的值为此模型生成一个值。
 
-最后，我们将为 `Kingdom` 变量创建因果马尔可夫核。`King` 和 `Prince` 变量是因果父变量，因此我们将它们的生成输出连接成一个字符串，并使用该字符串生成 `Kingdom` 输出，再次使用 BART seq2seq 模型。我们依赖于一个名为 `TorchDistributionMixin` 的混合器，它对于将 PyTorch 分布包装用于 Pyro 非常有用。
+最后，我们将为`Kingdom`变量创建因果马尔可夫核。`King`和`Prince`变量是因果父变量，因此我们将它们的生成输出连接成一个字符串，并使用该字符串生成`Kingdom`输出，再次使用 BART seq2seq 模型。我们依赖于一个名为`TorchDistributionMixin`的混合器，它对于将 PyTorch 分布包装用于 Pyro 非常有用。
 
 ##### 列表 13.18 从 Transformer 模型构建 Torch 分布
 
@@ -1124,9 +1105,9 @@ class TransformerModelDistribution(TorchDistributionMixin):
         return compute_log_probs(self.model, value)     #2
 ```
 
-#1 使用 TorchDistributionMixin 将 Transformers 模型转换为 Pyro 分布。TorchDistributionMixin 用于使 PyTorch 分布与 Pyro 的实用工具兼容。
+#1 使用`TorchDistributionMixin`将 Transformers 模型转换为 Pyro 分布。`TorchDistributionMixin`用于使 PyTorch 分布与 Pyro 的实用工具兼容。
 
-#2 log_prob 方法返回用于推理算法的对数概率。
+#2 `log_prob`方法返回用于推理算法的对数概率。
 
 现在，我们将使用该分布于 Pyro 中。
 
@@ -1186,48 +1167,50 @@ King, fueled by ambition, declares war on a neighboring realm, leaving his subje
 
 > 他的勇敢的王子指挥军队，在一场又一场的战斗中取得胜利
 
-要推断 *P*(*Kingdom*|*Prince*=*x*)，我们必须推断潜在混杂因子 *King* 的分布。我们将使用我们训练的 `prince2king_model` 来完成这项工作。我们将使用一种名为“重要性重采样”的概率推理算法。我们将首先创建一个提议函数（Pyro 称之为“引导函数”），该函数将根据王子生成 *King* 和 *Kingdom* 的样本。
+要推断 *P*(*Kingdom*|*Prince*=*x*)，我们必须推断潜在混杂因子 *King* 的分布。我们将使用我们训练的`prince2king_model`来完成这项工作。我们将使用一种名为“重要性重采样”的概率推理算法。我们将首先创建一个提议函数（Pyro 称之为“引导函数”），该函数将根据王子生成 *King* 和 *Kingdom* 的样本。
 
 ##### 列表 13.20 *P*(*Kingdom*|*Prince*=*x*) 的提议分布
+
+
 
 ```py
 import pyro.poutine as poutine
 from pyro.distributions import Categorical
 
-PRINCE_STORY = (     #1
-    "His courageous Prince takes command, leading "  #1
-    "the kingdom's army to victory in battle after battle")     #1
-cond_model = pyro.condition(    #1
-    causalLLM, {"Prince": encode(PRINCE_STORY)})   #1
+PRINCE_STORY = (
+    "His courageous Prince takes command, leading "
+    "the kingdom's army to victory in battle after battle")
+cond_model = pyro.condition(
+    causalLLM, {"Prince": encode(PRINCE_STORY)})
 
-def proposal_given_prince():    #2
-    prince = encode(PRINCE_STORY) #2
-    king = pyro.sample(   #3
-        "King",     #3
-        TransformerModelDistribution(prince2king_model, prince)   #3
-    )    #3
-    king_and_prince = torch.cat([king, prince], dim=1)   #3
-    kingdom = pyro.sample(     #4
-        "Kingdom",    #4
-        TransformerModelDistribution(kingdom_model, king_and_prince)    #4
-    )    #4
-    vignette = (convert_to_text(king) +    #5
-        PRINCE_STORY +  #5
-        convert_to_text(kingdom))  #5
+def proposal_given_prince():
+    prince = encode(PRINCE_STORY)
+    king = pyro.sample(
+        "King",
+        TransformerModelDistribution(prince2king_model, prince)
+    )
+    king_and_prince = torch.cat([king, prince], dim=1)
+    kingdom = pyro.sample(
+        "Kingdom",
+        TransformerModelDistribution(kingdom_model, king_and_prince)
+    )
+    vignette = (convert_to_text(king) +
+        PRINCE_STORY +
+        convert_to_text(kingdom))
     return vignette
 ```
 
 #1 我们将模型的条件设置为王子变量的这个值。
 
-#2 我们将使用提议函数从我们的目标分布 P(King, Kingdom|Prince=PRINCE_STORY) 中生成样本。
+#2 我们将使用提议函数从我们的目标分布 `P(King, Kingdom|Prince=PRINCE_STORY)` 中生成样本。
 
-#3 提议使用 prince2king_model 来推断王子=PRINCE_STORY 时的国王值。
+#3 提议使用 `prince2king_model` 来推断王子=`PRINCE_STORY` 时的国王值。
 
-#4 给定王子值和推断出的国王值，使用 king_and_prince 模型来抽取王国。
+#4 给定王子值和推断出的国王值，使用 `king_and_prince` 模型来抽取王国。
 
 #5 将生成的国王标记和提供的王子标记连接起来，以返回一个生成的短篇故事，这样我们就可以检查所抽取的内容。
 
-现在我们将根据在条件模型下样本的概率与在提议下样本的概率的比率来权衡每个样本。使用这些权重重采样样本将生成来自目标分布的样本。Pyro 提供了重要性采样的实用工具，但由于生成的序列长度不一，直接实现重要性采样将更容易。
+现在我们将根据在条件模型下样本的概率与在提议下样本的概率的比率来权衡每个样本。使用这些权重重采样样本将生成来自目标分布的样本。`Pyro` 提供了重要性采样的实用工具，但由于生成的序列长度不一，直接实现重要性采样将更容易。
 
 首先，我们将编写一个函数来处理样本并获取其重要性权重。
 
@@ -1235,15 +1218,15 @@ def proposal_given_prince():    #2
 
 ```py
 def process_sample(model, proposal):
-    sample_trace = poutine.trace(proposal).get_trace()    #1
-    king_text = convert_to_text(sample_trace.nodes['King']['value'])  #1
-    kingdom_text = convert_to_text( #1
-        sample_trace.nodes['Kingdom']['value'])     #1
-    proposal_log_prob = sample_trace.log_prob_sum()     #2
-    replay = poutine.replay(model, trace=sample_trace)    #3
-    model_trace = poutine.trace(replay).get_trace()     #3
-    model_log_prob = model_trace.log_prob_sum()   #3
-    log_importance_weight = model_log_prob - proposal_log_prob    #4
+    sample_trace = poutine.trace(proposal).get_trace()
+    king_text = convert_to_text(sample_trace.nodes['King']['value'])
+    kingdom_text = convert_to_text(
+        sample_trace.nodes['Kingdom']['value'])
+    proposal_log_prob = sample_trace.log_prob_sum()
+    replay = poutine.replay(model, trace=sample_trace)
+    model_trace = poutine.trace(replay).get_trace()
+    model_log_prob = model_trace.log_prob_sum()
+    log_importance_weight = model_log_prob - proposal_log_prob
     sample = (king_text, kingdom_text, log_importance_weight)
     return sample
 ```
@@ -1261,20 +1244,20 @@ def process_sample(model, proposal):
 ##### 列表 13.22 列表 13.22 *P*(*Kingdom*|*Prince*=*x*) 的重要性重采样
 
 ```py
-def do_importance_resampling(model, proposal, num_samples):    #1
+def do_importance_resampling(model, proposal, num_samples):
     original_samples = []
     for _ in range(num_samples):
         sample = process_sample(model, proposal)
         original_samples.append(sample)
-    unique_samples = list(set(original_samples))     #2
-    log_importance_weights = torch.tensor(   #2
-        [sample[2] for sample in original_samples]) #2
-    resampling_dist = Categorical(logits=log_importance_weights)     #2
-    resampled_indices = resampling_dist.sample_n(num_samples)     #2
-    samples = pd.DataFrame(   #2
-        [unique_samples[i] for i in resampled_indices],      #2
-        columns=["King", "Kingdom", "log_importance_weight"]    #2
-    )     #2
+    unique_samples = list(set(original_samples))
+    log_importance_weights = torch.tensor(
+        [sample[2] for sample in original_samples])
+    resampling_dist = Categorical(logits=log_importance_weights)
+    resampled_indices = resampling_dist.sample_n(num_samples)
+    samples = pd.DataFrame(
+        [unique_samples[i] for i in resampled_indices],
+        columns=["King", "Kingdom", "log_importance_weight"]
+    )
     samples["Prince"] = PRINCE_STORY
     samples["Distribution"] = "observational"
     return samples[['King', 'Prince', 'Kingdom', 'Distribution']]
@@ -1288,29 +1271,29 @@ posterior_samples = do_importance_resampling(
 
 #2 使用重要性权重进行重采样。将对数权重传递给“logits”参数。
 
-接下来，我们将推断 *P*(*Kingdom*[*Prince*][=][*x*])。鉴于我们在 Pyro 中的因果模型，我们可以使用 Pyro 的 do-operator 来应用干预。我们知道，在王子干预下，国王到王子的边被移除，因此我们不需要使用 `prince2king_model`。我们可以简单地从我们的干预模型中进行普通的前向生成。
+接下来，我们将推断 *P*(*Kingdom*[*Prince*][=][*x*])。鉴于我们在 `Pyro` 中的因果模型，我们可以使用 `Pyro` 的 do-operator 来应用干预。我们知道，在王子干预下，国王到王子的边被移除，因此我们不需要使用 `prince2king_model`。我们可以简单地从我们的干预模型中进行普通的前向生成。
 
 ##### 列表 13.23 使用纯前向蒙特卡洛采样推断 *P*(*KingdomPrince*=*x*)
 
 ```py
-intervention_model = pyro.do(     #1
-    causalLLM, {"Prince": encode(PRINCE_STORY)})   #1
-intervention_samples = pd.DataFrame(     #2
-    [intervention_model() for _ in range(num_samples)],     #2
-    columns=["King", "Prince", "Kingdom"]    #2
-)   #2
-intervention_samples["Distribution"] = "interventional"     #2
-all_samples = pd.concat(   #2
-    [posterior_samples, intervention_samples],    #2
-    ignore_index=True     #2
-)    #2
+intervention_model = pyro.do(
+    causalLLM, {"Prince": encode(PRINCE_STORY)})
+intervention_samples = pd.DataFrame(
+    [intervention_model() for _ in range(num_samples)],
+    columns=["King", "Prince", "Kingdom"]
+)
+intervention_samples["Distribution"] = "interventional"
+all_samples = pd.concat(
+    [posterior_samples, intervention_samples],
+    ignore_index=True
+)
 ```
 
 #1 从干预分布中进行前向样本抽取。
 
 #2 标记样本，并将它们与观察样本结合起来。
 
-生成样本将需要一些时间。由于我们直接在 Pyro 中使用编码序列张量工作，我们可以利用潜在的更快基于梯度的推理算法。为了方便，您可以在 GitHub 仓库的书目录中访问预先保存的样本：[`github.com/altdeep/causalml`](https://github.com/altdeep/causalml)。
+生成样本将需要一些时间。由于我们直接在 `Pyro` 中使用编码序列张量工作，我们可以利用潜在的更快基于梯度的推理算法。为了方便，您可以在 GitHub 仓库的书目录中访问预先保存的样本：[`github.com/altdeep/causalml`](https://github.com/altdeep/causalml)。
 
 接下来，让我们可视化分布之间的差异。我们需要一种方法来可视化来自干预和观察分布的样本文本。我们可以使用 TF-IDF（词频-逆文档频率），这是一种数值统计量，反映了单词在样本集合中对样本的重要性，强调了特定样本中独特的单词。
 
@@ -1326,28 +1309,28 @@ kingdom_samples_url = (
     "master/book/chapter%2013/kingdom_samples.csv")
 all_samples = pd.read_csv(kingdom_samples_url)
 
-observational_texts = all_samples[     #1
-    all_samples["Distribution"] == "observational"]["Kingdom"]   #1
-interventional_texts = all_samples[all_samples[  #1
-    "Distribution"] == "interventional"]["Kingdom"]   #1
+observational_texts = all_samples[
+    all_samples["Distribution"] == "observational"]["Kingdom"]
+interventional_texts = all_samples[all_samples[
+    "Distribution"] == "interventional"]["Kingdom"]
 
-    vectorizer = TfidfVectorizer(stop_words='english')     #2
-X_obs = vectorizer.fit_transform(observational_texts)    #2
-X_int = vectorizer.transform(interventional_texts)     #2
+    vectorizer = TfidfVectorizer(stop_words='english')
+X_obs = vectorizer.fit_transform(observational_texts)
+X_int = vectorizer.transform(interventional_texts)
 
-k = 10     #3
-feature_names = vectorizer.get_feature_names_out()     #3
-obs_indices = X_obs.sum(axis=0).argsort()[0, -k:][::-1]    #3
-int_indices = X_int.sum(axis=0).argsort()[0, -k:][::-1]    #3
-combined_indices = np.concatenate((obs_indices, int_indices))    #3
-combined_indices = np.unique(combined_indices)     #3
+k = 10
+feature_names = vectorizer.get_feature_names_out()
+obs_indices = X_obs.sum(axis=0).argsort()[0, -k:][::-1]
+int_indices = X_int.sum(axis=0).argsort()[0, -k:][::-1]
+combined_indices = np.concatenate((obs_indices, int_indices))
+combined_indices = np.unique(combined_indices)
 ```
 
 #1 从观察和干预分布中提取生成的王国场景。
 
 #2 计算每个组中生成的王国场景的 TF-IDF 值。
 
-#3 获取每个集合中 TF-IDF 评分最高的 k=7 个单词。
+#3 获取每个集合中 TF-IDF 评分最高的 `k=7` 个单词。
 
 最后，我们将可视化这两个分布。
 
@@ -1356,33 +1339,33 @@ combined_indices = np.unique(combined_indices)     #3
 ```py
 import matplotlib.pyplot as plt
 
-labels = [feature_names[i] for i in combined_indices]    #1
-labels, indices = np.unique(labels, return_index=True)     #1
-obs_values = np.array(X_obs.sum(axis=0))[0, combined_indices]     #1
-int_values = np.array(X_int.sum(axis=0))[0, combined_indices]     #1
-obs_values = [obs_values[0][i] for i in indices]     #1
-int_values = [int_values[0][i] for i in indices]     #1
-combined = list(zip(labels, obs_values, int_values))    #1
-sorted_combined = sorted(combined, key=lambda x: (-x[1], x[2]))    #1
-labels, obs_values, int_values = zip(*sorted_combined)    #1
+labels = [feature_names[i] for i in combined_indices]
+labels, indices = np.unique(labels, return_index=True)
+obs_values = np.array(X_obs.sum(axis=0))[0, combined_indices]
+int_values = np.array(X_int.sum(axis=0))[0, combined_indices]
+obs_values = [obs_values[0][i] for i in indices]
+int_values = [int_values[0][i] for i in indices]
+combined = list(zip(labels, obs_values, int_values))
+sorted_combined = sorted(combined, key=lambda x: (-x[1], x[2]))
+labels, obs_values, int_values = zip(*sorted_combined)
 
-width = 0.35    #2
-x = np.arange(len(labels))     #2
-fig, ax = plt.subplots()    #2
-rects1 = ax.bar(x - width/2, obs_values, width, #2
-                label='Observational', alpha=0.7)    #2
-rects2 = ax.bar(x + width/2, int_values, width, #2
-                label='Interventional', alpha=0.7)    #2
-ax.set_xlabel('Words')     #2
-ax.set_ylabel('TF-IDF Values')     #2
-ax.set_title(    #2
-    'Top Words in Generated Kingdom Vignettes by TF-IDF Value')    #2
-ax.set_xticks(x)     #2
-ax.set_xticklabels(labels)    #2
-ax.legend()    #2
-fig.tight_layout()    #2
-plt.xticks(rotation=45)   #2
-plt.show()     #2
+width = 0.35
+x = np.arange(len(labels))
+fig, ax = plt.subplots()
+rects1 = ax.bar(x - width/2, obs_values, width,
+                label='Observational', alpha=0.7)
+rects2 = ax.bar(x + width/2, int_values, width,
+                label='Interventional', alpha=0.7)
+ax.set_xlabel('Words')
+ax.set_ylabel('TF-IDF Values')
+ax.set_title(
+    'Top Words in Generated Kingdom Vignettes by TF-IDF Value')
+ax.set_xticks(x)
+ax.set_xticklabels(labels)
+ax.legend()
+fig.tight_layout()
+plt.xticks(rotation=45)
+plt.show()
 ```
 
 #1 准备条形图的数据。

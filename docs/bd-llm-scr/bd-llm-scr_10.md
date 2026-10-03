@@ -1,3 +1,5 @@
+
+
 # 附录 D：为训练循环添加铃声和哨声
 
 在这个附录中，我们增强了第 5 到 7 章中涵盖的预训练和微调过程的训练函数。特别是，它涵盖了*学习率预热*、*余弦衰减*和*梯度裁剪*。然后我们将这些技术纳入训练函数并预训练一个 LLM。
@@ -10,7 +12,6 @@ from chapter04 import GPTModel
 
 GPT_CONFIG_124M = {
     "vocab_size": 50257,          #1
-
     "context_length": 256,       #2
     "emb_dim": 768,           #3
     "n_heads": 12,            #4
@@ -26,17 +27,11 @@ model.eval()
 ```
 
 #1 词汇量大小
-
 #2 缩短上下文长度（原：1024）
-
 #3 嵌入维度
-
 #4 注意力头数量
-
 #5 层数数量
-
 #6 Dropout 率
-
 #7 查询-键-值偏差
 
 初始化模型后，我们需要初始化数据加载器。首先，我们加载“The Verdict”短篇小说：
@@ -139,13 +134,9 @@ for epoch in range(n_epochs):    #2
 ```
 
 #1 这个增量由我们在每个 20 个预热步骤中增加的`initial_lr`的量决定。
-
 #2 在每个 epoch 中遍历训练加载器中的批次执行典型的训练循环
-
 #3 如果我们仍在预热阶段，则更新学习率
-
 #4 将计算出的学习率应用于优化器
-
 #5 在完整的训练循环中，会计算损失和模型更新，这里为了简单起见省略了这些内容。
 
 在运行前面的代码后，我们通过可视化训练循环如何改变学习率来验证学习率预热是否按预期工作：
@@ -204,7 +195,6 @@ for epoch in range(n_epochs):
 ```
 
 #1 应用线性预热
-
 #2 在预热后使用余弦退火
 
 再次，为了验证学习率是否按预期改变，我们绘制了学习率图：
@@ -226,7 +216,7 @@ plt.show()
 
 *梯度裁剪*是增强 LLM 训练稳定性的另一种重要技术。这种方法涉及设置一个阈值，超过该阈值梯度将被缩放到预定的最大幅度。这个过程确保在反向传播过程中模型参数的更新保持在可管理的范围内。
 
-例如，在 PyTorch 的`clip_grad_` `norm_`函数中应用`max_norm=1.0`设置确保梯度的范数不超过 1.0。在这里，“范数”表示梯度向量在模型参数空间中的长度或大小，具体指的是 L2 范数，也称为欧几里得范数。
+例如，在 PyTorch 的`clip_grad_norm_`函数中应用`max_norm=1.0`设置确保梯度的范数不超过 1.0。在这里，“范数”表示梯度向量在模型参数空间中的长度或大小，具体指的是 L2 范数，也称为欧几里得范数。
 
 用数学术语来说，对于一个由分量***v*** = [*v*[1], *v*[2], ..., *v**n*]组成的向量***v***，L2 范数是
 
@@ -298,6 +288,13 @@ tensor(0.0185)
 
 与`train_model_simple`相比，代码的变化如下所示：
 
+
+
+
+# 训练函数定义与使用
+
+## 函数定义
+
 ```py
 from chapter05 import evaluate_model, generate_and_print_sample
 
@@ -360,6 +357,8 @@ def train_model(model, train_loader, val_loader, optimizer, device,
     return train_losses, val_losses, track_tokens_seen, track_lrs
 ```
 
+## 代码注释说明
+
 #1 从优化器中检索初始学习率，假设我们将其用作峰值学习率
 
 #2 计算训练过程中的总迭代次数
@@ -368,11 +367,13 @@ def train_model(model, train_loader, val_loader, optimizer, device,
 
 #4 根据当前阶段（预热或余弦退火）调整学习率
 
-#5 **将计算出的学习率应用于优化器**
+#5 将计算出的学习率应用于优化器
 
 #6 在预热阶段之后应用梯度裁剪以避免梯度爆炸
 
-#7 以下内容与第五章中使用的 train_model_simple 函数相比保持不变。
+#7 以下内容与第五章中使用的`train_model_simple`函数相比保持不变。
+
+## 函数使用
 
 定义了`train_model`函数后，我们可以像使用`train_model_simple`方法进行预训练一样使用它来训练模型：
 
@@ -409,6 +410,8 @@ the,,,,,,,,
 Ep 15 (Iter 000130): Train loss 0.041, Val loss 6.915 
 Every effort moves you?"  "Yes--quite insensible to the irony. She wanted him vindicated--and by me!"  He laughed again, and threw back his head to look up at the sketch of the donkey. "There were days when I
 ```
+
+## 结果分析
 
 与预训练类似，由于数据集非常小，模型在几个 epoch 后开始过拟合，我们多次迭代它。尽管如此，我们可以看到函数正在起作用，因为它最小化了训练集损失。
 

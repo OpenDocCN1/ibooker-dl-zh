@@ -1,14 +1,15 @@
+
 # 第九章：PyTorch 在实践中
 
 在我们的最后一章中，我们将看看 PyTorch 如何被其他人和公司使用。您还将学习一些新技术，包括调整图片大小、生成文本和创建可以欺骗神经网络的图像。与之前章节略有不同的是，我们将集中在如何使用现有库快速上手，而不是从头开始使用 PyTorch。我希望这将成为进一步探索的跳板。
 
 让我们从检查一些最新的方法开始，以充分利用您的数据。
 
-# 数据增强：混合和平滑
+## 数据增强：混合和平滑
 
 回到第四章，我们看了各种增强数据的方法，以帮助减少模型在训练数据集上的过拟合。在深度学习研究中，能够用更少的数据做更多事情自然是一个活跃的领域，在本节中，我们将看到两种越来越受欢迎的方法，以从您的数据中挤出最后一滴信号。这两种方法也将使我们改变如何计算我们的损失函数，因此这将是对我们刚刚创建的更灵活的训练循环的一个很好的测试。
 
-## mixup
+### mixup
 
 *mixup*是一种有趣的增强技术，它源于对我们希望模型做什么的侧面看法。我们对模型的正常理解是，我们向其发送一张像图 9-1 中的图像，并希望模型返回一个结果，即该图像是一只狐狸。
 
@@ -110,7 +111,7 @@ mix_parameters = torch.max(mix_parameters, 1 - mix_parameters)
 
 我们仍然可以做更多工作让我们的标签更加有效。现在进入另一种方法，这种方法现在是最先进模型的主要特点：*标签平滑*。
 
-## 标签平滑
+### 标签平滑
 
 与 mixup 类似，*标签平滑*有助于通过使模型对其预测不那么确定来提高模型性能。我们不再试图强迫它预测预测类别为`1`（这在前一节中讨论的所有问题中都有问题），而是将其改为预测 1 减去一个小值，*epsilon*。我们可以创建一个新的损失函数实现，将我们现有的`CrossEntropyLoss`函数与这个功能包装在一起。事实证明，编写自定义损失函数只是`nn.Module`的另一个子类：
 
@@ -136,7 +137,7 @@ class LabelSmoothingCrossEntropyLoss(nn.Module):
 
 现在我们将从数据增强转向另一个当前深度学习趋势中的热门话题：生成对抗网络。
 
-# 计算机，增强！
+## 计算机，增强！
 
 深度学习能力不断增强的一个奇怪后果是，几十年来，我们计算机人一直在嘲笑那些电视犯罪节目，其中侦探点击按钮，使模糊的摄像头图像突然变得清晰、聚焦。我们曾经嘲笑和嘲弄 CSI 等节目做这种事情。但现在我们实际上可以做到这一点，至少在一定程度上。这里有一个巫术的例子，将一个较小的 256×256 图像缩放到 512×512，见图 9-4 和 9-5。
 
@@ -150,7 +151,7 @@ class LabelSmoothingCrossEntropyLoss(nn.Module):
 
 神经网络学习如何*幻想*新的细节来填补不存在的部分，效果可能令人印象深刻。但这是如何工作的呢？
 
-## 超分辨率简介
+### 超分辨率简介
 
 这是一个非常简单的超分辨率模型的第一部分。起初，它几乎与你迄今为止看到的任何模型完全相同：
 
@@ -220,6 +221,8 @@ nn.ReLU(inplace=True))
 ```
 
 试试吧！您会发现输出张量是输入的两倍大。如果我们有一组与该大小相同的地面真实图像作为标签，我们可以训练网络以接收大小为*x*的图像并为大小为*2x*的图像生成图像。在实践中，我们倾向于通过扩大两倍所需的量，然后添加一个标准的卷积层来执行这种上采样，如下所示：
+
+
 
 ```py
 self.upsample = nn.Sequential(......
@@ -313,13 +316,13 @@ def gan_train():
 
 ### 运行 ESRGAN
 
-为了展示 ESRGAN，我们将从[GitHub 存储库](https://github.com/xinntao/ESRGAN)下载代码。使用**`git`**克隆：
+为了展示 ESRGAN，我们将从[GitHub 存储库](https://github.com/xinntao/ESRGAN)下载代码。使用`git`克隆：
 
 ```py
 git clone https://github.com/xinntao/ESRGAN
 ```
 
-然后我们需要下载权重，这样我们就可以在不训练的情况下使用模型。使用自述文件中的 Google Drive 链接，下载*RRDB_ESRGAN_x4.pth*文件并将其放在*./models*中。我们将对 Helvetica 的缩小版本进行上采样，但可以随意将任何图像放入*./LR*目录。运行提供的*test.py*脚本，您将看到生成的上采样图像并保存在*results*目录中。
+然后我们需要下载权重，这样我们就可以在不训练的情况下使用模型。使用自述文件中的 Google Drive 链接，下载`RRDB_ESRGAN_x4.pth`文件并将其放在`./models`中。我们将对 Helvetica 的缩小版本进行上采样，但可以随意将任何图像放入`./LR`目录。运行提供的`test.py`脚本，您将看到生成的上采样图像并保存在`results`目录中。
 
 这就是超分辨率的全部内容，但我们还没有完成图像处理。
 
@@ -335,7 +338,7 @@ git clone https://github.com/xinntao/ESRGAN
 
 ###### 图 9-7\. 盒子里的猫在一个边界框中
 
-但我们如何让我们的网络解决这个问题呢？请记住，这些网络可以预测您想要的任何内容。如果在我们的 CATFISH 模型中，我们除了预测一个类别之外，还产生四个额外的输出怎么样？我们将有一个输出大小为`6`的`Linear`层，而不是`2`。额外的四个输出将使用*x[1]、x[2]、y[1]、y[2]*坐标定义一个矩形。我们不仅要提供图像作为训练数据，还必须用边界框增强它们，以便模型有东西可以训练，当然。我们的损失函数现在将是类别预测的交叉熵损失和边界框的均方损失的组合损失。
+但我们如何让我们的网络解决这个问题呢？请记住，这些网络可以预测您想要的任何内容。如果在我们的 CATFISH 模型中，我们除了预测一个类别之外，还产生四个额外的输出怎么样？我们将有一个输出大小为`6`的`Linear`层，而不是`2`。额外的四个输出将使用`x[1]`、`x[2]`、`y[1]`、`y[2]`坐标定义一个矩形。我们不仅要提供图像作为训练数据，还必须用边界框增强它们，以便模型有东西可以训练，当然。我们的损失函数现在将是类别预测的交叉熵损失和边界框的均方损失的组合损失。
 
 这里没有魔法！我们只需设计模型以满足我们的需求，提供具有足够信息的数据进行训练，并包含一个告诉网络它的表现如何的损失函数。
 
@@ -355,7 +358,7 @@ git clone https://github.com/xinntao/ESRGAN
 
 ## Faster R-CNN 和 Mask R-CNN
 
-Facebook Research 开发了*maskrcnn-benchmark*库，其中包含目标检测和分割算法的参考实现。我们将安装该库并添加代码来生成预测。在撰写本文时，构建模型的最简单方法是使用 Docker（当 PyTorch 1.2 发布时可能会更改）。从[*https://github.com/facebookresearch/maskrcnn-benchmark*](https://github.com/facebookresearch/maskrcnn-benchmark)克隆存储库，并将此脚本*predict.py*添加到*demo*目录中，以设置使用 ResNet-101 骨干的预测管道：
+Facebook Research 开发了`maskrcnn-benchmark`库，其中包含目标检测和分割算法的参考实现。我们将安装该库并添加代码来生成预测。在撰写本文时，构建模型的最简单方法是使用 Docker（当 PyTorch 1.2 发布时可能会更改）。从[*https://github.com/facebookresearch/maskrcnn-benchmark*](https://github.com/facebookresearch/maskrcnn-benchmark)克隆存储库，并将此脚本`predict.py`添加到`demo`目录中，以设置使用 ResNet-101 骨干的预测管道：
 
 ```py
 import matplotlib.pyplot as plt
@@ -385,7 +388,7 @@ predictions = predictions[:,:,::-1]
 plt.imsave(sys.argv[2], predictions)
 ```
 
-在这个简短的脚本中，我们首先设置了`COCODemo`预测器，确保我们传入的配置设置了 Faster R-CNN 而不是 Mask R-CNN（后者会产生分割输出）。然后我们打开一个在命令行上设置的图像文件，但是我们必须将其转换为`BGR`格式而不是`RGB`格式，因为预测器是在 OpenCV 图像上训练的，而不是我们迄今为止使用的 PIL 图像。最后，我们使用`imsave`将`predictions`数组（原始图像加上边界框）写入一个新文件，也在命令行上指定。将一个测试图像文件复制到这个*demo*目录中，然后我们可以构建 Docker 镜像：
+在这个简短的脚本中，我们首先设置了`COCODemo`预测器，确保我们传入的配置设置了 Faster R-CNN 而不是 Mask R-CNN（后者会产生分割输出）。然后我们打开一个在命令行上设置的图像文件，但是我们必须将其转换为`BGR`格式而不是`RGB`格式，因为预测器是在 OpenCV 图像上训练的，而不是我们迄今为止使用的 PIL 图像。最后，我们使用`imsave`将`predictions`数组（原始图像加上边界框）写入一个新文件，也在命令行上指定。将一个测试图像文件复制到这个`demo`目录中，然后我们可以构建 Docker 镜像：
 
 ```py
 docker build docker/
@@ -421,7 +424,7 @@ class MyDataset(object):
         return {"height": img_height, "width": img_width
 ```
 
-然后，您需要将新创建的数据集添加到*maskrcnn_benchmark/data/datasets/*init*.py*和*maskrcnn_benchmark/config/paths_catalog.py*中。然后可以使用存储库中提供的*train_net.py*脚本进行训练。请注意，您可能需要减少批量大小以在单个 GPU 上训练这些网络中的任何一个。
+然后，您需要将新创建的数据集添加到`maskrcnn_benchmark/data/datasets/__init__.py`和`maskrcnn_benchmark/config/paths_catalog.py`中。然后可以使用存储库中提供的`train_net.py`脚本进行训练。请注意，您可能需要减少批量大小以在单个 GPU 上训练这些网络中的任何一个。
 
 这就是目标检测和分割的全部内容，但是请参阅“进一步阅读”以获取更多想法，包括标题为 You Only Look Once（YOLO）架构的内容。与此同时，我们将看看如何恶意破坏模型。
 
@@ -430,6 +433,8 @@ class MyDataset(object):
 你可能在网上看到过关于图像如何阻止图像识别正常工作的文章。如果一个人将图像举到相机前，神经网络会认为它看到了熊猫或类似的东西。这些被称为*对抗样本*，它们是发现架构限制以及如何最好地防御的有趣方式。
 
 创建对抗样本并不太困难，特别是如果你可以访问模型。这里有一个简单的神经网络，用于对来自流行的 CIFAR-10 数据集的图像进行分类。这个模型没有什么特别之处，所以可以随意将其替换为 AlexNet、ResNet 或本书中迄今为止介绍的任何其他网络：
+
+
 
 ```py
 class ModelToBreak(nn.Module):
@@ -630,13 +635,15 @@ GPT-2 背后的魔力在于规模：该模型训练于 800 万个网站的文本
 
 与 BERT 一样，OpenAI 发布的官方 GPT-2 版本是一个 TensorFlow 模型。与 BERT 一样，Hugging Face 发布了一个 PyTorch 版本，该版本包含在同一个库（`pytorch-transformers`）中。然而，围绕原始 TensorFlow 模型构建了一个蓬勃发展的生态系统，而目前在 PyTorch 版本周围并不存在。因此，这一次，我们将作弊：我们将使用一些基于 TensorFlow 的库来微调 GPT-2 模型，然后导出权重并将其导入模型的 PyTorch 版本。为了节省我们太多的设置，我们还在 Colab 笔记本中执行所有 TensorFlow 操作！让我们开始吧。
 
-打开一个新的 Google Colab 笔记本，并安装我们正在使用的库，Max Woolf 的*gpt-2-simple*，它将 GPT-2 微调封装在一个单一软件包中。通过将此添加到单元格中进行安装：
+
+
+打开一个新的 Google Colab 笔记本，并安装我们正在使用的库，Max Woolf 的`gpt-2-simple`，它将 GPT-2 微调封装在一个单一软件包中。通过将此添加到单元格中进行安装：
 
 ```py
 !pip3 install gpt-2-simple
 ```
 
-接下来，您需要一些文本。在此示例中，我使用了 PG Wodehouse 的*My Man Jeeves*的公共领域文本。我还不打算在从 Project Gutenberg 网站使用`wget`下载文本后对文本进行任何进一步处理：
+接下来，您需要一些文本。在此示例中，我使用了 PG Wodehouse 的`My Man Jeeves`的公共领域文本。我还不打算在从 Project Gutenberg 网站使用`wget`下载文本后对文本进行任何进一步处理：
 
 ```py
 !wget http://www.gutenberg.org/cache/epub/8164/pg8164.txt
@@ -663,7 +670,7 @@ gpt2.finetune(sess,
 gpt2.copy_checkpoint_to_gdrive()
 ```
 
-这将指引您打开一个新的网页，将认证代码复制到笔记本中。完成后，权重将被打包并保存到您的 Google Drive 中，文件名为*run1.tar.gz*。
+这将指引您打开一个新的网页，将认证代码复制到笔记本中。完成后，权重将被打包并保存到您的 Google Drive 中，文件名为`run1.tar.gz`。
 
 现在，在运行 PyTorch 的实例或笔记本上，下载该 tar 文件并解压缩。我们需要重命名一些文件，使这些权重与 GPT-2 的 Hugging Face 重新实现兼容：
 
@@ -688,7 +695,7 @@ from pytorch_transformers import GPT2LMHeadModel
 model = GPT2LMHeadModel.from_pretrained([SAVED_TENSORFLOW_MODEL_DIR])
 ```
 
-或者，只是为了玩弄模型，您可以使用*run_gpt2.py*脚本获得一个提示，输入文本并从基于 PyTorch 的模型获取生成的样本：
+或者，只是为了玩弄模型，您可以使用`run_gpt2.py`脚本获得一个提示，输入文本并从基于 PyTorch 的模型获取生成的样本：
 
 ```py
 python [REPO_DIR]/pytorch-transformers/examples/run_gpt2.py
@@ -701,7 +708,7 @@ BERT 和 GPT-2 目前是文本学习中最流行的名称，但在我们结束�
 
 ## ULMFiT
 
-与 BERT 和 GPT-2 这两个庞然大物相比，*ULMFiT*基于一个老式的 RNN。看不到 Transformer，只有 AWD-LSTM，这是由 Stephen Merity 最初创建的架构。在 WikiText-103 数据集上训练，它已被证明适合迁移学习，尽管是*老式*的架构，但在分类领域已被证明与 BERT 和 GPT-2 具有竞争力。
+与 BERT 和 GPT-2 这两个庞然大物相比，`ULMFiT`基于一个老式的 RNN。看不到 Transformer，只有 AWD-LSTM，这是由 Stephen Merity 最初创建的架构。在 WikiText-103 数据集上训练，它已被证明适合迁移学习，尽管是*老式*的架构，但在分类领域已被证明与 BERT 和 GPT-2 具有竞争力。
 
 虽然 ULMFiT 本质上只是另一个可以像其他模型一样在 PyTorch 中加载和使用的模型，但它的自然家园是 fast.ai 库，该库位于 PyTorch 之上，并为快速掌握深度学习并快速提高生产力提供了许多有用的抽象。为此，我们将看看如何在 Twitter 数据集上使用 fast.ai 库中的 ULMFiT，该数据集在第五章中使用过。
 
@@ -803,13 +810,13 @@ learn.fit_one_cycle(1, 2e-2, moms=(0.8,0.7))
 
 一些推荐关注的 Twitter 账号：
 
-+   *@jeremyphoward* —— fast.ai 的联合创始人
++   `@jeremyphoward` —— fast.ai 的联合创始人
 
-+   *@miles_brundage* —— OpenAI 的研究科学家（政策）
++   `@miles_brundage` —— OpenAI 的研究科学家（政策）
 
-+   *@BrundageBot* —— 一个每天生成有趣论文摘要的 Twitter 机器人（警告：通常每天推出 50 篇论文！）
++   `@BrundageBot` —— 一个每天生成有趣论文摘要的 Twitter 机器人（警告：通常每天推出 50 篇论文！）
 
-+   *@pytorch* —— 官方 PyTorch 账号
++   `@pytorch` —— 官方 PyTorch 账号
 
 ¹ 请查看张宏毅等人（2017 年）的论文“混合：超越经验风险最小化”。
 

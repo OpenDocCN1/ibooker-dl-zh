@@ -1,16 +1,14 @@
+
+
 # 3 构建无服务器图像识别系统，第二部分
 
 本章涵盖了
 
-+   构建简单的 AI as a Service 系统
-
-+   消费人工智能图像识别服务
-
-+   实现同步和异步服务
-
-+   部署用户界面
-
-+   部署到云端
++ 构建简单的 AI as a Service 系统
++ 消费人工智能图像识别服务
++ 实现同步和异步服务
++ 部署用户界面
++ 部署到云端
 
 在本章中，我们将继续构建我们在第二章开始的服务器端无服务器图像识别系统。我们将添加我们的图像识别服务，该服务将调用 AWS Rekognition 来为我们完成繁重的工作。一旦完成，我们将为我们的系统构建一个简单的前端，以便我们可以测试我们的图像识别能力。
 
@@ -22,17 +20,17 @@
 
 ### 3.1.1 分析服务
 
-让我们来看看 `analysis-service`。与 `crawler-service` 类似，当我们的 S3 存储桶中有可供分析图像时，该服务会由 Analysis SQS 队列的消息触发。该服务的逻辑概述如图 3.1 所示。
+让我们来看看`analysis-service`。与`crawler-service`类似，当我们的 S3 存储桶中有可供分析图像时，该服务会由 Analysis SQS 队列的消息触发。该服务的逻辑概述如图 3.1 所示。
 
 ![](img/CH03_F01_Elger.png)
 
 图 3.1 分析服务
 
-从本质上讲，`analysis-service` 在下载的图像和亚马逊 Rekognition 服务之间形成了一座桥梁。`crawler-service` 下载的每一张图像都会输入到 Rekognition 中，并返回一组标签。每个标签都是一个描述图像中由模型识别的对象的词，以及一个置信度水平（一个介于 0 和 100 之间的数字，其中 100 表示对图像标签的完全置信）。
+从本质上讲，`analysis-service`在下载的图像和亚马逊 Rekognition 服务之间形成了一座桥梁。`crawler-service`下载的每一张图像都会输入到 Rekognition 中，并返回一组标签。每个标签都是一个描述图像中由模型识别的对象的词，以及一个置信度水平（一个介于 0 和 100 之间的数字，其中 100 表示对图像标签的完全置信）。
 
 在此分析之后，该服务处理返回的数据以创建一组词频，这些词频可以输入到词云生成器中。背后的想法是尝试在给定 URL 上可用的图像之间视觉上确定一个共同的主题。
 
-让我们来看看 `analysis-service` 中的代码，从 `serverless.yml` 配置开始，看看这是如何实现的。这将在下一列表中展示。
+让我们来看看`analysis-service`中的代码，从`serverless.yml`配置开始，看看这是如何实现的。这将在下一列表中展示。
 
 图 3.1 分析服务 `serverless.yml`
 
@@ -61,9 +59,9 @@ functions:
 
 ❷ 定义主入口点
 
-我们应该注意，这个服务的 `serverless.yml` 配置文件与之前的非常相似。主要区别在于它允许 Lambda 函数访问 Rekognition API。让我们看看这个接口是如何工作的。`analysis-service` 代码中的 `handler.js` 文件实现了这个接口。
+我们应该注意，这个服务的`serverless.yml`配置文件与之前的非常相似。主要区别在于它允许 Lambda 函数访问 Rekognition API。让我们看看这个接口是如何工作的。`analysis-service`代码中的`handler.js`文件实现了这个接口。
 
-以下列表显示了 `analysis-service` 的 `require` 语句。
+以下列表显示了`analysis-service`的`require`语句。
 
 图 3.2 分析服务 require
 
@@ -222,13 +220,11 @@ $ serverless deploy
 
 如上图所示，UI 服务公开了三个端点：
 
-+   `url/list` 列出已提交进行分析的所有 URL。
++ `url/list` 列出已提交进行分析的所有 URL。
++ `image/list` 列出针对特定 URL 已分析的所有图像。
++ `url/analyze` 提交 URL 以进行分析。
 
-+   `image/list` 列出针对特定 URL 已分析的所有图像。
-
-+   `url/analyze` 提交 URL 以进行分析。
-
-Serverless 框架允许我们在单个配置文件中定义多个 Lambda 函数，我们已经在 UI 服务的配置中使用了这一点。让我们看一下 UI 服务的 `serverless.yml` 文件，它将在下一个列表中展示。
+Serverless 框架允许我们在单个配置文件中定义多个 Lambda 函数，我们已经在 UI 服务的配置中使用了这一点。让我们看一下 UI 服务的`serverless.yml`文件，它将在下一个列表中展示。
 
 ![](img/CH03_F02_Elger.png)
 
@@ -293,7 +289,7 @@ functions:
 
 此配置在之前的配置文件之上引入了一些新元素。首先，我们使用了一个自定义插件--`serverless-domain-manager`。我们使用它来帮助我们为我们的服务设置一个自定义域名。如果您还记得，在第二章的开始，我们在 Route53 中设置了一个域名并创建了一个通配符证书。一会儿，我们将使用此域名来为我们的 UI 服务。
 
-在此阶段，配置中的权限部分应该看起来很熟悉。函数部分略有不同，因为它有三个条目。请注意，每个条目都是相似的，因为它与一个 `HTTP` 事件相关联。这告诉 Serverless 将函数绑定到 API Gateway，并通过给定的路由使函数可用。自定义域名条目用于为服务创建 DNS 条目，并将其连接到 API Gateway。我们将在一会儿部署此服务，但首先让我们看看实现，它在 `handler.js` 文件中。
+在此阶段，配置中的权限部分应该看起来很熟悉。函数部分略有不同，因为它有三个条目。请注意，每个条目都是相似的，因为它与一个`HTTP`事件相关联。这告诉 Serverless 将函数绑定到 API Gateway，并通过给定的路由使函数可用。自定义域名条目用于为服务创建 DNS 条目，并将其连接到 API Gateway。我们将在一会儿部署此服务，但首先让我们看看实现，它在`handler.js`文件中。
 
 在现在应该已经熟悉的模式中，我们引入 AWS SDK 并创建服务所需的对象，在这种情况下是 S3 和 SQS。这将在以下列表中展示。
 
@@ -310,9 +306,9 @@ const sqs = new AWS.SQS({region: process.env.REGION})
 
 ❷ 加载 AWS SDK 并实例化 S3 和 SQS 接口。
 
-该服务定义了三个入口点，它们将被部署为三个单独的 Lambda 函数。`listUrl` 函数将在下一个列表中提供。
+该服务定义了三个入口点，它们将被部署为三个单独的 Lambda 函数。`listUrl`函数将在下一个列表中提供。
 
-图 3.8 `listUrls` 函数
+图 3.8 `listUrls`函数
 
 ```
 module.exports.listUrls = (event, context, cb) => {     ❶
@@ -349,12 +345,15 @@ module.exports.listUrls = (event, context, cb) => {     ❶
 
 注意，此函数的入口点与我们的所有其他服务完全相同，尽管在这种情况下，该函数将通过 API Gateway 作为 HTTP GET 请求执行。该函数相当简单，它只是列出我们 S3 存储桶顶层的一组文件夹，并将列表作为 JSON 数组返回。
 
-我们的 `listImages` 函数更加简单，因为它从 S3 读取 `status.json` 文件并返回用于显示的内容，所以我们在这里不会详细说明它。相反，让我们看一下以下代码中的 `analyzeUrl` 函数。
+我们的`listImages`函数更加简单，因为它从 S3 读取`status.json`文件并返回用于显示的内容，所以我们在这里不会详细说明它。相反，让我们看一下以下代码中的`analyzeUrl`函数。
 
 图 3.9 `analyzeUrl`
 
+
+
+
+`module.exports.analyzeUrl = (event, context, cb) => {`
 ```
-module.exports.analyzeUrl = (event, context, cb) => {
   let accountId = process.env.ACCOUNTID
   if (!accountId) {
     accountId = context.invokedFunctionArn.split(':')[4]
@@ -384,7 +383,7 @@ module.exports.analyzeUrl = (event, context, cb) => {
 
 再次，这个函数相当直接。它将 URL 作为事件体，并将此 URL 作为消息有效负载的一部分发布到我们的 SQS 队列，由爬虫服务处理。
 
-单一职责原则
+## 单一职责原则
 
 *单一职责原则*或*SRP*是一个强大的理念，它帮助我们保持代码的解耦和良好的维护。希望你能看到，到目前为止的所有代码都遵循了 SRP。我们喜欢将 SRP 视为适用于多个层面的东西：
 
@@ -594,9 +593,9 @@ $(function () {
 
 代码使用标准的 jQuery 函数向刚刚部署的 UI 服务发送 AJAX 请求。它在页面加载时渲染已分析的 URL 列表，以及针对特定 URL 分析的图像列表。最后，它允许用户提交新的 URL 进行分析。在我们部署前端之前，你应该编辑 `code.js` 文件并替换以下行：
 
-+   `const` `BUCKET_ROOT` `=` `'<YOUR` `BUCKET` `URL>'` 应替换为你的特定存储桶的 URL；例如，[`s3-eu-west-1.amazonaws.com /mybucket`](https://s3-eu-west-1.amazonaws.com/mybucket)。
++   `const BUCKET_ROOT = '<YOUR BUCKET URL>'` 应替换为你的特定存储桶的 URL；例如，[`s3-eu-west-1.amazonaws.com /mybucket`](https://s3-eu-west-1.amazonaws.com/mybucket)。
 
-+   `const` `API_ROOT` `=` `'https://chapter2api.<YOUR` `CUSTOM` `DOMAIN>/api/'` 应替换为你的特定自定义域名。
++   `const API_ROOT = 'https://chapter2api.<YOUR CUSTOM DOMAIN>/api/'` 应替换为你的特定自定义域名。
 
 现在已经完成了，我们可以继续部署前端。为此，我们将使用本章开头设置的 AWS 命令行。运行以下命令：
 
@@ -661,7 +660,9 @@ $ aws s3 sync app/ s3://$CHAPTER2_BUCKET
 
 希望你能同意，我们能够用相对较少的代码实现了很多功能，让云基础设施为我们承担重担。我们还应该指出，这个图像识别系统可以不使用神经网络或深度学习的专业知识来构建。我们将在本书的其余部分扩展这一 AI 工程方法。
 
-## 3.4 移除系统
+
+
+### 3.4 移除系统
 
 一旦你完成对系统的测试，它应该被完全移除，以避免产生额外费用。这可以通过使用 Serverless 的`remove`命令非常简单地实现。在`chapter2-3`代码目录中有一个名为`remove.sh`的脚本，它会为你完成移除工作。这将从 S3 中移除前端，并拆除所有相关资源。要使用它，请运行
 
@@ -672,16 +673,16 @@ $ bash remove.sh
 
 如果你希望在任何时候重新部署系统，同一文件夹中有一个名为`deploy.sh`的关联脚本。这将通过自动化我们在本章中工作的步骤为你重新部署整个系统。
 
-## 摘要
+### 摘要
 
-+   一个分析服务消费一个图像识别 AI 服务。我们使用 AWS Rekognition 的`detectLabels` API 来检测每张图像中的标记对象。
++ 一个分析服务消费一个图像识别 AI 服务。我们使用 AWS Rekognition 的`detectLabels` API 来检测每张图像中的标记对象。
 
-+   创建了一个简单的 API 来与我们的分析系统交互。我们使用 API 网关为无服务器服务提供外部端点。
++ 创建了一个简单的 API 来与我们的分析系统交互。我们使用 API 网关为无服务器服务提供外部端点。
 
-+   前端单页应用程序可以作为无服务器应用程序的一部分进行部署。我们的单页应用程序被复制到公开可访问的 S3 存储桶中。
++ 前端单页应用程序可以作为无服务器应用程序的一部分进行部署。我们的单页应用程序被复制到公开可访问的 S3 存储桶中。
 
-+   该系统的所有基础设施都定义为代码；我们从未需要使用 AWS 网页控制台来部署我们的应用程序。
++ 该系统的所有基础设施都定义为代码；我们从未需要使用 AWS 网页控制台来部署我们的应用程序。
 
-+   部署和移除可以通过触发 Serverless 框架的脚本实现完全自动化。
++ 部署和移除可以通过触发 Serverless 框架的脚本实现完全自动化。
 
 警告 请确保你完全移除本章中部署的所有云资源，以避免产生额外费用！

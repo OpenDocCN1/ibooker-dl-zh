@@ -1,14 +1,16 @@
+
+
 # 第四章. 设计 LLM 应用程序
 
-前两章为本书的其余部分奠定了基础。第二章 详细介绍了 LLM 的工作原理，并证明它们最终实际上是逐个预测内容的文档完成模型。第三章 解释了聊天 API 是如何建立在第二章的 LLM 之上的。通过在 API 层面上添加一些语法糖和适量的微调，文档完成模型被用于完成用户和想象中的助手之间的对话。当你深入思考时，聊天模型实际上仍然是一个文档完成模型——只是它完成的文档都是对话记录。
+前两章为本书的其余部分奠定了基础。第二章详细介绍了 LLM 的工作原理，并证明它们最终实际上是逐个预测内容的文档完成模型。第三章解释了聊天 API 是如何建立在第二章的 LLM 之上的。通过在 API 层面上添加一些语法糖和适量的微调，文档完成模型被用于完成用户和想象中的助手之间的对话。当你深入思考时，聊天模型实际上仍然是一个文档完成模型——只是它完成的文档都是对话记录。
 
-从本书的这一部分开始，你将学习到构建 LLM 应用程序以解决公司及其用户问题的所有必要知识。本章是进入这一内容的门户。在本章中，我们将深入探讨 LLM 的 *应用*，你会发现这实际上是在用户问题域和模型文本域之间的一个转换层。此外，LLM 应用程序是一个具有目的的转换层——解决问题！
+从本书的这一部分开始，你将学习到构建 LLM 应用程序以解决公司及其用户问题的所有必要知识。本章是进入这一内容的门户。在本章中，我们将深入探讨 LLM 的*应用*，你会发现这实际上是在用户问题域和模型文本域之间的一个转换层。此外，LLM 应用程序是一个具有目的的转换层——解决问题！
 
-# 循环的解剖结构
+## 循环的解剖结构
 
-在 图 4-1 中，LLM 应用程序被表示为一个 *循环*，意味着用户和模型之间的交互往返。模型和用户的领域通常相当不同。用户可能在进行各种事情，例如撰写电子邮件并寻找恰当的措辞来表达他们的观点。或者他们可能在进行一些复杂的事情，例如组织团队旅行、预订旅行票务和安排住宿。也许用户并没有直接与 LLM 应用程序接触；例如，他们可能设置了一个定期进行的重复分析，当有新数据可用时，LLM 应用程序会执行。重点是用户可以从事各种各样的活动。
+在 图 4-1 中，LLM 应用程序被表示为一个*循环*，意味着用户和模型之间的交互往返。模型和用户的领域通常相当不同。用户可能在进行各种事情，例如撰写电子邮件并寻找恰当的措辞来表达他们的观点。或者他们可能在进行一些复杂的事情，例如组织团队旅行、预订旅行票务和安排住宿。也许用户并没有直接与 LLM 应用程序接触；例如，他们可能设置了一个定期进行的重复分析，当有新数据可用时，LLM 应用程序会执行。重点是用户可以从事各种各样的活动。
 
-相反，模型只做一件事——完成文档。但这一能力在构建 LLM 应用程序时为你提供了很大的灵活性。完成文档的能力使模型能够撰写电子邮件、代码、故事、文档，以及（原则上）任何人类可能撰写的内容。正如我们在上一章所展示的，聊天应用程序是一个完成 *记录* 文档的 LLM 应用程序，而工具执行只是进一步完成一个包含函数调用语法的专用记录文档。凭借其完成文本、参与聊天和执行工具的能力，LLM 可以应用于几乎无限数量的用例。
+相反，模型只做一件事——完成文档。但这一能力在构建 LLM 应用程序时为你提供了很大的灵活性。完成文档的能力使模型能够撰写电子邮件、代码、故事、文档，以及（原则上）任何人类可能撰写的内容。正如我们在上一章所展示的，聊天应用程序是一个完成*记录*文档的 LLM 应用程序，而工具执行只是进一步完成一个包含函数调用语法的专用记录文档。凭借其完成文本、参与聊天和执行工具的能力，LLM 可以应用于几乎无限数量的用例。
 
 ![图片](img/pefl_0401.png)
 
@@ -22,7 +24,7 @@ LLM 应用可能只涉及循环的一次迭代。例如，如果用户正在撰�
 
 在以下章节中，我们将带您环游图 4-1 的循环。我们将讨论用户问题领域，将该问题转换为模型领域，收集完成内容，并将其转换回用户的解决方案。
 
-## 用户的问题
+### 用户的问题
 
 循环从用户和他们试图解决的问题开始。表 4-1 说明了用户问题领域在多个维度上的变化，可以从简单到复杂。这些维度包括以下内容：
 
@@ -38,16 +40,16 @@ LLM 应用可能只涉及循环的一次迭代。例如，如果用户正在撰�
 
 表 4-1\. 复杂性四个维度（行）中的三个问题域（列）
 
-|   | *复杂性增加➜* |
+|  | *复杂性增加➜* |
 | --- | --- |
-|   | 校对 | IT 技术支持协助 | 旅行计划 |
+|  | 校对 | IT 技术支持协助 | 旅行计划 |
 | --- | --- | --- | --- |
 | ***问题媒介*** | 文本 | 电话语音 | 网站上的复杂交互、用户输入的文本和与 API 的交互。 |
 | ***抽象层次*** | 问题具体、定义明确且规模小。 | 一个大的抽象问题空间和大的解决方案空间，但受限于可用的文档 | 涉及理解用户的主体偏好和客观约束，以便协调复杂的解决方案。 |
 | ***所需上下文*** | 不仅仅是用户提交的文本。 | 可搜索的技术文档和示例支持转录本 | 访问日历、航空公司 API、最近的新闻文章、政府旅行建议、维基百科等。 |
 | ***有状态性*** | 无状态性——每次对 API 的调用都包含一个独特的问题陈述。 | 必须跟踪对话历史和尝试过的解决方案 | 必须跟踪跨周的计划、不同的交互媒介和计划中断的分支。 |
 
-## 将用户问题转换为模型域
+### 将用户问题转换为模型域
 
 从图 4-1 的循环中的下一个停靠点是应用程序内部，在这里用户的问题被转换为模型的域。提示工程的核心在于这一步。目标是创建一个提示，使其完成包含可用于解决用户问题的信息。仅仅构建一个恰到好处的提示是一项相当艰巨的任务，应用程序必须同时满足以下标准：
 
@@ -65,27 +67,27 @@ LLM 应用可能只涉及循环的一次迭代。例如，如果用户正在撰�
 
 ###### 小贴士
 
-大多数最好的 LLM 对它们的训练数据守口如瓶，这是有充分理由的。如果你确切知道它们的训练文档是如何格式化的，那么你在操纵提示和，比如说，寻找新的越狱策略上就占有了优势。然而，如果你想看看模型熟悉哪些类型的文档，那么最简单的事情就是——*直接询问*。例如，尝试以下请求：`**"哪些类型的正式文档对于指定公司的财务信息是有用的?"**`你应该会看到一大堆可以模仿你请求的文档。接下来，要求模型生成一个示例文档，看看它是否符合你的需求。
+大多数最好的 LLM 对它们的训练数据守口如瓶，这是有充分理由的。如果你确切知道它们的训练文档是如何格式化的，那么你在操纵提示和，比如说，寻找新的越狱策略上就占有了优势。然而，如果你想看看模型熟悉哪些类型的文档，那么最简单的事情就是——*直接询问*。例如，尝试以下请求：`"哪些类型的正式文档对于指定公司的财务信息是有用的?"`你应该会看到一大堆可以模仿你请求的文档。接下来，要求模型生成一个示例文档，看看它是否符合你的需求。
 
-幸运的是，有无数种文档和图案可以借鉴。对于完成模型，看看你是否可以使提示类似于计算机程序、新闻文章、推文、Markdown 文档、通信记录等。对于聊天模型，整体文档由你决定——对于 OpenAI，这是一个以指导性系统消息开始，随后是用户和助手角色之间来回交流的 ChatML 文档。但你可以通过在用户消息中包含常见图案来使用小红帽原则。例如，利用 Markdown 语法来帮助模型理解内容的结构。使用井号（`#`）来分隔部分，反引号(`` ` ``) to delimit code, an asterisk (`*`) to indicate items in a list, etc.
+幸运的是，有无数种文档和图案可以借鉴。对于完成模型，看看你是否可以使提示类似于计算机程序、新闻文章、推文、Markdown 文档、通信记录等。对于聊天模型，整体文档由你决定——对于 OpenAI，这是一个以指导性系统消息开始，随后是用户和助手角色之间来回交流的 ChatML 文档。但你可以通过在用户消息中包含常见图案来使用小红帽原则。例如，利用 Markdown 语法来帮助模型理解内容的结构。使用井号（`#`）来分隔部分，反引号（`` ` ``）来分隔代码，星号（`*`）来表示列表中的项目，等等。
 
-Now, let’s look at the second criterion: the prompt must include all the information relevant to addressing the user’s problem. As you convert the user’s problem into the model’s domain, you must collect all of the information relevant to solving the user’s problem and incorporate it into the prompt. Sometimes, the user directly supplies you with all of the information that you need—in the proofreading example, the user’s raw text is sufficient. But at the other extreme, the travel planning application requires that you pull in user preferences, information from user calendars, airline ticket availability, recent news about the destination, government travel recommendations, etc.
+现在，让我们来看第二个标准：提示必须包含所有与解决用户问题相关的信息。当你将用户的问题转换为模型的域时，你必须收集所有与解决用户问题相关的信息，并将其纳入提示中。有时，用户直接向你提供了你需要的所有信息——在校对示例中，用户的原始文本就足够了。但在另一个极端，旅行规划应用要求你引入用户偏好、用户日历中的信息、机票可用性、关于目的地的最新新闻、政府旅行建议等。
 
-Finding all the *possible* content is one challenge, and finding the *best* content is the next challenge. If you saturate the prompt with too much loosely relevant content, then the language model will get distracted and generate irrelevant completions. Finally, the content must be arranged in a well-formatted, logical document so that it makes sense—lest you stray off the path on the way to Grandmother’s house.
+找到所有*可能的*内容是一个挑战，找到*最佳的*内容则是下一个挑战。如果你用太多松散相关的内容充斥提示，语言模型就会分心，生成不相关的完成内容。最后，内容必须被安排成一个格式良好、逻辑清晰的文档，以便有意义——以免你在去奶奶家的路上偏离路径。
 
-The third criterion to consider is that the prompt must condition the model to generate a completion that is actually helpful. If the LLM continues after the prompt by merely jabbering on about the user’s problem, then you’re not helping them at all. You must therefore carefully consider how to set up the prompt so that it points to a solution. When working with completion models, this can be surprisingly tricky. You will need to let the model know that it’s time to create the solution (see the homework example that follows). For chat models, this is much easier because the model has been fine-tuned to automatically produce a helpful message from the assistant that addresses the user problem. Thus, you don’t need any trickery to pull an answer out of the model.
+要考虑的第三个标准是，提示必须引导模型生成一个实际上有帮助的完成内容。如果 LLM 在提示之后仅仅继续喋喋不休地谈论用户的问题，那么你根本没有帮助他们。因此，你必须仔细考虑如何设置提示，使其指向解决方案。当使用完成模型时，这可能出奇地棘手。你需要让模型知道是时候创建解决方案了（见下面的作业示例）。对于聊天模型，这要容易得多，因为模型已经经过微调，可以自动从助手生成一条有帮助的消息来解决用户问题。因此，你不需要任何技巧来从模型中获取答案。
 
-Finally, you must ensure that the model actually stops! Here again, the situation is different for completion versus chat models. With chat, everything is easy—the model is fine-tuned to come to a stop after the helpful assistant message (though you might need to instruct the assistant to limit how chatty it is). With completion models, you have to be more careful. One option is to create an expectation in the instructional text that the solution should *not* go on forever; it should reach a solution and stop. An alternative is to create the expectation that some specific thing will follow and that it will begin with very specific and easily identifiable opening text. If such a pattern exists, then we can use the `stop` parameter to halt generation at the moment the opening text is produced. Both of these patterns are seen in the example covered next.
+最后，你必须确保模型真的会停下来！在这里，情况对于完成模型和聊天模型也是不同的。对于聊天，一切都很容易——模型经过微调，在有用的助手消息之后会停下来（尽管你可能需要指示助手限制它的啰嗦程度）。对于完成模型，你必须更加小心。一种选择是在指令文本中创建一个期望，即解决方案*不应该*永远持续下去；它应该达到一个解决方案并停止。另一种选择是创建一个期望，即某个特定的事情将随之而来，并且它将从非常具体且易于识别的开头文本开始。如果存在这样的模式，那么我们可以使用`stop`参数在生成开头文本的那一刻停止生成。这两种模式都可以在接下来介绍的示例中看到。
 
-### Example: Converting the user’s problem into a homework problem
+#### 示例：将用户的问题转换为家庭作业问题
 
-Let’s dig into an example to demonstrate the preceding concepts. Table 4-2 shows an example prompt for an application that makes travel recommendations based on a user’s requested location. The plain text is part of the boilerplate used to structure the prompt and condition it to provide a solution, and the italicized text is the information specific to the user’s current request. This example uses a completion API because it makes it easier to see each of the preceding criteria in action. (Note that building an actual travel app would be very complicated indeed! We chose this very simplified example because it demonstrates the ideas discussed previously. We talk about more realistic applications in Chapters 8 and 9.)
+让我们深入一个示例来演示前面的概念。表 4-2 显示了一个应用程序的示例提示，该应用程序根据用户请求的地点提供旅行推荐。纯文本是用于构建提示并使其提供解决方案的样板的一部分，斜体文本是特定于用户当前请求的信息。这个示例使用了完成 API，因为它更容易看到前面每个标准的实际应用。（请注意，构建一个实际的旅行应用程序确实会非常复杂！我们选择这个非常简化的示例是因为它演示了前面讨论的想法。我们将在第 8 章和第 9 章讨论更现实的应用程序。）
 
-Table 4-2\. An example prompt for a travel recommendation application
+表 4-2\. 旅行推荐应用程序的示例提示
 
-| Prompt |  
+| 提示 |  
+
 ```
-
 # 休闲、旅游与旅游研究 101 - 家庭作业
 
 为以下三个问题提供答案。每个答案都应该
@@ -137,9 +139,10 @@ Table 4-2\. An example prompt for a travel recommendation application
 ```py
 
  |
-| Completion |  
-```
 
+| 完成 |  
+
+```
 也许现在朝鲜不是一个很好的目的地。
 
 但我敢打赌我们可以在韩国找到一个不错的旅游地点。
@@ -150,15 +153,18 @@ Table 4-2\. An example prompt for a travel recommendation application
 
 首先，注意提示如何遵循小红帽原则——这是一个家庭作业问题，这种类型的文档你很可能在训练数据中经常看到。此外，文档以 Markdown 格式编写，这是一种常见的标记语言。这将鼓励模型以可预测的方式格式化文档，使用部分标题和语法来指示加粗或斜体字。在最基本层面上，文档使用正确的语法。这很重要，因为糟糕的语法会鼓励模型以类似的方式生成文本。显然，我们正稳步走向奶奶家。
 
-接下来，看看提示如何结合 LLM 需要理解问题的上下文；这个上下文在 表 4-2 中以斜体形式出现。首先是实际的用户问题。可能用户刚刚从旅行网站的下拉菜单中选择了朝鲜；他们甚至可能不小心选了它。尽管如此，它被添加到提示中作为第一个加粗文本片段。随后的加粗文本片段是从其他相关资源中提取的：国务院旅行建议和最近的新闻文章标题。对于我们的例子，这些信息足以做出旅行推荐。
+接下来，看看提示如何结合 LLM 需要理解问题的上下文；这个上下文在表 4-2 中以斜体形式出现。首先是实际的用户问题。可能用户刚刚从旅行网站的下拉菜单中选择了朝鲜；他们甚至可能不小心选了它。尽管如此，它被添加到提示中作为第一个加粗文本片段。随后的加粗文本片段是从其他相关资源中提取的：国务院旅行建议和最近的新闻文章标题。对于我们的例子，这些信息足以做出旅行推荐。
 
-有几种方式可以引导模型走向明确的解决方案，而不是进一步阐述问题。在第一行，我们引导模型向希望看到的响应类型——休闲、旅行和旅游领域内的某种内容。接下来，我们包括一个示例问题。这与用户当前请求无关，但它为模型建立了一个模式：问题将以 `## 问题 N` 开头，随后将以 `## 解决方案 N` 开头提供解决方案。
+有几种方式可以引导模型走向明确的解决方案，而不是进一步阐述问题。在第一行，我们引导模型向希望看到的响应类型——休闲、旅行和旅游领域内的某种内容。接下来，我们包括一个示例问题。这与用户当前请求无关，但它为模型建立了一个模式：问题将以`## 问题 N`开头，随后将以`## 解决方案 N`开头提供解决方案。
 
-问题 1 还鼓励在随后的答案中使用某种语气——简洁且礼貌。由于解决方案 1 是一个简短的句子，这进一步鼓励在完成过程中继续这种模式。有了这种模式，问题 2 就是实际的用户问题。我们设定了问题，插入上下文，并提出问题：`你会告诉顾客什么？` 使用文本 `## 解决方案 2`，我们表明问题陈述已经结束，现在是回答的时候。如果我们省略了这一点，那么模型可能会继续通过虚构更多关于朝鲜的信息来详细阐述问题。
 
-最后的任务是坚持一个明确的停止点。由于每个新的 Markdown 部分都以##开头，我们有一个可以利用的模式。如果模型开始编造第三个问题，那么我们可以通过指定停止文本来切断模型生成，告诉模型一旦产生这个文本就停止生成。在这种情况下，一个合理的停止文本选择是`\n#`，这表示模型已经完成了当前解决方案，并开始了一个新的部分，可能是编造问题的第三部分。
 
-### 聊天模型与生成模型
+
+# 问题 1 还鼓励在随后的答案中使用某种语气——简洁且礼貌。由于解决方案 1 是一个简短的句子，这进一步鼓励在完成过程中继续这种模式。有了这种模式，问题 2 就是实际的用户问题。我们设定了问题，插入上下文，并提出问题：`你会告诉顾客什么？` 使用文本 `## 解决方案 2`，我们表明问题陈述已经结束，现在是回答的时候。如果我们省略了这一点，那么模型可能会继续通过虚构更多关于朝鲜的信息来详细阐述问题。
+
+最后的任务是坚持一个明确的停止点。由于每个新的 Markdown 部分都以`##`开头，我们有一个可以利用的模式。如果模型开始编造第三个问题，那么我们可以通过指定停止文本来切断模型生成，告诉模型一旦产生这个文本就停止生成。在这种情况下，一个合理的停止文本选择是`\n#`，这表示模型已经完成了当前解决方案，并开始了一个新的部分，可能是编造问题的第三部分。
+
+## 聊天模型与生成模型
 
 在前面的例子中，我们依靠一个生成模型来展示用户域与模型域之间转换的标准。随着聊天模型的引入，许多过程都得到了简化。聊天 API 确保输入到模型中的数据将非常接近微调数据，因为消息将被内部形成为一个转录文档（本节开头的第 1 个标准）。模型高度条件化，能够提供解决用户问题的响应（第 3 个标准），并且模型将在合理的位置停止——即在助手消息的结尾（第 4 个标准）。
 
@@ -168,7 +174,7 @@ Table 4-2\. An example prompt for a travel recommendation application
 
 回顾图 4-1，在 LLM 应用循环的下一阶段，你将提示提交给模型并检索生成内容。如果你只玩过一种特定的模型，比如 ChatGPT，你可能会认为这里没有需要做的决定——只需将提示发送给模型并等待生成内容，就像我们在示例中展示的那样。然而，所有模型并不相同！
 
-你将不得不决定你的模型应该有多大。通常，模型越大，其生成内容的质量越高。但有一些非常重要的权衡，比如成本。在撰写这本书的时候，运行 GPT-4 的成本可能是运行 gpt-3.5-turbo 的*20 倍*。这种质量提升是否值得价格上数量级的增加？有时候，是值得的！
+你将不得不决定你的模型应该有多大。通常，模型越大，其生成内容的质量越高。但有一些非常重要的权衡，比如成本。在撰写这本书的时候，运行 GPT-4 的成本可能是运行 `gpt-3.5-turbo` 的*20 倍*。这种质量提升是否值得价格上数量级的增加？有时候，是值得的！
 
 另一个重要因素是延迟。更大的模型需要更多的计算，而更多的计算可能需要比用户能提供的更多时间。在 GitHub Copilot 的早期阶段，我们决定使用一个名为 Codex 的 OpenAI 模型，它体积小、*足够智能*且速度极快。如果我们使用了 GPT-4，那么无论补全结果有多好，用户很少会愿意等待。
 
@@ -307,6 +313,8 @@ LLMs——即使是最好的——也不是全能的。他们怎么可能呢？�
 ## 在线评估
 
 在在线评估中，你寻找的是用户对应用是否提供良好体验的反馈。反馈不必涉及填写长表，但在线评估的生命线是遥测数据——所以测量*一切*。
+
+
 
 评估质量的一个明显方法就是直接询问用户。在 ChatGPT 和其他基于聊天的 LLM 体验中，你可能看到每个助手消息旁边的小点赞或点踩按钮。虽然这似乎是质量的一个明确指标，但你必须考虑到偏见。可能只有真正愤怒的用户才会投票——他们总是投反对票。而且，从比例上来说，与上下/下按钮互动的流量并不多。所以除非你的应用流量真的很大，否则你可能无法从上下/下按钮中获得足够的数据。
 

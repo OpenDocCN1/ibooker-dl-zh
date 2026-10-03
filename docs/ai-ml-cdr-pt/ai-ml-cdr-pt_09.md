@@ -1,3 +1,4 @@
+
 # 第八章\. 使用机器学习创建文本
 
 随着 2022 年 ChatGPT 的发布，*生成式 AI*这个词进入了公众的词汇表。这个简单的应用允许你与基于云的 AI 进行聊天，它以几乎神奇的方式回答你的查询，几乎涵盖了人类经验的各个方面。它是通过使用比上一章中看到的循环神经网络更高级的进化，通过使用一种称为*变换器*的技术来工作的。
@@ -80,7 +81,7 @@
 
 +   正好赶上兰吉安之球。
 
-您希望创建一个包含所有文本的单个字符串，并将其设置为您的数据。使用\n 作为换行符。然后，这个语料库可以轻松加载和分词。首先，分词函数将文本拆分为单个单词，然后`create_word_dictionary`将为文本中的每个单词创建一个索引的字典：
+您希望创建一个包含所有文本的单个字符串，并将其设置为您的数据。使用`\n`作为换行符。然后，这个语料库可以轻松加载和分词。首先，分词函数将文本拆分为单个单词，然后`create_word_dictionary`将为文本中的每个单词创建一个索引的字典：
 
 ```py
 def tokenize(text):
@@ -101,7 +102,6 @@ def create_word_dictionary(word_list):
             counter += 1
 
     return word_dict
-
 ```
 
 注意，这是一个非常简单的学习方法，目的是学习这些方法的工作原理。在生产系统中，您可能会使用现成的、为规模而构建的组件，或者极大地增强它们以实现规模和异常检查。
@@ -116,7 +116,6 @@ tokens = tokenize(data)
 word_index = create_word_dictionary(tokens)
 
 total_words = len(tokenizer.word_index) + 1
-
 ```
 
 这个过程的目的是用它们的标记值替换单词（见图 8-1）。
@@ -152,7 +151,7 @@ def pad_sequences(sequences, max_length=None):
     padded_sequences = []
     for seq in sequences:
         # Calculate number of zeros needed
-        num_zeros = max_length – len(seq)
+        num_zeros = max_length - len(seq)
         # Create padded sequence
         padded_seq = [0] * num_zeros + list(seq)
         padded_sequences.append(padded_seq)
@@ -182,20 +181,20 @@ input_sequences = pad_sequences(input_sequences, max_sequence_len)
 
 ###### 图 8-3\. 将填充序列转换为特征（x）和标签（y）
 
-当您训练神经网络时，您将匹配每个特征与其对应的标签。例如，对于[0 0 0 0 0 0 1]，标签将是[2]。
+当您训练神经网络时，您将匹配每个特征与其对应的标签。例如，对于`[0 0 0 0 0 0 1]`，标签将是`[2]`。
 
 这里是您用来将标签从输入序列中分离的代码：
 
 ```py
 def split_sequences(sequences):
     # Create xs by removing the last element from each sequence
-    xs = [seq[:–1] for seq in sequences]
+    xs = [seq[:-1] for seq in sequences]
 
     # Create labels by taking just the last element from each sequence
-    labels = [seq[–1:] for seq in sequences]  
-    # Using [–1:] to keep it as a single-element list
+    labels = [seq[-1:] for seq in sequences]  
+    # Using [-1:] to keep it as a single-element list
     # Alternative if you want labels as single numbers instead of lists:
-    # labels = [seq[–1] for seq in sequences]
+    # labels = [seq[-1] for seq in sequences]
 
     return xs, labels
 xs, labels = split_sequences(input_sequences)
@@ -237,7 +236,9 @@ def one_hot_encode_with_checks(value, corpus_size):
 
 你可以使 LSTM 双向的，步数可以是序列的长度，即我们的最大长度减 1（因为我们从末尾移除了一个标记来制作标签）。
 
-最后，输出层将是一个具有总单词数作为参数的密集层，通过 Softmax 激活。这个层中的每个神经元都将代表下一个单词匹配该索引值的概率：
+最后，输出层将是一个具有总单词数作为参数的密集层，通过 Softmax 激活。这个层中的每个神经元都将代表下一个单词匹配该索引值的概率。
+
+
 
 ```py
 class LSTMPredictor(nn.Module):
@@ -332,7 +333,6 @@ number_sequence = [word_dict.get(word, 0) for word in words]
 # Pad the sequence
 padded_sequence = [0] * (sequence_length – len(number_sequence)) 
                       + number_sequence
-
 ```
 
 然后，你需要将这个序列填充，使其与用于训练的数据具有相同的形状，通过将其转换为张量：
@@ -354,7 +354,6 @@ with torch.no_grad():  # No need to track gradients for prediction
 ```py
 # Get the predicted word index (highest probability)
 predicted_idx = torch.argmax(output[0]).item()
-
 ```
 
 这应该会给出值`6`。如果你查看单词索引，你会看到它是单词“one”：
@@ -362,7 +361,6 @@ predicted_idx = torch.argmax(output[0]).item()
 ```py
 {'UNK': 0, 'in': 1, 'the': 2, 'town': 3, 'of': 4, 'Athy': 5, 
  `'``one``'``:` `6``,` 'Jeremy': 7, 'Lanigan': 8,
-
 ```
 
 你也可以通过在单词索引项中搜索直到找到预测的单词并打印出来，在代码中查找它。你可以通过创建一个反向字典（将值映射到单词，而不是相反）来完成此操作：
@@ -373,7 +371,6 @@ reverse_dict = {v: k for k, v in word_dict.items()}
 
 # Convert predicted index to word
 predicted_word = reverse_dict[predicted_idx]
-
 ```
 
 因此，从文本“in the town of Athy”开始，网络预测下一个词应该是“one”——如果你查看训练数据，这是正确的，因为这首歌以这句开始：
@@ -489,14 +486,12 @@ generated_text = generate_sequence(
 
 print("\nFinal generated sequence:")
 print(generated_text)
-
 ```
 
 这将最终创建一个类似这样的字符串：
 
 ```py
 sweet jeremy saw dublin his right leg acres of the nolans, dolans, daughter, of
-
 ```
 
 它迅速陷入胡言乱语。为什么？第一个原因是训练文本的主体真的很小，所以它几乎没有上下文可以工作。第二个原因是序列中下一个单词的预测依赖于序列中的前一个单词，如果前一个匹配不佳，即使是最好的“下一个”匹配也将有很低的准确率。当你将这个添加到序列中并预测下一个单词后，它具有低准确率的可能性甚至更高——因此，预测的单词看起来像是半随机生成的。
@@ -541,6 +536,8 @@ youll: 0.0113
 你可以轻松地将用于硬编码数据集的相同模式扩展到使用文本文件。我已经托管了一个包含约 1700 行文本的文本文件，这些文本是从多首歌曲中收集的，你可以用它进行实验。稍作修改后，你可以用这个代替单个硬编码的歌曲。
 
 要在 Colab 中下载数据，请使用以下代码：
+
+
 
 ```py
 !wget --no-check-certificate \
@@ -608,7 +605,6 @@ on the a over the frivolity;
 
 ```py
 sweet jeremy saw dublin she of his on the frivolity; of a heart is the ground
-
 ```
 
 看起来好多了！但我们还能进一步改进吗？
@@ -621,7 +617,7 @@ sweet jeremy saw dublin she of his on the frivolity; of a heart is the ground
 
 ## 嵌入维度
 
-在第六章中，我们讨论了嵌入的最佳维度是单词数量的四次方根。在这种情况下，词汇表有 3,259 个单词，其四次方根约为 8。另一个经验法则是这个数字的对数——log(3259)略大于 32。因此，如果网络学习缓慢，您可以选择这两个值之间的一个数字。这为您提供了足够的“空间”来捕捉单词之间的关系。
+在第六章中，我们讨论了嵌入的最佳维度是单词数量的四次方根。在这种情况下，词汇表有 3,259 个单词，其四次方根约为 8。另一个经验法则是这个数字的对数——`log(3259)`略大于 32。因此，如果网络学习缓慢，您可以选择这两个值之间的一个数字。这为您提供了足够的“空间”来捕捉单词之间的关系。
 
 ## 初始化 LSTM
 
@@ -680,7 +676,6 @@ twould set your heart a bubblin will lámh. you that
 
 in the town of athy one jeremy lanigan do lámh. pretty generation her soul, 
 fell on the stony ground red we were feeble was down
-
 ```
 
 ###### 注意

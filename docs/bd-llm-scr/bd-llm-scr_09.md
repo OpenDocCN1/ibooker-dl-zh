@@ -1,3 +1,5 @@
+
+
 # 附录 C 练习解答
 
 练习答案的完整代码示例可以在补充的 GitHub 仓库[`github.com/rasbt/LLMs-from-scratch`](https://github.com/rasbt/LLMs-from-scratch)中找到。
@@ -362,6 +364,9 @@ for param in model.parameters():
 
 Phi-3 提示格式，如图 7.4 所示，对于给定的示例输入如下所示：
 
+
+
+
 ```py
 <user>
 Identify the correct spelling of the following word: 'Occasion'
@@ -403,7 +408,7 @@ for i, entry in tqdm(enumerate(test_data), total=len(test_data)):
     test_data[i]["model_response"] = response_text
 ```
 
-#1 新：调整###Response 到<|assistant|>
+#1 新：调整`###Response`到`<|assistant|>`
 
 使用 Phi-3 模板微调模型大约快 17%，因为它导致模型输入更短。分数接近 50，这与我们之前使用 Alpaca 风格提示获得的分数在同一水平。
 
@@ -490,11 +495,11 @@ def custom_collate_fn(
 
 #2 在目标中屏蔽所有输入和指令标记
 
-当使用这种指令屏蔽方法微调模型进行评估时，其表现略差（使用第七章的 Ollama Llama 3 方法，大约低 4 分）。这与“带有指令损失的指令调整”论文中的观察结果一致([`arxiv.org/abs/2405.14394`](https://arxiv.org/abs/2405.14394))。
+当使用这种指令屏蔽方法微调模型进行评估时，其表现略差（使用第七章的 Ollama Llama 3 方法，大约低 4 分）。这与“带有指令损失的指令调整”论文中的观察结果一致（[`arxiv.org/abs/2405.14394`](https://arxiv.org/abs/2405.14394)）。
 
 ### 练习 7.3
 
-要在原始斯坦福 Alpaca 数据集([`github.com/tatsu-lab/stanford_alpaca`](https://github.com/tatsu-lab/stanford_alpaca))上微调模型，我们只需更改文件 URL：
+要在原始斯坦福 Alpaca 数据集（[`github.com/tatsu-lab/stanford_alpaca`](https://github.com/tatsu-lab/stanford_alpaca)）上微调模型，我们只需更改文件 URL：
 
 ```py
 url = "https://raw.githubusercontent.com/rasbt/LLMs-from-scratch/main/ch07/01_main-chapter-code/instruction-data.json"
@@ -510,7 +515,7 @@ url = "https://raw.githubusercontent.com/tatsu-lab/stanford_alpaca/main/alpaca_d
 
 因此，强烈建议在 GPU 上运行训练。
 
-如果你遇到内存不足的错误，考虑将批大小从 8 减少到 4、2 或 1。除了降低批大小外，你还可能希望考虑将 `allowed_max_length` 从 1024 降低到 512 或 256。
+如果你遇到内存不足的错误，考虑将批大小从 8 减少到 4、2 或 1。除了降低批大小外，你还可能希望考虑将`allowed_max_length`从 1024 降低到 512 或 256。
 
 下面是来自 Alpaca 数据集的一些示例，包括生成的模型响应：
 
@@ -546,11 +551,11 @@ model.to(device)
 
 ### 练习 A.1
 
-可选的 Python 设置提示文档([`github.com/rasbt/LLMs-from-scratch/tree/main/setup/01_optional-python-setup-preferences`](https://github.com/rasbt/LLMs-from-scratch/tree/main/setup/01_optional-python-setup-preferences)) 包含了额外的建议和提示，如果你需要额外的帮助来设置你的 Python 环境。
+可选的 Python 设置提示文档（[`github.com/rasbt/LLMs-from-scratch/tree/main/setup/01_optional-python-setup-preferences`](https://github.com/rasbt/LLMs-from-scratch/tree/main/setup/01_optional-python-setup-preferences)）包含了额外的建议和提示，如果你需要额外的帮助来设置你的 Python 环境。
 
 ### 练习 A.2
 
-可选的 "安装本书中使用的库" 文档([`github.com/rasbt/LLMs-from-scratch/tree/main/setup/02_installing-python-libraries`](https://github.com/rasbt/LLMs-from-scratch/tree/main/setup/02_installing-python-libraries)) 包含了检查你的环境是否正确设置的实用工具。
+可选的 "安装本书中使用的库" 文档（[`github.com/rasbt/LLMs-from-scratch/tree/main/setup/02_installing-python-libraries`](https://github.com/rasbt/LLMs-from-scratch/tree/main/setup/02_installing-python-libraries)）包含了检查你的环境是否正确设置的实用工具。
 
 ### 练习 A.3
 

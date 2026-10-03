@@ -1,8 +1,10 @@
+
+
 # 第四章：卷积神经网络
 
 在本章中，我们介绍卷积神经网络（CNNs）以及与之相关的构建块和方法。我们从对 MNIST 数据集进行分类的简单模型开始，然后介绍 CIFAR10 对象识别数据集，并将几个 CNN 模型应用于其中。尽管小巧快速，但本章介绍的 CNN 在实践中被广泛使用，以获得物体识别任务中的最新结果。
 
-# CNN 简介
+## CNN 简介
 
 在过去几年中，卷积神经网络作为一种特别有前途的深度学习形式获得了特殊地位。根植于图像处理，卷积层已经在几乎所有深度学习的子领域中找到了应用，并且在大多数情况下非常成功。
 
@@ -38,17 +40,16 @@
 
 在本章中，我们涵盖了与卷积神经网络相关的层和操作类型。我们首先重新审视 MNIST 数据集，这次应用一个准确率约为 99%的模型。接下来，我们将转向更有趣的对象识别 CIFAR10 数据集。
 
-# MNIST：第二次
+## MNIST：第二次
 
 在本节中，我们再次查看 MNIST 数据集，这次将一个小型卷积神经网络应用作为我们的分类器。在这样做之前，有几个元素和操作我们必须熟悉。
 
-## 卷积
+### 卷积
 
 卷积操作，正如你可能从架构的名称中期待的那样，是卷积神经网络中连接层的基本手段。我们使用内置的 TensorFlow `conv2d()`：
 
 ```py
 tf.nn.conv2d(x, W, strides=[1, 1, 1, 1], padding='SAME')
-
 ```
 
 在这里，`x`是数据——输入图像，或者是在网络中进一步应用之前的卷积层后获得的下游特征图。正如之前讨论的，在典型的 CNN 模型中，我们按层次堆叠卷积层，并且*特征图*只是一个常用术语，指的是每个这样的层的输出。查看这些层的输出的另一种方式是*处理后的图像*，是应用滤波器和其他操作的结果。在这里，这个滤波器由`W`参数化，表示我们网络中学习的卷积滤波器的权重。这只是我们在图 4-2 中看到的小“滑动窗口”中的一组权重。
@@ -61,14 +62,12 @@ tf.nn.conv2d(x, W, strides=[1, 1, 1, 1], padding='SAME')
 
 ```py
 [None, 28, 28, 1]
-
 ```
 
 这意味着我们有未知数量的图像，每个图像为 28×28 像素，具有一个颜色通道（因为这些是灰度图像）。我们使用的权重`W`的形状将是：
 
 ```py
 [5, 5, 1, 32]
-
 ```
 
 初始的 5×5×1 表示在图像中要进行卷积的小“窗口”的大小，在我们的情况下是一个 5×5 的区域。在具有多个颜色通道的图像中（RGB，如第一章中简要讨论的），我们将每个图像视为 RGB 值的三维张量，但在这个单通道数据中它们只是二维的，卷积滤波器应用于二维区域。稍后，当我们处理 CIFAR10 数据时，我们将看到多通道图像的示例以及如何相应地设置权重`W`的大小。
@@ -81,7 +80,7 @@ tf.nn.conv2d(x, W, strides=[1, 1, 1, 1], padding='SAME')
 
 最后，将`padding`设置为`'SAME'`意味着填充`x`的边界，使得操作的结果大小与`x`的大小相同。
 
-# 激活函数
+### 激活函数
 
 在线性层之后，无论是卷积还是全连接，常见的做法是应用非线性*激活函数*（参见图 4-3 中的一些示例）。激活函数的一个实际方面是，连续的线性操作可以被单个操作替代，因此深度不会为模型的表达能力做出贡献，除非我们在线性层之间使用非线性激活。
 
@@ -89,7 +88,7 @@ tf.nn.conv2d(x, W, strides=[1, 1, 1, 1], padding='SAME')
 
 ###### 图 4-3。常见的激活函数：逻辑函数（左）、双曲正切函数（中）、修正线性单元（右）
 
-## 池化
+### 池化
 
 在卷积层后跟随输出的池化是常见的。技术上，*池化*意味着使用某种本地聚合函数减少数据的大小，通常在每个特征图内部。
 
@@ -105,7 +104,7 @@ tf.nn.max_pool(x, ksize=[1, 2, 2, 1], strides=[1, 2, 2, 1], padding='SAME')
 
 最大池化输出预定义大小的每个区域中的输入的最大值（这里是 2×2）。`ksize`参数控制池化的大小（2×2），`strides`参数控制我们在`x`上“滑动”池化网格的幅度，就像在卷积层的情况下一样。将其设置为 2×2 网格意味着池化的输出将恰好是原始高度和宽度的一半，总共是原始大小的四分之一。
 
-## Dropout
+### Dropout
 
 我们模型中最后需要的元素是*dropout*。这是一种正则化技巧，用于强制网络将学习的表示分布到所有神经元中。在训练期间，dropout 会“关闭”一定比例的层中的单位，通过将它们的值设置为零。这些被丢弃的神经元是随机的，每次计算都不同，迫使网络学习一个即使在丢失后仍能正常工作的表示。这个过程通常被认为是训练多个网络的“集成”，从而增加泛化能力。在测试时使用网络作为分类器时（“推断”），不会进行 dropout，而是直接使用完整的网络。
 
@@ -113,12 +112,11 @@ tf.nn.max_pool(x, ksize=[1, 2, 2, 1], strides=[1, 2, 2, 1], padding='SAME')
 
 ```py
 tf.nn.dropout(layer, keep_prob=keep_prob)
-
 ```
 
 为了能够更改此值（我们必须这样做，因为对于测试，我们希望这个值为`1.0`，表示根本没有丢失），我们将使用`tf.placeholder`并传递一个值用于训练（`.5`）和另一个用于测试（`1.0`）。
 
-## 模型
+### 模型
 
 首先，我们定义了一些辅助函数，这些函数将在本章中广泛使用，用于创建我们的层。这样做可以使实际模型简短易读（在本书的后面，我们将看到存在几种框架，用于更抽象地定义深度学习构建块，这样我们可以专注于快速设计我们的网络，而不是定义所有必要的元素的繁琐工作）。我们的辅助函数有：
 
@@ -148,7 +146,6 @@ def full_layer(input, size):
     W = weight_variable([in_size, size])
     b = bias_variable([size])
     return tf.matmul(input, W) + b
-
 ```
 
 让我们更仔细地看看这些：
@@ -197,14 +194,13 @@ keep_prob = tf.placeholder(tf.float32)
 full1_drop = tf.nn.dropout(full_1, keep_prob=keep_prob)
 
 y_conv = full_layer(full1_drop, 10)
-
 ```
 
 ![CNN](img/letf_0404.png)
 
 ###### 图 4-4. 所使用的 CNN 架构的可视化。
 
-# 随机初始化
+#### 随机初始化
 
 在前一章中，我们讨论了几种类型的初始化器，包括此处用于卷积层权重的随机初始化器：
 
@@ -233,6 +229,9 @@ initial = tf.truncated_normal(shape, stddev=0.1)
 我们将测试过程分为 10 个包含 1,000 张图像的块。对于更大的数据集，这样做非常重要。
 
 以下是完整的代码：
+
+
+
 
 ```py
 mnist = input_data.read_data_sets(DATA_DIR, one_hot=True)
@@ -266,12 +265,11 @@ with tf.Session() as sess:
                             for i in range(10)])
 
 print "test accuracy: {}".format(test_accuracy)
-
 ```
 
 这个模型的性能已经相当不错，仅经过 5 个周期，准确率就超过了 99%，¹这相当于 5,000 步，每个步骤的迷你批次大小为 50。
 
-有关多年来使用该数据集的模型列表以及如何进一步改进结果的一些想法，请查看[*http://yann.lecun.com/exdb/mnist/*](http://yann.lecun.com/exdb/mnist/)。
+有关多年来使用该数据集的模型列表以及如何进一步改进结果的一些想法，请查看[http://yann.lecun.com/exdb/mnist/](http://yann.lecun.com/exdb/mnist/)。
 
 # CIFAR10
 
@@ -285,15 +283,15 @@ print "test accuracy: {}".format(test_accuracy)
 
 首先，[下载数据集的 Python 版本](https://www.cs.toronto.edu/~kriz/cifar-10-python.tar.gz)并将文件提取到本地目录中。现在应该有以下文件：
 
-+   *data_batch_1*, *data_batch_2*, *data_batch_3*, *data_batch_4*, *data_batch_5*
++   `data_batch_1`, `data_batch_2`, `data_batch_3`, `data_batch_4`, `data_batch_5`
 
-+   *test_batch*
++   `test_batch`
 
-+   *batches_meta*
++   `batches_meta`
 
-+   *readme.html*
++   `readme.html`
 
-*data_batch_X*文件是包含训练数据的序列化数据文件，*test_batch*是一个类似的包含测试数据的序列化文件。*batches_meta*文件包含从数字到语义标签的映射。*.html*文件是 CIFAR-10 数据集网页的副本。
+`data_batch_X`文件是包含训练数据的序列化数据文件，`test_batch`是一个类似的包含测试数据的序列化文件。`batches_meta`文件包含从数字到语义标签的映射。`.html`文件是 CIFAR-10 数据集网页的副本。
 
 由于这是一个相对较小的数据集，我们将所有数据加载到内存中：
 
@@ -319,13 +317,12 @@ x, y = self.images[self._i:self._i+batch_size],
 self.labels[self._i:self._i+batch_size]
 self._i = (self._i + batch_size) % len(self.images)
 return x, y
-
 ```
 
 在这里我们使用以下实用函数：
 
 ```py
-DATA_PATH="*`/path/to/CIFAR10`*"defunpickle(file):withopen(os.path.join(DATA_PATH,file),'rb')asfo:dict=cPickle.load(fo)returndictdefone_hot(vec,vals=10):n=len(vec)out=np.zeros((n,vals))out[range(n),vec]=1returnout
+DATA_PATH="`/path/to/CIFAR10`"defunpickle(file):withopen(os.path.join(DATA_PATH,file),'rb')asfo:dict=cPickle.load(fo)returndictdefone_hot(vec,vals=10):n=len(vec)out=np.zeros((n,vals))out[range(n),vec]=1returnout
 ```
 
 `unpickle()`函数返回一个带有`data`和`labels`字段的`dict`，分别包含图像数据和标签。`one_hot()`将标签从整数（范围为 0 到 9）重新编码为长度为 10 的向量，其中除了标签位置上的 1 之外，所有位置都是 0。
@@ -339,7 +336,6 @@ self.train = CifarLoader(["data_batch_{}".format(i)
 for i in range(1, 6)])
 .load()
 self.test = CifarLoader(["test_batch"]).load()
-
 ```
 
 使用 Matplotlib，我们现在可以使用数据管理器来显示一些 CIFAR10 图像，并更好地了解这个数据集中的内容：
@@ -361,7 +357,6 @@ print "Number of test images: {}".format(len(d.test.images))
 print "Number of test images: {}".format(len(d.test.labels))
 images = d.train.images
 display_cifar(images, 10)
-
 ```
 
 # Matplotlib
@@ -377,7 +372,6 @@ Number of train images: 50000
 Number of train labels: 50000
 Number of test images: 10000
 Number of test images: 10000
-
 ```
 
 在图 4-5 中生成并显示的图像旨在让人了解 CIFAR10 图像实际上是什么样子的。值得注意的是，这些小的 32×32 像素图像每个都包含一个完整的单个对象，该对象位于中心位置，即使在这种分辨率下也基本上是可识别的。
@@ -433,7 +427,6 @@ sess.run(train_step, feed_dict={x: batch[0], y_: batch[1],
                                 keep_prob: 0.5})
 
 test(sess)
-
 ```
 
 这第一次尝试将在几分钟内达到大约 70%的准确度（使用批量大小为 100，自然取决于硬件和配置）。这好吗？截至目前，最先进的深度学习方法在这个数据集上实现了超过 95%的准确度，但是使用更大的模型并且通常需要许多小时的训练。
@@ -442,14 +435,12 @@ test(sess)
 
 ```py
 x = tf.placeholder(tf.float32, shape=[None, 32, 32, 3])
-
 ```
 
 同样，在两次池化操作之后，我们这次剩下的是大小为 8×8 的 64 个特征图：
 
 ```py
 conv2_flat = tf.reshape(conv2_pool, [-1, 8 * 8 * 64])
-
 ```
 
 最后，为了方便起见，我们将测试过程分组到一个名为`test()`的单独函数中，并且我们不打印训练准确度值（可以使用与 MNIST 模型中相同代码添加回来）。
@@ -484,27 +475,29 @@ y_conv = full_layer(full1_drop, 10)
 
 这仍然与最佳已知方法之间存在相当大的差距。有几个独立适用的元素可以帮助缩小这个差距：
 
-模型大小
+**模型大小**
 
 对于这种数据集和类似数据集，大多数成功的方法使用更深的网络和更多可调参数。
 
-其他类型的层和方法
+**其他类型的层和方法**
 
 通常与这里介绍的层一起使用的是其他类型的流行层，比如局部响应归一化。
 
-优化技巧
+**优化技巧**
 
 更多关于这个的内容以后再说！
 
-领域知识
+**领域知识**
 
 利用领域知识进行预处理通常是很有帮助的。在这种情况下，这将是传统的图像处理。
 
-数据增强
+**数据增强**
 
 基于现有数据集添加训练数据可能会有所帮助。例如，如果一张狗的图片水平翻转，那么显然仍然是一张狗的图片（但垂直翻转呢？）。小的位移和旋转也经常被使用。
 
-重用成功的方法和架构
+**重用成功的方法和架构**
+
+
 
 和大多数工程领域一样，从一个经过时间验证的方法开始，并根据自己的需求进行调整通常是正确的方式。在深度学习领域，这经常通过微调预训练模型来实现。
 
@@ -538,7 +531,6 @@ full1 = tf.nn.relu(full_layer(conv3_drop, F1))
 full1_drop = tf.nn.dropout(full1, keep_prob=keep_prob)
 
 y_conv = full_layer(full1_drop, 10)
-
 ```
 
 这个模型由三个卷积层块组成，接着是我们之前已经见过几次的全连接和输出层。每个卷积层块包含三个连续的卷积层，然后是一个池化层和 dropout。
@@ -550,7 +542,6 @@ y_conv = full_layer(full1_drop, 10)
 ```py
 conv3_pool = tf.nn.max_pool(conv3_3, ksize=[1, 8, 8, 1], strides=[1, 8, 8, 1], 
                            padding='SAME')
-
 ```
 
 由于在这一点上特征图的大小为 8×8（在前两个池化层之后，每个轴上都将 32×32 的图片减半），这样全局池化每个特征图并保留最大值。第三个块的特征图数量设置为 80，所以在这一点上（在最大池化之后），表示被减少到只有 80 个数字。这使得模型的整体大小保持较小，因为在过渡到全连接层时参数的数量保持在 80×500。

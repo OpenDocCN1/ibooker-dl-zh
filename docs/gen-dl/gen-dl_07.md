@@ -1,10 +1,11 @@
+
 # 第四章：生成对抗网络
 
 2014 年，Ian Goodfellow 等人在蒙特利尔的神经信息处理系统会议（NeurIPS）上发表了一篇名为“生成对抗网络”的论文¹。生成对抗网络（或者更常见的称为 GAN）的引入现在被认为是生成建模历史上的一个关键转折点，因为这篇论文中提出的核心思想衍生出了一些最成功和令人印象深刻的生成模型。
 
 本章将首先阐述 GAN 的理论基础，然后我们将看到如何使用 Keras 构建我们自己的 GAN。
 
-# 介绍
+## 介绍
 
 让我们从一个简短的故事开始，以阐明 GAN 训练过程中使用的一些基本概念。
 
@@ -18,17 +19,17 @@ GAN 是生成器和鉴别器之间的一场战斗。生成器试图将随机噪�
 
 在过程开始时，生成器输出嘈杂的图像，鉴别器随机预测。GAN 的关键在于我们如何交替训练这两个网络，使得随着生成器变得更擅长欺骗鉴别器，鉴别器必须适应以保持其正确识别哪些观察结果是伪造的能力。这驱使生成器找到欺骗鉴别器的新方法，循环继续。
 
-# 深度卷积生成对抗网络（DCGAN）
+## 深度卷积生成对抗网络（DCGAN）
 
 为了看到这个过程，让我们开始在 Keras 中构建我们的第一个 GAN，以生成砖块的图片。
 
 我们将密切关注 GAN 的第一篇重要论文之一，“使用深度卷积生成对抗网络进行无监督表示学习”²。在这篇 2015 年的论文中，作者展示了如何构建一个深度卷积 GAN 来从各种数据集中生成逼真的图像。他们还引入了一些显著改进生成图像质量的变化。
 
-# 运行此示例的代码
+### 运行此示例的代码
 
-这个例子的代码可以在位于书籍存储库中的 Jupyter 笔记本中找到，路径为*notebooks/04_gan/01_dcgan/dcgan.ipynb*。
+这个例子的代码可以在位于书籍存储库中的 Jupyter 笔记本中找到，路径为`notebooks/04_gan/01_dcgan/dcgan.ipynb`。
 
-## 砖块数据集
+#### 砖块数据集
 
 首先，您需要下载训练数据。我们将使用通过 Kaggle 提供的[乐高砖块图像数据集](https://oreil.ly/3vp9f)。这是一个包含 40,000 张来自多个角度拍摄的 50 种不同玩具砖块的照片的计算机渲染集合。一些 Brickki 产品的示例图像显示在图 4-3 中。
 
@@ -36,7 +37,7 @@ GAN 是生成器和鉴别器之间的一场战斗。生成器试图将随机噪�
 
 ###### 图 4-3\. 砖块数据集中的图像示例
 
-您可以通过在书籍存储库中运行 Kaggle 数据集下载脚本来下载数据集，如示例 4-1 所示。这将把图像和相关元数据保存到*/data*文件夹中。
+您可以通过在书籍存储库中运行 Kaggle 数据集下载脚本来下载数据集，如示例 4-1 所示。这将把图像和相关元数据保存到`/data`文件夹中。
 
 ##### 示例 4-1\. 下载砖块数据集
 
@@ -61,9 +62,9 @@ train_data = utils.image_dataset_from_directory(
 )
 ```
 
-原始数据在范围[0, 255]内缩放以表示像素强度。在训练 GAN 时，我们将数据重新缩放到范围[-1, 1]，以便我们可以在生成器的最后一层使用 tanh 激活函数，该函数提供比 sigmoid 函数更强的梯度（示例 4-3）。
+原始数据在范围`[0, 255]`内缩放以表示像素强度。在训练 GAN 时，我们将数据重新缩放到范围`[-1, 1]`，以便我们可以在生成器的最后一层使用 tanh 激活函数，该函数提供比 sigmoid 函数更强的梯度（示例 4-3）。
 
-##### 示例 4-3。预处理砖块数据集
+##### 示例 4-3\. 预处理砖块数据集
 
 ```py
 def preprocess(img):
@@ -73,13 +74,15 @@ def preprocess(img):
 train = train_data.map(lambda x: preprocess(x))
 ```
 
-现在让我们看看如何构建鉴别器。## 鉴别器
+现在让我们看看如何构建鉴别器。
+
+### 鉴别器
 
 鉴别器的目标是预测图像是真实的还是伪造的。这是一个监督图像分类问题，因此我们可以使用与我们在第二章中使用的类似架构：堆叠的卷积层，带有单个输出节点。
 
 我们将构建的鉴别器的完整架构显示在表 4-1 中。
 
-表 4-1。鉴别器的模型摘要
+表 4-1\. 鉴别器的模型摘要
 
 | 层（类型） | 输出形状 | 参数 # |
 | --- | --- | --- |
@@ -107,7 +110,7 @@ train = train_data.map(lambda x: preprocess(x))
 
 提供构建鉴别器的 Keras 代码在示例 4-4 中。
 
-##### 示例 4-4。鉴别器
+##### 示例 4-4\. 鉴别器
 
 ```py
 discriminator_input = layers.Input(shape=(64, 64, 1)) # ①
@@ -147,27 +150,19 @@ discriminator_output = layers.Flatten()(x) # ③
 discriminator = models.Model(discriminator_input, discriminator_output) # ④
 ```
 
-①
+① 定义鉴别器的`Input`层（图像）。
 
-定义鉴别器的`Input`层（图像）。
+② 将`Conv2D`层堆叠在一起，中间夹有`BatchNormalization`、`LeakyReLU`激活和`Dropout`层。
 
-②
+③ 将最后一个卷积层展平-到这一点，张量的形状为 1×1×1，因此不需要最终的`Dense`层。
 
-将`Conv2D`层堆叠在一起，中间夹有`BatchNormalization`、`LeakyReLU`激活和`Dropout`层。
-
-③
-
-将最后一个卷积层展平-到这一点，张量的形状为 1×1×1，因此不需要最终的`Dense`层。
-
-④
-
-定义鉴别器的 Keras 模型-一个接受输入图像并输出介于 0 和 1 之间的单个数字的模型。
+④ 定义鉴别器的 Keras 模型-一个接受输入图像并输出介于 0 和 1 之间的单个数字的模型。
 
 请注意，我们在一些`Conv2D`层中使用步幅为 2，以减少通过网络时张量的空间形状（原始图像中为 64，然后 32、16、8、4，最后为 1），同时增加通道数（灰度输入图像中为 1，然后 64、128、256，最后为 512），最终折叠为单个预测。
 
 我们在最后一个`Conv2D`层上使用 sigmoid 激活函数，输出一个介于 0 和 1 之间的数字。
 
-## 生成器
+### 生成器
 
 现在让我们构建生成器。生成器的输入将是从多元标准正态分布中抽取的向量。输出是与原始训练数据中的图像大小相同的图像。
 
@@ -175,32 +170,32 @@ discriminator = models.Model(discriminator_input, discriminator_output) # ④
 
 我们将构建的生成器的架构显示在表 4-2 中。
 
-表 4-2。生成器的模型摘要
+表 4-2\. 生成器的模型摘要
 
 | 层（类型） | 输出形状 | 参数 # |
 | --- | --- | --- |
-| InputLayer（无，100）0 |
-| Reshape（无，1，1，100）0 |
-| Conv2DTranspose（无，4，4，512）819,200 |
-| BatchNormalization（无，4，4，512）2,048 |
-| ReLU（无，4，4，512）0 |
-| Conv2DTranspose（无，8，8，256）2,097,152 |
-| BatchNormalization（无，8，8，256）1,024 |
-| ReLU（无，8，8，256）0 |
-| Conv2DTranspose（无，16，16，128）524,288 |
-| BatchNormalization（无，16，16，128）512 |
-| ReLU（无，16，16，128）0 |
-| Conv2DTranspose（无，32，32，64）131,072 |
-| BatchNormalization（无，32，32，64）256 |
-| ReLU（无，32，32，64）0 |
-| Conv2DTranspose（无，64，64，1）1,024 |
-| 总参数 3,576,576 |
-| 可训练参数 3,574,656 |
-| 不可训练参数 1,920 |
+| InputLayer | (None, 100) | 0 |
+| Reshape | (None, 1, 1, 100) | 0 |
+| Conv2DTranspose | (None, 4, 4, 512) | 819,200 |
+| BatchNormalization | (None, 4, 4, 512) | 2,048 |
+| ReLU | (None, 4, 4, 512) | 0 |
+| Conv2DTranspose | (None, 8, 8, 256) | 2,097,152 |
+| BatchNormalization | (None, 8, 8, 256) | 1,024 |
+| ReLU | (None, 8, 8, 256) | 0 |
+| Conv2DTranspose | (None, 16, 16, 128) | 524,288 |
+| BatchNormalization | (None, 16, 16, 128) | 512 |
+| ReLU | (None, 16, 16, 128) | 0 |
+| Conv2DTranspose | (None, 32, 32, 64) | 131,072 |
+| BatchNormalization | (None, 32, 32, 64) | 256 |
+| ReLU | (None, 32, 32, 64) | 0 |
+| Conv2DTranspose | (None, 64, 64, 1) | 1,024 |
+| 总参数 | 3,576,576 |
+| 可训练参数 | 3,574,656 |
+| 不可训练参数 | 1,920 |
 
 构建生成器的代码在示例 4-5 中给出。
 
-##### 示例 4-5。生成器
+##### 示例 4-5\. 生成器
 
 ```py
 generator_input = layers.Input(shape=(100,)) # ①
@@ -236,29 +231,19 @@ generator_output = layers.Conv2DTranspose(
 generator = models.Model(generator_input, generator_output) # ⑤
 ```
 
-①
+① 定义生成器的`Input`层-长度为 100 的向量。
 
-定义生成器的`Input`层-长度为 100 的向量。
+② 我们使用一个`Reshape`层来给出一个 1×1×100 的张量，这样我们就可以开始应用卷积转置操作。
 
-②
+③ 我们通过四个`Conv2DTranspose`层传递这些数据，其中夹在中间的是`BatchNormalization`和`LeakyReLU`层。
 
-我们使用一个`Reshape`层来给出一个 1×1×100 的张量，这样我们就可以开始应用卷积转置操作。
+④ 最终的`Conv2DTranspose`层使用 tanh 激活函数将输出转换为范围`[-1,1]`，以匹配原始图像域。
 
-③
-
-我们通过四个`Conv2DTranspose`层传递这些数据，其中夹在中间的是`BatchNormalization`和`LeakyReLU`层。
-
-④
-
-最终的`Conv2DTranspose`层使用 tanh 激活函数将输出转换为范围[-1,1]，以匹配原始图像域。
-
-⑤
-
-定义生成器的 Keras 模型-接受长度为 100 的向量并输出形状为`[64，64，1]`的张量。
+⑤ 定义生成器的 Keras 模型-接受长度为 100 的向量并输出形状为`[64, 64, 1]`的张量。
 
 请注意，我们在一些`Conv2DTranspose`层中使用步幅为 2，以增加通过网络传递时张量的空间形状（原始向量中为 1，然后为 4，8，16，32，最终为 64），同时减少通道数（512，然后为 256，128，64，最终为 1 以匹配灰度输出）。
 
-## 训练 DCGAN
+### 训练 DCGAN
 
 正如我们所看到的，在 DCGAN 中生成器和鉴别器的架构非常简单，并且与我们在第三章中看到的 VAE 模型并没有太大不同。理解 GAN 的关键在于理解生成器和鉴别器的训练过程。
 
@@ -272,11 +257,13 @@ generator = models.Model(generator_input, generator_output) # ⑤
 
 ![](img/gdl2_0405.png)
 
-###### 图 4-5。训练 DCGAN-灰色框表示在训练过程中权重被冻结
+###### 图 4-5\. 训练 DCGAN-灰色框表示在训练过程中权重被冻结
 
 Keras 提供了创建自定义`train_step`函数来实现这一逻辑的能力。示例 4-7 展示了完整的`DCGAN`模型类。
 
-##### 示例 4-7。编译 DCGAN
+##### 示例 4-7\. 编译 DCGAN
+
+
 
 ```py
 class DCGAN(models.Model):
@@ -363,37 +350,21 @@ dcgan.compile(
 dcgan.fit(train, epochs=300)
 ```
 
-①
+① 生成器和鉴别器的损失函数是`BinaryCrossentropy`。
 
-生成器和鉴别器的损失函数是`BinaryCrossentropy`。
+② 为了训练网络，首先从多元标准正态分布中抽取一批向量。
 
-②
+③ 接下来，通过生成器生成一批生成的图像。
 
-为了训练网络，首先从多元标准正态分布中抽取一批向量。
+④ 现在让鉴别器预测一批真实图像的真实性...
 
-③
+⑤ ...和一批生成的图像。
 
-接下来，通过生成器生成一批生成的图像。
+⑥ 鉴别器损失是真实图像（标签为 1）和假图像（标签为 0）之间的平均二元交叉熵。
 
-④
+⑦ 生成器损失是鉴别器对生成图像的预测与标签 1 之间的二元交叉熵。
 
-现在让鉴别器预测一批真实图像的真实性...​
-
-⑤
-
-...​和一批生成的图像。
-
-⑥
-
-鉴别器损失是真实图像（标签为 1）和假图像（标签为 0）之间的平均二元交叉熵。
-
-⑦
-
-生成器损失是鉴别器对生成图像的预测与标签 1 之间的二元交叉熵。
-
-⑧
-
-分别更新鉴别器和生成器的权重。
+⑧ 分别更新鉴别器和生成器的权重。
 
 鉴别器和生成器不断争夺主导地位，这可能使 DCGAN 训练过程不稳定。理想情况下，训练过程将找到一个平衡点，使生成器能够从鉴别器那里学习有意义的信息，图像的质量将开始提高。经过足够的 epochs，鉴别器往往最终占据主导地位，如图 4-6 所示，但这可能不是问题，因为生成器可能已经学会在这一点上生成足够高质量的图像。
 
@@ -482,7 +453,9 @@ def compare_images(img1, img2):
 
 近年来，一些关键进展大大提高了 GAN 模型的整体稳定性，并减少了一些早期列出的问题的可能性，比如模式崩溃。
 
-在本章的其余部分，我们将研究带有梯度惩罚的 Wasserstein GAN（WGAN-GP），该模型对我们迄今为止探索的 GAN 框架进行了几个关键调整，以改善图像生成过程的稳定性和质量。` `#带有梯度惩罚的 Wasserstein GAN（WGAN-GP）
+在本章的其余部分，我们将研究带有梯度惩罚的 Wasserstein GAN（WGAN-GP），该模型对我们迄今为止探索的 GAN 框架进行了几个关键调整，以改善图像生成过程的稳定性和质量。
+
+# 带有梯度惩罚的 Wasserstein GAN（WGAN-GP）
 
 在本节中，我们将构建一个 WGAN-GP 来从我们在第三章中使用的 CelebA 数据集中生成人脸。
 
@@ -516,45 +489,57 @@ Wasserstein GAN（WGAN）是由 Arjovsky 等人在 2017 年的一篇论文中引
 
 ##### 方程 4-2. GAN 鉴别器损失最小化
 
-<math alttext="min Underscript upper D Endscripts minus left-parenthesis double-struck upper E Subscript x tilde p Sub Subscript upper X Subscript Baseline left-bracket log upper D left-parenthesis x right-parenthesis right-bracket plus double-struck upper E Subscript z tilde p Sub Subscript upper Z Subscript Baseline left-bracket log left-parenthesis 1 minus upper D left-parenthesis upper G left-parenthesis z right-parenthesis right-parenthesis right-parenthesis right-bracket right-parenthesis" display="block"><mrow><munder><mo movablelimits="true" form="prefix">min</mo> <mi>D</mi></munder> <mo>-</mo> <mrow><mo>(</mo> <msub><mi>𝔼</mi> <mrow><mi>x</mi><mo>∼</mo><msub><mi>p</mi> <mi>X</mi></msub></mrow></msub> <mrow><mo>[</mo> <mo form="prefix">log</mo> <mrow><mi>D</mi> <mo>(</mo> <mi>x</mi> <mo>)</mo></mrow> <mo>]</mo></mrow> <mo>+</mo> <msub><mi>𝔼</mi> <mrow><mi>z</mi><mo>∼</mo><msub><mi>p</mi> <mi>Z</mi></msub></mrow></msub> <mrow><mo>[</mo> <mo form="prefix">log</mo> <mrow><mo>(</mo> <mn>1</mn> <mo>-</mo> <mi>D</mi> <mo>(</mo> <mi>G</mi> <mo>(</mo> <mi>z</mi> <mo>)</mo> <mo>)</mo> <mo>)</mo></mrow> <mo>]</mo></mrow> <mo>)</mo></mrow></mrow></math>
 
-为了训练 GAN 生成器 G，我们计算了对比生成图像 G(z_i)的预测 p_i 与响应 y_i=1 的损失。因此，对于 GAN 生成器，最小化损失函数可以写成方程 4-3 所示。
 
-##### 方程 4-3. GAN 生成器损失最小化
+为了训练 GAN 生成器 `G`，我们计算了对比生成图像 `G(z_i)` 的预测 `p_i` 与响应 `y_i=1` 的损失。因此，对于 GAN 生成器，最小化损失函数可以写成方程 4-3 所示。
 
-<math alttext="min Underscript upper G Endscripts minus left-parenthesis double-struck upper E Subscript z tilde p Sub Subscript upper Z Subscript Baseline left-bracket log upper D left-parenthesis upper G left-parenthesis z right-parenthesis right-parenthesis right-bracket right-parenthesis" display="block"><mrow><munder><mo movablelimits="true" form="prefix">min</mo> <mi>G</mi></munder> <mo>-</mo> <mrow><mo>(</mo> <msub><mi>𝔼</mi> <mrow><mi>z</mi><mo>∼</mo><msub><mi>p</mi> <mi>Z</mi></msub></mrow></msub> <mrow><mo>[</mo> <mo form="prefix">log</mo> <mrow><mi>D</mi> <mo>(</mo> <mi>G</mi> <mo>(</mo> <mi>z</mi> <mo>)</mo> <mo>)</mo></mrow> <mo>]</mo></mrow> <mo>)</mo></mrow></mrow></math>
+### 方程 4-3. GAN 生成器损失最小化
+
+```
+min_D - (𝔼_{x∼p_X}[log D(x)] + 𝔼_{z∼p_Z}[log(1 - D(G(z)))])
+```
 
 现在让我们将其与 Wasserstein 损失函数进行比较。
 
-首先，Wasserstein 损失要求我们使用 y_i=1 和 y_i=-1 作为标签，而不是 1 和 0。我们还从鉴别器的最后一层中移除了 sigmoid 激活，使得预测 p_i 不再受限于[0, 1]范围，而是可以是任何范围内的任意数字（负无穷，正无穷）。因此，在 WGAN 中，鉴别器通常被称为*评论家*，输出*分数*而不是概率。
+首先，Wasserstein 损失要求我们使用 `y_i=1` 和 `y_i=-1` 作为标签，而不是 `1` 和 `0`。我们还从鉴别器的最后一层中移除了 sigmoid 激活，使得预测 `p_i` 不再受限于 `[0, 1]` 范围，而是可以是任何范围内的任意数字（负无穷，正无穷）。因此，在 WGAN 中，鉴别器通常被称为*评论家*，输出*分数*而不是概率。
 
 Wasserstein 损失函数定义如下：
 
-<math alttext="minus StartFraction 1 Over n EndFraction sigma-summation Underscript i equals 1 Overscript n Endscripts left-parenthesis y Subscript i Baseline p Subscript i Baseline right-parenthesis" display="block"><mrow><mo>-</mo> <mfrac><mn>1</mn> <mi>n</mi></mfrac> <munderover><mo>∑</mo> <mrow><mi>i</mi><mo>=</mo><mn>1</mn></mrow> <mi>n</mi></munderover> <mrow><mo>(</mo> <msub><mi>y</mi> <mi>i</mi></msub> <msub><mi>p</mi> <mi>i</mi></msub> <mo>)</mo></mrow></mrow></math>
+```
+- (1/n) ∑_{i=1}^{n} (y_i * p_i)
+```
 
-为了训练 WGAN 评论家<math alttext="upper D"><mi>D</mi></math>，我们计算真实图像的预测与响应之间的损失<math alttext="p Subscript i Baseline equals upper D left-parenthesis x Subscript i Baseline right-parenthesis"><mrow><msub><mi>p</mi> <mi>i</mi></msub> <mo>=</mo> <mi>D</mi> <mrow><mo>(</mo> <msub><mi>x</mi> <mi>i</mi></msub> <mo>)</mo></mrow></mrow></math>与响应<math alttext="y Subscript i Baseline equals 1"><mrow><msub><mi>y</mi> <mi>i</msub> <mo>=</mo> <mn>1</mn></mrow></math>，以及生成图像的预测与响应之间的损失<math alttext="p Subscript i Baseline equals upper D left-parenthesis upper G left-parenthesis z Subscript i Baseline right-parenthesis right-parenthesis"><mrow><msub><mi>p</mi> <mi>i</msub> <mo>=</mo> <mi>D</mi> <mrow><mo>(</mo> <mi>G</mi> <mrow><mo>(</mo> <msub><mi>z</mi> <mi>i</msub> <mo>)</mo></mrow> <mo>)</mo></mrow></mrow></math>与响应<math alttext="y Subscript i"><msub><mi>y</mi> <mi>i</msub></math> = -1。因此，对于 WGAN 评论家，最小化损失函数可以写成如下形式：
+为了训练 WGAN 评论家 `D`，我们计算真实图像的预测与响应之间的损失 `p_i = D(x_i)` 与响应 `y_i = 1`，以及生成图像的预测与响应之间的损失 `p_i = D(G(z_i))` 与响应 `y_i = -1`。因此，对于 WGAN 评论家，最小化损失函数可以写成如下形式：
 
-<math alttext="min Underscript upper D Endscripts minus left-parenthesis double-struck upper E Subscript x tilde p Sub Subscript upper X Subscript Baseline left-bracket upper D left-parenthesis x right-parenthesis right-bracket minus double-struck upper E Subscript z tilde p Sub Subscript upper Z Subscript Baseline left-bracket upper D left-parenthesis upper G left-parenthesis z right-parenthesis right-parenthesis right-bracket right-parenthesis" display="block"><mrow><munder><mo movablelimits="true" form="prefix">min</mo> <mi>D</mi></munder> <mo>-</mo> <mrow><mo>(</mo> <msub><mi>𝔼</mi> <mrow><mi>x</mi><mo>∼</mo><msub><mi>p</mi> <mi>X</mi></msub></mrow></msub> <mrow><mo>[</mo> <mi>D</mi> <mrow><mo>(</mo> <mi>x</mi> <mo>)</mo></mrow> <mo>]</mo></mrow> <mo>-</mo> <msub><mi>𝔼</mi> <mrow><mi>z</mi><mo>∼</mo><msub><mi>p</mi> <mi>Z</mi></msub></mrow></msub> <mrow><mo>[</mo> <mi>D</mi> <mrow><mo>(</mo> <mi>G</mi> <mrow><mo>(</mo> <mi>z</mi> <mo>)</mo></mrow> <mo>)</mo></mrow> <mo>]</mo></mrow> <mo>)</mo></mrow></mrow></math>
+```
+min_D - (𝔼_{x∼p_X}[D(x)] - 𝔼_{z∼p_Z}[D(G(z))])
+```
 
 换句话说，WGAN 评论家试图最大化其对真实图像和生成图像的预测之间的差异。
 
-为了训练 WGAN 生成器，我们计算生成图像的预测与响应之间的损失<math alttext="p Subscript i Baseline equals upper D left-parenthesis upper G left-parenthesis z Subscript i Baseline right-parenthesis right-parenthesis"><mrow><msub><mi>p</mi> <mi>i</mi></msub> <mo>=</mo> <mi>D</mi> <mrow><mo>(</mo> <mi>G</mi> <mrow><mo>(</mo> <msub><mi>z</mi> <mi>i</mi></msub> <mo>)</mo></mrow> <mo>)</mo></mrow></mrow></math>与响应<math alttext="y Subscript i Baseline equals 1"><mrow><msub><mi>y</mi> <mi>i</mi></msub> <mo>=</mo> <mn>1</mn></mrow></math>。因此，对于 WGAN 生成器，最小化损失函数可以写成如下形式：
+为了训练 WGAN 生成器，我们计算生成图像的预测与响应之间的损失 `p_i = D(G(z_i))` 与响应 `y_i = 1`。因此，对于 WGAN 生成器，最小化损失函数可以写成如下形式：
 
-<math alttext="min Underscript upper G Endscripts minus left-parenthesis double-struck upper E Subscript z tilde p Sub Subscript upper Z Subscript Baseline left-bracket upper D left-parenthesis upper G left-parenthesis z right-parenthesis right-parenthesis right-bracket right-parenthesis" display="block"><mrow><munder><mo movablelimits="true" form="prefix">min</mo> <mi>G</mi></munder> <mo>-</mo> <mrow><mo>(</mo> <msub><mi>𝔼</mi> <mrow><mi>z</mi><mo>∼</mo><msub><mi>p</mi> <mi>Z</mi></msub></mrow></msub> <mrow><mo>[</mo> <mi>D</mi> <mrow><mo>(</mo> <mi>G</mi> <mrow><mo>(</mo> <mi>z</mi> <mo>)</mo></mrow> <mo>)</mo></mrow> <mo>]</mo></mrow> <mo>)</mo></mrow></mrow></math>
+```
+min_G - (𝔼_{z∼p_Z}[D(G(z))])
+```
 
 换句话说，WGAN 生成器试图生成评论家尽可能高分的图像（即，评论家被欺骗以为它们是真实的）。
 
 ## 利普希茨约束
 
-也许让你惊讶的是，我们现在允许评论家输出范围内的任何数字（<math alttext="negative normal infinity"><mrow><mo>-</mo> <mi>∞</mi></mrow></math>，<math alttext="normal infinity"><mi>∞</mi></math>），而不是应用 Sigmoid 函数将输出限制在通常的[0,1]范围内。因此，Wasserstein 损失可能非常大，这令人不安——通常情况下，神经网络中的大数值应该避免！
+也许让你惊讶的是，我们现在允许评论家输出范围内的任何数字（`-∞`，`∞`），而不是应用 Sigmoid 函数将输出限制在通常的 `[0,1]` 范围内。因此，Wasserstein 损失可能非常大，这令人不安——通常情况下，神经网络中的大数值应该避免！
 
 事实上，WGAN 论文的作者表明，为了使 Wasserstein 损失函数起作用，我们还需要对评论家施加额外的约束。具体来说，评论家必须是*1-Lipschitz 连续函数*。让我们详细解释一下这意味着什么。
 
-评论家是一个将图像转换为预测的函数<math alttext="upper D"><mi>D</mi></math>。如果对于任意两个输入图像<math alttext="x 1"><msub><mi>x</mi> <mn>1</mn></msub></math>和<math alttext="x 2"><msub><mi>x</mi> <mn>2</mn></msub></math>，该函数满足以下不等式，则我们称该函数为 1-Lipschitz：
+评论家是一个将图像转换为预测的函数 `D`。如果对于任意两个输入图像 `x_1` 和 `x_2`，该函数满足以下不等式，则我们称该函数为 1-Lipschitz：
 
-<math alttext="StartFraction StartAbsoluteValue upper D left-parenthesis x 1 right-parenthesis minus upper D left-parenthesis x 2 right-parenthesis EndAbsoluteValue Over StartAbsoluteValue x 1 minus x 2 EndAbsoluteValue EndFraction less-than-or-equal-to 1" display="block"><mrow><mfrac><mrow><mrow><mo>|</mo><mi>D</mi></mrow><mrow><mo>(</mo><msub><mi>x</mi> <mn>1</mn></msub> <mo>)</mo></mrow><mo>-</mo><mi>D</mi><mrow><mo>(</mo><msub><mi>x</mi> <mn>2</mn></msub> <mo>)</mo></mrow><mrow><mo>|</mo></mrow></mrow> <mrow><mrow><mo>|</mo></mrow><msub><mi>x</mi> <mn>1</mn></msub> <mo>-</mo><msub><mi>x</mi> <mn>2</mn></msub> <mrow><mo>|</mo></mrow></mrow></mfrac> <mo>≤</mo> <mn>1</mn></mrow></math>
+```
+|D(x_1) - D(x_2)| / |x_1 - x_2| ≤ 1
+```
 
-在这里，<math alttext="StartAbsoluteValue x 1 minus x 2 EndAbsoluteValue"><mrow><mrow><mo>|</mo></mrow> <msub><mi>x</mi> <mn>1</mn></msub> <mo>-</mo> <msub><mi>x</mi> <mn>2</mn></msub> <mrow><mo>|</mo></mrow></mrow></math>是两个图像之间的平均像素绝对差异，<math alttext="StartAbsoluteValue upper D left-parenthesis x 1 right-parenthesis minus upper D left-parenthesis x 2 right-parenthesis EndAbsoluteValue"><mrow><mrow><mo>|</mo> <mi>D</mi></mrow> <mrow><mo>(</mo> <msub><mi>x</mi> <mn>1</mn></msub> <mo>)</mo></mrow> <mo>-</mo> <mi>D</mi> <mrow><mo>(</mo> <msub><mi>x</mi> <mn>2</mn></msub> <mo>)</mo></mrow> <mrow><mo>|</mo></mrow></mrow></math>是评论家预测之间的绝对差异。基本上，我们要求评论家的预测在两个图像之间变化的速率有限（即，梯度的绝对值必须在任何地方最多为 1）。我们可以看到这应用于利普希茨连续的一维函数中，如图 4-11 所示——在任何位置放置锥体时，线都不会进入锥体。换句话说，线在任何点上升或下降的速率都有限制。
+
+
+在这里，`|x1 - x2|`是两个图像之间的平均像素绝对差异，`|D(x1) - D(x2)|`是评论家预测之间的绝对差异。基本上，我们要求评论家的预测在两个图像之间变化的速率有限（即，梯度的绝对值必须在任何地方最多为 1）。我们可以看到这应用于利普希茨连续的一维函数中，如图 4-11 所示——在任何位置放置锥体时，线都不会进入锥体。换句话说，线在任何点上升或下降的速率都有限制。
 
 ![](img/gdl2_0411.png)
 
@@ -566,7 +551,7 @@ Wasserstein 损失函数定义如下：
 
 ## 强制利普希茨约束
 
-在原始的 WGAN 论文中，作者展示了通过在每个训练批次后将评论家的权重剪辑到一个小范围[-0.01, 0.01]内来强制执行利普希茨约束的可能性。
+在原始的 WGAN 论文中，作者展示了通过在每个训练批次后将评论家的权重剪辑到一个小范围`[-0.01, 0.01]`内来强制执行利普希茨约束的可能性。
 
 这种方法的批评之一是，评论家学习的能力大大降低，因为我们正在剪辑它的权重。事实上，即使在原始的 WGAN 论文中，作者们也写道，“权重剪辑显然是一种强制利普希茨约束的可怕方式。”强大的评论家对于 WGAN 的成功至关重要，因为没有准确的梯度，生成器无法学习如何调整其权重以生成更好的样本。
 
@@ -822,6 +807,8 @@ x = layers.Reshape((1,1, 34))(x)
 
 ##### 示例 4-11。CGAN 的`train_step`
 
+
+
 ```py
 def train_step(self, data):
     real_images, one_hot_labels = data # ①
@@ -885,29 +872,17 @@ def train_step(self, data):
     )
 ```
 
-①
+① 图像和标签从输入数据中解压缩。
 
-图像和标签从输入数据中解压缩。
+② 独热编码向量被扩展为具有与输入图像相同空间大小（64×64）的独热编码图像。
 
-②
+③ 现在，生成器被提供了两个输入的列表——随机潜在向量和独热编码标签向量。
 
-独热编码向量被扩展为具有与输入图像相同空间大小（64×64）的独热编码图像。
+④ 评论家现在被提供了两个输入的列表——假/真实图像和独热编码标签通道。
 
-③
+⑤ 梯度惩罚函数还需要将独热编码标签通道传递给评论家，因为它使用评论家。
 
-现在，生成器被提供了两个输入的列表——随机潜在向量和独热编码标签向量。
-
-④
-
-评论家现在被提供了两个输入的列表——假/真实图像和独热编码标签通道。
-
-⑤
-
-梯度惩罚函数还需要将独热编码标签通道传递给评论家，因为它使用评论家。
-
-⑥
-
-对评论家培训步骤所做的更改也适用于生成器训练步骤。
+⑥ 对评论家培训步骤所做的更改也适用于生成器训练步骤。
 
 ## CGAN 的分析
 

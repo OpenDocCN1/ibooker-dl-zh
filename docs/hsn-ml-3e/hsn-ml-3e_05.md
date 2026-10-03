@@ -1,3 +1,5 @@
+
+
 # 第四章：训练模型
 
 到目前为止，我们大多将机器学习模型及其训练算法视为黑匣子。如果您在之前章节的一些练习中有所了解，您可能会对不知道底层原理的情况下能做多少事情感到惊讶：您优化了一个回归系统，改进了一个数字图像分类器，甚至从头开始构建了一个垃圾邮件分类器，所有这些都是在不知道它们实际如何工作的情况下完成的。实际上，在许多情况下，您并不真正需要知道实现细节。
@@ -188,13 +190,16 @@ array([[4.21509616],
 
 ## 计算复杂度
 
-正规方程计算**X**^⊺**X**的逆，这是一个（*n*+1）×（*n*+1）矩阵（其中*n*是特征数）。求解这样一个矩阵的*计算复杂度*通常约为*O*(*n*^(2.4))到*O*(*n*³)，取决于实现。换句话说，如果特征数翻倍，计算时间大约会乘以 2^(2.4)=5.3 到 2³=8。
 
-Scikit-Learn 的`LinearRegression`类使用的 SVD 方法大约是*O*(*n*²)。如果特征数量翻倍，计算时间大约会乘以 4。
+
+
+正规方程计算`X`^⊺`X`的逆，这是一个（`n`+1）×（`n`+1）矩阵（其中`n`是特征数）。求解这样一个矩阵的*计算复杂度*通常约为`O(n^(2.4))`到`O(n³)`，取决于实现。换句话说，如果特征数翻倍，计算时间大约会乘以`2^(2.4)=5.3`到`2³=8`。
+
+Scikit-Learn 的`LinearRegression`类使用的 SVD 方法大约是`O(n²)`。如果特征数量翻倍，计算时间大约会乘以 4。
 
 ###### 警告
 
-当特征数量增多时（例如 100,000），正规方程和 SVD 方法都变得非常慢。积极的一面是，它们都与训练集中实例数量线性相关（它们是*O*(*m*)），因此它们可以有效地处理大型训练集，只要它们可以放入内存。
+当特征数量增多时（例如 100,000），正规方程和 SVD 方法都变得非常慢。积极的一面是，它们都与训练集中实例数量线性相关（它们是`O(m)`），因此它们可以有效地处理大型训练集，只要它们可以放入内存。
 
 此外，一旦训练好线性回归模型（使用正规方程或任何其他算法），预测速度非常快：计算复杂度与您要进行预测的实例数量和特征数量成正比。换句话说，对两倍实例（或两倍特征）进行预测将花费大约两倍的时间。
 
@@ -204,9 +209,9 @@ Scikit-Learn 的`LinearRegression`类使用的 SVD 方法大约是*O*(*n*²)。�
 
 *梯度下降*是一种通用的优化算法，能够找到各种问题的最优解。梯度下降的一般思想是迭代地调整参数，以最小化成本函数。
 
-假设你在浓雾中的山中迷失了方向，只能感受到脚下的坡度。快速到达山谷底部的一个好策略是沿着最陡的坡度方向下坡。这正是梯度下降所做的：它测量了关于参数向量**θ**的误差函数的局部梯度，并沿着下降梯度的方向前进。一旦梯度为零，你就到达了一个最小值！
+假设你在浓雾中的山中迷失了方向，只能感受到脚下的坡度。快速到达山谷底部的一个好策略是沿着最陡的坡度方向下坡。这正是梯度下降所做的：它测量了关于参数向量`θ`的误差函数的局部梯度，并沿着下降梯度的方向前进。一旦梯度为零，你就到达了一个最小值！
 
-在实践中，您首先用随机值填充**θ**（这称为*随机初始化*）。然后逐渐改进它，每次尝试减少成本函数（例如 MSE）一点点，直到算法*收敛*到最小值（参见图 4-3）。
+在实践中，您首先用随机值填充`θ`（这称为*随机初始化*）。然后逐渐改进它，每次尝试减少成本函数（例如 MSE）一点点，直到算法*收敛*到最小值（参见图 4-3）。
 
 ![mls3 0403](img/mls3_0403.png)
 
@@ -230,7 +235,7 @@ Scikit-Learn 的`LinearRegression`类使用的 SVD 方法大约是*O*(*n*²)。�
 
 ###### 图 4-6。梯度下降的陷阱
 
-幸运的是，线性回归模型的 MSE 成本函数恰好是一个*凸函数*，这意味着如果您选择曲线上的任意两点，连接它们的线段永远不会低于曲线。这意味着没有局部最小值，只有一个全局最小值。它还是一个连续函数，斜率永远不会突然改变。这两个事实有一个重要的结果：梯度下降保证可以无限接近全局最小值（如果等待足够长的时间且学习率不太高）。
+幸运的是，线性回归模型的 MSE 成本函数恰好是一个*凸函数*，这意味着如果您选择曲线上的任意两点，连接它们的线段永远不会低于曲线。这意味着没有局部最小值，只有一个全局最小值。它还是一个连续函数，斜率永远不会突然变化。这两个事实有一个重要的结果：梯度下降保证可以无限接近全局最小值（如果等待足够长的时间且学习率不太高）。
 
 虽然成本函数的形状像一个碗，但如果特征具有非常不同的比例，它可能是一个延长的碗。图 4-7 展示了在特征 1 和 2 具有相同比例的训练集上的梯度下降（左侧），以及在特征 1 的值远小于特征 2 的训练集上的梯度下降（右侧）。
 
@@ -248,13 +253,13 @@ Scikit-Learn 的`LinearRegression`类使用的 SVD 方法大约是*O*(*n*²)。�
 
 ## 批量梯度下降
 
-要实现梯度下降，您需要计算成本函数相对于每个模型参数*θ*[*j*]的梯度。换句话说，您需要计算如果您稍微改变*θ*[*j*]，成本函数将如何变化。这被称为*偏导数*。这就像问，“如果我面向东，脚下的山坡有多陡？”然后面向北问同样的问题（如果您可以想象一个超过三维的宇宙，那么其他维度也是如此）。方程 4-5 计算了关于参数*θ*[*j*]的 MSE 的偏导数，表示为∂ MSE(**θ**) / ∂θ[*j*]。
+要实现梯度下降，您需要计算成本函数相对于每个模型参数`θ[j]`的梯度。换句话说，您需要计算如果您稍微改变`θ[j]`，成本函数将如何变化。这被称为*偏导数*。这就像问，“如果我面向东，脚下的山坡有多陡？”然后面向北问同样的问题（如果您可以想象一个超过三维的宇宙，那么其他维度也是如此）。方程 4-5 计算了关于参数`θ[j]`的 MSE 的偏导数，表示为`∂MSE(θ) / ∂θ[j]`。
 
 ##### 方程 4-5\. 成本函数的偏导数
 
 <math display="block"><mrow><mstyle scriptlevel="0" displaystyle="true"><mfrac><mi>∂</mi> <mrow><mi>∂</mi><msub><mi>θ</mi> <mi>j</mi></msub></mrow></mfrac></mstyle> <mtext>MSE</mtext> <mrow><mo>(</mo> <mi mathvariant="bold">θ</mi> <mo>)</mo></mrow> <mo>=</mo> <mstyle scriptlevel="0" displaystyle="true"><mfrac><mn>2</mn> <mi>m</mi></mfrac></mstyle> <munderover><mo>∑</mo> <mrow><mi>i</mi><mo>=</mo><mn>1</mn></mrow> <mi>m</mi></munderover> <mrow><mo>(</mo> <msup><mi mathvariant="bold">θ</mi> <mo>⊺</mo></msup> <msup><mi mathvariant="bold">x</mi> <mrow><mo>(</mo><mi>i</mi><mo>)</mo></mrow></msup> <mo>-</mo> <msup><mi>y</mi> <mrow><mo>(</mo><mi>i</mi><mo>)</mo></mrow></msup> <mo>)</mo></mrow> <msubsup><mi>x</mi> <mi>j</mi> <mrow><mo>(</mo><mi>i</mi><mo>)</mo></mrow></msubsup></mrow></math>
 
-与单独计算这些偏导数不同，您可以使用方程 4-6 一次性计算它们。梯度向量，表示为∇[**θ**]MSE(**θ**)，包含成本函数的所有偏导数（每个模型参数一个）。
+与单独计算这些偏导数不同，您可以使用方程 4-6 一次性计算它们。梯度向量，表示为`∇[θ]MSE(θ)`，包含成本函数的所有偏导数（每个模型参数一个）。
 
 ##### 方程 4-6\. 成本函数的梯度向量
 
@@ -262,9 +267,9 @@ Scikit-Learn 的`LinearRegression`类使用的 SVD 方法大约是*O*(*n*²)。�
 
 ###### 警告
 
-请注意，这个公式涉及对整个训练集**X**进行计算，每次梯度下降步骤都要进行！这就是为什么该算法被称为*批量梯度下降*：它在每一步使用整个批量的训练数据（实际上，*全梯度下降*可能是一个更好的名称）。因此，在非常大的训练集上，它非常慢（我们很快将看到一些更快的梯度下降算法）。然而，梯度下降随着特征数量的增加而扩展得很好；当特征数量达到数十万时，使用梯度下降训练线性回归模型比使用正规方程或 SVD 分解要快得多。
+请注意，这个公式涉及对整个训练集`X`进行计算，每次梯度下降步骤都要进行！这就是为什么该算法被称为*批量梯度下降*：它在每一步使用整个批量的训练数据（实际上，*全梯度下降*可能是一个更好的名称）。因此，在非常大的训练集上，它非常慢（我们很快将看到一些更快的梯度下降算法）。然而，梯度下降随着特征数量的增加而扩展得很好；当特征数量达到数十万时，使用梯度下降训练线性回归模型比使用正规方程或 SVD 分解要快得多。
 
-一旦有了指向上坡的梯度向量，只需朝相反方向前进以下坡。这意味着从**θ**中减去∇[**θ**]MSE(**θ**)。这就是学习率*η*发挥作用的地方：⁠⁴将梯度向量乘以*η*来确定下坡步长的大小（方程 4-7）。
+一旦有了指向上坡的梯度向量，只需朝相反方向前进以下坡。这意味着从`θ`中减去`∇[θ]MSE(θ)`。这就是学习率`η`发挥作用的地方：⁠⁴将梯度向量乘以`η`来确定下坡步长的大小（方程 4-7）。
 
 ##### 方程 4-7\. 梯度下降步骤
 
@@ -303,7 +308,7 @@ array([[4.21509616],
 
 要找到一个好的学习率，可以使用网格搜索（参见第二章）。然而，您可能希望限制迭代次数，以便网格搜索可以消除收敛时间过长的模型。
 
-您可能想知道如何设置迭代次数。如果太低，当算法停止时，您仍然离最优解很远；但如果太高，您将浪费时间，因为模型参数不再改变。一个简单的解决方案是设置一个非常大的迭代次数，但在梯度向量变得微小时中断算法——也就是说，当其范数小于一个微小数*ϵ*（称为*容差*）时——因为这表示梯度下降已经（几乎）达到了最小值。
+您可能想知道如何设置迭代次数。如果太低，当算法停止时，您仍然离最优解很远；但如果太高，您将浪费时间，因为模型参数不再改变。一个简单的解决方案是设置一个非常大的迭代次数，但在梯度向量变得微小时中断算法——也就是说，当其范数小于一个微小数`ϵ`（称为*容差*）时——因为这表示梯度下降已经（几乎）达到了最小值。
 
 ## 随机梯度下降
 
@@ -341,7 +346,7 @@ for epoch in range(n_epochs):
         theta = theta - eta * gradients
 ```
 
-按照惯例，我们按照*m*次迭代的轮次进行迭代；每一轮称为*epoch*，如前所述。虽然批量梯度下降代码通过整个训练集迭代了 1,000 次，但这段代码只通过训练集迭代了 50 次，并达到了一个相当不错的解决方案：
+按照惯例，我们按照`m`次迭代的轮次进行迭代；每一轮称为*epoch*，如前所述。虽然批量梯度下降代码通过整个训练集迭代了 1,000 次，但这段代码只通过训练集迭代了 50 次，并达到了一个相当不错的解决方案：
 
 ```py
 >>> theta
@@ -360,6 +365,8 @@ array([[4.21076011],
 ###### 警告
 
 在使用随机梯度下降时，训练实例必须是独立同分布的（IID），以确保参数平均被拉向全局最优解。确保这一点的一个简单方法是在训练期间对实例进行洗牌（例如，随机选择每个实例，或在每个 epoch 开始时对训练集进行洗牌）。如果不对实例进行洗牌，例如，如果实例按标签排序，则 SGD 将从优化一个标签开始，然后是下一个标签，依此类推，并且不会接近全局最小值。
+
+
 
 要使用 Scikit-Learn 进行随机梯度下降线性回归，您可以使用`SGDRegressor`类，默认情况下优化 MSE 成本函数。以下代码最多运行 1,000 个时代（`max_iter`）或在 100 个时代内损失下降不到 10^(–5)（`tol`）时停止（`n_iter_no_change`）。它以学习率 0.01（`eta0`）开始，使用默认学习计划（与我们使用的不同）。最后，它不使用任何正则化（`penalty=None`；稍后会详细介绍）：
 
@@ -556,6 +563,8 @@ train_sizes, train_scores, valid_scores = learning_curve(
 
 ###### 图 4-17。线性（左）和多项式（右）模型，都具有不同级别的岭正则化
 
+
+
 与线性回归一样，我们可以通过计算闭式方程或执行梯度下降来执行岭回归。优缺点是相同的。方程 4-9 显示了闭式解，其中**A**是(*n* + 1) × (*n* + 1) *单位矩阵*，⁠⁹除了左上角的单元格为 0，对应于偏置项。
 
 ##### 方程 4-9. 岭回归闭式解
@@ -701,31 +710,42 @@ for epoch in range(n_epochs):
 
 ## 估计概率
 
+
+
 那么逻辑回归是如何工作的呢？就像线性回归模型一样，逻辑回归模型计算输入特征的加权和（加上偏置项），但是不像线性回归模型直接输出结果，它输出这个结果的*逻辑*（参见方程 4-13）。
 
 ##### 方程 4-13。逻辑回归模型估计概率（向量化形式）
 
-<math display="block"><mrow><mover accent="true"><mi>p</mi> <mo>^</mo></mover> <mo>=</mo> <msub><mi>h</mi> <mi mathvariant="bold">θ</mi></msub> <mrow><mo>(</mo> <mi mathvariant="bold">x</mi> <mo>)</mo></mrow> <mo>=</mo> <mi>σ</mi> <mrow><mo>(</mo> <msup><mi mathvariant="bold">θ</mi> <mo>⊺</mo></msup> <mi mathvariant="bold">x</mi> <mo>)</mo></mrow></mrow></math>
+```
+p̂ = hθ(x) = σ(θ⊺x)
+```
 
 逻辑函数 *σ*(·) 是一个 *S* 形函数，输出介于 0 和 1 之间的数字。它的定义如 方程式 4-14 和 图 4-21 所示。
 
 ##### 方程式 4-14\. 逻辑函数
 
-<math display="block"><mrow><mi>σ</mi> <mrow><mo>(</mo> <mi>t</mi> <mo>)</mo></mrow> <mo>=</mo> <mstyle scriptlevel="0" displaystyle="true"><mfrac><mn>1</mn> <mrow><mn>1</mn><mo>+</mo><mo form="prefix">exp</mo><mo>(</mo><mo>-</mo><mi>t</mi><mo>)</mo></mrow></mfrac></mstyle></mrow></math>![mls3 0421](img/mls3_0421.png)
+```
+σ(t) = 1 / (1 + exp(-t))
+```
+
+![mls3 0421](img/mls3_0421.png)
 
 ###### 图 4-21\. 逻辑函数
 
-逻辑回归模型一旦估计出概率 <math><mover><mi>p</mi><mo>^</mo></mover></math> = *h***θ**，即实例 **x** 属于正类的概率，它可以轻松地进行预测 *ŷ*（见 方程式 4-15）。
+逻辑回归模型一旦估计出概率 `p̂` = *h***θ**，即实例 **x** 属于正类的概率，它可以轻松地进行预测 *ŷ*（见 方程式 4-15）。
 
 ##### 方程式 4-15\. 使用 50% 阈值概率的逻辑回归模型预测
 
-<math display="block"><mrow><mover accent="true"><mi>y</mi> <mo>^</mo></mover> <mo>=</mo> <mfenced separators="" open="{" close=""><mtable><mtr><mtd columnalign="left"><mn>0</mn></mtd> <mtd columnalign="left"><mrow><mtext>if</mtext> <mover accent="true"><mi>p</mi> <mo>^</mo></mover> <mo><</mo> <mn>0.5</mn></mrow></mtd></mtr> <mtr><mtd columnalign="left"><mn>1</mn></mtd> <mtd columnalign="left"><mrow><mtext>if</mtext> <mover accent="true"><mi>p</mi> <mo>^</mo></mover> <mo>≥</mo> <mn>0.5</mn></mrow></mtd></mtr></mtable></mfenced></mrow></math>
+```
+ŷ = 0 if p̂ < 0.5
+    1 if p̂ ≥ 0.5
+```
 
 注意到当 *t* < 0 时，*σ*(*t*) < 0.5，当 *t* ≥ 0 时，*σ*(*t*) ≥ 0.5，因此使用默认的 50% 概率阈值的逻辑回归模型会在 **θ**^⊺ **x** 为正时预测为 1，为负时预测为 0。
 
 ###### 注意
 
-得分 *t* 通常被称为 *对数几率*。这个名字来自于对数几率函数的定义，即 logit(*p*) = log(*p* / (1 – *p*))，它是逻辑函数的反函数。实际上，如果计算估计概率 *p* 的对数几率，你会发现结果是 *t*。对数几率也被称为 *对数几率比*，因为它是正类估计概率与负类估计概率之间的比值的对数。
+得分 *t* 通常被称为 *对数几率*。这个名字来自于对数几率函数的定义，即 `logit(p) = log(p / (1 – p))`，它是逻辑函数的反函数。实际上，如果计算估计概率 *p* 的对数几率，你会发现结果是 *t*。对数几率也被称为 *对数几率比*，因为它是正类估计概率与负类估计概率之间的比值的对数。
 
 ## 训练和成本函数
 
@@ -733,7 +753,10 @@ for epoch in range(n_epochs):
 
 ##### 方程式 4-16\. 单个训练实例的成本函数
 
-<math><mrow><mi>c</mi><mo>(</mo><mi mathvariant="bold">θ</mi><mo>)</mo></mrow><mo>=</mo><mrow><mfenced open="{" close=""><mtable><mtr><mtd><mo>-</mo><mi>log</mi><mo>(</mo><mover accent="true"><mi>p</mi><mo>^</mo></mover><mo>)</mo></mtd><mtd><mtext>if </mtext><mi>y</mi><mo>=</mo><mn>1</mn></mtd></mtr><mtr><mtd><mo>-</mo><mi>log</mi><mo>(</mo><mn>1</mn><mo>-</mo><mover accent="true"><mi>p</mi><mo>^</mo></mover><mo>)</mo></mtd><mtd><mtext>if </mtext><mi>y</mi><mo>=</mo><mn>0</mn></mtd></mtr></mtable></mfenced></mrow></math>
+```
+c(θ) = -log(p̂) if y = 1
+       -log(1 - p̂) if y = 0
+```
 
 这个成本函数是有意义的，因为当 *t* 接近 0 时，–log(*t*) 会变得非常大，所以如果模型为正实例估计出接近 0 的概率，成本会很大，如果模型为负实例估计出接近 1 的概率，成本也会很大。另一方面，当 *t* 接近 1 时，–log(*t*) 接近 0，所以如果负实例的估计概率接近 0，或者正实例的估计概率接近 1，成本会接近 0，这正是我们想要的。
 
@@ -741,7 +764,9 @@ for epoch in range(n_epochs):
 
 ##### 方程 4-17。逻辑回归成本函数（对数损失）
 
-<math><mrow><mi>J</mi><mo>(</mo><mi mathvariant="bold">θ</mi><mo>)</mo></mrow><mo>=</mo><mrow><mo>-</mo><mfrac><mn>1</mn><mi>m</mi></mfrac><munderover><mo>∑</mo><mrow><mi>i</mi><mo>=</mo><mn>1</mn></mrow><mi>m</mi></munderover><mfenced open="[" close="]"><mrow><msup><mi>y</mi><mrow><mo>(</mo><mi>i</mi><mo>)</mrow></msup><mi>l</mi><mi>o</mi><mi>g</mi><mfenced><msup><mover accent="true"><mi>p</mi><mo>^</mo></mover><mrow><mo>(</mo><mi>i</mi><mo>)</mrow></msup></mfenced><mo>+</mo><mo>(</mo><mn>1</mn><mo>-</mo><msup><mi>y</mi><mrow><mo>(</mo><mi>i</mi><mo>)</mrow></msup><mo>)</mo><mi>l</mi><mi>o</mi><mi>g</mi><mfenced><mrow><mn>1</mn><mo>-</mo><msup><mover accent="true"><mi>p</mi><mo>^</mo></mover><mrow><mo>(</mo><mi>i</mi><mo>)</mrow></msup></mrow></mfenced></mrow></mfenced></mrow></math>
+```
+J(θ) = -1/m ∑(i=1 to m) [y^(i) log(p̂^(i)) + (1 - y^(i)) log(1 - p̂^(i))]
+```
 
 ###### 警告
 
@@ -751,7 +776,9 @@ for epoch in range(n_epochs):
 
 ##### 方程 4-18。逻辑成本函数偏导数
 
-数学显示="block"><mrow><mstyle scriptlevel="0" displaystyle="true"><mfrac><mi>∂</mi> <mrow><mi>∂</mi><msub><mi>θ</mi> <mi>j</mi></msub></mrow></mfrac></mstyle> <mtext>J</mtext> <mrow><mo>(</mo> <mi mathvariant="bold">θ</mi> <mo>)</mo></mrow> <mo>=</mo> <mstyle scriptlevel="0" displaystyle="true"><mfrac><mn>1</mn> <mi>m</mi></mfrac></mstyle> <munderover><mo>∑</mo> <mrow><mi>i</mi><mo>=</mo><mn>1</mn></mrow> <mi>m</mi></munderover> <mfenced separators="" open="(" close=")"><mi>σ</mi> <mrow><mo>(</mo> <msup><mi mathvariant="bold">θ</mi> <mo>⊺</mo></msup> <msup><mi mathvariant="bold">x</mi> <mrow><mo>(</mo><mi>i</mi><mo>)</mo></mrow></msup> <mo>)</mo></mrow> <mo>-</mo> <msup><mi>y</mi> <mrow><mo>(</mo><mi>i</mi><mo>)</mrow></msup></mfenced> <msubsup><mi>x</mi> <mi>j</mi> <mrow><mo>(</mo><mi>i</mi><mo>)</mo></mrow></msubsup></mrow></math>
+```
+∂J(θ) / ∂θj = 1/m ∑(i=1 to m) (σ(θ⊺x^(i)) - y^(i)) xj^(i)
+```
 
 这个方程看起来非常像方程 4-5：对于每个实例，它计算预测误差并将其乘以*j*^(th)特征值，然后计算所有训练实例的平均值。一旦有包含所有偏导数的梯度向量，您就可以在批量梯度下降算法中使用它。就是这样：您现在知道如何训练逻辑回归模型了。对于随机梯度下降，您将一次处理一个实例，对于小批量梯度下降，您将一次处理一个小批量。
 
@@ -772,7 +799,7 @@ for epoch in range(n_epochs):
 ['data', 'target', 'frame', 'target_names', 'DESCR', 'feature_names',
  'filename', 'data_module']
 >>> iris.data.head(3)
- sepal length (cm)  sepal width (cm)  petal length (cm)  petal width (cm)
+   sepal length (cm)  sepal width (cm)  petal length (cm)  petal width (cm)
 0                5.1               3.5                1.4               0.2
 1                4.9               3.0                1.4               0.2
 2                4.7               3.2                1.3               0.2
@@ -836,67 +863,77 @@ array([ True, False])
 
 ###### 注意
 
-控制 Scikit-Learn `LogisticRegression`模型正则化强度的超参数不是`alpha`（像其他线性模型一样），而是它的倒数：`C`。`C`值越高，模型的正则化就越*少*。
 
-与其他线性模型一样，逻辑回归模型可以使用ℓ[1]或ℓ[2]惩罚进行正则化。Scikit-Learn 实际上默认添加了ℓ[2]惩罚。
+
+控制 Scikit-Learn `LogisticRegression` 模型正则化强度的超参数不是 `alpha`（像其他线性模型一样），而是它的倒数：`C`。`C` 值越高，模型的正则化就越少。
+
+与其他线性模型一样，逻辑回归模型可以使用 ℓ[1] 或 ℓ[2] 惩罚进行正则化。Scikit-Learn 实际上默认添加了 ℓ[2] 惩罚。
 
 ## Softmax 回归
 
-逻辑回归模型可以直接泛化为支持多类别，而无需训练和组合多个二元分类器（如第三章中讨论的）。这称为*softmax 回归*或*多项式逻辑回归*。
+逻辑回归模型可以直接泛化为支持多类别，而无需训练和组合多个二元分类器（如第三章中讨论的）。这称为 softmax 回归或多项式逻辑回归。
 
-这个想法很简单：给定一个实例**x**，Softmax 回归模型首先为每个类别*k*计算一个分数*s**k*，然后通过应用*softmax 函数*（也称为*归一化指数函数*）来估计每个类别的概率。计算*s**k*的方程应该看起来很熟悉，因为它就像线性回归预测的方程（参见方程 4-19）。
+这个想法很简单：给定一个实例 `x`，Softmax 回归模型首先为每个类别 `k` 计算一个分数 `s_k`，然后通过应用 softmax 函数（也称为归一化指数函数）来估计每个类别的概率。计算 `s_k` 的方程应该看起来很熟悉，因为它就像线性回归预测的方程（参见方程 4-19）。
 
 ##### 方程 4-19。类别 k 的 Softmax 分数
 
-<math display="block"><mrow><msub><mi>s</mi> <mi>k</mi></msub> <mrow><mo>(</mo> <mi mathvariant="bold">x</mi> <mo>)</mo></mrow> <mo>=</mo> <msup><mrow><mo>(</mo><msup><mi mathvariant="bold">θ</mi> <mrow><mo>(</mo><mi>k</mi><mo>)</mo></mrow></msup> <mo>)</mo></mrow> <mo>⊺</mo></msup> <mi mathvariant="bold">x</mi></mrow></math>
+```
+s_k(x) = (θ^(k))⊺ x
+```
 
-注意每个类别都有自己专用的参数向量**θ**^((*k*))。所有这些向量通常被存储为*参数矩阵* **Θ** 的行。
+注意每个类别都有自己专用的参数向量 `θ^(k)`。所有这些向量通常被存储为参数矩阵 `Θ` 的行。
 
-一旦你计算出每个类别对于实例**x**的得分，你可以通过将得分通过 softmax 函数（方程 4-20）来估计实例属于类别*k*的概率<math><msub><mover><mi>p</mi><mo>^</mo></mover><mi>k</mi></msub></math>。该函数计算每个得分的指数，然后对它们进行归一化（除以所有指数的和）。这些得分通常被称为对数几率或对数几率（尽管它们实际上是未归一化的对数几率）。
+一旦你计算出每个类别对于实例 `x` 的得分，你可以通过将得分通过 softmax 函数（方程 4-20）来估计实例属于类别 `k` 的概率 `p̂_k`。该函数计算每个得分的指数，然后对它们进行归一化（除以所有指数的和）。这些得分通常被称为对数几率或对数几率（尽管它们实际上是未归一化的对数几率）。
 
-##### 方程 4-20\. Softmax 函数
+##### 方程 4-20. Softmax 函数
 
-<math display="block"><mrow><msub><mover accent="true"><mi>p</mi> <mo>^</mo></mover> <mi>k</mi></msub> <mo>=</mo> <mi>σ</mi> <msub><mfenced separators="" open="(" close=")"><mi mathvariant="bold">s</mi><mo>(</mo><mi mathvariant="bold">x</mi><mo>)</mo></mfenced> <mi>k</mi></msub> <mo>=</mo> <mstyle scriptlevel="0" displaystyle="true"><mfrac><mrow><mo form="prefix">exp</mo><mfenced separators="" open="(" close=")"><msub><mi>s</mi> <mi>k</mi></msub> <mrow><mo>(</mo><mi mathvariant="bold">x</mi><mo>)</mo></mrow></mfenced></mrow> <mrow><munderover><mo>∑</mo> <mrow><mi>j</mi><mo>=</mo><mn>1</mn></mrow> <mi>K</mi></munderover> <mrow><mo form="prefix">exp</mo><mfenced separators="" open="(" close=")"><msub><mi>s</mi> <mi>j</mi></msub> <mrow><mo>(</mo><mi mathvariant="bold">x</mi><mo>)</mo></mrow></mfenced></mrow></mrow></mfrac></mstyle></mrow></math>
+```
+p̂_k = σ(s(x))_k = exp(s_k(x)) / Σ_{j=1}^{K} exp(s_j(x))
+```
 
 在这个方程中：
 
-+   *K* 是类别的数量。
-
-+   **s**(**x**)是包含实例**x**每个类别得分的向量。
-
-+   *σ*(**s**(**x**))[*k*]是实例**x**属于类别*k*的估计概率，给定该实例每个类别的得分。
+- `K` 是类别的数量。
+- `s(x)` 是包含实例 `x` 每个类别得分的向量。
+- `σ(s(x))[k]` 是实例 `x` 属于类别 `k` 的估计概率，给定该实例每个类别的得分。
 
 就像逻辑回归分类器一样，默认情况下，softmax 回归分类器预测具有最高估计概率的类别（即具有最高得分的类别），如方程 4-21 所示。
 
-##### 方程 4-21\. Softmax 回归分类器预测
+##### 方程 4-21. Softmax 回归分类器预测
 
-<math display="block"><mrow><mover accent="true"><mi>y</mi> <mo>^</mo></mover> <mo>=</mo> <munder><mo form="prefix">argmax</mo> <mi>k</mi></munder> <mi>σ</mi> <msub><mfenced separators="" open="(" close=")"><mi mathvariant="bold">s</mi><mo>(</mo><mi mathvariant="bold">x</mi><mo>)</mo></mfenced> <mi>k</mi></msub> <mo>=</mo> <munder><mo form="prefix">argmax</mo> <mi>k</mi></munder> <msub><mi>s</mi> <mi k</mi></msub> <mrow><mo>(</mo> <mi mathvariant="bold">x</mi> <mo>)</mo></mrow> <mo>=</mo> <munder><mo form="prefix">argmax</mo> <mi>k</mi></munder> <mfenced separators="" open="(" close=")"><msup><mrow><mo>(</mo><msup><mi mathvariant="bold">θ</mi> <mrow><mo>(</mo><mi>k</mi><mo>)</mo></mrow></msup> <mo>)</mo></mrow> <mo>⊺</mo></msup> <mi mathvariant="bold">x</mi></mfenced></mrow></math>
+```
+ŷ = argmax_k σ(s(x))_k = argmax_k s_k(x) = argmax_k (θ^(k))⊺ x
+```
 
-*argmax*运算符返回最大化函数的变量值。在这个方程中，它返回最大化估计概率*σ*(**s**(**x**))[*k*]的*k*值。
+`argmax` 运算符返回最大化函数的变量值。在这个方程中，它返回最大化估计概率 `σ(s(x))[k]` 的 `k` 值。
 
 ###### 提示
 
 softmax 回归分类器一次只预测一个类别（即它是多类别的，而不是多输出的），因此它只能用于具有互斥类别的情况，例如不同种类的植物。你不能用它来识别一张图片中的多个人。
 
-现在你知道模型如何估计概率并进行预测了，让我们来看看训练。目标是让模型估计目标类的概率很高（因此其他类的概率很低）。最小化方程 4-22 中显示的成本函数，称为*交叉熵*，应该能够实现这个目标，因为当模型估计目标类的概率很低时，它会受到惩罚。交叉熵经常用来衡量一组估计的类别概率与目标类别的匹配程度。
+现在你知道模型如何估计概率并进行预测了，让我们来看看训练。目标是让模型估计目标类的概率很高（因此其他类的概率很低）。最小化方程 4-22 中显示的成本函数，称为交叉熵，应该能够实现这个目标，因为当模型估计目标类的概率很低时，它会受到惩罚。交叉熵经常用来衡量一组估计的类别概率与目标类别的匹配程度。
 
 ##### 方程 4-22. 交叉熵成本函数
 
-<math><mrow><mi>J</mi><mo>(</mo><mi mathvariant="bold">Θ</mi><mo>)</mo></mrow><mo>=</mo><mrow><mo>-</mo><mfrac><mn>1</mn><mi>m</mi></mfrac><munderover><mo>∑</mo><mrow><mi>i</mi><mo>=</mo><mn>1</mn></mrow><mi>m</mi></munderover><munderover><mo>∑</mo><mrow><mi>k</mi><mo>=</mo><mn>1</mn></mrow><mi>K</mi></munderover><msubsup><mi>y</mi><mi>k</mi><mrow><mo>(</mo><mi>i</mi><mo>)</mo></mrow></msubsup><mi>log</mi><mfenced><msubsup><mover accent="true"><mi>p</mi><mo>^</mo></mover><mi>k</mi><mrow><mo>(</mo><mi>i</mi><mo>)</mo></mrow></msubsup></mfenced></mrow></math>
+```
+J(Θ) = - (1/m) Σ_{i=1}^{m} Σ_{k=1}^{K} y_k^(i) log(p̂_k^(i))
+```
 
-在这个方程中，<math><msubsup><mi>y</mi><mi>k</mi><mrow><mo>(</mo><mi>i</mi><mo>)</mo></mrow></msubsup></math>是第*i*个实例属于第*k*类的目标概率。一般来说，它要么等于 1，要么等于 0，取决于实例是否属于该类。
+在这个方程中，`y_k^(i)` 是第 `i` 个实例属于第 `k` 类的目标概率。一般来说，它要么等于 1，要么等于 0，取决于实例是否属于该类。
 
-注意，当只有两类（*K* = 2）时，这个成本函数等同于逻辑回归成本函数（对数损失；参见方程 4-17）。
+注意，当只有两类（`K` = 2）时，这个成本函数等同于逻辑回归成本函数（对数损失；参见方程 4-17）。
 
-这个成本函数关于**θ**^((*k*))的梯度向量由方程 4-23 给出。
+这个成本函数关于 `θ^(k)` 的梯度向量由方程 4-23 给出。
 
 ##### 方程 4-23. 类别 k 的交叉熵梯度向量
 
-<math display="block"><mrow><msub><mi>∇</mi> <msup><mi mathvariant="bold">θ</mi> <mrow><mo>(</mo><mi>k</mi><mo>)</mo></mrow></msup></msub> <mi>J</mi> <mrow><mo>(</mo> <mi mathvariant="bold">Θ</mi> <mo>)</mo></mrow> <mo>=</mo> <mstyle scriptlevel="0" displaystyle="true"><mfrac><mn>1</mn> <mi>m</mi></mfrac></mstyle> <munderover><mo>∑</mo> <mrow><mi>i</mi><mo>=</mo><mn>1</mn></mrow> <mi>m</mi></munderover> <mrow><mfenced separators="" open="(" close=")"><msubsup><mover accent="true"><mi>p</mi> <mo>^</mo></mover> <mi>k</mi> <mrow><mo>(</mo><mi>i</mi><mo>)</mo></mrow></msubsup> <mo>-</mo> <msubsup><mi>y</mi> <mi>k</mi> <mrow><mo>(</mo><mi>i</mi><mo>)</mo></mrow></msubsup></mfenced> <msup><mi mathvariant="bold">x</mi> <mrow><mo>(</mo><mi>i</mi><mo>)</mo></mrow></msup></mrow></mrow></math>
+```
+∇_{θ^(k)} J(Θ) = (1/m) Σ_{i=1}^{m} (p̂_k^(i) - y_k^(i)) x^(i)
+```
 
-现在你可以计算每个类别的梯度向量，然后使用梯度下降（或任何其他优化算法）来找到最小化成本函数的参数矩阵**Θ**。
+现在你可以计算每个类别的梯度向量，然后使用梯度下降（或任何其他优化算法）来找到最小化成本函数的参数矩阵 `Θ`。
 
-让我们使用 softmax 回归将鸢尾花分类为所有三类。当你在多于两类上训练 Scikit-Learn 的`LogisticRegression`分类器时，它会自动使用 softmax 回归（假设你使用`solver="lbfgs"`，这是默认值）。它还默认应用ℓ[2]正则化，你可以使用之前提到的超参数`C`来控制：
+让我们使用 softmax 回归将鸢尾花分类为所有三类。当你在多于两类上训练 Scikit-Learn 的 `LogisticRegression` 分类器时，它会自动使用 softmax 回归（假设你使用 `solver="lbfgs"`，这是默认值）。它还默认应用 ℓ[2] 正则化，你可以使用之前提到的超参数 `C` 来控制：
 
 ```py
 X = iris.data[["petal length (cm)", "petal width (cm)"]].values
@@ -907,81 +944,67 @@ softmax_reg = LogisticRegression(C=30, random_state=42)
 softmax_reg.fit(X_train, y_train)
 ```
 
-所以下次当你发现一朵花瓣长 5 厘米，宽 2 厘米的鸢尾花时，你可以让你的模型告诉你它是什么类型的鸢尾花，它会以 96%的概率回答*Iris virginica*（第 2 类）（或以 4%的概率回答*Iris versicolor*）:
+所以下次当你发现一朵花瓣长 5 厘米，宽 2 厘米的鸢尾花时，你可以让你的模型告诉你它是什么类型的鸢尾花，它会以 96% 的概率回答 *Iris virginica*（第 2 类）（或以 4% 的概率回答 *Iris versicolor*）：
 
 ```py
 >>> softmax_reg.predict([[5, 2]])
 array([2])
 >>> softmax_reg.predict_proba([[5, 2]]).round(2)
-array([[0\.  , 0.04, 0.96]])
+array([[0.  , 0.04, 0.96]])
 ```
 
-图 4-25 显示了由背景颜色表示的决策边界。请注意，任意两个类之间的决策边界是线性的。图中还显示了*Iris versicolor*类的概率，由曲线表示（例如，标有 0.30 的线表示 30% 概率边界）。请注意，模型可以预测估计概率低于 50% 的类。例如，在所有决策边界相交的点，所有类的估计概率均为 33%。
+图 4-25 显示了由背景颜色表示的决策边界。请注意，任意两个类之间的决策边界是线性的。图中还显示了 *Iris versicolor* 类的概率，由曲线表示（例如，标有 0.30 的线表示 30% 概率边界）。请注意，模型可以预测估计概率低于 50% 的类。例如，在所有决策边界相交的点，所有类的估计概率均为 33%。
 
 ![mls3 0425](img/mls3_0425.png)
 
-###### 图 4-25\. Softmax 回归决策边界
+###### 图 4-25. Softmax 回归决策边界
 
 在本章中，你学习了训练线性模型的各种方法，包括回归和分类。你使用闭式方程解决线性回归问题，以及梯度下降，并学习了在训练过程中如何向成本函数添加各种惩罚以对模型进行正则化。在此过程中，你还学习了如何绘制学习曲线并分析它们，以及如何实现早期停止。最后，你学习了逻辑回归和 softmax 回归的工作原理。我们已经打开了第一个机器学习黑匣子！在接下来的章节中，我们将打开更多黑匣子，从支持向量机开始。
 
 # 练习
 
-1.  如果你有一个拥有数百万个特征的训练集，你可以使用哪种线性回归训练算法？
+1. 如果你有一个拥有数百万个特征的训练集，你可以使用哪种线性回归训练算法？
+2. 假设你的训练集中的特征具有非常不同的尺度。哪些算法可能会受到影响，以及如何受影响？你可以采取什么措施？
+3. 在训练逻辑回归模型时，梯度下降是否会陷入局部最小值？
+4. 如果让所有梯度下降算法运行足够长的时间，它们会导致相同的模型吗？
+5. 假设你使用批量梯度下降，并在每个时期绘制验证误差。如果你注意到验证误差持续上升，可能出现了什么问题？如何解决？
+6. 当验证误差上升时，立即停止小批量梯度下降是一个好主意吗？
+7. 在我们讨论的梯度下降算法中，哪种算法会最快接近最优解？哪种实际上会收敛？如何使其他算法也收敛？
+8. 假设你正在使用多项式回归。你绘制学习曲线并注意到训练误差和验证误差之间存在很大差距。发生了什么？有哪三种方法可以解决这个问题？
+9. 假设你正在使用岭回归，并且注意到训练误差和验证误差几乎相等且相当高。你会说模型存在高偏差还是高方差？你应该增加正则化超参数 `α` 还是减少它？
+10. 为什么要使用：
+    1. 是否可以使用岭回归代替普通线性回归（即，没有任何正则化）？
+    2. 是否可以使用 Lasso 代替岭回归？
+    3. 是否可以使用弹性网络代替 Lasso 回归？
+11. 假设你想要将图片分类为室内/室外和白天/黑夜。你应该实现两个逻辑回归分类器还是一个 softmax 回归分类器？
+12. 使用 NumPy 实现批量梯度下降并进行早期停止以进行 softmax 回归，而不使用 Scikit-Learn。将其应用于鸢尾花数据集等分类任务。
 
-1.  假设你的训练集中的特征具有非常不同的尺度。哪些算法可能会受到影响，以及如何受影响？你可以采取什么措施？
+这些练习的解决方案可在本章笔记本的末尾找到，网址为 [https://homl.info/colab3](https://homl.info/colab3)。
 
-1.  在训练逻辑回归模型时，梯度下降是否会陷入局部最小值？
+¹ 闭式方程仅由有限数量的常数、变量和标准操作组成：例如，`a = sin(b – c)`。没有无限求和、极限、积分等。
 
-1.  如果让所有梯度下降算法运行足够长的时间，它们会导致相同的模型吗？
+² 从技术上讲，它的导数是 Lipschitz 连续的。
 
-1.  假设你使用批量梯度下降，并在每个时期绘制验证误差。如果你注意到验证误差持续上升，可能出现了什么问题？如何解决？
+³ 由于特征 1 较小，改变 `θ[1]` 以影响成本函数需要更大的变化，这就是为什么碗沿着 `θ[1]` 轴被拉长的原因。
 
-1.  当验证误差上升时，立即停止小批量梯度下降是一个好主意吗？
-
-1.  在我们讨论的梯度下降算法中，哪种算法会最快接近最优解？哪种实际上会收敛？如何使其他算法也收敛？
-
-1.  假设你正在使用多项式回归。你绘制学习曲线并注意到训练误差和验证误差之间存在很大差距。发生了什么？有哪三种方法可以解决这个问题？
-
-1.  假设你正在使用岭回归，并且注意到训练误差和验证误差几乎相等且相当高。你会说模型存在高偏差还是高方差？你应该增加正则化超参数*α*还是减少它？
-
-1.  为什么要使用：
-
-    1.  是否可以使用岭回归代替普通线性回归（即，没有任何正则化）？
-
-    1.  是否可以使用 Lasso 代替岭回归？
-
-    1.  是否可以使用弹性网络代替 Lasso 回归？
-
-1.  假设你想要将图片分类为室内/室外和白天/黑夜。你应该实现两个逻辑回归分类器还是一个 softmax 回归分类器？
-
-1.  使用 NumPy 实现批量梯度下降并进行早期停止以进行 softmax 回归，而不使用 Scikit-Learn。将其应用于鸢尾花数据集等分类任务。
-
-这些练习的解决方案可在本章笔记本的末尾找到，网址为[*https://homl.info/colab3*](https://homl.info/colab3)。
-
-¹ 闭式方程仅由有限数量的常数、变量和标准操作组成：例如，*a* = sin(*b* – *c*)。没有无限求和、极限、积分等。
-
-² 从技术上讲，它的导数是*Lipschitz 连续*的。
-
-³ 由于特征 1 较小，改变*θ*[1]以影响成本函数需要更大的变化，这就是为什么碗沿着*θ*[1]轴被拉长的原因。
-
-⁴ Eta（*η*）是希腊字母表的第七个字母。
+⁴ Eta（`η`）是希腊字母表的第七个字母。
 
 ⁵ 而正规方程只能执行线性回归，梯度下降算法可以用来训练许多其他模型，您将会看到。
 
 ⁶ 这种偏差的概念不应与线性模型的偏差项混淆。
 
-⁷ 通常使用符号*J*(**θ**)表示没有简短名称的代价函数；在本书的其余部分中，我经常会使用这种符号。上下文将清楚地表明正在讨论哪个代价函数。
+⁷ 通常使用符号 `J(θ)` 表示没有简短名称的代价函数；在本书的其余部分中，我经常会使用这种符号。上下文将清楚地表明正在讨论哪个代价函数。
 
 ⁸ 范数在第二章中讨论。
 
 ⁹ 一个全是 0 的方阵，除了主对角线（从左上到右下）上的 1。
 
-¹⁰ 或者，您可以使用`Ridge`类与`"sag"`求解器。随机平均梯度下降是随机梯度下降的一种变体。有关更多详细信息，请参阅由不列颠哥伦比亚大学的 Mark Schmidt 等人提出的演示[“使用随机平均梯度算法最小化有限和”](https://homl.info/12)。
+¹⁰ 或者，您可以使用 `Ridge` 类与 `"sag"` 求解器。随机平均梯度下降是随机梯度下降的一种变体。有关更多详细信息，请参阅由不列颠哥伦比亚大学的 Mark Schmidt 等人提出的演示 [“使用随机平均梯度算法最小化有限和”](https://homl.info/12)。
 
 ¹¹ 您可以将非可微点处的次梯度向量视为该点周围梯度向量之间的中间向量。
 
-¹² 照片来源于相应的维基百科页面。*Iris virginica*照片由 Frank Mayfield 拍摄（[知识共享署名-相同方式共享 2.0](https://creativecommons.org/licenses/by-sa/2.0)），*Iris versicolor*照片由 D. Gordon E. Robertson 拍摄（[知识共享署名-相同方式共享 3.0](https://creativecommons.org/licenses/by-sa/3.0)），*Iris setosa*照片为公共领域。
+¹² 照片来源于相应的维基百科页面。*Iris virginica* 照片由 Frank Mayfield 拍摄（[知识共享署名-相同方式共享 2.0](https://creativecommons.org/licenses/by-sa/2.0)），*Iris versicolor* 照片由 D. Gordon E. Robertson 拍摄（[知识共享署名-相同方式共享 3.0](https://creativecommons.org/licenses/by-sa/3.0)），*Iris setosa* 照片为公共领域。
 
-¹³ NumPy 的`reshape()`函数允许一个维度为-1，表示“自动”：该值是从数组的长度和剩余维度推断出来的。
+¹³ NumPy 的 `reshape()` 函数允许一个维度为 -1，表示“自动”：该值是从数组的长度和剩余维度推断出来的。
 
-¹⁴ 它是一组点**x**，使得*θ*[0] + *θ*[1]*x*[1] + *θ*[2]*x*[2] = 0，这定义了一条直线。
+¹⁴ 它是一组点 `x`，使得 `θ[0] + θ[1]x[1] + θ[2]x[2] = 0`，这定义了一条直线。

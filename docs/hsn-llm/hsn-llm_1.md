@@ -1,4 +1,5 @@
-# 第二章： 语义搜索
+
+# 第二章：语义搜索
 
 搜索是第一个被广泛采用的“大语言模型”（LLM）应用之一。在开创性论文[BERT：用于语言理解的深度双向变换器预训练](https://arxiv.org/abs/1810.04805)发布几个月后，谷歌宣布它在使用此模型来增强谷歌搜索，并且它[代表了](https://blog.google/products/search/search-language-understanding-bert/)“搜索历史上最大的飞跃之一”。微软必应也[表示](https://azure.microsoft.com/en-us/blog/bing-delivers-its-largest-improvement-in-search-experience-using-azure-gpus/)“从今年四月开始，我们使用大型变换器模型为我们的必应客户带来了过去一年最大的质量改进”。
 
@@ -6,11 +7,11 @@
 
 在本章中，我们将讨论使用语言模型增强搜索系统的三种主要方法。我们将介绍代码示例，您可以利用这些功能来增强自己的应用程序。请注意，这不仅对网页搜索有用，搜索还是大多数应用程序和产品的重要组成部分。因此，我们的重点不仅是构建一个网页搜索引擎，而是关注您自己的数据集。此功能为许多其他基于搜索的激动人心的 LLM 应用提供动力（例如，检索增强生成或文档问答）。让我们开始看看这三种使用 LLM 进行语义搜索的方法。
 
-# 基于语言模型的搜索系统的三大类。
+## 基于语言模型的搜索系统的三大类
 
 关于如何最好地使用 LLM 进行搜索的研究很多。这些模型的三大类是：
 
-1- 密集检索
+1. **密集检索**
 
 假设用户在搜索引擎中输入搜索查询。密集检索系统依赖于嵌入的概念，这是我们在前面的章节中遇到的相同概念，并将搜索问题转化为检索搜索查询的最近邻（在查询和文档都转换为嵌入后）。图 2-1 展示了密集检索如何获取搜索查询，查阅其文本档案，并输出一组相关结果。
 
@@ -18,7 +19,7 @@
 
 ###### 图 2-1\. 密集检索是语义搜索的关键类型之一，依赖文本嵌入的相似性来检索相关结果。
 
-2- 重新排序
+2. **重新排序**
 
 这些系统是多个步骤的管道。重排序 LLM 是这些步骤之一，负责对结果子集相对于查询的相关性进行评分，然后根据这些评分更改结果的顺序。图 2-2 显示了重排序器如何不同于密集检索，因为它们需要额外的输入：来自搜索管道前一步的搜索结果集。
 
@@ -26,7 +27,7 @@
 
 ###### 图 2-2\. 重排序器，第二种关键的语义搜索类型，接收搜索查询和结果集合，并根据相关性重新排序，通常会显著改善结果。
 
-3- 生成搜索
+3. **生成搜索**
 
 不断增长的文本生成 LLM 能力导致了一批新的搜索系统，其中包括一个生成模型，它简单地对查询生成答案。图 2-3 显示了一个生成搜索的例子。
 
@@ -36,7 +37,7 @@
 
 这三种概念都很强大，可以在同一流程中结合使用。本章其余部分将更详细地介绍这三种系统。虽然这些是主要类别，但它们并不是搜索领域中唯一的 LLM 应用。
 
-# 密集检索
+## 密集检索
 
 回想一下，嵌入将文本转换为数字表示。这些可以被视为空间中的点，如我们在图 2-4 中所见。接近的点意味着它们所代表的文本是相似的。因此在这个例子中，文本 1 和文本 2 彼此相似（因为它们靠近），而与文本 3 不同（因为它更远）。
 
@@ -52,21 +53,17 @@
 
 根据图 2-5 中的距离，“文本 2”是这个查询的最佳结果，其次是“文本 1”。但是，这里可能会出现两个问题：
 
-文本 3 是否应该被返回作为结果？这是你作为系统设计者的决定。有时需要设置一个最大相似度分数的阈值，以过滤掉不相关的结果（以防语料库中没有与查询相关的结果）。
+- 文本 3 是否应该被返回作为结果？这是你作为系统设计者的决定。有时需要设置一个最大相似度分数的阈值，以过滤掉不相关的结果（以防语料库中没有与查询相关的结果）。
+- 查询及其最佳结果在语义上相似吗？不一定。这就是为什么语言模型需要在问答对上进行训练，以便在检索方面变得更好的原因。这个过程在第十三章中有更详细的说明。
 
-查询及其最佳结果在语义上相似吗？不一定。这就是为什么语言模型需要在问答对上进行训练，以便在检索方面变得更好的原因。这个过程在第十三章中有更详细的说明。
-
-## 密集检索示例
+### 密集检索示例
 
 让我们通过使用 Cohere 搜索维基百科关于电影*星际穿越*的页面来看一个密集检索示例。在这个示例中，我们将执行以下操作：
 
-1.  获取我们想要使其可搜索的文本，对其进行一些轻处理以将其拆分成句子。
-
-1.  嵌入句子
-
-1.  构建搜索索引
-
-1.  搜索并查看结果
+1. 获取我们想要使其可搜索的文本，对其进行一些轻处理以将其拆分成句子。
+2. 嵌入句子
+3. 构建搜索索引
+4. 搜索并查看结果
 
 首先，我们需要安装示例所需的库：
 
@@ -93,208 +90,138 @@ api_key = ''
 
 # Create and retrieve a Cohere API key from os.cohere.ai
 co = cohere.Client(api_key)
-
 ```
 
-1.  获取文本档案
+1. **获取文本档案**
 
-    让我们使用维基百科关于电影*星际穿越*的第一部分。https://en.wikipedia.org/wiki/Interstellar_(film)。我们将获取文本，然后将其拆分成句子。
+让我们使用维基百科关于电影*星际穿越*的第一部分。https://en.wikipedia.org/wiki/Interstellar_(film)。我们将获取文本，然后将其拆分成句子。
 
-    ```py
-    text = """
-    Interstellar is a 2014 epic science fiction film co-written, directed, and produced by Christopher Nolan. 
-    It stars Matthew McConaughey, Anne Hathaway, Jessica Chastain, Bill Irwin, Ellen Burstyn, Matt Damon, and Michael Caine. 
-    Set in a dystopian future where humanity is struggling to survive, the film follows a group of astronauts who travel through a wormhole near Saturn in search of a new home for mankind.
+```py
+text = """
+Interstellar is a 2014 epic science fiction film co-written, directed, and produced by Christopher Nolan. 
+It stars Matthew McConaughey, Anne Hathaway, Jessica Chastain, Bill Irwin, Ellen Burstyn, Matt Damon, and Michael Caine. 
+Set in a dystopian future where humanity is struggling to survive, the film follows a group of astronauts who travel through a wormhole near Saturn in search of a new home for mankind.
 
-    Brothers Christopher and Jonathan Nolan wrote the screenplay, which had its origins in a script Jonathan developed in 2007\. 
-    Caltech theoretical physicist and 2017 Nobel laureate in Physics[4] Kip Thorne was an executive producer, acted as a scientific consultant, and wrote a tie-in book, The Science of Interstellar. 
-    Cinematographer Hoyte van Hoytema shot it on 35 mm movie film in the Panavision anamorphic format and IMAX 70 mm. 
-    Principal photography began in late 2013 and took place in Alberta, Iceland, and Los Angeles. 
-    Interstellar uses extensive practical and miniature effects and the company Double Negative created additional digital effects.
+Brothers Christopher and Jonathan Nolan wrote the screenplay, which had its origins in a script Jonathan developed in 2007\. 
+Caltech theoretical physicist and 2017 Nobel laureate in Physics[4] Kip Thorne was an executive producer, acted as a scientific consultant, and wrote a tie-in book, The Science of Interstellar. 
+Cinematographer Hoyte van Hoytema shot it on 35 mm movie film in the Panavision anamorphic format and IMAX 70 mm. 
+Principal photography began in late 2013 and took place in Alberta, Iceland, and Los Angeles. 
+Interstellar uses extensive practical and miniature effects and the company Double Negative created additional digital effects.
 
-    Interstellar premiered on October 26, 2014, in Los Angeles. 
-    In the United States, it was first released on film stock, expanding to venues using digital projectors. 
-    The film had a worldwide gross over $677 million (and $773 million with subsequent re-releases), making it the tenth-highest grossing film of 2014\. 
-    It received acclaim for its performances, direction, screenplay, musical score, visual effects, ambition, themes, and emotional weight. 
-    It has also received praise from many astronomers for its scientific accuracy and portrayal of theoretical astrophysics. Since its premiere, Interstellar gained a cult following,[5] and now is regarded by many sci-fi experts as one of the best science-fiction films of all time.
-    Interstellar was nominated for five awards at the 87th Academy Awards, winning Best Visual Effects, and received numerous other accolades"""
-    # Split into a list of sentences
-    texts = text.split('.')
+Interstellar premiered on October 26, 2014, in Los Angeles. 
+In the United States, it was first released on film stock, expanding to venues using digital projectors. 
+The film had a worldwide gross over $677 million (and $773 million with subsequent re-releases), making it the tenth-highest grossing film of 2014\. 
+It received acclaim for its performances, direction, screenplay, musical score, visual effects, ambition, themes, and emotional weight. 
+It has also received praise from many astronomers for its scientific accuracy and portrayal of theoretical astrophysics. Since its premiere, Interstellar gained a cult following,[5] and now is regarded by many sci-fi experts as one of the best science-fiction films of all time.
+Interstellar was nominated for five awards at the 87th Academy Awards, winning Best Visual Effects, and received numerous other accolades"""
+# Split into a list of sentences
+texts = text.split('.')
 
-    # Clean up to remove empty spaces and new lines
-    texts = np.array([t.strip(' \n') for t in texts])
-    ```
+# Clean up to remove empty spaces and new lines
+texts = np.array([t.strip(' \n') for t in texts])
+```
 
-1.  嵌入文本
+2. **嵌入文本**
 
-    让我们现在嵌入文本。我们将把它们发送到 Cohere API，并为每个文本返回一个向量。
+让我们现在嵌入文本。我们将把它们发送到 Cohere API，并为每个文本返回一个向量。
 
-    ```py
-    # Get the embeddings
-    response = co.embed(
-      texts=texts,
-    ).embeddings
+```py
+# Get the embeddings
+response = co.embed(
+  texts=texts,
+).embeddings
 
-    embeds = np.array(response)
-    print(embeds.shape)
-    ```
+embeds = np.array(response)
+print(embeds.shape)
+```
 
-    输出如下：
+输出如下：
 
-    (15, 4096)
+```
+(15, 4096)
+```
 
-    表明我们有 15 个向量，每个向量的大小为 4096。
+表明我们有 15 个向量，每个向量的大小为 4096。
 
-1.  构建搜索索引
+3. **构建搜索索引**
 
-    在我们可以搜索之前，我们需要构建一个搜索索引。索引存储嵌入，并被优化为快速检索最近邻，即使我们有非常大量的点。
+在我们可以搜索之前，我们需要构建一个搜索索引。索引存储嵌入，并被优化为快速检索最近邻，即使我们有非常大量的点。
 
-    ```py
-    # Create the search index, pass the size of embedding
-    search_index = AnnoyIndex(embeds.shape[1], 'angular')
+```py
+# Create the search index, pass the size of embedding
+search_index = AnnoyIndex(embeds.shape[1], 'angular')
 
-    # Add all the vectors to the search index
-    for index, embed in enumerate(embeds):
-        search_index.add_item(index, embed)
+# Add all the vectors to the search index
+for index, embed in enumerate(embeds):
+    search_index.add_item(index, embed)
 
-    search_index.build(10) 
-    search_index.save('test.ann')
-    ```
+search_index.build(10) 
+search_index.save('test.ann')
+```
 
-1.  搜索索引
+4. **搜索索引**
 
-    现在我们可以使用任何我们想要的查询来搜索数据集。我们只需嵌入查询，并将其嵌入呈现给索引，索引将检索出最相似的文本。
+现在我们可以使用任何我们想要的查询来搜索数据集。我们只需嵌入查询，并将其嵌入呈现给索引，索引将检索出最相似的文本。
 
-    让我们定义我们的搜索函数：
+让我们定义我们的搜索函数：
 
-    ```py
-    def search(query):
+```py
+def search(query):
 
-      # 1\. Get the query's embedding
-      query_embed = co.embed(texts=[query]).embeddings[0]
+  # 1\. Get the query's embedding
+  query_embed = co.embed(texts=[query]).embeddings[0]
 
-      # 2\. Retrieve the nearest neighbors
-      similar_item_ids = search_index.get_nns_by_vector(query_embed, n=3,
-                                                      include_distances=True)
-      # 3\. Format the results
-      results = pd.DataFrame(data={'texts': texts[similar_item_ids[0]], 
-                                  'distance': similar_item_ids[1]})
+  # 2\. Retrieve the nearest neighbors
+  similar_item_ids = search_index.get_nns_by_vector(query_embed, n=3,
+                                                  include_distances=True)
+  # 3\. Format the results
+  results = pd.DataFrame(data={'texts': texts[similar_item_ids[0]], 
+                              'distance': similar_item_ids[1]})
 
-      # 4\. Print and return the results
-      print(f"Query:'{query}'\nNearest neighbors:")
-      return results
-    ```
+  # 4\. Print and return the results
+  print(f"Query:'{query}'\nNearest neighbors:")
+  return results
+```
 
-    我们现在准备好写查询并搜索文本了！
+我们现在准备好写查询并搜索文本了！
 
-    ```py
-    query = "How much did the film make?"
-    search(query)
-    ```
+```py
+query = "How much did the film make?"
+search(query)
+```
 
-    这产生的输出为：
+这产生的输出为：
 
-    ```py
-    Query:'How much did the film make?'
-    Nearest neighbors:
-    ```
+```
+Query:'How much did the film make?'
+Nearest neighbors:
+```
 
-    |  |
-    | --- |
-
-    ```py
-    texts
-    ```
-
-    |
-
-    ```py
-    distance
-    ```
-
-    |
-
-    |
-
-    ```py
-    0
-    ```
-
-    |
-
-    ```py
-    The film had a worldwide gross over $677 million (and $773 million with subsequent re-releases), making it the tenth-highest grossing film of 2014
-    ```
-
-    |
-
-    ```py
-    0.815905
-    ```
-
-    |
-
-    |
-
-    ```py
-    1
-    ```
-
-    |
-
-    ```py
-    It stars Matthew McConaughey, Anne Hathaway, Jessica Chastain, Bill Irwin, Ellen Burstyn, Matt Damon, and Michael Caine
-    ```
-
-    |
-
-    ```py
-    1.066861
-    ```
-
-    |
-
-    |
-
-    ```py
-    2
-    ```
-
-    |
-
-    ```py
-    In the United States, it was first released on film stock, expanding to venues using digital projectors
-    ```
-
-    |
-
-    ```py
-    1.086919
-    ```
-
-    |
+|  | texts | distance |
+| --- | --- | --- |
+| 0 | The film had a worldwide gross over $677 million (and $773 million with subsequent re-releases), making it the tenth-highest grossing film of 2014 | 0.815905 |
+| 1 | It stars Matthew McConaughey, Anne Hathaway, Jessica Chastain, Bill Irwin, Ellen Burstyn, Matt Damon, and Michael Caine | 1.066861 |
+| 2 | In the United States, it was first released on film stock, expanding to venues using digital projectors | 1.086919 |
 
 第一个结果的距离最小，因此与查询最相似。查看它，它完美地回答了问题。请注意，如果我们仅进行关键字搜索，这是不可能的，因为最佳结果中不包含“much”或“make”这两个词。
 
 为了进一步说明密集检索的能力，这里有一个查询列表及每个查询的最佳结果：
 
-查询：“告诉我关于$$$的事情？”
+- 查询：“告诉我关于$$$的事情？”
+  最佳结果：这部电影在全球的总票房超过 6.77 亿美元（与后来的重映一起为 7.73 亿美元），成为 2014 年票房第十高的电影。
+  距离：1.244138
 
-最佳结果：这部电影在全球的总票房超过 6.77 亿美元（与后来的重映一起为 7.73 亿美元），成为 2014 年票房第十高的电影。
+- 查询：“哪些演员参与了？”
+  顶部结果：它由马修·麦康纳、安妮·海瑟薇、杰西卡·查斯坦、比尔·欧文、艾伦·伯斯廷、马特·达蒙和迈克尔·凯恩主演。
+  距离：0.917728
 
-距离：1.244138
+- 查询：“这部电影是如何上映的？”
 
-查询：“哪些演员参与了？”
 
-顶部结果：它由马修·麦康纳、安妮·海瑟薇、杰西卡·查斯坦、比尔·欧文、艾伦·伯斯廷、马特·达蒙和迈克尔·凯恩主演。
-
-距离：0.917728
-
-查询：“这部电影是如何上映的？”
 
 顶部结果：在美国，它最初是在胶卷上发布的，扩展到使用数字放映机的场所。
 
-距离：0.871881
+距离：`0.871881`
 
 ### 密集检索的注意事项
 
@@ -305,80 +232,15 @@ Query:'What is the mass of the moon?'
 Nearest neighbors:
 ```
 
-|  |
-| --- |
-
-```py
-texts
-```
-
-|
-
-```py
-distance
-```
-
-|
-
-|
-
-```py
-0
-```
-
-|
-
-```py
-The film had a worldwide gross over $677 million (and $773 million with subsequent re-releases), making it the tenth-highest grossing film of 2014
-```
-
-|
-
-```py
-1.298275
-```
-
-|
-
-|
-
-```py
-1
-```
-
-|
-
-```py
-It has also received praise from many astronomers for its scientific accuracy and portrayal of theoretical astrophysics
-```
-
-|
-
-```py
-1.324389
-```
-
-|
-
-|
-
-```py
-2
-```
-
-|
-
-```py
-Cinematographer Hoyte van Hoytema shot it on 35 mm movie film in the Panavision anamorphic format and IMAX 70 mm
-```
-
-|
-
-```py
-1.328375
-```
-
-|
+|  |  |
+| --- | --- |
+| `texts` | `distance` |
+| `0` | `The film had a worldwide gross over $677 million (and $773 million with subsequent re-releases), making it the tenth-highest grossing film of 2014` |
+| `1.298275` |
+| `1` | `It has also received praise from many astronomers for its scientific accuracy and portrayal of theoretical astrophysics` |
+| `1.324389` |
+| `2` | `Cinematographer Hoyte van Hoytema shot it on 35 mm movie film in the Panavision anamorphic format and IMAX 70 mm` |
+| `1.328375` |
 
 在这种情况下，一个可能的启发式方法是设定一个阈值水平——例如，相关性的最大距离。许多搜索系统向用户提供他们能获取的最佳信息，并由用户决定其相关性。跟踪用户是否点击了结果（并对此感到满意）的信息，可以改善未来版本的搜索系统。
 
@@ -527,7 +389,7 @@ Relevance Score: 0.03
 
 ```
 
-这表明，重新排序模型对第一个结果的信心更高，为其分配了 0.92 的相关性评分，而其他结果的评分则明显较低。
+这表明，重新排序模型对第一个结果的信心更高，为其分配了 `0.92` 的相关性评分，而其他结果的评分则明显较低。
 
 然而，更常见的是，我们的索引会有数千或数百万个条目，我们需要筛选出，比如说一百或一千个结果，然后将这些结果呈现给重新排序模型。这个筛选过程被称为搜索管道的*第一阶段*。
 
@@ -577,6 +439,8 @@ Relevance Score: 0.03
 
 语义搜索使用信息检索（IR）领域的指标进行评估。让我们讨论这两个流行指标：平均精确度（MAP）和标准化折扣累积增益（nDCG）。
 
+
+
 评估搜索系统需要三个主要[组件](https://nlp.stanford.edu/IR-book/html/htmledition/irbook.html)：文本档案、一组查询和相关性判断，指示哪些文档与每个查询相关。我们在图 3-13 中看到了这些组件。
 
 ![要评估搜索系统，我们需要一个测试套件，包括查询和相关性判断，指示我们档案中的哪些文档与每个查询相关。](img/semantic_search_888356_13.png)
@@ -613,7 +477,7 @@ Relevance Score: 0.03
 
 第一个很简单，只看第一个结果，我们计算精度分数：将正确结果的数量除以结果的总数（正确和不正确）。图 2-17 显示，在这种情况下，我们在第一个位置上有一个正确结果。因此，精度为 1/1 = 1。
 
-![  计算均值平均精度时，我们从计算每个位置的精度开始，从第 1 个位置开始。](img/semantic_search_888356_17.png)
+![计算均值平均精度时，我们从计算每个位置的精度开始，从第 1 个位置开始。](img/semantic_search_888356_17.png)
 
 ###### 图 2-17\. 计算均值平均精度时，我们从计算每个位置的精度开始，从第 1 个位置开始。
 

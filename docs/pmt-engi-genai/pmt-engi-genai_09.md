@@ -1,16 +1,17 @@
+
 # 第九章：使用 Stable Diffusion 的高级图像生成技术
 
 大多数与 AI 图像的工作只需要简单的提示工程技巧，但当您需要更多创意控制输出或想要为特定任务训练自定义模型时，可用的工具就更加强大。这些更复杂的能力通常需要更多的技术能力和结构化思维，作为创建最终图像的工作流程的一部分。
 
 本章中所有图像均由 Stable Diffusion XL 生成，除非另有说明，例如在依赖于 ControlNet 等扩展的章节中，那里支持更多的旧版 v1.5 模型的方法。所讨论的技术旨在可迁移到任何未来的或替代模型。我们广泛使用了 AUTOMATIC1111 的 Stable Diffusion WebUI，并提供了详细的设置说明，这些说明是在撰写本文时最新的，但请查阅[官方仓库](https://oreil.ly/hs_fS)以获取最新的说明，并诊断您遇到的任何问题。
 
-# 运行 Stable Diffusion
+## 运行 Stable Diffusion
 
 Stable Diffusion 是一个开源的图像生成模型，因此如果您有 NVIDIA 或 AMD GPU，或者 Apple Silicon（为 M1、M2 或 M3 Mac 提供动力），您可以在您的计算机上免费运行它。运行第一个流行的版本（1.4）的[Stable Diffusion 在 Google Colab 笔记本中](https://oreil.ly/OmBuR)是很常见的，它提供了访问云中免费 GPU 的途径（尽管如果 Google 限制了免费层，您可能需要升级到付费账户）。
 
 如果您之前没有使用过它，或者要查找有关限制的最新信息，请访问[Google Colab 网站](https://oreil.ly/2WGxQ)。这本书的 Python 笔记本副本已保存在[GitHub 仓库](https://oreil.ly/uauNn)中，但您应该将其上传到 Google Drive，并在 Google Colab 中运行以避免设置问题。
 
-安装 Stable Diffusion 可以通过 Hugging Face diffusers 库以及一些依赖项来完成。在 Google Colab 中，以下代码安装了必要的依赖项（如果你在本地安装而不是在 Jupyter Notebook 或 Google Colab 中，则不需要感叹号(!)）：
+安装 Stable Diffusion 可以通过 Hugging Face `diffusers` 库以及一些依赖项来完成。在 Google Colab 中，以下代码安装了必要的依赖项（如果你在本地安装而不是在 Jupyter Notebook 或 Google Colab 中，则不需要感叹号(`!`)）：
 
 ```py
 !pip install diffusers==0.11.1
@@ -35,7 +36,7 @@ pipe = pipe.to("cuda")
 
 `import torch`
 
-这行代码正在导入 torch 库，也称为[PyTorch](https://pytorch.org)。PyTorch 是一个开源的机器学习库，用于计算机视觉和自然语言处理等应用。
+这行代码正在导入 `torch` 库，也称为[PyTorch](https://pytorch.org)。PyTorch 是一个开源的机器学习库，用于计算机视觉和自然语言处理等应用。
 
 `from diffusers import StableDiffusionPipeline`
 
@@ -45,13 +46,13 @@ pipe = pipe.to("cuda")
 
 这是在创建一个具有预训练权重的 `StableDiffusionPipeline` 类的实例。`from_pretrained` 方法加载预训练模型的权重——在这种情况下，模型是 `CompVis/stable-diffusion-v1-4`。
 
-`torch_dtype=torch.float16` 参数指定模型中使用的应为 float16，这是一种半精度浮点格式。使用 float16 可以加快模型计算速度并减少内存使用（这对于保持在 Google Colab 免费层限制内是必要的）。
+`torch_dtype=torch.float16` 参数指定模型中使用的应为 `float16`，这是一种半精度浮点格式。使用 `float16` 可以加快模型计算速度并减少内存使用（这对于保持在 Google Colab 免费层限制内是必要的）。
 
 `pipe = pipe.to("cuda")`
 
-这行代码将 pipe 模型移动到 GPU。字符串 `"cuda"` 指的是 CUDA，这是由 Nvidia 创建的并行计算平台和应用编程接口 (API) 模型。通过这样做，pipe 模型执行的所有计算都将由 GPU 执行，这比在 CPU 上运行大型模型和数据要快得多。
+这行代码将 `pipe` 模型移动到 GPU。字符串 `"cuda"` 指的是 CUDA，这是由 Nvidia 创建的并行计算平台和应用编程接口 (API) 模型。通过这样做，`pipe` 模型执行的所有计算都将由 GPU 执行，这比在 CPU 上运行大型模型和数据要快得多。
 
-现在我们有了我们的 pipe，我们可以传递一个提示和其他模型参数，如随机种子（更改此值以每次生成不同的图像）、推理步骤数（更多步骤需要时间但会产生更高质量的图像）和指导比例（图像与提示匹配的紧密程度）：
+现在我们有了我们的 `pipe`，我们可以传递一个提示和其他模型参数，如随机种子（更改此值以每次生成不同的图像）、推理步骤数（更多步骤需要时间但会产生更高质量的图像）和指导比例（图像与提示匹配的紧密程度）：
 
 ```py
 # run inference on a prompt
@@ -80,11 +81,11 @@ image
 
 `generator = torch.Generator("cuda").manual_seed(1024)`
 
-在这一行中，创建了一个 PyTorch 生成器并将其分配给 generator 变量。生成器使用 `"cuda"` 初始化，这意味着它将使用 GPU 进行计算。`manual_seed(1024)` 函数用于设置生成随机数的随机种子，以确保结果可重复。如果您使用相同的模型运行此代码，应该得到完全相同的图像。
+在这一行中，创建了一个 PyTorch 生成器并将其分配给 `generator` 变量。生成器使用 `"cuda"` 初始化，这意味着它将使用 GPU 进行计算。`manual_seed(1024)` 函数用于设置生成随机数的随机种子，以确保结果可重复。如果您使用相同的模型运行此代码，应该得到完全相同的图像。
 
 `image = pipe(prompt, num_inference_steps=50, guidance_scale=7, generator=generator).images[0]`
 
-这行代码在提示上运行 pipe 模型以生成图像。`num_inference_steps` 参数设置为 50，意味着模型将执行 50 步推理。`guidance_scale` 参数设置为 7，这调整了提示引导生成的图像的强度（较高的值往往会导致图像颗粒化且多样性较低）。生成器参数传递了之前创建的随机数生成器。结果是生成图像的数组，`images[0]` 从此数组中选择第一张图像。
+这行代码在提示上运行 `pipe` 模型以生成图像。`num_inference_steps` 参数设置为 50，意味着模型将执行 50 步推理。`guidance_scale` 参数设置为 7，这调整了提示引导生成的图像的强度（较高的值往往会导致图像颗粒化且多样性较低）。`generator` 参数传递了之前创建的随机数生成器。结果是生成图像的数组，`images[0]` 从此数组中选择第一张图像。
 
 `image.save(f"astronaut_rides_horse.png")`
 
@@ -207,7 +208,7 @@ Image(filename=image_paths[0])
 
 使用 Stability AI 服务的缺点是缺乏对定制的控制。Stable Diffusion 作为开源项目的一个巨大好处是能够修改模型的几乎任何方面，并利用社区构建的高级功能。此外，不能保证您今天依赖的函数或特性在未来仍然存在，因为 Stability AI 致力于满足投资者的期望、法律团队和公司客户的需求。例如，流行的（更宽容的）1.5 版本模型已被弃用，转而使用新的 Stable Diffusion 2.0 和 XL 模型，这给那些已经精心调整他们的工作流程、参数和提示以与 v1.5 版本协同工作的人带来了问题。
 
-# AUTOMATIC1111 Web 用户界面
+## AUTOMATIC1111 Web 用户界面
 
 Stable Diffusion 的重度用户通常推荐[AUTOMATIC1111](https://oreil.ly/r-2vm)（发音为“automatic eleven eleven”）Web 用户界面，因为它功能丰富，并附带由 Stable Diffusion 高级用户构建的多个扩展。该项目是利用 Stable Diffusion 最佳特性的门户：一个投入了无数小时将高级功能整合到工具中的充满活力的开源社区。高级用户还可能想要探索[ComfyUI](https://oreil.ly/LWVvC)，因为它支持更高级的工作流程和更大的灵活性（包括[图像到视频](https://oreil.ly/dh7jR)），但我们认为这过于复杂，不适合大多数用例，这些用例可以很容易地通过 AUTOMATIC1111 处理。
 
@@ -225,41 +226,40 @@ Stable Diffusion 的重度用户通常推荐[AUTOMATIC1111](https://oreil.ly/r-2
 
 +   [在苹果硅上安装和运行](https://oreil.ly/Ob2VK)
 
-安装通常涉及确保您已安装 Git 和 Python（以及任何其他 [依赖项](https://oreil.ly/vBOVI)），并下载 Stable Diffusion，以及将 Automatic1111 [代码](https://oreil.ly/x0BMn)下载到您的本地计算机。本章中的图像使用的是 Stable Diffusion 的 [XL 1.0 版本](https://oreil.ly/DIvUz)，尽管许多人仍然使用较旧的 [版本 1.5](https://oreil.ly/FNxf9)，因为它被认为更宽容，并且拥有丰富的自定义社区训练模型。这些技术在各个模型中都是通用的，尽管结果和品质会有所不同：普遍认为，从 2.0 版本的训练数据中移除 NSFW 图像导致了生成（即使是非显性）逼真人物图像的性能下降（尽管在 XL 版本中这似乎得到了很大程度的纠正）。
 
-由于该模型是开源的，您可以通过访问基础和精炼模型的 Hugging Face 模型页面，并从“文件和版本”选项卡下载 *.safetensors* 文件来在您的本地计算机上获取 SDXL v1.0。这种格式比之前的 *.ckpt* 文件格式更安全，因为它在运行时不会在您的计算机上执行代码：
 
-+   [基础模型](https://oreil.ly/wtHRj): *sd_xl_base_1.0.safetensors*
+# 安装与配置
 
-+   [精炼模型](https://oreil.ly/0Dlbv): *sd_xl_refiner_1.0.safetensors*
+安装通常涉及确保您已安装 Git 和 Python（以及任何其他[依赖项](https://oreil.ly/vBOVI)），并下载 Stable Diffusion，以及将 Automatic1111 [代码](https://oreil.ly/x0BMn)下载到您的本地计算机。本章中的图像使用的是 Stable Diffusion 的 [XL 1.0 版本](https://oreil.ly/DIvUz)，尽管许多人仍然使用较旧的[版本 1.5](https://oreil.ly/FNxf9)，因为它被认为更宽容，并且拥有丰富的自定义社区训练模型。这些技术在各个模型中都是通用的，尽管结果和品质会有所不同：普遍认为，从 2.0 版本的训练数据中移除 NSFW 图像导致了生成（即使是非显性）逼真人物图像的性能下降（尽管在 XL 版本中这似乎得到了很大程度的纠正）。
 
-这些模型需要时间下载，所以现在就开始下载它们，一旦安装了 AUTOMATIC111 接口，您就可以将它们放入 models/Stable-diffusion 文件夹。如果您想使用较旧的 v1.5 Stable Diffusion 模型，请从 [Hugging Face](https://oreil.ly/hwblq) 下载 *v1-5-pruned-emaonly.ckpt* 文件，并将其移动到放置基础和精炼模型的文件夹中。
+由于该模型是开源的，您可以通过访问基础和精炼模型的 Hugging Face 模型页面，并从“文件和版本”选项卡下载 `*.safetensors*` 文件来在您的本地计算机上获取 SDXL v1.0。这种格式比之前的 `*.ckpt*` 文件格式更安全，因为它在运行时不会在您的计算机上执行代码：
+
++ [基础模型](https://oreil.ly/wtHRj)：`sd_xl_base_1.0.safetensors`
++ [精炼模型](https://oreil.ly/0Dlbv)：`sd_xl_refiner_1.0.safetensors`
+
+这些模型需要时间下载，所以现在就开始下载它们，一旦安装了 AUTOMATIC111 接口，您就可以将它们放入 `models/Stable-diffusion` 文件夹。如果您想使用较旧的 v1.5 Stable Diffusion 模型，请从 [Hugging Face](https://oreil.ly/hwblq) 下载 `v1-5-pruned-emaonly.ckpt` 文件，并将其移动到放置基础和精炼模型的文件夹中。
 
 一旦安装完成，可以通过运行一个本地启动应用程序的脚本来访问 Web 界面。该应用程序将显示为浏览器中的 Web 地址。以下是一个示例，适用于具有 Nvidia GPU 的 Windows 计算机（截至编写时）：
 
-1.  安装 [Python 3.10.6](https://oreil.ly/kGiyi)（选择添加到 PATH）和 [Git](https://oreil.ly/Pdzb0)。
-
-1.  从搜索栏打开命令提示符，并输入 `**git clone [*https://github.com/AUTOMATIC1111/stable-diffusion-webui*](https://github.com/AUTOMATIC1111/stable-diffusion-webui)**`。
-
-1.  请记住将 sd_xl_base_1.0.safetensors 和 sd_xl_refiner_1.0.safetensors 模型移动到 stable-diffusion-webui/models/Stable-diffusion 文件夹。
-
-1.  双击 *webui-user.bat* 文件，访问界面运行的地址（通常是 *[*http://127.0.0.1:7860*](http://127.0.0.1:7860)*）。对于 Mac 或 Linux，你需要在终端中运行 `bash webui.sh`。
+1. 安装 [Python 3.10.6](https://oreil.ly/kGiyi)（选择添加到 PATH）和 [Git](https://oreil.ly/Pdzb0）。
+2. 从搜索栏打开命令提示符，并输入 `git clone https://github.com/AUTOMATIC1111/stable-diffusion-webui`。
+3. 请记住将 `sd_xl_base_1.0.safetensors` 和 `sd_xl_refiner_1.0.safetensors` 模型移动到 `stable-diffusion-webui/models/Stable-diffusion` 文件夹。
+4. 双击 `webui-user.bat` 文件，访问界面运行的地址（通常是 `http://127.0.0.1:7860`）。对于 Mac 或 Linux，你需要在终端中运行 `bash webui.sh`。
 
 从此界面，如 图 9-4（来自官方 [GitHub 仓库](https://oreil.ly/OOpas)）所示，您可以在“txt2img”标签页的左上角输入您的提示，然后点击生成以获取您的图像。
 
-如果你遇到错误，或者如果你之前下载了 AUTOMATIC1111 网页用户界面并需要更新它，你可以在终端中进入 stable-diffusion-webui 文件夹并运行 `git pull`。如果你遇到错误，你可以通过在 stable-diffusion-webui 文件夹中运行 `git checkout -f master` 来重置你的实现（首先移动任何你想保存的文件）。
+如果你遇到错误，或者如果你之前下载了 AUTOMATIC1111 网页用户界面并需要更新它，你可以在终端中进入 `stable-diffusion-webui` 文件夹并运行 `git pull`。如果你遇到错误，你可以通过在 `stable-diffusion-webui` 文件夹中运行 `git checkout -f master` 来重置你的实现（首先移动任何你想保存的文件）。
 
-###### 警告
-
-以这种方式重置 AUTOMATIC1111 将会删除文件夹中的任何文件，包括任何自定义设置。我们建议你在不同的文件夹中创建本地副本以备恢复。
+> **警告**
+> 以这种方式重置 AUTOMATIC1111 将会删除文件夹中的任何文件，包括任何自定义设置。我们建议你在不同的文件夹中创建本地副本以备恢复。
 
 ![pega 0904](img/pega_0904.png)
 
-###### 图 9-4\. 稳定扩散网页用户界面
+**图 9-4\. 稳定扩散网页用户界面**
 
-在提示词输入框下方立即的框中，你可以添加负面提示以从图像中移除概念并确保它们不会显示（有关负面提示的更多信息，请参阅第八章）。下面，你会发现一些设置，包括种子（设置为 –1 以每次生成新图像），采样（推理）步数，批次数（依次运行的生成数量），以及批大小（每个批次中处理的图像数量，这需要更高的 VRAM）。当图像生成时，你可以直接从界面下载它们，使用下面的按钮将它们发送到各种标签页，或者访问稳定扩散网页用户界面/输出文件夹，其中它们按方法（`text2img`，`img2img`）和日期组织：
+在提示词输入框下方立即的框中，你可以添加负面提示以从图像中移除概念并确保它们不会显示（有关负面提示的更多信息，请参阅第八章）。下面，你会发现一些设置，包括种子（设置为 –1 以每次生成新图像），采样（推理）步数，批次数（依次运行的生成数量），以及批大小（每个批次中处理的图像数量，这需要更高的 VRAM）。当图像生成时，你可以直接从界面下载它们，使用下面的按钮将它们发送到各种标签页，或者访问 `stable-diffusion-webui/outputs` 文件夹，其中它们按方法（`text2img`，`img2img`）和日期组织：
 
-```py
+```
 stable-diffusion-webui/
     outputs/
         txt2img-images/
@@ -271,21 +271,17 @@ stable-diffusion-webui/
 
 ![pega 0905](img/pega_0905.png)
 
-###### 图 9-5\. SDXL 的标准设置
+**图 9-5\. SDXL 的标准设置**
 
 可用的采样方法相对复杂且难以解释，但权衡通常在速度、质量和随机性之间。`Euler` 是最简单的采样器，而 `DDIM` 是第一个专门为扩散模型设计的。名称中带有 *a* 的采样方法，例如 `Euler a`，是祖先采样器，它们在过程中将噪声注入图像。这会导致结果的可重复性较低，因为图像不会收敛（每次运行模型时图像都有一些随机性）。运行 20–30 步的 `DPM++ 2M Karras` 和 `UniPC` 采样器是稳健、稳定和可重复图像的优秀选择。对于更高质量但速度较慢且更随机的图像，尝试使用 10–15 步的 `DPM++ SDE Karras` 或 `DDIM` 采样器。
 
 另一个重要的参数是 CFG Scale（分类器自由指导——与在稳定扩散推理 Google Colab 示例中引入的 `guidance_scale` 相同）。作为一个经验法则，以下是 CFG Scale 的常见值及其对应的含义：
 
-+   *1*：主要忽略提示。
-
-+   *3*：尽情发挥创意。
-
-+   *7*：提示和创造力之间的良好平衡。
-
-+   *15*：遵循提示。
-
-+   *30*：严格遵循提示。
++ `1`：主要忽略提示。
++ `3`：尽情发挥创意。
++ `7`：提示和创造力之间的良好平衡。
++ `15`：遵循提示。
++ `30`：严格遵循提示。
 
 你可以通过高度和宽度以及批量计数来更改生成的图像大小，以及使用图像数量。高分辨率修复复选框使用上采样器生成更大的高分辨率图像（更多内容稍后介绍），修复面部缺陷的复选框使用面部修复模型（默认`Codeformer`）来修复 Stable Diffusion 经常出现的人脸缺陷，而平铺复选框创建一个可以重复平铺的图像。还有保存和插入你想要定期重用的提示样式的功能。在不同的标签页中有很多[强大功能](https://oreil.ly/MiSt1)，以及你可以添加的社区构建扩展，随着可用性的增加，还将添加更多。
 
@@ -293,14 +289,14 @@ AUTOMATIC1111 支持提示权重，或加权项，类似于 Midjourney（在第�
 
 输入：
 
-```py
+```
 Marilyn Monroe as a (pirate:1.5) on a desert island, detailed clothing,
 by Stanley Artgerm Lau and Alphonse Mucha
 ```
 
 负面：
 
-```py
+```
 racy, nudity, cleavage
 ```
 
@@ -308,7 +304,7 @@ racy, nudity, cleavage
 
 ![pega 0906](img/pega_0906.png)
 
-###### 图 9-6\. 玛丽莲·梦露海盗
+**图 9-6\. 玛丽莲·梦露海盗**
 
 方括号`[pirate]`以相同的方式反向工作，通过 10%减少提示中一个术语的强调。所以例如，`[hat]`等同于权重 0.9，或`(hat:0.9)`。注意这不同于负提示，因为该术语仍然会出现在图像生成中，只是被降低。提示权重在负提示框中也起作用，更积极地从图像中移除该概念或减少其影响。这可以用来确保当负提示不足以移除不想要的元素或风格时，它们不会出现。
 
@@ -320,7 +316,7 @@ AUTOMATIC1111 的强大用户使用的一种更高级的技术是 *提示编辑*
 
 输入：
 
-```py
+```
 vogue fashion shoot of [Emma Watson: Amber Heard: 0.5],
 highly realistic, high resolution, highly detailed,
 dramatic, 8k
@@ -330,7 +326,7 @@ dramatic, 8k
 
 ![pega 0907](img/pega_0907.png)
 
-###### 图 9-7\. 埃玛·沃森和艾梅柏·希尔德混合
+**图 9-7\. 埃玛·沃森和艾梅柏·希尔德混合**
 
 # 提供方向
 
@@ -344,13 +340,13 @@ AUTOMATIC1111 网页界面支持 `Img2Img` (图 9-8)，这是 Midjourney 提交�
 
 ![pega 0908](img/pega_0908.png)
 
-###### 图 9-8\. Img2Img
+**图 9-8\. Img2Img**
 
 这些参数与正常的`Text2Image`模式相同，增加了*去噪强度*，它控制生成过程之前添加到基础图像中的随机噪声量。0 的值将添加零噪声，因此输出将完全像输入一样，而 1 的值将完全用噪声替换输入（功能上等同于使用`Text2Image`）。通常，您需要与提示中的单词一起实验不同的去噪强度、CFG 比例和种子值的组合。以下图 9-9 中的示例只是为了好玩创建了一个皮克斯风格的字符：我们不建议在提示中使用受保护的知识产权进行商业用途。
 
 输入：
 
-```py
+```
 headshot of a man in an office,  as a Pixar Disney character
 from Up ( 2 0 0 9 ), unreal engine, octane render, 3 d
 render, photorealistic, in the style of Pixar
@@ -360,13 +356,13 @@ render, photorealistic, in the style of Pixar
 
 ![pega 0909](img/pega_0909.png)
 
-###### 图 9-9。不同去噪强度值对图像的影响
+**图 9-9。不同去噪强度值对图像的影响**
 
 如果您想在 AUTOMATIC1111 中测试一个参数的许多不同值并生成如图 9-9 所示的网格，这可以在底部的脚本下拉菜单中支持，您可以选择 X/Y/Z 图并选择最多三个参数来生成多个值。例如，您也可以尝试调整 CFG 比例，看看它如何与去噪相互作用。图 9-10 展示了如何选择去噪强度参数的多个值。当您点击生成按钮时，将生成一个图像网格，您可以在方法（即`Text2Image`或`Img2Img`）和今天的日期下的输出文件夹中找到填充网格的每个单独图像。
 
 ![pega 0910](img/pega_0910.png)
 
-###### 图 9-10。去噪参数的 X/Y/Z 图
+**图 9-10。去噪参数的 X/Y/Z 图**
 
 # 评估质量
 
@@ -378,7 +374,7 @@ render, photorealistic, in the style of Pixar
 
 ![pega 0911](img/pega_0911.png)
 
-###### 图 9-11。PNG 信息标签页
+**图 9-11。PNG 信息标签页**
 
 # 图像上采样
 
@@ -386,13 +382,13 @@ render, photorealistic, in the style of Pixar
 
 ![pega 0912](img/pega_0912.png)
 
-###### 图 9-12\. SD Upscale 界面
+**图 9-12\. SD Upscale 界面**
 
-通常我们发现 R-ESRGAN 4x+ 放大器是一个好的默认选择，但有时这可能会给图像带来卡通般的质感，如图 9-12 中所示，特别是草地。如果您没有得到好的结果，有[更多模型](https://openmodeldb.info)可供测试。当您下载一个新的模型（一个 *.pth* 文件）时，只需将其放置在 ESRGAN 文件夹中并重新启动网络界面，它们就会出现（在您的终端中）。您也可以通过修改提示来获得良好的放大效果，尤其是如果您丢失了一些细节或风格变化过多。然而，不建议使用原始提示，因为这会在每个瓦片中以相同的方式修复图像，产生奇怪的效果。为了展示更广泛的质量差异，我们使用了 v1.5 模型来生成原始图像（SDXL 创建的图像比原始图像大 4 倍，质量更高，因此放大需求较少）。
+通常我们发现 R-ESRGAN 4x+ 放大器是一个好的默认选择，但有时这可能会给图像带来卡通般的质感，如图 9-12 中所示，特别是草地。如果您没有得到好的结果，有[更多模型](https://openmodeldb.info)可供测试。当您下载一个新的模型（一个 `*.pth*` 文件）时，只需将其放置在 `ESRGAN` 文件夹中并重新启动网络界面，它们就会出现（在您的终端中）。您也可以通过修改提示来获得良好的放大效果，尤其是如果您丢失了一些细节或风格变化过多。然而，不建议使用原始提示，因为这会在每个瓦片中以相同的方式修复图像，产生奇怪的效果。为了展示更广泛的质量差异，我们使用了 v1.5 模型来生成原始图像（SDXL 创建的图像比原始图像大 4 倍，质量更高，因此放大需求较少）。
 
 ![pega 0913](img/pega_0913.png)
 
-###### 图 9-13\. 放大对图像部分的影响
+**图 9-13\. 放大对图像部分的影响**
 
 # 指定格式
 
@@ -406,11 +402,11 @@ render, photorealistic, in the style of Pixar
 
 ![pega 0914](img/pega_0914.png)
 
-###### 图 9-14\. Interrogate CLIP
+**图 9-14\. Interrogate CLIP**
 
 输出：
 
-```py
+```
 a painting of a woman in a pirate costume on the beach
 with a pirate hat on her head and a pirate ship in the background,
 a fine art painting, Chris Rallis, fantasy art, stanley artgerm lau
@@ -418,13 +414,15 @@ a fine art painting, Chris Rallis, fantasy art, stanley artgerm lau
 
 # SD 修复和扩展
 
-Img2Img 也支持修复和扩展，并提供了一个简单的画布工具来创建遮罩。要使用修复或扩展，请点击 Img2Img 选项卡中的 Inpaint 子选项卡并上传你的图像。建议使用特定的修复模型以获得更好的结果，你可以通过 [下载](https://oreil.ly/s_trl) *sd-v1-5-inpainting.ckpt* 文件并将其移动到你的 Models > Stable-Diffusion 文件夹中来实现。重新启动界面；模型应该出现在左上角的下拉菜单中。画布允许你使用画笔移除图像的部分，就像在 DALL-E 中一样（见 第八章），大小可调，以便进行精细控制。在 图 9-15 中，城堡庭院中央的石头圆圈已被移除。
+
+
+Img2Img 也支持修复和扩展，并提供了一个简单的画布工具来创建遮罩。要使用修复或扩展，请点击 `Img2Img` 选项卡中的 `Inpaint` 子选项卡并上传你的图像。建议使用特定的修复模型以获得更好的结果，你可以通过 [下载](https://oreil.ly/s_trl) `sd-v1-5-inpainting.ckpt` 文件并将其移动到你的 `Models > Stable-Diffusion` 文件夹中来实现。重新启动界面；模型应该出现在左上角的下拉菜单中。画布允许你使用画笔移除图像的部分，就像在 `DALL-E` 中一样（见 第八章），大小可调，以便进行精细控制。在 图 9-15 中，城堡庭院中央的石头圆圈已被移除。
 
 ![pega 0915](img/pega_0915.png)
 
 ###### 图 9-15\. Img2Img 中的修复画布
 
-通常为 DALL-E 提供的建议，它也支持修复图像功能，是使用你的提示来描述整个图像，而不仅仅是修复区域。这是一个好的默认设置，应该首先尝试。确保将修复区域设置为 *整个图片* 而不是 *仅遮罩*，否则它将尝试将整个场景拟合到遮罩区域（不用担心，即使你选择了 *整个图片*，它也只会在你遮罩的区域上绘画）。如果原始图像是由 AI 生成的，还可以帮助将种子从原始图像中传递过来。然而，根据你想要修改或修复的区域添加或更改提示，通常在我们的经验中会得到更好的结果。至少你应该更改提示的主题；例如，在 图 9-15 中，提示从 `城堡` 改为 `雕像`，因为我们想要在庭院中出现的是雕像。你也可以尝试只对填充区域进行提示，尽管这可能会得到一个在风格上不全局一致的图像。
+通常为 `DALL-E` 提供的建议，它也支持修复图像功能，是使用你的提示来描述整个图像，而不仅仅是修复区域。这是一个好的默认设置，应该首先尝试。确保将修复区域设置为 *整个图片* 而不是 *仅遮罩*，否则它将尝试将整个场景拟合到遮罩区域（不用担心，即使你选择了 *整个图片*，它也只会在你遮罩的区域上绘画）。如果原始图像是由 AI 生成的，还可以帮助将种子从原始图像中传递过来。然而，根据你想要修改或修复的区域添加或更改提示，通常在我们的经验中会得到更好的结果。至少你应该更改提示的主题；例如，在 图 9-15 中，提示从 `城堡` 改为 `雕像`，因为我们想要在庭院中出现的是雕像。你也可以尝试只对填充区域进行提示，尽管这可能会得到一个在风格上不全局一致的图像。
 
 输入：
 
@@ -446,9 +444,9 @@ high fantasy art
 
 修复图像功能之所以强大，是因为它赋予了你控制权。能够隔离图像的某个部分并给出详细的修复指示，使你拥有更高效的流程，而不会影响图像的其他部分。
 
-如果对修复区域的调整很小，请使用“原始”作为遮罩内容选项，并使用 0.2 到 0.4 的去噪强度。如果您完全替换图像中的某个元素，可能需要使用 Latent Noise 选项，去噪强度高达 0.8，尽管任何高于 0.4 的情况都可能导致图像中出现全局不一致的元素和幻觉，因此可能需要时间来迭代以达到满意的效果。填充选项也很有用，因为它匹配周围区域的颜色。如果您在修复区域的边缘看到难看的接缝，可以增加遮罩模糊，但通常默认的 4 是足够的。修复是一个迭代过程。我们建议一次修复一个问题或瑕疵，应用尽可能多次，并尝试不同的参数，直到对最终图像满意为止。
+如果对修复区域的调整很小，请使用“原始”作为遮罩内容选项，并使用 0.2 到 0.4 的去噪强度。如果您完全替换图像中的某个元素，可能需要使用 `Latent Noise` 选项，去噪强度高达 0.8，尽管任何高于 0.4 的情况都可能导致图像中出现全局不一致的元素和幻觉，因此可能需要时间来迭代以达到满意的效果。填充选项也很有用，因为它匹配周围区域的颜色。如果您在修复区域的边缘看到难看的接缝，可以增加遮罩模糊，但通常默认的 4 是足够的。修复是一个迭代过程。我们建议一次修复一个问题或瑕疵，应用尽可能多次，并尝试不同的参数，直到对最终图像满意为止。
 
-Outpainting 与 Midjourney 中的操作不同（见第八章 Chapter 8），Midjourney 具有指定 1.5 倍或 2 倍缩放或自定义宽高比的能力。而在 AUTOMATIC1111 中，Outpainting 是通过滚动到脚本下拉菜单并选择“穷人版 Outpainting”来实现的。您需要将调整大小模式设置为调整大小，并在 Img2Img Inpaint 标签中填写，并设置一个相对较高的去噪强度以使其工作。此扩展允许您扩展图像不同侧面的像素，同时像通常一样为要修复的这些侧面的内容设置遮罩内容和遮罩模糊参数。
+Outpainting 与 `Midjourney` 中的操作不同（见第八章 Chapter 8），`Midjourney` 具有指定 1.5 倍或 2 倍缩放或自定义宽高比的能力。而在 `AUTOMATIC1111` 中，Outpainting 是通过滚动到脚本下拉菜单并选择“穷人版 Outpainting”来实现的。您需要将调整大小模式设置为调整大小，并在 `Img2Img Inpaint` 标签中填写，并设置一个相对较高的去噪强度以使其工作。此扩展允许您扩展图像不同侧面的像素，同时像通常一样为要修复的这些侧面的内容设置遮罩内容和遮罩模糊参数。
 
 图 9-17 展示了输出结果。
 
@@ -456,15 +454,15 @@ Outpainting 与 Midjourney 中的操作不同（见第八章 Chapter 8），Mid
 
 ###### 图 9-17\. Img2Img 中的 Outpainting
 
-如图 9-17 所示，添加到天空中的额外城堡增加了幻觉的可能性，并且质量可能较低。通常需要大量的实验和迭代才能正确完成这个过程。这与早期采用生成式 AI 的用户在 Photoshop 中在照片两侧添加额外空白空间，然后再用 Stable Diffusion 修复以匹配图像其余部分的技术类似。这种技术本质上只是增加了额外步骤的修复，因此所有之前列出的建议都适用。由于 AUTOMATIC1111 中 Outpainting 功能的低质量和没有适当画布的限制，这可能比使用 AUTOMATIC1111 中的 Outpainting 功能更快。
+如图 9-17 所示，添加到天空中的额外城堡增加了幻觉的可能性，并且质量可能较低。通常需要大量的实验和迭代才能正确完成这个过程。这与早期采用生成式 AI 的用户在 `Photoshop` 中在照片两侧添加额外空白空间，然后再用 `Stable Diffusion` 修复以匹配图像其余部分的技术类似。这种技术本质上只是增加了额外步骤的修复，因此所有之前列出的建议都适用。由于 `AUTOMATIC1111` 中 Outpainting 功能的低质量和没有适当画布的限制，这可能比使用 `AUTOMATIC1111` 中的 Outpainting 功能更快。
 
 # ControlNet
 
-使用提示和 Img2Img 或基础图像，可以控制图像的风格，但通常图像中人物的姿态、场景的构图或物体的结构在最终图像中会有很大的差异。ControlNet 是一种为图像生成模型如 Stable Diffusion 进行高级条件输入图像的方法。
+使用提示和 `Img2Img` 或基础图像，可以控制图像的风格，但通常图像中人物的姿态、场景的构图或物体的结构在最终图像中会有很大的差异。`ControlNet` 是一种为图像生成模型如 `Stable Diffusion` 进行高级条件输入图像的方法。
 
 它允许您通过边缘检测、姿态、深度等多种技术获得对最终生成的图像的更多控制。您上传您想要模仿的图像，并使用预训练模型选项之一处理图像，以便与您的提示一起输入，从而生成具有不同风格的匹配图像组成（图 9-18，来自[ControlNet 论文](https://oreil.ly/suOJz)）。
 
-被称为 ControlNet 的实际上是一系列在论文“Adding Conditional Control to Text-to-Image Diffusion Models”([Zhang, Rao, and Agrawala, 2023](https://oreil.ly/ZH-Ow))之后发布的[开源模型](https://oreil.ly/E-bjw)。虽然您可以用 Python 编写代码并为其构建自己的用户界面，但最快、最简单的方法是通过 AUTOMATIC1111 的[ControlNet](https://oreil.ly/Dw2rs)扩展来启动。截至写作时，并非所有 ControlNet 方法都适用于 SDXL，所以我们正在使用 Stable Diffusion v1.5（确保您使用与您所使用的 Stable Diffusion 版本匹配的 ControlNet 模型）。
+被称为 `ControlNet` 的实际上是一系列在论文“Adding Conditional Control to Text-to-Image Diffusion Models”([Zhang, Rao, and Agrawala, 2023](https://oreil.ly/ZH-Ow))之后发布的[开源模型](https://oreil.ly/E-bjw)。虽然您可以用 `Python` 编写代码并为其构建自己的用户界面，但最快、最简单的方法是通过 `AUTOMATIC1111` 的[ControlNet](https://oreil.ly/Dw2rs)扩展来启动。截至写作时，并非所有 `ControlNet` 方法都适用于 `SDXL`，所以我们正在使用 `Stable Diffusion v1.5`（确保您使用与您所使用的 `Stable Diffusion` 版本匹配的 `ControlNet` 模型）。
 
 ![pega 0918](img/pega_0918.png)
 
@@ -472,39 +470,32 @@ Outpainting 与 Midjourney 中的操作不同（见第八章 Chapter 8），Mid
 
 您可以按照以下说明安装扩展：
 
-1.  导航到扩展选项卡并点击名为“可用”的子选项卡。
-
-1.  点击“从 URL 加载”按钮。
-
-1.  在搜索框中输入`**sd-webui-controlnet**`以查找扩展。
-
-1.  点击最右侧操作列中的“安装”。
-
-1.  Web UI 现在将下载必要的文件并在您的本地 Stable Diffusion 版本上安装 ControlNet。
+1. 导航到扩展选项卡并点击名为“可用”的子选项卡。
+2. 点击“从 URL 加载”按钮。
+3. 在搜索框中输入`sd-webui-controlnet`以查找扩展。
+4. 点击最右侧操作列中的“安装”。
+5. Web UI 现在将下载必要的文件并在您的本地 `Stable Diffusion` 版本上安装 `ControlNet`。
 
 如果您在执行前面的步骤时遇到困难，您可以尝试以下替代方法：
 
-1.  导航到扩展选项卡并点击“从 URL 安装”子选项卡。
+1. 导航到扩展选项卡并点击“从 URL 安装”子选项卡。
+2. 在 `Git` 仓库的 URL 字段中粘贴扩展的链接：[*https://github.com/Mikubill/sd-webui-controlnet*](https://github.com/Mikubill/sd-webui-controlnet)。
+3. 点击安装。
+4. WebUI 将下载并安装 `ControlNet` 所需的文件。
 
-1.  在 Git 仓库的 URL 字段中粘贴扩展的链接：[*https://github.com/Mikubill/sd-webui-controlnet*](https://github.com/Mikubill/sd-webui-controlnet)。
+现在您已经安装了 `ControlNet`，请从您的终端或命令行重启 `AUTOMATIC1111`，或者访问设置并点击“应用并重启 UI”。
 
-1.  点击安装。
+扩展将出现在您为 `Stable Diffusion` 获得的正常参数选项下方，在一个手风琴选项卡中（图 9-19）。您首先上传一个图像，然后点击启用，在选择您想要使用的 `ControlNet` 预处理器和模型之前。如果您的系统 VRAM（视频随机访问内存）少于 6 GB，您应该勾选“低 VRAM”框。根据手头的任务，您可能需要尝试多种模型并对这些模型的参数进行调整，以查看哪种能得到结果。
 
-1.  WebUI 将下载并安装 ControlNet 所需的文件。
-
-现在您已经安装了 ControlNet，请从您的终端或命令行重启 AUTOMATIC1111，或者访问设置并点击“应用并重启 UI”。
-
-扩展将出现在您为 Stable Diffusion 获得的正常参数选项下方，在一个手风琴选项卡中（图 9-19）。您首先上传一个图像，然后点击启用，在选择您想要使用的 ControlNet 预处理器和模型之前。如果您的系统 VRAM（视频随机访问内存）少于 6 GB，您应该勾选“低 VRAM”框。根据手头的任务，您可能需要尝试多种模型并对这些模型的参数进行调整，以查看哪种能得到结果。
-
-控制权重与提示权重或影响力类似，类似于在括号中添加带有权重的词语 `(prompt words: 1.2)`，但这是针对 ControlNet 输入的。起始控制步骤和结束控制步骤是指 ControlNet 在扩散过程中应用的时刻，默认情况下从开始到结束（0 到 1），类似于 `[prompt words::0.8]` 这样的提示编辑/偏移（从开始应用此部分提示，直到完成总步骤的 80%）。由于图像是从较大的元素扩散到更精细的细节，通过控制 ControlNet 在该过程中的应用位置，你可以实现不同的结果；例如，移除最后 20% 的步骤（结束控制步骤 = 0.8）可能会让模型在填充更精细的细节时拥有更多的创造力。预处理分辨率也有助于在此处保持控制，决定中间图像处理步骤中有多少精细细节。一些模型有自己的独特参数，例如 Canny 低阈值和高阈值，这些参数决定了哪些像素构成一个 *边缘*。最后，控制模式决定了模型相对于你的提示，遵循 ControlNet 输入的程度。
+控制权重与提示权重或影响力类似，类似于在括号中添加带有权重的词语 `(prompt words: 1.2)`，但这是针对 `ControlNet` 输入的。起始控制步骤和结束控制步骤是指 `ControlNet` 在扩散过程中应用的时刻，默认情况下从开始到结束（0 到 1），类似于 `[prompt words::0.8]` 这样的提示编辑/偏移（从开始应用此部分提示，直到完成总步骤的 80%）。由于图像是从较大的元素扩散到更精细的细节，通过控制 `ControlNet` 在该过程中的应用位置，你可以实现不同的结果；例如，移除最后 20% 的步骤（结束控制步骤 = 0.8）可能会让模型在填充更精细的细节时拥有更多的创造力。预处理分辨率也有助于在此处保持控制，决定中间图像处理步骤中有多少精细细节。一些模型有自己的独特参数，例如 `Canny` 低阈值和高阈值，这些参数决定了哪些像素构成一个 *边缘*。最后，控制模式决定了模型相对于你的提示，遵循 `ControlNet` 输入的程度。
 
 ![pega 0919](img/pega_0919.png)
 
 ###### 图 9-19\. AUTOMATIC1111 中的 ControlNet 扩展界面
 
-当你首次安装 ControlNet 时，你不会下载任何模型。为了使它们在下拉菜单中显示，你应该通过从 [模型页面](https://oreil.ly/csYK_) 下载并然后将它们放入 Models > ControlNet 文件夹来安装它们。如果你不确定要尝试哪个模型，可以从 [Canny 边缘检测](https://oreil.ly/z9XC6) 开始，因为它是最通用的。每个模型相对较大（大约几吉字节），所以只下载你计划使用的模型。以下是一些更常见模型的示例。本节中所有图像都是使用 `DPM++ SDE Karras` 样本器生成的，CFG 尺度为 1.5，控制模式设置为平衡，调整模式设置为裁剪和调整（上传的图像被裁剪以匹配生成图像的尺寸，512 × 512），以及 30 个采样步骤，每个 ControlNet 模型的默认设置。使用了 Stable Diffusion 的 1.5 版本，因为并非所有这些 ControlNet 模型在撰写本文时都适用于 Stable Diffusion XL，但这些技术应该可以在模型之间迁移。
+当你首次安装 `ControlNet` 时，你不会下载任何模型。为了使它们在下拉菜单中显示，你应该通过从 [模型页面](https://oreil.ly/csYK_) 下载并然后将它们放入 `Models > ControlNet` 文件夹来安装它们。如果你不确定要尝试哪个模型，可以从 [Canny 边缘检测](https://oreil.ly/z9XC6) 开始，因为它是最通用的。每个模型相对较大（大约几吉字节），所以只下载你计划使用的模型。以下是一些更常见模型的示例。本节中所有图像都是使用 `DPM++ SDE Karras` 样本器生成的，CFG 尺度为 1.5，控制模式设置为平衡，调整模式设置为裁剪和调整（上传的图像被裁剪以匹配生成图像的尺寸，512 × 512），以及 30 个采样步骤，每个 `ControlNet` 模型的默认设置。使用了 `Stable Diffusion` 的 1.5 版本，因为并非所有这些 `ControlNet` 模型在撰写本文时都适用于 `Stable Diffusion XL`，但这些技术应该可以在模型之间迁移。
 
-Canny 边缘检测在对比度高的区域周围创建简单、锐利的像素轮廓。它可以非常详细，并给出优秀的结果，但也可以捕捉到不需要的噪声，并将过多的控制权交给 ControlNet。在需要将高度详细的内容转移到具有不同风格的新的图像中时，Canny 表现出色，应该作为默认选项使用。例如，以特定风格重新绘制城市天际线与 Canny 模型配合得非常好，正如我们在图 9-20 中用纽约市（由 [Robert Bye](https://oreil.ly/wEPLB) 在 [Unsplash](https://oreil.ly/_iyxU) 上提供）的照片所做的那样。
+`Canny` 边缘检测在对比度高的区域周围创建简单、锐利的像素轮廓。它可以非常详细，并给出优秀的结果，但也可以捕捉到不需要的噪声，并将过多的控制权交给 `ControlNet`。在需要将高度详细的内容转移到具有不同风格的新的图像中时，`Canny` 表现出色，应该作为默认选项使用。例如，以特定风格重新绘制城市天际线与 `Canny` 模型配合得非常好，正如我们在图 9-20 中用纽约市（由 [Robert Bye](https://oreil.ly/wEPLB) 在 [Unsplash](https://oreil.ly/_iyxU) 上提供）的照片所做的那样。
 
 输入：
 
@@ -518,7 +509,7 @@ New York City by Studio Ghibli
 
 ###### 图 9-20\. ControlNet Canny
 
-有时在传统的 img2img 提示中，图像的一些元素可能会混淆或合并，因为 Stable Diffusion 不理解这些物体之间的相对深度。深度模型基于图像创建一个深度图估计，这提供了对图像元素构图和空间位置的掌控。如果你不熟悉深度图，白色区域更靠近观察者，而黑色区域更远。这可以在图 9-21 中看到，其中一支乐队（由 [Hans Vivek](https://oreil.ly/tlCrf) 在 [Unsplash](https://oreil.ly/BOKJ7) 上提供）的照片被转换成了一群士兵，他们具有相同的姿势和景深。
+有时在传统的 `img2img` 提示中，图像的一些元素可能会混淆或合并，因为 `Stable Diffusion` 不理解这些物体之间的相对深度。深度模型基于图像创建一个深度图估计，这提供了对图像元素构图和空间位置的掌控。如果你不熟悉深度图，白色区域更靠近观察者，而黑色区域更远。这可以在图 9-21 中看到，其中一支乐队（由 [Hans Vivek](https://oreil.ly/tlCrf) 在 [Unsplash](https://oreil.ly/BOKJ7) 上提供）的照片被转换成了一群士兵，他们具有相同的姿势和景深。
 
 输入：
 
@@ -547,7 +538,7 @@ symmetrical face
 
 ###### 图 9-22\. ControlNet 正常
 
-OpenPose 方法通过确定姿势、手部位置和面部表情为人物创建骨架。为了使此模型正常工作，通常需要有一个全身可见的人类主体，尽管也有肖像选项。在场景中需要多人时，使用多个 OpenPose 骨架并将它们组合成单个图像是非常常见的做法。图 9-23 将 [蒙娜丽莎的姿势](https://oreil.ly/7n02i) 转换到了 Rachel Weisz 的照片上。
+`OpenPose` 方法通过确定姿势、手部位置和面部表情为人物创建骨架。为了使此模型正常工作，通常需要有一个全身可见的人类主体，尽管也有肖像选项。在场景中需要多人时，使用多个 `OpenPose` 骨架并将它们组合成单个图像是非常常见的做法。图 9-23 将 [蒙娜丽莎的姿势](https://oreil.ly/7n02i) 转换到了 `Rachel Weisz` 的照片上。
 
 输入：
 
@@ -561,7 +552,7 @@ painting of Rachel Weisz
 
 ###### 图 9-23\. ControlNet OpenPose
 
-M-LSD（移动线段检测）技术在建筑和室内设计中相当常用，因为它非常适合追踪直线。直线通常只出现在人造物体中，所以它不太适合自然场景（尽管可能会产生有趣的效果）。像房屋这样的人造物体非常适合这种方法，如图中现代公寓的图片（由 [Collov Home Design](https://oreil.ly/OtV_O) 在 [Unsplash](https://oreil.ly/z38do) 上拍摄）所示，被重新想象成 *Mad Men* 时代的风格，如图 9-24 所示。
+`M-LSD`（移动线段检测）技术在建筑和室内设计中相当常用，因为它非常适合追踪直线。直线通常只出现在人造物体中，所以它不太适合自然场景（尽管可能会产生有趣的效果）。像房屋这样的人造物体非常适合这种方法，如图中现代公寓的图片（由 [Collov Home Design](https://oreil.ly/OtV_O) 在 [Unsplash](https://oreil.ly/z38do) 上拍摄）所示，被重新想象成 *Mad Men* 时代的风格，如图 9-24 所示。
 
 输入：
 
@@ -575,7 +566,7 @@ M-LSD（移动线段检测）技术在建筑和室内设计中相当常用，因
 
 ###### 图 9-24\. ControlNet M-LSD
 
-SoftEdge 技术也称为 HED（整体嵌套边缘检测），是 Canny 边缘检测的替代方案，能够在物体周围创建更平滑的轮廓。它非常常用，提供与 Canny 相似的良好细节，但可能更少噪声，并能提供更美观的结果。这种方法非常适合图像风格化和重新着色，并且与 Canny 相比，它往往允许更好地处理面部。多亏了 ControlNet，你不需要输入太多关于整体图像的详细提示，只需提示你想要看到的变化即可。图 9-25 展示了对 [维梅尔的《戴珍珠耳环的少女》](https://oreil.ly/RjUur) 的重新想象，由斯嘉丽·约翰逊演绎：
+`SoftEdge` 技术也称为 `HED`（整体嵌套边缘检测），是 `Canny` 边缘检测的替代方案，能够在物体周围创建更平滑的轮廓。它非常常用，提供与 `Canny` 相似的良好细节，但可能更少噪声，并能提供更美观的结果。这种方法非常适合图像风格化和重新着色，并且与 `Canny` 相比，它往往允许更好地处理面部。多亏了 `ControlNet`，你不需要输入太多关于整体图像的详细提示，只需提示你想要看到的变化即可。图 9-25 展示了对 [维梅尔的《戴珍珠耳环的少女》](https://oreil.ly/RjUur) 的重新想象，由斯嘉丽·约翰逊演绎：
 
 输入：
 
@@ -595,7 +586,7 @@ monochrome, lowres, bad anatomy, worst quality, low quality
 
 ###### 图 9-25\. ControlNet SoftEdge
 
-另一种在建筑中流行的技术是分割，它将图像分割成相关区域或与彼此有一定关联的段。这大致相当于在 Img2Img 中使用图像蒙版，但结果更好。当需要更精确地控制图像中的各种对象时，可以使用分割。一个强大的用例是在户外场景中，这些场景可能因一天中的时间、周围环境或甚至时代而异。看看 图 9-26，展示了一座城堡的现代照片（由 [Richard Clark](https://oreil.ly/SG9CT) 在 [Unsplash](https://oreil.ly/2FlyI) 上拍摄），变成了一个幻想风格的城堡插图。
+另一种在建筑中流行的技术是分割，它将图像分割成相关区域或与彼此有一定关联的段。这大致相当于在 `Img2Img` 中使用图像蒙版，但结果更好。当需要更精确地控制图像中的各种对象时，可以使用分割。一个强大的用例是在户外场景中，这些场景可能因一天中的时间、周围环境或甚至时代而异。看看 图 9-26，展示了一座城堡的现代照片（由 [Richard Clark](https://oreil.ly/SG9CT) 在 [Unsplash](https://oreil.ly/2FlyI) 上拍摄），变成了一个幻想风格的城堡插图。
 
 输入：
 
@@ -613,7 +604,7 @@ midday, in the style of high fantasy art
 
 ###### 图 9-26\. ControlNet 分割
 
-一个强大的功能是能够在画布上绘制并使用它于 ControlNet 中。你也可以离线绘制并拍照上传你的图片，但对于简单的图片，点击 Stable Diffusion 网页 UI 中的铅笔表情符号，并用提供的画笔绘制会更快捷。即使是一个简单的涂鸦也通常足够，边缘也不需要完美，如图 9-27 所示。
+一个强大的功能是能够在画布上绘制并使用它于 `ControlNet` 中。你也可以离线绘制并拍照上传你的图片，但对于简单的图片，点击 `Stable Diffusion` 网页 UI 中的铅笔表情符号，并用提供的画笔绘制会更快捷。即使是一个简单的涂鸦也通常足够，边缘也不需要完美，如图 9-27 所示。
 
 输入：
 
@@ -629,9 +620,13 @@ The Happy Goldfish, illustrated children's book
 
 # 提供示例
 
+
+
+# ControlNet 基础
+
 ControlNet 赋予 AI 艺术家通过提供一个示例图像来模仿另一个图像的能力，从而在构图方面使图像看起来像另一个图像。这允许在视觉一致性方面有更多的控制，并在制作更复杂的图像方面有更多的灵活性。
 
-这些 ControlNet 方法中的每一个都有自己的预处理程序，并且它们必须与图像模型相匹配，以便图像有意义。例如，如果您使用的是 Canny 预处理程序，则应使用类似 control_v11p_sd15_canny 的 Canny 模型。选择一个为完成任务提供足够自由的模型也很重要；例如，使用 SoftEdge 模型的一张猫的图像可能细节过多，无法变成狮子，您可能想尝试更粗略的模型。与所有 Stable Diffusion 的事物一样，找到精确的模型和参数组合需要实验，因为新的功能和选项不断涌现。
+这些 ControlNet 方法中的每一个都有自己的预处理程序，并且它们必须与图像模型相匹配，以便图像有意义。例如，如果您使用的是 Canny 预处理程序，则应使用类似 `control_v11p_sd15_canny` 的 Canny 模型。选择一个为完成任务提供足够自由的模型也很重要；例如，使用 SoftEdge 模型的一张猫的图像可能细节过多，无法变成狮子，您可能想尝试更粗略的模型。与所有 Stable Diffusion 的事物一样，找到精确的模型和参数组合需要实验，因为新的功能和选项不断涌现。
 
 ControlNet 支持使用简单的提示语运行，甚至可以完全不使用提示语。它将匹配您提交的现有图像，并确保达到高水平的一致性。您可以使用一个通用的提示语，如`一个专业、详细、高质量的图像`，从而得到现有图像的一个良好版本。然而，大多数情况下，您可能试图改变图像的某些方面，并希望输入一个完整的提示语，就像之前的例子一样。生成的图像将匹配提示语和 ControlNet 的输出，您可以通过调整可用的参数来实验，看看能得到什么结果。
 
@@ -643,27 +638,20 @@ ControlNet 支持使用简单的提示语运行，甚至可以完全不使用提
 
 您可以使用[*sd-webui-segment-anything*](https://oreil.ly/rFMJN)扩展在 AUTOMATIC1111 界面中使用 SAM。一旦 AUTOMATIC1111 安装并运行，您可以按照以下说明安装 SAM 扩展：
 
-1.  导航到“扩展”标签，并点击名为“可用”的子标签。
-
-1.  点击“从”按钮。
-
-1.  在搜索框中输入：`**sd-webui-segment-anything**`以找到扩展。
-
-1.  在最右侧的操作列中点击“安装”。
-
-1.  WebUI 现在将下载必要的文件并在本地 Stable Diffusion 版本上安装 SAM。
+1. 导航到“扩展”标签，并点击名为“可用”的子标签。
+2. 点击“从”按钮。
+3. 在搜索框中输入：`sd-webui-segment-anything`以找到扩展。
+4. 在最右侧的操作列中点击“安装”。
+5. WebUI 现在将下载必要的文件并在本地 Stable Diffusion 版本上安装 SAM。
 
 如果你执行前面的步骤有困难，你可以尝试以下替代方法：
 
-1.  导航到“扩展”选项卡并点击“从 URL 安装”子选项卡。
+1. 导航到“扩展”选项卡并点击“从 URL 安装”子选项卡。
+2. 在 Git 仓库的 URL 字段中粘贴扩展链接：`https://github.com/continue-revolution/sd-webui-segment-anything`。
+3. 点击“安装”。
+4. WebUI 将下载并安装 SAM 在本地 Stable Diffusion 版本上所需的文件。
 
-1.  在 Git 仓库的 URL 字段中粘贴扩展链接：[*https://github.com/continue-revolution/sd-webui-segment-anything*](https://github.com/continue-revolution/sd-webui-segment-anything)。
-
-1.  点击“安装”。
-
-1.  WebUI 将下载并安装 SAM 在本地 Stable Diffusion 版本上所需的文件。
-
-你还需要下载实际的 SAM 模型权重，链接到[存储库](https://oreil.ly/IqrbI)。本章节中使用的是 1.25 GB 的*sam_vit_l_0b3195.pth*。如果你遇到低 VRAM（你的电脑冻结或卡顿）的问题，你应该切换到更小的模型。将你下载的模型移动到*stable-diffusion-webui/sd-webui-segment-anything/models/sam*文件夹。
+你还需要下载实际的 SAM 模型权重，链接到[存储库](https://oreil.ly/IqrbI)。本章节中使用的是 1.25 GB 的`sam_vit_l_0b3195.pth`。如果你遇到低 VRAM（你的电脑冻结或卡顿）的问题，你应该切换到更小的模型。将你下载的模型移动到`stable-diffusion-webui/sd-webui-segment-anything/models/sam`文件夹。
 
 现在你已经完全安装了 SAM，请从终端或命令行重新启动 AUTOMATIC1111，或者访问设置并点击“应用并重新启动 UI”。
 
@@ -683,7 +671,7 @@ ControlNet 支持使用简单的提示语运行，甚至可以完全不使用提
 
 据报道，原始的 Stable Diffusion 模型训练成本高达 [$600,000](https://oreil.ly/s739b)，使用了总共 150,000 个 GPU 小时，因此对于大多数组织来说，自己训练基础模型可能是不切实际的。然而，可以在 Stable Diffusion 的基础上构建，使用 Dreambooth 技术，该技术是在论文“DreamBooth: Fine Tuning Text-to-Image Diffusion Models for Subject-Driven Generation”([Ruiz et al., 2022](https://oreil.ly/ZqdjB))中提出的。DreamBooth 允许你微调或训练模型，使其能够理解其训练数据中尚未遇到的新概念。无需从头开始构建新模型意味着显著减少时间和资源：大约 45 分钟到 1 个 GPU 的时间。DreamBooth 实际上更新了新模型的权重，这为你提供了一个新的 2 GB 模型文件，可以在 AUTOMATIC1111 中使用，而不是使用基础 Stable Diffusion 模型。
 
-在像 [Hugging Face](https://oreil.ly/2efOO) 和 [Civitai](https://civitai.com) 这样的网站上有很多基于 DreamBooth 的模型。要在 AUTOMATIC1111 中使用这些模型，你只需下载它们并将它们移动到 stable-diffusion-webui/models/Stable-diffusion/ 文件夹中。DreamBooth 模型通常需要一个特定的词或标记来触发风格或主题，这个标记必须包含在提示中。例如，[Inkpunk Diffusion](https://oreil.ly/spsy3) 模型需要单词 *nvinkpunk*。注意：这里的底层基础模型是 Stable Diffusion 的 v1.5 版本，因此请将图像大小重置为 512 × 512。
+在像 [Hugging Face](https://oreil.ly/2efOO) 和 [Civitai](https://civitai.com) 这样的网站上有很多基于 DreamBooth 的模型。要在 AUTOMATIC1111 中使用这些模型，你只需下载它们并将它们移动到`stable-diffusion-webui/models/Stable-diffusion/`文件夹中。DreamBooth 模型通常需要一个特定的词或标记来触发风格或主题，这个标记必须包含在提示中。例如，[Inkpunk Diffusion](https://oreil.ly/spsy3) 模型需要单词`nvinkpunk`。注意：这里的底层基础模型是 Stable Diffusion 的 v1.5 版本，因此请将图像大小重置为 512 × 512。
 
 输入：
 
@@ -701,7 +689,7 @@ skateboarding in Times Square nvinkpunk
 
 许多人使用 AI 时犯的一个错误是认为有一个模型可以统治一切。实际上，有许多创意模型存在，并且通常在特定任务上的训练比通用基础模型能产生更好的结果。虽然基础模型如 Stable Diffusion XL 是大多数从业者开始的地方，但通常他们开始尝试在特定任务上微调自己的模型，这些任务通常基于更小、更高效的模型，如 v1.5。
 
-训练 DreamBooth 模型的首选方法是 [Shivam Shrirao 的仓库](https://oreil.ly/AJnnL)，它使用了 HuggingFace 的 `diffusers` 库。以下是对 [Google Colab](https://oreil.ly/790FZ) 中代码的解释。本笔记本使用的是版本 1.5，因为它是一个较小的模型，并且可以在 Google Colab 环境中免费训练几小时。为这本书保存了一份 Python 笔记本副本到 [GitHub 仓库](https://oreil.ly/NzzGm)，但请注意，它只能在 Nvidia GPU 上运行，而不能在 MacBook 上运行。
+训练 DreamBooth 模型的首选方法是 [Shivam Shrirao 的仓库](https://oreil.ly/AJnnL)，它使用了 HuggingFace 的`diffusers`库。以下是对 [Google Colab](https://oreil.ly/790FZ) 中代码的解释。本笔记本使用的是版本 1.5，因为它是一个较小的模型，并且可以在 Google Colab 环境中免费训练几小时。为这本书保存了一份 Python 笔记本副本到 [GitHub 仓库](https://oreil.ly/NzzGm)，但请注意，它只能在 Nvidia GPU 上运行，而不能在 MacBook 上运行。
 
 首先，Colab 会检查是否有访问 Nvidia GPU 的权限。这是在 Google Colab 上运行 Dreambooth 的一个很好的理由，因为您将获得运行代码所需的正确资源，而无需任何配置：
 
@@ -710,7 +698,7 @@ skateboarding in Times Square nvinkpunk
     memory.free --format=csv,noheader
 ```
 
-接下来，安装必要的库，包括来自 Hugging Face 的 `diffusers` 库：
+接下来，安装必要的库，包括来自 Hugging Face 的`diffusers`库：
 
 ```py
 !wget -q https://github.com/ShivamShrirao/diffusers/raw/ \
@@ -725,7 +713,7 @@ git+https://github.com/ShivamShrirao/diffusers
 bitsandbytes==0.35.0 gradio natsort safetensors xformers
 ```
 
-运行下一个单元格以设置模型完成运行后的输出目录。建议将模型保存到 Google Drive（即使暂时保存），因为您可以从那里比从 Google Colab 文件系统更可靠地下载大文件（4-5 GB）。确保您已从 Hugging Face hub `runwayml/stable-diffusion-v1-5` 中选择了正确的基模型，并为输出目录选择一个名称（通常是 *ukj* 或 *zwx*；关于这一点稍后会有更多说明）：
+运行下一个单元格以设置模型完成运行后的输出目录。建议将模型保存到 Google Drive（即使暂时保存），因为您可以从那里比从 Google Colab 文件系统更可靠地下载大文件（4-5 GB）。确保您已从 Hugging Face hub `runwayml/stable-diffusion-v1-5` 中选择了正确的基模型，并为输出目录选择一个名称（通常是`ukj`或`zwx`；关于这一点稍后会有更多说明）：
 
 ```py
 #@markdown If model weights should be saved directly in
@@ -753,7 +741,7 @@ print(f"[*] Weights will be saved at {OUTPUT_DIR}")
 !mkdir -p $OUTPUT_DIR
 ```
 
-在训练之前，您需要添加想要训练的概念。根据我们的经验，在多个概念上训练往往会损害性能，所以我们通常会只在一个主题或风格上训练。您可以在 AUTOMATIC1111 的检查点合并标签页中稍后合并模型，尽管这涉及到本书未涵盖的更高级领域。实例提示包括您将在提示中使用的令牌以触发模型，理想情况下是一个没有其他含义的词，如 *zwx* 或 *ukj*。类别提示是训练的起点，因此如果您正在训练一个特定人物的模型，您从 `photo of a person` 开始以使训练更有效：
+在训练之前，您需要添加想要训练的概念。根据我们的经验，在多个概念上训练往往会损害性能，所以我们通常会只在一个主题或风格上训练。您可以在 AUTOMATIC1111 的检查点合并标签页中稍后合并模型，尽管这涉及到本书未涵盖的更高级领域。实例提示包括您将在提示中使用的令牌以触发模型，理想情况下是一个没有其他含义的词，如`zwx`或`ukj`。类别提示是训练的起点，因此如果您正在训练一个特定人物的模型，您从`photo of a person`开始以使训练更有效：
 
 ```py
 # You can also add multiple concepts here.
@@ -778,7 +766,7 @@ with open("concepts_list.json", "w") as f:
     json.dump(concepts_list, f, indent=4)
 ```
 
-接下来，我们通过 Google Colab 上传图像。Dreambooth 可以使用尽可能少的 5 张图像，但通常建议您使用大约 20-30 张图像，尽管有些人使用数百张图像进行训练。一个创造性的用例是使用第八章（ch08.html#standard_image_08）中讨论的 Consistent Characters 方法生成 20 张相同 AI 生成的角色的不同图像，并使用它们来训练 Dreambooth 模型。或者，您可以上传 20 张自己的照片来创建 AI 个人照片，或者上传 20 张您公司销售的产品照片以生成 AI 产品摄影。您可以将文件本地上传到 Google Colab 文件系统中的 *instance_data_dir*（这可能更快）或运行下一个单元格以获取上传按钮：
+接下来，我们通过 Google Colab 上传图像。Dreambooth 可以使用尽可能少的 5 张图像，但通常建议您使用大约 20-30 张图像，尽管有些人使用数百张图像进行训练。一个创造性的用例是使用第八章（ch08.html#standard_image_08）中讨论的 Consistent Characters 方法生成 20 张相同 AI 生成的角色的不同图像，并使用它们来训练 Dreambooth 模型。或者，您可以上传 20 张自己的照片来创建 AI 个人照片，或者上传 20 张您公司销售的产品照片以生成 AI 产品摄影。您可以将文件本地上传到 Google Colab 文件系统中的`instance_data_dir`（这可能更快）或运行下一个单元格以获取上传按钮：
 
 ```py
 import os
@@ -795,7 +783,13 @@ for c in concepts_list:
         shutil.move(filename, dst_path)
 ```
 
-现在真正的训练开始了！此代码在 GPU 上运行，并在完成后输出最终权重。确保在运行之前更改 `save_sample_prompt` 以使用您分配的令牌，在这种情况下为 `photo of ukj person`：
+现在真正的训练开始了！此代码在 GPU 上运行，并在完成后输出最终权重。确保在运行之前更改`save_sample_prompt`以使用您分配的令牌，在这种情况下为`photo of ukj person`：
+
+
+
+# 使用 Dreambooth 训练个性化模型
+
+首先，执行以下命令开始训练 Dreambooth 模型：
 
 ```py
 !python3 train_dreambooth.py \
@@ -822,7 +816,7 @@ for c in concepts_list:
   --concepts_list="concepts_list.json"
 ```
 
-现在训练已完成，接下来的两个代码单元格定义了目录，然后显示一个图像网格，以便您可以直观地看到模型是否正确理解了您的概念，并且现在能够生成您风格的主题的有用图像：
+训练完成后，接下来的两个代码单元格定义了目录，然后显示一个图像网格，以便您可以直观地看到模型是否正确理解了您的概念，并且现在能够生成您风格的主题的有用图像：
 
 ```py
 WEIGHTS_DIR = ""
@@ -874,7 +868,7 @@ plt.tight_layout()
 plt.savefig('grid.png', dpi=72)
 ```
 
-最后，您需要运行转换过程以获取 *.ckpt* 文件，这是您将在 AUTOMATIC1111 中使用的文件：
+最后，您需要运行转换过程以获取 `*.ckpt*` 文件，这是您将在 AUTOMATIC1111 中使用的文件：
 
 ```py
 #@markdown Run conversion.
@@ -891,7 +885,7 @@ if fp16:
 print(f"[*] Converted ckpt saved at {ckpt_path}")
 ```
 
-然后，您可以访问权重目录 *stable_diffusion_weights/zwx* 来找到模型并下载它。如果您在从 Google Colab 文件系统下载如此大的文件时遇到问题，请在运行模型之前尝试检查保存到 Google Drive 的选项，并从那里下载。我们建议在将模型放入您的 *stable-diffusion-webui/models/Stable-diffusion/* 文件夹之前重命名模型，这样您在使用时可以识别它：
+然后，您可以访问权重目录 `stable_diffusion_weights/zwx` 来找到模型并下载它。如果您在从 Google Colab 文件系统下载如此大的文件时遇到问题，请在运行模型之前尝试检查保存到 Google Drive 的选项，并从那里下载。我们建议在将模型放入您的 `stable-diffusion-webui/models/Stable-diffusion/` 文件夹之前重命名模型，这样您在使用时可以识别它：
 
 输入：
 

@@ -1,15 +1,13 @@
+
+
 # 第五章：赋能动作代理
 
-### 本章涵盖
+## 本章涵盖
 
 +   代理如何使用动作在自身之外进行行动
-
 +   定义和使用 OpenAI 函数
-
 +   语义内核及其使用语义函数的方法
-
 +   协同语义和本地函数
-
 +   使用语义内核实例化 GPT 接口
 
 在本章中，我们通过函数的使用来探讨动作，以及代理如何使用它们。我们将首先查看 OpenAI 函数调用，然后迅速转向微软的另一个项目，称为语义内核（SK），我们将使用它来构建和管理代理或作为代理的技能和函数。
@@ -96,16 +94,11 @@ response = client.chat.completions.create(
         )
 ```
 
-#1 新参数称为 tools
-
+#1 新参数称为 `tools`
 #2 设置工具的类型以执行功能
-
 #3 提供了关于函数功能的出色描述
-
 #4 定义输入参数的类型；一个对象代表一个 JSON 文档。
-
 #5 为每个输入参数提供出色的描述
-
 #6 您甚至可以用枚举的方式来描述。
 
 要了解这是如何工作的，请打开 Visual Studio Code (VS Code) 到书籍的源代码文件夹：`chapter_4/first_function.py`。在 VS Code 中打开相关章节文件夹以创建一个新的 Python 环境并安装 `requirements.txt` 文件是一个好习惯。如果您需要这方面的帮助，请参阅附录 B。
@@ -136,11 +129,8 @@ Function(arguments='{"topic":"time travel movie",
 ```
 
 #1 之前定义的函数
-
 #2 返回要调用的函数名称和提取的输入参数
-
 #3 之前定义的函数
-
 #4 返回要调用的函数名称和提取的输入参数
 
 使用调试器（F5）或终端在 VS Code 中运行 `first_function.py` Python 脚本，以查看相同的结果。在这里，LLM 解析输入请求以匹配任何已注册的工具。在这种情况下，工具是单个函数定义，即推荐的函数。LLM 从该函数中提取输入参数，并从请求中解析这些参数。然后，它以命名函数和指定的输入参数的形式回复。
@@ -157,7 +147,7 @@ Function(arguments='{"topic":"time travel movie",
 
 ##### 图 5.4 一个示例请求返回三个工具函数调用，然后将结果提交回 LLM 以返回一个自然语言回复。
 
-现在我们已经理解了这个示例，请在 VS Code 中打开`parallel_functions.py`。列表 5.3 显示了您想要调用的 Python 函数，以提供推荐。
+现在我们已经理解了这个示例，请在 VS Code 中打开 `parallel_functions.py`。列表 5.3 显示了您想要调用的 Python 函数，以提供推荐。
 
 ##### 列表 5.3 `parallel_functions.py` (推荐函数)
 
@@ -181,12 +171,10 @@ def recommend(topic, rating="good"):
 ```
 
 #1 检查字符串是否包含在主题输入中
-
 #2 如果未检测到主题，则返回默认值
-
 #3 返回一个 JSON 对象
 
-接下来，我们将查看名为`run_conversation`的函数，所有的工作都是从请求构建开始的。
+接下来，我们将查看名为 `run_conversation` 的函数，所有的工作都是从请求构建开始的。
 
 ##### 列表 5.4 `parallel_functions.py` (`run_conversation`, `request`)
 
@@ -225,9 +213,7 @@ tools = [     #3
 ```
 
 #1 用户消息请求三个推荐。
-
 #2 注意没有系统消息。
-
 #3 将函数定义添加到请求的工具部分
 
 列表 5.5 显示了请求的执行，我们之前已经讨论过，但有一些需要注意的事项。这个调用使用了一个较低模型，如 GPT-3.5，因为委托函数是一个更直接的任务，可以使用较旧、较便宜、不太复杂的语言模型来完成。
@@ -245,16 +231,16 @@ response_message = response.choices[0].message     #4
 ```
 
 #1 委托给函数的 LLM 可以是更简单的模型。
-
 #2 添加消息和工具定义
-
-#3 auto 是默认值。
-
+#3 `auto` 是默认值。
 #4 LLM 返回的消息
 
 在这个阶段，API 调用之后，响应应该包含所需函数调用的信息。记住，我们要求 LLM 提供三个推荐，这意味着它也应该提供三个函数调用输出，如下所示。
 
 ##### 列表 5.6 `parallel_functions.py` (`run_conversation`, `tool_calls`)
+
+
+
 
 ```py
 tool_calls = response_message.tool_calls     #1
@@ -262,8 +248,7 @@ if tool_calls:    #1
     available_functions = {
         "recommend": recommend,
     }     #2
-    # Step 4: send the info for each function call and function response to 
-the model
+    # Step 4: send the info for each function call and function response to the model
     for tool_call in tool_calls:     #3
         function_name = tool_call.function.name
         function_to_call = available_functions[function_name]
@@ -288,15 +273,10 @@ the model
 ```
 
 #1 如果响应包含工具调用，则执行它们。
-
 #2 只有一个函数，但可能包含多个
-
 #3 遍历调用并将内容回放给 LLM
-
 #4 从提取的参数中执行推荐函数
-
 #5 将每个函数调用的结果附加到消息集合中
-
 #6 使用更新后的信息向 LLM 发送另一个请求，并返回消息回复
 
 工具调用输出和推荐函数调用的结果被附加到消息中。注意现在消息还包含了第一次调用的历史。然后这些信息被传递回 LLM 以构建自然语言回复。
@@ -310,11 +290,9 @@ Here are some recommendations for you:
 
 1\. Time travel movies: "Back to the Future"
 2\. Recipes: "The best thing you ever ate."
-3\. Gifts: "A glorious new..." (the recommendation was cut off, so I 
-couldn't provide the full recommendation)
+3\. Gifts: "A glorious new..." (the recommendation was cut off, so I couldn't provide the full recommendation)
 
-I hope you find these recommendations helpful! Let me know if you need 
-more information.
+I hope you find these recommendations helpful! Let me know if you need more information.
 ```
 
 这完成了这个简单的演示。对于更高级的应用，函数可以执行各种任务，从抓取网站到调用搜索引擎，甚至完成更复杂的任务。
@@ -358,11 +336,8 @@ pip install -e .     #4
 ```
 
 #1 卸载 SK 的任何先前安装
-
 #2 将仓库克隆到本地文件夹
-
 #3 对源文件夹的更改
-
 #4 从源文件夹安装可编辑的包
 
 安装完成后，打开`SK_connecting.py`。列表 5.9 展示了通过 SK 快速运行示例的演示。该示例使用 OpenAI 或 Azure OpenAI 创建聊天完成服务。
@@ -392,8 +367,7 @@ if selected_service == "OpenAI":
 elif selected_service == "AzureOpenAI":
     from semantic_kernel.connectors.ai.open_ai import AzureChatCompletion
 
-    deployment, api_key, endpoint = 
-↪ sk.azure_openai_settings_from_dot_env()   #4
+    deployment, api_key, endpoint = sk.azure_openai_settings_from_dot_env()   #4
     service_id = "aoai_chat_completion"
     kernel.add_service(
         AzureChatCompletion(
@@ -407,29 +381,21 @@ elif selected_service == "AzureOpenAI":
 #This function is currently broken
 async def run_prompt():
     result = await kernel.invoke_prompt( 
-              ↪ prompt="recommend a movie about 
-↪ time travel")     #5
+              ↪ prompt="recommend a movie about time travel")     #5
     print(result)
 
 # Use asyncio.run to execute the async function
 asyncio.run(run_prompt())     #6
 
 ###Output
-One highly recommended time travel movie is "Back to the Future" (1985) 
-directed by Robert Zemeckis. This classic film follows the adventures of 
-teenager Marty McFly (Michael J. Fox)…
+One highly recommended time travel movie is "Back to the Future" (1985) directed by Robert Zemeckis. This classic film follows the adventures of teenager Marty McFly (Michael J. Fox)…
 ```
 
 #1 设置你使用的服务（OpenAI 或 Azure OpenAI）
-
 #2 创建内核
-
 #3 从 .env 文件加载机密信息并将其设置在聊天服务上
-
 #4 从 .env 文件加载机密信息并将其设置在聊天服务上
-
 #5 调用提示
-
 #6 异步调用函数
 
 通过按 F5（调试）运行示例，你应该会看到一个类似于列表 5.9 的输出。这个示例演示了如何使用 SK 创建并执行语义函数。语义函数相当于提示流中的提示模板，这是另一个微软工具。在这个例子中，我们定义一个简单的提示作为一个函数。
@@ -449,9 +415,7 @@ teenager Marty McFly (Michael J. Fox)…
 prompt = """     #1
 system:
 
-You have vast knowledge of everything and can recommend anything provided 
-you are given the following criteria, the subject, genre, format and any 
-other custom information.
+You have vast knowledge of everything and can recommend anything provided you are given the following criteria, the subject, genre, format and any other custom information.
 
 user:
 Please recommend a {{$format}} with the subject {{$subject}} and {{$genre}}.
@@ -480,8 +444,7 @@ prompt_template_config = sk.PromptTemplateConfig(     #2
         ),
         InputVariable(
             name="custom",
-            description="Any custom information [CA]
-                       to enhance the recommendation",
+            description="Any custom information [CA] to enhance the recommendation",
             is_required=True,
         ),
     ],
@@ -498,7 +461,7 @@ async def run_recommendation(     #4
     subject="time travel",
     format="movie", 
     genre="medieval", 
-           custom="must be a comedy"
+    custom="must be a comedy"
 ):
     recommendation = await kernel.invoke(
         recommend_function,
@@ -513,21 +476,13 @@ async def run_recommendation(     #4
 asyncio.run(run_recommendation())    #5
 
 ###Output
-One movie that fits the criteria of being about time travel, set in a 
-medieval period, and being a comedy is "The Visitors" (Les Visiteurs) 
-from 1993\. This French film, directed by Jean-Marie Poiré, follows a 
-knight and his squire who are transported to the modern era by a 
-wizard’s spell gone wrong.…
+One movie that fits the criteria of being about time travel, set in a medieval period, and being a comedy is "The Visitors" (Les Visiteurs) from 1993\. This French film, directed by Jean-Marie Poiré, follows a knight and his squire who are transported to the modern era by a wizard’s spell gone wrong.…
 ```
 
 #1 定义一个带有占位符的提示
-
 #2 配置提示模板和输入变量定义
-
 #3 从提示创建内核函数
-
 #4 创建一个异步函数来包装函数调用
-
 #5 设置内核函数参数
 
 尝试调试这个示例（F5），等待输出生成。这是设置 SK 和创建及练习语义函数的基础。在下一节中，我们将继续了解如何将语义函数注册为技能/插件。
@@ -543,6 +498,8 @@ wizard’s spell gone wrong.…
 SK 的 VS Code 扩展提供了创建插件/技能的有用工具。在本节中，我们将使用 SK 扩展创建一个插件/技能，然后编辑该扩展的组件。之后，我们将在 SK 中注册并执行该插件。
 
 图 5.6 展示了在 VS Code 中使用 SK 扩展创建新技能的过程。（如果您需要安装此扩展，请参阅附录 B 的说明。）然后，您将获得将函数放置在技能/插件文件夹中的选项。始终将相似的功能分组在一起。创建技能后，输入您想要开发的函数的名称和描述。务必像 LLM 将要使用它一样描述该函数。
+
+
 
 ![figure](img/5-6.png)
 
@@ -606,7 +563,7 @@ You want to recommend a movie that the user has not watched before.
 
 现在，我们将深入探讨加载技能/插件并在简单示例中执行它的代码。在 VS Code 中打开 `SK_first_skill.py` 文件。以下列表显示了一个突出显示新部分的缩略版本。
 
-##### 列表 5.13 SK_first_skill.py（缩略列表）
+##### 列表 5.13 `SK_first_skill.py`（缩略列表）
 
 ```py
 kernel = sk.Kernel()
@@ -848,6 +805,10 @@ would recommend a…
 
 TMDB 是一个出色的服务，但它不提供语义服务或可以插入到 ChatGPT 或代理中的服务。为了做到这一点，我们必须在 TMDB 公开的 API 调用周围包装一个语义服务层。
 
+
+
+# 语义服务层
+
 语义服务层是一个 GPT 接口，通过自然语言公开函数。正如讨论的那样，要将函数公开给 ChatGPT 或其他如代理等接口，它们必须被定义为插件。幸运的是，SK 可以自动为我们创建插件，前提是我们正确编写我们的语义服务层。
 
 原生插件或一组技能可以作为语义层。要创建原生插件，创建一个新的插件文件夹，并在该文件夹中放置一个包含一组原生函数的 Python 文件。目前 SK 扩展没有很好地做到这一点，所以手动创建模块效果最好。
@@ -955,7 +916,7 @@ Gets a list of currently playing movies for a given genre””",
 
 查看其他映射为语义的 API 调用。如您所见，将 API 调用转换为语义服务的模式已经定义得很好。在我们运行完整服务之前，我们将在下一节测试每个函数。
 
-### 5.5.2 测试语义服务
+## 5.5.2 测试语义服务
 
 在实际应用中，您可能希望为每个语义服务函数编写一套完整的单元或集成测试。我们在这里不会这样做；相反，我们将编写一个快速的帮助脚本以测试各种函数。
 
@@ -1036,7 +997,7 @@ Attack on Titan, My Hero Academia, Fighting Spirit, The Owl House
 
 在这个测试中展示了 SK 的真正力量。注意`TMDbService`类是如何作为一个插件导入的，但我们不需要定义除了我们之前已经做的任何插件配置？通过只写一个封装了一些 API 函数的类，我们已经以语义方式公开了 TMDB API 的一部分。现在，函数公开后，我们可以在下一节中查看它们如何作为聊天界面的插件使用。
 
-### 5.5.3 与语义服务层的交互式聊天
+## 5.5.3 与语义服务层的交互式聊天
 
 当 TMDB 函数以语义方式公开时，我们可以继续将它们集成到聊天界面中。这将使我们能够在这个界面中自然地进行对话以获取各种信息，例如当前的热门电影。
 
@@ -1147,6 +1108,8 @@ async def chat() -> bool:
 
 ##### 列表 5.23 `SK_service_chat.py`（主函数）
 
+
+
 ```py
 async def main() -> None:
     chatting = True
@@ -1220,7 +1183,7 @@ Please note that some movies may overlap in both genres, such as
 "The Family Plan" and "Freelance ."
 ```
 
-#1 LLM 调用两次 get_top_movies_by_genre。
+#1 LLM 调用两次 `get_top_movies_by_genre`。
 
 #2 内部调用以获取类型 ID
 
@@ -1236,7 +1199,7 @@ Please note that some movies may overlap in both genres, such as
 
 因此，我们将创建 `TMDbService` 的 v2 版本来纠正这个问题，并将结果作为 JSON 字符串返回。在 VS Code 中打开文件 `tmdb_v2.py`，并滚动到 `get_top_movies_by_genre` 函数。
 
-##### 列表 5.25 `tmdb_v2.py` (`get_top_movies_by_genre`)
+##### 列表 5.25 `tmdb_v2.py`（`get_top_movies_by_genre`）
 
 ```py
 def get_top_movies_by_genre(self, genre: str) -> str:
@@ -1312,7 +1275,7 @@ space-related theme in its overview. …
 
 +   *练习 2*—开发天气信息插件
 
-*目标*—学习创建执行独特任务的插件。
+*目标*——学习创建执行独特任务的插件。
 
 *任务:*
 
@@ -1322,7 +1285,7 @@ space-related theme in its overview. …
 
 +   *练习 3*—制作一个创意语义功能
 
-*目标*—探索创建语义功能。
+*目标*——探索创建语义功能。
 
 *任务:*
 
@@ -1332,7 +1295,7 @@ space-related theme in its overview. …
 
 +   *练习 4*—使用原生函数增强语义功能
 
-*目标*—了解如何结合语义和原生函数。
+*目标*——了解如何结合语义和原生函数。
 
 *任务:*
 
@@ -1342,7 +1305,7 @@ space-related theme in its overview. …
 
 +   *练习 5*—使用语义内核封装现有的 Web API
 
-*目标*—学习将现有的网络 API 封装为语义服务插件。
+*目标*——学习将现有的网络 API 封装为语义服务插件。
 
 *任务:*
 

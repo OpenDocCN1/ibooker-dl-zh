@@ -1,12 +1,11 @@
+
 # 4 以无服务器方式构建和保障 Web 应用程序
 
 本章涵盖
 
-+   创建无服务器待办事项列表
-
-+   使用 DynamoDB，一个无服务器数据库
-
-+   以无服务器方式实现登录
++ 创建无服务器待办事项列表
++ 使用 DynamoDB，一个无服务器数据库
++ 以无服务器方式实现登录
 
 在本章中，我们将基于第二章和第三章的教训，构建我们的第二个、更强大的无服务器 AI 系统。大多数编程教材都使用标准的待办事项列表应用作为教学示例。在这方面，本书也不例外。然而，这绝对不是你祖父母的待办事项列表：这是强化版的待办事项列表！在本章中，我们将构建的待办事项列表应用将从一个足够简单的 CRUD（创建、读取、更新、删除）类型的应用程序开始，利用云原生数据库。在通过登录和注销屏幕保护应用程序后，我们将添加自然语言语音接口来记录和转录文本，并让系统从我们的待办事项列表中告诉我们日常日程。最后，我们将向系统中添加对话接口，使我们能够完全通过自然语音而不是键盘进行交互。
 
@@ -28,21 +27,17 @@
 
 系统架构显示了服务之间的清晰分离。每个服务都有一个单一的责任和定义良好的接口：
 
-+   *Web 应用程序* --客户端应用程序的静态内容从 S3 存储桶中提供。API 网关提供了一个 API，该 API 触发我们的同步和异步服务中的事件处理器。我们的 Web 应用程序客户端使用 AWS Amplify 客户端 SDK 来处理认证的复杂性。
++ *Web 应用程序* --客户端应用程序的静态内容从 S3 存储桶中提供。API 网关提供了一个 API，该 API 触发我们的同步和异步服务中的事件处理器。我们的 Web 应用程序客户端使用 AWS Amplify 客户端 SDK 来处理认证的复杂性。
++ *同步和异步服务* --这些自定义服务是 AWS Lambda 函数，它们处理我们的 API 请求并执行应用程序的主要业务逻辑。
 
-+   *同步和异步服务* --这些自定义服务是 AWS Lambda 函数，它们处理我们的 API 请求并执行应用程序的主要业务逻辑。
+![](img/CH04_F02_Elger.png)
 
-    ![](img/CH04_F02_Elger.png)
+图 4.2 系统架构。系统由自定义服务和托管服务组成。使用 AWS 提供的许多托管服务，我们可以快速构建和部署可扩展的生产级应用程序。
 
-    图 4.2 系统架构。系统由自定义服务和托管服务组成。使用 AWS 提供的许多托管服务，我们可以快速构建和部署可扩展的生产级应用程序。
-
-+   *通信架构* --AWS Route53 用于 DNS 配置，因此我们的服务可以通过自定义域名访问。
-
-+   *实用服务* --AWS Cognito 用于身份验证和授权。
-
-+   *AI 服务* --我们使用三个托管的 AWS AI 服务：Transcribe、Polly 和 Lex。
-
-+   *数据服务* --使用 DynamoDB 作为强大且可扩展的数据库。S3 用于文件存储。
++ *通信架构* --AWS Route53 用于 DNS 配置，因此我们的服务可以通过自定义域名访问。
++ *实用服务* --AWS Cognito 用于身份验证和授权。
++ *AI 服务* --我们使用三个托管的 AWS AI 服务：Transcribe、Polly 和 Lex。
++ *数据服务* --使用 DynamoDB 作为强大且可扩展的数据库。S3 用于文件存储。
 
 在我们处理系统时，我们将更详细地描述每个部分，并解释它是如何构建和部署的。
 
@@ -68,15 +63,11 @@
 
 展示了一个主要同步服务。这是`to-do`服务，它提供了以下简单的 CRUD 接口：
 
-+   `POST /todo/`--创建一个新的项目。
-
-+   `GET /todo/{id}`--读取一个特定的项目。
-
-+   `PUT /todo/{id}`--更新项目。
-
-+   `DELETE /todo/{id}`--删除一个项目。
-
-+   `GET /todo`--列出所有项目。
++ `POST /todo/` --创建一个新的项目。
++ `GET /todo/{id}` --读取一个特定的项目。
++ `PUT /todo/{id}` --更新项目。
++ `DELETE /todo/{id}` --删除一个项目。
++ `GET /todo` --列出所有项目。
 
 ### 4.2.3 异步服务
 
@@ -92,17 +83,15 @@
 
 提供了一个将录音笔记转换为文本的接口：
 
-+   `POST /note`--启动一个新的异步笔记转录作业。
-
-+   `GET /note/{id}`--轮询获取有关异步转录的信息。
++ `POST /note` --启动一个新的异步笔记转录作业。
++ `GET /note/{id}` --轮询获取有关异步转录的信息。
 
 #### 调度服务
 
 提供了一个创建计划并将其转换为语音录音的接口：
 
-+   `POST /schedule`--启动一个新的异步调度作业。
-
-+   `GET /schedule/{id}`--轮询获取有关计划的信息。
++ `POST /schedule` --启动一个新的异步调度作业。
++ `GET /schedule/{id}` --轮询获取有关计划的信息。
 
 ### 4.2.4 通信架构
 
@@ -122,11 +111,9 @@
 
 此图显示我们正在使用几个 AI 服务：
 
-+   *Transcribe* 用于提供语音到文本转换，并从 S3 读取其输入。
-
-+   *Polly* 将文本转换为语音，并将其输出音频文件写入 S3。
-
-+   *Lex* 用于创建交互式聊天机器人。我们将使用 Lex Web UI 系统直接集成到我们的前端应用中。
++ *Transcribe* 用于提供语音到文本转换，并从 S3 读取其输入。
++ *Polly* 将文本转换为语音，并将其输出音频文件写入 S3。
++ *Lex* 用于创建交互式聊天机器人。我们将使用 Lex Web UI 系统直接集成到我们的前端应用中。
 
 ### 4.2.7 数据服务
 
@@ -140,13 +127,10 @@
 
 现在我们已经看到了最终目标，让我们深入其中，将系统组合起来。作为本章的先决条件，您需要具备以下条件：
 
-+   AWS 账户
-
-+   AWS 命令行已安装并配置
-
-+   Node.js 已安装
-
-+   Serverless Framework 已安装
++ AWS 账户
++ AWS 命令行已安装并配置
++ Node.js 已安装
++ Serverless Framework 已安装
 
 如何设置 Node.js 和 Serverless Framework 的说明在第 2 和第三章中提供。AWS 的设置说明在附录 A 中提供。如果您尚未这样做，您需要在继续本章的代码之前遵循这些说明。
 
@@ -162,15 +146,11 @@ $ git clone https://github.com/fourTheorem/ai-as-a-service.git
 
 该系统的代码被分解为多个简单步骤，因为我们将会逐步构建系统。在本章中，我们构建基本应用，然后在第五章中添加 AI 功能。如果您查看`chapter4`和`chapter5`目录，您将找到以下分解：
 
-+   `chapter4/step-1-basic-todo`
-
-+   `chapter4/step-2-cognito-login`
-
-+   `chapter5/step-3-note-service`
-
-+   `chapter5/step-4-schedule-service`
-
-+   `chapter5/step-5-chat-interface`
++ `chapter4/step-1-basic-todo`
++ `chapter4/step-2-cognito-login`
++ `chapter5/step-3-note-service`
++ `chapter5/step-4-schedule-service`
++ `chapter5/step-5-chat-interface`
 
 我们将按顺序处理这些目录。每个逻辑步骤都将为我们的待办事项应用添加额外的功能。让我们从第一步开始，我们的基本待办事项应用。
 
@@ -188,11 +168,9 @@ $ git clone https://github.com/fourTheorem/ai-as-a-service.git
 
 在整理本书的内容时，我们确实质疑过世界是否还需要另一个待办事项应用程序。然而，经过反思，我们决定以下原因将是有价值的：
 
-+   待办事项应用程序需要涵盖所有基本的 CRUD 操作。
-
-+   这对大多数程序员来说是一个熟悉的起点。
-
-+   大多数待办事项应用程序都停留在 CRUD 部分；我们的目标是探索如何通过 AI 服务来保护和扩展应用程序。
++ 待办事项应用程序需要涵盖所有基本的 CRUD 操作。
++ 这对大多数程序员来说是一个熟悉的起点。
++ 大多数待办事项应用程序都停留在 CRUD 部分；我们的目标是探索如何通过 AI 服务来保护和扩展应用程序。
 
 在这个起点，系统由一组小的组件组成，如图 4.8 所示。
 
@@ -249,15 +227,11 @@ CRUD
 
 如果你对这个术语不熟悉，*CRUD*代表*创建、读取、更新、删除*。有时你会听到“基于 CRUD 的应用程序”这个术语。这个术语只是意味着一个在某个数据存储上执行这些标准操作的应用程序。通常，CRUD 应用程序使用 RESTful HTTP 接口实现。这意味着以下 HTTP 动词和路由被使用：
 
-+   `POST /widget`--发布数据以创建和存储新的小部件。
-
-+   `GET /widget/{id}`--读取具有提供 ID 的小部件的数据。
-
-+   `PUT /widget/{id}`--更新具有提供 ID 的小部件。
-
-+   `DELETE /widget/{id}`--删除具有提供 ID 的小部件。
-
-+   `GET /widget`--获取所有小部件的列表。
++ `POST /widget` --发布数据以创建和存储新的小部件。
++ `GET /widget/{id}` --读取具有提供 ID 的小部件的数据。
++ `PUT /widget/{id}` --更新具有提供 ID 的小部件。
++ `DELETE /widget/{id}` --删除具有提供 ID 的小部件。
++ `GET /widget` --获取所有小部件的列表。
 
 如下所示，`serverless.yml`文件的主要部分配置了 AWS 提供者并定义了 API 网关路由及其相关的 Lambda 函数事件处理程序。
 
@@ -307,9 +281,8 @@ resources:
 
 尽管这个配置文件比我们之前的示例要大一些，但其结构与第二章和第三章中的`ui-service`非常相似，即我们
 
-+   为我们的处理程序函数配置对 DynamoDB 的访问
-
-+   定义路由和处理程序函数
++ 为我们的处理程序函数配置对 DynamoDB 的访问
++ 定义路由和处理程序函数
 
 我们在提供者部分使用环境定义来为我们的处理程序代码提供 DynamoDB 表名：
 
@@ -333,7 +306,15 @@ resources:
 
 列表 4.3 无服务器 DynamoDB 配置
 
-```
+
+
+# 4.4.2 后端
+
+## DynamoDB 资源定义
+
+以下 CloudFormation 模板定义了一个 DynamoDB 表：
+
+```yaml
 Resources:
   TodosDynamoDbTable:
     Type: 'AWS::DynamoDB::Table'
@@ -359,11 +340,13 @@ Resources:
 
 这是一个非常简单的配置，在 DynamoDB 表上定义了一个单一的 `id` 键。
 
+## 待办服务处理程序
+
 如果我们现在查看 `to-do` 服务的处理程序代码，应该会清楚系统是如何使用 DynamoDB 存储数据的。代码在文件 `handler.js` 中，如下所示列表。
 
-列表 4.4 需求和创建待办服务处理程序
+**列表 4.4 需求和创建待办服务处理程序**
 
-```
+```javascript
 const uuid = require('uuid')
 const AWS = require('aws-sdk')                       ❶
 const dynamoDb = new AWS.DynamoDB.DocumentClient()   ❷
@@ -403,9 +386,9 @@ module.exports.create = (event, context, cb) => {    ❺
 
 如果你在第二章和第三章中工作过，处理程序的实现应该也很熟悉。这里的模式是包含 AWS SDK 并创建一个接口，以便访问我们想要访问的特定服务，在这种情况下是 DynamoDB。其余的代码然后使用这个资源对服务执行操作，并将结果返回给服务的调用者。在列表 4.4 中，我们展示了 `create` 端点。这映射到我们的 `POST /to-do` 路由。此代码的客户端将在 `POST` 请求中包含待办信息，格式为 JSON 数据。在这种情况下，使用的 JSON 格式如以下列表所示。
 
-列表 4.5 待办 `POST` 的示例 JSON 内容
+**列表 4.5 待办 `POST` 的示例 JSON 内容**
 
-```
+```json
 {
   dueDate: '2018/11/20',
   action: 'Shopping',
@@ -424,7 +407,7 @@ module.exports.create = (event, context, cb) => {    ❺
 
 代码位于 `frontend` 目录中，结构如下所示列表。
 
-列表 4.6 前端目录结构
+**列表 4.6 前端目录结构**
 
 ```
 ???    assets
@@ -443,11 +426,11 @@ module.exports.create = (event, context, cb) => {    ❺
 
 ![](img/CH04_F10_Elger.png)
 
-图 4.10 前端
+**图 4.10 前端**
 
-列表 4.7 `index.html`
+**列表 4.7 `index.html`**
 
-```
+```html
 <html>
 <head>
   <title>Chapter 4</title>
@@ -480,19 +463,19 @@ module.exports.create = (event, context, cb) => {    ❺
 
 应用程序的主要代码位于 `src` 目录中。它由以下内容组成：
 
-+   index.js--应用程序入口点
++   `index.js`——应用程序入口点
 
-+   todo.js--待办事项“模型”和“控制器”代码
++   `todo.js`——待办事项“模型”和“控制器”代码
 
-+   todo-view.js--待办事项 DOM 操作
++   `todo-view.js`——待办事项 DOM 操作
 
-+   templates.js--通用渲染模板
++   `templates.js`——通用渲染模板
 
 如下所示列表的 `index.js` 文件，简单地加载了所需资源。
 
-列表 4.8 `index.js`
+**列表 4.8 `index.js`**
 
-```
+```javascript
 import $ from 'jquery'                          ❶
 import 'bootstrap/dist/css/bootstrap.min.css'
 import 'webpack-jquery-ui/css'
@@ -511,9 +494,9 @@ $(function () {
 
 主要工作在我们下面的待办事项模块中完成。
 
-列表 4.9 `todo.js`
+**列表 4.9 `todo.js`**
 
-```
+```javascript
 import $ from 'jquery'
 import {view} from './todo-view'     ❶
 
@@ -566,7 +549,7 @@ API_ROOT = `https://chapter4api.${process.env.CHAPTER4_DOMAIN}/api/todo/`
 
 我们将在本节稍后部署前端时设置 `CHAPTER4_DOMAIN` 变量。
 
-为什么没有使用框架？
+#### 为什么没有使用框架？
 
 熟悉前端开发的读者可能会想知道为什么我们不使用某种前端框架，如 React、Vue 或 Angular。答案是，尽管我们了解有许多流行的框架可用，但它们需要时间来学习。本书的目标是教授 AI 即服务而不是前端框架，因此我们选择使用 JQuery 结合 Webpack 的最低共同分母方法。这样我们希望减少认知学习负担。
 
@@ -578,7 +561,7 @@ API_ROOT = `https://chapter4api.${process.env.CHAPTER4_DOMAIN}/api/todo/`
 
 我们在第二章和第三章中介绍了 `package.json` 的结构，所以这部分应该是熟悉的。我们应该注意，`webpack` 本身在 `package.json` 中被管理为一个开发依赖项。我们还在脚本块下定义了一个构建任务，该任务运行 `webpack` 以构建用于部署的应用程序。
 
-Webpack
+#### Webpack
 
 Webpack 是现代 JavaScript 应用程序的静态模块打包器。Webpack 处理 JavaScript、CSS 以及其他源文件，以创建一个紧凑的输出 JavaScript 文件，该文件可以包含在 Web 应用程序中。Webpack 通过构建依赖图而不是逐文件工作来实现这一点。这有几个好处：
 
@@ -594,9 +577,9 @@ Webpack 的完整文档可在此处查看：[`webpack.js.org/`](https://webpack.
 
 我们的 `webpack` 配置如下所示。
 
-列表 4.10 `webpack.config.js`
+**列表 4.10 `webpack.config.js`**
 
-```
+```javascript
 const Dotenv = require('dotenv-webpack')
 const path = require('path')
 
@@ -640,7 +623,7 @@ module.exports = {
 
 ❺ CSS 和图像模块
 
-❻ .env 文件插件
+❻ `.env` 文件插件
 
 我们的 webpack 配置将把 `src/index.js` 中的所有依赖项构建到 `dist` 文件夹中。这包括我们所有的源代码和相关模块，包括 JQuery。然后我们可以简单地部署 `dist` 目录到 S3，以拥有一个功能性的应用程序。
 
@@ -666,7 +649,7 @@ module.exports = {
 
 这些是全局变量，你应该在系统的一个地方保持它们。为了部署我们的待办应用程序，我们需要提供系统特定的变量。为此，我们将使用一个`.env`文件。使用任何文本编辑器创建一个名为`.env`的文件，并将其放置在`chapter4/step1-basic-todo`目录中。该文件应包含以下列表中的内容。
 
-列表 4.11 步骤 1 的环境变量
+**列表 4.11 步骤 1 的环境变量**
 
 ```
 # environment definiton for Chapter 4
@@ -688,7 +671,7 @@ CHAPTER4_DOMAIN=<your development domain>        ❸
 
 首先，我们将部署我们的资源项目。为此，进入`resources`目录并运行：
 
-```
+```bash
 $ npm install
 $ serverless deploy
 ```
@@ -699,15 +682,19 @@ $ serverless deploy
 
 接下来，我们将部署待办服务。进入`todo-service`目录，通过运行以下命令安装依赖项：
 
-```
+```bash
 $ npm install
 ```
 
 在部署之前，我们需要为我们的应用程序创建一个自定义域名。在`serverless.yml`中的配置如下所示。
 
-列表 4.12 `serverless.yml`中的自定义域名配置
+**列表 4.12 `serverless.yml`中的自定义域名配置**
 
-```
+
+
+# 自定义域名配置
+
+```yaml
 custom:
   region: ${env:AWS_DEFAULT_REGION, 'eu-west-1'}
   accountid: ${env:AWS_ACCOUNT_ID}
@@ -725,48 +712,48 @@ custom:
 
 ❶ 这定义了父域名。
 
-❷ 子域名由前缀 chapter4api 和父域名组成。
+❷ 子域名由前缀`chapter4api`和父域名组成。
 
 ❸ 指定了一个通配符证书。
 
 我们这个部分的域名将由`CHAPTER4_DOMAIN`的设置和一个子域名`chapter4api`组成。也就是说，如果我们使用`example.com`作为变量`CHAPTER4_DOMAIN`的值，那么这一章的完整自定义域名将是`chapter4api.example.com`。
 
-让我们继续创建这个域名
+让我们继续创建这个域名：
 
-```
+```bash
 $ serverless create_domain
 ```
 
 我们现在可以通过运行以下命令来部署我们的待办事项 API：
 
-```
+```bash
 $ serverless deploy
 ```
 
-#### 部署前端
+## 部署前端
 
 最后，在这一节中，我们需要部署我们的前端。首先，为了安装依赖项，进入`frontend`目录并运行：
 
-```
+```bash
 $ npm install
 ```
 
 接下来，我们需要通过运行以下命令创建我们的应用程序的存储桶：
 
-```
+```bash
 $ serverless deploy
 ```
 
 我们现在可以通过我们的`npm`脚本部分使用 Webpack 构建前端：
 
-```
+```bash
 $ source ../.env
 $ npm run build
 ```
 
 这将在我们的`dist`目录中创建一个名为`main.js`的文件，以及一个包含一些额外图像的`assets`目录。为了部署前端，我们将使用 AWS 命令行，就像我们在第二章和第三章中所做的那样：
 
-```
+```bash
 $ cd frontend
 $ source ../.env
 $ aws s3 sync dist/ s3://$CHAPTER4_BUCKET
@@ -774,9 +761,9 @@ $ aws s3 sync dist/ s3://$CHAPTER4_BUCKET
 
 这会将`dist`目录的内容推送到我们刚刚创建的第四章存储桶。请注意，我们需要将环境文件的内容`source`到 shell 中，以提供`CHAPTER4_BUCKET`环境变量。
 
-#### 测试它
+## 测试它
 
-如果所有前面的步骤都进行顺利，我们现在应该已经将一个完全功能性的系统部署到了 AWS。为了测试这一点，请在浏览器中打开此 URL
+如果所有前面的步骤都进行顺利，我们现在应该已经将一个完全功能性的系统部署到了 AWS。为了测试这一点，请在浏览器中打开此 URL：
 
 ```
 https://<CHAPTER4_BUCKET>.s3-eu-west-1.amazonaws.com/index.html
@@ -784,32 +771,25 @@ https://<CHAPTER4_BUCKET>.s3-eu-west-1.amazonaws.com/index.html
 
 将`<CHAPTER4_BUCKET>`替换为你的特定存储桶名称。你应该能够通过浏览器中的前端创建和更新待办事项。
 
-为什么从存储桶提供服务？
+### 为什么从存储桶提供服务？
 
 一些读者可能会想知道为什么我们要直接从 S3 存储桶提供内容。我们为什么不使用像 CloudFront 这样的 CDN？答案是，对于这样一个教学系统，CloudFront 是过度的。我们同意，对于一个完整的生产系统，S3 存储桶应该用作 CDN 的源服务器；然而，在开发模式下，CDN 缓存和更新只会碍手碍脚。
 
 我们现在有一个工作的待办事项系统。只有一个小问题。系统是公开可访问的，这意味着任何互联网上的随机人员都可以读取和修改我的待办事项列表。这显然不是我们系统所期望的特性，所以我们最好迅速解决这个问题。幸运的是，我们可以使用一个云原生服务来为我们处理这项工作。在下一节中，我们将使用 Cognito 来保护我们的待办事项列表。
 
-## 4.5 步骤 2：使用 Cognito 进行安全保护
+# 4.5 步骤 2：使用 Cognito 进行安全保护
 
-用户管理是那些看似简单的问题之一，因为它看起来应该很容易，但通常结果却非常困难！许多程序员在天真地认为“这不可能那么难”的假设下，长时间熬夜自己编写用户身份验证和管理系统。
+用户管理是那些看似简单的问题之一，因为它看起来应该很容易，但通常结果却非常困难！许多程序员在天真地认为"这不可能那么难"的假设下，长时间熬夜自己编写用户身份验证和管理系统。
 
-幸运的是，用户登录和管理是一个已解决的问题，所以我们再也不需要编写这类代码了。我们可以直接使用云原生服务来为我们完成这项工作。有几种选项可供选择，但对我们这个系统来说，我们将使用 AWS Cognito。Cognito 为我们提供了一个完整的身份验证服务，包括
+幸运的是，用户登录和管理是一个已解决的问题，所以我们再也不需要编写这类代码了。我们可以直接使用云原生服务来为我们完成这项工作。有几种选项可供选择，但对我们这个系统来说，我们将使用 AWS Cognito。Cognito 为我们提供了一个完整的身份验证服务，包括：
 
 +   密码复杂性策略
-
 +   与 Web 和移动应用程序的集成
-
 +   多种登录策略
-
 +   用户管理
-
 +   密码复杂性规则
-
 +   单点登录
-
 +   通过 Facebook、Google、Amazon 等社交登录
-
 +   安全最佳实践和针对最新已知安全漏洞的防御
 
 这对于一个小型的开发工作来说功能非常强大。所以，让我们将 Cognito 应用到我们的待办事项系统中，并保护它免受坏人的侵害！
@@ -822,51 +802,47 @@ https://<CHAPTER4_BUCKET>.s3-eu-west-1.amazonaws.com/index.html
 
 我们已经将 AWS Amplify 库添加到前端。Amplify 是一个提供对各种 AWS 服务进行认证访问的 JavaScript 库。目前，我们只会用它来进行认证和访问控制。在成功登录后提供的令牌将被传递到 API Gateway 的 API 调用中，这些调用反过来由 AWS Lambda 处理函数处理。
 
-AWS Amplify
-
-Amplify 最初是一个提供客户端访问 AWS API 的 JavaScript 库。该库支持桌面浏览器，以及 iOS 和 Android 设备。库的最新增补是 Amplify CLI，旨在提供类似于我们一直在使用的 Serverless Framework 的工具链。在撰写本文时，Amplify 工具链不如 Serverless Framework 成熟，并且缺乏插件生态系统支持。然而，这绝对是一个值得关注的项目。
-
-Amplify 的完整文档可以在以下链接找到：[`aws-amplify.github.io/docs/js/start`](https://aws-amplify.github.io/docs/js/start)。
+> **AWS Amplify**
+>
+> Amplify 最初是一个提供客户端访问 AWS API 的 JavaScript 库。该库支持桌面浏览器，以及 iOS 和 Android 设备。库的最新增补是 Amplify CLI，旨在提供类似于我们一直在使用的 Serverless Framework 的工具链。在撰写本文时，Amplify 工具链不如 Serverless Framework 成熟，并且缺乏插件生态系统支持。然而，这绝对是一个值得关注的项目。
+>
+> Amplify 的完整文档可以在以下链接找到：[`aws-amplify.github.io/docs/js/start`](https://aws-amplify.github.io/docs/js/start)。
 
 如图 4.11 所示，我们将登录任务委托给 Cognito。一旦用户认证成功，就会分配一个会话令牌，由 Amplify 库管理。然后我们在 API Gateway 设置中添加一个认证步骤，要求用户在请求继续之前提供有效的 JSON Web Token (JWT)。任何没有有效网络令牌的请求都会在这一层被拒绝。
 
-JSON Web Tokens
+> **JSON Web Tokens**
+>
+> JSON Web Token (JWT) 是一个定义了安全传输声明的方法的 (RFC 7519) 标准，它将声明作为 JSON 对象进行传输。JWT 由三个部分组成：
+>
+> ```
+> <header>.<payload>.<signature>
+> ```
+>
+> +   `header`——标识令牌使用的哈希算法。
+> +   `payload`——包含一组声明。一个典型的声明可能是用户 ID。
+> +   `signature`——是`header`、`payload`和一个秘密使用`header`中定义的算法进行单向哈希的结果。
+>
+> 通常，JWT 会在登录时由认证服务器颁发，然后由客户端用于安全地访问资源。JWT 通常具有较短的生存期，并在预定义的时间后过期，迫使客户端定期重新认证以生成新的令牌。
+>
+> 关于 JWT 的详细信息可以在以下链接找到：[`en.wikipedia.org/wiki/JSON_Web_Token`](https://en.wikipedia.org/wiki/JSON_Web_Token)。
 
-JSON Web Token (JWT) 是一个定义了安全传输声明的方法的 (RFC 7519) 标准，它将声明作为 JSON 对象进行传输。JWT 由三个部分组成：
+## 4.5.1 获取代码
 
-```
-<header>.<payload>.<signature>
-```
+这个步骤的代码在目录`chapter4/step-2-cognito-login`中，包含了步骤 1 的代码以及 Cognito 的更新。我们将依次介绍这些更新，然后部署更改以保护我们的系统。
 
-+   header--标识令牌使用的哈希算法。
-
-+   payload--包含一组声明。一个典型的声明可能是用户 ID。
-
-+   signature--是 header、payload 和一个秘密使用 header 中定义的算法进行单向哈希的结果。
-
-通常，JWT 会在登录时由认证服务器颁发，然后由客户端用于安全地访问资源。JWT 通常具有较短的生存期，并在预定义的时间后过期，迫使客户端定期重新认证以生成新的令牌。
-
-关于 JWT 的详细信息可以在以下链接找到：[`en.wikipedia.org/wiki/JSON_Web_Token`](https://en.wikipedia.org/wiki/JSON_Web_Token)。
-
-### 4.5.1 获取代码
-
-这个步骤的代码在目录 `chapter4/step-2-cognito-login` 中，包含了步骤 1 的代码以及 Cognito 的更新。我们将依次介绍这些更新，然后部署更改以保护我们的系统。
-
-### 4.5.2 用户服务
+## 4.5.2 用户服务
 
 首先，有一个新的服务目录，`user-service`。这个文件夹只包含 Cognito 的无服务器配置。这里有三个文件：
 
-+   identity-pool.yml
-
-+   user-pool.yml
-
-+   serverless.yml
++   `identity-pool.yml`
++   `user-pool.yml`
++   `serverless.yml`
 
 我们的`serverless.yml`很短，此时你应该熟悉大多数模板条目。它导入其他两个文件，这些文件包含 Cognito 资源。下一个列表中的`user-pool.yml`配置了我们的 Cognito 用户池。用户池正是其名称所暗示的，即用户池。
 
-列表 4.13 Cognito 用户池配置
+**列表 4.13 Cognito 用户池配置**
 
-```
+```yaml
 Resources:
   CognitoUserPool:                             ❶
     Type: AWS::Cognito::UserPool
@@ -907,9 +883,9 @@ Cognito 提供了大量的选项。我们将保持简单，仅为其配置电子
 
 要使用 Cognito 授权访问 AWS 资源，我们还需要一个身份池。这已在`identity-pool.yml`中配置，如下所示。
 
-列表 4.14 Cognito 身份池配置
+**列表 4.14 Cognito 身份池配置**
 
-```
+```yaml
 Resources:
   CognitoIdentityPool:                                  ❶
     Type: AWS::Cognito::IdentityPool
@@ -940,9 +916,9 @@ Resources:
 
 在列表 4.14 中，我们将身份池连接到了我们的用户池，还连接到了一个角色，`CognitoAuthRole`。该角色也在`identity-pool.yml`中定义。关于这个角色的关键部分包含在下一个列表中的策略声明中。
 
-列表 4.15 身份池策略声明
+**列表 4.15 身份池策略声明**
 
-```
+```yaml
 Statement:
     - Effect: 'Allow'
       Action:                    ❶
@@ -963,27 +939,23 @@ Statement:
 
 ❷ 策略授予调用我们的 API 网关路由的访问权限。
 
-此策略将与所有经过身份验证的用户相关联，并表示具有此角色的用户可以
+此策略将与所有经过身份验证的用户相关联，并表示具有此角色的用户可以：
 
 +   访问 S3
-
 +   调用 Transcribe 服务
-
 +   调用 Polly 服务
-
 +   使用 Lex 服务
-
 +   执行 API 网关功能
 
 对于此角色，将拒绝访问任何其他服务。
 
-#### 超时！
+### 超时！
 
 好的，如果你觉得所有关于用户池和身份池的讨论有点令人困惑，我们同意！一开始可能会感到有些压倒性，所以让我们花点时间来解释。要理解的关键概念是身份验证和授权之间的区别。
 
-*身份验证*是“谁”。换句话说，我能证明我就是我所说的那个人吗？通常这是通过证明我知道一个秘密信息片段——密码来完成的。用户池处理身份验证。
+*身份验证*是"谁"。换句话说，我能证明我就是我所说的那个人吗？通常这是通过证明我知道一个秘密信息片段——密码来完成的。用户池处理身份验证。
 
-*授权*是“什么”。鉴于我已经证明了我的身份，我允许访问哪些资源？通常这通过某种类型的权限模型来实现。例如，在文件系统中，有用户和组级别的访问控制，实现了基本的权限模型。我们刚刚创建的 AWS 策略是我们登录用户的权限模型。身份池处理授权。
+*授权*是"什么"。鉴于我已经证明了我的身份，我允许访问哪些资源？通常这通过某种类型的权限模型来实现。例如，在文件系统中，有用户和组级别的访问控制，实现了基本的权限模型。我们刚刚创建的 AWS 策略是我们登录用户的权限模型。身份池处理授权。
 
 身份池也被称为*联合身份*。这是因为身份池可以有多个身份来源。这如图 4.12 所示。
 
@@ -995,13 +967,13 @@ Statement:
 
 对于这个系统，我们将仅使用 Cognito 用户池作为我们的认证用户来源；我们不会启用社交登录。
 
-### 4.5.3 To-do 服务
+## 4.5.3 To-do 服务
 
-现在我们有了认证用户的来源，我们需要更新我们的服务以确保我们已将其锁定以防止未经授权的访问。这很容易实现，并且需要对我们的 to-do 服务 `serverless.yml` 进行少量更新，如下列表所示。
+现在我们有了认证用户的来源，我们需要更新我们的服务以确保我们已将其锁定以防止未经授权的访问。这很容易实现，并且需要对我们的 to-do 服务`serverless.yml`进行少量更新，如下列表所示。
 
-列表 4.16 对 `serverless.yml` 的更改
+**列表 4.16 对`serverless.yml`的更改**
 
-```
+```yaml
 custom:
   poolArn: ${env:CHAPTER4_POOL_ARN}         ❶
 
@@ -1030,13 +1002,15 @@ functions:
 
 ❷ 声明授权者
 
-我们只需为希望保护的每个端点声明一个授权者。我们还需要更新我们的环境以包括用户池标识符 `CHAPTER4_POOL_ARN`。
+我们只需为希望保护的每个端点声明一个授权者。我们还需要更新我们的环境以包括用户池标识符`CHAPTER4_POOL_ARN`。
 
-### 4.5.4 前端服务
+## 4.5.4 前端服务
 
-我们对前端所做的最后一系列更改提供了登录、注销和令牌管理功能。我们已将 AWS Amplify 添加到前端 `package.json` 中作为依赖项。Amplify 需要我们提供一些配置参数。这通过 `index.js` 完成，如下列表所示。
+我们对前端所做的最后一系列更改提供了登录、注销和令牌管理功能。我们已将 AWS Amplify 添加到前端`package.json`中作为依赖项。Amplify 需要我们提供一些配置参数。这通过`index.js`完成，如下列表所示。
 
-列表 4.17 `index.js` 中的 Amplify 配置
+**列表 4.17 `index.js`中的 Amplify 配置**
+
+
 
 ```
 const oauth = {                                  ❶
@@ -1067,7 +1041,7 @@ Amplify.configure({                              ❷
 
 登录实现由 `auth.js` 和 `auth-view.js` 处理。以下列表显示了 `auth.js` 的代码。
 
-列表 4.18 `auth.js`
+**列表 4.18 `auth.js`**
 
 ```
 ...
@@ -1117,7 +1091,7 @@ function activate () {
 
 最后，在前端，我们需要更新我们对 to-do API 的调用，包括我们的授权令牌；否则，我们将被拒绝访问。这显示在列表 4.19 中。
 
-列表 4.19 更新的 `create` 方法
+**列表 4.19 更新的 `create` 方法**
 
 ```
 function create (cb) {
@@ -1159,7 +1133,7 @@ $ serverless deploy
 
 ![](img/CH04_F13_Elger.png)
 
-图 4.13 用户和身份池
+**图 4.13 用户和身份池**
 
 对于我们的用户池，我们使用了域名 `chapter4devfth`。您可以使用任何可用的唯一域名。
 
@@ -1167,11 +1141,11 @@ $ serverless deploy
 
 ![](img/CH04_F14_Elger.png)
 
-图 4.14 OAuth 流配置
+**图 4.14 OAuth 流配置**
 
 对于登录和注销回调 URL，您应该使用我们在步骤 1 中创建的定制域名提供您的前端存储桶的 URL。这些应该以以下形式提供：[`s3-eu-west-1.amazonaws.com/<YOUR BUCKET NAME>/index.html`](https://s3-eu-west-1.amazonaws.com/<YOUR%20BUCKET%20NAME%3E/index.html)。
 
-OAuth
+**OAuth**
 
 OAuth 是一种广泛实施的认证和授权标准协议。对 OAuth 2.0 协议的全面讨论需要一本完整的书籍。实际上，我们会将对此感兴趣的读者推荐到曼宁出版社出版的由 Justin Richer 和 Antonio Sanso 编写的 *OAuth 2 in Action* 一书（[`www.manning.com/books/oauth-2-in-action`](https://www.manning.com/books/oauth-2-in-action)）。
 
@@ -1183,7 +1157,7 @@ OAuth 是一种广泛实施的认证和授权标准协议。对 OAuth 2.0 协议
 
 现在我们已经配置了我们的池，我们需要更新我们的 `.env` 文件。进入 `chapter4/step-2-cognito-login` 目录并编辑文件 `.env` 以匹配以下列表。
 
-列表 4.20 更新的 `.env` 文件
+**列表 4.20 更新的 `.env` 文件**
 
 ```
 # environment definition for Chapter 4
@@ -1207,27 +1181,27 @@ CHAPTER4_IDPOOL=<your identity pool ID>
 
 ![](img/CH04_F15_Elger.png)
 
-图 4.15 用户池 ID 和 ARN
+**图 4.15 用户池 ID 和 ARN**
 
 客户端 ID 可以在 Cognito 用户池视图的 *应用客户端设置* 部分找到。这如图 4.16 所示。
 
 ![](img/CH04_F16_Elger.png)
 
-图 4.16 池客户端 ID
+**图 4.16 池客户端 ID**
 
 身份池 ID 可以在“联合身份”视图中找到。只需选择已创建的身份池，然后在右上角选择编辑身份池。编辑视图如图 4.17 所示。从这里，您可以查看并复制身份池 ID。
 
 ![](img/CH04_F17_Elger.png)
 
-图 4.17 身份池 ID
+**图 4.17 身份池 ID**
 
 注意，您可能会看到一个警告，表明没有指定未认证的角色。这可以忽略，因为所有用户都必须对我们的应用程序进行认证。
 
-一旦您在 AWS 控制台中找到了所需值，请使用相关值填充`.env`文件。
+一旦您在 AWS 控制台中找到了所需值，请使用相关值填充 `.env` 文件。
 
 #### 更新待办事项 API
 
-现在我们已经更新了我们的环境，我们可以将更改部署到我们的待办事项服务。请进入`step-2-cognito-login/todo-service`目录并运行
+现在我们已经更新了我们的环境，我们可以将更改部署到我们的待办事项服务。请进入 `step-2-cognito-login/todo-service` 目录并运行
 
 ```
 $ npm install
@@ -1238,7 +1212,7 @@ $ serverless deploy
 
 #### 更新前端
 
-现在我们已经安全地保护了我们的 API，我们需要更新我们的前端以允许访问。为此，请进入`step-2-cognito-login/frontend`目录并运行
+现在我们已经安全地保护了我们的 API，我们需要更新我们的前端以允许访问。为此，请进入 `step-2-cognito-login/frontend` 目录并运行
 
 ```
 $ source ../.env
@@ -1271,7 +1245,7 @@ $ aws s3 sync dist/ s3://$CHAPTER4_BUCKET
 
 +   从客户端到数据库的端到端无服务器平台可以在代码中定义并使用 Serverless Framework 进行部署。
 
-+   可以在`serverless.yml`文件的资源部分创建 DynamoDB 表。
++   可以在 `serverless.yml` 文件的资源部分创建 DynamoDB 表。
 
 +   在我们的 Lambda 函数中使用 AWS SDK 将数据从事件传递到我们的数据库读/写调用。
 
@@ -1281,4 +1255,4 @@ $ aws s3 sync dist/ s3://$CHAPTER4_BUCKET
 
 +   可以创建 API Gateway CRUD 路由来触发 Lambda 函数。API Gateway 路由是通过我们在 `serverless.yml` 中定义的事件创建的，与相关的 Lambda 函数或 *handler* 相关联。
 
-警告：第五章将继续构建此系统，并在第五章末尾提供如何移除已部署资源的说明。如果您暂时不打算处理第五章，请确保您完全移除本章中部署的所有云资源，以避免产生额外费用！
+**警告：** 第五章将继续构建此系统，并在第五章末尾提供如何移除已部署资源的说明。如果您暂时不打算处理第五章，请确保您完全移除本章中部署的所有云资源，以避免产生额外费用！

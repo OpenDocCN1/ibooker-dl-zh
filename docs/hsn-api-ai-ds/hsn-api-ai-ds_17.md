@@ -1,3 +1,4 @@
+
 # 第十四章\. 使用 LangChain 与 API 一起使用
 
 > 一个系统越“具有代理性”，LLM 决定系统如何行为的情况就越多。
@@ -6,37 +7,37 @@
 
 AI 应用程序使用 LLM 作为与用户的自然语言界面，研究人员正在探索使用 LLM 来执行多步任务的方法。本章将探讨两种重要的方法，API 和 LLM 如何结合使用来创建 AI 应用程序。首先，您将查看使用 API 调用 LLM，然后您将反转角色并使用 LLM 调用 API。您将使用 LangChain 来完成这两个任务。
 
-LangChain 及其相关项目 LangGraph 是用于创建 *具有代理性* 应用程序的开放源代码框架——这些应用程序使用 LLM 来控制系统行为。尽管许多开发者通过直接调用 LLM API 并执行自定义编码来与它们交互来构建这些应用程序，但 LangChain 和 LangGraph 标准化了所需的大部分任务。您可以将它们视为位于 API 或模型之上的框架。
+LangChain 及其相关项目 LangGraph 是用于创建*具有代理性*应用程序的开放源代码框架——这些应用程序使用 LLM 来控制系统行为。尽管许多开发者通过直接调用 LLM API 并执行自定义编码来与它们交互来构建这些应用程序，但 LangChain 和 LangGraph 标准化了所需的大部分任务。您可以将它们视为位于 API 或模型之上的框架。
 
 这里有一些新术语：
 
-代理
+**代理**
 
 哈里森·蔡斯将代理定义为“一个使用 LLM 来决定应用程序控制流的系统。”代理不是预先编程的，就像传统软件一样——它们使用模型进行推理并决定对话的流程。它们可以执行由函数调用模型建议的工具调用。
 
-函数调用模型
+**函数调用模型**
 
-这是一种特殊的模型，它考虑可用的 *函数* 或 *工具* 并建议何时使用它们。尽管名称如此，这些模型并不直接调用工具；它们将建议提供给 *代理*，由代理进行调用。
+这是一种特殊的模型，它考虑可用的*函数*或*工具*并建议何时使用它们。尽管名称如此，这些模型并不直接调用工具；它们将建议提供给*代理*，由代理进行调用。
 
-模型
+**模型**
 
 这些是 LangChain 用户调用的 AI 模型。LangChain 可以使用本地下载的模型或通过模型提供商提供的 Web API 调用的模型。
 
-模型系列
+**模型系列**
 
 这些是具有相同名称和架构的多个模型。
 
-工具包
+**工具包**
 
 这是一个集合，包含代理将用于执行任务的多个工具。
 
-工具或函数
+**工具或函数**
 
 这是为代理提供额外技能的代码。一个简单的 Python 函数可能执行数学运算。您将创建一个调用 SWC API 的工具。
 
 本章中介绍的应用软件将专注于使用 LangChain 生态系统与 API 一起使用。表 14-1 显示了您将使用的新工具。
 
-表 14-1\. 本章使用的工具
+**表 14-1\. 本章使用的工具**
 
 | 软件名称 | 版本 | 用途 |
 | --- | --- | --- |
@@ -44,7 +45,7 @@ LangChain 及其相关项目 LangGraph 是用于创建 *具有代理性* 应用�
 | LangGraph | 0.2 | 用于创建代理的 Python 库 |
 | Anthropic Claude | 3.5 Sonnet | 用于向 LangGraph 代理提供推理的模型 |
 | Pydantic | 2 | 用于在您的工具包中执行验证的 Python 库 |
-| swcpy | NA | SDK 创建于 第七章 用于您的 API |
+| swcpy | NA | SDK 创建于第七章用于您的 API |
 
 # 通过 LangChain 使用 API 调用 AI
 
@@ -88,7 +89,7 @@ LangGraph 使用了一些来自数学图论的专业术语（参见“使用 Apa
 
 要使用 Anthropic API，您需要将您的初始账户升级到构建计划，并向您的账户添加资金。为了限制潜在的过度支出，我建议最初添加 5 美元并禁用自动重新加载。这意味着即使您的 API 密钥被误用，您最多也只能花费 5 美元。
 
-接下来，导航到[Anthropic API 密钥页面](https://oreil.ly/fcaYA)并选择创建密钥。给密钥起一个像**`secret-api-key`**这样的名字，并选择默认工作区。您的显示应该看起来像图 14-3。
+接下来，导航到[Anthropic API 密钥页面](https://oreil.ly/fcaYA)并选择创建密钥。给密钥起一个像`secret-api-key`这样的名字，并选择默认工作区。您的显示应该看起来像图 14-3。
 
 ![创建 Anthropic API 密钥](img/haad_1403.png)
 
@@ -107,9 +108,7 @@ LangGraph 使用了一些来自数学图论的专业术语（参见“使用 Apa
 按照说明进行[“添加一个秘密”](https://oreil.ly/VGSJ3)并使用以下信息创建一个新的秘密：
 
 +   *名称*：`ANTHROPIC_API_KEY`
-
 +   *值*：使用上一节中创建的 Anthropic API 密钥的值。
-
 +   *仓库访问*：选择`ai-project`仓库。
 
 完成后，您应该会看到密钥已保存，如图图 14-4 所示。
@@ -120,14 +119,14 @@ LangGraph 使用了一些来自数学图论的专业术语（参见“使用 Apa
 
 # 在您的 Codespace 中安装新库
 
-现在启动你的 Codespace。你将使用你在 “克隆第三部分仓库” 中创建的 Part III GitHub Codespace。如果你还没有创建你的 Part III Codespace，你现在可以完成该部分。要安装本章所需的库，创建一个名为 *chapter14/requirements.txt* 的文件：
+现在启动你的 Codespace。你将使用你在“克隆第三部分仓库”中创建的 Part III GitHub Codespace。如果你还没有创建你的 Part III Codespace，你现在可以完成该部分。要安装本章所需的库，创建一个名为*chapter14/requirements.txt*的文件：
 
 ```py
 .../analytics-project (main) $ cd chapter14
 .../chapter14 (main) $ touch requirements.txt
 ```
 
-使用以下内容更新 *chapter14/requirements.txt*：
+使用以下内容更新*chapter14/requirements.txt*：
 
 ```py
 langchain_core>=0.3.0,<0.4.0 ![1](img/1.png)
@@ -157,7 +156,7 @@ langgraph>=0.2.0,<0.3.0  ![3](img/3.png)
 
 # 创建您的 Jupyter Notebook
 
-你将使用 Jupyter Notebook 来实现一个基于 [LangChain GitHub 仓库](https://oreil.ly/U-TJF)示例的对话聊天代理。
+你将使用 Jupyter Notebook 来实现一个基于[LangChain GitHub 仓库](https://oreil.ly/U-TJF)示例的对话聊天代理。
 
 要开始，请在终端窗口中运行以下命令以创建新目录和本章中你将使用的 Jupyter Notebook：
 
@@ -165,7 +164,7 @@ langgraph>=0.2.0,<0.3.0  ![3](img/3.png)
 .../chapter14 (main) $ touch langgraph_notebook.ipynb
 ```
 
-点击 *langgraph_notebook.ipynb* 文件以打开它。在文件右上角，点击选择内核。Codespaces 应会提示你“安装/启用建议的扩展 Python + Jupyter”——选择此选项。如果提示，点击安装按钮。这将安装一些 VS Code 的扩展。
+点击*langgraph_notebook.ipynb*文件以打开它。在文件右上角，点击选择内核。Codespaces 应会提示你“安装/启用建议的扩展 Python + Jupyter”——选择此选项。如果提示，点击安装按钮。这将安装一些 VS Code 的扩展。
 
 安装完成后，窗口标题将更改为选择另一个内核。选择 Python 环境。窗口标题将更改为选择 Python 环境。应该列出一个带有星号的 Python 版本——选择此 Python 版本。
 
@@ -314,19 +313,21 @@ display(
 )
 ```
 
+
+
 显示图的图像展示了你的代理的流程。你应该看到一个与图 14-5 匹配的图像。这表明图将开始，并将向代理发送消息，而不引用任何其他节点。
 
 ![基本代理的图](img/haad_1405.png)
 
 ###### 图 14-5。基本代理的图
 
-# 与 LangGraph 代理聊天
+## 与 LangGraph 代理聊天
 
 你现在可以与创建的代理进行对话了。你将通过使用`app.invoke()`方法和`messages`对象来完成此操作。对`invoke()`方法的调用还包括一个包含`thread_id`值的`config`对象。`thread_id`允许代理记住对话中的先前消息。
 
 添加另一个 Markdown 单元格，内容如下：
 
-```py
+```
 ## Chat with the Agent
 ```
 
@@ -387,9 +388,9 @@ I'd be happy to help with those.
 
 为了解决这个知识差距，你将创建一个工具包，该工具包提供对 SportsWorldCentral API 的访问权限。
 
-# 在本地运行 SportsWorldCentral (SWC) API
+## 在本地运行 SportsWorldCentral (SWC) API
 
-SWC API 的代码和数据库文件位于你的 Codespace 的 */api* 文件夹中。在终端中启动第二个会话，并按照以下所示在你的 Codespace 中安装 API 所需的库，使用提供的 *requirements.txt* 文件：
+SWC API 的代码和数据库文件位于你的 Codespace 的 `/api` 文件夹中。在终端中启动第二个会话，并按照以下所示在你的 Codespace 中安装 API 所需的库，使用提供的 `requirements.txt` 文件：
 
 ```py
 .../ai-project (main) $ cd api
@@ -411,9 +412,9 @@ INFO:     Application startup complete.
 INFO:     Uvicorn running on http://0.0.0.0:8000 (Press CTRL+C to quit)
 ```
 
-API 现在正在 Codespaces 中运行。复制终端中显示的 URL（在本例中为 `[*http://0.0.0.0:8000*](http://0.0.0.0:8000)`，它可能也适用于你的情况）。
+API 现在正在 Codespaces 中运行。复制终端中显示的 URL（在本例中为 `http://0.0.0.0:8000`，它可能也适用于你的情况）。
 
-在主终端会话中，在基本项目目录中创建一个名为 *.env* 的文件，如下所示：
+在主终端会话中，在基本项目目录中创建一个名为 `.env` 的文件，如下所示：
 
 ```py
 chapter14 (main) $ touch ../.env
@@ -427,9 +428,9 @@ SWC_API_BASE_URL=[URL from previous step]
 
 这将在你稍后创建的 Jupyter Notebook 中使用。
 
-# 安装 swcpy 软件开发工具包 (SDK)
+## 安装 swcpy 软件开发工具包 (SDK)
 
-要构建用于使用您的 API 的工具包，您首先需要安装您在第七章中创建的 swcpy SDK。如果您已经完成了该项目，您可以将该代码复制到这个存储库中，并在 */sdk* 目录中使用 `pip3 install -e` 本地安装它。如果您还没有完成，请执行以下命令从 Part I GitHub 存储库安装 SDK：
+要构建用于使用您的 API 的工具包，您首先需要安装您在第七章中创建的 swcpy SDK。如果您已经完成了该项目，您可以将该代码复制到这个存储库中，并在 `/sdk` 目录中使用 `pip3 install -e` 本地安装它。如果您还没有完成，请执行以下命令从 Part I GitHub 存储库安装 SDK：
 
 ```py
 .../api (main) $ pip install swcpy@git+https://github.com/handsonapibook/
@@ -446,19 +447,19 @@ Successfully installed backoff-2.2.1 pyarrow-16.1.0 swcpy-0.0.2
 
 ###### 注意
 
-您将创建一个使用 swcpy SDK 的工具，这是与您的 API 交互最稳健的方式。您还可以使用其他方法与您的 API 交互。例如，您也可以构建一个基于您在第九章中创建的简单 API 客户端的工具。或者，您可以直接使用 httpx 或 requests 调用单个 API 端点。您可能想尝试不同的方法，看看您更喜欢哪种。
+您将创建一个使用 swcpy SDK 的工具，这是与您的 API 交互最稳健的方式。您还可以使用其他方法与您的 API 交互。例如，您也可以构建一个基于您在第九章中创建的简单 API 客户端的工具。或者，您可以直接使用 `httpx` 或 `requests` 调用单个 API 端点。您可能想尝试不同的方法，看看您更喜欢哪种。
 
-# 创建 LangChain 工具包
+## 创建 LangChain 工具包
 
 LangChain 工具包包含多个工具。LangChain 提供了多种创建工具的方法，如[“如何创建工具”](https://oreil.ly/V8tBi)中所示。您将通过继承 `BaseTool` 类来创建工具。根据文档，此方法“提供了对工具定义的最大控制。”
 
-创建一个名为 *swc_toolkit.py* 的 Python 文件，如下所示：
+创建一个名为 `swc_toolkit.py` 的 Python 文件，如下所示：
 
 ```py
 chapter14 (main) $ touch swc_toolkit.py
 ```
 
-在您的工具包文件顶部，您将添加您的导入并加载 Codespace 密钥。将以下内容添加到 *swc_toolkit.py*：
+在您的工具包文件顶部，您将添加您的导入并加载 Codespace 密钥。将以下内容添加到 `swc_toolkit.py`：
 
 ```py
 import os
@@ -494,7 +495,7 @@ local_swc_client = SWCClient(config)
 
 这将实例化 SDK。有关此功能如何工作的更多信息，请参阅第七章。
 
-swcpy SDK 具有多种功能，以不同的方式调用 API 端点。对于您为代理提供的每个 SDK 函数，创建一个 Pydantic `BasesModel` 类的实例用于输入值，并创建一个 LangChain `BaseTool` 类的实例来调用 SDK。您将创建以下工具：
+swcpy SDK 具有多种功能，以不同的方式调用 API 端点。对于您为代理提供的每个 SDK 函数，创建一个 Pydantic `BaseModel` 类的实例用于输入值，并创建一个 LangChain `BaseTool` 类的实例来调用 SDK。您将创建以下工具：
 
 +   `HealthCheckTool`：允许代理检查 API 是否正常运行
 
@@ -502,7 +503,7 @@ swcpy SDK 具有多种功能，以不同的方式调用 API 端点。对于您�
 
 +   `ListTeamsTool`：允许代理获取团队列表
 
-将以下内容添加到 *swc_toolkit.py* 的底部，添加 `HealthCheckTool` 和 `ListLeaguesTool`：
+将以下内容添加到 `swc_toolkit.py` 的底部，添加 `HealthCheckTool` 和 `ListLeaguesTool`：
 
 ```py
 class HealthCheckInput(BaseModel): ![1](img/1.png)
@@ -570,7 +571,9 @@ class ListLeaguesTool(BaseTool): ![6](img/6.png)
 
 这是将调用 SDK 的 `list_leagues()` 函数的工具。
 
-现在，你将添加 `ListTeamsTool` 并创建一个 `BaseToolkit` 对象，该对象代表你将提供给代理的所有工具。将以下内容添加到 *swc_toolkit.py* 的底部：
+现在，你将添加 `ListTeamsTool` 并创建一个 `BaseToolkit` 对象，该对象代表你将提供给代理的所有工具。将以下内容添加到 `swc_toolkit.py` 的底部：
+
+
 
 ```py
 class TeamsInput(BaseModel): ![1](img/1.png)
@@ -612,19 +615,19 @@ class SportsWorldCentralToolkit(BaseToolkit): ![3](img/3.png)
 
 ![1](img/#co_using_apis_with_langchain_CO7-1)
 
-这是为 `ListTeamsTool` 定义的输入。它包含该工具使用的参数。
+这是为`ListTeamsTool`定义的输入。它包含该工具使用的参数。
 
 ![2](img/#co_using_apis_with_langchain_CO7-2)
 
-这是将调用 SDK 的 `list_teams()` 函数的工具。
+这是将调用 SDK 的`list_teams()`函数的工具。
 
 ![3](img/#co_using_apis_with_langchain_CO7-3)
 
-工具包是从 LangChain 的 `BaseToolkit` 类派生的。
+工具包是从 LangChain 的`BaseToolkit`类派生的。
 
 ![4](img/#co_using_apis_with_langchain_CO7-4)
 
-`get_tools()` 方法返回工具包中的工具列表。
+`get_tools()`方法返回工具包中的工具列表。
 
 ![5](img/#co_using_apis_with_langchain_CO7-5)
 
@@ -632,21 +635,21 @@ class SportsWorldCentralToolkit(BaseToolkit): ![3](img/3.png)
 
 # 使用 AI 调用 API（与 LangGraph 一起）
 
-在 *langgraph_notebook.ipynb* 笔记本中，你创建了一个能够聊天的代理，但该代理无法回答来自 SWC API 的问题。现在，你将创建一个改进版本，该版本可以使用工具调用 SWC API。首先，使用以下命令复制包含以下内容的 Jupyter Notebook：
+在`langgraph_notebook.ipynb`笔记本中，你创建了一个能够聊天的代理，但该代理无法回答来自 SWC API 的问题。现在，你将创建一个改进版本，该版本可以使用工具调用 SWC API。首先，使用以下命令复制包含以下内容的 Jupyter Notebook：
 
 ```py
 .../chapter14 (main) $ cp langgraph_notebook.ipynb \
 langgraph_notebook_with_toolkit.ipynb
 ```
 
-打开 *langgraph_notebook_with_toolkit.ipynb* 并选择你之前使用的 Python 内核。更新第一个 Markdown 单元，以便更清晰地显示以下文本：
+打开`langgraph_notebook_with_toolkit.ipynb`并选择你之前使用的 Python 内核。更新第一个 Markdown 单元，以便更清晰地显示以下文本：
 
 ```py
 # LangGraph Agent
 ## _With_ tools
 ```
 
-将以下内容添加到包含 `import` 语句的第一个 Python 单元中，并重新运行它：
+将以下内容添加到包含`import`语句的第一个 Python 单元中，并重新运行它：
 
 ```py
 from swc_toolkit import SportsWorldCentralToolkit ![1](img/1.png)
@@ -657,15 +660,15 @@ from typing import Literal
 
 ![1](img/#co_using_apis_with_langchain_CO8-1)
 
-这是为你创建的工具包的 `import` 语句。
+这是为你创建的工具包的`import`语句。
 
 ![2](img/#co_using_apis_with_langchain_CO8-2)
 
-这个 `import` 提供了 LangChain 工具功能。
+这个`import`提供了 LangChain 工具功能。
 
 ![3](img/#co_using_apis_with_langchain_CO8-3)
 
-这个 `import` 为工具包添加了 LangGraph 支持。
+这个`import`为工具包添加了 LangGraph 支持。
 
 在用于配置日志的 Python 单元下方，添加以下 Markdown 单元：
 
@@ -680,7 +683,7 @@ swc_toolkit = SportsWorldCentralToolkit()
 tools = swc_toolkit.get_tools()
 ```
 
-这些语句创建了一个工具包类的实例，然后从其中检索所有工具并将它们放入 `tools` 对象中。
+这些语句创建了一个工具包类的实例，然后从其中检索所有工具并将它们放入`tools`对象中。
 
 对于你的代理的主体，将会有很多变化。你将*绑定*工具到你的模型，这意味着让模型意识到它可以访问的工具。然后，你将为工具创建一个节点，并更新代理的流程，以便在需要回答问题时使用工具。
 

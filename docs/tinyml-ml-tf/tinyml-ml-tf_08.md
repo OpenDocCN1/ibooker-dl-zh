@@ -1,3 +1,5 @@
+
+
 # 第八章：唤醒词检测：训练模型
 
 在第七章中，我们围绕一个训练有能力识别“是”和“否”的模型构建了一个应用程序。在本章中，我们将训练一个*新*模型，可以识别不同的单词。
@@ -221,7 +223,7 @@ Total number of training steps: 18000
 
 您可以看到 TensorBoard 显示了两个图形，“准确度”和“交叉熵”，如图 8-7 所示。两个图形都显示了 x 轴上的当前步骤。“准确度”图显示了模型在 y 轴上的准确度，这表明它能够正确检测单词的时间有多少。“交叉熵”图显示了模型的损失，量化了模型预测与正确值之间的差距。
 
-！[TensorBoard 中图形的屏幕截图]（Images/timl_0807.png）
+![TensorBoard 中图形的屏幕截图](img/timl_0807.png)
 
 ###### 图 8-7。"准确度"和"交叉熵"图
 
@@ -233,19 +235,19 @@ Total number of training steps: 18000
 
 新数据将随着时间的推移出现在图形中，但要显示它，您需要调整它们的比例以适应。您可以通过单击每个图形下面的最右边的按钮来实现这一点，如图 8-8 所示。
 
-！[TensorBoard 中图标的屏幕截图]（Images/timl_0808.png）
+![TensorBoard 中图标的屏幕截图](img/timl_0808.png)
 
 ###### 图 8-8。单击此按钮以调整图形的比例，以适应所有可用数据
 
 您还可以单击图 8-9 中显示的按钮，使每个图形变大。
 
-！[TensorBoard 中图标的屏幕截图]（Images/timl_0809.png）
+![TensorBoard 中图标的屏幕截图](img/timl_0809.png)
 
 ###### 图 8-9。单击此按钮以放大图形
 
 除了图形外，TensorBoard 还可以显示输入传入模型。单击 IMAGES 选项卡，显示类似于图 8-10 的视图。这是在训练期间输入到模型中的频谱图的示例。
 
-！[TensorBoard 中 IMAGES 选项卡的屏幕截图]（Images/timl_0810.png）
+![TensorBoard 中 IMAGES 选项卡的屏幕截图](img/timl_0810.png)
 
 ###### 图 8-10。TensorBoard 的 IMAGES 选项卡
 
@@ -257,19 +259,19 @@ Total number of training steps: 18000
 
 图 8-11 显示了应用默认平滑度的图形；请注意它们有多模糊。
 
-！[TensorBoard 中图形的屏幕截图]（Images/timl_0811.png）
+![TensorBoard 中图形的屏幕截图](img/timl_0811.png)
 
 ###### 图 8-11。默认平滑度的训练图
 
 通过调整图 8-12 中显示的平滑滑块，我们可以增加平滑度，使趋势更加明显。
 
-！[TensorBoard 的*平滑*滑块的屏幕截图]（Images/timl_0812.png）
+![TensorBoard 的*平滑*滑块的屏幕截图](img/timl_0812.png)
 
 ###### 图 8-12。TensorBoard 的平滑滑块
 
 图 8-13 显示了具有更高平滑度级别的相同图形。原始数据以较浅的颜色可见，在下面。
 
-！[TensorBoard 中图形的屏幕截图]（Images/timl_0813.png）
+![TensorBoard 中图形的屏幕截图](img/timl_0813.png)
 
 ###### 图 8-13。增加平滑度的训练图
 
@@ -303,7 +305,10 @@ Total number of training steps: 18000
 
 正如您在本书中早些时候学到的，训练是一个迭代调整模型权重和偏差的过程，直到它产生有用的预测。训练脚本将这些权重和偏差写入*检查点*文件。每一百步写入一个检查点。这意味着如果训练在中途失败，可以从最近的检查点重新启动而不会丢失进度。
 
-*train.py*脚本被调用时带有一个参数，`--train_dir`，用于指定这些检查点文件将被写入的位置。在我们的 Colab 中，它被设置为*/content/speech_commands_train*。
+`train.py`脚本被调用时带有一个参数，`--train_dir`，用于指定这些检查点文件将被写入的位置。在我们的 Colab 中，它被设置为`/content/speech_commands_train`。
+
+
+
 
 您可以通过打开 Colab 的左侧面板来查看检查点文件，该面板具有一个文件浏览器。要这样做，请点击图 8-15 中显示的按钮。
 
@@ -311,7 +316,7 @@ Total number of training steps: 18000
 
 ###### 图 8-15\. 打开 Colab 侧边栏的按钮
 
-在此面板中，点击“文件”选项卡以查看运行时的文件系统。如果您打开*speech_commands_train/*目录，您将看到检查点文件，如图 8-16 所示。每个文件名中的数字表示保存检查点的步骤。
+在此面板中，点击“文件”选项卡以查看运行时的文件系统。如果您打开`speech_commands_train/`目录，您将看到检查点文件，如图 8-16 所示。每个文件名中的数字表示保存检查点的步骤。
 
 ![Colab 的文件浏览器显示检查点文件列表的截图](img/timl_0816.png)
 
@@ -320,7 +325,6 @@ Total number of training steps: 18000
 一个 TensorFlow 模型由两个主要部分组成：
 
 +   训练产生的权重和偏差
-
 +   将模型的输入与这些权重和偏差结合起来产生模型的输出的操作图
 
 此时，我们的模型操作在 Python 脚本中定义，并且其训练的权重和偏差在最新的检查点文件中。我们需要将这两者合并为一个具有特定格式的单个模型文件，以便我们可以用来运行推断。创建此模型文件的过程称为*冻结*——我们正在创建一个具有*冻结*权重的图的静态表示。
@@ -338,7 +342,7 @@ Total number of training steps: 18000
 
 为了指向正确的操作图以冻结的脚本，我们传递了一些与训练中使用的相同参数。我们还传递了最终检查点文件的路径，该文件的文件名以训练步骤的总数结尾。
 
-运行此单元格以冻结图。冻结的图将输出到名为*tiny_conv.pb*的文件中。
+运行此单元格以冻结图。冻结的图将输出到名为`tiny_conv.pb`的文件中。
 
 这个文件是完全训练过的 TensorFlow 模型。它可以被 TensorFlow 加载并用于运行推断。这很棒，但它仍然是常规 TensorFlow 使用的格式，而不是 TensorFlow Lite。我们的下一步是将模型转换为 TensorFlow Lite 格式。
 
@@ -361,7 +365,7 @@ Total number of training steps: 18000
 
 您可能想知道为什么`input_shape`参数在宽度、高度和通道参数之前有一个前导`1`。这是批处理大小；为了在训练期间提高效率，我们一次发送很多输入，但当我们在实时应用中运行时，我们每次只处理一个样本，这就是为什么批处理大小固定为`1`。
 
-转换后的模型将被写入*tiny_conv.tflite*。恭喜！这是一个完全成型的 TensorFlow Lite 模型！
+转换后的模型将被写入`tiny_conv.tflite`。恭喜！这是一个完全成型的 TensorFlow Lite 模型！
 
 查看这个模型有多小，在下一个单元格中运行以下代码：
 
@@ -401,7 +405,7 @@ unsigned char _content_tiny_conv_tflite[] = {
 unsigned int _content_tiny_conv_tflite_len = 18208;
 ```
 
-这段代码也被写入一个文件*tiny_conv.cc*，您可以使用 Colab 的文件浏览器下载。因为您的 Colab 运行时将在 12 小时后到期，现在将此文件下载到您的计算机是一个好主意。
+这段代码也被写入一个文件`tiny_conv.cc`，您可以使用 Colab 的文件浏览器下载。因为您的 Colab 运行时将在 12 小时后到期，现在将此文件下载到您的计算机是一个好主意。
 
 接下来，我们将把这个新训练过的模型与`micro_speech`项目集成起来，以便我们可以将其部署到一些硬件上。
 
@@ -409,21 +413,19 @@ unsigned int _content_tiny_conv_tflite_len = 18208;
 
 要使用我们的新模型，我们需要做三件事：
 
-1.  在[*micro_features/tiny_conv_micro_features_model_data.cc*](https://oreil.ly/EAR0U)中，用我们的新模型替换原始模型数据。
-
-1.  在[*micro_features/micro_model_settings.cc*](https://oreil.ly/bqw67)中用我们的新“on”和“off”标签更新标签名称。
-
-1.  更新特定设备的*command_responder.cc*以执行我们对新标签的操作。
+1. 在[*micro_features/tiny_conv_micro_features_model_data.cc*](https://oreil.ly/EAR0U)中，用我们的新模型替换原始模型数据。
+2. 在[*micro_features/micro_model_settings.cc*](https://oreil.ly/bqw67)中用我们的新“on”和“off”标签更新标签名称。
+3. 更新特定设备的`command_responder.cc`以执行我们对新标签的操作。
 
 ## 替换模型
 
-要替换模型，请在文本编辑器中打开*micro_features/tiny_conv_micro_features_model_data.cc*。
+要替换模型，请在文本编辑器中打开`micro_features/tiny_conv_micro_features_model_data.cc`。
 
 ###### 注意
 
-如果你正在使用 Arduino 示例，该文件将显示为 Arduino IDE 中的一个选项卡。它的名称将是*micro_features_tiny_conv_micro_features_model_data.cpp*。如果你正在使用 SparkFun Edge，你可以直接在本地的 TensorFlow 存储库副本中编辑文件。如果你正在使用 STM32F746G，你应该在 Mbed 项目目录中编辑文件。
+如果你正在使用 Arduino 示例，该文件将显示为 Arduino IDE 中的一个选项卡。它的名称将是`micro_features_tiny_conv_micro_features_model_data.cpp`。如果你正在使用 SparkFun Edge，你可以直接在本地的 TensorFlow 存储库副本中编辑文件。如果你正在使用 STM32F746G，你应该在 Mbed 项目目录中编辑文件。
 
-*tiny_conv_micro_features_model_data.cc*文件包含一个看起来像这样的数组声明：
+`tiny_conv_micro_features_model_data.cc`文件包含一个看起来像这样的数组声明：
 
 ```cpp
 const unsigned char
@@ -438,13 +440,13 @@ const int g_tiny_conv_micro_features_model_data_len = 18208;
 
 需要替换数组的内容以及常量`g_tiny_conv_micro_features_model_data_len`的值，如果已经更改。
 
-为此，打开你在上一节末尾下载的*tiny_conv.cc*文件。复制并粘贴数组的内容，但不包括定义，到*tiny_conv_micro_features_model_data.cc*中定义的数组中。确保你正在覆盖数组的内容，但不是它的声明。
+为此，打开你在上一节末尾下载的`tiny_conv.cc`文件。复制并粘贴数组的内容，但不包括定义，到`tiny_conv_micro_features_model_data.cc`中定义的数组中。确保你正在覆盖数组的内容，但不是它的声明。
 
-在*tiny_conv.cc*的底部，你会找到`_content_tiny_conv_tflite_len`，一个变量，其值表示数组的长度。回到*tiny_conv_micro_features_model_data.cc*，用这个变量的值替换`g_tiny_conv_micro_features_model_data_len`的值。然后保存文件；你已经完成了更新。
+在`tiny_conv.cc`的底部，你会找到`_content_tiny_conv_tflite_len`，一个变量，其值表示数组的长度。回到`tiny_conv_micro_features_model_data.cc`，用这个变量的值替换`g_tiny_conv_micro_features_model_data_len`的值。然后保存文件；你已经完成了更新。
 
 ## 更新标签
 
-接下来，打开*micro_features/micro_model_settings.cc*。这个文件包含一个类标签的数组：
+接下来，打开`micro_features/micro_model_settings.cc`。这个文件包含一个类标签的数组：
 
 ```cpp
 const char* kCategoryLabels[kCategoryCount] = {
@@ -474,11 +476,11 @@ const char* kCategoryLabels[kCategoryCount] = {
 
 ## 更新 command_responder.cc
 
-该项目包含针对 Arduino、SparkFun Edge 和 STM32F746G 的不同设备特定实现的*command_responder.cc*。我们将在以下部分展示如何更新每个设备。
+该项目包含针对 Arduino、SparkFun Edge 和 STM32F746G 的不同设备特定实现的`command_responder.cc`。我们将在以下部分展示如何更新每个设备。
 
 ### Arduino
 
-位于*arduino/command_responder.cc*中的 Arduino 命令响应器在听到“yes”时会点亮 LED 3 秒钟。让我们将其更新为在听到“on”或“off”时点亮 LED。在文件中，找到以下`if`语句：
+位于`arduino/command_responder.cc`中的 Arduino 命令响应器在听到“yes”时会点亮 LED 3 秒钟。让我们将其更新为在听到“on”或“off”时点亮 LED。在文件中，找到以下`if`语句：
 
 ```cpp
 // If we heard a "yes", switch on an LED and store the time.
@@ -501,7 +503,7 @@ if (found_command[0] == 'o') {
 
 ### SparkFun Edge
 
-位于*sparkfun_edge/command_responder.cc*中的 SparkFun Edge 命令响应器会根据听到的“yes”或“no”点亮不同的 LED。在文件中，找到以下`if`语句：
+位于`sparkfun_edge/command_responder.cc`中的 SparkFun Edge 命令响应器会根据听到的“yes”或“no”点亮不同的 LED。在文件中，找到以下`if`语句：
 
 ```cpp
 if (found_command[0] == 'y') {
@@ -535,7 +537,7 @@ if (found_command[0] == 'u') {
 
 ### STM32F746G
 
-位于*disco_f746ng/command_responder.cc*中的 STM32F746G 命令响应器会根据听到的命令显示不同的单词。在文件中，找到以下`if`语句：
+位于`disco_f746ng/command_responder.cc`中的 STM32F746G 命令响应器会根据听到的命令显示不同的单词。在文件中，找到以下`if`语句：
 
 ```cpp
 if (*found_command == 'y') {
@@ -578,10 +580,11 @@ if (found_command[0] == 'o' && found_command[1] == 'n') {
 如果你无法使用 Colab，有两种其他推荐的训练模型的方法：
 
 +   在一个带有 GPU 的云虚拟机（VM）中
-
 +   在你的本地工作站上
 
 进行基于 GPU 的训练所需的驱动程序仅在 Linux 上可用。没有 Linux，训练将需要大约四个小时。因此，建议使用带有 GPU 的云虚拟机或类似配置的 Linux 工作站。
+
+
 
 设置您的虚拟机或工作站超出了本书的范围。但是，我们有一些建议。如果您使用虚拟机，可以启动一个[Google Cloud 深度学习虚拟机镜像](https://oreil.ly/PVRtP)，该镜像预先配置了所有您进行 GPU 训练所需的依赖项。如果您使用 Linux 工作站，[TensorFlow GPU Docker 镜像](https://oreil.ly/PFYVr)包含了您所需的一切。
 
@@ -600,7 +603,7 @@ git clone -q https://github.com/tensorflow/tensorflow
 git -c advice.detachedHead=false -C tensorflow checkout 17ce384df70
 ```
 
-现在您可以运行*train.py*脚本来训练模型。这将训练一个能识别“是”和“不”的模型，并将检查点文件输出到*/tmp*：
+现在您可以运行`train.py`脚本来训练模型。这将训练一个能识别“是”和“不”的模型，并将检查点文件输出到`/tmp`：
 
 ```cpp
 python tensorflow/tensorflow/examples/speech_commands/train.py \
@@ -694,7 +697,7 @@ xxd -i /tmp/tiny_conv.tflite > /tmp/tiny_conv_micro_features_model_data.cc
 
 该过程开始通过为给定时间片段生成傅立叶变换（也称为快速傅立叶变换或 FFT）-在我们的情况下是 30 毫秒的音频数据。这个 FFT 是在使用[汉宁窗口](https://oreil.ly/jhn8c)过滤的数据上生成的，汉宁窗口是一个钟形函数，减少了 30 毫秒窗口两端样本的影响。傅立叶变换为每个频率产生具有实部和虚部的复数，但我们只关心总能量，因此我们对两个分量的平方求和，然后应用平方根以获得每个频率桶的幅度。
 
-给定*N*个样本，傅立叶变换提供*N*/2 个频率的信息。以每秒 16,000 个样本的速率的 30 毫秒需要 480 个样本，因为我们的 FFT 算法需要二的幂输入，所以我们用零填充到 512 个样本，给我们 256 个频率桶。这比我们需要的要大，因此为了缩小它，我们将相邻频率平均到 40 个降采样桶中。然而，这种降采样不是线性的；相反，它使用基于人类感知的梅尔频率刻度，以便更多地为低频率分配权重，从而为它们提供更多的桶，而高频率则合并到更广泛的桶中。图 8-26 展示了该过程的图表。
+给定`N`个样本，傅立叶变换提供`N/2`个频率的信息。以每秒 16,000 个样本的速率的 30 毫秒需要 480 个样本，因为我们的 FFT 算法需要二的幂输入，所以我们用零填充到 512 个样本，给我们 256 个频率桶。这比我们需要的要大，因此为了缩小它，我们将相邻频率平均到 40 个降采样桶中。然而，这种降采样不是线性的；相反，它使用基于人类感知的梅尔频率刻度，以便更多地为低频率分配权重，从而为它们提供更多的桶，而高频率则合并到更广泛的桶中。图 8-26 展示了该过程的图表。
 
 ![特征生成过程的图表。](img/timl_0826.png)
 
@@ -772,9 +775,11 @@ xxd -i /tmp/tiny_conv.tflite > /tmp/tiny_conv_micro_features_model_data.cc
 
 有一件棘手的事情是，这个结果是基于分析音频的最后一秒。如果我们每秒只运行一次，可能会得到一个话语，一半在上一秒，一半在当前秒。当模型只听到部分单词时，任何模型都不可能很好地识别单词，因此在这种情况下，单词识别会失败。为了克服这个问题，我们需要比每秒运行模型更频繁，以尽可能高的概率在我们的一秒窗口内捕捉到整个单词。实际上，我们发现我们必须每秒运行 10 到 15 次才能取得良好的结果。
 
-如果我们得到这些结果如此迅速，我们如何决定何时得分足够高？我们实现了一个后处理类，它会随着时间平均分数，并仅在短时间内同一个单词的得分高时触发识别。您可以在[`RecognizeCommands 类`](https://oreil.ly/FuYfL)中看到这个实现。这个类接收模型的原始结果，然后使用累积和平均算法来确定是否有任何类别已经超过了阈值。然后将这些后处理结果传递给[`CommandResponder`](https://oreil.ly/b8ArK)以根据平台的输出能力采取行动。
+如果我们得到这些结果如此迅速，我们如何决定何时得分足够高？我们实现了一个后处理类，它会随着时间平均分数，并仅在短时间内同一个单词的得分高时触发识别。您可以在[`RecognizeCommands` 类](https://oreil.ly/FuYfL)中看到这个实现。这个类接收模型的原始结果，然后使用累积和平均算法来确定是否有任何类别已经超过了阈值。然后将这些后处理结果传递给[`CommandResponder`](https://oreil.ly/b8ArK)以根据平台的输出能力采取行动。
 
 模型参数都是从训练数据中学习的，但命令识别器使用的算法是手动创建的，所以所有的[阈值](https://oreil.ly/tfNfr)——比如触发识别所需的得分值，或者需要的正结果时间窗口——都是手动选择的。这意味着不能保证它们是最佳的，所以如果在您自己的应用中看到不佳的结果，您可能希望尝试自己调整它们。
+
+
 
 更复杂的语音识别模型通常使用能够接收流数据的模型（如递归神经网络），而不是我们在本章中展示的单层卷积网络。将流式处理嵌入到模型设计中意味着您无需进行后处理即可获得准确的结果，尽管这确实使训练变得更加复杂。
 
@@ -784,7 +789,7 @@ xxd -i /tmp/tiny_conv.tflite > /tmp/tiny_conv_micro_features_model_data.cc
 
 ## 语音命令数据集
 
-*train.py*脚本默认下载了 Speech Commands 数据集。这是一个开源集合，包含超过 10 万个一秒钟的 WAV 文件，涵盖了许多不同说话者的各种短单词。它由 Google 分发，但话语是从世界各地的志愿者那里收集的。Aakanksha Chowdhery 等人的[“Visual Wake Words Dataset”](https://oreil.ly/EC6nd)提供了更多细节。
+`train.py`脚本默认下载了 Speech Commands 数据集。这是一个开源集合，包含超过 10 万个一秒钟的 WAV 文件，涵盖了许多不同说话者的各种短单词。它由 Google 分发，但话语是从世界各地的志愿者那里收集的。Aakanksha Chowdhery 等人的[“Visual Wake Words Dataset”](https://oreil.ly/EC6nd)提供了更多细节。
 
 除了“是”和“否”之外，数据集还包括另外八个命令词（“打开”，“关闭”，“上”，“下”，“左”，“右”，“停止”和“前进”），以及从“零”到“九”的十个数字。每个单词都有几千个示例。还有其他单词，比如“Marvin”，每个单词的示例要少得多。命令词旨在有足够的话语，以便您可以训练一个合理的模型来识别它们。其他单词旨在用于填充“未知”类别，因此模型可以发现当发出未经训练的单词时，而不是将其误认为是一个命令。
 
@@ -803,7 +808,7 @@ python tensorflow/examples/speech_commands/train.py \
 
 训练脚本的默认设置是使用 Speech Commands，但如果您有自己的数据集，可以使用`--data_dir`参数来使用它。您指向的目录应该像 Speech Commands 一样组织，每个包含一组 WAV 文件的类别都有一个子文件夹。您还需要一个特殊的*background*子文件夹，其中包含您的应用程序预计会遇到的背景噪音类型的较长的 WAV 录音。如果默认的一秒持续时间对您的用例不起作用，您还需要选择一个识别持续时间，并通过`--sample_duration_ms`参数指定。然后，您可以使用`--wanted_words`参数设置要识别的类别。尽管名称如此，这些类别可以是任何类型的音频事件，从玻璃破碎到笑声；只要您有足够的每个类别的 WAV 文件，训练过程应该与语音一样有效。
 
-如果您在根目录*/tmp/my_wavs*中有名为*glass*和*laughter*的 WAV 文件夹，这是如何训练您自己的模型的：
+如果您在根目录`/tmp/my_wavs`中有名为*glass*和*laughter*的 WAV 文件夹，这是如何训练您自己的模型的：
 
 ```cpp
 python tensorflow/examples/speech_commands/train.py \
@@ -820,7 +825,7 @@ python tensorflow/examples/speech_commands/train.py \
 
 如果您需要捕捉您关心的单词的音频，如果您有一个提示说话者并将结果拆分为标记文件的工具，那将会更容易。Speech Commands 数据集是使用[Open Speech Recording app](https://oreil.ly/UWsG3)录制的，这是一个托管应用程序，允许用户通过大多数常见的网络浏览器录制话语。作为用户，您将看到一个网页，首先要求您同意被录制，带有默认的谷歌协议，这是[可以轻松更改的](https://oreil.ly/z5vka)。同意后，您将被发送到一个具有录音控件的新页面。当您按下录制按钮时，单词将作为提示出现，您说的每个单词的音频将被记录。当所有请求的单词都被记录时，您将被要求将结果提交到服务器。
 
-README 中有在 Google Cloud 上运行的说明，但这是一个用 Python 编写的 Flask 应用程序，因此您应该能够将其移植到其他环境中。如果您使用 Google Cloud，您需要更新[*app.yaml*](https://oreil.ly/dV2kv)文件，指向您自己的存储桶，并提供您自己的随机会话密钥（这仅用于哈希，因此可以是任何值）。要自定义记录的单词，您需要编辑[客户端 JavaScript](https://oreil.ly/XcJIe)中的一些数组：一个用于频繁重复的主要单词，一个用于次要填充词。
+README 中有在 Google Cloud 上运行的说明，但这是一个用 Python 编写的 Flask 应用程序，因此您应该能够将其移植到其他环境中。如果您使用 Google Cloud，您需要更新[`app.yaml`](https://oreil.ly/dV2kv)文件，指向您自己的存储桶，并提供您自己的随机会话密钥（这仅用于哈希，因此可以是任何值）。要自定义记录的单词，您需要编辑[客户端 JavaScript](https://oreil.ly/XcJIe)中的一些数组：一个用于频繁重复的主要单词，一个用于次要填充词。
 
 记录的文件以 OGG 压缩音频的形式存储在 Google Cloud 存储桶中，但训练需要 WAV 文件，因此您需要将它们转换。而且很可能您的一些录音包含错误，比如人们忘记说单词或说得太轻，因此在可能的情况下自动过滤出这些错误是有帮助的。如果您已经在`BUCKET_NAME`变量中设置了您的存储桶名称，您可以通过使用以下 bash 命令将文件复制到本地机器开始：
 
@@ -879,7 +884,7 @@ python tensorflow/examples/speech_commands/train.py \
 
 ## 模型架构
 
-我们之前训练的“是”/“否”模型旨在小而快速。它只有 18 KB，并且执行一次需要 400,000 次算术运算。为了符合这些约束条件，它牺牲了准确性。如果您正在设计自己的应用程序，您可能希望做出不同的权衡，特别是如果您试图识别超过两个类别。您可以通过修改*models.py*文件指定自己的模型架构，然后使用`--model_architecture`参数。您需要编写自己的模型创建函数，例如`create_tiny_conv_model0`，但要指定您想要的模型中的层。然后，您可以更新`create_model0`中的`if`语句，为您的架构命名，并在通过命令行传递架构参数时调用您的新创建函数。您可以查看一些现有的创建函数以获取灵感，包括如何处理辍学。如果您已添加了自己的模型代码，以下是如何调用它的方法：
+我们之前训练的“是”/“否”模型旨在小而快速。它只有 18 KB，并且执行一次需要 400,000 次算术运算。为了符合这些约束条件，它牺牲了准确性。如果您正在设计自己的应用程序，您可能希望做出不同的权衡，特别是如果您试图识别超过两个类别。您可以通过修改`models.py`文件指定自己的模型架构，然后使用`--model_architecture`参数。您需要编写自己的模型创建函数，例如`create_tiny_conv_model0`，但要指定您想要的模型中的层。然后，您可以更新`create_model0`中的`if`语句，为您的架构命名，并在通过命令行传递架构参数时调用您的新创建函数。您可以查看一些现有的创建函数以获取灵感，包括如何处理辍学。如果您已添加了自己的模型代码，以下是如何调用它的方法：
 
 ```cpp
 python tensorflow/examples/speech_commands/train.py \

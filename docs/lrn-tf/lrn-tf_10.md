@@ -1,14 +1,15 @@
+
 # 第十章：使用 TensorFlow 导出和提供模型
 
 在本章中，我们将学习如何使用简单和高级的生产就绪方法保存和导出模型。对于后者，我们介绍了 TensorFlow Serving，这是 TensorFlow 中最实用的用于创建生产环境的工具之一。我们将从快速概述两种简单的保存模型和变量的方法开始：首先是通过手动保存权重并重新分配它们，然后是使用`Saver`类创建训练检查点以及导出我们的模型。最后，我们将转向更高级的应用程序，通过使用 TensorFlow Serving 在服务器上部署我们的模型。
 
-# 保存和导出我们的模型
+## 保存和导出我们的模型
 
 到目前为止，我们已经学习了如何使用 TensorFlow 创建、训练和跟踪模型。现在我们将学习如何保存训练好的模型。保存当前权重状态对于明显的实际原因至关重要——我们不想每次都从头开始重新训练模型，我们也希望有一种方便的方式与他人分享我们模型的状态（就像我们在第七章中看到的预训练模型一样）。
 
 在这一部分，我们将讨论保存和导出的基础知识。我们首先介绍了一种简单的保存和加载权重到文件的方法。然后我们将看到如何使用 TensorFlow 的`Saver`对象来保持序列化模型检查点，其中包含有关权重状态和构建图的信息。
 
-## 分配加载的权重
+### 分配加载的权重
 
 在训练后重复使用权重的一个天真但实用的方法是将它们保存到文件中，稍后可以加载它们并重新分配给模型。
 
@@ -48,7 +49,6 @@ print("Accuracy: {}".format(acc))
 
 Out: 
 Accuracy: 0.9199
-
 ```
 
 接下来，我们将执行相同的过程，但这次是针对第四章中用于 MNIST 数据的 CNN 模型。在这里，我们有八组不同的权重：两个卷积层 1 和 2 的滤波器权重及其对应的偏置，以及两组全连接层的权重和偏置。我们将模型封装在一个类中，以便方便地保持这八个参数的更新列表。
@@ -130,7 +130,6 @@ class simple_cnn:
       print("Weight index: {}".format(i), 
                               "Weight shape: {}".format(w.shape))
       sess.run(self.parameters[i].assign(w))
-
 ```
 
 在这个例子中，模型已经训练好，并且权重已保存为`cnn_weights`。我们加载权重并将它们传递给我们的 CNN 对象。当我们在测试数据上运行模型时，它将使用预训练的权重：
@@ -178,12 +177,11 @@ Weight index: 6 Weight shape: (1024, 10)
 Weight index: 7 Weight shape: (10,)
 
 test accuracy: 0.990100026131
-
 ```
 
 我们可以获得高准确度，而无需重新训练。
 
-## Saver 类
+### Saver 类
 
 TensorFlow 还有一个内置的类，我们可以用于与前面的示例相同的目的，提供额外有用的功能，我们很快就会看到。这个类被称为`Saver`类（在第五章中已经简要介绍过）。
 
@@ -196,7 +194,6 @@ TensorFlow 还有一个内置的类，我们可以用于与前面的示例相同
 ```py
 saver = tf.train.Saver(max_to_keep=7, 
                       keep_checkpoint_every_n_hours=0.5)
-
 ```
 
 如果没有给出输入，那么默认情况下会保留最后五个检查点，并且`every_n_hours`功能会被有效地禁用（默认设置为`10000`）。
@@ -206,7 +203,7 @@ saver = tf.train.Saver(max_to_keep=7,
 在这个代码示例中，每 50 个训练迭代将在指定目录中保存一个文件：
 
 ```py
-DIR="*`path/to/model`*"withtf.Session()assess:forstepinrange(1,NUM_STEPS+1):batch_xs,batch_ys=data.train.next_batch(MINIBATCH_SIZE)sess.run(gd_step,feed_dict={x:batch_xs,y_true:batch_ys})ifstep%50==0:saver.save(sess,os.path.join(DIR,"model"),global_step=step)
+DIR="`*path/to/model*`"withtf.Session()assess:forstepinrange(1,NUM_STEPS+1):batch_xs,batch_ys=data.train.next_batch(MINIBATCH_SIZE)sess.run(gd_step,feed_dict={x:batch_xs,y_true:batch_ys})ifstep%50==0:saver.save(sess,os.path.join(DIR,"model"),global_step=step)
 ```
 
 另一个保存的文件名为*checkpoint*包含保存的检查点列表，以及最近检查点的路径：
@@ -231,42 +228,73 @@ all_model_checkpoint_paths: "model_ckpt-1000"
 
 在下面的代码中，我们使用`Saver`保存权重的状态：
 
+
+
+# TensorFlow 模型保存与恢复
+
+以下代码演示了如何使用 TensorFlow 训练一个简单的 Softmax 回归模型，并保存检查点：
+
 ```py
-fromtensorflow.examples.tutorials.mnistimportinput_dataDATA_DIR='/tmp/data'data=input_data.read_data_sets(DATA_DIR,one_hot=True)NUM_STEPS=1000MINIBATCH_SIZE=100DIR="*`path/to/model`*"x=tf.placeholder(tf.float32,[None,784],name='x')W=tf.Variable(tf.zeros([784,10]),name='W')y_true=tf.placeholder(tf.float32,[None,10])y_pred=tf.matmul(x,W)cross_entropy=tf.reduce_mean(tf.nn.softmax_cross_entropy_with_logits(logits=y_pred,labels=y_true))gd_step=tf.train.GradientDescentOptimizer(0.5)\ .minimize(cross_entropy)correct_mask=tf.equal(tf.argmax(y_pred,1),tf.argmax(y_true,1))accuracy=tf.reduce_mean(tf.cast(correct_mask,tf.float32))saver=tf.train.Saver(max_to_keep=7,keep_checkpoint_every_n_hours=1)withtf.Session()assess:sess.run(tf.global_variables_initializer())forstepinrange(1,NUM_STEPS+1):batch_xs,batch_ys=data.train.next_batch(MINIBATCH_SIZE)sess.run(gd_step,feed_dict={x:batch_xs,y_true:batch_ys})ifstep%50==0:saver.save(sess,os.path.join(DIR,"model_ckpt"),global_step=step)ans=sess.run(accuracy,feed_dict={x:data.test.images,y_true:data.test.labels})print("Accuracy: {:.4}%".format(ans*100))Out:Accuracy:90.87%
+from tensorflow.examples.tutorials.mnist import input_data
+DATA_DIR = '/tmp/data'
+data = input_data.read_data_sets(DATA_DIR, one_hot=True)
+NUM_STEPS = 1000
+MINIBATCH_SIZE = 100
+DIR = "`path/to/model`"
+
+x = tf.placeholder(tf.float32, [None, 784], name='x')
+W = tf.Variable(tf.zeros([784, 10]), name='W')
+y_true = tf.placeholder(tf.float32, [None, 10])
+y_pred = tf.matmul(x, W)
+cross_entropy = tf.reduce_mean(
+    tf.nn.softmax_cross_entropy_with_logits(logits=y_pred, labels=y_true))
+gd_step = tf.train.GradientDescentOptimizer(0.5).minimize(cross_entropy)
+correct_mask = tf.equal(tf.argmax(y_pred, 1), tf.argmax(y_true, 1))
+accuracy = tf.reduce_mean(tf.cast(correct_mask, tf.float32))
+
+saver = tf.train.Saver(max_to_keep=7, keep_checkpoint_every_n_hours=1)
+
+with tf.Session() as sess:
+    sess.run(tf.global_variables_initializer())
+    for step in range(1, NUM_STEPS + 1):
+        batch_xs, batch_ys = data.train.next_batch(MINIBATCH_SIZE)
+        sess.run(gd_step, feed_dict={x: batch_xs, y_true: batch_ys})
+        if step % 50 == 0:
+            saver.save(sess, os.path.join(DIR, "model_ckpt"), global_step=step)
+    ans = sess.run(accuracy, feed_dict={x: data.test.images, y_true: data.test.labels})
+    print("Accuracy: {:.4}%".format(ans * 100))
+
+# Out:
+# Accuracy: 90.87%
 ```
 
 现在我们只需使用`saver.restore()`为相同的图模型恢复我们想要的检查点，权重会自动分配给模型：
 
 ```py
 tf.reset_default_graph()
-x = tf.placeholder(tf.float32, [None, 784],name='x')
-W = tf.Variable(tf.zeros([784, 10]),name='W')
+x = tf.placeholder(tf.float32, [None, 784], name='x')
+W = tf.Variable(tf.zeros([784, 10]), name='W')
 y_true = tf.placeholder(tf.float32, [None, 10])
 y_pred = tf.matmul(x, W)
 cross_entropy = tf.reduce_mean(
-            tf.nn.softmax_cross_entropy_with_logits(logits=y_pred, 
-                                                    labels=y_true))
-gd_step = tf.train.GradientDescentOptimizer(0.5)\
-                                            .minimize(cross_entropy)
+    tf.nn.softmax_cross_entropy_with_logits(logits=y_pred, labels=y_true))
+gd_step = tf.train.GradientDescentOptimizer(0.5).minimize(cross_entropy)
 correct_mask = tf.equal(tf.argmax(y_pred, 1), tf.argmax(y_true, 1))
 accuracy = tf.reduce_mean(tf.cast(correct_mask, tf.float32))
 
 saver = tf.train.Saver()
 
 with tf.Session() as sess:
+    saver.restore(sess, os.path.join(DIR, "model_ckpt-1000"))
+    ans = sess.run(accuracy, feed_dict={x: data.test.images, y_true: data.test.labels})
 
-  saver.restore(sess, os.path.join(DIR,"model_ckpt-1000"))
-  ans = sess.run(accuracy, feed_dict={x: data.test.images, 
-                                       y_true: data.test.labels})
+print("Accuracy: {:.4}%".format(ans * 100))
 
-print("Accuracy: {:.4}%".format(ans*100))
-
-Out:
-Accuracy: 90.87% 
-
+# Out:
+# Accuracy: 90.87%
 ```
 
-# 在恢复之前重置图
+## 在恢复之前重置图
 
 加载的变量需要与当前图中的变量配对，因此应该具有匹配的名称。如果由于某种原因名称不匹配，那么可能会出现类似于这样的错误：
 
@@ -280,7 +308,7 @@ NotFoundError: Key W_1 not found in checkpoint
 
 如果名称被一些旧的、无关紧要的图使用，就会发生这种情况。通过使用`tf.reset_default_graph()`命令重置图，您可以解决这个问题。
 
-到目前为止，在这两种方法中，我们需要重新创建图以重新分配恢复的参数。然而，`Saver`还允许我们恢复图而无需重建它，通过生成包含有关图的所有必要信息的*.meta*检查点文件。
+到目前为止，在这两种方法中，我们需要重新创建图以重新分配恢复的参数。然而，`Saver`还允许我们恢复图而无需重建它，通过生成包含有关图的所有必要信息的`*.meta*`检查点文件。
 
 关于图的信息以及如何将保存的权重合并到其中（元信息）被称为`MetaGraphDef`。这些信息被序列化——转换为一个字符串——使用协议缓冲区（参见“序列化和协议缓冲区”），它包括几个部分。网络架构的信息保存在`graph_def`中。
 
@@ -307,26 +335,33 @@ graph_def {
     op: "Placeholder"
     attr {
       key: "_output_shapes"
-      value {
-        list {
-          shape {
-            dim {
-              size: -1
-            }
-            dim {
-              size: 784
-            }
-          }
-        }
-      }
-    }...
+      value {
+        list {
+          shape {
+            dim {
+              size: -1
+            }
+            dim {
+              size: 784
+            }
+          }
+        }
+      }
+    }...
 
 ```
 
-为了加载保存的图，我们使用`tf.train.import_meta_graph()`，传递我们想要的检查点文件的名称（带有*.meta*扩展名）。TensorFlow 已经知道如何处理恢复的权重，因为这些信息也被保存了：
+为了加载保存的图，我们使用`tf.train.import_meta_graph()`，传递我们想要的检查点文件的名称（带有`*.meta*`扩展名）。TensorFlow 已经知道如何处理恢复的权重，因为这些信息也被保存了：
 
 ```py
-tf.reset_default_graph()DIR="*`path/to/model`*"withtf.Session()assess:saver=tf.train.import_meta_graph(os.path.join(DIR,"model_ckpt-1000.meta"))saver.restore(sess,os.path.join(DIR,"model_ckpt-1000"))ans=sess.run(accuracy,feed_dict={x:data.test.images,y_true:data.test.labels})print("Accuracy: {:.4}%".format(ans*100))
+tf.reset_default_graph()
+DIR = "`path/to/model`"
+
+with tf.Session() as sess:
+    saver = tf.train.import_meta_graph(os.path.join(DIR, "model_ckpt-1000.meta"))
+    saver.restore(sess, os.path.join(DIR, "model_ckpt-1000"))
+    ans = sess.run(accuracy, feed_dict={x: data.test.images, y_true: data.test.labels})
+    print("Accuracy: {:.4}%".format(ans * 100))
 ```
 
 然而，仅仅导入图并恢复权重是不够的，会导致错误。原因是导入模型并恢复权重并不会给我们额外访问在运行会话时使用的变量（`fetches`和`feed_dict`的键）——模型不知道输入和输出是什么，我们希望计算什么度量等等。
@@ -336,39 +371,49 @@ tf.reset_default_graph()DIR="*`path/to/model`*"withtf.Session()assess:saver=tf.t
 在这个例子中，我们希望访问度量`accuracy`（我们希望获取）和 feed 键`x`和`y_true`。我们在将模型保存为`train_var`的名称之前将它们添加到一个集合中：
 
 ```py
-train_var = [x,y_true,accuracy]
+train_var = [x, y_true, accuracy]
 tf.add_to_collection('train_var', train_var[0])
 tf.add_to_collection('train_var', train_var[1])
 tf.add_to_collection('train_var', train_var[2])
-
 ```
 
 如所示，`saver.save()`方法会自动保存图结构以及权重的检查点。我们还可以使用`saver.export_meta.graph()`显式保存图，然后添加一个集合（作为第二个参数传递）：
 
 ```py
-train_var = [x,y_true,accuracy]
+train_var = [x, y_true, accuracy]
 tf.add_to_collection('train_var', train_var[0])
 tf.add_to_collection('train_var', train_var[1])
-tf.add_to_collection('train_var', train_var[2]) 
+tf.add_to_collection('train_var', train_var[2])
 
-saver = tf.train.Saver(max_to_keep=7,
-           keep_checkpoint_every_n_hours=1)
-saver.export_meta_graph(os.path.join(DIR,"model_ckpt.meta")
-            ,collection_list=['train_var'])
-
+saver = tf.train.Saver(max_to_keep=7, keep_checkpoint_every_n_hours=1)
+saver.export_meta_graph(os.path.join(DIR, "model_ckpt.meta"), collection_list=['train_var'])
 ```
 
 现在我们从集合中检索图，从中可以提取所需的变量：
 
 ```py
-tf.reset_default_graph()DIR="*`path/to/model`*"withtf.Session()assess:sess.run(tf.global_variables_initializer())saver=tf.train.import_meta_graph(os.path.join(DIR,"model_ckpt.meta")saver.restore(sess,os.path.join(DIR,"model_ckpt-1000"))x=tf.get_collection('train_var')[0]y_true=tf.get_collection('train_var')[1]accuracy=tf.get_collection('train_var')[2]ans=sess.run(accuracy,feed_dict={x:data.test.images,y_true:data.test.labels})print("Accuracy: {:.4}%".format(ans*100))Out:Accuracy:91.4%
+tf.reset_default_graph()
+DIR = "`path/to/model`"
+
+with tf.Session() as sess:
+    sess.run(tf.global_variables_initializer())
+    saver = tf.train.import_meta_graph(os.path.join(DIR, "model_ckpt.meta"))
+    saver.restore(sess, os.path.join(DIR, "model_ckpt-1000"))
+    x = tf.get_collection('train_var')[0]
+    y_true = tf.get_collection('train_var')[1]
+    accuracy = tf.get_collection('train_var')[2]
+    ans = sess.run(accuracy, feed_dict={x: data.test.images, y_true: data.test.labels})
+    print("Accuracy: {:.4}%".format(ans * 100))
+
+# Out:
+# Accuracy: 91.4%
 ```
 
 在定义图形时，请考虑一旦图形已保存和恢复，您想要检索哪些变量/操作，例如前面示例中的准确性操作。在下一节中，当我们谈论 Serving 时，我们将看到它具有内置功能，可以引导导出的模型，而无需像我们在这里做的那样保存变量。
 
 # TensorFlow Serving 简介
 
-TensorFlow Serving 是用 C++编写的高性能服务框架，我们可以在生产环境中部署我们的模型。通过使客户端软件能够访问它并通过 Serving 的 API 传递输入，使我们的模型可以用于生产（图 10-1）。当然，TensorFlow Serving 旨在与 TensorFlow 模型无缝集成。Serving 具有许多优化功能，可减少延迟并增加预测的吞吐量，适用于实时、大规模应用。这不仅仅是关于预测的可访问性和高效服务，还涉及灵活性——通常希望出于各种原因保持模型更新，例如获得额外的训练数据以改进模型，对网络架构进行更改等。
+TensorFlow Serving 是用 C++ 编写的高性能服务框架，我们可以在生产环境中部署我们的模型。通过使客户端软件能够访问它并通过 Serving 的 API 传递输入，使我们的模型可以用于生产（图 10-1）。当然，TensorFlow Serving 旨在与 TensorFlow 模型无缝集成。Serving 具有许多优化功能，可减少延迟并增加预测的吞吐量，适用于实时、大规模应用。这不仅仅是关于预测的可访问性和高效服务，还涉及灵活性——通常希望出于各种原因保持模型更新，例如获得额外的训练数据以改进模型，对网络架构进行更改等。
 
 ![](img/letf_1001.png)
 
@@ -378,7 +423,7 @@ TensorFlow Serving 是用 C++编写的高性能服务框架，我们可以在生
 
 假设我们运行一个语音识别服务，并且我们希望使用 TensorFlow Serving 部署我们的模型。除了优化服务外，对我们来说定期更新模型也很重要，因为我们获取更多数据或尝试新的网络架构。稍微更技术化一点，我们希望能够加载新模型并提供其输出，卸载旧模型，同时简化模型生命周期管理和版本策略。
 
-一般来说，我们可以通过以下方式实现 Serving。在 Python 中，我们定义模型并准备将其序列化，以便可以被负责加载、提供和管理版本的不同模块解析。Serving 的核心“引擎”位于一个 C++模块中，只有在我们希望控制 Serving 行为的特定调整和定制时才需要访问它。
+一般来说，我们可以通过以下方式实现 Serving。在 Python 中，我们定义模型并准备将其序列化，以便可以被负责加载、提供和管理版本的不同模块解析。Serving 的核心“引擎”位于一个 C++ 模块中，只有在我们希望控制 Serving 行为的特定调整和定制时才需要访问它。
 
 简而言之，这就是 Serving 架构的工作方式（图 10-2）：
 
@@ -402,7 +447,7 @@ Serving 需要安装一些组件，包括一些第三方组件。安装可以从
 
 ### 安装 Serving
 
-Docker 安装说明可以在[ Docker 网站](https://docs.docker.com/engine/installation/)上找到。
+Docker 安装说明可以在[Docker 网站](https://docs.docker.com/engine/installation/)上找到。
 
 在这里，我们演示使用[Ubuntu](https://docs.docker.com/engine/installation/linux/ubuntu/)进行 Docker 设置。
 
@@ -415,7 +460,6 @@ Docker 容器是从本地 Docker 镜像创建的，该镜像是从 dockerfile �
 ```py
 docker build --pull -t $USER/tensorflow-serving-devel -f 
                                                   Dockerfile.devel .
-
 ```
 
 现在我们在本地机器上创建了镜像，我们可以使用以下命令创建和运行容器：
@@ -427,9 +471,11 @@ docker run -v $HOME/docker_files:/host_files
 
 `docker run -it $USER/tensorflow-serving-devel`命令足以创建和运行容器，但我们对此命令进行了两次添加。
 
-首先，我们添加*-v $HOME/home_dir:/docker_dir*，其中`-v`（卷）表示请求共享文件系统，这样我们就可以方便地在 Docker 容器和主机之间传输文件。在这里，我们在主机上创建了共享文件夹*docker_files*，在我们的 Docker 容器上创建了*host_files*。另一种传输文件的方法是简单地使用命令`docker cp foo.txt *mycontainer*:/foo.txt`。第二个添加是`-p <*host port*>:<*container port*>`，这使得容器中的服务可以通过指定的端口暴露在任何地方。
+首先，我们添加`-v $HOME/home_dir:/docker_dir`，其中`-v`（卷）表示请求共享文件系统，这样我们就可以方便地在 Docker 容器和主机之间传输文件。在这里，我们在主机上创建了共享文件夹`docker_files`，在我们的 Docker 容器上创建了`host_files`。另一种传输文件的方法是简单地使用命令`docker cp foo.txt *mycontainer*:/foo.txt`。第二个添加是`-p <*host port*>:<*container port*>`，这使得容器中的服务可以通过指定的端口暴露在任何地方。
 
-一旦我们输入我们的`run`命令，一个容器将被创建和启动，并且一个终端将被打开。我们可以使用命令`docker ps -a`（在 Docker 终端之外）查看我们容器的状态。请注意，每次使用`docker run`命令时，我们都会创建另一个容器；要进入现有容器的终端，我们需要使用`docker exec -it <*container id*> bash`。
+
+
+一旦我们输入`run`命令，一个容器将被创建和启动，并且一个终端将被打开。我们可以使用命令`docker ps -a`（在 Docker 终端之外）查看我们容器的状态。请注意，每次使用`docker run`命令时，我们都会创建另一个容器；要进入现有容器的终端，我们需要使用`docker exec -it <*container id*> bash`。
 
 最后，在打开的终端中，我们克隆并配置 TensorFlow Serving：
 
@@ -443,9 +489,9 @@ cd serving/tensorflow
 
 ## 构建和导出
 
-现在 Serving 已经克隆并运行，我们可以开始探索其功能和如何使用它。克隆的 TensorFlow Serving 库是按照 Bazel 架构组织的。Bazel 构建的源代码组织在一个工作区目录中，里面有一系列分组相关源文件的包。每个包都有一个*BUILD*文件，指定从该包内的文件构建的输出。
+现在 Serving 已经克隆并运行，我们可以开始探索其功能和如何使用它。克隆的 TensorFlow Serving 库是按照 Bazel 架构组织的。Bazel 构建的源代码组织在一个工作区目录中，里面有一系列分组相关源文件的包。每个包都有一个`BUILD`文件，指定从该包内的文件构建的输出。
 
-我们克隆库中的工作区位于*/serving*文件夹中，包含*WORKSPACE*文本文件和*/tensorflow_serving*包，稍后我们将返回到这里。
+我们克隆库中的工作区位于`/serving`文件夹中，包含`WORKSPACE`文本文件和`/tensorflow_serving`包，稍后我们将返回到这里。
 
 现在我们转向查看处理训练和导出模型的 Python 脚本，并看看如何以一种适合进行 Serving 的方式导出我们的模型。
 
@@ -455,19 +501,15 @@ cd serving/tensorflow
 
 我们要采取的步骤如下：
 
-1.  像前几章一样定义我们的模型。
+1. 像前几章一样定义我们的模型。
+2. 创建一个模型构建器实例。
+3. 在构建器中定义我们的元数据（模型、方法、输入和输出等）以序列化格式（称为`SignatureDef`）。
+4. 使用构建器保存我们的模型。
 
-1.  创建一个模型构建器实例。
-
-1.  在构建器中定义我们的元数据（模型、方法、输入和输出等）以序列化格式（称为 `SignatureDef`）。
-
-1.  使用构建器保存我们的模型。
-
-首先，我们通过使用 Serving 的 `SavedModelBuilder` 模块创建一个构建器实例，传递我们希望将文件导出到的位置（如果目录不存在，则将创建）。`SavedModelBuilder` 导出表示我们的模型的序列化文件，格式如下所需：
+首先，我们通过使用 Serving 的`SavedModelBuilder`模块创建一个构建器实例，传递我们希望将文件导出到的位置（如果目录不存在，则将创建）。`SavedModelBuilder`导出表示我们的模型的序列化文件，格式如下所需：
 
 ```py
 builder = saved_model_builder.SavedModelBuilder(export_path)
-
 ```
 
 我们需要的序列化模型文件将包含在一个目录中，该目录的名称将指定模型及其版本：
@@ -481,11 +523,11 @@ export_path = os.path.join(
 
 这样，每个版本将被导出到一个具有相应路径的不同子目录中。
 
-请注意，`export_path_base` 是从命令行输入的，使用 `sys.argv` 获取，版本作为标志保留（在上一章中介绍）。标志解析由 `tf.app.run()` 处理，我们很快就会看到。
+请注意，`export_path_base`是从命令行输入的，使用`sys.argv`获取，版本作为标志保留（在上一章中介绍）。标志解析由`tf.app.run()`处理，我们很快就会看到。
 
 接下来，我们要定义输入（图的输入张量的形状）和输出（预测张量）签名。在本章的第一部分中，我们使用 TensorFlow 集合对象来指定输入和输出数据之间的关系及其相应的占位符，以及用于计算预测和准确性的操作。在这里，签名起到了类似的作用。
 
-我们使用创建的构建器实例添加变量和元图信息，使用 `SavedModelBuilder.add_meta_graph_and_variables()` 方法：
+我们使用创建的构建器实例添加变量和元图信息，使用`SavedModelBuilder.add_meta_graph_and_variables()`方法：
 
 ```py
 builder.add_meta_graph_and_variables(
@@ -510,15 +552,14 @@ prediction_signature = signature_def_utils.build_signature_def(
  method_name=signature_constants.PREDICT_METHOD_NAME)
 ```
 
-这里的 `images` 和 `scores` 是我们稍后将用来引用我们的 `x` 和 `y` 张量的任意名称。通过以下命令将图像和分数编码为所需格式：
+这里的`images`和`scores`是我们稍后将用来引用我们的`x`和`y`张量的任意名称。通过以下命令将图像和分数编码为所需格式：
 
 ```py
 tensor_info_x = utils.build_tensor_info(x)
 tensor_info_y = utils.build_tensor_info(y_conv)
-
 ```
 
-与预测签名类似，我们有分类签名，其中我们输入关于分数（前 `k` 个类的概率值）和相应类的信息：
+与预测签名类似，我们有分类签名，其中我们输入关于分数（前`k`个类的概率值）和相应类的信息：
 
 ```py
 # Build the signature_def_map
@@ -527,7 +568,6 @@ classification_inputs = utils.build_tensor_info(
 classification_outputs_classes = utils.build_tensor_info(
                                            prediction_classes)
 classification_outputs_scores = utils.build_tensor_info(values)
-
 ```
 
 ```py
@@ -543,16 +583,17 @@ classification_signature = signature_def_utils.build_signature_def(
  method_name=signature_constants.CLASSIFY_METHOD_NAME)
 ```
 
-最后，我们使用 `save()` 命令保存我们的模型：
+最后，我们使用`save()`命令保存我们的模型：
 
 ```py
 builder.save()
-
 ```
 
 简而言之，将所有部分整合在一起，以准备在脚本执行时序列化和导出，我们将立即看到。
 
 以下是我们主要的 Python 模型脚本的最终代码，包括我们的模型（来自第四章的 CNN 模型）：
+
+
 
 ```py
 import os
@@ -731,30 +772,30 @@ if __name__ == '__main__':
 
 在我们介绍 Serving 的最后部分中，我们使用 Bazel 实际导出和部署我们的模型。
 
-大多数 Bazel *BUILD* 文件仅包含构建规则的声明，指定输入和输出之间的关系，以及构建输出的步骤。
+大多数 Bazel `BUILD` 文件仅包含构建规则的声明，指定输入和输出之间的关系，以及构建输出的步骤。
 
-例如，在这个 *BUILD* 文件中，我们有一个 Python 规则 `py_binary` 用于构建可执行程序。这里有三个属性，`name` 用于规则的名称，`srcs` 用于处理以创建目标（我们的 Python 脚本）的文件列表，`deps` 用于链接到二进制目标中的其他库的列表：
+例如，在这个 `BUILD` 文件中，我们有一个 Python 规则 `py_binary` 用于构建可执行程序。这里有三个属性，`name` 用于规则的名称，`srcs` 用于处理以创建目标（我们的 Python 脚本）的文件列表，`deps` 用于链接到二进制目标中的其他库的列表：
 
 ```py
 py_binary(
-    name = "serving_model_ch4",
-    srcs = [
-        "serving_model_ch4.py",
-    ],
-    deps = [
-        ":mnist_input_data",
-        "@org_tensorflow//tensorflow:tensorflow_py",
-        "@org_tensorflow//tensorflow/python/saved_model:builder",
-        "@org_tensorflow//tensorflow/python/saved_model:constants",
-        "@org_tensorflow//tensorflow/python/saved_model:loader",
-        "@org_tensorflow//tensorflow/python/saved_model:
+    name = "serving_model_ch4",
+    srcs = [
+        "serving_model_ch4.py",
+    ],
+    deps = [
+        ":mnist_input_data",
+        "@org_tensorflow//tensorflow:tensorflow_py",
+        "@org_tensorflow//tensorflow/python/saved_model:builder",
+        "@org_tensorflow//tensorflow/python/saved_model:constants",
+        "@org_tensorflow//tensorflow/python/saved_model:loader",
+        "@org_tensorflow//tensorflow/python/saved_model:
                                               signature_constants",
-        "@org_tensorflow//tensorflow/python/saved_model:
+        "@org_tensorflow//tensorflow/python/saved_model:
                                               signature_def_utils",
-        "@org_tensorflow//tensorflow/python/saved_model:
-                                              tag_constants",
-        "@org_tensorflow//tensorflow/python/saved_model:utils",
-    ],
+        "@org_tensorflow//tensorflow/python/saved_model:
+                                              tag_constants",
+        "@org_tensorflow//tensorflow/python/saved_model:utils",
+    ],
 )
 ```
 
@@ -763,7 +804,7 @@ py_binary(
 ```py
 bazel build //tensorflow_serving/example:serving_model_ch4
 bazel-bin/tensorflow_serving/example/serving_model_ch4 
-        --training_iteration=1000 --model_version=1 /tmp/mnist_model
+        --training_iteration=1000 --model_version=1 /tmp/mnist_model
 
 ```
 
@@ -773,25 +814,26 @@ bazel-bin/tensorflow_serving/example/serving_model_ch4
 --model_version=2
 ```
 
-在指定的子目录中，我们将找到两个文件，*saved_model.pb* 和 *variables*，它们包含有关我们的图（包括元数据）和其变量的序列化信息。在接下来的行中，我们使用标准的 TensorFlow 模型服务器加载导出的模型：
+在指定的子目录中，我们将找到两个文件，`saved_model.pb` 和 `variables`，它们包含有关我们的图（包括元数据）和其变量的序列化信息。在接下来的行中，我们使用标准的 TensorFlow 模型服务器加载导出的模型：
 
 ```py
 bazel build //tensorflow_serving/model_servers:
-                                           tensorflow_model_server
+                                          tensorflow_model_server
 bazel-bin/tensorflow_serving/model_servers/tensorflow_model_server 
-                  --port=8000 --model_name=mnist 
-                  --model_base_path=/tmp/mnist_model/ --logtostderr
+                  --port=8000 --model_name=mnist 
+                  --model_base_path=/tmp/mnist_model/ --logtostderr
 ```
 
 最后，我们的模型现在已经被提供并准备在 `localhost:8000` 上运行。我们可以使用一个简单的客户端实用程序 `mnist_client` 来测试服务器：
+
+
 
 ```py
 bazel build //tensorflow_serving/example:mnist_client
 bazel-bin/tensorflow_serving/example/mnist_client 
                           --num_tests=1000 --server=localhost:8000
-
 ```
 
 # 总结
 
-本章讨论了如何保存、导出和提供模型，从简单保存和重新分配权重使用内置的`Saver`实用程序到用于生产的高级模型部署机制。本章的最后部分涉及 TensorFlow Serving，这是一个非常好的工具，可以通过动态版本控制使我们的模型商业化准备就绪。Serving 是一个功能丰富的实用程序，具有许多功能，我们强烈建议对掌握它感兴趣的读者在网上寻找更深入的技术资料。
+本章讨论了如何保存、导出和提供模型，从简单保存和重新分配权重使用内置的`Saver`实用程序到用于生产的高级模型部署机制。本章的最后部分涉及`TensorFlow Serving`，这是一个非常好的工具，可以通过动态版本控制使我们的模型商业化准备就绪。`Serving`是一个功能丰富的实用程序，具有许多功能，我们强烈建议对掌握它感兴趣的读者在网上寻找更深入的技术资料。

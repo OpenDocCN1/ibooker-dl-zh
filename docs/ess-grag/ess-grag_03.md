@@ -1,16 +1,13 @@
+
 # 第四章：从自然语言问题生成 Cypher 查询
 
-### 本章涵盖
+## 本章涵盖
 
-+   查询语言生成的基础知识
-
-+   查询语言生成在 RAG 管道中的位置
-
-+   查询语言生成的实用技巧
-
-+   使用基础模型实现 text2cypher 检索器
-
-+   用于文本 2cypher 的专业（微调）LLM
++ 查询语言生成的基础知识
++ 查询语言生成在 RAG 管道中的位置
++ 查询语言生成的实用技巧
++ 使用基础模型实现 text2cypher 检索器
++ 用于文本 2cypher 的专业（微调）LLM
 
 在前面的章节中，我们已经覆盖了很多内容。我们学习了如何构建知识图谱，从文本中提取信息，并使用这些信息来回答问题。我们还探讨了如何通过使用硬编码的 Cypher 查询来扩展和改进普通的向量搜索检索，从而为 LLM 获取更多相关的上下文。在本章中，我们将更进一步，学习如何从自然语言问题生成 Cypher 查询。这将使我们能够构建一个更灵活和动态的检索系统，能够适应不同类型的问题和知识图谱。
 
@@ -24,15 +21,11 @@
 
 从自然语言问题生成 Cypher 查询的工作流程可以分解为以下步骤（图 4.1）：
 
-+   从用户那里检索问题。
-
-+   检索知识图谱的模式。
-
-+   定义其他有用的信息，如术语映射、格式说明和少量示例。
-
-+   为 LLM 生成提示。
-
-+   将提示传递给 LLM 以生成 Cypher 查询。
++ 从用户那里检索问题。
++ 检索知识图谱的模式。
++ 定义其他有用的信息，如术语映射、格式说明和少量示例。
++ 为 LLM 生成提示。
++ 将提示传递给 LLM 以生成 Cypher 查询。
 
 ![figure](img/4-1.png)
 
@@ -258,37 +251,32 @@ LLM 需要知道如何将问题中使用的术语映射到模式中使用的术�
 
 ##### 列表 4.5 提示模板
 
-```py
-prompt_template = """
-Instructions:
-Generate Cypher statement to query a graph database to get the data to answer the following user question.
 
-Graph database schema:
-Use only the provided relationship types and properties in the schema.
-Do not use any other relationship types or properties that are not provided in the schema.
-{schema}
 
-Terminology mapping:
-This section is helpful to map terminology between the user question and the graph database schema.
-{terminology}
-Examples:
-The following examples provide useful patterns for querying the graph database.
-{examples}
+# 4.5 专为 text2cypher 优化的（微调的）LLM
 
-Format instructions:
-Do not include any explanations or apologies in your responses.
-Do not respond to any questions that might ask anything else than for you to
-construct a Cypher statement.
-Do not include any text except the generated Cypher statement.
-ONLY RESPOND WITH CYPHER—NO CODE BLOCKS.
+在 Neo4j，我们正在通过微调不断改进 text2cypher 的 LLM 性能。我们 Hugging Face 上的开源训练数据可在[`huggingface.co/datasets/neo4j/text2cypher`](https://huggingface.co/datasets/neo4j/text2cypher)找到。我们还提供基于开源 LLM（如 Gemma2、Llama 3.1）的微调模型，可在[`huggingface.co/neo4j`](https://huggingface.co/neo4j)找到。
 
-User question: {question}
-"""
-```
+这些模型在性能上仍然远远落后于像最新 GPT 和 Gemini 模型这样的微调大型模型，但它们效率更高，可以在大型模型太慢的生产系统中使用。大胆尝试它们，并参考少量示例、模式、术语映射和格式说明来提高模型性能。有关我们的微调过程和学习，更多信息请参阅[`mng.bz/MwDW`](https://mng.bz/MwDW)、[`mng.bz/a9v7`](https://mng.bz/a9v7)和[`mng.bz/yNWB`](https://mng.bz/yNWB)。
+
+# 4.6 我们学到的东西以及 text2cypher 能做什么
+
+在本章的代码和信息的基础上，您应该能够为您的知识图谱实现一个 text2cypher 检索器。您应该能够让它为广泛的问题生成正确的 Cypher 查询，并通过提供少量示例、模式、术语映射和格式说明来提高其性能。
+
+随着你识别出它难以应对的问题类型，你可以向提示中添加更多少样本示例，以帮助它学习如何生成正确的查询。随着时间的推移，你会发现生成的查询质量有所提高，检索器变得更加可靠。
+
+# 摘要
+
++   查询语言生成与 RAG（Retrieval-Augmented Generation）管道很好地结合，作为其他检索方法的补充，尤其是在我们想要聚合数据或从图中获取特定数据时。
++   查询语言生成的有用实践包括使用少样本示例、模式、术语映射和格式说明。
++   我们可以使用基础模型实现一个文本到 Cypher 的检索器，并将提示结构化到 LLM 中。
++   我们可以使用专门（微调）的 LLM（大型语言模型）进行文本到 Cypher 的转换，并提高其性能。
+
+---
 
 使用这个提示模板，我们现在可以为 LLM 生成提示。假设我们有一个以下用户问题、模式、术语映射和少量示例。
 
-##### 列表 4.6 完整提示示例
+## 列表 4.6 完整提示示例
 
 ```py
 question = "Who directed the most movies?"
@@ -353,7 +341,7 @@ Cypher: MATCH (p1:Person)-[:ACTED_IN]->(m:Movie)<-[:ACTED_IN]-(p2:Person)
 
 使用这个提示，我们现在可以生成用户问题的 Cypher 查询。您可以尝试将提示复制到 LLM 中，看看它生成什么。
 
-##### 列表 4.7 生成的 Cypher 查询
+## 列表 4.7 生成的 Cypher 查询
 
 ```py
 MATCH (p:Person)-[:DIRECTED]->(m:Movie)
@@ -362,24 +350,32 @@ ORDER BY movieCount
 DESC LIMIT 1
 ```
 
-## 4.5 专为 text2cypher 优化的（微调的）LLM
+---
 
-在 Neo4j，我们正在通过微调不断改进 text2cypher 的 LLM 性能。我们 Hugging Face 上的开源训练数据可在[`huggingface.co/datasets/neo4j/text2cypher`](https://huggingface.co/datasets/neo4j/text2cypher)找到。我们还提供基于开源 LLM（如 Gemma2、Llama 3.1）的微调模型，可在[`huggingface.co/neo4j`](https://huggingface.co/neo4j)找到。
+```py
+prompt_template = """
+Instructions:
+Generate Cypher statement to query a graph database to get the data to answer the following user question.
 
-这些模型在性能上仍然远远落后于像最新 GPT 和 Gemini 模型这样的微调大型模型，但它们效率更高，可以在大型模型太慢的生产系统中使用。大胆尝试它们，并参考少量示例、模式、术语映射和格式说明来提高模型性能。有关我们的微调过程和学习，更多信息请参阅[`mng.bz/MwDW`](https://mng.bz/MwDW)、[`mng.bz/a9v7`](https://mng.bz/a9v7)和[`mng.bz/yNWB`](https://mng.bz/yNWB)。
+Graph database schema:
+Use only the provided relationship types and properties in the schema.
+Do not use any other relationship types or properties that are not provided in the schema.
+{schema}
 
-## 4.6 我们学到的东西以及 text2cypher 能做什么
+Terminology mapping:
+This section is helpful to map terminology between the user question and the graph database schema.
+{terminology}
+Examples:
+The following examples provide useful patterns for querying the graph database.
+{examples}
 
-在本章的代码和信息的基础上，您应该能够为您的知识图谱实现一个 text2cypher 检索器。您应该能够让它为广泛的问题生成正确的 Cypher 查询，并通过提供少量示例、模式、术语映射和格式说明来提高其性能。
+Format instructions:
+Do not include any explanations or apologies in your responses.
+Do not respond to any questions that might ask anything else than for you to
+construct a Cypher statement.
+Do not include any text except the generated Cypher statement.
+ONLY RESPOND WITH CYPHER—NO CODE BLOCKS.
 
-随着你识别出它难以应对的问题类型，你可以向提示中添加更多少样本示例，以帮助它学习如何生成正确的查询。随着时间的推移，你会发现生成的查询质量有所提高，检索器变得更加可靠。
-
-## 摘要
-
-+   查询语言生成与 RAG（Retrieval-Augmented Generation）管道很好地结合，作为其他检索方法的补充，尤其是在我们想要聚合数据或从图中获取特定数据时。
-
-+   查询语言生成的有用实践包括使用少样本示例、模式、术语映射和格式说明。
-
-+   我们可以使用基础模型实现一个文本到 Cypher 的检索器，并将提示结构化到 LLM 中。
-
-+   我们可以使用专门（微调）的 LLM（大型语言模型）进行文本到 Cypher 的转换，并提高其性能。
+User question: {question}
+"""
+```

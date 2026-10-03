@@ -1,36 +1,34 @@
-# 第七章\. Tableau 代理
+
+
+# 第七章：Tableau 代理
 
 现在你已经了解了 Tableau Pulse 的所有方面，是时候继续了解 Tableau 平台上的其他 AI 工具：Tableau 代理。正如前言中提到的，Tableau 代理（以前称为 Einstein Copilot）是可供在 Web 上创建可视化或 Prep 工作流程的作者使用的 AI 助手。它还可以直接与 Tableau 数据目录功能协同工作，生成数据资产和内容的摘要。使用 Tableau 代理，你可以使用对话式 AI 来构建图表和计算，获得分析建议，并最大限度地减少管理时间。让我们深入了解。
 
-# 先决条件
+## 先决条件
 
-Tableau 代理目前仅适用于拥有 Tableau+订阅的 Tableau Cloud 用户。2024 年夏季推出，Tableau+被定位为 Tableau 平台（仅 Tableau Cloud）的企业级解决方案，具有高级 AI 功能。该产品线的版本包括你习惯的正常 Tableau 许可证的所有内容，还包括数据管理和高级管理附加组件、访问其 eLearning 库、一个数据云实例、Tableau 代理、Tableau Pulse 的额外功能、数据连接服务以及高级支持。不出所料，这项服务附带了一个相当高的新价格标签，大约是每种许可证类型传统许可成本的 3 倍。
+Tableau 代理目前仅适用于拥有 Tableau+ 订阅的 Tableau Cloud 用户。2024 年夏季推出，Tableau+ 被定位为 Tableau 平台（仅 Tableau Cloud）的企业级解决方案，具有高级 AI 功能。该产品线的版本包括你习惯的正常 Tableau 许可证的所有内容，还包括数据管理和高级管理附加组件、访问其 eLearning 库、一个数据云实例、Tableau 代理、Tableau Pulse 的额外功能、数据连接服务以及高级支持。不出所料，这项服务附带了一个相当高的新价格标签，大约是每种许可证类型传统许可成本的 3 倍。
 
 要启用 Tableau 代理，组织必须拥有一个数据云实例并将其与他们的 Tableau Cloud 实例连接。此外，他们必须设置并启用带有 Einstein 生成式 AI 的 Salesforce CRM。这三个平台之间的连接有两个主要目的：
 
-+   对 AI 服务的请求跟踪和审计
-
-+   基于信用系统的 AI 服务利用
+- 对 AI 服务的请求跟踪和审计
+- 基于信用系统的 AI 服务利用
 
 关于这些平台之间设置的更多信息可在[帮助文档](https://oreil.ly/eEr0e)中找到。
 
-# 可视化创作
+## 可视化创作
 
-假设你已经获得了 Tableau+许可证，并在你的 Tableau Cloud 环境中设置了 Tableau AI，你将能够在 Web 上创建可视化时使用 Tableau 代理。首先，你需要在 Tableau Cloud 上打开一个新的或现有的工作簿。从那里，你将在作者屏幕的右上角看到 Einstein 图标，紧邻数据指南图标，如图图 7-1 所示。
+假设你已经获得了 Tableau+ 许可证，并在你的 Tableau Cloud 环境中设置了 Tableau AI，你将能够在 Web 上创建可视化时使用 Tableau 代理。首先，你需要在 Tableau Cloud 上打开一个新的或现有的工作簿。从那里，你将在作者屏幕的右上角看到 Einstein 图标，紧邻数据指南图标，如图 7-1 所示。
 
 ![计算机屏幕截图 自动生成描述](img/lait_0701.png)
 
-###### 图 7-1\. Web 作者中的 Tableau 代理窗口
+###### 图 7-1：Web 作者中的 Tableau 代理窗口
 
 在访问此窗口并点击生成式 AI 的一般警告消息后，你可以开始与之交互。Tableau 代理会告诉你它可以协助以下操作：
 
-+   创建简单的可视化
-
-+   创建和描述计算字段
-
-+   执行如过滤、排序和分组数据等操作
-
-+   提供分析建议
+- 创建简单的可视化
+- 创建和描述计算字段
+- 执行如过滤、排序和分组数据等操作
+- 提供分析建议
 
 你也可以直接提问并描述你想要完成的任务。本节将探讨一些这些功能，并讨论 Tableau Agent 如何提供帮助。我将首先使用在第二章中首次提到的熟悉的数据源 Superstore Transactions。
 
@@ -38,11 +36,11 @@ Tableau 代理目前仅适用于拥有 Tableau+订阅的 Tableau Cloud 用户。
 
 虽然 AI 列出了分组作为一项功能，但 Tableau 文档表明分组目前不受支持。
 
-## 创建简单可视化
+### 创建简单可视化
 
 使用 Tableau Agent，你可以加快创建可能繁琐或需要多次点击的视觉化的速度。我将从非常直接的例子开始，并逐渐将提示中的语言变得更具模糊性，以便 AI 做出决策（如图表类型），而这些决策并没有明确说明（见示例 7-1）。
 
-##### 示例 7-1. 直接请求特定图表类型
+##### 示例 7-1：直接请求特定图表类型
 
 **提示**
 
@@ -60,9 +58,9 @@ I created a line chart to show sales by week. I used the 'Order Date' field for 
 
 ![](img/lait_0702.png)
 
-###### 图 7-2. 在提示后由 Tableau Agent 创建的折线图（见示例 7-1）（查看此图的更大版本[在线](https://oreil.ly/lait0702))
+###### 图 7-2：在提示后由 Tableau Agent 创建的折线图（见示例 7-1）（查看此图的更大版本[在线](https://oreil.ly/lait0702)）
 
-##### 示例 7-2. 请求特定图表类型，但在布局上有些模糊
+##### 示例 7-2：请求特定图表类型，但在布局上有些模糊
 
 **提示**
 
@@ -80,11 +78,11 @@ I created a bar chart that breaks down the sales of each sub-category for each c
 
 ![](img/lait_0703.png)
 
-###### 图 7-3. 在提示后由 Tableau Agent 创建的柱状图（见示例 7-2）（查看此图的更大版本[在线](https://oreil.ly/lait0703))
+###### 图 7-3：在提示后由 Tableau Agent 创建的柱状图（见示例 7-2）（查看此图的更大版本[在线](https://oreil.ly/lait0703)）
 
 由于它是会话式 AI，我可以继续使用另一个提示来尝试获取我想要的图表（见示例 7-3）。
 
-##### 示例 7-3. 调整图表布局的后续请求
+##### 示例 7-3：调整图表布局的后续请求
 
 **提示**
 
@@ -104,9 +102,9 @@ Tableau Agent 还可以处理查看数据而不指定图表类型的请求。如
 
 ![图片](img/lait_0704.png)
 
-###### 图 7-4. 指定字段位置后的更新条形图（查看此图的更大版本[在线](https://oreil.ly/lait0704)）
+###### 图 7-4：指定字段位置后的更新条形图（查看此图的更大版本[在线](https://oreil.ly/lait0704)）
 
-##### 示例 7-4. 没有描述所需图表类型的特定数据元素
+##### 示例 7-4：没有描述所需图表类型的特定数据元素
 
 **提示**
 
@@ -124,9 +122,9 @@ I created a bar chart to show the sales and quantity for every product. The 'Pro
 
 ![图片](img/lait_0705.png)
 
-###### 图 7-5. 在示例 7-4 中没有指定图表类型时 AI 创建的图表（查看此图的更大版本[在线](https://oreil.ly/lait0705)）
+###### 图 7-5：在示例 7-4 中没有指定图表类型时 AI 创建的图表（查看此图的更大版本[在线](https://oreil.ly/lait0705)）
 
-##### 示例 7-5. 根据指定目标生成图表的请求
+##### 示例 7-5：根据指定目标生成图表的请求
 
 **提示**
 
@@ -140,15 +138,15 @@ I want to see the relationship between the two values for all products
 I updated the viz to show the relationship between sales and quantity for every product. I used a scatter plot to better visualize the relationship between these two values.
 ```
 
-在示例 7-5 的提示中包含“两个值之间的关系”这个关键词，这是 Tableau 文档通常描述散点图目的方式，结果是我想达到的，如图图 7-6 所示。
+在示例 7-5 的提示中包含“两个值之间的关系”这个关键词，这是 Tableau 文档通常描述散点图目的方式，结果是我想达到的，如图 7-6 所示。
 
 ![图片](img/lait_0706.png)
 
-###### 图 7-6. 在示例 7-5 的提示中提供更多上下文后的更新图表（查看此图的更大版本[在线](https://oreil.ly/lait0706)）
+###### 图 7-6：在示例 7-5 的提示中提供更多上下文后的更新图表（查看此图的更大版本[在线](https://oreil.ly/lait0706)）
 
 知道 AI 在提供更多关于布局或分析任务的上下文信息时表现更好，这非常有用。这里还有一个例子（示例 7-6），其中创建图表的类型存在歧义，但分析的目的很明确。
 
-##### 示例 7-6. 没有描述图表类型的特定分析任务
+##### 示例 7-6：没有描述图表类型的特定分析任务
 
 **提示**
 
@@ -162,21 +160,21 @@ make a chart showing the part-to-whole relationship of Category and Sub-Category
 OK. I can’t make exactly what you requested, but here’s a viz based on the fields you mentioned.
 ```
 
-生成的图表是一个树状图，如图图 7-7 所示，这是我心理上预期的。正确的字段被识别出来，由于独特的子类别数量，比饼图提供了更清晰的视觉。令人惊讶的是，Tableau Agent 提到它不能制作出我请求的确切图表，因为图表完全符合要求。
+生成的图表是一个树状图，如图 7-7 所示，这是我心理上预期的。正确的字段被识别出来，由于独特的子类别数量，比饼图提供了更清晰的视觉。令人惊讶的是，Tableau Agent 提到它不能制作出我请求的确切图表，因为图表完全符合要求。
 
 ![图片](img/lait_0707.png)
 
-###### 图 7-7. 在示例 7-6 的提示中提供分析任务后由 AI 创建的图表（查看此图的更大版本[在线](https://oreil.ly/lait0707)）
+###### 图 7-7：在示例 7-6 的提示中提供分析任务后由 AI 创建的图表（查看此图的更大版本[在线](https://oreil.ly/lait0707)）
 
 ###### 小贴士
 
 考虑到 AI 在构建可视化时的表现，在您的提示中提供尽可能多的上下文是有意义的。我建议包括图表类型（如果您有想法的话），任何您感兴趣的布局细节，以及您试图实现的分析类型。
 
-## 与计算字段一起工作
+### 与计算字段一起工作
 
 接下来，我想通过一些涉及计算字段的示例。使用 Tableau 代理，您可以创建计算字段，了解它们的工作原理，并获得有关调试不按预期工作的计算的协助。示例 7-7 显示了简单计算的提示。
 
-##### 示例 7-7\. 简单计算
+##### 示例 7-7：简单计算
 
 **提示**
 
@@ -194,11 +192,11 @@ This calculation returns the number of days between the Order Date and Ship Date
 
 ![](img/lait_0708.png)
 
-###### 图 7-8\. 基于示例 7-7 中的提示创建的计算字段（查看此图的更大版本[在线](https://oreil.ly/lait0708)）
+###### 图 7-8：基于示例 7-7 中的提示创建的计算字段（查看此图的更大版本[在线](https://oreil.ly/lait0708)）
 
 现在，我想尝试更复杂一些，看看 Tableau 代理是否可以创建一个使用更高级元素的计算字段，比如表格计算。由于表格计算依赖于可视化中的数据布局，我将从一个包含正确元素但计算并不完全符合我要求的图表开始（参见示例 7-8）。
 
-##### 示例 7-8\. 高级计算
+##### 示例 7-8：高级计算
 
 **提示**
 
@@ -216,11 +214,11 @@ This calculation computes the percentage difference in sales between each month.
 
 ![](img/lait_0709.png)
 
-###### 图 7-9\. 在示例 7-8 的提示之后创建的高级计算（查看此图的更大版本[在线](https://oreil.ly/lait0709)）
+###### 图 7-9：在示例 7-8 的提示之后创建的高级计算（查看此图的更大版本[在线](https://oreil.ly/lait0709)）
 
 最后，我想在计算字段中尝试一个复合概念，这需要一个 LOD 表达式和一个函数。这将是一种需要一些时间来构思的计算，并且需要创作者在构建计算的过程中逐步验证其功能（参见示例 7-9）。
 
-##### 示例 7-9\. 多个计算概念
+##### 示例 7-9：多个计算概念
 
 **提示**
 
@@ -238,13 +236,13 @@ This calculation finds the very first order date for each state using customers 
 
 ![图片](img/lait_0710.png)
 
-###### 图 7-10\. 从示例 7-9 中的提示生成的 AI 复杂计算（查看此图的大版本[在线](https://oreil.ly/lait0710)）
+###### 图 7-10：从示例 7-9 中的提示生成的 AI 复杂计算（查看此图的大版本[在线](https://oreil.ly/lait0710)）
 
 与计算一起工作可能是 Tableau Agent 的最大优势。让我们看看它是如何描述计算的，并看看我是否能得到帮助来修改它以满足我的需求。
 
 注意在图 7-10 中，计算字段窗口中有一个小爱因斯坦图标。点击此图标会导致 Tableau Agent 列出它如何帮助进行计算。首先，我会要求它解释我创建的利润排名计算，该计算用于为每个子类别排名利润值（见示例 7-10）。
 
-##### 示例 7-10\. 解释和调试现有的计算字段
+##### 示例 7-10：解释和调试现有的计算字段
 
 **提示**
 
@@ -255,18 +253,18 @@ Explain Profit Rank
 **Tableau Agent**
 
 ```py
-The 'Profit Rank' calculated field assigns a unique rank to each item based on the total profit, with the highest profit receiving rank 1\. It uses the RANK_UNIQUE function to ensure that each rank is distinct, and it sorts the profits in descending order.
+The 'Profit Rank' calculated field assigns a unique rank to each item based on the total profit, with the highest profit receiving rank 1. It uses the RANK_UNIQUE function to ensure that each rank is distinct, and it sorts the profits in descending order.
 ```
 
 图 7-11 显示了构建的利润排名字段的可视化及其解释。
 
 ![图片](img/lait_0711.png)
 
-###### 图 7-11\. 从示例 7-10 中的提示解释的利润排名计算（查看此图的大版本[在线](https://oreil.ly/lait0711)）
+###### 图 7-11：从示例 7-10 中的提示解释的利润排名计算（查看此图的大版本[在线](https://oreil.ly/lait0711)）
 
 你会在可视化中注意到排名跨越了所有子类别，忽略了类别字段。但我希望通过这个计算实现的是每个子类别在其父类别内都获得一个排名。让我们看看 Tableau Agent 是否能提供帮助（见示例 7-11）。
 
-##### 示例 7-11\. 请求调整排名的计算方式
+##### 示例 7-11：请求调整排名的计算方式
 
 **提示**
 
@@ -276,7 +274,12 @@ How can I change the calculation so that the rank starts over for every Category
 
 **Tableau Agent**
 
-```py
+
+
+
+此计算会按类别对利润总和进行唯一排名。要在可视化中使用此计算，请将“类别”放在行或列架上，将“子类别”放在行架上，并将“利润排名”放在文本或标签架上。将“计算依据”设置为“子类别”，以确保排名在每个类别内重新开始。
+
+```
 This calculation ranks the sum of profits uniquely within each category. To use this in your Viz, place 'Category' on the Rows or Columns shelf, 'Sub-Category' on the Rows shelf, and 'Profit Rank' on the Text or Label shelf. Set the 'Compute Using' setting to 'Sub-Category' to ensure the ranking restarts for each category.
 ```
 
@@ -296,13 +299,13 @@ This calculation ranks the sum of profits uniquely within each category. To use 
 
 **提示**
 
-```py
+```
 Limit the data to the last 18 months
 ```
 
 **Tableau Agent**
 
-```py
+```
 I updated the viz to limit the data to the last 18 months.
 ```
 
@@ -318,13 +321,13 @@ I updated the viz to limit the data to the last 18 months.
 
 **提示**
 
-```py
+```
 I only want to see Consumer and Corporate in the chart
 ```
 
 **Tableau Agent**
 
-```py
+```
 I updated the viz to only include the 'Consumer' and 'Corporate' segments in the chart.
 ```
 
@@ -340,13 +343,13 @@ I updated the viz to only include the 'Consumer' and 'Corporate' segments in the
 
 **提示**
 
-```py
+```
 Only include rows of data where the sales value is more than 100
 ```
 
 **Tableau Agent**
 
-```py
+```
 I updated the viz to only include rows where the sales value is more than 100.
 ```
 
@@ -396,19 +399,19 @@ Tableau Agent 也可在 Web 上的 Prep Builder 的“添加字段”编辑器�
 
 在 Prep 中使用 Tableau Agent 的经验几乎与你在使用计算时获得的 Web 编写支持完全相同。一般来说，你将能够使用编辑器参考标签页中可用的函数和运算符。这包括逻辑运算符、固定 LOD、数值聚合等。特别是，Tableau Prep Builder 中的 Tableau Agent 还包括构建正则表达式的功能。
 
-*正则表达式*（regex）是用于匹配字符串字段中字符表达式的模式。它们非常强大，但通常识别正确的语法来隔离模式是具有挑战性的。这就是 Tableau Agent 可以提供帮助的地方。示例 7-15 展示了当被要求创建一个解析出订单 ID 字段中的四位年份的计算时会发生什么，该字段包括一个两位的国家代码、四位年份和一个六位订单号，这些数字由破折号分隔（例如：CA-2021-100867）。
+*正则表达式*（regex）是用于匹配字符串字段中字符表达式的模式。它们非常强大，但通常识别正确的语法来隔离模式是具有挑战性的。这就是 Tableau Agent 可以提供帮助的地方。示例 7-15 展示了当被要求创建一个解析出订单 ID 字段中的四位年份的计算时会发生什么，该字段包括一个两位的国家代码、四位年份和一个六位订单号，这些数字由破折号分隔（例如：`CA-2021-100867`）。
 
 ##### 示例 7-15\. 使用正则表达式构建计算
 
 **提示**
 
-```py
+```
 Write a regular expression to parse the four digit year from the Order ID into its own field.
 ```
 
 **Tableau Agent**
 
-```py
+```
 This calculation uses a regular expression to extract the first sequence of four digits from the 'Order ID' field, which represents the four-digit year.
 ```
 

@@ -1,7 +1,9 @@
+
+
 # 第七章：内置电池：创建 Python SDK
 
 > 让正确的事情变得容易，错误的事情变得困难。
-> 
+>
 > 凯西·西拉
 
 要创建数据科学家会喜欢的 API，您应该给他们一个用于调用 API 的*软件开发工具包*（SDK）。这是大多数 API 生产者不采取的额外步骤，但它使您的用户的生活变得更加容易。在本章中，您将了解 SDK 的价值，并从几位专家的实用技巧中受益，然后您将为 SWC 梦幻足球 API 创建一个 Python SDK。构建 SDK 是您第一部分项目组合的顶峰。
@@ -14,7 +16,7 @@ SDK 可以包括代码示例、调试器和文档，但这个术语通常指的�
 
 ###### 图 7-1\. SDK 与 API 交互
 
-# SDK 架起桥梁
+## SDK 架起桥梁
 
 为了了解 SDK 的好处和实施它们的技巧，我采访了几位经验丰富的 SDK 开发者，并随后以书面问题的形式进行了跟进。
 
@@ -42,10 +44,10 @@ SDK 可以是整体 API 产品策略的一部分。我所见过的最佳例子�
 
 ###### 图 7-2\. statsbombpy SDK 文档
 
-# 为您的 SDK 选择一种语言
+## 为您的 SDK 选择一种语言
 
 > 您的 SDK 之旅从了解您的开发者受众以及他们将如何使用您的 API 开始。
-> 
+>
 > SDKs.io
 
 在开发 SDK 时，您将做出的第一个决定是支持哪些编程语言。SDK 不需要用与 API 开发相同的语言编写。相反，它需要用 API 消费者使用的语言编写。他们将导入 SDK 到他们的代码中，并使用它来与您的 API 交互，而不是直接调用 API。
@@ -56,21 +58,21 @@ API 提供者有时会为不同的消费者提供多种语言的 SDK。Zan Marka
 
 Simon Yu 解释了自动生成服务的优势：“正确地设计 SDK 实现是困难的。维护和支持它们甚至更难。如果负责更新 SDK 的团队成员离开了会发生什么？现在将这个问题乘以您想要提供 SDK 的所有语言，”他说。“这就是 Speakeasy 和其他 SDK 生成器发挥作用的地方。”
 
-# 从最小可行 SDK 开始
+## 从最小可行 SDK 开始
 
 你第一部分项目组合的最后一部分是创建一个 Python SDK。在本章中，你将学习 API 专家的技巧和窍门，并实现受他们启发的 Python 功能：Francisco Goitia 的 [statsbompy](https://oreil.ly/LUiJd)、Simon Yu 公司的 SDK 以及 Joey Greco 的 [pymfl](https://oreil.ly/ut2nK)，以及额外的参考文档。
 
 你将从一个非常简单的 SDK 开始工作，以确保项目打包正常工作。我将称之为你的**最小可行 SDK**。在验证包可以正常工作并安装后，你将添加额外的功能。
 
-## 专家技巧：使你的 SDK 易于安装
+### 专家技巧：使你的 SDK 易于安装
 
 > ...如果他们可以使用 pip install 安装 Python 库并开始使用数据，这将使他们的生活更轻松。
-> 
+>
 > 弗朗西斯科·戈伊蒂亚，StatsBomb
 
-许多编程语言都有从外部存储库下载和安装库的标准方法，例如 Node.js 的 npm 和 Java 的 Maven。Python SDK 通常发布在 [Python 包索引（PyPI）](https://pypi.org)。在 PyPI 上托管 SDK 允许 Python 开发者使用 `pip3` 工具将 SDK 安装到他们的环境中，就像你在前面的章节中用 FastAPI 和 SQLAlchemy 等库所做的那样。如果项目结构正确，`pip3` 工具还可以直接从 GitHub 存储库安装包。这就是你将如何构建你的 SDK 项目并向用户提供说明。作为额外的好处，如果你选择这样做，这种结构也是发布到 PyPI 所需的。
+许多编程语言都有从外部存储库下载和安装库的标准方法，例如 Node.js 的 `npm` 和 Java 的 `Maven`。Python SDK 通常发布在 [Python 包索引（PyPI）](https://pypi.org)。在 PyPI 上托管 SDK 允许 Python 开发者使用 `pip3` 工具将 SDK 安装到他们的环境中，就像你在前面的章节中用 FastAPI 和 SQLAlchemy 等库所做的那样。如果项目结构正确，`pip3` 工具还可以直接从 GitHub 存储库安装包。这就是你将如何构建你的 SDK 项目并向用户提供说明。作为额外的好处，如果你选择这样做，这种结构也是发布到 PyPI 所需的。
 
-将目录更改为 *chapter7* 并创建 *sdk* 文件夹。然后，切换到 *sdk* 目录并创建一个名为 *pyproject.toml* 的文件：
+将目录更改为 `chapter7` 并创建 `sdk` 文件夹。然后，切换到 `sdk` 目录并创建一个名为 `pyproject.toml` 的文件：
 
 ```py
 .../portfolio-project (main) $ cd chapter7
@@ -79,7 +81,7 @@ Simon Yu 解释了自动生成服务的优势：“正确地设计 SDK 实现是
 .../sdk (main) $ touch pyproject.toml
 ```
 
-**pyproject.toml** 文件提供了工具如 `pip3` 需要的所有设置，以便正确打包你的代码并在 Python 环境中安装它。将以下所有文本添加到你的 **pyproject.toml** 文件中：
+`pyproject.toml` 文件提供了工具如 `pip3` 需要的所有设置，以便正确打包你的代码并在 Python 环境中安装它。将以下所有文本添加到你的 `pyproject.toml` 文件中：
 
 ```py
 [build-system] ![1](img/1.png)
@@ -124,23 +126,23 @@ dependencies =  ![6
 
 ![5](img/#co_batteries_included__creating_a_python_sdk_CO1-5)
 
-开发状态`Alpha`表明此 SDK 处于开发初期阶段。
+开发状态 `Alpha` 表明此 SDK 处于开发初期阶段。
 
 ![6](img/6.png)[#co_batteries_included__creating_a_python_sdk_CO1-6]
 
-本节列出了您的包运行所需的 Python 库。这是本章中唯一列出依赖关系的部分——SDK 不使用*requirements.txt*文件。
+本节列出了您的包运行所需的 Python 库。这是本章中唯一列出依赖关系的部分——SDK 不使用 `requirements.txt` 文件。
 
-## 专家提示：使 SDK 统一和符合习惯用法
+### 专家提示：使 SDK 统一和符合习惯用法
 
-俞明说：“SDK 应该是统一和可预测的。命名约定、错误处理和响应格式应贯穿整个 SDK，以避免给用户带来不必要的困惑。”例如，您的 SDK 函数返回单个项目时将以`get_`开头，而返回列表的函数将以`list_`开头。
+俞明说：“SDK 应该是统一和可预测的。命名约定、错误处理和响应格式应贯穿整个 SDK，以避免给用户带来不必要的困惑。”例如，您的 SDK 函数返回单个项目时将以 `get_` 开头，而返回列表的函数将以 `list_` 开头。
 
 Sdks.io 建议您使您的 SDK*符合习惯用法*，遵循该语言其他程序员的规范。对于 Python SDK，这意味着您的代码应该是*Pythonic*。这是一个广泛的概念，但意味着 Python 代码应遵循其他 Python 程序员和工具使用的约定。Python 是一种活的语言，不断添加新功能，因此编码约定试图跟上。约定是通过 Python 社区中的 Python 增强提案（PEP）建立的。如果您想了解这个过程，请查看[PEP 1 – PEP 目的和指南](https://oreil.ly/dgQ79)。
 
-对于您 SDK 的整体风格，您将使用[PEP 8 – Python 代码风格指南](https://oreil.ly/oersV)。[官方 Python 文档](https://oreil.ly/csNt5)提供了 PEP 8 风格的良好总结：使用 4 个空格缩进，保持行长度不超过 79 个字符，并为类使用`UpperCamelCase`，为函数和方法使用`lowercase_with_underscores`。
+对于您 SDK 的整体风格，您将使用[PEP 8 – Python 代码风格指南](https://oreil.ly/oersV)。[官方 Python 文档](https://oreil.ly/csNt5)提供了 PEP 8 风格的良好总结：使用 4 个空格缩进，保持行长度不超过 79 个字符，并为类使用 `UpperCamelCase`，为函数和方法使用 `lowercase_with_underscores`。
 
 在您的 SDK 中，您将使用的一些额外的 Pythonic 约定包括[PEP 202 – 列推导式](https://oreil.ly/7rivi)、[PEP 343 – 上下文管理器](https://oreil.ly/bgVdx)、[PEP 257 – 文档字符串](https://oreil.ly/q5zA2)、[PEP 518 – 构建系统要求](https://oreil.ly/WLYFx)和[PEP 484 – 类型提示](https://oreil.ly/RkeOY)。这些内容将在将它们添加到您的 SDK 代码中时进行解释。
 
-*swc_client.py*文件是主要的客户端，将与您的 API 交互。您将从一个非常基础的客户端开始。创建目录结构、包初始化文件和起始 Python 客户端：
+`swc_client.py` 文件是主要的客户端，将与您的 API 交互。您将从一个非常基础的客户端开始。创建目录结构、包初始化文件和起始 Python 客户端：
 
 ```py
 .../sdk (main) $ mkdir src
@@ -151,9 +153,9 @@ Sdks.io 建议您使您的 SDK*符合习惯用法*，遵循该语言其他程序
 
 ![1](img/1.png)[#co_batteries_included__creating_a_python_sdk_CO2-1]
 
-因为您的 SDK 将是一个 Python 包，所以包含代码的每个目录都将包含一个名为*__init__.py*的文件。现在可以使用一个空文件来完成这项工作。
+因为您的 SDK 将是一个 Python 包，所以包含代码的每个目录都将包含一个名为 `__init__.py` 的文件。现在可以使用一个空文件来完成这项工作。
 
-要开始创建最小化的 SDK，给*swc_client.py*文件添加足够的功能以调用 SWC API 的健康检查：
+要开始创建最小化的 SDK，给 `swc_client.py` 文件添加足够的功能以调用 SWC API 的健康检查：
 
 ```py
 import httpx ![1](img/1.png)
@@ -179,7 +181,10 @@ class SWCClient:
 
 ![3](img/3.png)[#co_batteries_included__creating_a_python_sdk_CO3-3]
 
-构造函数还接收一个字符串参数 `swc_base_url`，这是要调用的 API 的基本地址。您设置类变量 `self.swc_base_url`，以便这个值可以在 `get_health_check()` 方法中使用。
+
+
+
+构造函数还接收一个字符串参数`swc_base_url`，这是要调用的 API 的基本地址。您设置类变量`self.swc_base_url`，以便这个值可以在`get_health_check()`方法中使用。
 
 ![4](img/4.png)[#co_batteries_included__creating_a_python_sdk_CO3-4]
 
@@ -187,11 +192,11 @@ class SWCClient:
 
 ![5](img/5.png)[#co_batteries_included__creating_a_python_sdk_CO3-5]
 
-`httpx.Client` 有很多可用功能，但就目前而言，你正在设置基本 URL 并使用它来调用 `"/"` 端点，这是你的 API 的健康检查。
+`httpx.Client`有很多可用功能，但就目前而言，你正在设置基本 URL 并使用它来调用`"/"`端点，这是你的 API 的健康检查。
 
-为了确保你已经正确配置了 SDK 包，现在是时候使用 `pip3` 在你的 Codespace 中安装它。这将使用你创建的新源代码和配置文件，并将其安装为 Python 文件中可以访问的库。它还将从 *pyproject.toml* 文件的 `dependencies` 部分安装依赖项。
+为了确保你已经正确配置了 SDK 包，现在是时候使用`pip3`在你的 Codespace 中安装它。这将使用你创建的新源代码和配置文件，并将其安装为 Python 文件中可以访问的库。它还将从`pyproject.toml`文件的`dependencies`部分安装依赖项。
 
-现在用 `-e` 选项本地安装你的包，这确保了随着代码的变化，包在本地得到更新：
+现在用`-e`选项本地安装你的包，这确保了随着代码的变化，包在本地得到更新：
 
 ```py
 .../sdk (main) $ pip3 install -e .
@@ -205,9 +210,9 @@ Installing collected packages: pluggy, iniconfig, pytest, swcpy
 Successfully installed iniconfig-2.0.0 pluggy-1.5.0 pytest-8.2.2 swcpy-0.0.1
 ```
 
-`pip` 包从 *pyproject.toml* 文件中添加了 Python 包的版本号。
+`pip`包从`pyproject.toml`文件中添加了 Python 包的版本号。
 
-恭喜你，你已经创建并安装了一个 Python 包！看看你为这个最小 SDK 创建的文件。使用 `tree` 命令，加上一些选项来过滤掉构建过程中创建的临时文件：
+恭喜你，你已经创建并安装了一个 Python 包！看看你为这个最小 SDK 创建的文件。使用`tree`命令，加上一些选项来过滤掉构建过程中创建的临时文件：
 
 ```py
 .../sdk (main) $ tree --prune -I 'build|*.egg-info|__pycache__'
@@ -229,7 +234,7 @@ Successfully installed iniconfig-2.0.0 pluggy-1.5.0 pytest-8.2.2 swcpy-0.0.1
 
 隐藏复杂细节的关键是实施合理的默认设置。这意味着用户可以在不指定任何参数的情况下使用您的 SDK，并且它将直接工作。一个重要的默认设置是 SDK 应该知道 API 的基本 URL，而无需告知。这允许用户使用`pip3`安装它并使用它，而无需阅读文档来了解此地址。如果 SDK 是公共 API 的只读包装器，您可能会默认生产 API 地址。如果 API 需要身份验证或是一个读写 API，您可能希望默认使用沙盒环境以防止意外。合理的默认设置将处理*快乐路径*，即 80%的用户将需要的标准用法。剩余的 20%可以通过允许用户更改配置以覆盖特殊情况的默认值来处理。
 
-您将添加用户可以通过创建配置类来覆盖的合理默认设置。创建一个名为*swc_config.py*的文件，如下所示：
+您将添加用户可以通过创建配置类来覆盖的合理默认设置。创建一个名为`swc_config.py`的文件，如下所示：
 
 ```py
 .../sdk (main) $ touch src/swcpy/swc_config.py
@@ -237,7 +242,7 @@ Successfully installed iniconfig-2.0.0 pluggy-1.5.0 pytest-8.2.2 swcpy-0.0.1
 
 此文件定义了`SWCConfig`类。用户将使用他们的配置设置实例化此类的实例，并将其传递给`SWCClient`构造函数。然后，他们将使用`SWCClient`来调用 API。
 
-使用以下内容更新*swc_config.py*：
+使用以下内容更新`swc_config.py`：
 
 ```py
 import os
@@ -304,27 +309,27 @@ class SWCConfig:
 
 ![2](img/2.png)[#co_batteries_included__creating_a_python_sdk_CO4-2]
 
-此语句从*.env*文件或操作系统的环境中加载外部变量。
+此语句从`.env`文件或操作系统的环境中加载外部变量。
 
 ![3](img/3.png)[#co_batteries_included__creating_a_python_sdk_CO4-3]
 
-`swc_base_url` 将用于访问 API。
+`swc_base_url`将用于访问 API。
 
 ![4](img/4.png)[#co_batteries_included__creating_a_python_sdk_CO4-4]
 
-`swc_backoff` 决定在发生错误时 SDK 是否应使用退避策略重试调用。
+`swc_backoff`决定在发生错误时 SDK 是否应使用退避策略重试调用。
 
 ![5](img/5.png)[#co_batteries_included__creating_a_python_sdk_CO4-5]
 
-`swc_backoff_max_time` 是 SDK 在停止尝试 API 调用之前应保持尝试的最大秒数。
+`swc_backoff_max_time`是 SDK 在停止尝试 API 调用之前应保持尝试的最大秒数。
 
 ![6](img/6.png)[#co_batteries_included__creating_a_python_sdk_CO4-6]
 
-`swc_bulk_file_format` 设置批量文件的格式。
+`swc_bulk_file_format`设置批量文件的格式。
 
 ![7](img/7.png)[#co_batteries_included__creating_a_python_sdk_CO4-7]
 
-`__init__` 方法在创建此类时执行一次。它用于从用户传递的参数设置类变量。默认值在此方法中设置。
+`__init__`方法在创建此类时执行一次。它用于从用户传递的参数设置类变量。默认值在此方法中设置。
 
 ![8](img/8.png)[#co_batteries_included__creating_a_python_sdk_CO4-8]
 
@@ -336,9 +341,9 @@ class SWCConfig:
 
 ![10](img/10.png)[#co_batteries_included__creating_a_python_sdk_CO4-10]
 
-`__str__` 方法被外部程序用于记录此类的内容。如果你不提供这样的自定义方法，将会创建一个默认方法，但它可能包含较少有用的信息。
+`__str__`方法被外部程序用于记录此类的内容。如果你不提供这样的自定义方法，将会创建一个默认方法，但它可能包含较少有用的信息。
 
-接下来，修改 *chapter7/sdk/src/swcpy* 目录中的 *__init__.py* 文件，使其看起来如下：
+接下来，修改`chapter7/sdk/src/swcpy`目录中的`__init__.py`文件，使其看起来如下：
 
 ```py
 from .swc_client import SWCClient
@@ -351,22 +356,28 @@ from .swc_config import SWCConfig
 
 西蒙·余建议，一个 SDK 应该具有丰富的功能，以显著减少开发者的编码工作。在本章中，我对所审查的 SDK 进行了调查，发现了一些功能，例如处理版本、处理分页、客户端缓存和身份验证。你将包括两个高级功能：数据类型验证和重试/退避逻辑。
 
-对于最终用户来说，在他们的代码中添加数据验证是耗时的工作。他们必须阅读 API 文档以确定有效的数据类型和值，然后添加大量检查值并抛出错误的代码。当 SDK 开发者添加数据验证时，这对用户来说是一个很大的好处。原始 API 开发者对 API 的工作原理有详细的了解，这使得他们更容易在 SDK 中添加验证。对于这个 Python SDK，你还有一个额外的优势：可以访问 API 构建时使用的原始 Pydantic 类。你可以在你的 SDK 中重用第七章的 *schemas.py* 文件，以最小的努力为你的 SDK 提供强大的数据验证。
+对于最终用户来说，在他们的代码中添加数据验证是耗时的工作。他们必须阅读 API 文档以确定有效的数据类型和值，然后添加大量检查值并抛出错误的代码。当 SDK 开发者添加数据验证时，这对用户来说是一个很大的好处。原始 API 开发者对 API 的工作原理有详细的了解，这使得他们更容易在 SDK 中添加验证。对于这个 Python SDK，你还有一个额外的优势：可以访问 API 构建时使用的原始 Pydantic 类。你可以在你的 SDK 中重用第七章的`schemas.py`文件，以最小的努力为你的 SDK 提供强大的数据验证。
 
-创建一个 *schemas* 文件夹和 *__init__.py* 文件，如下所示：
+创建一个`schemas`文件夹和`__init__.py`文件，如下所示：
 
 ```py
 .../sdk (main) $ mkdir src/swcpy/schemas
 .../sdk (main) $ echo "from .schemas import *" > src/swcpy/schemas/__init__.py
 ```
 
-将 *chapter6* 目录（或 *chapter6/complete*，如果你还没有完成第六章）中的 schemas 文件复制到本章目录中，如下所示：
+将`chapter6`目录（或`chapter6/complete`，如果你还没有完成第六章）中的 schemas 文件复制到本章目录中，如下所示：
 
 ```py
 .../sdk (main) $ cp ../../chapter6/complete/schemas.py src/swcpy/schemas
 ```
 
-现在，你将从头开始逐步重建客户端。首先，你将添加导入和类构造函数。用以下内容替换整个 *swc_client.py* 文件：
+现在，你将从头开始逐步重建客户端。首先，你将添加导入和类构造函数。用以下内容替换整个`swc_client.py`文件：
+
+
+
+# 创建 Python SDK
+
+## 代码示例
 
 ```py
 import httpx
@@ -445,9 +456,11 @@ class SWCClient:
         logger.debug(f"Bulk file dictionary: {self.BULK_FILE_NAMES}")
 ```
 
+## 代码注释说明
+
 ![1](img/1.png)[#co_batteries_included__creating_a_python_sdk_CO5-1]
 
-这导入了你创建的 *swc_config.py* 文件。
+这导入了你创建的`swc_config.py`文件。
 
 ![2](img/2.png)[#co_batteries_included__creating_a_python_sdk_CO5-2]
 
@@ -471,7 +484,7 @@ class SWCClient:
 
 ![7](img/7.png)[#co_batteries_included__creating_a_python_sdk_CO5-7]
 
-你需要将 `*[github ID]*` 替换为你的 GitHub ID，以确保批量文件的路径正确。
+你需要将`*[github ID]*`替换为你的 GitHub ID，以确保批量文件的路径正确。
 
 ![8](img/8.png)(#co_batteries_included__creating_a_python_sdk_CO5-8)
 
@@ -487,7 +500,9 @@ class SWCClient:
 
 ![11](img/11.png)(#co_batteries_included__creating_a_python_sdk_CO5-11)
 
-这段代码将*.csv*或*.parquet*文件扩展名追加到文件名字典中。它使用字典推导式，这是一种高效且 Pythonic 的方式来更新字典中的所有元素。
+这段代码将`.csv`或`.parquet`文件扩展名追加到文件名字典中。它使用字典推导式，这是一种高效且 Pythonic 的方式来更新字典中的所有元素。
+
+## 指数退避与抖动
 
 你在客户端添加的重试和回退功能有几个意想不到的转折。当你从你的 SDK 中发起 API 调用时，有时可能会因为暂时的网络故障或 API 的减速而失败。这可能是因为负载均衡问题，或者是因为服务正在中间阶段上线更多服务器以处理增加的负载。如果你正在运行使用 API 的过程，你可以在放弃之前尝试重试几次，使其更具弹性。
 
@@ -495,15 +510,15 @@ class SWCClient:
 
 API 消费者和 SDK 开发者可以实施指数回退而不是简单的重试。使用这种方法，每次失败尝试之间的时间会指数级地变长。这种方法认识到一个失败的服务需要休息，并且发生的失败越多，它需要的休息就越多。例如，客户端可能会在每次失败时将重试之间的时间加倍。使用这种方法，它会在 1 秒、2 秒、4 秒、8 秒等重试，直到达到预设的停止点。
 
-这是一种改进，但你能否看到使用这种方法可能存在的问题？问题在 AWS 的 *架构* 博客中解释得非常清楚，在“指数退避与抖动”（[“Exponential Backoff And Jitter”](https://oreil.ly/tSRCm)）中，图 7-3 提供了一个简化的可视化。底部数字是故障后的秒数，垂直条是那一秒内发生的重试尝试次数。
+这是一种改进，但你能否看到使用这种方法可能存在的问题？问题在 AWS 的*架构*博客中解释得非常清楚，在“指数退避与抖动”（[“Exponential Backoff And Jitter”](https://oreil.ly/tSRCm)）中，图 7-3 提供了一个简化的可视化。底部数字是故障后的秒数，垂直条是那一秒内发生的重试尝试次数。
 
 ![指数退避的问题](img/haad_0703.png)
 
 ###### 图 7-3. 指数退避的问题
 
-如图中所示，如果多个人使用相同的指数退避设置（如果他们都使用你的 SDK 默认设置，这种情况很常见），他们很可能会在相同的间隔内进行重试。这是因为，当出现故障时，它可能会同时影响许多用户，开始他们的重试计时器。这不是你想要的。解决方案是引入 *抖动*，这是一个与退避相结合的随机元素。使用这种方法，你可以在不重试相同间隔的情况下获得退避重试的好处。这是两者的最佳结合：指数退避与抖动。
+如图中所示，如果多个人使用相同的指数退避设置（如果他们都使用你的 SDK 默认设置，这种情况很常见），他们很可能会在相同的间隔内进行重试。这是因为，当出现故障时，它可能会同时影响许多用户，开始他们的重试计时器。这不是你想要的。解决方案是引入*抖动*，这是一个与退避相结合的随机元素。使用这种方法，你可以在不重试相同间隔的情况下获得退避重试的好处。这是两者的最佳结合：指数退避与抖动。
 
-你添加到 *swc_client.py* 中的代码实现了使用 [backoff Python 库](https://oreil.ly/PUZbE) 的指数退避和随机抖动。为了使用这个库，你在 `call_api()` 函数上添加了装饰器 `backoff.on_exception`。这会将退避功能包装在函数调用中，而无需对函数本身进行任何修改。如果 SDK 用户使用退避，`call_api()` 函数将被包装上这个额外的功能。
+你添加到`swc_client.py`中的代码实现了使用 [backoff Python 库](https://oreil.ly/PUZbE) 的指数退避和随机抖动。为了使用这个库，你在`call_api()`函数上添加了装饰器`backoff.on_exception`。这会将退避功能包装在函数调用中，而无需对函数本身进行任何修改。如果 SDK 用户使用退避，`call_api()`函数将被包装上这个额外的功能。
 
 重新审视你添加到代码中的装饰器：
 
@@ -523,11 +538,11 @@ API 消费者和 SDK 开发者可以实施指数回退而不是简单的重试�
 
 ![2](img/2.png)[#co_batteries_included__creating_a_python_sdk_CO6-2]
 
-从 `call_api` 函数中查找 `RequestError` 和 `HTTPStatusError` 异常。
+从`call_api`函数中查找`RequestError`和`HTTPStatusError`异常。
 
 ![3](img/3.png)[#co_batteries_included__creating_a_python_sdk_CO6-3]
 
-在 `backoff_max_time` 参数（默认为 30 秒）后停止重试。
+在`backoff_max_time`参数（默认为 30 秒）后停止重试。
 
 ![4](img/4.png)[#co_batteries_included__creating_a_python_sdk_CO6-4]
 
@@ -537,9 +552,9 @@ API 消费者和 SDK 开发者可以实施指数回退而不是简单的重试�
 
 你不希望你的 SDK 成为一个黑盒——你希望用户理解底层发生了什么。实现这一目标的一种方式是将源代码发布在公共仓库上。另一种方式是提供有意义的日志记录，这有助于用户在遇到错误或未返回预期结果时。
 
-为了 Pythonic，您的 SDK 将使用 Python 的内置 *logging* 库，并允许用户配置他们想要打印的日志级别。例如，他们可能只想在生产日志中记录严重错误，而在开发期间记录调试消息。表 7-1 显示了可用的日志级别，根据 [官方 Python 文档](https://oreil.ly/CmUps)。
+为了 Pythonic，您的 SDK 将使用 Python 的内置*logging*库，并允许用户配置他们想要打印的日志级别。例如，他们可能只想在生产日志中记录严重错误，而在开发期间记录调试消息。表 7-1 显示了可用的日志级别，根据 [官方 Python 文档](https://oreil.ly/CmUps)。
 
-表 7-1\. Python 日志级别
+表 7-1. Python 日志级别
 
 | 级别 | 它的含义/何时使用 |
 | --- | --- |
@@ -551,9 +566,9 @@ API 消费者和 SDK 开发者可以实施指数回退而不是简单的重试�
 
 ###### 注意
 
-在本章中，如果您在运行 `pytest` 时发生错误，您将在终端中看到日志消息。默认情况下，任何具有 `WARNING` 或更高级别日志级别的消息都将显示。如果您想看到 `INFO` 或 `DEBUG` 消息，可以使用 `--log-level` 命令行选项。
+在本章中，如果您在运行`pytest`时发生错误，您将在终端中看到日志消息。默认情况下，任何具有`WARNING`或更高级别日志级别的消息都将显示。如果您想看到`INFO`或`DEBUG`消息，可以使用`--log-level`命令行选项。
 
-您在本书前面添加了导入语句并创建了一个 `logger` 对象。您将在创建的新方法 `call_api()` 中看到此功能的应用。在 *swc_client.py* 的底部添加以下代码：
+您在本书前面添加了导入语句并创建了一个`logger`对象。您将在创建的新方法`call_api()`中看到此功能的应用。在`swc_client.py`的底部添加以下代码：
 
 ```py
     def call_api(self, ![1](img/1.png)
@@ -586,11 +601,13 @@ API 消费者和 SDK 开发者可以实施指数回退而不是简单的重试�
 
 ![1](img/#co_batteries_included__creating_a_python_sdk_CO7-1)
 
-因为这是一个类方法，第一个参数总是 `self`，它代表这个类的实例。
+因为这是一个类方法，第一个参数总是`self`，它代表这个类的实例。
 
 ![2](img/#co_batteries_included__creating_a_python_sdk_CO7-2)
 
 此方法的第二个参数是您要调用的单个端点。
+
+
 
 ![3](img/#co_batteries_included__creating_a_python_sdk_CO7-3)
 
@@ -598,7 +615,7 @@ API 调用的查询字符串参数以可选字典的形式传递。
 
 ![4](img/#co_batteries_included__creating_a_python_sdk_CO7-4)
 
-这是一个类型提示，表示该方法应返回一个 `httpx.Response` 对象。
+这是一个类型提示，表示该方法应返回一个`httpx.Response`对象。
 
 ![5](img/#co_batteries_included__creating_a_python_sdk_CO7-5)
 
@@ -606,13 +623,13 @@ API 调用的查询字符串参数以可选字典的形式传递。
 
 ![6](img/#co_batteries_included__creating_a_python_sdk_CO7-6)
 
-这是一个上下文管理器，它使用 `httpx.Client` 执行后续步骤。
+这是一个上下文管理器，它使用`httpx.Client`执行后续步骤。
 
 ![7](img/#co_batteries_included__creating_a_python_sdk_CO7-7)
 
-这是在 `logging.DEBUG` 级别的日志记录。参数使用 F-string 格式化，这是一种格式化变量值的 Pythonic 方法。
+这是在`logging.DEBUG`级别的日志记录。参数使用 F-string 格式化，这是一种格式化变量值的 Pythonic 方法。
 
-`call_api` 函数用于为每个 SDK 函数进行 API 调用。通过集中这项工作，你可以应用额外的错误处理和日志记录，而不会使你的代码太长。它围绕 API 调用添加了 `try…​except` 逻辑。如果 API 调用成功，这个函数会记录一个 `logging.DEBUG` 级别的消息，包含响应中的数据。
+`call_api`函数用于为每个 SDK 函数进行 API 调用。通过集中这项工作，你可以应用额外的错误处理和日志记录，而不会使你的代码太长。它围绕 API 调用添加了`try…​except`逻辑。如果 API 调用成功，这个函数会记录一个`logging.DEBUG`级别的消息，包含响应中的数据。
 
 让我们更仔细地看看这个方法中的一条关键代码行：
 
@@ -620,19 +637,19 @@ API 调用的查询字符串参数以可选字典的形式传递。
     with httpx.Client(base_url=self.swc_base_url) as client:
 ```
 
-当一个语句使用 `with…​as` 这种格式时，它使用 Python 对象作为 *上下文管理器*，这样对象就会被初始化，然后运行其中的语句，然后清理它所使用的任何资源。在这里，`httpx.Client` 是上下文管理器。
+当一个语句使用`with…​as`这种格式时，它使用 Python 对象作为*上下文管理器*，这样对象就会被初始化，然后运行其中的语句，然后清理它所使用的任何资源。在这里，`httpx.Client`是上下文管理器。
 
-根据 [HTTPX 文档](https://oreil.ly/I-xln)，`httpx.Client` 是使用 *httpx* 进行 API 调用的有效方式，因为它在 API 调用之间池化资源。`Client` 构造函数接受 `base_url` 参数，并将用于它所使用的所有 API 调用。
+根据 [HTTPX 文档](https://oreil.ly/I-xln)，`httpx.Client`是使用*httpx*进行 API 调用的有效方式，因为它在 API 调用之间池化资源。`Client`构造函数接受`base_url`参数，并将用于它所使用的所有 API 调用。
 
-这段代码包含在 `try…​except` 块中，所以如果 API 调用不成功，`except` 首先处理 `httpx.HTTPStatusError`，这是一种将带有 HTTP 状态码的错误类型。对于这种类型的异常，它会记录一个 `logging.ERROR` 级别的消息，然后重新抛出异常。如果不是那种类型的异常，它接下来处理 `httpx.RequestError`。这种异常没有 HTTP 状态码，所以它只是在日志消息中放入异常的正文。然后重新抛出异常。重新抛出异常是很重要的，因为你在本章后面将添加重试和退避逻辑，并且它将寻找那些异常。
+这段代码包含在`try…​except`块中，所以如果 API 调用不成功，`except`首先处理`httpx.HTTPStatusError`，这是一种将带有 HTTP 状态码的错误类型。对于这种类型的异常，它会记录一个`logging.ERROR`级别的消息，然后重新抛出异常。如果不是那种类型的异常，它接下来处理`httpx.RequestError`。这种异常没有 HTTP 状态码，所以它只是在日志消息中放入异常的正文。然后重新抛出异常。重新抛出异常是很重要的，因为你在本章后面将添加重试和退避逻辑，并且它将寻找那些异常。
 
 ## 专家提示：隐藏你的 API 复杂细节
 
 乔伊·格雷科喜欢 SDK 处理底层 API 的一些复杂性。“作为一个数据消费者，我不想担心 API 版本、头信息、身份验证、速率限制或寻找正确的端点来使用，”他说。“我只希望调用一些函数，并能够做对我有意义的事情。”
 
-现在将 `get_health_check` 和 `list_leagues` 方法添加到文件的底部。像 `get_health_check` 和 `list_leagues` 这样的端点方法封装了 API 调用，并保护用户免受复杂的细节，如端点名称和返回类型。说这些方法的存在是 SDK 存在的原因并不夸张。
+现在将`get_health_check`和`list_leagues`方法添加到文件的底部。像`get_health_check`和`list_leagues`这样的端点方法封装了 API 调用，并保护用户免受复杂的细节，如端点名称和返回类型。说这些方法的存在是 SDK 存在的原因并不夸张。
 
-这两个都使用了你创建的 `call_api` 函数。`list_leagues` 方法还使用 Pydantic 验证 API 返回的数据。如果 API 的数据与 Pydantic 类定义不匹配，客户端将抛出一个错误，可以被记录。将以下代码添加到 *swc_client.py* 文件的底部：
+这两个都使用了你创建的`call_api`函数。`list_leagues`方法还使用 Pydantic 验证 API 返回的数据。如果 API 的数据与 Pydantic 类定义不匹配，客户端将抛出一个错误，可以被记录。将以下代码添加到*swc_client.py*文件的底部：
 
 ```py
     def get_health_check(self) -> httpx.Response:
@@ -683,11 +700,11 @@ API 调用的查询字符串参数以可选字典的形式传递。
 
 ![1](img/1.png)(#co_batteries_included__creating_a_python_sdk_CO8-1)
 
-新的 `get_health_check()` 方法使用 `call_api()` 方法，而不是像最小 SDK 那样直接调用 API。
+新的`get_health_check()`方法使用`call_api()`方法，而不是像最小 SDK 那样直接调用 API。
 
 ![2](img/#co_batteries_included__creating_a_python_sdk_CO8-2)
 
-类型提示显示，该方法应返回一个`List`类型的`League`对象列表。`League`是一个在`*schemas.py*`文件中定义的 Pydantic 类。
+类型提示显示，该方法应返回一个`List`类型的`League`对象列表。`League`是一个在*schemas.py*文件中定义的 Pydantic 类。
 
 ![3](img/#co_batteries_included__creating_a_python_sdk_CO8-3)
 
@@ -714,14 +731,16 @@ API 调用的查询字符串参数以可选字典的形式传递。
 ## 专家技巧：支持批量下载
 
 > 作为一名数据科学家，我发现许多公开数据服务的复杂性令人沮丧。我不想学习如何查询端点、考虑数据类型或阅读 API 文档。只给我数据！
+
 > 
+
 > 罗宾·林内克
 
 批量下载对许多 API 用户来说非常有价值，但数据科学家尤其喜欢这个功能。数据科学家经常使用完整的数据集进行分析和数据加载，他们发现调用多个端点以获取数据子集非常令人沮丧。您可以使用[FastAPI 的静态文件](https://oreil.ly/58q0a)从 API 的端点提供批量下载。
 
-相反，您将通过 SDK 方法提供批量下载。您的 SDK 将从您 GitHub 仓库中的网络托管位置访问文件。每个文件的 URL 将使用 `BULK_FILE_BASE_URL` 和 `BULK_FILE_NAMES` 字典构建。您的仓库包含您在 SQLite 数据库中加载的每个表的两个批量文件：一个为 *.csv* 格式，另一个为 *.parquet* 格式。通过提供这两种选项，您的 SDK 能够满足广泛的批量数据需求。
+相反，您将通过 SDK 方法提供批量下载。您的 SDK 将从您 GitHub 仓库中的网络托管位置访问文件。每个文件的 URL 将使用`BULK_FILE_BASE_URL`和`BULK_FILE_NAMES`字典构建。您的仓库包含您在 SQLite 数据库中加载的每个表的两个批量文件：一个为*.csv*格式，另一个为*.parquet*格式。通过提供这两种选项，您的 SDK 能够满足广泛的批量数据需求。
 
-批量文件位于您的仓库的 *bulk* 文件夹中。使用以下命令查看这些文件的列表：
+批量文件位于您的仓库的*bulk*文件夹中。使用以下命令查看这些文件的列表：
 
 ```py
 .../sdk (main) $ ls /workspaces/portfolio-project/bulk
@@ -731,7 +750,7 @@ league_data.parquet   player_data.parquet       team_player_data.csv
 performance_data.csv  readme.md                 team_player_data.parquet
 ```
 
-具有 *.csv* 扩展名的文件是 *逗号分隔值* 文件。以下显示了 *player_data.csv* 文件的头两行：
+具有*.csv*扩展名的文件是*逗号分隔值*文件。以下显示了*player_data.csv*文件的头两行：
 
 ```py
 player_id,gsis_id,first_name,last_name,position,last_changed_date
@@ -740,11 +759,11 @@ player_id,gsis_id,first_name,last_name,position,last_changed_date
 
 这些是没有任何压缩的纯文本文件。第一行包含用逗号分隔的列名。其余行包含每个数据记录的一行，数据值由逗号分隔。CSV 文件在 Python 库（如 pandas）或软件（如 Microsoft Excel）中很容易处理。
 
-*Parquet 文件* 使用一种开源数据格式，这种格式在多种数据分析任务中都很受欢迎。以下是来自 [Apache Parquet 项目页面](https://oreil.ly/K4_0_) 的官方定义：“Apache Parquet 是一种开源的列式数据文件格式，旨在高效地存储和检索数据。它提供了高性能的压缩和编码方案来处理大量复杂数据，并且被许多编程语言和数据分析工具所支持。”
+*Parquet 文件*使用一种开源数据格式，这种格式在多种数据分析任务中都很受欢迎。以下是来自 [Apache Parquet 项目页面](https://oreil.ly/K4_0_) 的官方定义：“Apache Parquet 是一种开源的列式数据文件格式，旨在高效地存储和检索数据。它提供了高性能的压缩和编码方案来处理大量复杂数据，并且被许多编程语言和数据分析工具所支持。”
 
-您将创建一个单独的方法来检索每个文件，但该方法将根据用户在 `SWCConfig` 类中选择的 `bulk_file_format` 参数来检索 *.csv* 或 *.parquet* 格式的文件。如果用户未提供此参数，则默认值为 *.csv*。
+您将创建一个单独的方法来检索每个文件，但该方法将根据用户在`SWCConfig`类中选择的`bulk_file_format`参数来检索*.csv*或*.parquet*格式的文件。如果用户未提供此参数，则默认值为*.csv*。
 
-在 *swc_client.py* 的底部添加以下方法：
+在*swc_client.py*的底部添加以下方法：
 
 ```py
     def get_bulk_player_file(self) -> bytes: ![1](img/1.png)
@@ -764,19 +783,19 @@ player_id,gsis_id,first_name,last_name,position,last_changed_date
 
 ![1](img/#co_batteries_included__creating_a_python_sdk_CO9-1)
 
-此方法的类型提示为 `bytes`，因为 Parquet 文件是二进制文件，而不是文本。
+此方法的类型提示为`bytes`，因为 Parquet 文件是二进制文件，而不是文本。
 
 ![2](img/#co_batteries_included__creating_a_python_sdk_CO9-2)
 
-该语句使用 `BULK_FILE_BASE_URL` 和 `BULK_FILE_NAMES` 字典从您的 GitHub 仓库的网络托管位置构建单个文件的 URL。
+该语句使用`BULK_FILE_BASE_URL`和`BULK_FILE_NAMES`字典从您的 GitHub 仓库的网络托管位置构建单个文件的 URL。
 
 ![3](img/#co_batteries_included__creating_a_python_sdk_CO9-3)
 
-与其他方法不同，此方法使用 `httpx.get()` 方法，而不是 `call_api` 方法。`follow_redirects` 参数处理在检索文件时发生的任何网页重定向。
+与其他方法不同，此方法使用`httpx.get()`方法，而不是`call_api`方法。`follow_redirects`参数处理在检索文件时发生的任何网页重定向。
 
 ![4](img/#co_batteries_included__creating_a_python_sdk_CO9-4)
 
-该方法返回 `response.content`，其中将包含二进制文件。
+该方法返回`response.content`，其中将包含二进制文件。
 
 您已经创建了实现您 SDK 所有主要功能的方法，尽管您还没有为所有端点或批量文件创建方法。更新您的*pyproject.toml*文件以包含您已添加的所有新库，并增加版本号：
 
@@ -816,29 +835,31 @@ dependencies =
 
 导入用于数据验证的 Pydantic 库。
 
+
+
 ![3](img/#co_batteries_included__creating_a_python_sdk_CO10-3)
 
-导入用于回退和重试功能的 backoff 库。
+导入用于回退和重试功能的`backoff`库。
 
 ![4](img/#co_batteries_included__creating_a_python_sdk_CO10-4)
 
-导入 PyArrow 库以处理 Parquet 文件。
+导入`PyArrow`库以处理`Parquet`文件。
 
 ## 专家提示：记录您的 SDK
 
-就像 API 需要文档一样，您的 SDK 也需要。由于您的 SDK 将直接用于程序代码中，记录您的 SDK 的第一步是为程序员将使用的方法添加全面的 docstrings。这是编写 Pythonic 代码的重要部分，它有助于使用 VS Code 等 IDE 的数据科学家使用您的 SDK 时获得提示和代码补全，从而加快他们的工作速度并提高准确性。随着越来越多的数据科学家在开发过程中使用生成式 AI，它允许 AI 助手和共飞行员推断出准确的编码建议。您在*swc_client.py*和*swc_config.py*文件中提供了广泛的 docstrings。
+就像 API 需要文档一样，您的 SDK 也需要。由于您的 SDK 将直接用于程序代码中，记录您的 SDK 的第一步是为程序员将使用的方法添加全面的`docstrings`。这是编写 Pythonic 代码的重要部分，它有助于使用 VS Code 等 IDE 的数据科学家使用您的 SDK 时获得提示和代码补全，从而加快他们的工作速度并提高准确性。随着越来越多的数据科学家在开发过程中使用生成式 AI，它允许 AI 助手和共飞行员推断出准确的编码建议。您在`swc_client.py`和`swc_config.py`文件中提供了广泛的`docstrings`。
 
-您还需要包括一个编写良好的*README.md*文件，解释如何安装 SDK 并提供使用示例。此文件将默认显示在您的 SDK 的 GitHub 仓库中，如果您将其发布到 PyPI，它将是 SDK 的主页。
+您还需要包括一个编写良好的`README.md`文件，解释如何安装 SDK 并提供使用示例。此文件将默认显示在您的 SDK 的 GitHub 仓库中，如果您将其发布到 PyPI，它将是 SDK 的主页。
 
-按照以下方式创建*README.md*文件：
+按照以下方式创建`README.md`文件：
 
-```py
+```
 .../sdk (main) $ touch README.md
 ```
 
 将以下内容添加到该文件中：
 
-```py
+```
 # swcpy software development kit (SDK)
 This is the Python SDK to interact with the SportsWorldCentral Football API, 
 which was created for the book [Hands-On APIs for AI and Data Science]
@@ -865,7 +886,7 @@ method for setting the base URL for the SWC API is by creating a Python
 
 SWC_API_BASE_URL={您的 API 的 URL}
 
-```py
+```
 
 You may also set this value as an environment variable in the environment you 
 are using the SDK, or pass it as a parameter to the `SWCConfig()` method.
@@ -888,7 +909,7 @@ leagues_response = client.list_leagues()
 
 print(leagues_response)
 
-```py
+```
 
 ### Example of bulk data functions
 
@@ -919,12 +940,12 @@ config = SWCConfig()
 
         f.write(player_file)
 
-```py
+```
 ```
 
 在此文件中需要注意的一个关键部分是它解释了用户如何从您的 GitHub 仓库安装您的 SDK。以下是该部分内容：
 
-```py
+```
 ## Installing swcpy
 
 To install this SDK in your environment, execute the following command:
@@ -935,7 +956,7 @@ To install this SDK in your environment, execute the following command:
 
 您现在已经创建了所有需要的文件，并完成了前几个端点的所有编码。要查看您项目的新的结构，运行`tree`命令：
 
-```py
+```
 .../sdk (main) $ tree --prune -I 'build|*.egg-info|__pycache__'
 .
 ├── README.md
@@ -954,7 +975,7 @@ To install this SDK in your environment, execute the following command:
 
 要使用`pip`更新您的本地系统以使用 SDK 的新版本，您将使用`--upgrade`选项：
 
-```py
+```
 .../sdk (main) $ pip3 install --upgrade .
 Processing /workspaces/portfolio-project/chapter7/sdk
   Installing build dependencies ... done
@@ -974,20 +995,20 @@ pydantic-2.4.2 pydantic-core-2.10.1 swcpy-0.0.2
 
 ## 测试您的 SDK
 
-现在，你将使用 pytest 测试 SDK。使用以下命令创建一个新的目录和文件：
+现在，你将使用`pytest`测试 SDK。使用以下命令创建一个新的目录和文件：
 
-```py
+```
 .../sdk (main) $ mkdir tests
 .../sdk (main) $ touch tests/test_swcpy.py
 ```
 
 ###### 注意
 
-你可以使用不同的 pytest 布局来将测试包含在你的包中。在这种情况下，你正在使用名为“tests outside application”的 pytest 布局样式，该样式在[pytest 的良好集成实践](https://oreil.ly/GM3HU)中有描述。这意味着当你运行测试时，你是在测试已安装的模块，而不是本地路径中的代码。
+你可以使用不同的`pytest`布局来将测试包含在你的包中。在这种情况下，你正在使用名为“tests outside application”的`pytest`布局样式，该样式在[pytest 的良好集成实践](https://oreil.ly/GM3HU)中有描述。这意味着当你运行测试时，你是在测试已安装的模块，而不是本地路径中的代码。
 
-使用以下内容更新 *test_swcpy.py* 文件：
+使用以下内容更新`test_swcpy.py`文件：
 
-```py
+```python
 import pytest
 from swcpy import SWCClient ![1](img/1.png)
 from swcpy import SWCConfig
@@ -1037,15 +1058,15 @@ def test_bulk_player_file_parquet(): ![7](img/7.png)
 
 ![2](img/2.png)[#co_batteries_included__creating_a_python_sdk_CO11-2]
 
-这个库用于处理像 Parquet 文件这样的二进制文件。
+这个库用于处理像`Parquet`文件这样的二进制文件。
 
 ![3](img/3.png)[#co_batteries_included__creating_a_python_sdk_CO11-3]
 
-这个库专门用于处理 Parquet 文件。
+这个库专门用于处理`Parquet`文件。
 
 ![4](img/4.png)[#co_batteries_included__creating_a_python_sdk_CO11-4]
 
-你将使用 pandas 库来读取 Parquet 文件的长度。
+你将使用`pandas`库来读取`Parquet`文件的长度。
 
 ![5](img/5.png)[#co_batteries_included__creating_a_python_sdk_CO11-5]
 
@@ -1057,15 +1078,15 @@ def test_bulk_player_file_parquet(): ![7](img/7.png)
 
 ![7](img/7.png)[#co_batteries_included__creating_a_python_sdk_CO11-7]
 
-这个测试方法测试了 Parquet 批量文件下载。
+这个测试方法测试了`Parquet`批量文件下载。
 
 ![8](img/8.png)[#co_batteries_included__creating_a_python_sdk_CO11-8]
 
-这设置了 Parquet 文件的配置选项。
+这设置了`Parquet`文件的配置选项。
 
 ![9](img/9.png)[#co_batteries_included__creating_a_python_sdk_CO11-9]
 
-这些代码行使用 PyArrow 和 pandas 读取 Parquet 文件并计数记录。
+这些代码行使用`PyArrow`和`pandas`读取`Parquet`文件并计数记录。
 
 现在，你将在另一个终端会话中运行你的 API，以便你的 SDK 可以调用它。在 Codespaces 中使用分割终端命令打开第二个终端会话，如图 图 7-4 所示。
 
@@ -1081,11 +1102,11 @@ def test_bulk_player_file_parquet(): ![7](img/7.png)
 
 ###### 小贴士
 
-如果你之前没有在 Codespace 中安装 API，你需要在运行 API 之前，在 *chapter6/complete* 目录中运行命令 **`pip3 install -r requirements.txt`**。
+如果你之前没有在 Codespace 中安装 API，你需要在运行 API 之前，在`chapter6/complete`目录中运行命令 **`pip3 install -r requirements.txt`**。
 
-在第二个窗口中，切换到 *chapter6/complete* 目录以使用存储库中的完整 API。按照以下方式启动 API：
+在第二个窗口中，切换到`chapter6/complete`目录以使用存储库中的完整 API。按照以下方式启动 API：
 
-```py
+```
 .../sdk (main) $ cd ../../chapter6/complete
 .../chapter6 (main) $ fastapi run main.py
 ...
@@ -1097,13 +1118,21 @@ INFO:     Uvicorn running on http://0.0.0.0:8000 (Press CTRL+C to quit) ![1](img
 
 ![1](img/1.png)[#co_batteries_included__creating_a_python_sdk_CO12-1]
 
-*test_swcpy.py* 文件应该在 `swc_base_url=` 参数中使用此地址。如果没有这个地址，更新 *test_swcpy.py* 以匹配这里的地址。
+`test_swcpy.py`文件应该在`swc_base_url=`参数中使用此地址。如果没有这个地址，更新`test_swcpy.py`以匹配这里的地址。
 
 你不需要像前几章那样点击“在浏览器中打开”，因为你将使用你的 SDK 在终端测试 API。
 
 在左侧终端窗口中，输入**`pytest tests/test_swcpy.py`**命令，你应该会看到类似以下输出的内容：
 
-```py
+
+
+# 测试运行与 SDK 功能回顾
+
+## 测试运行
+
+运行以下命令执行 SDK 的测试套件：
+
+```
 .../sdk (main) $ pytest tests/test_swcpy.py
 =========== test session starts ===========
 platform linux -- Python 3.10.13, pytest-8.1.2, pluggy-1.5.0
@@ -1117,37 +1146,39 @@ tests/test_swcpy.py ...                  [100%]
 ============ 3 passed in 0.68s ============
 ```
 
+## 已实现的专家提示
+
 你已经为你的 SDK 添加了许多出色的功能。做得好！花点时间考虑一下你已经为你的 SDK 实现的专家提示和功能：
 
-使你的 SDK 易于安装。
+**使你的 SDK 易于安装。**
 
 你配置了你的项目，使其可以直接使用`pip3`从 GitHub 安装。如果你选择，你也可以将其发布到 PyPI。
 
-保持一致性和地道性。
+**保持一致性和地道性。**
 
 你使用了 PEP 8 样式和一致的函数命名。你使用了 Pythonic 技术，如列表推导、字典推导和上下文管理器。并且你使用了 Python 标准日志函数。
 
-使用合理的默认值。
+**使用合理的默认值。**
 
 你实现了`SWCConfig`，它将使用默认值直接工作，但可以通过 URL 和其他设置进行自定义。
 
-提供额外的功能。
+**提供额外的功能。**
 
 你提供了数据验证、带抖动的指数退避和批量下载。
 
-执行日志记录。
+**执行日志记录。**
 
 你使用 Python 内置的日志库实现了多级日志记录。
 
-隐藏你 API 的复杂细节。
+**隐藏你 API 的复杂细节。**
 
 你实现了允许用户调用 API 端点而不必阅读 API 文档的方法。
 
-提供批量下载。
+**提供批量下载。**
 
 你为所有数据库表提供了*.csv*和*.parquet*格式的批量文件。
 
-记录你的 SDK。
+**记录你的 SDK。**
 
 你提供了一个*README.md*文件，解释了如何安装和使用 SDK。
 
@@ -1160,31 +1191,20 @@ tests/test_swcpy.py ...                  [100%]
 我不想让你完全处于困境中，所以这里有一些你可以用来继续构建你的 SDK 的附加信息。首先，以下是你需要创建以涵盖所有 API 端点的函数：
 
 +   `get_health_check`（已完成）
-
 +   `list_leagues`（已完成）
-
 +   `get_league_by_id`
-
 +   `get_counts`
-
 +   `list_teams`
-
 +   `list_players`
-
 +   `get_player_by_id`
-
 +   `list_performances`
 
 这里是你需要创建的批量下载函数：
 
 +   `get_bulk_player_file`（已完成）
-
 +   `get_bulk_league_file`
-
 +   `get_bulk_performance_file`
-
 +   `get_bulk_team_file`
-
 +   `get_bulk_team_player_file`
 
 我鼓励您尝试根据我给出的示例创建这些端点。保持一致性和地道性。与前面的章节一样，如果您想检查您的代码，完整的完成代码可在 *chapter7/complete* 目录中找到。
@@ -1197,7 +1217,7 @@ tests/test_swcpy.py ...                  [100%]
 
 在进行这些更改之前，您需要将文件的一个副本保存到 GitHub 的一个单独的 *branch* 中，这是一个在您的仓库中的隔离区域。这将保持您在编写代码时使用的原始目录结构。（您到目前为止一直在 *main* 分支上编写所有代码。）以下是从命令行创建新分支的步骤：
 
-```py
+```
 .../sdk (main) $ cd ../.. ![1](img/1.png)
 .../portfolio-project/ (main) $ git checkout -b learning-branch ![2](img/2.png)
 Switched to a new branch 'learning-branch'
@@ -1226,7 +1246,7 @@ branch 'learning-branch' set up to track 'origin/learning-branch'.
 
 在 Codespaces 中，您将把第六章和第七章的文件移动到您仓库的根目录。第六章包含最终的 API 文件，而第七章包含 SDK 文件。输入以下命令：
 
-```py
+```
 .../portfolio-project/ (learning-branch) $ git checkout main ![1](img/1.png)
 Switched to branch 'main'
 Your branch is up to date with 'origin/main'.
@@ -1260,7 +1280,7 @@ Your branch is up to date with 'origin/main'.
 
 要查看完成项目的目录结构，请运行以下命令：
 
-```py
+```
 .../portfolio-project (main) $ tree -d  --prune -I 'build|*.egg-info|__pycache__'
 .
 ├── bulk
@@ -1274,7 +1294,7 @@ Your branch is up to date with 'origin/main'.
 
 要更新您的 API 文档以提及您的 SDK，请将 *README.md* 中的底部“软件开发工具包 (SDK)”部分替换为以下内容：
 
-```py
+```
 ## Software Development Kit (SDK)
 
 If you are a Python user, you can use the swcpy SDK to interact with our API. 

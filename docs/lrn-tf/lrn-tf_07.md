@@ -1,8 +1,9 @@
+
 # 第七章：TensorFlow 抽象和简化
 
 本章的目的是让您熟悉 TensorFlow 的重要实用扩展。我们首先描述抽象是什么以及为什么它们对我们有用，然后简要回顾一些流行的 TensorFlow 抽象库。然后我们更深入地研究其中两个库，演示一些它们的核心功能以及一些示例。
 
-# 章节概述
+## 章节概述
 
 正如大多数读者可能知道的那样，在编程的上下文中，术语*抽象*指的是一层代码，“在”现有代码之上执行原始代码的目的驱动泛化的代码。抽象是通过将与某些高阶功能相关的代码片段分组和包装在一起的方式形成的，以便方便地将它们重新框架在一起。结果是简化的代码，更容易编写、阅读和调试，通常更容易和更快地使用。在许多情况下，TensorFlow 的抽象不仅使代码更清晰，还可以显著减少代码长度，从而显著缩短开发时间。
 
@@ -38,7 +39,6 @@ x_image = tf.reshape(x, [-1, 28, 28, 1])
 h1 = conv_layer(x_image, shape=[5, 5, 1, 32])
 h2 = conv_layer(h1, shape=[5, 5, 32, 64])
 h3 = conv_layer(h2, shape=[5, 5, 64, 32])
-
 ```
 
 在原生 TensorFlow 中，为了创建一个卷积层，我们必须根据输入和期望输出的形状定义和初始化其权重和偏置，应用具有定义步幅和填充的卷积操作，最后添加激活函数操作。很容易忘记其中一个基本组件或出错。此外，多次重复此过程可能有些繁琐，感觉可以更有效地完成。
@@ -77,19 +77,15 @@ hp3 = tf.nn.max_pool(h3, ksize=[1, 2, 2, 1],
 regressor = learn.LinearRegressor(feature_columns=feature_columns,
                                  optimizer=optimizer)
 regressor.fit(X, Y, steps=200, batch_size=506)
-
 ```
 
-## 高级调查
+### 高级调查
 
 在撰写本书时，有不少出色的 TensorFlow 开源扩展可用。其中一些流行的扩展包括：
 
 +   `tf.contrib.learn`
-
 +   TFLearn
-
 +   TF-Slim
-
 +   Keras
 
 虽然需要安装 TFLearn，但`contrib.learn`和 TF-Slim（现在是`tf.contrib.slim`）已与 TensorFlow 合并，因此无需安装。2017 年，Keras 获得了官方的 Google 支持，并且已经移入`tf.contrib`作为 1.1 版本（`tf.contrib.keras`）。名称*contrib*指的是该库中的代码是“贡献的”，仍然需要测试以查看是否得到广泛接受。因此，它仍可能发生变化，并且尚未成为核心 TensorFlow 的一部分。
@@ -106,20 +102,19 @@ TF-Slim 主要用于轻松设计复杂的卷积网络，并且有各种预训练
 
 这些库非常动态，不断变化，开发人员添加新模型和功能，并偶尔修改其语法。
 
-# Theano
+## Theano
 
 *Theano*是一个 Python 库，允许您以高效的方式操作涉及张量数组的符号数学表达式，因此它可以作为一个深度学习框架，与 TensorFlow 竞争。Theano 存在的时间更长，因此比 TensorFlow 更成熟一些，后者仍在不断变化和发展，但正在迅速成为领头羊（许多人普遍认为它已经是领先的库，具有许多优势，超过其他框架）。
 
 在接下来的章节中，我们演示如何使用这些扩展，以及一些示例。我们首先关注`contrib.learn`，演示它如何轻松让我们训练和运行简单的回归和分类模型。接下来我们介绍 TFLearn，并重新访问前几章介绍的更高级模型——CNN 和 RNN。然后我们简要介绍自编码器，并演示如何使用 Keras 创建一个。最后，我们结束本章，简要介绍 TF-Slim，并展示如何使用加载的预训练最先进的 CNN 模型对图像进行分类。
 
-# contrib.learn
+## contrib.learn
 
 使用`contrib.learn`不需要任何安装，因为它已经与 TensorFlow 合并：
 
 ```py
 import tensorflow as tf
 from tensorflow.contrib import learn
-
 ```
 
 我们从`contrib.learn`的现成*评估器*（模型的花哨名称）开始，可以快速高效地训练。这些预定义的评估器包括简单的线性和逻辑回归模型，简单的线性分类器和基本的深度神经网络。表 7-1 列出了我们可以使用的一些流行的评估器。
@@ -137,37 +132,27 @@ from tensorflow.contrib import learn
 当然，我们也希望使用更先进和定制的模型，为此`contrib.learn`让我们方便地包装我们自己制作的估计器，这是我们将在接下来讨论的功能之一。一旦我们准备好部署一个估计器，无论是为我们制作还是我们自己制作的，步骤基本相同：
 
 1.  我们*实例化*评估器类来创建我们的模型：
-
     ```py
-    model=learn.*`<``some_Estimator``>`*()
+    model=learn.<some_Estimator>()
     ```
-
-1.  然后我们使用我们的训练数据*拟合*它：
-
+2.  然后我们使用我们的训练数据*拟合*它：
     ```py
     model.fit()
-
     ```
-
-1.  我们*评估*模型，看它在某个给定数据集上的表现如何：
-
+3.  我们*评估*模型，看它在某个给定数据集上的表现如何：
     ```py
     model.evaluate()
-
     ```
-
-1.  最后，我们使用我们拟合的模型来*预测*结果，通常是针对新数据：
-
+4.  最后，我们使用我们拟合的模型来*预测*结果，通常是针对新数据：
     ```py
     model.predict()
-
     ```
 
 这四个基本阶段也存在于其他扩展中。
 
 `contrib`提供许多其他功能和特性；特别是，`contrib.learn`有一种非常巧妙的方式来处理我们的输入数据，这将是下一小节的重点，我们将在其中讨论线性模型。
 
-## 线性回归
+### 线性回归
 
 我们从`contrib.learn`的一个最强大的功能开始，即线性模型。我们说一个模型是*线性*的，每当它由特征的加权和的函数定义时，或更正式地*f*(*w[1]x[1]* + *w[2]x[2]* +...+ *w[n]x[n]*)，其中*f*可以是任何类型的函数，如恒等函数（如线性回归中）或逻辑函数（如逻辑回归中）。尽管在表达能力上有限，线性模型具有许多优点，如清晰的可解释性、优化速度和简单性。
 
@@ -176,30 +161,18 @@ from tensorflow.contrib import learn
 在接下来的部分中，我们首先重复这个完整的过程，然后展示如何使用`contrib.learn`来做到这一点要容易得多。在这个例子中，我们使用波士顿房屋数据集，可以使用[`sklearn`库](http://bit.ly/2sXIfrX?)下载。波士顿房屋数据集是一个相对较小的数据集（506 个样本），包含有关马萨诸塞州波士顿地区住房的信息。这个数据集中有 13 个预测变量：
 
 1.  CRIM：按城镇人均犯罪率
-
-1.  ZN：用于超过 25,000 平方英尺地块的住宅用地比例
-
-1.  INDUS：每个城镇非零售业务面积的比例
-
-1.  CHAS：查尔斯河虚拟变量（如果地块边界河流则为 1；否则为 0）
-
-1.  NOX：一氧化氮浓度（每千万份之）
-
-1.  RM：每个住宅的平均房间数
-
-1.  AGE：1940 年之前建造的自住单位比例
-
-1.  DIS：到波士顿五个就业中心的加权距离
-
-1.  RAD：到径向高速公路的可达性指数
-
-1.  TAX：每 1 万美元的全额财产税率
-
-1.  PTRATIO：按城镇的师生比
-
-1.  B：1000(Bk - 0.63)²，其中 Bk 是按城镇划分的黑人比例
-
-1.  LSTAT：人口的较低地位%
+2.  ZN：用于超过 25,000 平方英尺地块的住宅用地比例
+3.  INDUS：每个城镇非零售业务面积的比例
+4.  CHAS：查尔斯河虚拟变量（如果地块边界河流则为 1；否则为 0）
+5.  NOX：一氧化氮浓度（每千万份之）
+6.  RM：每个住宅的平均房间数
+7.  AGE：1940 年之前建造的自住单位比例
+8.  DIS：到波士顿五个就业中心的加权距离
+9.  RAD：到径向高速公路的可达性指数
+10. TAX：每 1 万美元的全额财产税率
+11. PTRATIO：按城镇的师生比
+12. B：1000(Bk - 0.63)²，其中 Bk 是按城镇划分的黑人比例
+13. LSTAT：人口的较低地位%
 
 目标变量是以千美元为单位的自住房屋的中位数价值。在这个例子中，我们尝试通过使用这 13 个特征的一些线性组合来预测目标变量。
 
@@ -210,7 +183,6 @@ from sklearn import datasets, metrics, preprocessing
 boston = datasets.load_boston()
 x_data = preprocessing.StandardScaler().fit_transform(boston.data)
 y_data = boston.target
-
 ```
 
 接下来，我们使用与第三章中相同的线性回归模型。这次我们跟踪“损失”，以便测量均方误差（MSE），即实际目标值与我们预测值之间的平方差的平均值。我们使用这个度量作为我们的模型表现如何的指标：
@@ -248,31 +220,26 @@ MSE = 21.9036388397
 经过 200 次迭代，我们打印出训练集计算的 MSE。现在我们执行完全相同的过程，但使用`contrib.learn`的线性回归估计器。定义、拟合和评估模型的整个过程只需要几行代码：
 
 1.  线性回归模型是使用`learn.LinearRegressor()`实例化的，并提供有关数据表示和优化器类型的知识：
-
     ```py
     reg = learn.LinearRegressor(
          feature_columns=feature_columns,
          optimizer=tf.train.GradientDescentOptimizer(
           learning_rate=0.1)
          )
-
     ```
-
-1.  使用`.fit()`训练`regressor`对象。我们传递协变量和目标变量，并设置步数和批量大小：
-
+2.  使用`.fit()`训练`regressor`对象。我们传递协变量和目标变量，并设置步数和批量大小：
     ```py
     reg.fit(x_data, boston.target, steps=NUM_STEPS, 
            batch_size=MINIBATCH_SIZE)
     ```
-
-1.  MSE 损失由`.evaluate()`返回：
-
+3.  MSE 损失由`.evaluate()`返回：
     ```py
     MSE = regressor.evaluate(x_data, boston.target, steps=1)
-
     ```
 
 以下是完整的代码：
+
+
 
 ```py
 NUM_STEPS = 200
@@ -313,14 +280,12 @@ DATA_DIR = '/tmp/data' if not 'win32' in sys.platform else "c:\\tmp\\data"
 data = input_data.read_data_sets(DATA_DIR, one_hot=False)
 x_data, y_data = data.train.images,data.train.labels.astype(np.int32)
 x_test, y_test = data.test.images,data.test.labels.astype(np.int32)
-
 ```
 
 请注意，在这种情况下，由于估计器的要求，我们以其类别标签形式传递目标：
 
 ```py
 one_hot=False
-
 ```
 
 对于每个样本返回一个单个整数，对应于正确的数字类别（即从 0 到[类别数] - 1 的值），而不是每个标签都是一个向量，其中每个标签是一个向量，其中 1 在对应于正确类别的索引中。
@@ -349,7 +314,6 @@ print('test accuracy: {}'.format(test_acc))
 
 Out:
 test accuracy: 0.977
-
 ```
 
 尽管不如我们在第四章中的 CNN 模型（超过 99%）那么好，但这里的测试准确性（约 98%）比简单 softmax 示例中的要好得多（约 92%），这是由于添加了一个隐藏层。在图 7-1 中，我们看到模型的准确性随着隐藏层中单位数的增加而增加。
@@ -366,7 +330,6 @@ from sklearn.metrics import confusion_matrix
 y_pred = dnn.predict(x=x_test,as_iterable=False)
 class_names = ['0','1','2','3','4','5','6','7','8','9']  
 cnf_matrix = confusion_matrix(y_test, y_pred)
-
 ```
 
 混淆矩阵显示在图 7-2 中。其行对应于真实数字，列对应于预测数字。例如，我们看到模型有时将`5`误分类为`3`，将`9`误分类为`4`和`7`。
@@ -393,7 +356,6 @@ bias = [0.9,1,1.1]
 height = np.array([weight[i]/100 + bias[b] for i,b in enumerate(spec_id)])
 spec_name = ['Goblin','Human','ManBears']
 spec = [spec_name[s] for s in spec_id]
-
 ```
 
 图 7-3 展示了数据样本的可视化。
@@ -408,7 +370,6 @@ spec = [spec_name[s] for s in spec_id]
 
 ```py
 df = pd.DataFrame({'Species':spec,'Weight':weight,'Height':height})
-
 ```
 
 图 7-4 展示了我们的数据框的样子。
@@ -426,7 +387,6 @@ Pandas 是 Python 中非常流行和有用的库，用于处理关系型或带�
 ```py
 from tensorflow.contrib import layers
 Weight = layers.real_valued_column("Weight")
-
 ```
 
 # Layers
@@ -446,7 +406,6 @@ Species = layers.sparse_column_with_keys(
 
 ```py
 reg = learn.LinearRegressor(feature_columns=[Weight,Species])
-
 ```
 
 到目前为止，我们已经定义了数据在模型中的表示方式；在拟合模型的下一阶段中，我们需要提供实际的训练数据。在波士顿房屋的例子中，特征都是数值型的，因此我们可以将它们直接输入为`x_data`和目标数据。
@@ -468,7 +427,6 @@ def input_fn(df):
   labels = tf.constant(df['Height'].values)
 
   return feature_cols, labels
-
 ```
 
 `Species`的值需要按照它们的`FeatureColumn`规范以稀疏格式进行编码。为此，我们使用`tf.SparseTensor()`，其中每个`i`索引对应一个非零值（在这种情况下，一个列矩阵中的所有行）。
@@ -486,14 +444,12 @@ SparseTensor(indices=[[0, 0], [2, 1], [2, 2]], values=[2, 5, 7],
 [[2, 0, 0]
  [0, 0, 0]
 [0, 5, 7]]
-
 ```
 
 我们以以下方式将其传递给`.fit()`方法：
 
 ```py
 reg.fit(input_fn=lambda:input_fn(df), steps=50000)
-
 ```
 
 这里，`input_fn()`是我们刚刚创建的函数，`df`是包含数据的数据框，我们还指定了迭代次数。
@@ -512,7 +468,6 @@ reg.fit(input_fn=lambda:input_fn(df), steps=10000)
 reg.fit(input_fn=lambda:input_fn(df), steps=10000)
 reg.fit(input_fn=lambda:input_fn(df), steps=10000)
 reg.fit(input_fn=lambda:input_fn(df), steps=10000)
-
 ```
 
 并实现相同的结果。如果我们想要在训练过程中跟踪模型，这可能会很有用；然而，后面我们将看到有更好的方法来实现这一点。
@@ -532,7 +487,6 @@ Out:
         Estimation for Species: [[0.90493023]
                                  [1.00566959]
                                  [1.10534406]]
-
 ```
 
 我们请求`Weight`和`Species`的权重值。`Species`是一个分类变量，因此它的三个权重值用作不同的偏差项。我们看到模型在估计真实权重（`Weight`为`0.01`，`Goblins`、`Humans`和`ManBears`的`Species`分别为`0.9`、`1`、`1.1`）方面表现得相当不错。我们可以使用`.get_variable_names()`方法获取变量的名称。
@@ -558,10 +512,11 @@ Out:
 
 ```py
 x_image = tf.reshape(x_data, [-1, 28, 28, 1])
-
 ```
 
 我们通过使用`contrib.layers`功能来构建网络，使得层构建过程更简单。
+
+
 
 使用`layers.convolution2d()`，我们可以在一行命令中设置所有内容：我们传递输入（上一层的输出），然后指定特征映射的数量（32）、滤波器的大小（5×5）和激活函数（`relu`），并初始化权重和偏置。输入的维度会自动识别，不需要指定。此外，与在较低级别的 TensorFlow 中工作时不同，我们不需要单独定义变量和偏置的形状：
 
@@ -774,13 +729,21 @@ model.fit({'input': X}, {'target': Y}, n_epoch=3,
 表 7-3. 标准 TFLearn 操作
 
 | 函数 | 描述 |
+
 | --- | --- |
+
 | `evaluate(*X*, *Y*, *batch_size=128*)` | 对给定样本进行模型评估。 |
+
 | `fit(*X*, *Y*, *n_epoch=10*)` | 使用输入特征`*X*`和目标`*Y*`对网络进行训练。 |
+
 | `get_weights(*weight_tensor*)` | 获取变量的权重。 |
+
 | `load(*model_file*)` | 恢复模型权重。 |
+
 | `predict(*X*)` | 获取给定输入数据的模型预测。 |
+
 | `save(*model_file*)` | 保存模型权重。 |
+
 | `set_weights(*tensor*, *weights*)` | 为张量变量分配给定值。 |
 
 与`contrib.learn`类似，通过使用`.fit()`方法执行拟合操作，我们向其中提供数据和控制训练设置：要执行的周期数，训练和验证批量大小，显示的度量，保存的摘要频率等。在拟合过程中，TFLearn 显示一个漂亮的仪表板，使我们能够在线跟踪训练过程。
@@ -822,7 +785,9 @@ Out:
 
 通过构建一个完全功能的文本分类 RNN 模型，我们结束了对 TFLearn 的介绍，这大大简化了我们在第五章和第六章中看到的代码。
 
-我们执行的任务是对电影评论进行情感分析，进行二元分类（好或坏）。我们将使用一个著名的 IMDb 评论数据集，包含 25,000 个训练样本和 25,000 个测试样本：
+我们执行的任务是对电影评论进行情感分析，进行二元分类（好或坏）。我们将使用一个著名的 IMDb 评论数据集，包含 25,000 个训练样本和 25,000 个测试样本。
+
+
 
 ```py
 from tflearn.data_utils import to_categorical, pad_sequences
@@ -833,7 +798,6 @@ train, test, _ = imdb.load_data(path='imdb.pkl', n_words=10000,
                 valid_portion=0.1)
 X_train, Y_train = train
 X_test, Y_test = test
-
 ```
 
 我们首先准备数据，这些数据具有不同的序列长度，通过使用`tflearn.data_utils.pad_sequences()`进行零填充来使序列相等，并将最大序列长度设置为 100：
@@ -841,7 +805,6 @@ X_test, Y_test = test
 ```py
 X_train = pad_sequences(X_train, maxlen=100, value=0.)
 X_test = pad_sequences(X_test, maxlen=100, value=0.)
-
 ```
 
 现在我们可以用一个张量表示数据，其中样本在其行中，单词 ID 在其列中。正如在第五章中解释的那样，这里的 ID 是用来任意编码实际单词的整数。在我们的情况下，有 10,000 个唯一的 ID。
@@ -851,14 +814,13 @@ X_test = pad_sequences(X_test, maxlen=100, value=0.)
 ```py
 RNN = tflearn.input_data([None, 100])
 RNN = tflearn.embedding(RNN, input_dim=10000, output_dim=128)
-
 ```
 
 最后，我们添加了一个 LSTM 层和一个全连接层来输出二元结果：
 
 ```py
 RNN = tflearn.lstm(RNN, 128, dropout=0.8)
-RNN = tflearn.fully_connected(RNN, 2, activation='softmax'
+RNN = tflearn.fully_connected(RNN, 2, activation='softmax')
 ```
 
 以下是完整的代码：
@@ -892,7 +854,6 @@ RNN = tflearn.regression(RNN, optimizer='adam', learning_rate=0.001,
 model = tflearn.DNN(RNN, tensorboard_verbose=0)
 model.fit(X_train, Y_train, validation_set=(X_test, Y_test),
                                 show_metric=True, batch_size=32)
-
 ```
 
 在本节中，我们只是简单地尝试了一下 TFLearn。该库有很好的[文档](http://tflearn.org)和许多示例，非常值得一看。
@@ -919,17 +880,16 @@ pip install keras
 
 ```py
 python setup.py install
-
 ```
 
 默认情况下，Keras 将使用 TensorFlow 作为其张量操作库。如果设置为使用 Theano，可以通过更改名为`$HOME/.keras/keras.json`的文件中的设置来切换（对于 Linux 用户——根据您的操作系统修改路径），其中除了其他本章不重要的技术设置外，还有`backend`属性：
 
 ```py
 {
-    "image_data_format": "channels_last",
-    "epsilon": 1e-07,
-    "floatx": "float32",
-    "backend": "tensorflow"
+    "image_data_format": "channels_last",
+    "epsilon": 1e-07,
+    "floatx": "float32",
+    "backend": "tensorflow"
 }
 ```
 
@@ -963,7 +923,6 @@ model = Sequential()
 
 model.add(Dense(units=64, input_dim=784))
 model.add(Activation('softmax'))
-
 ```
 
 或者等效地：
@@ -972,7 +931,6 @@ model.add(Activation('softmax'))
 model = Sequential([
 Dense(64, input_shape=(784,),activation='softmax')
 ])
-
 ```
 
 *密集*层是一个全连接层。第一个参数表示输出单元的数量，输入形状是输入的形状（在这个例子中，权重矩阵的大小将为 784×64）。`Dense()`还有一个可选参数，我们可以在第二个例子中指定并添加激活函数。
@@ -983,14 +941,12 @@ Dense(64, input_shape=(784,),activation='softmax')
 model.compile(loss='categorical_crossentropy',
 optimizer='sgd',
 metrics=['accuracy'])
-
 ```
 
 我们可以使用`.optimizers`来设置优化器的更精细分辨率（学习率、方法等）。例如：
 
 ```py
-optimizer=keras.optimizers.SGD(lr=0.02, momentum=0.8, nesterov=True))
-
+optimizer=keras.optimizers.SGD(lr=0.02, momentum=0.8, nesterov=True)
 ```
 
 最后，我们将数据传递给`.fit()`并设置 epoch 数和批量大小。与之前的库一样，我们现在可以轻松评估其表现并使用新的测试数据进行预测：
@@ -1007,14 +963,13 @@ model.fit(x_train, y_train, epochs=10, batch_size=64,
 
 loss_and_metrics = model.evaluate(x_test, y_test, batch_size=64)
 classes = model.predict(x_test, batch_size=64)
-
 ```
 
 请注意，在`fit()`方法中添加了一个`callbacks`参数。回调函数是在训练过程中应用的函数，我们可以通过将它们的列表传递给`.fit()`方法来查看统计信息并做出动态训练决策。
 
 在这个例子中，我们插入了两个回调函数：TensorBoard，指定其输出文件夹，和提前停止。
 
-# 提前停止
+## 提前停止
 
 提前停止用于防止过拟合，通过防止学习器进一步改善对训练数据的拟合而增加泛化误差。在这种意义上，它可以被认为是一种正则化形式。在 Keras 中，我们可以指定要监视的最小变化（`min_delta`）、在多少个不改进的 epoch 后停止（`patience`）以及所需变化的方向（`mode`）。
 
@@ -1026,7 +981,6 @@ classes = model.predict(x_test, batch_size=64)
 
 ```py
 inputs = Input(shape=(784,))
-
 ```
 
 然后我们定义我们的模型：
@@ -1035,7 +989,6 @@ inputs = Input(shape=(784,))
 x = Dense(64, activation='relu')(inputs)
 x = Dense(32, activation='relu')(x)
 outputs = Dense(10, activation='softmax')(x)
-
 ```
 
 正如我们所看到的，层就像函数一样起作用，给功能模型赋予了其名称。
@@ -1044,7 +997,6 @@ outputs = Dense(10, activation='softmax')(x)
 
 ```py
 model = Model(inputs=inputs, outputs=outputs)
-
 ```
 
 其他步骤如前所述：
@@ -1056,7 +1008,6 @@ metrics=['accuracy'])
 model.fit(x_train, y_train, epochs=10, batch_size=64)
 loss_and_metrics = model.evaluate(x_test, y_test, batch_size=64)
 classes = model.predict(x_test, batch_size=64)
-
 ```
 
 我们将通过介绍自动编码器的概念来结束本节，然后展示如何使用 Keras 实现一个自动编码器。
@@ -1095,7 +1046,6 @@ import numpy as np
 (x_train, y_train), (x_test, y_test) = cifar10.load_data()
 x_train = x_train[np.where(y_train==1)[0],:,:,:]
 x_test = x_test[np.where(y_test==1)[0],:,:,:]
-
 ```
 
 接下来我们进行一些预处理，首先将数据转换为`float32`，然后将其归一化到[0,1]范围内。这种归一化将允许我们在像素级别执行逐元素比较，我们很快就会看到。首先是类型转换：
@@ -1103,7 +1053,6 @@ x_test = x_test[np.where(y_test==1)[0],:,:,:]
 ```py
 x_train = x_train.astype('float32') / 255.
 x_test = x_test.astype('float32') / 255.
-
 ```
 
 然后我们添加一些高斯噪声来创建带噪声的数据集，并裁剪小于 0 或大于 1 的值：
@@ -1117,14 +1066,12 @@ x_test_n = x_test + 0.5 *\
 
 x_train_n = np.clip(x_train_n, 0., 1.)
 x_test_n = np.clip(x_test_n, 0., 1.)
-
 ```
 
 现在我们声明输入层（CIFAR10 数据集中的每个图像都是 32×32 像素，带有 RGB 通道）：
 
 ```py
-inp_img = Input(shape=(32, 32, 3))  
-
+inp_img = Input(shape=(32, 32, 3))
 ```
 
 接下来，我们开始添加我们通常的“乐高积木”层。我们的第一层是一个 2D 卷积层，第一个参数是滤波器的数量（因此是输出图像的数量），第二个是每个滤波器的大小。与其他库一样，Keras 会自动识别输入的形状。
@@ -1133,33 +1080,34 @@ inp_img = Input(shape=(32, 32, 3))
 
 最后，我们添加一个卷积输出层，回到三个通道：
 
+
+
 ```py
 img = Conv2D(32, (3, 3), activation='relu', padding='same')(inp_img)
 img = MaxPooling2D((2, 2), padding='same')(img)
 img = Conv2D(32, (3, 3), activation='relu', padding='same')(img)
 img = UpSampling2D((2, 2))(img)
 decoded = Conv2D(3, (3, 3), activation='sigmoid', padding='same')(img)
-
 ```
 
 我们声明功能模型格式，传递输入和输出：
 
 ```py
 autoencoder = Model(inp_img, decoded)
-
 ```
 
 接下来，我们编译模型，定义损失函数和优化器——在这种情况下，我们使用 Adagrad 优化器（只是为了展示另一个例子！）。对于图像的去噪，我们希望我们的损失能够捕捉解码图像与原始、去噪前图像之间的差异。为此，我们使用二元交叉熵损失，将每个解码像素与其对应的原始像素进行比较（现在在[0,1]之间）：
 
 ```py
 autoencoder.compile(optimizer='adadelta', loss='binary_crossentropy')
-
 ```
 
 模型定义后，我们用 10 个训练周期来拟合它：
 
 ```py
-tensorboard=TensorBoard(log_dir='<*`some_path`*>',histogram_freq=0,write_graph=True,write_images=True)model_saver=ModelCheckpoint(filepath='<*`some_path`*>',verbose=0,period=2)autoencoder.fit(x_train_n,x_train,epochs=10,batch_size=64,shuffle=True,validation_data=(x_test_n,x_test),callbacks=[tensorboard,model_saver])
+tensorboard=TensorBoard(log_dir='some_path',histogram_freq=0,write_graph=True,write_images=True)
+model_saver=ModelCheckpoint(filepath='some_path',verbose=0,period=2)
+autoencoder.fit(x_train_n,x_train,epochs=10,batch_size=64,shuffle=True,validation_data=(x_test_n,x_test),callbacks=[tensorboard,model_saver])
 ```
 
 希望模型能够捕捉一些内部结构，然后将其推广到其他嘈杂图像，并因此对其进行去噪。
@@ -1169,16 +1117,22 @@ tensorboard=TensorBoard(log_dir='<*`some_path`*>',histogram_freq=0,write_graph=T
 稍后，当我们希望加载我们的权重时，我们需要重建网络，然后使用`Model.load_weights()`方法，将我们的模型作为第一个参数，将保存的权重文件路径作为第二个参数（有关在第十章中保存模型的更多信息）：
 
 ```py
-inp_img=Input(shape=(32,32,3))img=Conv2D(32,(3,3),activation='relu',padding='same')(inp_img)img=MaxPooling2D((2,2),padding='same')(img)img=Conv2D(32,(3,3),activation='relu',padding='same')(img)img=UpSampling2D((2,2))(img)decoded=Conv2D(3,(3,3),activation='sigmoid',padding='same')(img)autoencoder=Model(inp_img,decoded)Model.load_weights(autoencoder,'*`some_path`*')
+inp_img=Input(shape=(32,32,3))
+img=Conv2D(32,(3,3),activation='relu',padding='same')(inp_img)
+img=MaxPooling2D((2,2),padding='same')(img)
+img=Conv2D(32,(3,3),activation='relu',padding='same')(img)
+img=UpSampling2D((2,2))(img)
+decoded=Conv2D(3,(3,3),activation='sigmoid',padding='same')(img)
+autoencoder=Model(inp_img,decoded)
+Model.load_weights(autoencoder,'some_path')
 ```
 
-# h5py 要求
+## h5py 要求
 
 为了保存模型，需要安装`h5py`包。这个包主要用于存储大量数据并从 NumPy 中操作数据。您可以使用`pip`安装它：
 
 ```py
 pip install h5py
-
 ```
 
 图 7-7 显示了我们选择类别的去噪测试图像，不同训练周期的结果。
@@ -1237,7 +1191,6 @@ net = slim.conv2d(net, 128, [3, 3], scope='con1_2')
 net = slim.conv2d(net, 128, [3, 3], scope='con1_3')
 net = slim.conv2d(net, 128, [3, 3], scope='con1_4')
 net = slim.conv2d(net, 128, [3, 3], scope='con1_5')
-
 ```
 
 我们可以这样输入：
@@ -1260,8 +1213,8 @@ net = slim.conv2d(net, 256, [3, 3], scope='con1_5')
 
 ```py
 slim.stack(net, slim.conv2d, [(64, [3, 3]), (64, [1, 1]), 
-                              (128, [3, 3]), (128, [1, 1]),
-                              (256, [3, 3])], scope='con')
+                              (128, [3, 3]), (128, [1, 1]),
+                              (256, [3, 3])], scope='con')
 ```
 
 最后，我们还有一个称为`arg_scope`的作用域机制，允许用户将一组共享参数传递给同一作用域中定义的每个操作。例如，假设我们有四个具有相同激活函数、初始化、正则化和填充的层。我们可以简单地使用`slim.arg_scope`命令，指定共享参数，如下面的代码所示：
@@ -1276,7 +1229,6 @@ net = slim.conv2d(inputs, 64, [11, 11], scope='con1')
 net = slim.conv2d(net, 128, [11, 11], padding='VALID', scope='con2')
 net = slim.conv2d(net, 256, [11, 11], scope='con3')
 net = slim.conv2d(net, 256, [11, 11], scope='con4')
-
 ```
 
 `arg_scope`命令中的各个参数仍然可以被覆盖，我们也可以将一个`arg_scope`嵌套在另一个中。
@@ -1305,14 +1257,13 @@ net = slim.conv2d(net, 256, [11, 11], scope='con4')
 
 创建它时，我们利用了我们刚提到的两个特性：
 
-1.  我们使用`arg_scope`功能，因为所有卷积层具有相同的激活函数和相同的正则化和初始化。
-
-1.  许多层都是相同的副本，因此我们还利用了`repeat`命令。
+1. 我们使用`arg_scope`功能，因为所有卷积层具有相同的激活函数和相同的正则化和初始化。
+2. 许多层都是相同的副本，因此我们还利用了`repeat`命令。
 
 结果非常引人注目——整个模型仅用 16 行代码定义：
 
 ```py
-  with slim.arg_scope([slim.conv2d, slim.fully_connected],
+with slim.arg_scope([slim.conv2d, slim.fully_connected],
                 activation_fn=tf.nn.relu,
                 weights_initializer=tf.truncated_normal_initializer(0.0, 0.01),
                 weights_regularizer=slim.l2_regularizer(0.0005)):
@@ -1351,14 +1302,16 @@ net = slim.conv2d(net, 256, [11, 11], scope='con4')
 
 ```py
 git clone https://github.com/tensorflow/models
-
 ```
 
 现在我们在计算机上拥有建模所需的脚本，并且可以通过设置路径来使用它们：
 
 ```py
-importsyssys.path.append("<*`some_path`*> + models/slim")
+import sys
+sys.path.append("some_path + models/slim")
 ```
+
+
 
 接下来，我们将下载预训练的 VGG-16（16 层）模型——它可以在[GitHub](http://bit.ly/2vkqMHq)上找到，还有其他模型，如 Inception、ResNet 等：
 

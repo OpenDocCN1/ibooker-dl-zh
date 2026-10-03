@@ -1,18 +1,15 @@
+
+
 # 9 使用 AI 从大型数据集中提取价值
 
 本章涵盖了
 
-+   使用 Amazon Comprehend 进行命名实体识别（NER）
-
-+   理解 Comprehend 的操作模式（异步、批量、同步）
-
-+   使用异步 Comprehend 服务
-
-+   使用 S3 通知触发 Lambda 函数
-
-+   使用死信队列处理 Lambda 中的错误
-
-+   处理 Comprehend 的结果
++ 使用 Amazon Comprehend 进行命名实体识别（NER）
++ 理解 Comprehend 的操作模式（异步、批量、同步）
++ 使用异步 Comprehend 服务
++ 使用 S3 通知触发 Lambda 函数
++ 使用死信队列处理 Lambda 中的错误
++ 处理 Comprehend 的结果
 
 第八章处理了从网站收集非结构化数据用于机器学习分析的问题。本章在第八章的无服务器网页爬虫基础上进行构建。这次，我们关注的是使用机器学习从我们收集的数据中提取有意义的见解。如果你没有完成第八章的内容，你应该现在回去完成它，然后再继续本章，因为我们将在网页爬虫的基础上直接构建。如果你已经熟悉了这些内容，我们可以直接进入并添加信息提取部分。
 
@@ -32,7 +29,7 @@
 
 ### 9.1.1 理解问题
 
-从非结构化文本中提取重要信息的问题被称为 *命名实体识别 (NER)*。一个 *命名实体* 可以是人、地点或组织。它也可以指日期和数值。NER 是一个具有挑战性的问题，也是许多研究的话题。这绝对不是一个完全解决的问题。由于其结果不能保证达到 100% 的准确性，我们必须考虑这一点。根据应用情况，可能需要人工结果检查。例如，假设你有一个需要检测文本中位置的系统。现在假设文本中的一句话提到了阿波罗 11 号指令舱，“哥伦比亚”。NER 可能将其识别为地点而不是航天器的一部分！每个命名实体识别系统都会为每个识别结果提供一个可能性分数，而这个值永远不会达到 100%。
+从非结构化文本中提取重要信息的问题被称为 *命名实体识别 (NER)*。一个 *命名实体* 可以是人、地点或组织。它也可以指日期和数值。NER 是一个具有挑战性的问题，也是许多研究的话题。这绝对不是一个完全解决的问题。由于其结果不能保证达到 100% 的准确性，我们必须考虑这一点。根据应用情况，可能需要人工结果检查。例如，假设你有一个需要检测文本中位置的系统。现在假设文本中的一句话提到了阿波罗 11 号指令舱，"哥伦比亚"。NER 可能将其识别为地点而不是航天器的一部分！每个命名实体识别系统都会为每个识别结果提供一个可能性分数，而这个值永远不会达到 100%。
 
 对于我们的会议事件信息提取场景，我们的目标是从网站数据中提取人名、地点和日期。然后这些信息将被存储并供用户访问。
 
@@ -68,13 +65,10 @@ Comprehend 以数组的形式返回实体识别结果。每个数组元素包含
 
 `Type`--已识别的实体类型：`PERSON`、`LOCATION`、`ORGANIZATION`、`COMMERCIAL_ITEM`、`EVENT`、`DATE`、`QUANTITY`、`TITLE` 或 `OTHER`。
 
-+   `Score`--分析结果中的置信度分数。这是一个介于 `0` 和 `1` 之间的值。
-
-+   `Text`--已识别的实体文本。
-
-+   `BeginOffset`--实体在文本中的起始偏移量。
-
-+   `EndOffset`--实体在文本中的结束偏移量。
++ `Score`--分析结果中的置信度分数。这是一个介于 `0` 和 `1` 之间的值。
++ `Text`--已识别的实体文本。
++ `BeginOffset`--实体在文本中的起始偏移量。
++ `EndOffset`--实体在文本中的结束偏移量。
 
 为了了解 Comprehend 的工作方式，让我们使用 AWS 命令行界面运行一次性的测试。使用 shell 是熟悉任何新 AWS 服务的一种有用方式。
 
@@ -132,11 +126,9 @@ aws comprehend detect-entities --language-code=en --text $INPUT_TEXT > results.j
 
 为了从会议网站爬取的每个网页中获得这些结果，我们将使用异步实体识别 API。这意味着我们必须处理以下 API 的特性：
 
-+   在 Comprehend 上进行的实体识别作业在异步模式下运行时间较长。每个作业可能需要 5 到 10 分钟。这比同步作业要长得多，但权衡是异步作业可以处理更大的文档。
-
-+   为了避免触碰到 API 的限速限制，我们将避免每秒发送超过一个请求，并将多个网页提交给每个任务。
-
-+   亚马逊 Comprehend 中的异步 API 将结果写入配置的 S3 存储桶。我们将通过 S3 存储桶上的通知触发器来处理结果。
++ 在 Comprehend 上进行的实体识别作业在异步模式下运行时间较长。每个作业可能需要 5 到 10 分钟。这比同步作业要长得多，但权衡是异步作业可以处理更大的文档。
++ 为了避免触碰到 API 的限速限制，我们将避免每秒发送超过一个请求，并将多个网页提交给每个任务。
++ 亚马逊 Comprehend 中的异步 API 将结果写入配置的 S3 存储桶。我们将通过 S3 存储桶上的通知触发器来处理结果。
 
 第八章中的网络爬虫为每个网页在 S3 存储桶中写了一个文本文件（`page.txt`）。为了开始实体识别，我们将在 S3 的单独的临时文件夹中创建这个文件的副本。这样，我们可以检查临时文件夹中的新文本文件以供处理。当处理开始时，我们将从临时区域删除文件。原始文件（`page.txt`）将永久保留在`sites`文件夹中，因此如果以后需要，它仍然可用于进一步处理。
 
@@ -221,6 +213,9 @@ Serverless Framework 为这个问题提供了一个很好的解决方案。通�
 准备服务`handler`模块的目标是执行任何必要的处理，以便文本准备好进行实体识别。在我们的案例中，这仅仅是把文本放入正确的文件夹，并使用正确的文件名进行处理。准备服务的`handler`模块如下所示。
 
 列表 9.3 准备服务`handler.js`摘录
+
+
+
 
 ```
 ...
@@ -501,6 +496,8 @@ cd ../extraction-service
 
 列表 9.7 `getTextBatch`函数
 
+
+
 ```
 const MAX_BATCH_SIZE = 25
 const INCOMING_TEXTS_PREFIX = 'incoming-texts/'
@@ -528,13 +525,13 @@ function getTextBatch() {
 }
 ```
 
-❶ 从临时区域（incoming-texts）读取最多 25 个键。
+❶ 从临时区域（`incoming-texts`）读取最多 25 个键。
 
-❷ 修改文件名，以从批处理结果中移除 incoming-texts/前缀。
+❷ 修改文件名，以从批处理结果中移除 `incoming-texts/` 前缀。
 
 ❸ 返回转换后的文件名批次，并附带一个表示批次大小的计数。
 
-我们将等待完全部署提取服务，所以让我们使用`sls invoke local`命令进行测试。请注意，尽管我们是在本地执行函数，但它正在调用 S3。因此，你的`AWS_`环境变量应该在这里设置，以确保你有权执行这些 SDK 调用。
+我们将等待完全部署提取服务，所以让我们使用 `sls invoke local` 命令进行测试。请注意，尽管我们是在本地执行函数，但它正在调用 S3。因此，你的 `AWS_` 环境变量应该在这里设置，以确保你有权执行这些 SDK 调用。
 
 我们如下本地运行该函数：
 
@@ -544,7 +541,7 @@ sls invoke local -f getTextBatch
 
 你应该看到类似于以下列表的输出。
 
-列表 9.8 `getTextBatch`的示例输出
+列表 9.8 `getTextBatch` 的示例输出
 
 ```
 {
@@ -562,15 +559,15 @@ sls invoke local -f getTextBatch
 
 ### 9.5.1 获取代码
 
-提取服务的代码位于`chapter8-9/extraction-service`目录中。我们的`startBatchProcessing`和`checkActiveJobs`函数可以在`handler.js`中找到。
+提取服务的代码位于 `chapter8-9/extraction-service` 目录中。我们的 `startBatchProcessing` 和 `checkActiveJobs` 函数可以在 `handler.js` 中找到。
 
 ### 9.5.2 启动实体识别作业
 
-AWS Comprehend SDK 为我们提供了`startEntitiesDetectionJob`函数。14 它要求我们指定一个输入路径，用于处理 S3 中所有文本文件。我们希望确保没有文本文件被遗漏处理。为了实现这一点，我们将要处理的文件复制到批处理目录中，并且只有在`startEntitiesDetectionJob`调用成功后才会删除源文件。
+AWS Comprehend SDK 为我们提供了 `startEntitiesDetectionJob` 函数。14 它要求我们指定一个输入路径，用于处理 S3 中所有文本文件。我们希望确保没有文本文件被遗漏处理。为了实现这一点，我们将要处理的文件复制到批处理目录中，并且只有在 `startEntitiesDetectionJob` 调用成功后才会删除源文件。
 
-这可以在提取服务的`handler.js`中的`startBatchProcessing` Lambda 函数中看到，如下面的列表所示。
+这可以在提取服务的 `handler.js` 中的 `startBatchProcessing` Lambda 函数中看到，如下面的列表所示。
 
-列表 9.9 提取服务处理程序`startBatchProcessing`函数
+列表 9.9 提取服务处理程序 `startBatchProcessing` 函数
 
 ```
 function startBatchProcessing(event) {
@@ -610,23 +607,23 @@ function startBatchProcessing(event) {
 }
 ```
 
-❶ 事件传递一个路径数组。这些路径相对于 incoming_texts 前缀。这些路径集构成了批处理。
+❶ 事件传递一个路径数组。这些路径相对于 `incoming_texts` 前缀。这些路径集构成了批处理。
 
 ❷ 我们基于当前时间生成一个批处理 ID。这用于在 S3 中创建批处理目录。
 
 ❸ 在处理之前，批处理中的所有文件都复制到批处理目录中。
 
-❹ S3 copyObject API 需要 URL 编码的 CopySource 属性。
+❹ S3 `copyObject` API 需要 URL 编码的 `CopySource` 属性。
 
-❺ 我们将批处理 ID 传递给我们的 startEntityRecognition 函数，以便批处理中的所有文件可以一起分析。
+❺ 我们将批处理 ID 传递给我们的 `startEntityRecognition` 函数，以便批处理中的所有文件可以一起分析。
 
-❻ 批处理识别开始后，我们继续删除 incoming_texts 目录中的所有输入路径。
+❻ 批处理识别开始后，我们继续删除 `incoming_texts` 目录中的所有输入路径。
 
-现在我们可以看到，通过将文件复制到批处理目录中，我们确保`incoming_texts`中的每个文件都将被处理。启动批处理识别作业时出现的任何错误都会使文件留在`incoming_texts`中，以便可以使用后续的批处理重新处理。
+现在我们可以看到，通过将文件复制到批处理目录中，我们确保 `incoming_texts` 中的每个文件都将被处理。启动批处理识别作业时出现的任何错误都会使文件留在 `incoming_texts` 中，以便可以使用后续的批处理重新处理。
 
-我们刚刚看到了对`startEntityRecognition`函数的引用。这个函数负责为 Comprehend 的`startEntitiesDetectionJob` API 创建参数。列表 9.10 显示了该函数的代码。
+我们刚刚看到了对 `startEntityRecognition` 函数的引用。这个函数负责为 Comprehend 的 `startEntitiesDetectionJob` API 创建参数。列表 9.10 显示了该函数的代码。
 
-列表 9.10 提取服务`startBatchProcessing` Lambda 函数
+列表 9.10 提取服务 `startBatchProcessing` Lambda 函数
 
 ```
 function startEntityRecognition(batchId) {
@@ -652,21 +649,21 @@ function startEntityRecognition(batchId) {
 
 ❶ 为了便于手动故障排除，我们使用生成的批处理 ID 作为作业名称。
 
-❷ 作业需要一个具有读取和写入 S3 存储桶权限的 IAM 角色。角色定义可以在 extraction-service/serverless.yml 中找到。
+❷ 作业需要一个具有读取和写入 S3 存储桶权限的 IAM 角色。角色定义可以在 `extraction-service/serverless.yml` 中找到。
 
-❸ 我们需要告诉 Comprehend，S3 文件夹中的每个文件代表一个单独的文档。另一种选择是 ONE_DOC_PER_LINE。
+❸ 我们需要告诉 Comprehend，S3 文件夹中的每个文件代表一个单独的文档。另一种选择是 `ONE_DOC_PER_LINE`。
 
 ❹ 批处理中文件的路径是我们刚刚复制文件的路径。
 
 ❺ 将 Comprehend 结果写入由批处理 ID 指定的输出文件夹。
 
-`startBatchProcessing`函数是本章功能的核心。它将提取的文本传递到 AWS Comprehend，这是一个托管 AI 服务，负责提取重要数据。
+`startBatchProcessing` 函数是本章功能的核心。它将提取的文本传递到 AWS Comprehend，这是一个托管 AI 服务，负责提取重要数据。
 
 ## 9.6 检查实体识别进度
 
-在我们尝试我们的实体识别作业处理之前，我们将查看`checkActiveJobs`。这是一个简单的 Lambda 函数，它将使用 Comprehend API 来报告正在进行的作业的状态。对于手动进度检查，您还可以查看 AWS 管理控制台的 Comprehend 部分。当我们知道有多少作业正在进行时，我们可以知道何时开始更多作业并控制并发 Comprehend 作业执行的数量。`checkActiveJobs`的代码在下一列表中显示。
+在我们尝试我们的实体识别作业处理之前，我们将查看 `checkActiveJobs`。这是一个简单的 Lambda 函数，它将使用 Comprehend API 来报告正在进行的作业的状态。对于手动进度检查，您还可以查看 AWS 管理控制台的 Comprehend 部分。当我们知道有多少作业正在进行时，我们可以知道何时开始更多作业并控制并发 Comprehend 作业执行的数量。`checkActiveJobs` 的代码在下一列表中显示。
 
-列表 9.11 提取服务`checkActiveJobs` Lambda 函数
+列表 9.11 提取服务 `checkActiveJobs` Lambda 函数
 
 ```
 function checkActiveJobs() {
@@ -692,7 +689,7 @@ function checkActiveJobs() {
 }
 ```
 
-❶ 调用 listEntitiesDetectionJobs API，根据正在进行的作业进行过滤。为了限制可能返回的数量，我们将结果数量限制在最大值。我们选择了 10 作为这个值。
+❶ 调用 `listEntitiesDetectionJobs` API，根据正在进行的作业进行过滤。为了限制可能返回的数量，我们将结果数量限制在最大值。我们选择了 10 作为这个值。
 
 ❷ 结果被转换，以给我们一个包含正在进行作业总数（不超过我们的最大作业计数值 10）以及每个作业摘要的输出。
 
@@ -700,11 +697,11 @@ function checkActiveJobs() {
 
 1.  使用 `getTextBatch` 选择要处理的有限数量的文件。
 
-1.  使用 `startBatchProcessing` 启动文件批次的实体识别执行。
+2.  使用 `startBatchProcessing` 启动文件批次的实体识别执行。
 
-1.  `checkActiveJobs` 用于报告正在进行中的识别作业数量。这将在我们整合所有实体提取逻辑时非常有用。
+3.  `checkActiveJobs` 用于报告正在进行中的识别作业数量。这将在我们整合所有实体提取逻辑时非常有用。
 
-我们已经使用 `sls` `invoke` `local` 测试了 `getTextBatch`。接下来，我们将部署提取服务并开始处理一批样本文本文件，以了解这些函数在实际应用中的配合情况。
+我们已经使用 `sls invoke local` 测试了 `getTextBatch`。接下来，我们将部署提取服务并开始处理一批样本文本文件，以了解这些函数在实际应用中的配合情况。
 
 ## 9.7 部署和测试批量实体识别
 
@@ -768,9 +765,9 @@ sls invoke -f startBatchProcessing --data \
 
 我们已经看到如何从命令行手动运行实体提取功能并验证命名实体识别（NER）的输出。对于我们的端到端应用，用于会议网站爬取和分析，我们希望持久化我们的实体提取结果。这样，我们可以使用 API 为寻找会议的观众提供提取的人名、地点和日期！
 
-实体结果处理将由 Comprehend 结果到达我们在启动实体识别作业时配置的输出文件夹驱动。就像准备服务一样，我们将使用 S3 桶通知。你将在提取服务的`serverless.yml`中找到`processEntityResults`函数的配置。相关部分在下一列表中重现。
+实体结果处理将由 Comprehend 结果到达我们在启动实体识别作业时配置的输出文件夹驱动。就像准备服务一样，我们将使用 S3 桶通知。你将在提取服务的 `serverless.yml` 中找到 `processEntityResults` 函数的配置。相关部分在下一列表中重现。
 
-列表 9.13 `processEntityResults`的`serverless.yml`提取
+列表 9.13 `processEntityResults` 的 `serverless.yml` 提取
 
 ```
 processEntityResults:
@@ -789,23 +786,19 @@ processEntityResults:
 
 ❷ 所有 Comprehend 结果都持久化到实体结果中，正如我们在启动实体检测作业时指定的。
 
-❸ Comprehend 还写入其他临时文件。我们只对存储在 output.tar.gz 中的最终结果感兴趣。
+
+
+❸ Comprehend 还写入其他临时文件。我们只对存储在`output.tar.gz`中的最终结果感兴趣。
 
 当结果到达时，我们将使用我们的通知 Lambda 函数提取结果并将它们持久化到前沿服务。由于前沿服务维护所有 URL 的状态，因此将结果与爬取/提取状态一起存储很方便。让我们分解所有必需的步骤：
 
-1.  S3 通知触发`processEntityResults`函数。
-
-1.  对象作为流从 S3 中检索。
-
-1.  流被解压并提取。
-
-1.  输出中的每一行 JSON 都被解析。
-
-1.  每个 Comprehend 结果条目的结构被转换为一个更易于访问的数据结构。结果按实体类型（人物、地点等）分组。
-
-1.  网页的种子和 URL 是从 S3 对象的路径（键）中派生的。
-
-1.  转换后的识别结果被发送到前沿服务。
+1. S3 通知触发`processEntityResults`函数。
+2. 对象作为流从 S3 中检索。
+3. 流被解压并提取。
+4. 输出中的每一行 JSON 都被解析。
+5. 每个 Comprehend 结果条目的结构被转换为一个更易于访问的数据结构。结果按实体类型（人物、地点等）分组。
+6. 网页的种子和 URL 是从 S3 对象的路径（键）中派生的。
+7. 转换后的识别结果被发送到前沿服务。
 
 Lambda 函数和相关内部函数（`handleEntityResultLines`，`storeEntityResults`）可以在提取服务的`handler.js`模块中找到。
 
@@ -893,7 +886,7 @@ States:
 
 ❸ 检查迭代次数。当循环执行了 100 次后，状态机终止。
 
-❹ 现在我们已经运行了 checkActiveJobs 函数，我们可以将活动作业的数量与限制（10）进行比较。
+❹ 现在我们已经运行了`checkActiveJobs`函数，我们可以将活动作业的数量与限制（10）进行比较。
 
 ❺ 获取传入文本的批次。如果没有可用的文本，我们等待。如果至少有一个项目，我们开始一个实体识别作业。
 

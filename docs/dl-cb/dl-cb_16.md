@@ -1,3 +1,5 @@
+
+
 # 第十六章：生产机器学习系统
 
 构建和训练模型是一回事；在生产系统中部署您的模型是另一回事，通常被忽视。在 Python 笔记本中运行代码很好，但不是为 web 客户端提供服务的好方法。在本章中，我们将看看如何真正开始运行。
@@ -73,7 +75,7 @@ Jurassic World
 
 生产机器学习模型的最简单方法是在训练完成后将其保存到磁盘，然后在需要时加载。所有主要的机器学习框架都支持这一点，包括我们在本书中使用的 Keras 和 scikit-learn。
 
-如果您控制内存管理，这个解决方案非常好。然而，在生产 web 服务器中，通常情况并非如此，当 web 请求到来时，如果必须将大型模型加载到内存中，延迟显然会受到影响。
+如果您控制内存管理，这个解决方案非常好。然而，在生产 web 服务器中，通常并非如此，当 web 请求到来时，如果必须将大型模型加载到内存中，延迟显然会受到影响。
 
 # 16.2 使用 Postgres 存储嵌入
 
@@ -125,7 +127,6 @@ Postgres 有许多扩展，值得探索，特别是对于处理大量数据的�
 ```py
 connection_str = "dbname='%s' user='%s' password='%s' host='%s'"
 conn = psycopg2.connect(connection_str % (DB_NAME, USER, PWD, HOST))
-
 ```
 
 插入我们之前构建的模型与 Python 中的任何其他 SQL 操作一样，只是我们需要将我们的`numpy`数组转换为 Python 列表：
@@ -196,7 +197,7 @@ reduced = svd.fit_transform(model.syn0norm)
 
 ```py
 reduced_lengths = np.linalg.norm(reduced, axis=1)
-normalized_reduced = reduced.T / reduced_lengths).T
+normalized_reduced = (reduced.T / reduced_lengths).T
 ```
 
 现在我们可以看相似性：
@@ -229,7 +230,7 @@ martini 0.784037414689
 
 ## 讨论
 
-Postgres 的`cube`扩展很棒，但带有一个警告，它仅适用于具有 100 个或更少元素的向量。文档有用地解释了这个限制：“为了让人们更难破坏事物，立方体的维度数量限制为 100。”绕过这个限制的一种方法是重新编译 Postgres，但这只是一个选项，如果您直接控制您的设置。此外，随着数据库的新版本发布，您需要继续这样做。
+Postgres 的`cube`扩展很棒，但带有一个警告，它仅适用于具有 100 个或更少元素的向量。文档有用地解释了这个限制：“为了让人们更难破坏事物，立方体的维度数量限制为 100。”绕过这种限制的一种方法是重新编译 Postgres，但这只是一个选项，如果您直接控制您的设置。此外，随着数据库的新版本发布，您需要继续这样做。
 
 在将我们的向量插入数据库之前降低维度可以很容易地使用`TruncatedSVD`类来完成。在这个示例中，我们使用了 Word2vec 数据集中的整个单词集，这导致了一些精度的损失。如果我们不仅降低输出的维度，还减少术语的数量，我们可以做得更好。然后 SVD 可以找到我们提供的数据中最重要的维度，而不是所有数据。这甚至可以通过泛化一点并掩盖原始输入数据中的数据不足来帮助。
 
@@ -295,39 +296,10 @@ REST 最初是作为一个完整的资源管理框架，为系统中的所有资
 
 第一步是加载腌制的图像名称和最近邻模型，并实例化用于图像识别的预训练模型：
 
-```py
-with open('data/image_similarity.pck', 'rb') as fin:
-    p = pickle.load(fin)
-    image_names = p['image_names']
-    nbrs = p['nbrs']
-base_model = InceptionV3(weights='imagenet', include_top=True)
-model = Model(inputs=base_model.input,
-              outputs=base_model.get_layer('avg_pool').output)
-```
 
-我们现在可以通过更改`if file:`后的代码部分来修改如何处理传入的图像。我们将调整图像大小到模型的目标大小，规范化数据，运行预测，并找到最近的邻居：
 
-```py
-      img = Image.open(file)
-      target_size = int(max(model.input.shape[1:]))
-      img = img.resize((target_size, target_size), Image.ANTIALIAS)
-      pre_processed = preprocess_input(
-          np.asarray([image.img_to_array(img)]))
-      vec = model.predict(pre_processed)
-      distances, indices = nbrs.kneighbors(vec)
-      res = [{'distance': dist,
-              'image_name': image_names[idx]}
-             for dist, idx in zip(distances[0], indices[0])]
-      return jsonify(results=res)
-```
 
-给它一张猫的图片，你应该看到从维基百科图片中抽样出大量猫的图片——还有一张孩子们玩家用电脑的照片。
-
-## 讨论
-
-通过在启动时加载模型，然后在图像进入时馈送图像，我们可以减少我们遵循本节第一个示例方法所获得的延迟。我们在这里有效地链接了两个模型，预训练的图像识别网络和最近邻分类器，并将组合导出为一个服务。
-
-# 16.7 从 Web 框架调用微服务
+# 16.6 从 Web 框架调用微服务
 
 ## 问题
 
@@ -360,7 +332,7 @@ def simple_view(request):
 
 `Requests`是一个用于发起`HTTP`调用的简单模块。尽管它不支持发起异步调用。在这个示例的代码中，这并不重要，但如果我们需要调用多个服务，我们希望能够并行进行。有许多选项可供选择，但它们都遵循一种模式，即在请求开始时向后端发起调用，进行我们需要的处理，然后在需要结果时等待未完成的请求。这是使用 Python 构建高性能系统的良好设置。
 
-# 16.8 TensorFlow seq2seq 模型
+# 16.7 TensorFlow seq2seq 模型
 
 ## 问题
 
@@ -435,7 +407,7 @@ def handle_request():
 
 在这个配方中，我们将数据输入到 seq2seq TensorFlow 模型的方式并不是很漂亮，但它是有效的，并且在性能方面比使用`stdin`和`stdout`要好得多。希望这个库的即将推出的版本将为我们提供一个更好的方式来在生产中使用这些模型，但目前这样做就可以了。
 
-# 16.9 在浏览器中运行深度学习模型
+# 16.8 在浏览器中运行深度学习模型
 
 ## 问题
 
@@ -468,7 +440,6 @@ git clone https://github.com/transcranial/keras-js.git
 
 ```py
 python <*git-root*>/keras-js/python/encoder.py nietzsche.h5
-
 ```
 
 这将给您一个*nietzsche.bin*文件。
@@ -561,7 +532,7 @@ return model.predict(inputData).then(outputData => {
 
 *encoder.py*脚本有一个名为`--quantize`的标志，它将模型的权重编码为 8 位整数。这将减少模型大小 75%，但意味着权重将不太精确，这可能会影响预测准确性。
 
-# 16.10 使用 TensorFlow Serving 运行 Keras 模型
+# 16.9 使用 TensorFlow Serving 运行 Keras 模型
 
 ## 问题
 
@@ -576,6 +547,8 @@ TensorFlow Serving 是 TensorFlow 平台的一部分；根据谷歌的说法，�
 将一个 TensorFlow 模型写成 TensorFlow Serving 可以使用的方式有些复杂。为了使其正常工作，Keras 模型需要更多的调整。原则上，只要模型只有一个输入和一个输出，就可以使用任何模型——这是 TensorFlow Serving 的限制之一。另一个限制是 TensorFlow Serving 只支持 Python 2.7。
 
 首先要做的是将模型重新创建为仅用于测试的模型。模型在训练和测试期间的行为不同。例如，`Dropout`层在训练时只会随机丢弃神经元，而在测试时会使用所有神经元。Keras 会将这些隐藏在用户之外，将学习阶段作为额外变量传递。如果您看到错误提示缺少输入的某些内容，这可能是原因。我们将学习阶段设置为`0`（false），并从我们的字符 CNN 模型中提取配置和权重：
+
+
 
 ```py
 K.set_learning_phase(0)

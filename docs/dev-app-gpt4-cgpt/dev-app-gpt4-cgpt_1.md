@@ -1,3 +1,4 @@
+
 # 前言
 
 在发布仅仅五天后，ChatGPT 就吸引了惊人的一百万用户，这在科技行业及其他领域引起了轰动。作为一个副作用，OpenAI API 用于人工智能文本生成的接口突然曝光，尽管它已经可用了三年。ChatGPT 界面展示了这种语言模型的潜力，突然之间，开发人员和发明家开始意识到他们手边可利用的令人难以置信的可能性。
@@ -18,7 +19,7 @@
 
 `等宽`
 
-用于程序清单，以及在段萂中引用程序元素，如变量或函数名称、数据库、数据类型、环境变量、语句和关键字。
+用于程序清单，以及在段落中引用程序元素，如变量或函数名称、数据库、数据类型、环境变量、语句和关键字。
 
 **`等宽粗体`**
 
@@ -42,15 +43,15 @@
 
 # 使用代码示例
 
-可下载补充材料（代码示例、练习等）[*https://oreil.ly/DevAppsGPT_GitHub*](https://oreil.ly/DevAppsGPT_GitHub)。
+可下载补充材料（代码示例、练习等）[`https://oreil.ly/DevAppsGPT_GitHub`](https://oreil.ly/DevAppsGPT_GitHub)。
 
-如果您有技术问题或在使用代码示例时遇到问题，请发送电子邮件至*support@oreilly.com*。
+如果您有技术问题或在使用代码示例时遇到问题，请发送电子邮件至`support@oreilly.com`。
 
 本书旨在帮助您完成工作。一般来说，如果本书提供了示例代码，您可以在您的程序和文档中使用它。除非您复制了代码的大部分内容，否则无需征得我们的许可。例如，编写一个使用本书中几个代码块的程序不需要许可。出售或分发 O'Reilly 图书中的示例需要许可。引用本书并引用示例代码来回答问题不需要许可。将本书中大量的示例代码整合到产品文档中需要许可。
 
 我们感谢，但通常不要求署名。署名通常包括标题、作者、出版商和 ISBN。例如：“*使用 GPT-4 和 ChatGPT 开发应用程序*，作者 Olivier Caelen 和 Marie-Alice Blete（O'Reilly）。版权所有 2023 年 Olivier Caelen 和 Marie-Alice Blete，978-1-098-15248-2。”
 
-如果您觉得您使用的代码示例超出了合理使用范围或上述给出的许可，请随时与我们联系*permissions@oreilly.com*。
+如果您觉得您使用的代码示例超出了合理使用范围或上述给出的许可，请随时与我们联系`permissions@oreilly.com`。
 
 # 致谢
 
@@ -61,5 +62,3 @@
 非常感谢我们 Worldline Labs 同事对 ChatGPT 和 OpenAI 服务的见解和永无止境的讨论；特别是 Liyun He Guelton，Guillaume Coter，Luxin Zhang 和 Patrik De Boe。同样非常感谢 Worldline 的开发者倡导团队从一开始就提供的支持和鼓励；特别是 Jean-Francois James 和 Fanilo Andrianasolo。
 
 最后，我们感谢我们的朋友和家人在我们疯狂迷恋 ChatGPT 期间的支持，使我们能够在如此短的时间内发布这本书。
-
-

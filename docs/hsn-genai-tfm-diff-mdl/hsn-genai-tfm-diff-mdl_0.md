@@ -1,12 +1,13 @@
+
 # 第一章：扩散模型
 
-在 2020 年末，一个名为扩散模型的鲜为人知的模型类别开始在机器学习领域引起轰动。研究人员找出了如何使用这些模型生成比以前技术产生的合成图像质量更高的图像。随后出现了一系列论文，提出了改进和修改，进一步提高了质量。到 2021 年底，出现了像 GLIDE 这样的模型，展示了在文本到图像任务上令人难以置信的结果，几个月后，这些模型已经进入了主流，如 DALL-E 2 和 Stable Diffusion 等工具，使任何人都可以通过输入所需看到的文本描述来生成图像。
+在 2020 年末，一个名为扩散模型的鲜为人知的模型类别开始在机器学习领域引起轰动。研究人员找出了如何使用这些模型生成比以前技术产生的合成图像质量更高的图像。随后出现了一系列论文，提出了改进和修改，进一步提高了质量。到 2021 年底，出现了像 `GLIDE` 这样的模型，展示了在文本到图像任务上令人难以置信的结果，几个月后，这些模型已经进入了主流，如 `DALL-E 2` 和 `Stable Diffusion` 等工具，使任何人都可以通过输入所需看到的文本描述来生成图像。
 
-在本章中，我们将深入了解这些模型的工作原理。我们将概述使它们如此强大的关键见解，使用现有模型生成图像，以了解它们的工作方式，然后训练我们自己的模型，以进一步加深对此的理解。该领域仍在快速发展，但本章涵盖的主题应该为您打下坚实的基础。第五章将通过一个名为 Stable Diffusion 的模型，探索更高级的技术，第六章将探讨这些技术在简单图像生成之外的应用。
+在本章中，我们将深入了解这些模型的工作原理。我们将概述使它们如此强大的关键见解，使用现有模型生成图像，以了解它们的工作方式，然后训练我们自己的模型，以进一步加深对此的理解。该领域仍在快速发展，但本章涵盖的主题应该为您打下坚实的基础。第五章将通过一个名为 `Stable Diffusion` 的模型，探索更高级的技术，第六章将探讨这些技术在简单图像生成之外的应用。
 
 # 关键见解：迭代细化
 
-那么，是什么使扩散模型如此强大呢？先前的技术，如 VAEs 或 GANs，通过模型的单次前向传递生成最终输出。这意味着模型必须在第一次尝试时就做到一切正确。如果它犯了一个错误，就无法返回并修复它。另一方面，扩散模型通过迭代多个步骤生成其输出。这种“迭代细化”允许模型纠正之前步骤中的错误，并逐渐改进输出。为了说明这一点，让我们看一个扩散模型的示例。
+那么，是什么使扩散模型如此强大呢？先前的技术，如 `VAEs` 或 `GANs`，通过模型的单次前向传递生成最终输出。这意味着模型必须在第一次尝试时就做到一切正确。如果它犯了一个错误，就无法返回并修复它。另一方面，扩散模型通过迭代多个步骤生成其输出。这种“迭代细化”允许模型纠正之前步骤中的错误，并逐渐改进输出。为了说明这一点，让我们看一个扩散模型的示例。
 
 我们可以使用 Hugging Face 扩散器库加载预训练模型。该管道可用于直接创建图像，但这并不能显示出底层发生了什么：
 
@@ -21,7 +22,7 @@ image_pipe().images[0]
 
 ![image](img/cell-4-output-3.png)
 
-我们可以逐步重新创建采样过程，以更好地了解模型生成图像时发生了什么。我们使用随机噪声初始化我们的样本 x，然后通过模型运行 30 步。在右侧，您可以看到模型对特定步骤的最终图像预测-请注意，最初的预测并不特别好！我们不是直接跳到最终预测的图像，而是只在预测的方向上稍微修改 x（显示在左侧）。然后，我们再次将这个新的、稍微更好的 x 通过模型进行下一步的处理，希望能产生稍微改进的预测，这可以用来进一步更新 x，依此类推。经过足够的步骤，模型可以生成一些令人印象深刻的逼真图像。
+我们可以逐步重新创建采样过程，以更好地了解模型生成图像时发生了什么。我们使用随机噪声初始化我们的样本 `x`，然后通过模型运行 30 步。在右侧，您可以看到模型对特定步骤的最终图像预测-请注意，最初的预测并不特别好！我们不是直接跳到最终预测的图像，而是只在预测的方向上稍微修改 `x`（显示在左侧）。然后，我们再次将这个新的、稍微更好的 `x` 通过模型进行下一步的处理，希望能产生稍微改进的预测，这可以用来进一步更新 `x`，依此类推。经过足够的步骤，模型可以生成一些令人印象深刻的逼真图像。
 
 ```py
 # The random starting point for a batch of 4 images
@@ -74,7 +75,7 @@ for i, t in enumerate(image_pipe.scheduler.timesteps):
 
 # 训练扩散模型
 
-在本节中，我们将从头开始训练一个扩散模型，以更好地了解它们的工作原理。我们将首先使用 Hugging Face diffusers 库中的组件。随着本章的进行，我们将逐渐揭开每个组件的工作原理。与其他类型的生成模型相比，训练扩散模型相对简单。我们反复进行：
+在本节中，我们将从头开始训练一个扩散模型，以更好地了解它们的工作原理。我们将首先使用 Hugging Face `diffusers` 库中的组件。随着本章的进行，我们将逐渐揭开每个组件的工作原理。与其他类型的生成模型相比，训练扩散模型相对简单。我们反复进行：
 
 +   从训练数据中加载一些图像。
 
@@ -96,9 +97,14 @@ for i, t in enumerate(image_pipe.scheduler.timesteps):
 dataset = load_dataset("huggan/smithsonian_butterflies_subset", split="train")
 ```
 
-在使用这些数据训练模型之前，我们需要做一些准备。图像通常表示为一个“像素”网格，每个像素有三个颜色通道（红色、绿色和蓝色）的颜色值在 0 到 255 之间。为了处理这些图像并使它们准备好进行训练，我们需要： - 将它们调整为固定大小 - （可选）通过随机水平翻转来添加一些增强，有效地使我们的数据集大小加倍 - 将它们转换为 PyTorch 张量（表示颜色值为 0 到 1 之间的浮点数） - 将它们标准化为具有均值为 0 的值，值在-1 到 1 之间
+在使用这些数据训练模型之前，我们需要做一些准备。图像通常表示为一个“像素”网格，每个像素有三个颜色通道（红色、绿色和蓝色）的颜色值在 0 到 255 之间。为了处理这些图像并使它们准备好进行训练，我们需要：
 
-我们可以使用`torchvision.transforms`来完成所有这些操作：
+-   将它们调整为固定大小
+-   （可选）通过随机水平翻转来添加一些增强，有效地使我们的数据集大小加倍
+-   将它们转换为 PyTorch 张量（表示颜色值为 0 到 1 之间的浮点数）
+-   将它们标准化为具有均值为 0 的值，值在 -1 到 1 之间
+
+我们可以使用 `torchvision.transforms` 来完成所有这些操作：
 
 ```py
 image_size = 64
@@ -148,7 +154,7 @@ Bounds: -0.9921568632125854 to 1.0
 
 ## 添加噪音
 
-我们如何逐渐破坏我们的数据？最常见的方法是向图像添加噪音。我们添加的噪音量由噪音时间表控制。不同的论文和方法以不同的方式处理这个问题，我们将在本章后面进行探讨。现在，让我们看看一种常见的方法，基于 Ho 等人的论文“去噪扩散概率模型”。在扩散器库中，添加噪音是由称为调度器的东西处理的，它接收一批图像和一个“时间步长”列表，并确定如何创建这些图像的嘈杂版本：
+我们如何逐渐破坏我们的数据？最常见的方法是向图像添加噪音。我们添加的噪音量由噪音时间表控制。不同的论文和方法以不同的方式处理这个问题，我们将在本章后面进行探讨。现在，让我们看看一种常见的方法，基于 `Ho` 等人的论文“去噪扩散概率模型”。在扩散器库中，添加噪音是由称为调度器的东西处理的，它接收一批图像和一个“时间步长”列表，并确定如何创建这些图像的嘈杂版本：
 
 ```py
 scheduler = DDPMScheduler(num_train_timesteps=1000, beta_start=0.001, beta_end=0.02)
@@ -162,15 +168,15 @@ show_images((noised_x*0.5 + 0.5).clip(0, 1))
 
 ![image](img/cell-10-output-1.png)
 
-在训练过程中，我们将随机选择时间步长。调度器接收一些参数（beta_start 和 beta_end），它用这些参数来确定给定时间步长应该存在多少噪音。我们将在第 X 节中更详细地介绍调度器。
+在训练过程中，我们将随机选择时间步长。调度器接收一些参数（`beta_start` 和 `beta_end`），它用这些参数来确定给定时间步长应该存在多少噪音。我们将在第 X 节中更详细地介绍调度器。
 
 ## UNet
 
-UNet 是一种卷积神经网络，用于诸如图像分割之类的任务，其中期望的输出与输入具有相同的空间范围。它由一系列“下采样”层组成，用于减小输入的空间大小，然后是一系列“上采样”层，用于再次增加输入的空间范围。下采样层通常也后面跟着一个“跳跃连接”，将下采样层的输出连接到上采样层的输入。这允许上采样层“看到”网络早期的高分辨率表示，这对于具有图像样式输出的任务特别有用，其中这些高分辨率信息尤为重要。
+`UNet` 是一种卷积神经网络，用于诸如图像分割之类的任务，其中期望的输出与输入具有相同的空间范围。它由一系列“下采样”层组成，用于减小输入的空间大小，然后是一系列“上采样”层，用于再次增加输入的空间范围。下采样层通常也后面跟着一个“跳跃连接”，将下采样层的输出连接到上采样层的输入。这允许上采样层“看到”网络早期的高分辨率表示，这对于具有图像样式输出的任务特别有用，其中这些高分辨率信息尤为重要。
 
-扩散库中使用的 UNet 架构比 2015 年 Ronneberger 等人提出的[原始 UNet](https://arxiv.org/abs/1505.04597)更先进，增加了注意力和残差块等功能。我们稍后会更仔细地看一下，但这里的关键特点是它可以接受一个输入（嘈杂的图像）并产生一个形状相同的预测（预测的噪音）。对于扩散模型，UNet 通常还接受时间步作为额外的条件，我们将在 UNet 深入探讨部分再次探讨这一点。
+扩散库中使用的 `UNet` 架构比 2015 年 `Ronneberger` 等人提出的[原始 UNet](https://arxiv.org/abs/1505.04597)更先进，增加了注意力和残差块等功能。我们稍后会更仔细地看一下，但这里的关键特点是它可以接受一个输入（嘈杂的图像）并产生一个形状相同的预测（预测的噪音）。对于扩散模型，`UNet` 通常还接受时间步作为额外的条件，我们将在 `UNet` 深入探讨部分再次探讨这一点。
 
-这是我们如何创建一个 UNet 并将我们的一批嘈杂图像输入其中的方法：
+这是我们如何创建一个 `UNet` 并将我们的一批嘈杂图像输入其中的方法：
 
 ```py
 # Create a UNet2DModel
@@ -198,7 +204,7 @@ torch.Size([8, 3, 64, 64])
 
 ## 训练
 
-现在我们的模型和数据准备好了，我们可以开始训练。我们将使用学习率为 3e-4 的 AdamW 优化器。对于每个训练步骤，我们：
+现在我们的模型和数据准备好了，我们可以开始训练。我们将使用学习率为 `3e-4` 的 `AdamW` 优化器。对于每个训练步骤，我们：
 
 +   加载一批图像。
 
@@ -211,6 +217,10 @@ torch.Size([8, 3, 64, 64])
 +   反向传播损失并使用优化器更新模型权重。
 
 在代码中，所有这些看起来是这样的：
+
+
+
+# 训练扩散模型
 
 ```py
 num_epochs = 50 # How many runs through the data should we do?
@@ -324,7 +334,7 @@ show_images(sample.clip(-1, 1)*0.5 + 0.5, nrows=1)
 
 在本章的开头，我们说扩散模型背后的关键思想是迭代改进。在训练期间，我们通过不同的方式“腐败”输入。在推断期间，我们从“最大程度上腐败”的输入开始，迭代地“去腐败”它，希望最终得到一个不错的最终结果。
 
-到目前为止，我们已经专注于一种特定的“腐败”：添加高斯噪声。这样做的一个原因是扩散模型的理论基础 - 如果我们使用不同的腐败方法，我们在技术上就不再做“扩散”了！然而，Bansal 等人的一篇题为[*Cold Diffusion*](https://arxiv.org/abs/2208.09392)的论文戏剧性地表明，我们不一定需要仅仅出于理论上的便利而限制自己使用这种方法。他们表明，类似扩散模型的方法适用于许多不同的“腐败”方法（见图 1-1）。最近，像[MUSE](https://arxiv.org/abs/2301.00704)、[MaskGIT](https://arxiv.org/abs/2202.04200)和[PAELLA](https://arxiv.org/abs/2211.07292)这样的模型已经使用了随机标记屏蔽或替换作为等效的“腐败”方法，用于量化数据 - 也就是说，用离散标记而不是连续值表示的数据。
+到目前为止，我们已经专注于一种特定的“腐败”：添加高斯噪声。这样做的一个原因是扩散模型的理论基础 - 如果我们使用不同的腐败方法，我们在技术上就不在做“扩散”了！然而，Bansal 等人的一篇题为[*Cold Diffusion*](https://arxiv.org/abs/2208.09392)的论文戏剧性地表明，我们不一定需要仅仅出于理论上的便利而限制自己使用这种方法。他们表明，类似扩散模型的方法适用于许多不同的“腐败”方法（见图 1-1）。最近，像[MUSE](https://arxiv.org/abs/2301.00704)、[MaskGIT](https://arxiv.org/abs/2202.04200)和[PAELLA](https://arxiv.org/abs/2211.07292)这样的模型已经使用了随机标记屏蔽或替换作为等效的“腐败”方法，用于量化数据 - 也就是说，用离散标记而不是连续值表示的数据。
 
 ![image.png](img/84ca400c-1-image.png)
 
@@ -404,17 +414,23 @@ show_images((noised_x*0.5 + 0.5).clip(0, 1))
 
 <math display="block"><mrow><mi>q</mi> <mrow><mo>(</mo> <msub><mi>𝐱</mi> <mi>t</mi></msub> <mo>|</mo> <msub><mi>𝐱</mi> <mrow><mi>t</mi><mo>-</mo><mn>1</mn></mrow></msub> <mo>)</mo></mrow> <mo>=</mo> <mi>𝒩</mi> <mrow><mo>(</mo> <msub><mi>𝐱</mi> <mi>t</mi></msub> <mo>;</mo> <msqrt><mrow><mn>1</mn> <mo>-</mo> <msub><mi>β</mi> <mi>t</mi></msub></mrow></msqrt> <msub><mi>𝐱</mi> <mrow><mi>t</mi><mo>-</mo><mn>1</mn></mrow></msub> <mo>,</mo> <msub><mi>β</mi> <mi>t</mi></msub> <mi>𝐈</mi> <mo>)</mo></mrow> <mo>.</mo></mrow></math>
 
-这里<math alttext="beta Subscript t"><msub><mi>β</mi> <mi>t</mi></msub></math>被定义为所有时间步长 t，并用于指定每个步骤添加多少噪声。这种符号可能有点令人生畏，但这个方程告诉我们的是，更嘈杂的<math alttext="bold x Subscript t"><msub><mi>𝐱</mi> <mi>t</mi></msub></math>是一个*分布*，其均值为<math alttext="StartRoot 1 minus beta Subscript t Baseline EndRoot bold x Subscript t minus 1"><mrow><msqrt><mrow><mn>1</mn> <mo>-</mo> <msub><mi>β</mi> <mi>t</mi></msub></mrow></msqrt> <msub><mi>𝐱</mi> <mrow><mi>t</mi><mo>-</mo><mn>1</mn></mrow></msub></mrow></math>，方差为<math alttext="beta Subscript t"><msub><mi>β</mi> <mi>t</mi></msub></math>。换句话说，<math alttext="bold x Subscript t"><msub><mi>𝐱</mi> <mi>t</mi></msub></math>是<math alttext="bold x Subscript t minus 1"><msub><mi>𝐱</mi> <mrow><mi>t</mi><mo>-</mo><mn>1</mn></mrow></msub></math>（按<math alttext="StartRoot 1 minus beta Subscript t Baseline EndRoot"><msqrt><mrow><mn>1</mn> <mo>-</mo> <msub><mi>β</mi> <mi>t</mi></msub></mrow></msqrt></math>缩放）和一些随机噪声的混合，我们可以将其视为按<math alttext="StartRoot beta Subscript t Baseline EndRoot"><msqrt><msub><mi>β</mi> <mi>t</mi></msub></msqrt></math>缩放的单位方差噪声。给定<math alttext="x Subscript t minus 1"><msub><mi>x</mi> <mrow><mi>t</mi><mo>-</mo><mn>1</mn></mrow></msub></math>和一些噪声<math alttext="epsilon"><mi>ϵ</mi></math>，我们可以从这个分布中采样得到<math alttext="x Subscript t"><msub><mi>x</mi> <mi>t</mi></msub></math>：
 
-<math><mrow><msub><mi>𝐱</mi> <mi>t</mi></msub> <mo>=</mo> <msqrt><mrow><mn>1</mn> <mo>-</mo> <msub><mi>β</mi> <mi>t</mi></msub></mrow></msqrt> <msub><mi>𝐱</mi> <mrow><mi>t</mi><mo>-</mo><mn>1</mn></mrow></msub> <mo>+</mo> <msqrt><msub><mi>β</mi> <mi>t</mi></msub></msqrt> <mi>ϵ</mi></mrow></math>
 
-要在时间步 t 获得嘈杂的输入，我们可以从 t=0 开始，并反复应用这一步，但这将非常低效。相反，我们可以找到一个公式一次性移动到任何时间步 t。我们定义<math alttext="alpha Subscript t Baseline equals 1 minus beta Subscript t"><mrow><msub><mi>α</mi> <mi>t</mi></msub> <mo>=</mo> <mn>1</mn> <mo>-</mo> <msub><mi>β</mi> <mi>t</mi></msub></mrow></math>，然后使用以下公式：
+这里`β_t`被定义为所有时间步长`t`，并用于指定每个步骤添加多少噪声。这种符号可能有点令人生畏，但这个方程告诉我们的是，更嘈杂的`𝐱_t`是一个*分布*，其均值为`√(1 - β_t) 𝐱_{t-1}`，方差为`β_t`。换句话说，`𝐱_t`是`𝐱_{t-1}`（按`√(1 - β_t)`缩放）和一些随机噪声的混合，我们可以将其视为按`√β_t`缩放的单位方差噪声。给定`x_{t-1}`和一些噪声`ϵ`，我们可以从这个分布中采样得到`x_t`：
 
-<math><mrow><msub><mi>x</mi> <mi>t</mi></msub> <mo>=</mo> <msqrt><msub><mover accent="true"><mi>α</mi> <mo>¯</mo></mover> <mi>t</mi></msub></msqrt> <msub><mi>x</mi> <mn>0</mn></msub> <mo>+</mo> <msqrt><mrow><mn>1</mn> <mo>-</mo> <msub><mover accent="true"><mi>α</mi> <mo>¯</mo></mover> <mi>t</mi></msub></mrow></msqrt> <mi>ϵ</mi></mrow></math>
+```
+𝐱_t = √(1 - β_t) 𝐱_{t-1} + √β_t ϵ
+```
 
-在这里 - <math alttext="epsilon"><mi>ϵ</mi></math> 是一些方差为单位的高斯噪声 - <math alttext="alpha overbar"><mover accent="true"><mi>α</mi> <mo>¯</mo></mover></math>（'alpha_bar'）是直到时间<math alttext="t"><mi>t</mi></math>的所有<math alttext="alpha"><mi>α</mi></math>值的累积乘积。
+要在时间步`t`获得嘈杂的输入，我们可以从`t=0`开始，并反复应用这一步，但这将非常低效。相反，我们可以找到一个公式一次性移动到任何时间步`t`。我们定义`α_t = 1 - β_t`，然后使用以下公式：
 
-因此，<math alttext="x Subscript t"><msub><mi>x</mi> <mi>t</mi></msub></math>是<math alttext="x 0"><msub><mi>x</mi> <mn>0</mn></msub></math>（由<math alttext="StartRoot alpha overbar Subscript t Baseline EndRoot"><msqrt><msub><mover accent="true"><mi>α</mi> <mo>¯</mo></mover> <mi>t</mi></msub></msqrt></math>缩放）和<math alttext="epsilon"><mi>ϵ</mi></math>（由<math alttext="StartRoot 1 minus alpha overbar Subscript t Baseline EndRoot"><msqrt><mrow><mn>1</mn> <mo>-</mo> <msub><mover accent="true"><mi>α</mi> <mo>¯</mo></mover> <mi>t</mi></msub></mrow></msqrt></math>缩放）的混合物。在 diffusers 库中，<math alttext="alpha overbar"><mover accent="true"><mi>α</mi> <mo>¯</mo></mover></math>值存储在`scheduler.alphas_cumprod`中。知道这一点，我们可以绘制给定调度程序的不同时间步骤中原始图像<math alttext="x 0"><msub><mi>x</mi> <mn>0</mn></msub></math>和噪音<math alttext="epsilon"><mi>ϵ</mi></math>的缩放因子：
+```
+x_t = √(ᾱ_t) x_0 + √(1 - ᾱ_t) ϵ
+```
+
+在这里 - `ϵ`是一些方差为单位的高斯噪声 - `ᾱ`（'alpha_bar'）是直到时间`t`的所有`α`值的累积乘积。
+
+因此，`x_t`是`x_0`（由`√ᾱ_t`缩放）和`ϵ`（由`√(1 - ᾱ_t)`缩放）的混合物。在`diffusers`库中，`ᾱ`值存储在`scheduler.alphas_cumprod`中。知道这一点，我们可以绘制给定调度程序的不同时间步骤中原始图像`x_0`和噪音`ϵ`的缩放因子：
 
 ```py
 plot_scheduler(DDPMScheduler()) # The default scheduler
@@ -422,7 +438,7 @@ plot_scheduler(DDPMScheduler()) # The default scheduler
 
 ![image](img/cell-21-output-1.png)
 
-我们上面的 SimpleScheduler 只是在原始图像和噪音之间线性混合，我们可以看到如果我们绘制缩放因子（相当于<math alttext="StartRoot alpha overbar Subscript t Baseline EndRoot"><msqrt><msub><mover accent="true"><mi>α</mi> <mo>¯</mo></mover> <mi>t</mi></msub></msqrt></math>和<math alttext="StartRoot left-parenthesis 1 minus alpha overbar Subscript t Baseline right-parenthesis EndRoot"><msqrt><mrow><mo>(</mo> <mn>1</mn> <mo>-</mo> <msub><mover accent="true"><mi>α</mi> <mo>¯</mo></mover> <mi>t</mi></msub> <mo>)</mo></mrow></msqrt></math>在 DDPM 情况下）：
+我们上面的`SimpleScheduler`只是在原始图像和噪音之间线性混合，我们可以看到如果我们绘制缩放因子（相当于`√ᾱ_t`和`√(1 - ᾱ_t)`在 DDPM 情况下）：
 
 ```py
 plot_scheduler(SimpleScheduler())
@@ -432,11 +448,11 @@ plot_scheduler(SimpleScheduler())
 
 一个良好的噪音调度将确保模型看到不同噪音水平的图像混合。最佳选择将根据训练数据而异。可视化一些更多选项，注意：
 
-+   将 beta_end 设置得太低意味着我们永远不会完全擦除图像，因此模型永远不会看到任何类似于用作推理起点的随机噪音的东西。
++   将`beta_end`设置得太低意味着我们永远不会完全擦除图像，因此模型永远不会看到任何类似于用作推理起点的随机噪音的东西。
 
-+   将 beta_end 设置得非常高意味着大多数时间步骤都花在几乎完全的噪音上，这将导致训练性能不佳。
++   将`beta_end`设置得非常高意味着大多数时间步骤都花在几乎完全的噪音上，这将导致训练性能不佳。
 
-+   不同的 beta 调度给出不同的曲线。
++   不同的`beta`调度给出不同的曲线。
 
 “余弦”调度是一个受欢迎的选择，因为它可以使原始图像平稳过渡到噪音。
 
@@ -456,7 +472,7 @@ plot_scheduler(DDPMScheduler(beta_end=0.1, beta_schedule="linear"),
 
 ###### 注意
 
-这里显示的所有调度都被称为“方差保持”（VP），这意味着模型输入的方差在整个调度过程中保持接近 1。您可能还会遇到“方差爆炸”（VE）公式，其中噪音只是以不同的量添加到原始图像（导致高方差输入）。我们将在采样章节中更详细地讨论这一点。我们的 SimpleScheduler 几乎是一个 VP 调度，但由于线性插值，方差并没有完全保持。
+这里显示的所有调度都被称为“方差保持”（VP），这意味着模型输入的方差在整个调度过程中保持接近 1。您可能还会遇到“方差爆炸”（VE）公式，其中噪音只是以不同的量添加到原始图像（导致高方差输入）。我们将在采样章节中更详细地讨论这一点。我们的`SimpleScheduler`几乎是一个 VP 调度，但由于线性插值，方差并没有完全保持。
 
 与许多与扩散相关的主题一样，不断有新的论文探讨噪音调度的主题，因此当您阅读本文时，可能会有大量的选项可供尝试！
 
@@ -487,6 +503,8 @@ plot_scheduler(DDPMScheduler(beta_end=0.1, beta_schedule="linear"),
 ###### 图 1-3。我们简单的 UNet 架构
 
 这个 UNet 以 32px 分辨率接收单通道输入，并以 32px 分辨率输出单通道输出，我们可以用它来构建 MNIST 数据集的扩散模型。编码路径中有三层，解码路径中也有三层。每一层由卷积后跟激活函数和上采样或下采样步骤（取决于我们是否在编码或解码路径中）组成。跳过连接允许信息直接从下采样块流向上采样块，并通过将下采样块的输出添加到相应上采样块的输入来实现。一些 UNet 将下采样块的输出连接到相应上采样块的输入，并可能还在跳过连接中包含额外的层。以下是这个网络的代码：
+
+
 
 ```py
 from torch import nn
@@ -532,17 +550,12 @@ class BasicUNet(nn.Module):
 
 这个简单的 UNet 适用于这个相对简单的任务，但远非理想。那么，我们可以做些什么来改进它呢？
 
-+   添加更多参数。可以通过在每个块中使用多个卷积层，通过在每个卷积层中使用更多的滤波器，或者通过使网络更深来实现。
-
-+   添加残差连接。使用 ResBlocks 而不是常规卷积层可以帮助模型学习更复杂的功能，同时保持训练稳定。
-
-+   添加归一化，如批归一化。批归一化可以帮助模型更快、更可靠地学习，确保每一层的输出都围绕 0 中心，并具有标准差为 1。
-
-+   添加正则化，如 dropout。Dropout 有助于防止模型过度拟合训练数据，这在处理较小的数据集时非常重要。
-
-+   添加注意力。通过引入自注意力层，我们允许模型在不同时间集中关注图像的不同部分，这有助于学习更复杂的功能。类似变压器的注意力层的添加也可以增加可学习参数的数量，这有助于模型学习更复杂的功能。缺点是注意力层在更高分辨率时计算成本要比常规卷积层高得多，因此我们通常只在较低分辨率（即 UNet 中的较低分辨率块）使用它们。
-
-+   添加一个额外的输入用于时间步长，这样模型可以根据噪音水平调整其预测。这称为时间步长调节，几乎所有最近的扩散模型都在使用。我们将在下一章中更多地了解有条件的模型。
++ 添加更多参数。可以通过在每个块中使用多个卷积层，通过在每个卷积层中使用更多的滤波器，或者通过使网络更深来实现。
++ 添加残差连接。使用 ResBlocks 而不是常规卷积层可以帮助模型学习更复杂的功能，同时保持训练稳定。
++ 添加归一化，如批归一化。批归一化可以帮助模型更快、更可靠地学习，确保每一层的输出都围绕 0 中心，并具有标准差为 1。
++ 添加正则化，如 dropout。Dropout 有助于防止模型过度拟合训练数据，这在处理较小的数据集时非常重要。
++ 添加注意力。通过引入自注意力层，我们允许模型在不同时间集中关注图像的不同部分，这有助于学习更复杂的功能。类似变压器的注意力层的添加也可以增加可学习参数的数量，这有助于模型学习更复杂的功能。缺点是注意力层在更高分辨率时计算成本要比常规卷积层高得多，因此我们通常只在较低分辨率（即 UNet 中的较低分辨率块）使用它们。
++ 添加一个额外的输入用于时间步长，这样模型可以根据噪音水平调整其预测。这称为时间步长调节，几乎所有最近的扩散模型都在使用。我们将在下一章中更多地了解有条件的模型。
 
 作为对比，在 diffusers 库中使用 UNet 实现时，在 MNIST 上的结果如下，该库包含了上述所有改进：
 
@@ -554,21 +567,19 @@ class BasicUNet(nn.Module):
 
 最近，一些替代架构已被提出用于扩散模型。这些包括：
 
-+   变压器。Peebles 和 Xie 的 DiT 论文（“具有变压器的可扩展扩散模型”）显示了基于变压器的架构可以用于训练扩散模型，并取得了很好的结果。然而，变压器架构的计算和内存需求仍然是非常高分辨率的挑战。
-
-+   [Simple Diffusion paper](https://arxiv.org/abs/2301.11093)链接中的*UViT*架构旨在兼顾两者的优点，通过用一大堆变压器块替换 UNet 的中间层。该论文的一个关键见解是，将大部分计算集中在 UNet 的较低分辨率块上，可以更有效地训练高分辨率扩散模型。对于非常高的分辨率，他们使用称为小波变换的东西进行一些额外的预处理，以减少输入图像的空间分辨率，同时通过使用额外的通道尽可能保留更多信息，再次减少在更高空间分辨率上花费的计算量。
-
-+   循环接口网络。[RIN paper](https://arxiv.org/abs/2212.11972)（Jabri 等）采用类似的方法，首先将高分辨率输入映射到更易处理和低维的“潜在”表示，然后通过一堆变压器块进行处理，然后解码回到图像。此外，RIN 论文引入了“循环”概念，其中信息从上一个处理步骤传递给模型，这对于扩散模型旨在执行的迭代改进可能是有益的。
++ 变压器。Peebles 和 Xie 的 DiT 论文（“具有变压器的可扩展扩散模型”）显示了基于变压器的架构可以用于训练扩散模型，并取得了很好的结果。然而，变压器架构的计算和内存需求仍然是非常高分辨率的挑战。
++ [Simple Diffusion paper](https://arxiv.org/abs/2301.11093)链接中的 *UViT* 架构旨在兼顾两者的优点，通过用一大堆变压器块替换 UNet 的中间层。该论文的一个关键见解是，将大部分计算集中在 UNet 的较低分辨率块上，可以更有效地训练高分辨率扩散模型。对于非常高的分辨率，他们使用称为小波变换的东西进行一些额外的预处理，以减少输入图像的空间分辨率，同时通过使用额外的通道尽可能保留更多信息，再次减少在更高空间分辨率上花费的计算量。
++ 循环接口网络。[RIN paper](https://arxiv.org/abs/2212.11972)（Jabri 等）采用类似的方法，首先将高分辨率输入映射到更易处理和低维的“潜在”表示，然后通过一堆变压器块进行处理，然后解码回到图像。此外，RIN 论文引入了“循环”概念，其中信息从上一个处理步骤传递给模型，这对于扩散模型旨在执行的迭代改进可能是有益的。
 
 尚不清楚基于变压器的方法是否会完全取代 UNet 作为扩散模型的首选架构，还是像 UViT 和 RIN 架构这样的混合方法将被证明是最有效的。
 
 # 深入：目标和预处理
 
-我们已经谈到扩散模型接受嘈杂的输入并“学会去噪”它。乍一看，你可能会认为网络的自然预测目标是图像的去噪版本，我们将其称为`x0`。然而，在代码中，我们将模型预测与用于创建嘈杂版本的单位方差噪声进行了比较（通常称为 epsilon 目标，`eps`）。这两者在数学上看起来是相同的，因为如果我们知道噪声和时间步长，我们可以推导出`x0`，反之亦然。虽然这是真的，但目标的选择对不同时间步的损失有一些微妙的影响，因此模型学习最佳去噪哪个噪声水平。为了获得一些直觉，让我们在不同的时间步上可视化一些不同的目标：
+我们已经谈到扩散模型接受嘈杂的输入并“学会去噪”它。乍一看，你可能会认为网络的自然预测目标是图像的去噪版本，我们将其称为 `x0`。然而，在代码中，我们将模型预测与用于创建嘈杂版本的单位方差噪声进行了比较（通常称为 epsilon 目标，`eps`）。这两者在数学上看起来是相同的，因为如果我们知道噪声和时间步长，我们可以推导出 `x0`，反之亦然。虽然这是真的，但目标的选择对不同时间步的损失有一些微妙的影响，因此模型学习最佳去噪哪个噪声水平。为了获得一些直觉，让我们在不同的时间步上可视化一些不同的目标：
 
 ![image](img/cell-26-output-1.png)
 
-在极低的噪声水平下，`x0`目标是非常容易的，而准确预测噪声几乎是不可能的。同样，在极高的噪声水平下，`eps`目标是容易的，而准确预测去噪图像几乎是不可能的。两种情况都不理想，因此引入了其他目标，使模型在不同的时间步预测`x0`和`eps`的混合。[“用于快速采样扩散模型的渐进蒸馏。”](https://arxiv.org/abs/2202.00512)中引入的`v`目标是其中之一，它被定义为<math alttext="v equals StartRoot alpha overbar EndRoot dot epsilon plus StartRoot 1 minus alpha overbar EndRoot dot x 0"><mrow><mi>v</mi> <mo>=</mo> <msqrt><mover accent="true"><mi>α</mi> <mo>¯</mo></mover></msqrt> <mo>·</mo> <mi>ϵ</mi> <mo>+</mo> <msqrt><mrow><mn>1</mn> <mo>-</mo> <mover accent="true"><mi>α</mi> <mo>¯</mo></mover></mrow></msqrt> <mo>·</mo> <msub><mi>x</mi> <mn>0</mn></msub></mrow></math>。Karras 等人在[EDM paper](https://arxiv.org/abs/2206.00364)中通过一个称为`c_skip`的参数引入了类似的想法，并将不同的扩散模型公式统一到一个一致的框架中。如果您对了解不同目标、缩放和其他不同扩散模型公式的微妙之处感兴趣，我们建议阅读他们的论文以获得更深入的讨论。
+在极低的噪声水平下，`x0` 目标是非常容易的，而准确预测噪声几乎是不可能的。同样，在极高的噪声水平下，`eps` 目标是容易的，而准确预测去噪图像几乎是不可能的。两种情况都不理想，因此引入了其他目标，使模型在不同的时间步预测 `x0` 和 `eps` 的混合。[“用于快速采样扩散模型的渐进蒸馏。”](https://arxiv.org/abs/2202.00512)中引入的 `v` 目标是其中之一，它被定义为 `v = sqrt(ᾱ) · ε + sqrt(1 - ᾱ) · x0`。Karras 等人在 [EDM paper](https://arxiv.org/abs/2206.00364) 中通过一个称为 `c_skip` 的参数引入了类似的想法，并将不同的扩散模型公式统一到一个一致的框架中。如果您对了解不同目标、缩放和其他不同扩散模型公式的微妙之处感兴趣，我们建议阅读他们的论文以获得更深入的讨论。
 
 # 项目时间：训练您自己的扩散模型
 
@@ -600,6 +611,6 @@ Peebles, William, and Saining Xie. “Scalable Diffusion Models with Transformer
 
 Jabri, Allan, David Fleet, and Ting Chen. “Scalable Adaptive Computation for Iterative Generation.” arXiv preprint arXiv:2212.11972 (2022).
 
-Salimans, Tim, and Jonathan Ho. “Progressive distillation for fast sampling of diffusion models.” arXiv preprint arXiv:2202.00512 (2022).)
+Salimans, Tim, and Jonathan Ho. “Progressive distillation for fast sampling of diffusion models.” arXiv preprint arXiv:2202.00512 (2022).
 
 Karras, Tero, Miika Aittala, Timo Aila, and Samuli Laine. “Elucidating the design space of diffusion-based generative models.” arXiv preprint arXiv:2206.00364 (2022).

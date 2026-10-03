@@ -1,6 +1,7 @@
+
 # 第四章：训练前馈神经网络
 
-# 快餐问题
+## 快餐问题
 
 我们开始理解如何使用深度学习解决一些有趣的问题，但仍然有一个重要问题：我们如何确切地找出参数向量（神经网络中所有连接的权重）应该是什么？这是通过一个通常称为*训练*的过程来实现的（见图 4-1）。在训练过程中，我们向神经网络展示大量的训练示例，并迭代修改权重，以最小化我们在训练示例上的错误。经过足够多的示例后，我们期望我们的神经网络将非常有效地解决其被训练做的任务。
 
@@ -12,25 +13,27 @@
 
 一个想法是在选择我们的训练案例时要聪明。对于一顿饭，我们可以只购买一份汉堡包，对于另一顿饭，我们可以只购买一份薯条，然后对于我们最后一顿饭，我们可以只购买一份苏打。一般来说，聪明地选择训练示例是一个好主意。许多研究表明，通过设计一个聪明的训练集，您可以使您的神经网络更加有效。仅使用这种方法的问题在于，在实际情况下，它很少能让您接近解决方案。例如，在图像识别中，这种策略没有明显的类似物。这不是一个实际的解决方案。
 
-相反，我们试图激励一个在一般情况下表现良好的解决方案。假设我们有一大批训练示例。然后我们可以使用图中的简单公式计算神经网络在第 i 个训练示例上的输出。我们希望训练神经元，以便我们选择可能最优的权重——最小化我们在训练示例上的错误。在这种情况下，假设我们想要在我们遇到的所有训练示例上最小化平方误差。更正式地说，如果我们知道<math alttext="t Superscript left-parenthesis i right-parenthesis"><msup><mi>t</mi> <mrow><mo>(</mo><mi>i</mi><mo>)</mo></mrow></msup></math>是第 i 个训练示例的真实答案，而<math alttext="y Superscript left-parenthesis i right-parenthesis"><msup><mi>y</mi> <mrow><mo>(</mo><mi>i</mi><mo>)</mo></mrow></msup></math>是神经网络计算出的值，我们希望最小化误差函数*E*的值：
+相反，我们试图激励一个在一般情况下表现良好的解决方案。假设我们有一大批训练示例。然后我们可以使用图中的简单公式计算神经网络在第 `i` 个训练示例上的输出。我们希望训练神经元，以便我们选择可能最优的权重——最小化我们在训练示例上的错误。在这种情况下，假设我们想要在我们遇到的所有训练示例上最小化平方误差。更正式地说，如果我们知道`t^(i)`是第 `i` 个训练示例的真实答案，而`y^(i)`是神经网络计算出的值，我们希望最小化误差函数*E*的值：
 
-<math alttext="upper E equals one-half sigma-summation Underscript i Endscripts left-parenthesis t Superscript left-parenthesis i right-parenthesis Baseline minus y Superscript left-parenthesis i right-parenthesis Baseline right-parenthesis squared"><mrow><mi>E</mi> <mo>=</mo> <mfrac><mn>1</mn> <mn>2</mn></mfrac> <msub><mo>∑</mo> <mi>i</mi></msub> <msup><mrow><mo>(</mo><msup><mi>t</mi> <mrow><mo>(</mo><mi>i</mi><mo>)</mo></mrow></msup> <mo>-</mo><msup><mi>y</mi> <mrow><mo>(</mo><mi>i</mi><mo>)</mo></mrow></msup> <mo>)</mo></mrow> <mn>2</mn></msup></mrow></math>
+```
+E = 1/2 ∑ᵢ (t^(i) - y^(i))²
+```
 
-当我们的模型在每个训练示例上做出完全正确的预测时，平方误差为零。此外，*E*越接近 0，我们的模型就越好。因此，我们的目标是选择我们的参数向量<math alttext="theta"><mi>θ</mi></math>（模型中所有权重的值），使*E*尽可能接近 0。
+当我们的模型在每个训练示例上做出完全正确的预测时，平方误差为零。此外，*E*越接近 0，我们的模型就越好。因此，我们的目标是选择我们的参数向量`θ`（模型中所有权重的值），使*E*尽可能接近 0。
 
 现在在这一点上，您可能会想知道为什么我们需要关注误差函数，当我们可以将这个问题视为一个方程组时。毕竟，我们有一堆未知数（权重），我们有一组方程（每个训练示例一个）。假设我们有一致的训练示例集，那将自动给我们一个误差为 0。
 
 这是一个聪明的观察，但不幸的是这个洞察并不很好地推广。请记住，虽然我们在这里使用的是线性神经元，但在实践中很少使用线性神经元，因为它们在学习方面受到限制。一旦我们开始使用像我们在第三章末尾讨论的 S 型、双曲正切或 ReLU 神经元这样的非线性神经元，我们就不能再建立一个线性方程组。显然，我们需要更好的策略来解决训练过程。
 
-# 梯度下降
+## 梯度下降
 
-让我们通过简化问题来可视化如何最小化所有训练样本上的平方误差。假设我们的线性神经元只有两个输入（因此只有两个权重，<math alttext="w 1"><msub><mi>w</mi> <mn>1</mn></msub></math> 和 <math alttext="w 2"><msub><mi>w</mi> <mn>2</mn></msub></math>）。然后我们可以想象一个三维空间，其中水平维度对应于权重 <math alttext="w 1"><msub><mi>w</mi> <mn>1</mn></msub></math> 和 <math alttext="w 2"><msub><mi>w</mi> <mn>2</mn></msub></math>，垂直维度对应于误差函数 *E* 的值。在这个空间中，水平平面上的点对应于权重的不同设置，这些点的高度对应于产生的误差。如果我们考虑我们在所有可能的权重上所犯的错误，我们会得到这个三维空间中的一个表面，特别是一个二次碗，如图 4-2 所示。
+让我们通过简化问题来可视化如何最小化所有训练样本上的平方误差。假设我们的线性神经元只有两个输入（因此只有两个权重，`w₁` 和 `w₂`）。然后我们可以想象一个三维空间，其中水平维度对应于权重 `w₁` 和 `w₂`，垂直维度对应于误差函数 *E* 的值。在这个空间中，水平平面上的点对应于权重的不同设置，这些点的高度对应于产生的误差。如果我们考虑我们在所有可能的权重上所犯的错误，我们会得到这个三维空间中的一个表面，特别是一个二次碗，如图 4-2 所示。
 
 ![ ](img/fdl2_0402.png)
 
 ###### 图 4-2。线性神经元的二次误差表面
 
-我们还可以方便地将这个表面可视化为一组椭圆形轮廓，其中最小误差位于椭圆的中心。在这个设置中，我们在一个二维平面上工作，其中维度对应于两个权重。轮廓对应于评估为相同值 *E* 的 <math alttext="w 1"><msub><mi>w</mi> <mn>1</mn></msub></math> 和 <math alttext="w 2"><msub><mi>w</mi> <mn>2</mn></msub></math> 的设置。轮廓越接近，斜率越陡。事实上，最陡下降的方向总是垂直于轮廓。这个方向被表示为一个称为*梯度*的向量。
+我们还可以方便地将这个表面可视化为一组椭圆形轮廓，其中最小误差位于椭圆的中心。在这个设置中，我们在一个二维平面上工作，其中维度对应于两个权重。轮廓对应于评估为相同值 *E* 的 `w₁` 和 `w₂` 的设置。轮廓越接近，斜率越陡。事实上，最陡下降的方向总是垂直于轮廓。这个方向被表示为一个称为*梯度*的向量。
 
 现在我们可以制定一个高层策略，来找到最小化误差函数的权重值。假设我们随机初始化网络的权重，这样我们就会发现自己在水平平面上的某个位置。通过评估当前位置的梯度，我们可以找到最陡下降的方向，并朝这个方向迈出一步。然后我们会发现自己在一个比之前更接近最小值的新位置。我们可以通过在这个新位置上取梯度并朝这个新方向迈出一步来重新评估最陡下降的方向。很容易看出，如图 4-3 所示，遵循这个策略最终会将我们带到最小误差点。这个算法被称为*梯度下降*，我们将用它来解决训练单个神经元和更一般的训练整个网络的问题。¹
 
@@ -38,11 +41,11 @@
 
 ###### 图 4-3。将误差表面可视化为一组轮廓
 
-# Δ规则和学习率
+## Δ规则和学习率
 
 在我们推导出训练快餐神经元的确切算法之前，我们先简要提一下*超参数*。除了神经网络中定义的权重参数外，学习算法还需要一些额外的参数来执行训练过程。其中一个被称为*学习率*的超参数。
 
-在实践中，在沿着等高线垂直移动的每一步中，我们需要确定在重新计算新方向之前要走多远。这个距离需要取决于表面的陡峭程度。为什么？我们离最小值越近，我们就希望向前迈出的步子越短。我们知道我们离最小值很近，因为表面更加平坦，所以我们可以使用陡峭度作为我们离最小值有多近的指标。然而，如果我们的误差表面相当平缓，训练可能需要大量时间。因此，我们经常将梯度乘以一个因子<math alttext="epsilon"><mi>ϵ</mi></math>，即学习率。选择学习率是一个困难的问题（图 4-4）。正如我们刚刚讨论的，如果我们选择的学习率太小，我们在训练过程中可能需要花费太长时间。但是，如果我们选择的学习率太大，我们很可能会开始偏离最小值。在第五章中，我们将学习各种利用自适应学习率的优化技术，以自动化选择学习率的过程。
+在实践中，在沿着等高线垂直移动的每一步中，我们需要确定在重新计算新方向之前要走多远。这个距离需要取决于表面的陡峭程度。为什么？我们离最小值越近，我们就希望向前迈出的步子越短。我们知道我们离最小值很近，因为表面更加平坦，所以我们可以使用陡峭度作为我们离最小值有多近的指标。然而，如果我们的误差表面相当平缓，训练可能需要大量时间。因此，我们经常将梯度乘以一个因子`ϵ`，即学习率。选择学习率是一个困难的问题（图 4-4）。正如我们刚刚讨论的，如果我们选择的学习率太小，我们在训练过程中可能需要花费太长时间。但是，如果我们选择的学习率太大，我们很可能会开始偏离最小值。在第五章中，我们将学习各种利用自适应学习率的优化技术，以自动化选择学习率的过程。
 
 ![ ](img/fdl2_0404.png)
 
@@ -54,41 +57,46 @@
 
 让我们回顾一下逻辑神经元如何从其输入计算输出值的机制：
 
-# 具有 S 形神经元的梯度下降
+## 具有 S 形神经元的梯度下降
 
 应用这种在每次迭代中改变权重的方法，我们最终能够利用梯度下降。
 
+```
 z = Σw_k x_k
-
 y = 1 / (1 + e^(-z))
+```
 
 神经元计算其输入的加权和，logit*z*。然后将其 logit 输入到输入函数中计算*y*，其最终输出。幸运的是，这些函数有很好的导数，这使得学习变得容易！对于学习，我们希望计算误差函数对权重的梯度。为此，我们首先计算 logit 对输入和权重的导数：
 
-<math alttext="StartFraction normal partial-differential z Over normal partial-differential w Subscript k Baseline EndFraction equals x Subscript k"><mrow><mfrac><mrow><mi>∂</mi><mi>z</mi></mrow> <mrow><mi>∂</mi><msub><mi>w</mi> <mi>k</mi></msub></mrow></mfrac> <mo>=</mo> <msub><mi>x</mi> <mi>k</mi></msub></mrow></math>
-
-<math alttext="StartFraction normal partial-differential z Over normal partial-differential x Subscript k Baseline EndFraction equals w Subscript k"><mrow><mfrac><mrow><mi>∂</mi><mi>z</mi></mrow> <mrow><mi>∂</mi><msub><mi>x</mi> <mi>k</mi></msub></mrow></mfrac> <mo>=</mo> <msub><mi>w</mi> <mi>k</mi></msub></mrow></math>
+```
+∂z/∂w_k = x_k
+∂z/∂x_k = w_k
+```
 
 而且，令人惊讶的是，如果你用输出来表达输出对 logit 的导数，那么输出对 logit 的导数就非常简单：
 
-<math alttext="StartFraction d y Over d z EndFraction equals StartFraction e Superscript negative z Baseline Over left-parenthesis 1 plus e Superscript negative z Baseline right-parenthesis squared EndFraction"><mrow><mfrac><mrow><mi>d</mi><mi>y</mi></mrow> <mrow><mi>d</mi><mi>z</mi></mrow></mfrac> <mo>=</mo> <mfrac><msup><mi>e</mi> <mrow><mo>-</mo><mi>z</mi></mrow></msup> <msup><mfenced separators="" open="(" close=")"><mn>1</mn><mo>+</mo><msup><mi>e</mi> <mrow><mo>-</mo><mi>z</mi></mrow></msup></mfenced> <mn>2</mn></msup></mfrac></mrow></math>
-
-<math alttext="equals StartFraction 1 Over 1 plus e Superscript negative z Baseline EndFraction StartFraction e Superscript negative z Baseline Over 1 plus e Superscript negative z Baseline EndFraction"><mrow><mo>=</mo> <mfrac><mn>1</mn> <mrow><mn>1</mn><mo>+</mo><msup><mi>e</mi> <mrow><mo>-</mo><mi>z</mi></mrow></msup></mrow></mfrac> <mfrac><msup><mi>e</mi> <mrow><mo>-</mo><mi>z</mi></mrow></msup> <mrow><mn>1</mn><mo>+</mo><msup><mi>e</mi> <mrow><mo>-</mo><mi>z</mi></mrow></msup></mrow></mfrac></mrow></math>
-
-<math alttext="equals StartFraction 1 Over 1 plus e Superscript negative z Baseline EndFraction left-parenthesis 1 minus StartFraction 1 Over 1 plus e Superscript negative z Baseline EndFraction right-parenthesis"><mrow><mo>=</mo> <mfrac><mn>1</mn> <mrow><mn>1</mn><mo>+</mo><msup><mi>e</mi> <mrow><mo>-</mo><mi>z</mi></mrow></msup></mrow></mfrac> <mfenced separators="" open="(" close=")"><mn>1</mn> <mo>-</mo> <mfrac><mn>1</mn> <mrow><mn>1</mn><mo>+</mo><msup><mi>e</mi> <mrow><mo>-</mo><mi>z</mi></mrow></msup></mrow></mfrac></mfenced></mrow></math>
-
-<math alttext="equals y left-parenthesis 1 minus y right-parenthesis"><mrow><mo>=</mo> <mi>y</mi> <mo>(</mo> <mn>1</mn> <mo>-</mo> <mi>y</mi> <mo>)</mo></mrow></math>
+```
+dy/dz = e^(-z) / (1 + e^(-z))²
+= 1/(1 + e^(-z)) * e^(-z)/(1 + e^(-z))
+= 1/(1 + e^(-z)) * (1 - 1/(1 + e^(-z)))
+= y(1 - y)
+```
 
 然后我们使用链式法则得到输出对每个权重的导数：
 
-<math alttext="StartFraction normal partial-differential y Over normal partial-differential w Subscript k Baseline EndFraction equals StartFraction d y Over d z EndFraction StartFraction normal partial-differential z Over normal partial-differential w Subscript k Baseline EndFraction equals x Subscript k Baseline y left-parenthesis 1 minus y right-parenthesis"><mrow><mfrac><mrow><mi>∂</mi><mi>y</mi></mrow> <mrow><mi>∂</mi><msub><mi>w</mi> <mi>k</mi></msub></mrow></mfrac> <mo>=</mo> <mfrac><mrow><mi>d</mi><mi>y</mi></mrow> <mrow><mi>d</mi><mi>z</mi></mrow></mfrac> <mfrac><mrow><mi>∂</mi><mi>z</mi></mrow> <mrow><mi>∂</mi><msub><mi>w</mi> <mi>k</mi></msub></mrow></mfrac> <mo>=</mo> <msub><mi>x</mi> <mi>k</mi></msub> <mi>y</mi> <mrow><mo>(</mo> <mn>1</mn> <mo>-</mo> <mi>y</mi> <mo>)</mo></mrow></mrow></math>
+```
+∂y/∂w_k = dy/dz * ∂z/∂w_k = x_k * y(1 - y)
+```
 
 将所有这些结合在一起，我们现在可以计算误差函数对每个权重的导数：
 
-<math alttext="StartFraction normal partial-differential upper E Over normal partial-differential w Subscript k Baseline EndFraction equals sigma-summation Underscript i Endscripts StartFraction normal partial-differential upper E Over normal partial-differential y Superscript left-parenthesis i right-parenthesis Baseline EndFraction StartFraction normal partial-differential y Superscript left-parenthesis i right-parenthesis Baseline Over normal partial-differential w Subscript k Baseline EndFraction equals minus sigma-summation Underscript i Endscripts x Subscript k Superscript left-parenthesis i right-parenthesis Baseline y Superscript left-parenthesis i right-parenthesis Baseline left-parenthesis 1 minus y Superscript left-parenthesis i right-parenthesis Baseline right-parenthesis left-parenthesis t Superscript left-parenthesis i right-parenthesis Baseline minus y Superscript left-parenthesis i right-parenthesis Baseline right-parenthesis"><mrow><mfrac><mrow><mi>∂</mi><mi>E</mi></mrow> <mrow><mi>∂</mi><msub><mi>w</mi> <mi>k</mi></msub></mrow></mfrac> <mo>=</mo> <msub><mo>∑</mo> <mi>i</mi></msub> <mfrac><mrow><mi>∂</mi><mi>E</mi></mrow> <mrow><mi>∂</mi><msup><mi>y</mi> <mrow><mo>(</mo><mi>i</mi><mo>)</mo></mrow></msup></mrow></mfrac> <mfrac><mrow><mi>∂</mi><msup><mi>y</mi> <mrow><mo>(</mo><mi>i</mi><mo>)</mo></mrow></msup></mrow> <mrow><mi>∂</mi><msub><mi>w</mi> <mi>k</mi></msub></mrow></mfrac> <mo>=</mo> <mo>-</mo> <msub><mo>∑</mo> <mi>i</mi></msub> <msubsup><mi>x</mi> <mi>k</mi> <mrow><mo>(</mo><mi>i</mi><mo>)</mo></mrow></msubsup> <msup><mi>y</mi> <mrow><mo>(</mo><mi>i</mi><mo>)</mo></mrow></msup> <mfenced separators="" open="(" close=")"><mn>1</mn> <mo>-</mo> <msup><mi>y</mi> <mrow><mo>(</mo><mi>i</mi><mo>)</mo></mrow></msup></mfenced> <mfenced separators="" open="(" close=")"><msup><mi>t</mi> <mrow><mo>(</mo><mi>i</mi><mo>)</mo></mrow></msup> <mo>-</mo> <msup><mi>y</mi> <mrow><mo>(</mo><mi>i</mi><mo>)</mo></mrow></msup></mfenced></mrow></math>
+
+
+∂E/∂w_k = ∑ᵢ (∂E/∂y⁽ⁱ⁾) · (∂y⁽ⁱ⁾/∂w_k) = -∑ᵢ x_k⁽ⁱ⁾ y⁽ⁱ⁾ (1 - y⁽ⁱ⁾) (t⁽ⁱ⁾ - y⁽ⁱ⁾)
 
 因此，修改权重的最终规则变为：
 
-<math alttext="normal upper Delta w Subscript k Baseline equals sigma-summation Underscript i Endscripts epsilon x Subscript k Superscript left-parenthesis i right-parenthesis Baseline y Superscript left-parenthesis i right-parenthesis Baseline left-parenthesis 1 minus y Superscript left-parenthesis i right-parenthesis Baseline right-parenthesis left-parenthesis t Superscript left-parenthesis i right-parenthesis Baseline minus y Superscript left-parenthesis i right-parenthesis Baseline right-parenthesis"><mrow><mi>Δ</mi> <msub><mi>w</mi> <mi>k</mi></msub> <mo>=</mo> <msub><mo>∑</mo> <mi>i</mi></msub> <mi>ϵ</mi> <msubsup><mi>x</mi> <mi>k</mi> <mrow><mo>(</mo><mi>i</mi><mo>)</mo></mrow></msubsup> <msup><mi>y</mi> <mrow><mo>(</mo><mi>i</mi><mo>)</mo></mrow></msup> <mfenced separators="" open="(" close=")"><mn>1</mn> <mo>-</mo> <msup><mi>y</mi> <mrow><mo>(</mo><mi>i</mi><mo>)</mo></mrow></msup></mfenced> <mfenced separators="" open="(" close=")"><msup><mi>t</mi> <mrow><mo>(</mo><mi>i</mi><mo>)</mo></mrow></msup> <mo>-</mo> <msup><mi>y</mi> <mrow><mo>(</mo><mi>i</mi><mo>)</mo></mrow></msup></mfenced></mrow></math>
+Δw_k = ∑ᵢ ε x_k⁽ⁱ⁾ y⁽ⁱ⁾ (1 - y⁽ⁱ⁾) (t⁽ⁱ⁾ - y⁽ⁱ⁾)
 
 正如您可能注意到的，新的修改规则就像 delta 规则一样，只是包含了额外的乘法项，以考虑 S 型神经元的逻辑组件。
 
@@ -102,35 +110,39 @@ y = 1 / (1 + e^(-z))
 
 ###### 图 4-5。反向传播算法推导的参考图
 
-我们使用的下标将指代神经元的层。符号*y*将像往常一样指代神经元的活动。类似地，符号*z*将指代神经元的 logit。我们首先看一下动态规划问题的基本情况。具体来说，我们计算输出层的误差函数导数：
+我们使用的下标将指代神经元的层。符号`y`将像往常一样指代神经元的活动。类似地，符号`z`将指代神经元的 logit。我们首先看一下动态规划问题的基本情况。具体来说，我们计算输出层的误差函数导数：
 
-<math alttext="upper E equals one-half sigma-summation Underscript j element-of o u t p u t Endscripts left-parenthesis t Subscript j Baseline minus y Subscript j Baseline right-parenthesis squared long right double arrow StartFraction normal partial-differential upper E Over normal partial-differential y Subscript j Baseline EndFraction equals minus left-parenthesis t Subscript j Baseline minus y Subscript j Baseline right-parenthesis"><mrow><mi>E</mi> <mo>=</mo> <mfrac><mn>1</mn> <mn>2</mn></mfrac> <msub><mo>∑</mo> <mrow><mi>j</mi><mo>∈</mo><mi>o</mi><mi>u</mi><mi>t</mi><mi>p</mi><mi>u</mi><mi>t</mi></mrow></msub> <msup><mfenced separators="" open="(" close=")"><msub><mi>t</mi> <mi>j</mi></msub> <mo>-</mo><msub><mi>y</mi> <mi>j</mi></msub></mfenced> <mn>2</mn></msup> <mo>⇒</mo> <mfrac><mrow><mi>∂</mi><mi>E</mi></mrow> <mrow><mi>∂</mi><msub><mi>y</mi> <mi>j</mi></msub></mrow></mfrac> <mo>=</mo> <mo>-</mo> <mrow><mo>(</mo> <msub><mi>t</mi> <mi>j</mi></msub> <mo>-</mo> <msub><mi>y</mi> <mi>j</mi></msub> <mo>)</mo></mrow></mrow></math>
+E = ½ ∑ⱼₑₒᵤₜₚᵤₜ (tⱼ - yⱼ)² ⇒ ∂E/∂yⱼ = -(tⱼ - yⱼ)
 
-现在我们来解决归纳步骤。假设我们已经有了层<math alttext="j"><mi>j</mi></math>的误差导数。我们接下来的目标是计算其下一层，即层<math alttext="i"><mi>i</mi></math>的误差导数。为了做到这一点，我们必须积累关于层<math alttext="i"><mi>i</mi></math>中神经元的输出如何影响层<math alttext="j"><mi>j</mi></math>中每个神经元的 logit 的信息。这可以通过以下方式完成，利用这样一个事实：logit 对来自下一层的输入数据的偏导数仅仅是连接<math alttext="w Subscript i j"><msub><mi>w</mi> <mrow><mi>i</mi><mi>j</mi></mrow></msub></math>的权重：
+现在我们来解决归纳步骤。假设我们已经有了层`j`的误差导数。我们接下来的目标是计算其下一层，即层`i`的误差导数。为了做到这一点，我们必须积累关于层`i`中神经元的输出如何影响层`j`中每个神经元的 logit 的信息。这可以通过以下方式完成，利用这样一个事实：logit 对来自下一层的输入数据的偏导数仅仅是连接`wᵢⱼ`的权重：
 
-<math alttext="StartFraction normal partial-differential upper E Over normal partial-differential y Subscript i Baseline EndFraction equals sigma-summation Underscript j Endscripts StartFraction normal partial-differential upper E Over normal partial-differential z Subscript j Baseline EndFraction StartFraction d z Subscript j Baseline Over d y Subscript i Baseline EndFraction equals sigma-summation Underscript j Endscripts w Subscript i j Baseline StartFraction normal partial-differential upper E Over normal partial-differential z Subscript j Baseline EndFraction"><mrow><mfrac><mrow><mi>∂</mi><mi>E</mi></mrow> <mrow><mi>∂</mi><msub><mi>y</mi> <mi>i</mi></msub></mrow></mfrac> <mo>=</mo> <msub><mo>∑</mo> <mi>j</mi></msub> <mfrac><mrow><mi>∂</mi><mi>E</mi></mrow> <mrow><mi>∂</mi><msub><mi>z</mi> <mi>j</mi></msub></mrow></mfrac> <mfrac><mrow><mi>d</mi><msub><mi>z</mi> <mi>j</mi></msub></mrow> <mrow><mi>d</mi><msub><mi>y</mi> <mi>i</mi></msub></mrow></mfrac> <mo>=</mo> <msub><mo>∑</mo> <mi>j</mi></msub> <msub><mi>w</mi> <mrow><mi>i</mi><mi>j</mi></mrow></msub> <mfrac><mrow><mi>∂</mi><mi>E</mi></mrow> <mrow><mi>∂</mi><msub><mi>z</mi> <mi>j</mi></msub></mrow></mfrac></mrow></math>
+∂E/∂yᵢ = ∑ⱼ (∂E/∂zⱼ) · (dzⱼ/dyᵢ) = ∑ⱼ wᵢⱼ (∂E/∂zⱼ)
 
 此外，我们观察到以下情况：
 
-<math alttext="StartFraction normal partial-differential upper E Over normal partial-differential z Subscript j Baseline EndFraction equals StartFraction normal partial-differential upper E Over normal partial-differential y Subscript j Baseline EndFraction StartFraction d y Subscript j Baseline Over d z Subscript j Baseline EndFraction equals y Subscript j Baseline left-parenthesis 1 minus y Subscript j Baseline right-parenthesis StartFraction normal partial-differential upper E Over normal partial-differential y Subscript j Baseline EndFraction"><mrow><mfrac><mrow><mi>∂</mi><mi>E</mi></mrow> <mrow><mi>∂</mi><msub><mi>z</mi> <mi>j</mi></msub></mrow></mfrac> <mo>=</mo> <mfrac><mrow><mi>∂</mi><mi>E</mi></mrow> <mrow><mi>∂</mi><msub><mi>y</mi> <mi>j</mi></msub></mrow></mfrac> <mfrac><mrow><mi>d</mi><msub><mi>y</mi> <mi>j</mi></msub></mrow> <mrow><mi>d</mi><msub><mi>z</mi> <mi>j</mi></msub></mrow></mfrac> <mo>=</mo> <msub><mi>y</mi> <mi>j</mi></msub> <mrow><mo>(</mo> <mn>1</mn> <mo>-</mo> <msub><mi>y</mi> <mi>j</mi></msub> <mo>)</mo></mrow> <mfrac><mrow><mi>∂</mi><mi>E</mi></mrow> <mrow><mi>∂</mi><msub><mi>y</mi> <mi>j</mi></msub></mrow></mfrac></mrow></math>
+∂E/∂zⱼ = (∂E/∂yⱼ) · (dyⱼ/dzⱼ) = yⱼ(1 - yⱼ)(∂E/∂yⱼ)
 
-将这两者结合起来，我们最终可以用层<math alttext="i"><mi>i</mi></math>的误差导数来表示层<math alttext="j"><mi>j</mi></math>的误差导数：
+将这两者结合起来，我们最终可以用层`i`的误差导数来表示层`j`的误差导数：
 
-<math alttext="StartFraction normal partial-differential upper E Over normal partial-differential y Subscript i Baseline EndFraction equals sigma-summation Underscript j Endscripts w Subscript i j Baseline y Subscript j Baseline left-parenthesis 1 minus y Subscript j Baseline right-parenthesis StartFraction normal partial-differential upper E Over normal partial-differential y Subscript j Baseline EndFraction"><mrow><mfrac><mrow><mi>∂</mi><mi>E</mi></mrow> <mrow><mi>∂</mi><msub><mi>y</mi> <mi>i</mi></msub></mrow></mfrac> <mo>=</mo> <msub><mo>∑</mo> <mi>j</mi></msub> <msub><mi>w</mi> <mrow><mi>i</mi><mi>j</mi></mrow></msub> <msub><mi>y</mi> <mi>j</mi></msub> <mrow><mo>(</mo> <mn>1</mn> <mo>-</mo> <msub><mi>y</mi> <mi>j</mi></msub> <mo>)</mo></mrow> <mfrac><mrow><mi>∂</mi><mi>E</mi></mrow> <mrow><mi>∂</mi><msub><mi>y</mi> <mi>j</mi></msub></mrow></mfrac></mrow></math>
+
 
 一旦我们完成了整个动态规划例程，适当地填满了表格中所有关于隐藏单元活动的偏导数（关于误差函数的），我们就可以确定误差如何随权重变化。这给了我们一种在每个训练示例之后修改权重的方法：
 
-<math alttext="StartFraction normal partial-differential upper E Over normal partial-differential w Subscript i j Baseline EndFraction equals StartFraction normal partial-differential z Subscript j Baseline Over normal partial-differential w Subscript i j Baseline EndFraction StartFraction normal partial-differential upper E Over normal partial-differential z Subscript j Baseline EndFraction equals y Subscript i Baseline y Subscript j Baseline left-parenthesis 1 minus y Subscript j Baseline right-parenthesis StartFraction normal partial-differential upper E Over normal partial-differential y Subscript j Baseline EndFraction"><mrow><mfrac><mrow><mi>∂</mi><mi>E</mi></mrow> <mrow><mi>∂</mi><msub><mi>w</mi> <mrow><mi>i</mi><mi>j</mi></mrow></msub></mrow></mfrac> <mo>=</mo> <mfrac><mrow><mi>∂</mi><msub><mi>z</mi> <mi>j</mi></msub></mrow> <mrow><mi>∂</mi><msub><mi>w</mi> <mrow><mi>i</mi><mi>j</mi></mrow></msub></mrow></mfrac> <mfrac><mrow><mi>∂</mi><mi>E</mi></mrow> <mrow><mi>∂</mi><msub><mi>z</mi> <mi>j</mi></msub></mrow></mfrac> <mo>=</mo> <msub><mi>y</mi> <mi>i</mi></msub> <msub><mi>y</mi> <mi>j</mi></msub> <mrow><mo>(</mo> <mn>1</mn> <mo>-</mo> <msub><mi>y</mi> <mi>j</mi></msub> <mo>)</mo></mrow> <mfrac><mrow><mi>∂</mi><mi>E</mi></mrow> <mrow><mi>∂</mi><msub><mi>y</mi> <mi>j</mi></msub></mrow></mfrac></mrow></math>
+```
+∂E/∂y_i = ∑_j w_ij y_j (1 - y_j) ∂E/∂y_j
+```
 
 最后，为了完成算法，就像以前一样，我们只需对数据集中的所有训练示例的偏导数求和。这给出了以下修改公式：
 
-<math alttext="normal upper Delta w Subscript i j Baseline equals minus sigma-summation Underscript k element-of d a t a s e t Endscripts epsilon y Subscript i Superscript left-parenthesis k right-parenthesis Baseline y Subscript j Superscript left-parenthesis k right-parenthesis Baseline left-parenthesis 1 minus y Subscript j Superscript left-parenthesis k right-parenthesis Baseline right-parenthesis StartFraction normal partial-differential upper E Superscript left-parenthesis k right-parenthesis Baseline Over normal partial-differential y Subscript j Superscript left-parenthesis k right-parenthesis Baseline EndFraction"><mrow><mi>Δ</mi> <msub><mi>w</mi> <mrow><mi>i</mi><mi>j</mi></mrow></msub> <mo>=</mo> <mo>-</mo> <msub><mo>∑</mo> <mrow><mi>k</mi><mo>∈</mo><mi>d</mi><mi>a</mi><mi>t</mi><mi>a</mi><mi>s</mi><mi>e</mi><mi>t</mi></mrow></msub> <mi>ϵ</mi> <msubsup><mi>y</mi> <mi>i</mi> <mrow><mo>(</mo><mi>k</mi><mo>)</mo></mrow></msubsup> <msubsup><mi>y</mi> <mi>j</mi> <mrow><mo>(</mo><mi>k</mi><mo>)</mo></mrow></msubsup> <mrow><mo>(</mo> <mn>1</mn> <mo>-</mo> <msubsup><mi>y</mi> <mi>j</mi> <mrow><mo>(</mo><mi>k</mi><mo>)</mo></mrow></msubsup> <mo>)</mo></mrow> <mfrac><mrow><mi>∂</mi><msup><mi>E</mi> <mrow><mo>(</mo><mi>k</mi><mo>)</mo></mrow></msup></mrow> <mrow><mi>∂</mi><msubsup><mi>y</mi> <mi>j</mi> <mrow><mo>(</mo><mi>k</mi><mo>)</mo></mrow></msubsup></mrow></mfrac></mrow></math>
+```
+Δw_ij = -∑_{k∈dataset} ε y_i^(k) y_j^(k) (1 - y_j^(k)) ∂E^(k)/∂y_j^(k)
+```
 
 这完成了我们对反向传播算法的描述。
 
 # 随机梯度下降和小批量梯度下降
 
-在我们描述的算法中“反向传播算法”，我们使用了一种称为*批量* *梯度下降*的梯度下降版本。批量梯度下降的思想是使用整个数据集来计算误差表面，然后沿着梯度的方向采取最陡下降的路径。对于简单的二次误差表面，这样做效果很好。但在大多数情况下，我们的误差表面可能更加复杂。让我们考虑图 4-6 中的情况。
+在我们描述的算法中“反向传播算法”，我们使用了一种称为*批量梯度下降*的梯度下降版本。批量梯度下降的思想是使用整个数据集来计算误差表面，然后沿着梯度的方向采取最陡下降的路径。对于简单的二次误差表面，这样做效果很好。但在大多数情况下，我们的误差表面可能更加复杂。让我们考虑图 4-6 中的情况。
 
 ![](img/fdl2_0406.png)
 
@@ -146,7 +158,9 @@ y = 1 / (1 + e^(-z))
 
 然而，SGD 的主要缺点是，一次查看一个示例产生的误差可能不足以对误差表面进行良好的近似。这反过来可能导致梯度下降花费大量时间。解决这个问题的一种方法是使用*小批量梯度下降*。在小批量梯度下降中，每次迭代我们计算与总数据集的某个子集相关的误差表面（而不仅仅是单个示例）。这个子集称为*小批量*，除了学习率之外，小批量大小是另一个超参数。小批量在批量梯度下降的效率和随机梯度下降的局部最小值避免之间取得平衡。在反向传播的背景下，我们的权重更新步骤变为：
 
-<math alttext="normal upper Delta w Subscript i j Baseline equals minus sigma-summation Underscript k element-of m i n i b a t c h Endscripts epsilon y Subscript i Superscript left-parenthesis k right-parenthesis Baseline y Subscript j Superscript left-parenthesis k right-parenthesis Baseline left-parenthesis 1 minus y Subscript j Superscript left-parenthesis k right-parenthesis Baseline right-parenthesis StartFraction normal partial-differential upper E Superscript left-parenthesis k right-parenthesis Baseline Over normal partial-differential y Subscript j Superscript left-parenthesis k right-parenthesis Baseline EndFraction"><mrow><mi>Δ</mi> <msub><mi>w</mi> <mrow><mi>i</mi><mi>j</mi></mrow></msub> <mo>=</mo> <mo>-</mo> <msub><mo>∑</mo> <mrow><mi>k</mi><mo>∈</mo><mi>m</mi><mi>i</mi><mi>n</mi><mi>i</mi><mi>b</mi><mi>a</mi><mi>t</mi><mi>c</mi><mi>h</mi></mrow></msub> <mi>ϵ</mi> <msubsup><mi>y</mi> <mi>i</mi> <mrow><mo>(</mo><mi>k</mi><mo>)</mo></mrow></msubsup> <msubsup><mi>y</mi> <mi>j</mi> <mrow><mo>(</mo><mi>k</mi><mo>)</mo></mrow></msubsup> <mrow><mo>(</mo> <mn>1</mn> <mo>-</mo> <msubsup><mi>y</mi> <mi>j</mi> <mrow><mo>(</mo><mi>k</mi><mo>)</mo></mrow></msubsup> <mo>)</mo></mrow> <mfrac><mrow><mi>∂</mi><msup><mi>E</mi> <mrow><mo>(</mo><mi>k</mi><mo>)</mo></mrow></msup></mrow> <mrow><mi>∂</mi><msubsup><mi>y</mi> <mi>j</mi> <mrow><mo>(</mo><mi>k</mi><mo>)</mo></mrow></msubsup></mrow></mfrac></mrow></math>
+```
+Δw_ij = -∑_{k∈minibatch} ε y_i^(k) y_j^(k) (1 - y_j^(k)) ∂E^(k)/∂y_j^(k)
+```
 
 这与我们在上一节中推导的内容完全相同，但是不是对数据集中的所有示例求和，而是对当前小批量中的示例求和。有关为什么随机梯度下降和小批量梯度下降会导致对整个数据集的梯度估计无偏的更多理论讨论，请参阅“神经网络学习理论”。
 
@@ -190,7 +204,9 @@ y = 1 / (1 + e^(-z))
 
 ###### 图 4-12。非重叠的训练和测试集
 
-第三，很可能在训练数据的过程中，有一个时间点，我们开始过度拟合训练集，而不是学习有用的特征。为了避免这种情况，我们希望能够在开始过拟合时停止训练过程，以防止泛化能力差。为了做到这一点，我们将训练过程分成*epochs*。一个 epoch 是对整个训练集的单次迭代。如果我们有一个大小为<math alttext="d"><mi>d</mi></math>的训练集，并且使用批量梯度下降的批量大小为<math alttext="b"><mi>b</mi></math>，那么一个 epoch 相当于<math alttext="StartFraction d Over b EndFraction"><mfrac><mi>d</mi> <mi>b</mi></mfrac></math>个模型更新。在每个 epoch 结束时，我们希望衡量我们的模型泛化的效果。为了做到这一点，我们使用一个额外的*验证集*，如图 4-13 所示。
+
+
+第三，很可能在训练数据的过程中，有一个时间点，我们开始过度拟合训练集，而不是学习有用的特征。为了避免这种情况，我们希望能够在开始过拟合时停止训练过程，以防止泛化能力差。为了做到这一点，我们将训练过程分成`epochs`。一个 epoch 是对整个训练集的单次迭代。如果我们有一个大小为`d`的训练集，并且使用批量梯度下降的批量大小为`b`，那么一个 epoch 相当于`d/b`个模型更新。在每个 epoch 结束时，我们希望衡量我们的模型泛化的效果。为了做到这一点，我们使用一个额外的`验证集`，如图 4-13 所示。
 
 ![ ](img/fdl2_0413.png)
 
@@ -198,7 +214,7 @@ y = 1 / (1 + e^(-z))
 
 在一个 epoch 结束时，验证集将告诉我们模型在尚未见过的数据上的表现。如果训练集上的准确性继续增加，而验证集上的准确性保持不变（或下降），这表明是时候停止训练了，因为我们正在过拟合。
 
-验证集还有助于作为*超参数优化*过程中准确性的代理度量。到目前为止，我们已经涵盖了几个超参数（学习率、小批量大小等），但我们尚未开发出如何找到这些超参数的最佳值的框架。找到超参数的最佳设置的一个潜在方法是应用*网格搜索*，在网格搜索中，我们从有限的选项集中为每个超参数选择一个值（例如，<math alttext="epsilon element-of StartSet 0.001 comma 0.01 comma 0.1 EndSet comma batch size element-of StartSet 16 comma 64 comma 128 EndSet comma ellipsis"><mrow><mi>ϵ</mi> <mo>∈</mo> <mo>{</mo> <mn>0</mn> <mo>.</mo> <mn>001</mn> <mo>,</mo> <mn>0</mn> <mo>.</mo> <mn>01</mn> <mo>,</mo> <mn>0</mn> <mo>.</mo> <mn>1</mn> <mo>}</mo> <mo>,</mo> <mtext>batch</mtext> <mtext>size</mtext> <mo>∈</mo> <mo>{</mo> <mn>16</mn> <mo>,</mo> <mn>64</mn> <mo>,</mo> <mn>128</mn> <mo>}</mo> <mo>,</mo> <mo>...</mo></mrow></math>），并使用每种超参数选择的所有可能排列来训练模型。我们选择在验证集上性能最佳的超参数组合，并报告使用最佳组合训练的模型在测试集上的准确性。³
+验证集还有助于作为`超参数优化`过程中准确性的代理度量。到目前为止，我们已经涵盖了几个超参数（学习率、小批量大小等），但我们尚未开发出如何找到这些超参数的最佳值的框架。找到超参数的最佳设置的一个潜在方法是应用`网格搜索`，在网格搜索中，我们从有限的选项集中为每个超参数选择一个值（例如，`ϵ ∈ {0.001, 0.01, 0.1}, batch size ∈ {16, 64, 128}, ...`），并使用每种超参数选择的所有可能排列来训练模型。我们选择在验证集上性能最佳的超参数组合，并报告使用最佳组合训练的模型在测试集上的准确性。³
 
 考虑到这一点，在我们开始描述直接对抗过拟合的各种方法之前，让我们先概述构建和训练深度学习模型时使用的工作流程。工作流程在图 4-14 中有详细描述。这有点复杂，但了解流程对确保我们正确训练神经网络至关重要。
 
@@ -218,9 +234,9 @@ y = 1 / (1 + e^(-z))
 
 在训练过程中已经提出了几种技术来防止过拟合。在本节中，我们将详细讨论这些技术。
 
-一种对抗过拟合的方法称为*正则化*。正则化通过添加额外的惩罚大权重的项来修改我们最小化的目标函数。我们改变目标函数，使其变为<math alttext="upper E r r o r plus lamda f left-parenthesis theta right-parenthesis"><mrow><mi>E</mi> <mi>r</mi> <mi>r</mi> <mi>o</mi> <mi>r</mi> <mo>+</mo> <mi>λ</mi> <mi>f</mi> <mo>(</mo> <mi>θ</mi> <mo>)</mo></mrow></math>，其中<math alttext="f left-parenthesis theta right-parenthesis"><mrow><mi>f</mi> <mo>(</mo> <mi>θ</mi> <mo>)</mo></mrow></math>随着<math alttext="theta"><mi>θ</mi></math>的分量增大而增大，<math alttext="lamda"><mi>λ</mi></math>是正则化强度（另一个超参数）。我们选择的<math alttext="lamda"><mi>λ</mi></math>的值决定了我们想要保护免受过拟合的程度。<math alttext="lamda equals 0"><mrow><mi>λ</mi> <mo>=</mo> <mn>0</mn></mrow></math>意味着我们不采取任何措施来防止过拟合。如果<math alttext="lamda"><mi>λ</mi></math>太大，那么我们的模型将优先保持<math alttext="theta"><mi>θ</mi></math>尽可能小，而不是试图找到在训练集上表现良好的参数值。因此，选择<math alttext="lamda"><mi>λ</mi></math>是一项非常重要的任务，可能需要一些试错。
+一种对抗过拟合的方法称为`正则化`。正则化通过添加额外的惩罚大权重的项来修改我们最小化的目标函数。我们改变目标函数，使其变为`Error + λf(θ)`，其中`f(θ)`随着`θ`的分量增大而增大，`λ`是正则化强度（另一个超参数）。我们选择的`λ`的值决定了我们想要保护免受过拟合的程度。`λ = 0`意味着我们不采取任何措施来防止过拟合。如果`λ`太大，那么我们的模型将优先保持`θ`尽可能小，而不是试图找到在训练集上表现良好的参数值。因此，选择`λ`是一项非常重要的任务，可能需要一些试错。
 
-机器学习中最常见的正则化类型是*L2*正则化。⁴ 它可以通过将神经网络中所有权重的平方幅度添加到误差函数中来实现。换句话说，对于神经网络中的每个权重<math alttext="w"><mi>w</mi></math>，我们将<math alttext="one-half lamda w squared"><mrow><mfrac><mn>1</mn> <mn>2</mn></mfrac> <mi>λ</mi> <msup><mi>w</mi> <mn>2</mn></msup></mrow></math>添加到误差函数中。L2 正则化具有对尖峰权重向量进行严厉惩罚并更喜欢扩散权重向量的直观解释。这具有鼓励网络稍微使用其所有输入而不是仅大量使用部分输入的吸引性属性。特别值得注意的是，在梯度下降更新期间，使用 L2 正则化最终意味着每个权重都会线性衰减至零。由于这种现象，L2 正则化通常也被称为*权重衰减*。
+机器学习中最常见的正则化类型是`L2`正则化。⁴ 它可以通过将神经网络中所有权重的平方幅度添加到误差函数中来实现。换句话说，对于神经网络中的每个权重`w`，我们将`1/2 λw²`添加到误差函数中。L2 正则化具有对尖峰权重向量进行严厉惩罚并更喜欢扩散权重向量的直观解释。这具有鼓励网络稍微使用其所有输入而不是仅大量使用部分输入的吸引性属性。特别值得注意的是，在梯度下降更新期间，使用 L2 正则化最终意味着每个权重都会线性衰减至零。由于这种现象，L2 正则化通常也被称为`权重衰减`。
 
 我们可以使用 ConvNetJS 来可视化 L2 正则化的效果。与图 2-10 和 2-11 类似，我们使用一个具有 2 个输入、大小为 2 的 softmax 输出和一个包含 20 个神经元的隐藏层的神经网络。我们使用小批量梯度下降（批量大小为 10）和正则化强度为 0.01、0.1 和 1 来训练网络。结果可以在图 4-15 中看到。
 
@@ -228,13 +244,13 @@ y = 1 / (1 + e^(-z))
 
 ###### 图 4-15。使用正则化强度为 0.01、0.1 和 1（按顺序）训练的神经网络的可视化。
 
-另一种常见的正则化类型是 *L1 正则化*。在这里，我们为神经网络中的每个权重 <math alttext="w"><mi>w</mi></math> 添加项 <math alttext="lamda StartAbsoluteValue w EndAbsoluteValue"><mrow><mi>λ</mi> <mfenced open="|" close="|"><mi>w</mi></mfenced></mrow></math>。L1 正则化具有引人注目的特性，即在优化过程中导致权重向量变得稀疏（即接近于零）。使用 L1 正则化的神经元最终只使用它们最重要的输入的一个小子集，并且对输入中的噪声变得相当抗拒。相比之下，来自 L2 正则化的权重向量通常是分散的、小数。当您想要准确了解哪些特征对决策有贡献时，L1 正则化是有用的。如果不需要这种特征分析水平，我们更倾向于使用 L2 正则化，因为它在经验上表现更好。
+另一种常见的正则化类型是`L1 正则化`。在这里，我们为神经网络中的每个权重`w`添加项`λ|w|`。L1 正则化具有引人注目的特性，即在优化过程中导致权重向量变得稀疏（即接近于零）。使用 L1 正则化的神经元最终只使用它们最重要的输入的一个小子集，并且对输入中的噪声变得相当抗拒。相比之下，来自 L2 正则化的权重向量通常是分散的、小数。当您想要准确了解哪些特征对决策有贡献时，L1 正则化是有用的。如果不需要这种特征分析水平，我们更倾向于使用 L2 正则化，因为它在经验上表现更好。
 
-*最大范数约束* 有类似的目标，试图限制 <math alttext="theta"><mi>θ</mi></math> 变得过大，但它们更直接地实现这一目标。最大范数约束对每个神经元的传入权重向量的幅度施加绝对上限，并使用投影梯度下降来强制执行约束。因此，每当梯度下降步骤使传入权重向量移动，使得 <math alttext="StartAbsoluteValue EndAbsoluteValue w StartAbsoluteValue EndAbsoluteValue Subscript 2 Baseline greater-than c"><mrow><msub><mfenced open="|" close="|"><mfenced open="|" close="|"><mi>w</mi></mfenced></mfenced> <mn>2</mn></msub> <mo>></mo> <mi>c</mi></mrow></math> 时，我们将向量投影回以半径 <math alttext="c"><mi>c</mi></math>（以原点为中心）的球体上。典型的 <math alttext="c"><mi>c</mi></math> 值为 3 和 4。其中一个好处是参数向量不会失控增长（即使学习率过高），因为权重的更新始终受到限制。
+`最大范数约束`有类似的目标，试图限制`θ`变得过大，但它们更直接地实现这一目标。最大范数约束对每个神经元的传入权重向量的幅度施加绝对上限，并使用投影梯度下降来强制执行约束。因此，每当梯度下降步骤使传入权重向量移动，使得`||w||₂ > c`时，我们将向量投影回以半径`c`（以原点为中心）的球体上。典型的`c`值为 3 和 4。其中一个好处是参数向量不会失控增长（即使学习率过高），因为权重的更新始终受到限制。
 
-*Dropout* 是一种不同的方法，用于防止过拟合，在深度神经网络中已经成为最受欢迎的防止过拟合的方法之一。在训练过程中，通过以概率 <math alttext="p"><mi>p</mi></math>（一个超参数）保持神经元活跃，或者将其设置为零来实现 dropout。直观地说，这迫使网络即使在缺少某些信息的情况下也能准确。它防止网络过于依赖任何一个神经元（或任何少量神经元的组合）。更数学化地表达，dropout 通过提供一种有效地近似组合指数级别不同的神经网络架构的方法来防止过拟合。dropout 的过程在 图 4-16 中表达。
+`Dropout`是一种不同的方法，用于防止过拟合，在深度神经网络中已经成为最受欢迎的防止过拟合的方法之一。在训练过程中，通过以概率`p`（一个超参数）保持神经元活跃，或者将其设置为零来实现 dropout。直观地说，这迫使网络即使在缺少某些信息的情况下也能准确。它防止网络过于依赖任何一个神经元（或任何少量神经元的组合）。更数学化地表达，dropout 通过提供一种有效地近似组合指数级别不同的神经网络架构的方法来防止过拟合。dropout 的过程在 图 4-16 中表达。
 
-辍学是相当直观的，但有一些重要的细微差别需要考虑。首先，我们希望在测试时间神经元的输出等同于训练时间的预期输出。我们可以通过在测试时间缩放输出来天真地修复这个问题。例如，如果 <math alttext="p equals 0.5"><mrow><mi>p</mi> <mo>=</mo> <mn>0</mn> <mo>.</mo> <mn>5</mn></mrow></math> ，神经元必须在测试时间将其输出减半，以便具有与训练期间相同（预期的）输出。这很容易理解，因为神经元的输出以概率 <math alttext="1 minus p"><mrow><mn>1</mn> <mo>-</mo> <mi>p</mi></mrow></math> 被设置为 0。这意味着如果一个神经元在辍学之前的输出是 *x*，那么在辍学之后，预期输出将是 <math alttext="upper E left-bracket output right-bracket equals p x plus left-parenthesis 1 minus p right-parenthesis dot 0 equals p x"><mrow><mi>E</mi> <mo>[</mo> <mtext>output</mtext> <mo>]</mo> <mo>=</mo> <mi>p</mi> <mi>x</mi> <mo>+</mo> <mo>(</mo> <mn>1</mn> <mo>-</mo> <mi>p</mi> <mo>)</mo> <mo>·</mo> <mn>0</mn> <mo>=</mo> <mi>p</mi> <mi>x</mi></mrow></math> 。然而，这种天真的辍学实现是不可取的，因为它要求在测试时间缩放神经元的输出。测试时间的性能对模型评估非常关键，因此最好始终使用*反向辍学*，其中缩放发生在训练时间而不是在测试时间。在反向辍学中，任何激活未被消除的神经元在传播到下一层之前，其输出被除以 <math alttext="p"><mi>p</mi></math> 。通过这种修复，<math alttext="upper E left-bracket output right-bracket equals p dot StartFraction x Over p EndFraction plus left-parenthesis 1 minus p right-parenthesis dot 0 equals x"><mrow><mi>E</mi> <mrow><mo>[</mo> <mtext>output</mtext> <mo>]</mo></mrow> <mo>=</mo> <mi>p</mi> <mo>·</mo> <mfrac><mi>x</mi> <mi>p</mi></mfrac> <mo>+</mo> <mrow><mo>(</mo> <mn>1</mn> <mo>-</mo> <mi>p</mi> <mo>)</mo></mrow> <mo>·</mo> <mn>0</mn> <mo>=</mo> <mi>x</mi></mrow></math> ，我们可以避免在测试时间任意缩放神经元的输出。
+辍学是相当直观的，但有一些重要的细微差别需要考虑。首先，我们希望在测试时间神经元的输出等同于训练时间的预期输出。我们可以通过在测试时间缩放输出来天真地修复这个问题。例如，如果`p = 0.5`，神经元必须在测试时间将其输出减半，以便具有与训练期间相同（预期的）输出。这很容易理解，因为神经元的输出以概率`1 - p`被设置为 0。这意味着如果一个神经元在辍学之前的输出是`x`，那么在辍学之后，预期输出将是`E[output] = px + (1 - p) · 0 = px`。然而，这种天真的辍学实现是不可取的，因为它要求在测试时间缩放神经元的输出。测试时间的性能对模型评估非常关键，因此最好始终使用`反向辍学`，其中缩放发生在训练时间而不是在测试时间。在反向辍学中，任何激活未被消除的神经元在传播到下一层之前，其输出被除以`p`。通过这种修复，`E[output] = p · x/p + (1 - p) · 0 = x`，我们可以避免在测试时间任意缩放神经元的输出。
 
 ![ ](img/fdl2_0416.png)
 

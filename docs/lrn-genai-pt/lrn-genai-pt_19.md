@@ -1,16 +1,12 @@
-# 第十六章：预训练大型
 
-语言模型和 LangChain 库
+# 第十六章：预训练大型语言模型和 LangChain 库
 
-本章涵盖
+## 本章涵盖
 
-+   使用预训练大型语言模型进行文本、图像、语音和代码生成
-
-+   少样本、单样本和零样本提示技术
-
-+   使用 LangChain 创建零样本个人助理
-
-+   生成式 AI 的限制和伦理问题
++ 使用预训练大型语言模型进行文本、图像、语音和代码生成
++ 少样本、单样本和零样本提示技术
++ 使用 LangChain 创建零样本个人助理
++ 生成式 AI 的限制和伦理问题
 
 预训练大型语言模型（LLMs）的兴起已经改变了自然语言处理（NLP）和生成任务的领域。OpenAI 的 GPT 系列是一个显著的例子，展示了这些模型在生成逼真文本、图像、语音甚至代码方面的广泛能力。有效利用这些预训练 LLMs 对于几个原因至关重要。它使我们能够在不开发这些模型的大量资源的情况下部署高级 AI 功能。此外，理解这些 LLMs 为利用 NLP 和生成 AI 的创新应用铺平了道路，促进了各个行业的进步。
 
@@ -56,7 +52,7 @@ OpenAI 允许你使用 LLMs 生成各种内容，如文本、图像、音频和�
 
 让我们先向 GPT 提问有关历史事实的问题。在新的单元格中输入以下代码行。
 
-列表 16.1 使用 OpenAI API 检查历史事实
+**列表 16.1 使用 OpenAI API 检查历史事实**
 
 ```py
 from openai import OpenAI
@@ -76,17 +72,14 @@ completion = client.chat.completions.create(
 print(completion.choices[0].message.content)
 ```
 
-① 提供您的 OpenAI API 密钥
-
-② 创建一个名为 client 的 OpenAI()类实例
-
-③ 定义系统的角色
-
+① 提供您的 OpenAI API 密钥  
+② 创建一个名为 `client` 的 `OpenAI()` 类实例  
+③ 定义系统的角色  
 ④ 提出问题
 
-确保在列表 16.1 中提供您的 OpenAI API 密钥。我们首先实例化`OpenAI()`类，并将其命名为`client`。在`chat.completions.create()`方法中，我们指定模型为`gpt-3.5-turbo`。网站[`platform.openai.com/docs/models`](https://platform.openai.com/docs/models)提供了各种可用的模型。您可以使用 gpt-4 或 gpt-3.5-turbo 进行文本生成。前者提供更好的结果，但费用也更高。由于我们的示例足够简单，我们将使用后者，因为它提供同样好的结果。
+确保在列表 16.1 中提供您的 OpenAI API 密钥。我们首先实例化 `OpenAI()` 类，并将其命名为 `client`。在 `chat.completions.create()` 方法中，我们指定模型为 `gpt-3.5-turbo`。网站 [`platform.openai.com/docs/models`](https://platform.openai.com/docs/models) 提供了各种可用的模型。您可以使用 `gpt-4` 或 `gpt-3.5-turbo` 进行文本生成。前者提供更好的结果，但费用也更高。由于我们的示例足够简单，我们将使用后者，因为它提供同样好的结果。
 
-前一个代码块中的`messages`参数由几个消息对象组成，每个对象包含一个角色（可以是“system”、“user”或“assistant”）和内容。系统消息决定了助手的行为了；如果没有系统消息，默认设置将助手描述为“一个有用的助手”。用户消息包括助手需要处理的询问或评论。例如，在先前的例子中，用户消息是“2000 年谁获得了诺贝尔经济学奖？”输出如下
+前一个代码块中的 `messages` 参数由几个消息对象组成，每个对象包含一个角色（可以是“system”、“user”或“assistant”）和内容。系统消息决定了助手的行为了；如果没有系统消息，默认设置将助手描述为“一个有用的助手”。用户消息包括助手需要处理的询问或评论。例如，在先前的例子中，用户消息是“2000 年谁获得了诺贝尔经济学奖？”输出如下：
 
 ```py
 The Nobel Prize in Economics in 2000 was awarded to James J. Heckman and 
@@ -111,7 +104,7 @@ completion = client.chat.completions.create(
 print(completion.choices[0].message.content)
 ```
 
-这里的`n=1`参数告诉助手生成一个响应。如果您想要多个响应，可以将 n 设置为不同的数字。n 的默认值是 1。输出如下
+这里的 `n=1` 参数告诉助手生成一个响应。如果您想要多个响应，可以将 `n` 设置为不同的数字。`n` 的默认值是 1。输出如下：
 
 ```py
 Self-motivation is a key factor in achieving success and personal growth in
@@ -123,7 +116,7 @@ One of the primary benefits of self-motivation is that it helps individuals
  take initiative and control of their lives…
 ```
 
-输出共有六段，我只包括了前几句话。您可以访问书籍的 GitHub 仓库([`github.com/markhliu/DGAI`](https://github.com/markhliu/DGAI))查看全文。如您所见，文章结构清晰，观点明确，且没有语法错误。
+输出共有六段，我只包括了前几句话。您可以访问书籍的 GitHub 仓库 ([`github.com/markhliu/DGAI`](https://github.com/markhliu/DGAI)) 查看全文。如您所见，文章结构清晰，观点明确，且没有语法错误。
 
 您甚至可以要求 OpenAI 的 GPT 为您写一个笑话：
 
@@ -140,13 +133,13 @@ completion = client.chat.completions.create(
 print(completion.choices[0].message.content)
 ```
 
-我们要求它讲一个数学笑话，结果是
+我们要求它讲一个数学笑话，结果是：
 
 ```py
 Why was the equal sign so humble? Because he knew he wasn't less than or greater than anyone else!
 ```
 
-您可以与助手进行双向对话。messages 参数自动包括对话历史。例如，在运行前面的代码块之后，如果您运行以下代码：
+您可以与助手进行双向对话。`messages` 参数自动包括对话历史。例如，在运行前面的代码块之后，如果您运行以下代码：
 
 ```py
 completion = client.chat.completions.create(
@@ -159,7 +152,7 @@ completion = client.chat.completions.create(
 print(completion.choices[0].message.content)
 ```
 
-您将得到一个类似的响应
+您将得到一个类似的响应：
 
 ```py
 Sure! Why was the math book sad? Because it had too many problems.
@@ -187,7 +180,7 @@ completion = client.chat.completions.create(
 print(completion.choices[0].message.content)
 ```
 
-注意，ChatGPT 使用 GPT-3.5-Turbo 有效地管理对话方面和代码生成任务。它不只为代码生成提供单独的 Codex 模型。输出如下
+注意，ChatGPT 使用 GPT-3.5-Turbo 有效地管理对话方面和代码生成任务。它不只为代码生成提供单独的 Codex 模型。输出如下：
 
 ```py
 Sure! Here's a simple Python program using the matplotlib library to plot 
@@ -233,9 +226,9 @@ library installed to visualize the sine graph.
 
 ![](img/CH16_F01_Liu.png)
 
-图 16.1 使用 OpenAI GPT-3.5 生成 Python 代码绘制正弦曲线。我们使用文本描述“编写一个 Python 程序绘制正弦图”来请求它生成一个 Python 程序。然后我们运行程序来创建图表。
+**图 16.1** 使用 OpenAI GPT-3.5 生成 Python 代码绘制正弦曲线。我们使用文本描述“编写一个 Python 程序绘制正弦图”来请求它生成一个 Python 程序。然后我们运行程序来创建图表。
 
-LLM 不仅提供了 Python 代码，还让您知道您需要在安装了 matplotlib 库的 Python 环境中运行代码。
+LLM 不仅提供了 Python 代码，还让您知道您需要在安装了 `matplotlib` 库的 Python 环境中运行代码。
 
 ### 16.1.3 使用 OpenAI DALL-E 2 生成图像
 
@@ -261,13 +254,15 @@ print(image_url)
 
 ![](img/CH16_F02_Liu.png)
 
-图 16.2 使用文本提示“有人在河岸钓鱼”生成的 DALL-E 2 图像
+**图 16.2** 使用文本提示“有人在河岸钓鱼”生成的 DALL-E 2 图像
 
 URL 在一小时后过期，所以请确保你及时访问它。此外，即使使用相同的文本提示，DALL-E 2 生成的图像也可能略有不同，因为输出是随机生成的。
 
 ### 16.1.4 使用 OpenAI API 进行语音生成
 
 文本到语音（TTS）是一种将书面文本转换为语音的技术。TTS 通过多模态 Transformer 进行训练，其中输入是文本，输出是音频格式。在 ChatGPT 的背景下，集成 TTS 功能意味着 LLM 不仅能够生成文本响应，还可以大声说出这些响应。接下来，我们请求 OpenAI API 将一段简短文本转换为语音：
+
+
 
 ```py
 response = client.audio.speech.create(
@@ -279,7 +274,7 @@ response = client.audio.speech.create(
 response.stream_to_file("files/speech.mp3")
 ```
 
-运行前面的代码单元后，会在你的电脑上保存一个名为 speech.mp3 的文件，你可以听一下。文档网站（[`platform.openai.com/docs/guides/text-to-speech`](https://platform.openai.com/docs/guides/text-to-speech)）提供了语音选项。这里我们选择了 `shimmer` 选项。其他选项包括 `alloy`、`echo` 等等。
+运行前面的代码单元后，会在你的电脑上保存一个名为`speech.mp3`的文件，你可以听一下。文档网站（[`platform.openai.com/docs/guides/text-to-speech`](https://platform.openai.com/docs/guides/text-to-speech)）提供了语音选项。这里我们选择了`shimmer`选项。其他选项包括`alloy`、`echo`等等。
 
 ## 16.2 LangChain 简介
 
@@ -323,7 +318,7 @@ outlets closer to the date of the awards show.
 
 ### 16.2.2 在 LangChain 中使用 OpenAI API
 
-本章早期安装的 langchain-openai 库允许你以最少的提示工程使用 OpenAI GPTs。你只需要用普通的英语解释你希望 LLM 做什么。
+本章早期安装的`langchain-openai`库允许你以最少的提示工程使用 OpenAI GPTs。你只需要用普通的英语解释你希望 LLM 做什么。
 
 这里是一个例子，展示我们如何要求它纠正文本中的语法错误：
 
@@ -398,7 +393,7 @@ Negative
 
 在提示中，我们提供了三个示例。其中两个评论被归类为正面，而另一个被归类为负面。然后我们提供了句子，“这部电影多么糟糕！”LLM 正确将其归类为负面。
 
-在上一个例子中，我们使用 `//` 来分隔句子和相应的情感。你可以使用其他分隔符，如 `->`，只要保持一致即可。
+在上一个例子中，我们使用`//`来分隔句子和相应的情感。你可以使用其他分隔符，如`->`，只要保持一致即可。
 
 下面是一个单样本提示的例子：
 
@@ -551,9 +546,11 @@ print(res["output"])
 
 ④ 向代理提问
 
-LangChain 中的 `hwchase17/react` 指的是一种特定的 ReAct 代理配置。ReAct 代表反应性动作，它是 LangChain 内的一个框架，旨在优化语言模型能力与其他工具结合以有效解决复杂任务。有关更多详细信息，请参阅 [`python.langchain.com/docs/how_to/migrate_agent/`](https://python.langchain.com/docs/how_to/migrate_agent/)。在 LangChain 中创建代理时，您需要指定代理要使用的工具。在先前的示例中，我们只使用了一个工具，即 Wolfram Alpha API。
+LangChain 中的`hwchase17/react`指的是一种特定的 ReAct 代理配置。ReAct 代表反应性动作，它是 LangChain 内的一个框架，旨在优化语言模型能力与其他工具结合以有效解决复杂任务。有关更多详细信息，请参阅 [`python.langchain.com/docs/how_to/migrate_agent/`](https://python.langchain.com/docs/how_to/migrate_agent/)。在 LangChain 中创建代理时，您需要指定代理要使用的工具。在先前的示例中，我们只使用了一个工具，即 Wolfram Alpha API。
 
 例如，我们询问肯塔基州列克星敦的当前温度，以下是输出结果：
+
+
 
 ```py
 > Entering new AgentExecutor chain...
@@ -571,7 +568,7 @@ chill of 41 °F.
 The temperature in Lexington, Kentucky is 44 °F with a wind chill of 41 °F.
 ```
 
-输出不仅显示了最终答案，即肯塔基州列克星敦的当前温度为 44 华氏度，而且还显示了思维链。它使用 Wolfram Alpha 作为获取答案的来源。
+输出不仅显示了最终答案，即肯塔基州列克星敦的当前温度为 44 华氏度，而且还显示了思维链。它使用 `Wolfram Alpha` 作为获取答案的来源。
 
 我们还可以将维基百科添加到工具箱中：
 
@@ -815,58 +812,58 @@ print(image_url)
 
 LLMs（大型语言模型）如 OpenAI 的 GPT 系列在自然语言处理和生成式 AI 领域取得了显著的进步。尽管这些模型拥有令人印象深刻的性能，但它们并非没有局限性。理解这些限制对于发挥它们的优点和减轻它们的弱点至关重要。
 
-同时，这些模型的快速进步和广泛应用也引发了一系列伦理问题，如偏见、不准确、侵犯隐私和版权侵权。这些问题需要仔细考虑并采取主动措施，以确保 LLMs 的开发和部署符合伦理标准和社会主义核心价值观。
 
-在本节中，我们将探讨 LLMs 的限制，分析为什么这些问题持续存在，并举例说明一些显著的失败案例，以强调解决这些挑战的重要性。我们还将检查与 LLMs 相关的关键伦理问题，并提出缓解这些问题的途径。
+
+同时，这些模型的快速进步和广泛应用也引发了一系列伦理问题，如偏见、不准确、侵犯隐私和版权侵权。这些问题需要仔细考虑并采取主动措施，以确保`LLMs`的开发和部署符合伦理标准和社会主义核心价值观。
+
+在本节中，我们将探讨`LLMs`的限制，分析为什么这些问题持续存在，并举例说明一些显著的失败案例，以强调解决这些挑战的重要性。我们还将检查与`LLMs`相关的关键伦理问题，并提出缓解这些问题的途径。
 
 ### 16.4.1 LLMs 的限制
 
-LLMs 的一个基本局限性是它们缺乏真正的理解和推理能力。虽然它们可以生成连贯且与上下文相关的回答，但它们并不具备对内容的内在理解。这可能导致逻辑错误、事实不准确，以及无法掌握复杂概念或细微差别。
+`LLMs`的一个基本局限性是它们缺乏真正的理解和推理能力。虽然它们可以生成连贯且与上下文相关的回答，但它们并不具备对内容的内在理解。这可能导致逻辑错误、事实不准确，以及无法掌握复杂概念或细微差别。
 
-这在 LLMs 犯下的许多史诗级错误中有所体现。《Smart Until It’s Dumb》这本书提供了许多 GPT-3 和 ChatGPT 犯下的此类错误的有趣实例。1 例如，考虑以下问题：March 夫人给了母亲茶和粥，同时她温柔地给小宝宝穿衣，就像它是她自己的孩子一样。谁是这个婴儿的母亲？GPT-3 给出的答案是 March 夫人。
+这在`LLMs`犯下的许多史诗级错误中有所体现。《Smart Until It’s Dumb》这本书提供了许多`GPT-3`和`ChatGPT`犯下的此类错误的有趣实例。^(1) 例如，考虑以下问题：March 夫人给了母亲茶和粥，同时她温柔地给小宝宝穿衣，就像它是她自己的孩子一样。谁是这个婴儿的母亲？`GPT-3`给出的答案是 March 夫人。
 
-公平地说，随着 LLMs 的快速进步，许多这些错误随着时间的推移得到了纠正。然而，LLMs 仍然会犯低级错误。2023 年 6 月 David Johnston 在 LinkedIn 上的一篇文章([`www.linkedin.com/pulse/intelligence-tests-llms-fail-why-david-johnston/`](https://www.linkedin.com/pulse/intelligence-tests-llms-fail-why-david-johnston/))测试了 LLMs 在人类容易解决的十二个问题上的智力。包括 GPT-4 在内的 LLMs 在这些问题上都遇到了困难。其中一个问题是：说出一个动物的名字，其单词长度等于它们腿的数量减去它们尾巴的数量。
+公平地说，随着`LLMs`的快速进步，许多这些错误随着时间的推移得到了纠正。然而，`LLMs`仍然会犯低级错误。2023 年 6 月 David Johnston 在 LinkedIn 上的一篇文章（[`www.linkedin.com/pulse/intelligence-tests-llms-fail-why-david-johnston/`](https://www.linkedin.com/pulse/intelligence-tests-llms-fail-why-david-johnston/)）测试了`LLMs`在人类容易解决的十二个问题上的智力。包括`GPT-4`在内的`LLMs`在这些问题上都遇到了困难。其中一个问题是：说出一个动物的名字，其单词长度等于它们腿的数量减去它们尾巴的数量。
 
--david-johnston/](https://www.linkedin.com/pulse/intelligence-tests-llms-fail-why-david-johnston/))测试了 LLMs 在人类容易解决的十二个问题上的智力。包括 GPT-4 在内的 LLMs 在这些问题上都遇到了困难。其中一个问题是：说出一个动物的名字，其单词长度等于它们腿的数量减去它们尾巴的数量。
-
-到目前为止，这个错误还没有被纠正。图 16.7 是我使用浏览器界面时 GPT-4 给出的答案的截图。
+到目前为止，这个错误还没有被纠正。图 16.7 是我使用浏览器界面时`GPT-4`给出的答案的截图。
 
 ![](img/CH16_F07_Liu.png)
 
 图 16.7 GPT-4 仍然犯的低级错误
 
-图 16.7 的输出显示，根据 GPT-4，数字五等于单词“bee”中的字母数量。
+图 16.7 的输出显示，根据`GPT-4`，数字五等于单词“bee”中的字母数量。
 
 ### 16.4.2 LLMs 的伦理问题
 
-最紧迫的伦理问题之一是 LLMs 可能持续和放大其训练数据中的偏见。由于这些模型从通常来源于人类生成内容的大量数据集中学习，它们可以继承与性别、种族、民族和其他社会因素相关的偏见。这可能导致带有偏见的输出，从而强化刻板印象和歧视。
+最紧迫的伦理问题之一是`LLMs`可能持续和放大其训练数据中的偏见。由于这些模型从通常来源于人类生成内容的大量数据集中学习，它们可以继承与性别、种族、民族和其他社会因素相关的偏见。这可能导致带有偏见的输出，从而强化刻板印象和歧视。
 
 为了减轻偏见，采用多元包容的训练数据集、实施偏见检测和纠正算法，以及在模型开发和评估中确保透明度是至关重要的。尤其重要的是建立行业范围内的合作，以制定偏见减轻实践的标准，并促进负责任的 AI 发展。
 
-然而，我们必须记住不要过度纠正。一个反例是，谷歌的 Gemini 通过在纳粹时代德国士兵等群体中包含有色人种，过度纠正了图像生成中的刻板印象.^(2)
+然而，我们必须记住不要过度纠正。一个反例是，谷歌的 Gemini 通过在纳粹时代德国士兵等群体中包含有色人种，过度纠正了图像生成中的刻板印象。^(2)
 
-对于 LLM 的另一个担忧是它们潜在的虚假信息和操纵能力。LLM 能够生成逼真且具有说服力的文本，这可能被用于制造和传播虚假信息、宣传或操纵性内容，这对公共讨论、民主和信息信任构成重大风险。
+对于`LLM`的另一个担忧是它们潜在的虚假信息和操纵能力。`LLM`能够生成逼真且具有说服力的文本，这可能被用于制造和传播虚假信息、宣传或操纵性内容，这对公共讨论、民主和信息信任构成重大风险。
 
 解决这一担忧的方案在于开发强大的内容审查系统。制定负责任使用的指南，以及促进 AI 开发者、政策制定者和媒体组织之间的合作，是打击虚假信息的关键步骤。
 
-第三个担忧与隐私相关。用于训练 LLM 的大量数据引发了隐私担忧，因为敏感信息可能会在模型输出中无意中被泄露。此外，LLM 被用于网络攻击或绕过安全措施的可能性也带来了重大的安全风险。
+第三个担忧与隐私相关。用于训练`LLM`的大量数据引发了隐私担忧，因为敏感信息可能会在模型输出中无意中被泄露。此外，`LLM`被用于网络攻击或绕过安全措施的可能性也带来了重大的安全风险。
 
-此外，用于训练大型语言模型（LLM）的数据大多是在未经授权的情况下收集的。支持者认为，用于训练 LLM 的数据使用方式具有变革性：模型不仅仅重复数据，而是用它来生成新的、原创的内容。这种变革可能符合“合理使用”原则，该原则允许在不获得许可的情况下有限地使用受版权保护的材料，如果使用增加了新的表达或意义。批评者认为，LLM 是在未经许可的情况下使用大量受版权保护的文本进行训练的，这超出了可能被认为是合理使用的范围。所使用的数据规模和训练过程中未经转换直接摄取受版权保护的材料可能被视为侵权。这场辩论仍在继续。现行的版权法并非针对生成式 AI 设计的，导致了对 LLM 等技术如何适用这些法律的模糊性。这可能是需要由立法和司法机构来解决，以提供明确的指导并确保所有方的利益得到公平代表。
+此外，用于训练大型语言模型（`LLM`）的数据大多是在未经授权的情况下收集的。支持者认为，用于训练`LLM`的数据使用方式具有变革性：模型不仅仅重复数据，而是用它来生成新的、原创的内容。这种变革可能符合“合理使用”原则，该原则允许在不获得许可的情况下有限地使用受版权保护的材料，如果使用增加了新的表达或意义。批评者认为，`LLM`是在未经许可的情况下使用大量受版权保护的文本进行训练的，这超出了可能被认为是合理使用的范围。所使用的数据规模和训练过程中未经转换直接摄取受版权保护的材料可能被视为侵权。这场辩论仍在继续。现行的版权法并非针对生成式 AI 设计的，导致了对`LLM`等技术如何适用这些法律的模糊性。这可能是需要由立法和司法机构来解决，以提供明确的指导并确保所有方的利益得到公平代表。
 
-围绕 LLMs 的伦理问题多方面且需要全面的方法。AI 研究人员、开发者和政策制定者之间的协作对于制定伦理准则和框架至关重要，这些准则和框架指导着这些强大模型的负责任开发和部署。随着我们继续利用 LLMs 的潜力，伦理考量必须始终是我们努力的重点，以确保人工智能的进步与社会的价值观和人类的福祉和谐一致。
+围绕`LLMs`的伦理问题多方面且需要全面的方法。AI 研究人员、开发者和政策制定者之间的协作对于制定伦理准则和框架至关重要，这些准则和框架指导着这些强大模型的负责任开发和部署。随着我们继续利用`LLMs`的潜力，伦理考量必须始终是我们努力的重点，以确保人工智能的进步与社会的价值观和人类的福祉和谐一致。
 
 ## 摘要
 
-+   少样本提示意味着你给出多个示例以帮助 LLMs 理解任务，而单样本或零样本提示则意味着提供一个或没有示例。
++   少样本提示意味着你给出多个示例以帮助`LLMs`理解任务，而单样本或零样本提示则意味着提供一个或没有示例。
 
-+   LangChain 是一个旨在简化在各种应用中使用大型语言模型（LLMs）的 Python 库。它抽象化了与不同 LLMs 和应用交互的复杂性。它允许代理根据当前任务自动选择工具箱中的正确工具，而无需明确告知它要做什么。
++   `LangChain`是一个旨在简化在各种应用中使用大型语言模型（`LLMs`）的 Python 库。它抽象化了与不同`LLMs`和应用交互的复杂性。它允许代理根据当前任务自动选择工具箱中的正确工具，而无需明确告知它要做什么。
 
-+   现代预训练的 LLMs，如 OpenAI 的 GPT 系列，可以创建各种格式的内蓉，如文本、图像、音频和代码。
++   现代预训练的`LLMs`，如 OpenAI 的 GPT 系列，可以创建各种格式的内容，如文本、图像、音频和代码。
 
-+   尽管它们取得了令人印象深刻的成就，但 LLMs 缺乏对内容内容的真正理解或推理能力。这些局限性可能导致逻辑错误、事实不准确，以及无法掌握复杂概念或细微差别。此外，这些模型的快速进步和广泛应用引发了一系列伦理问题，如偏见、错误信息、隐私侵犯和版权侵权。这些问题需要仔细考虑和主动措施，以确保 LLMs 的开发和部署与伦理标准和社会价值观相一致。
++   尽管它们取得了令人印象深刻的成就，但`LLMs`缺乏对内容的真正理解或推理能力。这些局限性可能导致逻辑错误、事实不准确，以及无法掌握复杂概念或细微差别。此外，这些模型的快速进步和广泛应用引发了一系列伦理问题，如偏见、错误信息、隐私侵犯和版权侵权。这些问题需要仔细考虑和主动措施，以确保`LLMs`的开发和部署与伦理标准和社会价值观相一致。
 
 * * *
 
-^(1)  Maggiori, Emmanuel，2023 年，*Smart Until It’s Dumb: Why Artificial Intelligence Keeps Making Epic Mistakes (and Why the AI Bubble Will Burst)*，Applied Maths Ltd. 电子书版。
+^(1) Maggiori, Emmanuel，2023 年，*Smart Until It’s Dumb: Why Artificial Intelligence Keeps Making Epic Mistakes (and Why the AI Bubble Will Burst)*，Applied Maths Ltd. 电子书版。
 
-^(2)  Adi Robertson，2024 年 2 月 21 日，“Google 因 Gemini 生成的种族多样性纳粹而道歉。”The Verge，[`mng.bz/2ga9`](https://mng.bz/2ga9)。
+^(2) Adi Robertson，2024 年 2 月 21 日，“Google 因 Gemini 生成的种族多样性纳粹而道歉。”The Verge，[`mng.bz/2ga9`](https://mng.bz/2ga9)。

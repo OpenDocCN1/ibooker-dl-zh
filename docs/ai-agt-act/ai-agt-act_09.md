@@ -1,12 +1,12 @@
+
+
 # 第十章：代理推理和评估
 
-### 本章涵盖
+## 本章涵盖
 
-+   使用各种提示工程技术来扩展大型语言模型功能
-
-+   使用涉及推理的提示工程技术来参与大型语言模型
-
-+   使用评估提示来缩小和识别未知问题的解决方案
+- 使用各种提示工程技术来扩展大型语言模型功能
+- 使用涉及推理的提示工程技术来参与大型语言模型
+- 使用评估提示来缩小和识别未知问题的解决方案
 
 现在我们已经检查了定义代理中语义记忆组件的记忆和检索模式，我们可以看看代理中最后一个也是最关键的组件：规划。规划包括许多方面，从推理、理解、评估到反馈。
 
@@ -26,75 +26,70 @@
 
 对于本章的练习，我们将使用提示流来构建和评估各种技术。（我们已经在第九章中广泛介绍了这个工具，所以如果需要复习，请参考该章节。）提示流是一个理解这些技术如何工作以及探索规划和推理过程流程的绝佳工具。
 
-打开 Visual Studio Code (VS Code)到`chapter` `10`源文件夹。为文件夹创建一个新的虚拟环境，并安装`requirements.txt`文件。如果您需要帮助设置章节的 Python 环境，请参阅附录 B。
+打开 Visual Studio Code (VS Code) 到 `chapter 10` 源文件夹。为文件夹创建一个新的虚拟环境，并安装 `requirements.txt` 文件。如果您需要帮助设置章节的 Python 环境，请参阅附录 B。
 
-我们将查看`prompt_flow/question-answering-prompting`文件夹中的第一个流程。在可视化编辑器中打开`flow.dag.yaml`文件，如图 10.2 所示。在右侧，您将看到组件的流程。顶部是`question_answer` LLM 提示，后面跟着两个`Embedding`组件，最后是一个用于评估的最终 LLM 提示，称为`evaluate`。
+我们将查看 `prompt_flow/question-answering-prompting` 文件夹中的第一个流程。在可视化编辑器中打开 `flow.dag.yaml` 文件，如图 10.2 所示。在右侧，您将看到组件的流程。顶部是 `question_answer` LLM 提示，后面跟着两个 `Embedding` 组件，最后是一个用于评估的最终 LLM 提示，称为 `evaluate`。
 
 ![figure](img/10-2.png)
 
-##### 图 10.2 `flow.dag.yaml`文件，在可视化编辑器中打开，突出显示流程的各个组件
+##### 图 10.2 `flow.dag.yaml` 文件，在可视化编辑器中打开，突出显示流程的各个组件
 
 列表 10.1 中的分解详细展示了流程的结构和组件，使用了一种类似 YAML 简化的伪代码。您还可以看到各个组件的输入和输出，以及运行流程的示例输出。
 
-##### 列表 10.1 `question-answer-prompting`流程
+##### 列表 10.1 `question-answer-prompting` 流程
 
 ```py
-   Inputs:
-        context  : the content to ask the question about
-        question : question asked specific to the content
-        expected : the expected answer
+Inputs:
+    context  : the content to ask the question about
+    question : question asked specific to the content
+    expected : the expected answer
 
 LLM: Question-Answer (the prompt used to ask the question)
-        inputs:
-               context and question
-        outputs: 
-               the prediction/answer to the question
+    inputs:
+        context and question
+    outputs:
+        the prediction/answer to the question
 
-   Embeddings: uses an LLM embedding model to create the embedding 
-representation of the text
+Embeddings: uses an LLM embedding model to create the embedding representation of the text
 
-     Embedding_predicted: embeds the output of the Question-Answer LLM
-     Embedding_expected: embeds the output of the expected answer
+    Embedding_predicted: embeds the output of the Question-Answer LLM
+    Embedding_expected: embeds the output of the expected answer
 
 Python: Evaluation (Python code to measure embedding similarity)
-     Inputs:
-            Embedding_predicted output
-            Embedding_expected output
-     Outputs: 
-            the similarity score between predicted and expected
+    Inputs:
+        Embedding_predicted output
+        Embedding_expected output
+    Outputs:
+        the similarity score between predicted and expected
 
-   Outputs:
-        context: -> input.context
-        question: -> input.question
-     expected: -> input.expected
-     predicted: -> output.question_answer
-     evaluation_score: output.evaluation
+Outputs:
+    context: -> input.context
+    question: -> input.question
+    expected: -> input.expected
+    predicted: -> output.question_answer
+    evaluation_score: output.evaluation
 
 ### Example Output
 {
     "context": "Back to the Future (1985)…",
     "evaluation_score": 0.9567478002354606,
     "expected": "Marty traveled back in time 30 years.",
-    "predicted": "Marty traveled back in time 30 years from 1985 to 1955 
-in the movie \"Back to the Future.\"",
-    "question": "How far did Marty travel back in time in the movie 
-Back to the Future (1985)"
+    "predicted": "Marty traveled back in time 30 years from 1985 to 1955 in the movie \"Back to the Future.\"",
+    "question": "How far did Marty travel back in time in the movie Back to the Future (1985)"
 }
 ```
 
-在运行此流程之前，请确保您的 LLM 块配置正确。这可能需要您设置与所选 LLM 的连接。如果您需要复习如何完成此操作，请再次参考第九章。如果您不使用 OpenAI，您需要配置 LLM 和`Embedding`块与您的连接。
+在运行此流程之前，请确保您的 LLM 块配置正确。这可能需要您设置与所选 LLM 的连接。如果您需要复习如何完成此操作，请再次参考第九章。如果您不使用 OpenAI，您需要配置 LLM 和 `Embedding` 块与您的连接。
 
 在配置您的 LLM 连接后，通过从可视化编辑器中点击播放按钮或在 YAML 编辑器窗口中使用测试（Shift-F5）链接来运行流程。如果一切连接和配置正确，您应该会看到列表 10.1 中的输出。
 
-在 VS Code 中打开`question_answer.jinja2`文件，如图 10.2 所示。这个列表显示了基本的问答式提示。在这种提示风格中，系统消息描述了基本规则，并提供了解答问题的上下文。在第四章中，我们探讨了检索增强生成（RAG）模式，而这个提示遵循了类似的模式。
+在 VS Code 中打开 `question_answer.jinja2` 文件，如图 10.2 所示。这个列表显示了基本的问答式提示。在这种提示风格中，系统消息描述了基本规则，并提供了解答问题的上下文。在第四章中，我们探讨了检索增强生成（RAG）模式，而这个提示遵循了类似的模式。
 
 ##### 列表 10.2 `question_answer.jinja2`
 
 ```py
 system:
-Answer the users question based on the context below. Keep the answer 
-short and concise. Respond "Unsure about answer" if not sure about the 
-answer.
+Answer the users question based on the context below. Keep the answer short and concise. Respond "Unsure about answer" if not sure about the answer.
 
 Context: {{context}}     #1
 
@@ -124,39 +119,39 @@ Question: {{question}}     #2
 
 ```py
 Inputs:
-       statement  : introduces the context and then asks for output
-       expected : the expected answer to the statement
- LLM: few_shot (the prompt used to ask the question)
-       inputs:statement
-       outputs: the prediction/answer to the statement
+    statement  : introduces the context and then asks for output
+    expected : the expected answer to the statement
 
-Embeddings: uses an LLM embedding model to create the embedding 
-representation of the text
+LLM: few_shot (the prompt used to ask the question)
+    inputs:
+        statement
+    outputs:
+        the prediction/answer to the statement
 
-        Embedding_predicted: embeds the output of the few_shot LLM
-        Embedding_expected: embeds the output of the expected answer
+Embeddings: uses an LLM embedding model to create the embedding representation of the text
 
-   Python: Evaluation (Python code to measure embedding similarity)
-        Inputs:
-               Embedding_predicted output
-               Embedding_expected output
-        Outputs: the similarity score between predicted and expected
+    Embedding_predicted: embeds the output of the few_shot LLM
+    Embedding_expected: embeds the output of the expected answer
+
+Python: Evaluation (Python code to measure embedding similarity)
+    Inputs:
+        Embedding_predicted output
+        Embedding_expected output
+    Outputs:
+        the similarity score between predicted and expected
 
 Outputs:
-        statement: -> input.statement
-        expected: -> input.expected
-        predicted: -> output.few_shot
-        evaluation_score: output.evaluation
+    statement: -> input.statement
+    expected: -> input.expected
+    predicted: -> output.few_shot
+    evaluation_score: output.evaluation
 
 ### Example Output
 {
     "evaluation_score": 0.906647282920417,     #1
     "expected": "We ate sunner and watched the setting sun.",
-    "predicted": "After a long hike, we sat by the lake 
-and enjoyed a peaceful sunner as the sky turned 
-brilliant shades of orange and pink.",     #2
-    "statement": "A sunner is a meal we eat in Cananda 
-at sunset, please use the word in a sentence"     #3
+    "predicted": "After a long hike, we sat by the lake and enjoyed a peaceful sunner as the sky turned brilliant shades of orange and pink.",     #2
+    "statement": "A sunner is a meal we eat in Cananda at sunset, please use the word in a sentence"     #3
 }
 ```
 
@@ -176,16 +171,12 @@ at sunset, please use the word in a sentence"     #3
 
 ```py
 system:
-You are an eccentric word dictionary maker. You will be asked to 
-
-construct a sentence using the word.
-The following are examples that demonstrate how to craft a sentence using 
-the word.
-A "whatpu" is a small, furry animal native to Tanzania. 
+You are an eccentric word dictionary maker. You will be asked to construct a sentence using the word.
+The following are examples that demonstrate how to craft a sentence using the word.
+A "whatpu" is a small, furry animal native to Tanzania.
 An example of a sentence that uses the word whatpu is:     #1
 We were traveling in Africa and we saw these very cute whatpus.
-To do a "farduddle" means to jump up and down really fast. An example of a 
-sentence that uses the word farduddle is:
+To do a "farduddle" means to jump up and down really fast. An example of a sentence that uses the word farduddle is:
 I was so excited that I started to farduddle.     #2
 
 Please only return the sentence requested by the user.   #3
@@ -213,6 +204,9 @@ user:
 在 VS Code 提示流程可视化编辑器中打开 `prompt_flow/zero-shot-prompting/flow.dag.yaml`。这个流程与之前图 10.1 中显示的几乎相同，但在实现上略有不同，如列表 10.5 所示。
 
 ##### 列表 10.5 `zero-shot-prompting` 流程
+
+
+
 
 ```py
 Inputs:
@@ -254,7 +248,7 @@ representation of the text
 
 #2 我们要求 LLM 进行分类的声明
 
-在 VS Code 提示流程可视化编辑器中按 Shift-F5 运行流程。你应该会看到类似于列表 10.5 所示的输出。
+在 VS Code 提示流程可视化编辑器中按 `Shift-F5` 运行流程。你应该会看到类似于列表 10.5 所示的输出。
 
 现在打开如列表 10.6 所示的 `zero_shot.jinja2` 提示。该提示简单，不使用示例来从文本中提取情感。特别值得注意的是，提示中甚至没有提到“情感”这个词，而 LLM 似乎理解了意图。
 
@@ -361,7 +355,7 @@ in each period. The journeys will be as follows:
 
 #3 预测答案显示了推理步骤和输出。
 
-深入研究输入并检查问题陈述；尝试自己评估这个问题。然后，通过按 Shift-F5 运行流程。你应该会看到类似于列表 10.7 中所示的结果。
+深入研究输入并检查问题陈述；尝试自己评估这个问题。然后，通过按 `Shift-F5` 运行流程。你应该会看到类似于列表 10.7 中所示的结果。
 
 按照列表 10.8 中的说明打开 `cot.jinja2` 提示文件。这个提示给出了一些时间旅行问题的例子，然后是经过思考和推理的解决方案。向 LLM 展示完成问题的步骤提供了推理机制。
 
@@ -433,7 +427,7 @@ user:
 
 你可能会注意到图 10.3 的解决方案也作为例子在列表 10.8 中提供。回顾列表 10.7 中 LLM 对问题的回复也是很有帮助的。从这一点，你可以看到 LLM 应用了哪些推理步骤来得到其最终答案。
 
-现在，我们可以查看评估解决方案如何解决问题的提示。打开列表 10.9 中所示的`evaluate_answer.jinja2`以回顾所使用的提示。这个提示很简单，使用了零样本提示，并允许 LLM 泛化它应该如何评分预期和预测。我们可以提供示例和分数，从而将此转变为一个几样本分类的例子。
+现在，我们可以查看评估解决方案如何解决问题的提示。打开列表 10.9 中所示的 `evaluate_answer.jinja2` 以回顾所使用的提示。这个提示很简单，使用了零样本提示，并允许 LLM 泛化它应该如何评分预期和预测。我们可以提供示例和分数，从而将此转变为一个几样本分类的例子。
 
 ##### 列表 10.9 `evaluate_answer.jinja2`
 
@@ -462,6 +456,8 @@ Predicted result: {{predicted}}     #5
 #4 预期或基于事实的答案
 
 #5 之前 CoT 提示的输出
+
+
 
 观察到在列表 10.7 中之前展示的 LLM 输出，你可以理解为什么评估步骤可能会变得令人困惑。或许解决这个问题的一个方法就是建议 LLM 以单个陈述的形式提供最终答案。在下一节中，我们将继续探讨另一个提示推理的例子。
 
@@ -517,7 +513,7 @@ LLM: evaluate_answer (the prompt used to evaluate the solution)
 
 #4 初始问题陈述
 
-在 VS Code 的视觉编辑器中按 Shift-F5 运行/测试流程。流程将运行，你应该会看到类似于列表 10.10 所示的输出。这个练习示例在相同问题上比之前的例子表现更好。
+在 VS Code 的视觉编辑器中按 `Shift-F5` 运行/测试流程。流程将运行，你应该会看到类似于列表 10.10 所示的输出。这个练习示例在相同问题上比之前的例子表现更好。
 
 在 VS Code 中打开`cot.jinja2`提示，如列表 10.11 所示。这个提示比之前的例子简单得多，因为它只使用了零样本。然而，一个关键短语将这个简单的提示转换成了一个强大的推理引擎。提示中的这一行`让我们` `一步一步` `来思考`触发了 LLM 考虑内部上下文以展示推理。这反过来又指导 LLM 分步骤推理出问题。
 
@@ -604,7 +600,7 @@ user:
 
 #4 最终的解决方案陈述，尽管是错误的，但更接近了。
 
-通过从可视化编辑器按 Shift-F5 运行流程，你会看到如列表 10.12 所示的输出。对于 Alex 问题，答案仍然不正确，但我们可以看到 LLM 为了推理出问题所做的工作。
+通过从可视化编辑器按 `Shift-F5` 运行流程，你会看到如列表 10.12 所示的输出。对于 Alex 问题，答案仍然不正确，但我们可以看到 LLM 为了推理出问题所做的工作。
 
 打开所有三个提示：`decompose_steps.jinja2`、`calculate_steps.jinja2`和`calculate_solution.jinja2`（分别见列表 10.13、10.14 和 10.15）。列表中展示的所有三个提示可以进行比较，以展示输出是如何链式连接的。
 
@@ -764,6 +760,18 @@ user:
 
 ##### 列表 10.17 `self-consistency-prompting` 批量执行输出
 
+
+
+# 10.3.1 自洽性提示
+
+在上一节中，我们探讨了思维链（CoT）提示，它引导模型逐步推理。然而，CoT 的一个局限性在于，它只生成一条推理路径，可能无法捕捉到问题的最佳解决方案。自洽性（Self-Consistency）提示技术通过生成多个推理路径并选择最一致的答案来克服这一局限。
+
+## 运行自洽性流程
+
+在 VS Code 中打开 `self-consistency-prompting/flow.dag.yaml`，然后以批量模式运行该流程。运行完成后，您将看到类似于列表 10.17 中所示的结果。
+
+##### 列表 10.17 `self-consistency-prompting` 流程的输出
+
 ```py
 {
     "name": "self-consistency-prompting_default_20240203_100322_912000",
@@ -797,11 +805,11 @@ user:
 
 #3 批量运行流程使用的数据
 
-您可以通过按 Ctrl 键并点击列表 10.17 中突出显示的输出链接来查看生成的流程。这将打开 VS Code 的另一个实例，显示包含运行所有输出的文件夹。我们现在想检查最一致的答案。幸运的是，提示流程中的评估功能可以帮助我们使用相似度匹配来识别一致的答案。
+您可以通过按 `Ctrl` 键并点击列表 10.17 中突出显示的输出链接来查看生成的流程。这将打开 VS Code 的另一个实例，显示包含运行所有输出的文件夹。我们现在想检查最一致的答案。幸运的是，提示流程中的评估功能可以帮助我们使用相似度匹配来识别一致的答案。
 
-在 VS Code 中打开`self-consistency-evaluation/flow.dag.yaml`（参见图 10.7）。此流程将预测答案嵌入，然后使用聚合来确定最一致的答案。
+在 VS Code 中打开 `self-consistency-evaluation/flow.dag.yaml`（参见图 10.7）。此流程将预测答案嵌入，然后使用聚合来确定最一致的答案。
 
-从流程中，在 VS Code 中打开`consistency.py`（如列表 10.18 所示）。此工具函数的代码计算所有答案对之间的余弦相似度。然后，它找到最相似的答案，记录它，并将其作为答案输出。
+从流程中，在 VS Code 中打开 `consistency.py`（如列表 10.18 所示）。此工具函数的代码计算所有答案对之间的余弦相似度。然后，它找到最相似的答案，记录它，并将其作为答案输出。
 
 ##### 列表 10.18 `consistency.py`
 
@@ -838,19 +846,19 @@ def consistency(texts: List[str],
 
 #5 返回最相似答案的文本
 
-我们还需要以批量模式运行评估流程。在 VS Code 中打开`self-consistency-evaluation/flow.dag.yaml`，以批量模式（水壶图标）运行流程。然后，选择现有运行作为流程输入，当提示时，选择你刚刚执行的顶部或最后一个运行作为输入。
+我们还需要以批量模式运行评估流程。在 VS Code 中打开 `self-consistency-evaluation/flow.dag.yaml`，以批量模式（水壶图标）运行流程。然后，选择现有运行作为流程输入，当提示时，选择你刚刚执行的顶部或最后一个运行作为输入。
 
-再次，在流程完成处理之后，你会看到类似于列表 10.17 中所示的结果。在输出文件夹链接上 Ctrl 点击以打开一个新的 VS Code 实例，显示结果。在 VS Code 中定位并打开如图 10.9 所示的`metric.json`文件。
+再次，在流程完成处理之后，你会看到类似于列表 10.17 中所示的结果。在输出文件夹链接上 `Ctrl` 点击以打开一个新的 VS Code 实例，显示结果。在 VS Code 中定位并打开如图 10.9 所示的 `metric.json` 文件。
 
 ![图](img/10-9.png)
 
-##### 图 10.9 VS Code 打开到批量运行输出文件夹。突出显示的是`metrics.json`文件和显示最相似答案的输出。
+##### 图 10.9 VS Code 打开到批量运行输出文件夹。突出显示的是 `metrics.json` 文件和显示最相似答案的输出。
 
 图 10.9 中显示的答案对于这次运行仍然是不正确的。你可以继续进行几个更多的提示批量运行，或者增加批量中的运行次数，然后评估流程以查看你是否能得到更好的答案。这种技术通常对更直接的问题更有帮助，但仍然展示了无法推理出复杂问题的能力。
 
 自洽性使用反思方法来评估最可能的思想。然而，最可能的事情并不总是最好的。因此，在下一节中，我们必须考虑一个更全面的方法。
 
-### 10.3.2 评估思维树提示
+## 10.3.2 评估思维树提示
 
 如前所述，ToT 提示，如图 10.6 所示，结合了自我评估和提示链技术。因此，它将规划序列分解为一系列提示，但在链的每个步骤中，它都提供了多次评估。这创建了一个可以在每个级别执行和评估的树，可以是广度优先，也可以是自顶向下的深度优先。
 
@@ -860,7 +868,7 @@ def consistency(texts: List[str],
 
 ##### 图 10.10 ToT 模式中的广度优先与深度优先执行
 
-在 VS Code 中打开`tree-of-thought-evaluation/flow.dag.yaml`。流程的可视化如图 10.11 所示。这个流程像一个广度优先的 ToT 模式——流程将一系列提示链在一起，要求 LLM 在每一步返回多个计划。
+在 VS Code 中打开 `tree-of-thought-evaluation/flow.dag.yaml`。流程的可视化如图 10.11 所示。这个流程像一个广度优先的 ToT 模式——流程将一系列提示链在一起，要求 LLM 在每一步返回多个计划。
 
 ![图](img/10-11.png)
 
@@ -868,7 +876,7 @@ def consistency(texts: List[str],
 
 由于流程以广度优先的方式执行，每个节点的每个级别输出也会被评估。流程中的每个节点都使用一对语义函数——一个用于生成答案，另一个用于评估答案。语义函数是一个自定义的 Python 流程块，它处理多个输入并生成多个输出。
 
-列表 10.19 展示了`semantic_function.py`工具。这个通用工具在本流程的多个块中被重复使用。它还展示了从 SK 直接用于提示流程的嵌入功能。
+列表 10.19 展示了 `semantic_function.py` 工具。这个通用工具在本流程的多个块中被重复使用。它还展示了从 SK 直接用于提示流程的嵌入功能。
 
 ##### 列表 10.19 `semantic_function.py`
 
@@ -928,7 +936,7 @@ def my_python_tool(
 
 #1 使用并集允许不同类型的 LLM 连接
 
-#2 检查输入是否为空或 None；如果是，则不应执行该函数。
+#2 检查输入是否为空或 `None`；如果是，则不应执行该函数。
 
 #3 设置生成函数，创建计划
 
@@ -975,33 +983,31 @@ sees the end of the battle.",
 
 使用以下练习来提高您对材料的了解：
 
-+   *练习 1*—创建直接提示、少量样本提示和零样本提示
++   *练习 1* — 创建直接提示、少量样本提示和零样本提示
 
-*目标*—为 LLM 创建三个不同的提示，以总结最近的一篇科学文章：一个使用直接提示，一个使用少量样本提示，最后一个使用零样本提示。
-
-*任务：*
-
-+   +   比较每种方法生成的摘要的有效性。
-
-    +   比较每种方法生成的摘要的准确性。
-
-+   *练习 2*—制作推理提示
-
-*目标*—设计一组提示，要求 LLM 解决逻辑谜题或谜语。
+*目标* — 为 LLM 创建三个不同的提示，以总结最近的一篇科学文章：一个使用直接提示，一个使用少量样本提示，最后一个使用零样本提示。
 
 *任务：*
 
-+   +   关注您的提示结构如何影响 LLM 的推理过程。
++   比较每种方法生成的摘要的有效性。
++   比较每种方法生成的摘要的准确性。
 
-    +   关注相同的方法如何影响其答案的正确性。
++   *练习 2* — 制作推理提示
 
-+   *练习 3*—评估提示技术
-
-*目标*—开发一个评估提示，要求 LLM 预测一个假设实验的结果。
+*目标* — 设计一组提示，要求 LLM 解决逻辑谜题或谜语。
 
 *任务：*
 
-+   +   创建一个后续提示，以评估 LLM 的预测准确性，并提供对其推理过程的反馈。
++   关注您的提示结构如何影响 LLM 的推理过程。
++   关注相同的方法如何影响其答案的正确性。
+
++   *练习 3* — 评估提示技术
+
+*目标* — 开发一个评估提示，要求 LLM 预测一个假设实验的结果。
+
+*任务：*
+
++   创建一个后续提示，以评估 LLM 的预测准确性，并提供对其推理过程的反馈。
 
 ## 摘要
 

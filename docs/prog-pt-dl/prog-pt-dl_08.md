@@ -1,29 +1,30 @@
+
 # 第八章：PyTorch 在生产中
 
 现在您已经学会了如何使用 PyTorch 对图像、文本和声音进行分类，下一步是看看如何将 PyTorch 应用程序部署到生产环境中。在本章中，我们创建应用程序，通过 HTTP 和 gRPC 在 PyTorch 模型上运行推断。然后，我们将这些应用程序打包到 Docker 容器中，并将它们部署到在 Google Cloud 上运行的 Kubernetes 集群中。
 
-在下半部分，我们将看一下 TorchScript，这是 PyTorch 1.0 中引入的一项新技术，它允许我们使用即时（JIT）跟踪来生成优化的模型，这些模型可以从 C++中运行。我们还简要介绍了如何使用量化压缩模型。首先，让我们看一下模型服务。
+在下半部分，我们将看一下 TorchScript，这是 PyTorch 1.0 中引入的一项新技术，它允许我们使用即时（JIT）跟踪来生成优化的模型，这些模型可以从 C++ 中运行。我们还简要介绍了如何使用量化压缩模型。首先，让我们看一下模型服务。
 
-# 模型服务
+## 模型服务
 
 在过去的六章中，我们一直在 PyTorch 中构建模型，但构建模型只是构建深度学习应用程序的一部分。毕竟，一个模型可能具有惊人的准确性（或其他相关指标），但如果它从不进行任何预测，那么它是否有价值呢？我们希望有一种简单的方法来打包我们的模型，以便它们可以响应请求（无论是通过网络还是其他方式，我们将看到），并且可以在生产环境中运行，而不需要太多的努力。
 
 幸运的是，Python 允许我们使用 Flask 框架快速启动 Web 服务。在本节中，我们构建一个简单的服务，加载我们基于 ResNet 的*猫或鱼*模型，接受包含图像 URL 的请求，并返回一个 JSON 响应，指示图像是否包含猫或鱼。
 
-###### 注意
+> **注意**
+> 
+> 如果我们向模型发送一张狗的图片会发生什么？模型会告诉您它是鱼还是猫。它没有其他选择之外的概念，总是会选择一个。一些深度学习从业者在训练过程中添加一个额外的类别 `Unknown`，并加入一些不属于所需类别的标记示例。这在一定程度上有效，但实质上是试图让神经网络学习*不是猫或鱼的所有内容*，这对您和我来说都很难表达，更不用说一系列矩阵计算了！另一个选择是查看最终 `softmax` 生成的概率输出。如果模型产生的预测大致是 50/50 的猫/鱼或分布在您的类别中，那么可能建议 `Unknown`。
 
-如果我们向模型发送一张狗的图片会发生什么？模型会告诉您它是鱼还是猫。它没有其他选择之外的概念，总是会选择一个。一些深度学习从业者在训练过程中添加一个额外的类别`Unknown`，并加入一些不属于所需类别的标记示例。这在一定程度上有效，但实质上是试图让神经网络学习*不是猫或鱼的所有内容*，这对您和我来说都很难表达，更不用说一系列矩阵计算了！另一个选择是查看最终`softmax`生成的概率输出。如果模型产生的预测大致是 50/50 的猫/鱼或分布在您的类别中，那么可能建议`Unknown`。
+### 构建 Flask 服务
 
-## 构建 Flask 服务
-
-让我们启动一个启用 Web 服务的模型版本。*Flask*是一个用 Python 创建 Web 服务的流行框架，我们将在本章中一直使用它作为基础。使用`pip`或`conda`安装 Flask 库：
+让我们启动一个启用 Web 服务的模型版本。*Flask* 是一个用 Python 创建 Web 服务的流行框架，我们将在本章中一直使用它作为基础。使用 `pip` 或 `conda` 安装 Flask 库：
 
 ```py
 conda install -c anaconda flask
 pip install flask
 ```
 
-创建一个名为*catfish*的新目录，并将您的模型定义复制到其中作为*model.py*：
+创建一个名为 *catfish* 的新目录，并将您的模型定义复制到其中作为 *model.py*：
 
 ```py
 from torchvision import models
@@ -36,7 +37,7 @@ CatfishModel.fc = nn.Sequential(nn.Linear(transfer_model.fc.in_features,500),
                   nn.Dropout(), nn.Linear(500,2))
 ```
 
-请注意，我们在这里没有指定预训练模型，因为我们将在 Flask 服务器启动过程中加载我们保存的权重。然后创建另一个 Python 脚本*catfish_server.py*，在其中我们将启动我们的 Web 服务：
+请注意，我们在这里没有指定预训练模型，因为我们将在 Flask 服务器启动过程中加载我们保存的权重。然后创建另一个 Python 脚本 *catfish_server.py*，在其中我们将启动我们的 Web 服务：
 
 ```py
 from flask import Flask, jsonify
@@ -66,45 +67,45 @@ if __name__ == '__main__':
   app.run(host=os.environ["CATFISH_HOST"], port=os.environ["CATFISH_PORT"])
 ```
 
-您可以通过设置`CATFISH_HOST`和`CATFISH_PORT`环境变量在命令行上启动 Web 服务器：
+您可以通过设置 `CATFISH_HOST` 和 `CATFISH_PORT` 环境变量在命令行上启动 Web 服务器：
 
 ```py
 CATFISH_HOST=127.0.0.1 CATFISH_PORT=8080 python catfish_server.py
 ```
 
-如果您将您的 Web 浏览器指向[*http://127.0.0.1:8080*](http://127.0.0.1:8080)，您应该会得到一个`status: "ok"`的 JSON 响应，如图 8-1 所示。
+如果您将您的 Web 浏览器指向 [*http://127.0.0.1:8080*](http://127.0.0.1:8080)，您应该会得到一个 `status: "ok"` 的 JSON 响应，如图 8-1 所示。
 
 ![CATFISH 的 OK 响应](img/ppdl_0801.png)
 
-###### 图 8-1\. CATFISH 的 OK 响应
+**图 8-1\. CATFISH 的 OK 响应**
 
-###### 注意
+> **注意**
+> 
+> 我们将在本章后面更详细地讨论这一点，但不要直接将 Flask 服务部署到生产环境，因为内置服务器不适合生产使用。
 
-我们将在本章后面更详细地讨论这一点，但不要直接将 Flask 服务部署到生产环境，因为内置服务器不适合生产使用。
-
-要进行预测，找到一个图像 URL，并将其作为`GET`请求发送到`/predict`路径，其中包括`image_url`参数。您应该看到一个 JSON 响应，显示 URL 和预测的类别，如图 8-2 所示。
+要进行预测，找到一个图像 URL，并将其作为 `GET` 请求发送到 `/predict` 路径，其中包括 `image_url` 参数。您应该看到一个 JSON 响应，显示 URL 和预测的类别，如图 8-2 所示。
 
 ![CATFISH 的预测](img/ppdl_0802.png)
 
-###### 图 8-2\. CATFISH 的预测
+**图 8-2\. CATFISH 的预测**
 
-Flask 中的魔法在于`@app.route()`注解。这使我们能够附加普通的 Python 函数，当用户访问特定端点时将运行这些函数。在我们的`predict()`方法中，我们从`GET`或`POST`HTTP 请求中提取`img_url`参数，将该 URL 打开为一个 PIL 图像，并通过一个简单的`torchvision`转换管道将其调整大小并将图像转换为张量。
+Flask 中的魔法在于 `@app.route()` 注解。这使我们能够附加普通的 Python 函数，当用户访问特定端点时将运行这些函数。在我们的 `predict()` 方法中，我们从 `GET` 或 `POST` HTTP 请求中提取 `img_url` 参数，将该 URL 打开为一个 PIL 图像，并通过一个简单的 `torchvision` 转换管道将其调整大小并将图像转换为张量。
 
-这给我们一个形状为`[3,224,224]`的张量，但由于我们模型的工作方式，我们需要将其转换为大小为 1 的批次，即`[1,3,224,224]`。因此，我们再次使用`unsqueeze()`来通过在现有维度前插入一个新的空轴来扩展我们的张量。然后我们可以像往常一样将其传递给模型，这会给我们预测张量。与以前一样，我们使用`torch.argmax()`来找到张量中具有最高值的元素，并用它来索引`CatfishClasses`数组。最后，我们返回一个 JSON 响应，其中包含类的名称和我们执行预测的图像 URL。
+这给我们一个形状为 `[3,224,224]` 的张量，但由于我们模型的工作方式，我们需要将其转换为大小为 1 的批次，即 `[1,3,224,224]`。因此，我们再次使用 `unsqueeze()` 来通过在现有维度前插入一个新的空轴来扩展我们的张量。然后我们可以像往常一样将其传递给模型，这会给我们预测张量。与以前一样，我们使用 `torch.argmax()` 来找到张量中具有最高值的元素，并用它来索引 `CatfishClasses` 数组。最后，我们返回一个 JSON 响应，其中包含类的名称和我们执行预测的图像 URL。
 
-如果你在这一点上尝试服务器，你可能会对分类性能感到有些失望。我们不是花了很多时间训练它吗？是的，我们是，但是在重新创建模型时，我们只是创建了一组具有标准 PyTorch 初始化的层！所以难怪它不好。让我们完善`load_model()`以加载我们的参数。
+如果你在这一点上尝试服务器，你可能会对分类性能感到有些失望。我们不是花了很多时间训练它吗？是的，我们是，但是在重新创建模型时，我们只是创建了一组具有标准 PyTorch 初始化的层！所以难怪它不好。让我们完善 `load_model()` 以加载我们的参数。
 
-###### 注意
+> **注意**
+> 
+> 这里我们只返回预测的类，而不是所有类别的完整预测集。当然你也可以返回预测张量，但要注意完整的张量输出会使攻击者更容易通过更多的*信息泄漏*来构建模型的副本。
 
-这里我们只返回预测的类，而不是所有类别的完整预测集。当然你也可以返回预测张量，但要注意完整的张量输出会使攻击者更容易通过更多的*信息泄漏*来构建模型的副本。
+### 设置模型参数
 
-## 设置模型参数
+在第二章中，我们讨论了训练后保存模型的两种方法，一种是使用 `torch.save()` 将整个模型写入磁盘，另一种是保存模型的所有权重和偏置的 `state_dict()`（但不包括结构）。对于我们基于生产的服务，我们需要加载一个已经训练好的模型，那么我们应该使用什么呢？
 
-在第二章中，我们讨论了训练后保存模型的两种方法，一种是使用`torch.save()`将整个模型写入磁盘，另一种是保存模型的所有权重和偏置的`state_dict()`（但不包括结构）。对于我们基于生产的服务，我们需要加载一个已经训练好的模型，那么我们应该使用什么呢？
+在我看来，你应该选择 `state_dict` 方法。保存整个模型是一个吸引人的选择，但是你将变得对模型结构的任何更改甚至训练设置的目录结构变得非常敏感。这很可能会导致在其他地方运行的单独服务中加载它时出现问题。如果我们要进行稍微不同布局的迁移，我们希望不必重新制作所有内容。
 
-在我看来，你应该选择`state_dict`方法。保存整个模型是一个吸引人的选择，但是你将变得对模型结构的任何更改甚至训练设置的目录结构变得非常敏感。这很可能会导致在其他地方运行的单独服务中加载它时出现问题。如果我们要进行稍微不同布局的迁移，我们希望不必重新制作所有内容。
-
-我们最好不要将保存的`state_dicts()`的文件名硬编码，这样我们可以将模型更新与服务解耦。这意味着我们可以轻松地使用新模型重新启动服务，或者回滚到早期的模型。我们将文件名作为参数传递，但应该指向哪里呢？暂时假设我们可以设置一个名为`CATFISH_MODEL_LOCATION`的环境变量，并在`load_model()`中使用它：
+我们最好不要将保存的 `state_dicts()` 的文件名硬编码，这样我们可以将模型更新与服务解耦。这意味着我们可以轻松地使用新模型重新启动服务，或者回滚到早期的模型。我们将文件名作为参数传递，但应该指向哪里呢？暂时假设我们可以设置一个名为 `CATFISH_MODEL_LOCATION` 的环境变量，并在 `load_model()` 中使用它：
 
 ```py
 def load_model():
@@ -114,7 +115,7 @@ def load_model():
   return m
 ```
 
-现在，将你在第四章中保存的模型权重文件之一复制到目录中，并将`CATFISH_MODEL_LOCATION`设置为指向该文件：
+现在，将你在第四章中保存的模型权重文件之一复制到目录中，并将 `CATFISH_MODEL_LOCATION` 设置为指向该文件：
 
 ```py
 export CATFISH_MODEL_LOCATION=catfishweights.pt
@@ -124,11 +125,11 @@ export CATFISH_MODEL_LOCATION=catfishweights.pt
 
 我们现在有一个工作的最小 Web 服务（你可能希望有更多的错误处理，但我把这留给你来练习！）。但是我们如何在服务器上运行它，比如在 AWS 或 Google Cloud 上？或者只是在别人的笔记本电脑上？毕竟，我们安装了一堆库来使其工作。我们可以使用 Docker 将所有内容打包到一个*容器*中，该容器可以在任何 Linux（或 Windows，使用新的 Windows Subsystem for Linux！）环境中安装，只需几秒钟。
 
-## 构建 Docker 容器
+### 构建 Docker 容器
 
 在过去几年中，Docker 已成为应用程序打包的事实标准之一。尖端的集群环境，如 Kubernetes，将 Docker 作为部署应用程序的核心（您将在本章后面看到），它甚至在企业中也取得了很大的进展。
 
-如果您之前没有接触过 Docker，这里有一个简单的解释：它的模型是基于集装箱的概念。您指定一组文件（通常使用 Dockerfile），Docker 用这些文件构建一个*镜像*，然后在*容器*中运行该镜像，容器是您系统上的一个隔离进程，只能看到您指定的文件和您告诉它运行的程序。然后您可以共享 Dockerfile，以便其他人构建自己的镜像，但更常见的方法是将创建的镜像推送到*注册表*，这是一个包含可以被任何有访问权限的人下载的 Docker 镜像列表。这些注册表可以是公共的或私有的；Docker 公司运行[Docker Hub](https://hub.docker.com)，这是一个包含超过 100,000 个 Docker 镜像的公共注册表，但许多公司也运行私有注册表供内部使用。
+如果您之前没有接触过 Docker，这里有一个简单的解释：它的模型是基于集装箱的概念。您指定一组文件（通常使用 Dockerfile），Docker 用这些文件构建一个*镜像*，然后在*容器*中运行该镜像，容器是您系统上的一个隔离进程，只能看到您指定的文件和您告诉它运行的程序。然后您可以共享 Dockerfile，以便其他人构建自己的镜像，但更常见的方法是将创建的镜像推送到*注册表*，这是一个包含可以被任何有访问权限的人下载的 Docker 镜像列表。这些注册表可以是公共的或私有的；Docker 公司运行 [Docker Hub](https://hub.docker.com)，这是一个包含超过 100,000 个 Docker 镜像的公共注册表，但许多公司也运行私有注册表供内部使用。
 
 我们需要编写自己的 Dockerfile。这可能听起来有点令人不知所措。我们需要告诉 Docker 安装什么？我们的代码？PyTorch？Conda？Python？Linux 本身？幸运的是，Dockerfile 可以继承自其他镜像，因此我们可以，例如，继承标准 Ubuntu 镜像，并从那里安装 Python、PyTorch 和其他所有内容。但我们可以做得更好！可以选择一些 Conda 镜像，这些镜像将为我们提供一个基本的 Linux、Python 和 Anaconda 安装基础。以下是一个示例 Dockerfile，可用于构建我们服务的容器镜像：
 
@@ -159,13 +160,13 @@ EXPOSE $port
 ENTRYPOINT ["/run-model-service.sh"]
 ```
 
-这里发生了一些事情，让我们来看看。几乎所有 Dockerfile 中的第一行都是`FROM`，列出了此文件继承的 Docker 镜像。在这种情况下，它是`continuumio/miniconda3:latest`。这个字符串的第一部分是镜像名称。镜像也有版本，所以冒号后面的所有内容都是一个*标签*，指示我们想要下载哪个版本的镜像。还有一个魔术标签`latest`，我们在这里使用它来下载我们想要的镜像的最新版本。您可能希望将服务固定在特定版本上，以免基础镜像可能导致您的问题后续更改。
+这里发生了一些事情，让我们来看看。几乎所有 Dockerfile 中的第一行都是 `FROM`，列出了此文件继承的 Docker 镜像。在这种情况下，它是 `continuumio/miniconda3:latest`。这个字符串的第一部分是镜像名称。镜像也有版本，所以冒号后面的所有内容都是一个*标签*，指示我们想要下载哪个版本的镜像。还有一个魔术标签 `latest`，我们在这里使用它来下载我们想要的镜像的最新版本。您可能希望将服务固定在特定版本上，以免基础镜像可能导致您的问题后续更改。
 
-`ARG`和`ENV`处理变量。`ARG`指定在构建镜像时由 Docker 提供的变量，然后该变量可以在 Dockerfile 中稍后使用。`ENV`允许您指定在运行时将注入容器的环境变量。在我们的容器中，我们使用`ARG`来指定端口是可配置选项，然后使用`ENV`确保配置在启动时对我们的脚本可用。
+`ARG` 和 `ENV` 处理变量。`ARG` 指定在构建镜像时由 Docker 提供的变量，然后该变量可以在 Dockerfile 中稍后使用。`ENV` 允许您指定在运行时将注入容器的环境变量。在我们的容器中，我们使用 `ARG` 来指定端口是可配置选项，然后使用 `ENV` 确保配置在启动时对我们的脚本可用。
 
-完成了这些操作后，`RUN`和`COPY`允许我们操作继承的镜像。`RUN`在镜像内部运行实际命令，任何更改都会保存为镜像的新*层*，叠加在基础层之上。`COPY`从 Docker 构建上下文中获取内容（通常是构建命令发出的目录中的任何文件或任何子目录），并将其插入到镜像文件系统的某个位置。通过使用`RUN`创建了`/app`后，我们使用`COPY`将代码和模型参数移动到镜像中。
+完成了这些操作后，`RUN` 和 `COPY` 允许我们操作继承的镜像。`RUN` 在镜像内部运行实际命令，任何更改都会保存为镜像的新*层*，叠加在基础层之上。`COPY` 从 Docker 构建上下文中获取内容（通常是构建命令发出的目录中的任何文件或任何子目录），并将其插入到镜像文件系统的某个位置。通过使用 `RUN` 创建了 `/app` 后，我们使用 `COPY` 将代码和模型参数移动到镜像中。
 
-`EXPOSE`指示 Docker 应将哪个端口映射到外部世界。默认情况下，没有打开任何端口，所以我们在这里添加一个，从文件中之前的`ARG`命令中获取。最后，`ENTRYPOINT`是创建容器时运行的默认命令。在这里，我们指定了一个脚本，但我们还没有创建它！在构建 Docker 镜像之前，让我们先做这个：
+`EXPOSE` 指示 Docker 应将哪个端口映射到外部世界。默认情况下，没有打开任何端口，所以我们在这里添加一个，从文件中之前的 `ARG` 命令中获取。最后，`ENTRYPOINT` 是创建容器时运行的默认命令。在这里，我们指定了一个脚本，但我们还没有创建它！在构建 Docker 镜像之前，让我们先做这个：
 
 ```py
 #!/bin/bash
@@ -174,15 +175,15 @@ cd /app
 waitress-serve --call 'catfish_server:create_app'
 ```
 
-等等，这里发生了什么？`waitress`是从哪里来的？问题在于，在之前运行基于 Flask 的服务器时，它使用了一个仅用于调试目的的简单 Web 服务器。如果我们想将其投入生产，我们需要一个适用于生产的 Web 服务器。Waitress 满足了这一要求。我们不需要详细讨论它，但如果您想了解更多信息，可以查看[Waitress 文档](https://oreil.ly/x96Ir)。
+等等，这里发生了什么？`waitress` 是从哪里来的？问题在于，在之前运行基于 Flask 的服务器时，它使用了一个仅用于调试目的的简单 Web 服务器。如果我们想将其投入生产，我们需要一个适用于生产的 Web 服务器。Waitress 满足了这一要求。我们不需要详细讨论它，但如果您想了解更多信息，可以查看 [Waitress 文档](https://oreil.ly/x96Ir)。
 
-设置好这一切后，我们最终可以使用`docker build`来创建我们的镜像：
+设置好这一切后，我们最终可以使用 `docker build` 来创建我们的镜像：
 
 ```py
 docker build -t catfish-service .
 ```
 
-我们可以通过使用`docker images`来确保镜像在我们的系统上可用：
+我们可以通过使用 `docker images` 来确保镜像在我们的系统上可用：
 
 ```py
 >docker images
@@ -190,17 +191,17 @@ REPOSITORY               TAG                            IMAGE ID
 catfish-service          latest                         e5de5ad808b6
 ```
 
-然后可以使用`docker run`来运行我们的模型预测服务：
+然后可以使用 `docker run` 来运行我们的模型预测服务：
 
 ```py
 docker run catfish-service -p 5000:5000
 ```
 
-我们还使用`-p`参数将容器的端口 5000 映射到我们计算机的端口 5000。您应该能够像以前一样返回到*http://localhost:5000/predict*。
+我们还使用 `-p` 参数将容器的端口 5000 映射到我们计算机的端口 5000。您应该能够像以前一样返回到 *http://localhost:5000/predict*。
 
-当在本地运行`docker images`时，您可能会注意到我们的 Docker 镜像超过 4GB！考虑到我们没有写太多代码，这相当大。让我们看看如何使镜像更小，同时使我们的镜像更适合部署。
+当在本地运行 `docker images` 时，您可能会注意到我们的 Docker 镜像超过 4GB！考虑到我们没有写太多代码，这相当大。让我们看看如何使镜像更小，同时使我们的镜像更适合部署。
 
-## 本地与云存储
+### 本地与云存储
 
 显然，存储我们保存的模型参数的最简单方法是在本地文件系统上，无论是在我们的计算机上还是在 Docker 容器内的文件系统上。但是这样做有几个问题。首先，模型被硬编码到镜像中。此外，很可能在构建镜像并投入生产后，我们需要更新模型。使用我们当前的 Dockerfile，即使模型的结构没有改变，我们也必须完全重建镜像！其次，我们镜像的大部分大小来自参数文件的大小。您可能没有注意到它们往往相当大！试试看：
 
@@ -213,6 +214,8 @@ total 641504
 -rw------- 1 ian ian  87306240 Dec 23  2017 resnet34-333f7ec4.pth
 -rw------- 1 ian ian 102502400 Oct  1  2017 resnet50-19c8e357.pth
 ```
+
+
 
 如果我们在每次构建时将这些模型添加到文件系统中，我们的 Docker 镜像可能会相当大，这会使推送和拉取变慢。我建议的是如果您在本地运行，可以使用本地文件系统或 Docker 卷映射容器，但如果您正在进行云部署，那么可以利用云的优势。模型参数文件可以上传到 Azure Blob Storage、Amazon Simple Storage Service（Amazon S3）或 Google Cloud Storage，并在启动时拉取。
 
@@ -451,6 +454,8 @@ traced_model = torch.jit.trace(model,
 
 现在，这将*起作用*，但您将从 Python 解释器收到这样的消息，这会让您停下来思考：
 
+
+
 ```py
 TracerWarning: Trace had nondeterministic nodes. Nodes:
 %input.15 :
@@ -634,15 +639,25 @@ class FeaturesCNNNet(torch.jit.ScriptModule):
 表 8-1\. TorchScript 中可用的 Python 类型
 
 | 类型 | 描述 |
+
 | --- | --- |
+
 | `tensor` | 一个 PyTorch 张量，可以是任何数据类型、维度或后端 |
+
 | `tuple`[T0, T1,…] | 包含子类型 T0、T1 等的元组（例如，`tuple[tensor, tensor]`） |
+
 | `boolean` | 布尔值 |
+
 | `str` | 字符串 |
+
 | `int` | 整数 |
+
 | `float` | 浮点数 |
+
 | `list` | 类型为 `T` 的列表 |
+
 | `optional[T]` | 要么为 *None*，要么为类型 `T` |
+
 | `dict[K, V]` | 键为类型 `K`，值为类型 `V` 的字典；`K` 只能是 `str`、`int` 或 `float` |
 
 在标准 Python 中可以做但在 TorchScript 中不能做的另一件事是具有混合返回类型的函数。以下在 TorchScript 中是非法的：
@@ -696,7 +711,9 @@ class BadClass:
 
 这又是 TorchScript 静态类型的一个结果。所有实例变量都必须在 `__init__` 中声明，不能在其他地方引入。哦，不要想着在类中包含任何不在方法中的表达式——这些都被 TorchScript 明确禁止了。
 
-TorchScript 作为 Python 的一个子集的一个有用特性是，翻译可以以逐步的方式进行，中间代码仍然是有效的可执行 Python。符合 TorchScript 的代码可以调用不符合规范的代码，虽然在所有不符合规范的代码转换之前你无法执行 `torch.jit.save()`，但你仍然可以在 Python 下运行所有内容。
+
+
+TorchScript 作为 Python 的一个子集的一个有用特性是，翻译可以以逐步的方式进行，中间代码仍然是有效的可执行 Python。符合 TorchScript 的代码可以调用不符合规范的代码，虽然在所有不符合规范的代码转换之前你无法执行`torch.jit.save()`，但你仍然可以在 Python 下运行所有内容。
 
 这些是我认为 TorchScript 的主要细微差别。你可以阅读更多关于[PyTorch 文档](https://oreil.ly/sS0o7)中的内容，其中深入探讨了诸如作用域（主要是标准 Python 规则）之类的内容，但这里提供的概述足以将你在本书中迄今看到的所有模型转换过来。让我们看看如何在 C++中使用我们的一个 TorchScript 启用的模型。
 
@@ -718,13 +735,13 @@ apt install cmake g++
 yum install cmake g++
 ```
 
-接下来，我们需要下载`libTorch`本身。为了让接下来的事情变得更容易，我们将使用基于 CPU 的`libTorch`分发，而不是处理启用 GPU 的分发带来的额外 CUDA 依赖。创建一个名为*torchscript_export*的目录并获取分发：
+接下来，我们需要下载`libTorch`本身。为了让接下来的事情变得更容易，我们将使用基于 CPU 的`libTorch`分发，而不是处理启用 GPU 的分发带来的额外 CUDA 依赖。创建一个名为`torchscript_export`的目录并获取分发：
 
 ```py
-  wget https://download.pytorch.org/libtorch/cpu/libtorch-shared-with-deps-latest.zip
+wget https://download.pytorch.org/libtorch/cpu/libtorch-shared-with-deps-latest.zip
 ```
 
-使用`unzip`来展开 ZIP 文件（它应该创建一个新的*libtorch*目录），并创建一个名为*helloworld*的目录。在这个目录中，我们将添加一个最小的*CMakeLists.txt*，*CMake*将用它来构建我们的可执行文件：
+使用`unzip`来展开 ZIP 文件（它应该创建一个新的`libtorch`目录），并创建一个名为`helloworld`的目录。在这个目录中，我们将添加一个最小的`CMakeLists.txt`，*CMake*将用它来构建我们的可执行文件：
 
 ```py
 cmake_minimum_required(VERSION 3.0 FATAL_ERROR)
@@ -737,7 +754,7 @@ target_link_libraries(helloworld "${TORCH_LIBRARIES}")
 set_property(TARGET helloword PROPERTY CXX_STANDARD 11)
 ```
 
-然后*helloworld.cpp*如下：
+然后`helloworld.cpp`如下：
 
 ```py
 #include <torch/torch.h>
@@ -749,7 +766,7 @@ int main() {
 }
 ```
 
-创建一个*build*目录并运行**`cmake`**，确保我们提供`libtorch`分发的*绝对*路径：
+创建一个`build`目录并运行`cmake`，确保我们提供`libtorch`分发的*绝对*路径：
 
 ```py
 mkdir build
@@ -782,7 +799,7 @@ cnn_traced = torch.jit.trace(cnn_model, torch.rand([1,3,224,224]))
 torch.jit.save(cnn_traced, "cnnnet")
 ```
 
-在 C++世界中，创建一个名为*load-cnn*的新目录，并添加这个新的*CMakeLists.txt*文件：
+在 C++世界中，创建一个名为`load-cnn`的新目录，并添加这个新的`CMakeLists.txt`文件：
 
 ```py
 cmake_minimum_required(VERSION 3.0 FATAL_ERROR)

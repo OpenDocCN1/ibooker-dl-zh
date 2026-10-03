@@ -1,20 +1,15 @@
+
 # 第八章：与您的数据聊天
 
-### 本章涵盖
+## 本章涵盖
 
-+   将您的数据引入企业的好处
-
-+   安装和使用向量数据库和向量索引
-
-+   规划和检索您的专有数据
-
-+   使用向量数据库进行搜索
-
-+   如何使用向量数据库和 LLM 实现端到端聊天
-
-+   将您的数据和 RAG 联合起来的好处
-
-+   RAG 如何为企业的人工智能安全性带来益处
++ 将您的数据引入企业的好处
++ 安装和使用向量数据库和向量索引
++ 规划和检索您的专有数据
++ 使用向量数据库进行搜索
++ 如何使用向量数据库和 LLM 实现端到端聊天
++ 将您的数据和 RAG 联合起来的好处
++ RAG 如何为企业的人工智能安全性带来益处
 
 利用大型语言模型（LLMs）进行数据交互实现是一种有希望的策略，特别适合那些寻求利用生成人工智能（AI）力量满足其特定商业需求的企业。通过将 LLM 的能力与企业特定的数据源和工具相结合，企业可以打造智能且具有情境意识的聊天机器人，为他们的客户和利益相关者提供宝贵的见解和建议。
 
@@ -36,11 +31,9 @@
 
 OpenAI 最新的模型——例如，具有 128K 上下文窗口的 GPT-4 Turbo 和谷歌最新的 Gemini Pro 1.5，具有 150 万个标记的内容窗口——已经引起了极大的热情和兴趣。然而，仅仅更大的上下文窗口是不够的。在您的数据上训练 LLM，与仅使用具有更大上下文窗口的 LLM 相比，有以下好处：
 
-+   *更准确和有信息量的答案*——当与你的数据聊天时，LLM 可以访问比仅使用更大的上下文窗口多得多的信息。这使得 LLM 能够为你提供更准确和有信息量的答案。
-
-+   *更个性化的答案*——LLM 还可以根据你的数据学习个性化其答案。例如，如果你与一个针对你的客户数据进行微调的 LLM 聊天，它可以学习提供更相关的答案来满足你的特定客户和他们的需求。例如，我们可以使用检索引擎来索引其客户数据，然后将检索引擎连接到 LLM。这将使公司能够以更个性化和信息化的方式与客户聊天。
-
-+   *更具创造性的答案*——LLM 还可以使用你的数据来生成更具创造性和有趣的问题答案。例如，如果你与一个针对你的产品数据进行微调的 LLM 聊天，LLM 可以学习生成新的产品想法或营销活动。
++ **更准确和有信息量的答案**——当与你的数据聊天时，LLM 可以访问比仅使用更大的上下文窗口多得多的信息。这使得 LLM 能够为你提供更准确和有信息量的答案。
++ **更个性化的答案**——LLM 还可以根据你的数据学习个性化其答案。例如，如果你与一个针对你的客户数据进行微调的 LLM 聊天，它可以学习提供更相关的答案来满足你的特定客户和他们的需求。例如，我们可以使用检索引擎来索引其客户数据，然后将检索引擎连接到 LLM。这将使公司能够以更个性化和信息化的方式与客户聊天。
++ **更具创造性的答案**——LLM 还可以使用你的数据来生成更具创造性和有趣的问题答案。例如，如果你与一个针对你的产品数据进行微调的 LLM 聊天，LLM 可以学习生成新的产品想法或营销活动。
 
 当然，具有更大上下文窗口的 LLM 有其自身的好处，但它们也可能是一把双刃剑，存在一些限制。更大的上下文窗口允许我们在一次 API 调用中传递更多信息，并且不必过多担心应用程序的块化。例如，最近宣布的 GPT-4.5 Turbo 具有 128K 的上下文窗口，允许在一个提示中包含大约 300 页的文本，相比之下，早期的 GPT-4 32K 模型大约只能包含 75 页。
 
@@ -56,15 +49,12 @@ OpenAI 最新的模型——例如，具有 128K 上下文窗口的 GPT-4 Turbo 
 
 ##### 图 8.1 Azure OpenAI 在您的数据上
 
-例如，我们将使用我的博客([`blog.desigeek.com`](https://blog.desigeek.com))作为专有数据源。它包含 20 年以上的各种主题和技术帖子。如果我们对用户提出的每个问题都回到博客，加载所有帖子，创建嵌入，搜索这些帖子，然后使用 RAG 来回答问题，这个过程将非常耗时且不可扩展。此外，还将产生额外的成本，因为我们将使用更多的标记在每个对话回合或新的一组对话中。更好的方法是将以下四个阶段作为我们将要经历的：
+例如，我们将使用我的博客（[`blog.desigeek.com`](https://blog.desigeek.com)）作为专有数据源。它包含 20 年以上的各种主题和技术帖子。如果我们对用户提出的每个问题都回到博客，加载所有帖子，创建嵌入，搜索这些帖子，然后使用 RAG 来回答问题，这个过程将非常耗时且不可扩展。此外，还将产生额外的成本，因为我们将使用更多的标记在每个对话回合或新的一组对话中。更好的方法是将以下四个阶段作为我们将要经历的：
 
-+   阅读和注入信息（即检索）
-
-+   创建嵌入并将细节保存到 Redis
-
-+   使用博客文章的保存细节进行问答实现搜索（即增强）
-
-+   将此与 LLM 生成相结合
++ 阅读和注入信息（即检索）
++ 创建嵌入并将细节保存到 Redis
++ 使用博客文章的保存细节进行问答实现搜索（即增强）
++ 将此与 LLM 生成相结合
 
 让我们先设置一个向量数据库。
 
@@ -84,9 +74,8 @@ Redis 通过模块的概念扩展其核心功能。Redis Search 是一个模块�
 
 除了 OpenAI 包之外，我们还需要以下先决条件来运行 Redis：
 
-+   Docker 必须已安装并本地运行。
-
-+   当使用 conda 时，可以使用 `conda install -c conda-forge redis-py` 安装 `redis-py` 包。如果我们使用 pip，则使用 `pip install redis`。
++ Docker 必须已安装并本地运行。
++ 当使用 conda 时，可以使用 `conda install -c conda-forge redis-py` 安装 `redis-py` 包。如果我们使用 pip，则使用 `pip install redis`。
 
 我们将使用 docker-compose 文件来配置 Docker，如列表 8.1 所示。我们没有更改默认端口，但您可以根据您的环境需要配置它们。在这个例子中，我们从 Docker 仓库中拉取最新的 `redis-stack` 镜像，并暴露两个端口——6379 和 8001。我们还设置了一个数据卷来持久化数据库中填充的信息。最后，我们设置了一些初始的健康检查来检查基本事项，例如服务是否正在运行，并且可以通过配置的端口访问。如果您更改了端口，请确保在健康检查中更新测试。
 
@@ -139,7 +128,7 @@ volumes:
 
 Azure AI Search 是一种基于云的服务，为构建搜索应用程序提供各种功能。除了提供向量搜索，允许您根据其向量嵌入找到并检索与给定查询在语义上相似的数据对象之外，它还支持混合搜索。混合搜索结合了全文和向量查询，这些查询针对包含可搜索纯文本内容和生成嵌入的搜索索引执行。在单个搜索请求中，混合查询可以使用现有功能，例如过滤、分面、排序、评分配置文件和语义排名。查询响应仅提供一个结果集，使用互逆排名融合（RRF）来确定哪些匹配项被包含。
 
-Azure AI Search 在使用 LLM 进行向量搜索方面比 Redis 提供更多优势。它是一个完全管理的搜索服务，可以索引和搜索结构化、半结构化和非结构化数据。Azure AI Search 具有高度的可扩展性，可以轻松处理大量数据。它支持企业所需的各种强大安全功能，例如端到端加密、基于角色的访问控制（RBAC）等。更多详细信息请参阅[`learn.microsoft.com/en-us/azure/search/`](https://learn.microsoft.com/en-us/azure/search/)。
+Azure AI Search 在使用 LLM 进行向量搜索方面比 Redis 提供更多优势。它是一个完全管理的搜索服务，可以索引和搜索结构化、半结构化和非结构化数据。Azure AI Search 具有高度的可扩展性，可以轻松处理大量数据。它支持企业所需的各种强大安全功能，例如端到端加密、基于角色的访问控制（RBAC）等。更多详细信息请参阅 [`learn.microsoft.com/en-us/azure/search/`](https://learn.microsoft.com/en-us/azure/search/)。
 
 ## 8.3 信息检索规划
 
@@ -159,9 +148,9 @@ Azure AI Search 在使用 LLM 进行向量搜索方面比 Redis 提供更多优�
 
 尽管我们使用博客文章作为源系统，但它是一个整体示例，代表了大多数 RAG 方面，并帮助我们了解最佳实践以及如何处理它们。我们从远程系统中检索信息以阅读博客文章。这与企业读取各种业务系统信息的基本原理相似。根据源系统，他们通过 API、导出文件或连接到各种数据库和数据源来读取这些信息。
 
-在我们的示例中，我们将使用博客的 RSS 源读取所有帖子。RSS 代表“真正简单的聚合”，这是一种标准网站内容分发方法，常用于发布更改。博客可以在[`blog.desigeek.com/`](https://blog.desigeek.com/)找到，相应的 RSS 源在[`blog.desigeek.com/index.xml`](https://blog.desigeek.com/index.xml)。
+在我们的示例中，我们将使用博客的 RSS 源读取所有帖子。RSS 代表"真正简单的聚合"，这是一种标准网站内容分发方法，常用于发布更改。博客可以在 [`blog.desigeek.com/`](https://blog.desigeek.com/) 找到，相应的 RSS 源在 [`blog.desigeek.com/index.xml`](https://blog.desigeek.com/index.xml)。
 
-首先，我们假设 Redis 像之前展示的那样在本地容器中运行。我们将连接到 Redis 并创建一个新的索引，称为`posts`。索引的模式在下一列表中显示，并代表我们之前看到的数据结构。除了博客文章的主要内容外，我们还捕获了相关的元数据，这将帮助我们回答问题或更好地理解上下文。
+首先，我们假设 Redis 像之前展示的那样在本地容器中运行。我们将连接到 Redis 并创建一个新的索引，称为 `posts`。索引的模式在下一列表中显示，并代表我们之前看到的数据结构。除了博客文章的主要内容外，我们还捕获了相关的元数据，这将帮助我们回答问题或更好地理解上下文。
 
 ##### 列表 8.2 Redis 索引模式
 
@@ -181,13 +170,11 @@ SCHEMA = [
 
 此模式包含以下类型的字段：
 
-+   `TagField`—用于存储标签，这些是简短、描述性的关键词，可以用来分类和组织数据。标签通常存储为字符串列表，Redis 搜索支持使用布尔运算符（如`AND`、`OR`和`NOT`）搜索标签。
++ `TagField`——用于存储标签，这些是简短、描述性的关键词，可以用来分类和组织数据。标签通常存储为字符串列表，Redis 搜索支持使用布尔运算符（如 `AND`、`OR` 和 `NOT`）搜索标签。
++ `TextField`——用于存储文本数据，例如博客文章的标题、描述和内容。Redis 搜索支持对 `TextField` 进行全文搜索，这意味着您可以在文本中搜索单词和短语。
++ `VectorField`——存储用于执行机器学习任务（如图像分类和自然语言处理）的数据的向量的数学表示。Redis 搜索支持向量相似性搜索，这意味着您可以搜索与给定向量相似的向量。
 
-+   `TextField`—用于存储文本数据，例如博客文章的标题、描述和内容。Redis 搜索支持对`TextField`进行全文搜索，这意味着您可以在文本中搜索单词和短语。
-
-+   `VectorField`—存储用于执行机器学习任务（如图像分类和自然语言处理）的数据的向量的数学表示。Redis 搜索支持向量相似性搜索，这意味着您可以搜索与给定向量相似的向量。
-
-大多数字段名称都是不言自明的，除了`VectorField`类型的`"embedding"`字段，它用于存储高维向量。Redis 支持两种相似性搜索算法，FLAT 和 HSNW；在我们的示例中，我们使用 HSNW。
+大多数字段名称都是不言自明的，除了 `VectorField` 类型的 `"embedding"` 字段，它用于存储高维向量。Redis 支持两种相似性搜索算法，FLAT 和 HSNW；在我们的示例中，我们使用 HSNW。
 
 HSNW 代表**分层可导航小世界**。它是一种用于多维空间中最近邻搜索的算法，在此用作嵌入类型。HSNW 算法特别适用于诸如相似性搜索或高维空间中的聚类等任务。它以其效率、准确性以及较低的计算开销而闻名。HSNW 将向量组织成图结构。
 
@@ -195,7 +182,9 @@ FLAT 代表**快速线性近似变换**。它是一种暴力算法和直接的�
 
 嵌入是浮点数，如 FLOAT32 所示。我们将维度设置为与 Azure OpenAI 模型的 1536 维相匹配，这必须与 LLM 的架构相匹配。最后，我们使用余弦距离度量来衡量相似度。Redis 支持三种类型的距离度量（见表 8.2）。
 
-##### 表 8.2 HNSW 距离度量选项
+
+
+### 表 8.2 HNSW 距离度量选项
 
 | HNSW 距离度量 | 描述 |
 | --- | --- |
@@ -203,7 +192,7 @@ FLAT 代表**快速线性近似变换**。它是一种暴力算法和直接的�
 | 点积 | 计算两个向量之间的点积。点积是两个序列数对应项乘积之和。 |
 | 余弦 | 计算两个向量之间角度的余弦值。无论它们的幅度如何，它衡量向量之间的相似度。这在文本分析中经常使用，其中向量的方向（角度）比向量的长度更重要。 |
 
-##### 标签字段与文本字段
+### 标签字段与文本字段
 
 `URL`字段是一个`TagField`而不是`TextField`。虽然一开始这可能看起来有些奇怪，但有一个很好的原因。使用`TagField`，整个 URL 被视为一个单独的标签。如果想要使用精确 URL 搜索文档，这个属性很有用。但是，如果您想搜索包含其 URL 中某些单词的文档，这将毫无用处，因为 URL 不会被分词。
 
@@ -230,10 +219,15 @@ setx REDIS_PASSWORD "Password-required-to-connect"
 ```py
 export REDIS_HOST="your-host-details"
 export REDIS_PORT="Port-number-exposed"
-export REDIS_ PASSWORD="Password-required-to-connect"Bash:
+export REDIS_PASSWORD="Password-required-to-connect"
+```
+
+Bash:
+
+```bash
 echo export REDIS_HOST="your-host-details" >> /etc/environment && source /etc/environment
 echo export REDIS_PORT="Port-number-exposed" >> /etc/environment && source /etc/environment
-echo export REDIS_ PASSWORD="Password-required-to-connect" >> /etc/environment && source /etc/environment
+echo export REDIS_PASSWORD="Password-required-to-connect" >> /etc/environment && source /etc/environment
 ```
 
 我们首先需要与 Redis 服务器建立连接，这相当简单：
@@ -258,14 +252,13 @@ conn.ft(index_name).create_index(
 
 当然，我们可以删除索引并查看其详情。此辅助函数的完整代码如下所示。
 
-##### 列表 8.3 Redis 搜索索引操作
+### 列表 8.3 Redis 搜索索引操作
 
 ```py
 import redis
 from redis.commands.search.field import VectorField, TextField
 from redis.commands.search.query import Query
-from redis.commands.search.indexDefinition import 
-     ↪IndexDefinition, IndexType
+from redis.commands.search.indexDefinition import IndexDefinition, IndexType
 from redis.commands.search.field import TagField
 
 redis_host = os.getenv('REDIS_HOST')           #1
@@ -325,7 +318,7 @@ def delete_all_keys_from_index(conn, index_name="posts"):    #5
             conn.delete(doc_id)
 
     except Exception as e:
-        print("Failed to delete keys: ", e))
+        print("Failed to delete keys: ", e)
 
 def view_index(conn, index_name="posts"):                 #6
     try:
@@ -377,15 +370,15 @@ if __name__ == "__main__":
 
 #7 运行主循环的函数
 
-图 8.4 展示了该代码在本地运行的示例。索引类型是 HASH，键的前缀以“post.”开头。
+图 8.4 展示了该代码在本地运行的示例。索引类型是`HASH`，键的前缀以"post."开头。
 
 ![图](img/CH08_F04_Bahree.png)
 
-##### 图 8.4 Redis Insight 在本地作为示例运行
+### 图 8.4 Redis Insight 在本地作为示例运行
 
 在我们的情况下，索引已经填充，当我们执行此操作以查看索引时，我们获得类似于以下列表的输出。请注意，为了简洁起见，输出已被截断：
 
-##### 列表 8.4 Redis 搜索索引详情
+### 列表 8.4 Redis 搜索索引详情
 
 ```py
 index_name: posts
@@ -415,7 +408,7 @@ total_indexing_time: 708.988
 
 ![图](img/CH08_F05_Bahree.png)
 
-##### 图 8.5 索引详情
+### 图 8.5 索引详情
 
 现在我们已经设置了索引，让我们看看我们如何检索数据（即博客文章），将其分块，填充向量数据库，并最终更新我们创建的索引。
 
@@ -425,7 +418,9 @@ total_indexing_time: 708.988
 
 由于每篇博客文章都是一个 HTML 页面，我们使用`BeautifulSoup`，一个 Python 库，来解析 HTML 页面，这样我们就可以选择所需的内容。如列表 8.5 所示，我们需要清理一些东西，并通过匹配博客文章的风格和生成的 HTML 来解析内容。对各种属性和类（如`post-title`等）的搜索取决于传入数据的形式和我们试图解决的问题的使用场景。在这个例子中，如果博客更改了主题或渲染方式，代码必须进行更新。
 
-##### 列表 8.5 从 HTML 中提取内容
+### 列表 8.5 从 HTML 中提取内容
+
+
 
 ```py
     r = requests.get(post.link)
@@ -474,7 +469,7 @@ total_indexing_time: 708.988
 
 注意，在接下来的列表中，我们只展示了代码的关键部分，并且为了避免严重性，我们避免使用之前见过的辅助函数。完整的代码示例可以在本书的 GitHub 代码仓库中找到（[`bit.ly/GenAIBook`](https://bit.ly/GenAIBook)）。
 
-##### 列表 8.6 检索博客文章并将其保存到 Redis
+#### 列表 8.6 检索博客文章并将其保存到 Redis
 
 ```py
 # OpenAI API key
@@ -603,7 +598,7 @@ print("Vector upload complete.")
 
 现在我们已经摄取了数据并准备好了索引，我们可以对其进行搜索。我们创建了一个简单的控制台应用程序，它接受用户的查询，将其矢量化，并根据返回给用户的三个最相似帖子进行搜索。这是一个语义搜索。以下列表显示了当我们询问“Longhorn”时生成的输出示例。
 
-##### 列表 8.7 搜索结果
+#### 列表 8.7 搜索结果
 
 ```py
 $  python .\search.py
@@ -628,7 +623,7 @@ From OSNews: Microsft has made <em>hard statements about perfomance
 
 让我们来看看使用 Redis 实现搜索的代码。我们首先获取一个用户查询，例如“告诉我关于 Longhorn 的事情”，创建一个向量，并使用余弦相似度获取一组可比较的结果。
 
-##### 列表 8.8 使用 Redis 进行搜索
+#### 列表 8.8 使用 Redis 进行搜索
 
 ```py
 def hybrid_search(query_vector, client, top_k=3, hybrid_fields="*"):
@@ -693,6 +688,8 @@ else:
 #7 将向量转换为 NumPy 数组
 
 #8 执行相似度搜索
+
+
 
 如其名所示，`hybrid_search()`函数执行混合搜索查询的重头戏。混合搜索查询将多种类型的搜索组合成一个单一的查询。这可以包括将基于文本的搜索与其他类型相结合，例如数值、分类或甚至是基于向量的搜索。请注意，确切的搜索类型将取决于信息和需求。
 

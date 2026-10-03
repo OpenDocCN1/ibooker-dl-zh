@@ -1,16 +1,14 @@
+
+
 # 第七章：模型服务实践
 
 本章涵盖
 
-+   使用模型服务方法构建样本预测器
-
-+   使用 TorchServe 和模型服务器方法构建样本服务
-
-+   参观流行的开源模型服务库和系统
-
-+   解释生产模型发布流程
-
-+   讨论后期模型监控
++ 使用模型服务方法构建样本预测器
++ 使用 TorchServe 和模型服务器方法构建样本服务
++ 参观流行的开源模型服务库和系统
++ 解释生产模型发布流程
++ 讨论后期模型监控
 
 在上一章中，我们讨论了模型服务的概念，以及用户场景和设计模式。在本章中，我们将重点放在这些概念在生产环境中的实际实现上。
 
@@ -28,17 +26,15 @@
 
 此示例服务遵循单一模型应用设计（第 6.3.1 节），其中包含前端 API 组件和后端预测器。我们还对预测器进行了一些增强，以支持多个意图分类模型。我们将按照以下步骤对此示例服务进行参观：
 
-1.  在本地运行示例预测服务
-
-1.  讨论系统设计
-
-1.  查看其子组件的实现细节：前端服务和后端预测器
+1. 在本地运行示例预测服务
+2. 讨论系统设计
+3. 查看其子组件的实现细节：前端服务和后端预测器
 
 ### 7.1.1 与服务玩耍
 
 列表 7.1 显示了如何在本地机器上运行示例预测服务。以下脚本首先运行后端预测器，然后运行前端服务。
 
-注意设置预测服务有点繁琐；我们需要运行元数据和艺术品存储服务，并准备好模型。为了清晰地演示这个想法，列表 7.1 强调了主要的设置步骤。要使模型服务在您的本地机器上工作，请完成附录 A 中的实验（A.2 节），然后使用代码 `./scripts/lab-004-model-serving.sh {run_id} {document}` 发送模型预测请求。
+注意：设置预测服务有点繁琐；我们需要运行元数据和艺术品存储服务，并准备好模型。为了清晰地演示这个想法，列表 7.1 强调了主要的设置步骤。要使模型服务在您的本地机器上工作，请完成附录 A 中的实验（A.2 节），然后使用代码 `./scripts/lab-004-model-serving.sh {run_id} {document}` 发送模型预测请求。
 
 列表 7.1 启动预测服务
 
@@ -62,11 +58,8 @@ docker run --name prediction-service --network orca3 \           ❹
 ```
 
 ❶ 构建预测器 Docker 镜像
-
 ❷ 运行预测器服务容器
-
 ❸ 构建预测服务镜像
-
 ❹ 运行预测服务容器
 
 一旦服务启动，您就可以向其发送预测请求；服务将加载第三章训练的意图分类模型，对给定文本进行模型预测，并返回预测结果。在以下示例中，将文本字符串“merry christmas”发送到服务，并预测为“joy”类别：
@@ -89,9 +82,7 @@ document is hello world                  ❸
 ```
 
 ❶ 将模型 ID 指定给响应
-
 ❷ 预测负载
-
 ❸ 预测响应，预测类别
 
 ### 7.1.2 服务设计
@@ -106,17 +97,17 @@ document is hello world                  ❸
 
 浏览图 7.1 中显示的样本模型服务的系统设计，您可以看到完成预测请求需要六个步骤。让我们逐步浏览图中编号的每一步：
 
-1.  用户向预测服务（前端组件）发送带有指定模型 ID 和文本字符串（即，`document`）的预测请求。模型 ID 是训练服务生成的唯一标识符，用于识别其生成的每个模型。
+1. 用户向预测服务（前端组件）发送带有指定模型 ID 和文本字符串（即，`document`）的预测请求。模型 ID 是训练服务生成的唯一标识符，用于识别其生成的每个模型。
 
-1.  前端服务通过搜索模型 ID 从元数据存储中获取模型元数据。对于每个成功的模型训练，训练服务将模型文件保存到云存储中，并将模型元数据（模型 ID、模型版本、名称和 URL）保存到元数据存储中；这就是为什么我们可以在元数据存储中找到模型信息的原因。
+2. 前端服务通过搜索模型 ID 从元数据存储中获取模型元数据。对于每个成功的模型训练，训练服务将模型文件保存到云存储中，并将模型元数据（模型 ID、模型版本、名称和 URL）保存到元数据存储中；这就是为什么我们可以在元数据存储中找到模型信息的原因。
 
-1.  如果模型文件尚未下载，前端组件将会将其下载到共享磁盘卷上。
+3. 如果模型文件尚未下载，前端组件将会将其下载到共享磁盘卷上。
 
-1.  前端组件将推理请求转发给后端预测器。
+4. 前端组件将推理请求转发给后端预测器。
 
-1.  后端预测器通过从共享磁盘卷上的模型文件中读取，将意图分类模型加载到内存中。
+5. 后端预测器通过从共享磁盘卷上的模型文件中读取，将意图分类模型加载到内存中。
 
-1.  后端预测器执行模型，对给定的文本字符串进行预测，并将预测结果返回给前端组件。
+6. 后端预测器执行模型，对给定的文本字符串进行预测，并将预测结果返回给前端组件。
 
 ### 7.1.3 前端服务
 
@@ -128,23 +119,23 @@ document is hello world                  ❸
 
 接下来我们考虑在图 7.2 中描述的模型提供工作流程中的意图预测场景，并应用刚刚复习过的六个步骤：
 
-1.  用户向 Web 接口发送包含模型 ID A 的意图预测请求。
+1. 用户向 Web 接口发送包含模型 ID A 的意图预测请求。
 
-1.  Web 接口调用预测器连接管理器来提供此请求。
+2. Web 接口调用预测器连接管理器来提供此请求。
 
-1.  预测器连接管理器通过查询元数据存储获取模型元数据，查询的条件为模型 ID 等于 A；返回的模型元数据包含模型算法类型和模型文件 URL。
+3. 预测器连接管理器通过查询元数据存储获取模型元数据，查询的条件为模型 ID 等于 A；返回的模型元数据包含模型算法类型和模型文件 URL。
 
-1.  基于模型算法类型，预测器管理器选择合适的预测器后端客户端来处理请求。在这种情况下，它选择了 `CustomGrpcPredictorBackend`，因为我们正在演示用于意图分类的自建模型提供容器。
+4. 基于模型算法类型，预测器管理器选择合适的预测器后端客户端来处理请求。在这种情况下，它选择了 `CustomGrpcPredictorBackend`，因为我们正在演示用于意图分类的自建模型提供容器。
 
-1.  `CustomGrpcPredictorBackend` 客户端首先在模型 A 的共享模型文件磁盘中检查模型文件的存在。如果在以前没有下载过模型，则使用模型 URL（从模型元数据中获取）从云存储中下载模型文件到共享文件磁盘。
+5. `CustomGrpcPredictorBackend` 客户端首先在模型 A 的共享模型文件磁盘中检查模型文件的存在。如果在以前没有下载过模型，则使用模型 URL（从模型元数据中获取）从云存储中下载模型文件到共享文件磁盘。
 
-1.  `CustomGrpcPredictorBackend` 客户端然后调用在服务配置文件中与该后端客户端预注册的模型预测器。在此示例中，`CustomGrpcPredictorBackend` 将调用我们自建的预测器，即意图预测器，将在第 7.1.4 节中讨论。
+6. `CustomGrpcPredictorBackend` 客户端然后调用在服务配置文件中与该后端客户端预注册的模型预测器。在此示例中，`CustomGrpcPredictorBackend` 将调用我们自建的预测器，即意图预测器，将在第 7.1.4 节中讨论。
 
 现在我们已经审查了系统设计和工作流程，让我们考虑主要组件的实际代码实现，包括 Web 接口（预测 API）、预测器连接管理器、预测器后端客户端和意图预测器。
 
 前端服务模型服务代码演示
 
-以下代码清单突出了图 7.2 中提到的预测工作流的核心实现。你也可以在 `src/main/ java/org/orca3/miniAutoML/prediction/PredictionService.java` 找到完整的实现。
+以下代码清单突出了图 7.2 中提到的预测工作流的核心实现。你也可以在 `src/main/java/org/orca3/miniAutoML/prediction/PredictionService.java` 找到完整的实现。
 
 7.2 前端服务预测工作流
 
@@ -188,20 +179,16 @@ public void predict(PredictRequest request, .. .. ..) {
 ```
 
 ❶ 获取所需的模型 ID
-
 ❷ 从元数据存储中获取模型元数据
-
 ❸ 根据模型算法类型选择后端预测器
-
 ❹ 下载模型文件
-
 ❺ 调用后端预测器运行模型推理
 
 预测 API
 
 前端服务仅提供一个 API — `Predict` — 用于发出预测请求。该请求有两个参数，`runId` 和 `document`。`runId` 不仅用于在训练服务（第三章）中引用模型训练运行，还可以用作引用模型的模型 ID。`document` 是客户想要运行预测的文本。
 
-通过使用 `Predict` API，用户可以指定一个意图模型（带有 `runId`）来预测给定文本字符串（`document`）的意图。以下清单显示了 `Predict` API 的 gRPC 合同（`grpc-contract/src/main/proto/prediction_service .proto`）。
+通过使用 `Predict` API，用户可以指定一个意图模型（带有 `runId`）来预测给定文本字符串（`document`）的意图。以下清单显示了 `Predict` API 的 gRPC 合同（`grpc-contract/src/main/proto/prediction_service.proto`）。
 
 7.3 预测服务 gRPC 接口
 
@@ -248,6 +235,11 @@ predictors.intent-classification.techStack=customGrpc
 现在，让我们回顾代码清单 7.5，看看预测器管理器如何读取算法和预测器映射，并使用该信息初始化预测器后端客户端发送预测请求。完整的实现位于 `prediction-service/src/main/java/org/orca3/miniAutoML/prediction/PredictorConnectionManager.java`。
 
 7.5 预测器管理器加载算法和预测器映射
+
+
+
+
+# 预测器连接管理器
 
 ```py
 public class PredictorConnectionManager {
@@ -305,11 +297,11 @@ public class PredictorConnectionManager {
 
 您还可以注意到 `PredictorConnectionManager` 类有几个缓存，如模型元数据缓存（`artifactCache`）和模型后端预测器客户端（`clients`）。这些缓存可以极大地提高模型服务的效率。例如，模型元数据缓存（`artifactCache`）可以通过避免调用元数据存储服务来减少呼叫已经下载的模型的服务请求响应时间。
 
-预测器后端客户端
+## 预测器后端客户端
 
 预测器客户端是前端服务用于与不同的预测器后端进行通信的对象。按设计，每种类型的预测器后端都支持其自己的模型类型，并且它有自己的用于通信的客户端，该客户端在`PredictorConnectionManager`中创建并存储。每个预测器后端客户端都会继承一个名为`PredictorBackend`的接口，如下列表所示。
 
-列表 7.6 预测器后端接口
+**列表 7.6 预测器后端接口**
 
 ```py
 public interface PredictorBackend {
@@ -348,27 +340,23 @@ public String predict(GetArtifactResponse artifact, String document) {
 
 让我们使用图 7.3 中的模型 A 的意图预测请求来考虑工作流程。它按以下步骤运行：
 
-1.  前端服务中的预测客户端调用预测器的 web gRPC 接口，使用模型 A 运行意图预测。
-
-1.  请求调用模型管理器。
-
-1.  模型管理器从共享磁盘卷加载模型 A 的模型文件，初始化模型，并将其放入模型缓存中。模型文件应该已经由前端服务放置在共享磁盘卷上。
-
-1.  模型管理器使用转换器的帮助执行模型 A，对输入和输出数据进行预处理和后处理。
-
-1.  返回预测结果。
+1. 前端服务中的预测客户端调用预测器的 web gRPC 接口，使用模型 A 运行意图预测。
+2. 请求调用模型管理器。
+3. 模型管理器从共享磁盘卷加载模型 A 的模型文件，初始化模型，并将其放入模型缓存中。模型文件应该已经由前端服务放置在共享磁盘卷上。
+4. 模型管理器使用转换器的帮助执行模型 A，对输入和输出数据进行预处理和后处理。
+5. 返回预测结果。
 
 ![](img/07-03.png)
 
-图 7.3 后端意图预测器设计和预测工作流程
+**图 7.3 后端意图预测器设计和预测工作流程**
 
 接下来，让我们看看工作流程中提到的组件的实际实现。
 
-预测 API
+#### 预测 API
 
 意图预测器有一个 API — `PredictorPredict`（见代码列表 7.7）。它接受两个参数，`runId` 和 `document`。`runId` 是模型 ID，`document` 是一个文本字符串。你可以在 `grpc-contract/src/main/proto/ prediction_service.proto` 中找到完整的 gRPC 合同。
 
-列表 7.7 意图预测器 gRPC 接口
+**列表 7.7 意图预测器 gRPC 接口**
 
 ```py
 service Predictor {
@@ -387,7 +375,7 @@ message PredictorPredictResponse {
 
 你可能注意到预测器 API 与前端 API（代码列表 7.2）相同；这是为了简单起见。但在实际应用中，它们通常是不同的，主要是因为它们被设计用于不同的目的。预测器的 predict API 设计有利于模型执行，而前端的 predict API 设计有利于客户和业务的需求。
 
-模型文件
+#### 模型文件
 
 我们在模型训练服务（第三章）中生成的每个意图分类模型都有三个文件。`manifest.json` 文件包含模型元数据和数据集标签；预测器需要这些信息将模型预测结果从整数转换为有意义的文本字符串。`model.pth` 是模型的学习参数；预测器将读取这些网络参数以设置模型的神经网络以进行模型服务。`vocab.pth` 是模型训练中使用的词汇文件，这也是服务所必需的，因为我们需要它将用户输入（字符串）转换为模型输入（十进制数）。让我们来看一下示例意图模型：
 
@@ -431,7 +419,7 @@ message PredictorPredictResponse {
 
 清单 7.8（`predictor/predict.py`）显示了我们用来在预测器中加载模型文件`model.pth`（仅参数）的模型架构。服务中的模型执行代码源自模型训练代码。如果你将以下清单中的模型定义与我们训练代码中的`TextClassificationModel`类（`training-code/text-classification/train.py`）进行比较，你会发现它们是相同的。这是因为模型服务本质上是模型训练运行。
 
-清单 7.8 模型的神经网络（架构）
+**清单 7.8 模型的神经网络（架构）**
 
 ```py
 class TextClassificationModel(nn.Module):
@@ -462,15 +450,25 @@ class TextClassificationModel(nn.Module):
 
 如果你使用模型服务器方法，使用不同版本的模型变得更加容易，因为这种方法打破了服务代码（模型执行代码）和训练代码之间的依赖关系。你可以在第 7.2 节中看到一个具体的例子。
 
-注意：正如我们在第六章（第 6.1.3 节）中提到的，模型训练和服务都利用相同的机器学习算法，但是在不同的执行模式下：学习和评估。然而，我们想再次澄清这个概念。理解训练代码、服务代码和模型文件之间的关系是服务系统设计的基础。
+**注意：** 正如我们在第六章（第 6.1.3 节）中提到的，模型训练和服务都利用相同的机器学习算法，但是在不同的执行模式下：学习和评估。然而，我们想再次澄清这个概念。理解训练代码、服务代码和模型文件之间的关系是服务系统设计的基础。
 
-模型管理器
+#### 模型管理器
 
 模型管理器是这个意图预测器的关键组件。它托管一个内存模型缓存，加载模型文件，并执行模型。下面的清单（`predictor/predict.py`）显示了模型管理器的核心代码。
 
-清单 7.9 意图预测器模型管理器
+**清单 7.9 意图预测器模型管理器**
 
-```py
+
+
+# 模型管理器与 TorchServe 模型服务器示例
+
+## 7.1 意图预测器
+
+### 7.1.1 模型管理器组件
+
+`ModelManager` 类负责管理模型的生命周期，包括加载、缓存和预测。其核心实现如下：
+
+```python
 class ModelManager:
   def __init__(self, config, tokenizer, device):
     self.model_dir = config.MODEL_DIR
@@ -531,19 +529,17 @@ self.models[self.model_classes(model_id)]                ❷
     return res
 ```
 
-❶ 将模型托管在内存中
-
-❷ 将模型图、内存中的依赖项和类缓存
-
+❶ 将模型托管在内存中  
+❷ 将模型图、内存中的依赖项和类缓存  
 ❸ 运行模型以获取预测结果
 
-意图预测器预测请求工作流程
+### 7.1.2 意图预测器预测请求工作流程
 
 你已经了解了意图预测器的主要组件，现在让我们来看看这个预测器内部的端到端工作流程。首先，我们通过将 `PredictorServicer` 注册到 gRPC 服务器来公开预测 API，这样前端服务就可以远程与预测器通信。其次，当前端服务调用 `PredictorPredict` API 时，模型管理器将加载模型到内存中，运行模型，并返回预测结果。清单 7.10 突出了上述工作流程的代码实现。你可以在 `predictor/predict.py` 中找到完整的实现。
 
-清单 7.10 意图预测器预测工作流程
+**清单 7.10 意图预测器预测工作流程**
 
-```py
+```python
 def serve():
   .. .. ..
   model_manager = ModelManager(config, 
@@ -569,13 +565,11 @@ class PredictorServicer(prediction_service_pb2_grpc.PredictorServicer):
     return PredictorPredictResponse(response=json.dumps({'res': class_name}))
 ```
 
-❶ 启动 gRPC 服务器
-
-❷ 将模型服务逻辑注册到公共 API
-
+❶ 启动 gRPC 服务器  
+❷ 将模型服务逻辑注册到公共 API  
 ❸ 进行预测
 
-### 7.1.5 模型逐出
+### 7.1.3 模型逐出
 
 示例代码未涵盖模型淘汰——即从预测服务的内存空间中淘汰不经常使用的模型文件。在设计中，对于每个预测请求，预测服务将从元数据存储中查询和下载请求模型，然后从本地磁盘读取和初始化模型到内存中。对于一些模型来说，这些操作是耗时的。
 
@@ -595,9 +589,9 @@ class PredictorServicer(prediction_service_pb2_grpc.PredictorServicer):
 
 因为这个模型服务器示例是在上一个示例服务的基础上开发的，所以我们以相同的方式与预测服务交互。唯一的区别是我们启动了一个 TorchServe 后端（容器），而不是启动一个自建的意图预测器容器。代码清单 7.11 仅显示了启动服务和发送意图预测请求的关键步骤。要在本地运行实验，请完成附录 A（A.2 节）中的实验，并参考 `scripts/lab-006-model-serving-torchserve.sh` 文件（[`mng.bz/0yEN`](http://mng.bz/0yEN)）。
 
-列表 7.11 启动预测服务并进行预测调用
+**列表 7.11 启动预测服务并进行预测调用**
 
-```py
+```python
 # step 1: start torchserve backend
 docker run --name intent-classification-torch-predictor\
  --network orca3 --rm -d -p "${ICP_TORCH_PORT}":7070 \
@@ -625,12 +619,9 @@ grpcurl -plaintext
  localhost:"${PS_PORT}" prediction.PredictionService/Predict
 ```
 
-❶ 将本地目录挂载到 TorchServe 容器
-
-❷ 启动 TorchServe
-
-❸ 设置 TorchServe 从 /models 目录加载模型
-
+❶ 将本地目录挂载到 TorchServe 容器  
+❷ 启动 TorchServe  
+❸ 设置 TorchServe 从 `/models` 目录加载模型  
 ❹ 设置预测服务的本地模型目录以下载模型
 
 ### 7.2.2 服务设计
@@ -639,7 +630,7 @@ grpcurl -plaintext
 
 ![图 7.4](img/07-04.png)
 
-图 7.4 系统概述和模型服务端到端工作流程
+**图 7.4 系统概述和模型服务端到端工作流程**
 
 从图 7.4 可以看出，模型服务工作流程与图 7.1 中的模型服务示例保持一致。用户调用预测服务的前端 API 发送模型服务请求；前端服务然后下载模型文件，并将预测请求转发到 TorchServe 后端。
 
@@ -651,7 +642,7 @@ grpcurl -plaintext
 
 ![图 7.5](img/07-05.png)
 
-图 7.5 前端服务设计和模型服务工作流程
+**图 7.5 前端服务设计和模型服务工作流程**
 
 在图 7.5 中，添加了两个灰色的方框；它们分别是 TorchServe gRPC 预测器后端客户端（`TorchGrpcPredictorBackend`）和后端 TorchServe 服务器。`TorchGrpcPredictorBackend` 通过下载模型文件并向 TorchServe 容器发送预测请求进行响应。在这个示例中，TorchServe 后端将由预测器连接管理器选择，因为请求的模型元数据（在元数据存储中）将 TorchServe 定义为其预测器。
 
@@ -661,7 +652,7 @@ TorchServe 是由 PyTorch 团队构建的用于提供 PyTorch 模型服务的工
 
 ![图 7.6](img/07-06.png)
 
-图 7.6 TorchServe 后端的模型服务工作流程：TorchServe 应用程序作为一个黑盒运行。
+**图 7.6 TorchServe 后端的模型服务工作流程：TorchServe 应用程序作为一个黑盒运行。**
 
 在我们的示例代码中，我们将 TorchServe 作为一个 Docker 容器运行，这是由 PyTorch 团队提供的，然后将本地文件目录挂载到容器中。这个文件目录作为 TorchServe 进程的模型存储。在图 7.6 中，我们分三步来运行模型预测。首先，我们将 PyTorch 模型文件复制到模型存储目录中。其次，我们调用 TorchServe 管理 API 将模型注册到 TorchServe 进程中。最后，我们调用 TorchServe API 来运行模型预测，对于我们来说，是意图分类模型。
 
@@ -673,11 +664,15 @@ TorchServe 提供了极大的灵活性和便利性，但也有相关要求。Tor
 
 TorchServe 提供了众多类型的 API，例如健康检查、模型解释、模型服务、工作线程管理和模型注册等。每个 API 都有 HTTP 和 gRPC 两种实现方式。由于 TorchServe 在其官网（[`pytorch.org/serve/`](https://pytorch.org/serve/)）和 GitHub 仓库（[`github.com/pytorch/serve`](https://github.com/pytorch/serve)）上都对 API 的协议和使用方式进行了详细的解释，你可以在那里找到具体的信息。在本小节中，我们将着重介绍我们在示例服务中使用的模型注册 API 和模型推理 API。
 
-模型注册 API
+#### 模型注册 API
 
 由于 TorchServe 采用黑箱方式进行模型服务，所以在使用模型之前需要将其注册。具体来说，我们需要先将模型文件放到 TorchServe 的模型存储库中（即本地文件目录），但是 TorchServe 并不会自动加载该模型文件。我们需要向 TorchServe 注册模型文件和该模型的运行方法，以便 TorchServe 知道如何正常运行该模型。
 
 在我们的代码示例中，我们使用了 TorchServe 的 gRPC 模型注册 API 来从预测服务中注册我们的意图模型，示例如下：
+
+
+
+# 注册模型
 
 ```py
 public void registerModel(GetArtifactResponse artifact) {
@@ -704,7 +699,7 @@ public void registerModel(GetArtifactResponse artifact) {
 
 TorchServe 模型文件中已经包含有模型的元数据，包括模型版本、模型运行时和模型服务入口。因此，在注册模型时，通常只需要在`registerModel`API 中设置模型文件名。除了模型注册之外，我们还可以使用`scaleWorker`API 来控制为该模型分配多少计算资源。
 
-模型推理 API
+# 模型推理 API
 
 TorchServe 为各种模型提供了统一的模型服务 API，使其使用起来非常简单。如果想要为模型的默认版本运行预测，只需向`/predictions/{model_name}`发送一个 REST 请求；如果想要为加载的特定版本的模型运行预测，则向`/predictions/{model_name}/{version}`发送 REST 请求。需要预测的内容以二进制格式输入到预测请求中。例如：
 
@@ -720,7 +715,7 @@ curl http:/ /localhost:8080/predictions/squeezenet1_1 \
 
 在我们的样本服务中，我们使用 gRPC 接口将预测请求发送到 TorchServe。代码清单 7.12 展示了 `TorchGrpcPredictorBackend` 客户端将预测请求从前端 API 调用转换为 TorchServe 后端 gRPC 调用。您可以在 `prediction-service/src/main/java/org/orca3/miniAutoML/prediction/TorchGrpcPredictorBackend.java` 找到 `TorchGrpcPredictorBackend` 的完整源代码。
 
-清单 7.12 从前端服务调用 TorchServe 预测 API
+## 清单 7.12 从前端服务调用 TorchServe 预测 API
 
 ```py
 // call TorchServe gRPC prediction api
@@ -737,7 +732,7 @@ public String predict(GetArtifactResponse artifact, String document) {
 
 ❶ 将文本输入转换为二进制格式以调用 TorchServe
 
-### 7.2.6 TorchServe 模型文件
+## 7.2.6 TorchServe 模型文件
 
 到目前为止，您已经看到了 TorchServe 模型服务的工作流程和 API。您可能想知道当 TorchServe 对其所服务的模型一无所知时，TorchServe 的模型服务是如何工作的。在第六章中，我们学到要服务一个模型，预测服务需要知道模型算法和模型输入/输出模式。与直觉相反，TorchServe 运行模型服务而不知道模型算法和模型输入/输出数据格式。诀窍在于 TorchServe 模型文件。
 
@@ -747,7 +742,7 @@ TorchServe 要求模型打包到一个特殊的 `.mar` 文件中。我们可以�
 
 当 TorchServe 收到预测请求时，它首先会找到承载模型的内部工作进程，然后触发模型的处理程序文件来处理请求。处理程序文件包含四个逻辑部分：模型网络初始化、输入数据预处理、模型推理和预测结果后处理。为了使前面的解释更具体，让我们以我们的意图模型文件为例。
 
-意图分类 `.mar` 文件
+### 意图分类 `.mar` 文件
 
 如果我们打开样本服务中意图模型的 `.mar` 文件，与我们在第 7.1.4 节中看到的模型文件相比，我们会看到额外添加了两个文件——`MANIFEST.json` 和 `torchserve_handler.py`。以下是意图 `.mar` 文件的文件夹结构：
 
@@ -786,13 +781,13 @@ TorchServe 要求模型打包到一个特殊的 `.mar` 文件中。我们可以�
 
 `MANIFEST.json` 文件定义了模型的元数据，包括模型版本、模型权重、模型名称和处理程序文件。通过拥有`MANIFEST.json`文件，TorchServe 知道如何加载和运行预测任意模型，而不知道其实现细节。
 
-TorchServe 处理程序文件
+### TorchServe 处理程序文件
 
 一旦模型在 TorchServe 中注册，TorchServe 将使用模型处理程序文件中的`handle(self`, `data`, `context)`函数作为模型预测的入口点。处理程序文件管理模型服务的整个过程，包括模型初始化、对输入请求的预处理、模型执行和对预测结果的后处理。
 
 代码清单 7.13 强调了在该示例服务中使用的意图分类 .mar 文件的处理程序文件中定义的关键部分。您可以在我们的 Git 代码库中找到此文件，路径为`training-code/text-classification/torchserve_handler.py`。
 
-列表 7.13 意图模型 TorchServe 处理文件
+#### 列表 7.13 意图模型 TorchServe 处理文件
 
 ```py
 class ModelHandler(BaseHandler):
@@ -881,22 +876,28 @@ class ModelHandler(BaseHandler):
 
 从清单 7.13 中的`handle`函数开始，您将清楚地了解处理程序文件是如何执行模型服务的。`initialize`函数加载所有模型文件（权重、标签和词汇表）并初始化模型。`handle`函数是模型服务的入口点；它对二进制模型输入进行预处理，运行模型推断，对模型输出进行后处理，并返回结果。
 
-在训练过程中打包 .mar 文件
+### 在训练过程中打包 .mar 文件
 
 当我们决定在模型服务中使用 TorchServe 时，最好在训练时生成 .mar 文件。另外，因为 TorchServe 处理程序文件包含模型架构和模型执行逻辑，通常是模型训练代码的一部分。
 
 打包 .mar 文件有两种方法。首先，在模型训练完成后，我们可以运行`torch-model-archiver` CLI 工具，将模型权重打包成序列化文件，将依赖文件作为额外文件。其次，我们可以使用`model_ archiver` Python 库，在模型训练代码的最后一步生成 .mar 文件。以下代码片段是我们用于打包意图分类模型的示例：
 
+
+
+## 方法一：通过命令行 CLI 工具打包模型
+
 ```py
-## Method one: package model by command line cli tool.
 torch-model-archiver --model-name intent_classification --version 1.0 \
  --model-file torchserve_model.py --serialized-file \
     workspace/MiniAutoML/{model_id}/model.pth \
  --handler torchserve_handler.py --extra-files \
 workspace/MiniAutoML/{model_id}/vocab.pth,
 ➥ workspace/MiniAutoML/{model_id}/manifest.json
+```
 
-## Method two: package model in training code.
+## 方法二：在训练代码中打包模型
+
+```py
 model_archiver.archive(model_name=archive_model_name, 
   handler_file=handler, model_state_file=model_local_path,
   extra_files=extra_files, model_version=config.MODEL_SERVING_VERSION,
@@ -905,25 +906,25 @@ model_archiver.archive(model_name=archive_model_name,
 
 ### 7.2.7 在 Kubernetes 中扩展规模
 
-在我们的示例服务中，为了演示目的，我们运行单个 TorchServe 容器作为预测后端，但这在生产环境中并非如此。扩展 TorchServe 面临的挑战如下：
+在我们的示例服务中，为了演示目的，我们运行单个 `TorchServe` 容器作为预测后端，但这在生产环境中并非如此。扩展 `TorchServe` 面临的挑战如下：
 
-+   负载均衡器使 TorchServe 模型注册变得困难。在 TorchServe 中，模型文件需要先注册到 TorchServe 服务器，然后才能使用。但是在生产环境中，TorchServe 实例被放置在网络负载均衡器后，因此我们只能将预测请求发送到负载均衡器，让它将请求路由到随机的 TorchServe 实例。在这种情况下，由于我们无法指定哪个 TorchServe 实例为哪个模型提供服务，注册模型变得困难。负载均衡器向我们隐藏了 TorchServe 实例。
++   负载均衡器使 `TorchServe` 模型注册变得困难。在 `TorchServe` 中，模型文件需要先注册到 `TorchServe` 服务器，然后才能使用。但是在生产环境中，`TorchServe` 实例被放置在网络负载均衡器后，因此我们只能将预测请求发送到负载均衡器，让它将请求路由到随机的 `TorchServe` 实例。在这种情况下，由于我们无法指定哪个 `TorchServe` 实例为哪个模型提供服务，注册模型变得困难。负载均衡器向我们隐藏了 `TorchServe` 实例。
 
-+   每个 TorchServe 实例都需要有一个用于加载模型的模型存储目录，并且在可以注册之前，模型文件需要放在模型存储目录中。有多个 TorchServe 实例会使模型文件复制变得难以管理，因为我们需要知道每个 TorchServe 实例的 IP 地址或 DNS 来复制模型文件。
++   每个 `TorchServe` 实例都需要有一个用于加载模型的模型存储目录，并且在可以注册之前，模型文件需要放在模型存储目录中。有多个 `TorchServe` 实例会使模型文件复制变得难以管理，因为我们需要知道每个 `TorchServe` 实例的 IP 地址或 DNS 来复制模型文件。
 
-+   我们需要在 TorchServe 实例之间平衡模型。让每个 TorchServe 实例加载每个模型文件是一个糟糕的想法；这将极大浪费计算资源。我们应该将负载均匀分配到不同的 TorchServe 实例上。
++   我们需要在 `TorchServe` 实例之间平衡模型。让每个 `TorchServe` 实例加载每个模型文件是一个糟糕的想法；这将极大浪费计算资源。我们应该将负载均匀分配到不同的 `TorchServe` 实例上。
 
-要解决这些挑战并扩展 TorchServe 后端，我们可以在 Kubernetes 中引入“边车”模式。图 7.7 描绘了整体概念。
+要解决这些挑战并扩展 `TorchServe` 后端，我们可以在 Kubernetes 中引入“边车”模式。图 7.7 描绘了整体概念。
 
 ![](img/07-07.png)
 
-图 7.7 在 Kubernetes 中的 TorchServe pod 中添加代理容器以扩展 TorchServe。
+图 7.7 在 Kubernetes 中的 `TorchServe` pod 中添加代理容器以扩展 `TorchServe`。
 
-图 7.7 中的建议是在每个 TorchServe pod 中与 TorchServe 容器一起添加代理容器（作为边车）。我们不直接调用 TorchServe API，而是将预测请求发送到代理容器。代理容器中的代理 API 将隐藏 TorchServe 模型管理细节，包括模型下载和模型注册。它将准备 TorchServe 容器以服务任意模型。
+图 7.7 中的建议是在每个 `TorchServe` pod 中与 `TorchServe` 容器一起添加代理容器（作为边车）。我们不直接调用 `TorchServe` API，而是将预测请求发送到代理容器。代理容器中的代理 API 将隐藏 `TorchServe` 模型管理细节，包括模型下载和模型注册。它将准备 `TorchServe` 容器以服务任意模型。
 
-添加代理容器后，模型服务工作流程（图 7.7）如下。首先，预测请求落在代理容器上。其次，代理下载模型文件并将其输入到共享磁盘（模型存储库）。第三，代理将模型注册到 TorchServe 容器并将推理请求转换为 TorchServe 格式。第四，TorchServe 容器运行模型服务并将结果返回给代理。最后，代理容器将预测响应返回给用户。
+添加代理容器后，模型服务工作流程（图 7.7）如下。首先，预测请求落在代理容器上。其次，代理下载模型文件并将其输入到共享磁盘（模型存储库）。第三，代理将模型注册到 `TorchServe` 容器并将推理请求转换为 `TorchServe` 格式。第四，`TorchServe` 容器运行模型服务并将结果返回给代理。最后，代理容器将预测响应返回给用户。
 
-通过添加代理容器，我们无需担心将预测请求发送到未注册该模型的 TorchServe 实例。代理容器（边车）将确保 TorchServe 容器准备好处理任何预测请求，方法是将模型文件复制到模型存储库并注册模型。这也简化了资源管理工作，因为现在我们可以简单地依赖负载均衡器将预测负载（模型）在 TorchServe pod 之间分配。此外，通过在所有 TorchServe pod 之间共享磁盘，我们可以为所有 TorchServe 实例共享模型存储库，从而减少了模型下载时间并节省了网络带宽。
+通过添加代理容器，我们无需担心将预测请求发送到未注册该模型的 `TorchServe` 实例。代理容器（边车）将确保 `TorchServe` 容器准备好处理任何预测请求，方法是将模型文件复制到模型存储库并注册模型。这也简化了资源管理工作，因为现在我们可以简单地依赖负载均衡器将预测负载（模型）在 `TorchServe` pod 之间分配。此外，通过在所有 `TorchServe` pod 之间共享磁盘，我们可以为所有 `TorchServe` 实例共享模型存储库，从而减少了模型下载时间并节省了网络带宽。
 
 边车模式：运行模型服务器的常用方法。
 
@@ -947,15 +948,15 @@ model_archiver.archive(model_name=archive_model_name,
 
 ## 7.4 开源模型服务工具巡回
 
-有很多开源的模型服务工具可以使用。这些选择非常多，但是选择这么多有时会让人感到困惑。为了帮助您更轻松地做出选择，我们将向您介绍一些流行的模型服务工具，包括 TensorFlow Serving、TorchServe、Triton 和 KServe。所有这些工具都可以立即使用，并适用于生产用例。
+有很多开源的模型服务工具可以使用。这些选择非常多，但是选择这么多有时会让人感到困惑。为了帮助您更轻松地做出选择，我们将向您介绍一些流行的模型服务工具，包括 TensorFlow Serving、`TorchServe`、Triton 和 KServe。所有这些工具都可以立即使用，并适用于生产用例。
 
 因为这里描述的每一个工具都有详尽的文档，所以我们将保持讨论在一个通用的层面，只看它们的总体设计、主要特征和适当使用情况。这些信息应该足以作为一个起点，让你自己深入探索。
 
-### 7.4.1 TensorFlow Serving。
+### 7.4.1 TensorFlow Serving
 
 TensorFlow Serving ([`www.tensorflow.org/tfx/guide/serving`](https://www.tensorflow.org/tfx/guide/serving)) 是一个可自定义的独立网页系统，用于在生产环境中提供 TensorFlow 模型。TensorFlow Serving 采用模型服务器方法；它可以使用相同的服务器架构和 API 为所有类型的 TensorFlow 模型提供服务。
 
-特征。
+#### 特征
 
 TensorFlow Serving 提供以下特点：
 
@@ -971,7 +972,7 @@ TensorFlow Serving 提供以下特点：
 
 +   具有可扩展的设计，可以在版本策略和模型加载上进行自定义。
 
-高级架构。
+#### 高级架构
 
 在 TensorFlow Serving 中，一个模型由一个或多个可用服务程序组成。可用服务程序是用于执行计算的基础对象（例如查找或推断）；它是 TensorFlow Serving 中的中心抽象。来源是用于查找和提供可用服务程序的插件模块。装载器标准是用于装载和卸载可用服务程序的 API。管理器处理可用服务程序的整个生命周期，包括加载、卸载和提供可用服务程序。
 
@@ -979,15 +980,15 @@ TensorFlow Serving 提供以下特点：
 
 图 7.8 显示了 TensorFlow Serving 的架构和模型服务的生命周期。蓝色 = 最深的灰色；绿色 = 较浅的灰色；黄色 = 最浅的灰色。（来源：TensorFlow；[`mng.bz/KlNj`](http://mng.bz/KlNj)）
 
-图 7.8 说明了向客户提供可提供服务的工作流程。首先，源插件为特定的可用服务程序创建一个加载器，加载器包含加载可用服务程序的元数据。第二，源从文件系统（模型库）中找到一个可用服务程序；它通知 DynamicManager 可用服务程序的版本和加载器。第三，基于预定义的版本策略，DynamicManager 确定是否加载模型。最后，客户端发送一个预测请求给可用服务程序，DynamicManager 返回一个句柄，以便客户端可以执行模型。
+图 7.8 说明了向客户提供可提供服务的工作流程。首先，源插件为特定的可用服务程序创建一个加载器，加载器包含加载可用服务程序的元数据。第二，源从文件系统（模型库）中找到一个可用服务程序；它通知 `DynamicManager` 可用服务程序的版本和加载器。第三，基于预定义的版本策略，`DynamicManager` 确定是否加载模型。最后，客户端发送一个预测请求给可用服务程序，`DynamicManager` 返回一个句柄，以便客户端可以执行模型。
 
-TensorFlow Serving 模型文件。
+#### TensorFlow Serving 模型文件
 
 TensorFlow Serving 要求模型以 SavedModel ([`mng.bz/9197`](http://mng.bz/9197)) 格式保存。我们可以使用 `tf.saved_model.save(model, save_path)` API 来实现这个目的。一个保存的模型是一个包含了序列化签名和运行它们所需的状态的目录，包括变量值和词汇表。例如，一个保存的模型目录有两个子目录，`assets` 和 `variables`，以及一个文件，`saved_model.pb`。
 
-assets 文件夹包含了 TensorFlow 图使用的文件，比如用于初始化词汇表的文本文件。variables 文件夹包含了训练检查点。`saved_model.pb` 文件存储了实际的 TensorFlow 程序，或者说模型，以及一组命名的签名，每个签名标识了一个接受张量输入并产生张量输出的函数。
+`assets` 文件夹包含了 TensorFlow 图使用的文件，比如用于初始化词汇表的文本文件。`variables` 文件夹包含了训练检查点。`saved_model.pb` 文件存储了实际的 TensorFlow 程序，或者说模型，以及一组命名的签名，每个签名标识了一个接受张量输入并产生张量输出的函数。
 
-模型服务
+#### 模型服务
 
 因为 TensorFlow 的 SavedModel 文件可以直接加载到 TensorFlow Serving 进程中，所以运行模型服务非常简单。一旦服务进程启动，我们可以将模型文件复制到 TensorFlow Serving 的模型目录中，然后立即发送 gRPC 或 REST 预测请求。让我们来看下面的预测示例：
 
@@ -1036,13 +1037,13 @@ model_config_list {
 }
 ```
 
-❶ 在 /models/model_a/versions/2 找到模型 v2
+❶ 在 `/models/model_a/versions/2` 找到模型 v2
 
-❷ 在 /models/model_a/versions/3 找到模型 v3
+❷ 在 `/models/model_a/versions/3` 找到模型 v3
 
 在这个配置中，我们定义了两个模型，`model_a` 和 `model_b`。因为 `model_a` 有一个 `model_version_policy`，所以两个版本（v2 和 v3）都被加载并可以提供请求服务。默认情况下，模型的最新版本将被提供服务，所以当检测到 `model_b` 的新版本时，旧版本将被新版本替换。
 
-回顾
+#### 回顾
 
 TensorFlow Serving 是用于 TensorFlow 模型的生产级模型服务解决方案；它支持 REST、gRPC、GPU 加速、小批量处理和边缘设备上的模型服务。虽然 TensorFlow Serving 在高级指标、灵活的模型管理和部署策略方面存在不足，但如果你只有 TensorFlow 模型的话，它仍然是一个不错的选择。
 
@@ -1050,23 +1051,23 @@ TensorFlow Serving 的主要缺点是它是一个供应商锁定的解决方案�
 
 ### 7.4.2 TorchServe
 
-TorchServe ([`pytorch.org/serve/`](https://pytorch.org/serve/)) 是一个性能出色、灵活且易于使用的工具，用于为 PyTorch eager 模式和 torchscripted 模型提供服务（torchscripted 模型是 PyTorch 模型的一种中间表示，可以在高性能环境（如 C++）中运行）。与 TensorFlow Serving 类似，TorchServe 采用模型服务器方法为所有类型的 PyTorch 模型提供服务，并提供统一的 API。不同之处在于 TorchServe 提供了一组管理 API，使模型管理非常方便灵活。例如，我们可以以编程方式注册和注销模型或模型的不同版本。我们还可以为模型和模型的不同版本扩展和缩小服务工作程序。
+`TorchServe` ([`pytorch.org/serve/`](https://pytorch.org/serve/)) 是一个性能出色、灵活且易于使用的工具，用于为 PyTorch eager 模式和 torchscripted 模型提供服务（torchscripted 模型是 PyTorch 模型的一种中间表示，可以在高性能环境（如 C++）中运行）。与 TensorFlow Serving 类似，`TorchServe` 采用模型服务器方法为所有类型的 PyTorch 模型提供服务，并提供统一的 API。不同之处在于 `TorchServe` 提供了一组管理 API，使模型管理非常方便灵活。例如，我们可以以编程方式注册和注销模型或模型的不同版本。我们还可以为模型和模型的不同版本扩展和缩小服务工作程序。
 
-高层架构
+#### 高层架构
 
-一个 TorchServe 服务器由三个组件组成：前端、后端和模型存储。前端处理 TorchServe 的请求/响应。它还管理模型的生命周期。后端是一组负责在模型上运行实际推断的模型工作程序。模型存储是一个包含所有可加载模型的目录；它可以是云存储文件夹或本地主机文件夹。图 7.9 显示了 TorchServing 实例的高级架构。
+一个 `TorchServe` 服务器由三个组件组成：前端、后端和模型存储。前端处理 `TorchServe` 的请求/响应。它还管理模型的生命周期。后端是一组负责在模型上运行实际推断的模型工作程序。模型存储是一个包含所有可加载模型的目录；它可以是云存储文件夹或本地主机文件夹。图 7.9 显示了 `TorchServing` 实例的高级架构。
 
 ![](img/07-09.png)
 
-图 7.9 TorchServe 架构图（来源：Kuldeep Singh，“使用 TorchServe 将命名实体识别模型部署到生产环境”，Analytics Vidhya，2020）
+图 7.9 `TorchServe` 架构图（来源：Kuldeep Singh，“使用 `TorchServe` 将命名实体识别模型部署到生产环境”，Analytics Vidhya，2020）
 
 图 7.9 描绘了两个工作流程：模型推断和模型管理。对于模型推断，首先，用户将预测请求发送到模型的推断端点，例如 `/predictions/{model_name}/{version}`。然后，推断请求被路由到已加载模型的工作进程之一。接下来，工作进程将从模型存储中读取模型文件，并让模型处理器加载模型，预处理输入数据，并运行模型以获得预测结果。
 
 对于模型管理，用户需要在可以访问模型之前注册模型。这可以通过使用管理 API 来完成。我们还可以为模型调整工作进程计数的规模。我们将在即将到来的示例使用部分中看到一个示例。
 
-功能
+#### 功能
 
-TorchServe 提供以下功能：
+`TorchServe` 提供以下功能：
 
 +   可以为多个模型或同一模型的多个版本提供服务
 
@@ -1080,21 +1081,41 @@ TorchServe 提供以下功能：
 
 +   处理模型版本控制，用于 A/B 测试和实验
 
-Torch 服务模型文件
+#### Torch 服务模型文件
 
-纯 PyTorch 模型不能直接加载到 Torch 服务服务器中。TorchServe 要求将其所有模型打包成 .mar 文件。请参阅 7.2.6 节，了解如何创建 .mar 文件的详细示例。
+纯 PyTorch 模型不能直接加载到 Torch 服务服务器中。`TorchServe` 要求将其所有模型打包成 `.mar` 文件。请参阅 7.2.6 节，了解如何创建 `.mar` 文件的详细示例。
 
-模型服务
+#### 模型服务
 
-下面的代码片段列出了使用 TorchServe 运行模型推理的五个一般步骤。有关具体示例，您可以查看我们的示例意图分类预测器的 README 文档（[`mng.bz/WA8a`](http://mng.bz/WA8a)）：
+下面的代码片段列出了使用 `TorchServe` 运行模型推理的五个一般步骤。有关具体示例，您可以查看我们的示例意图分类预测器的 README 文档（[`mng.bz/WA8a`](http://mng.bz/WA8a)）：
 
-```py
-# 1\. Create model store directory for torch serving
+
+
+# 使用 TorchServe 部署意图分类模型
+
+以下示例演示了如何使用 TorchServe 部署意图分类模型，并通过其管理 API 和推理 API 进行模型注册、查询和动态扩缩容。
+
+## 1. 模型部署与推理
+
+### 1.1 准备模型存储目录
+
+首先，创建 TorchServe 的模型存储目录，并将模型文件（`.mar` 文件）复制到该目录中。
+
+```bash
+# 1. Create model store directory for torch serving
 # and copy model files (mar files) to it
 mkdir -p /tmp/model_store/torchserving
 cp sample_models/intent.mar /tmp/model_store/torchserving                       ❶
+```
 
-# 2\. Run the torch serving container
+❶ 创建本地模型目录并复制意图分类模型。
+
+### 1.2 启动 TorchServe 容器
+
+拉取并运行 TorchServe 的 Docker 容器，将本地模型目录挂载为容器内的模型存储目录。
+
+```bash
+# 2. Run the torch serving container
 docker pull pytorch/torchserve:0.4.2-cpu
 docker run --rm --shm-size=1g \
        --ulimit memlock=-1 \
@@ -1106,52 +1127,70 @@ docker run --rm --shm-size=1g \
        -p7071:7071 \
        --mount type=bind,source=/tmp/model_store/torchserving,target=/tmp/models❷
 pytorch/torchserve:0.4.2-cpu torchserve --model-store=/tmp/models
+```
 
-# 3\. Register intent model through torchserving management api
-curl -X POST  "http:/ /localhost:8081/models?url=                               ❸
+❷ 将本地模型目录绑定为 TorchServe 的模型存储目录。
+
+### 1.3 注册模型
+
+通过 TorchServe 的管理 API 注册意图模型。
+
+```bash
+# 3. Register intent model through torchserving management api
+curl -X POST  "http://localhost:8081/models?url=                               ❸
 ➥ intent_1.mar&initial_workers=1&model_name=intent"                            ❸
+```
 
-# 4\. Query intent model in torch serving with default version.
-curl --location --request GET 'http:/ /localhost:8080/predictions/intent' \
---header 'Content-Type: text/plain' \
---data-raw 'make a 10 minute timer'
+❸ `intent_1.mar` 包含模型文件和模型元数据，例如模型版本。
 
-# 5\. Query intent model in torch serving with specified version - 1.0
-curl --location --request GET 'http:/ /localhost:8080/predictions/intent/1.0' \
+### 1.4 查询模型（默认版本）
+
+发送推理请求，查询默认版本的意图模型。
+
+```bash
+# 4. Query intent model in torch serving with default version.
+curl --location --request GET 'http://localhost:8080/predictions/intent' \
 --header 'Content-Type: text/plain' \
 --data-raw 'make a 10 minute timer'
 ```
 
-❶ 创建本地模型目录并复制意图分类模型
+### 1.5 查询模型（指定版本）
 
-❷ 将本地模型目录绑定为 TorchServe 的模型存储目录
+发送推理请求，查询指定版本（`1.0`）的意图模型。
 
-❸ Intent_1.mar 包含模型文件和模型元数据，例如模型版本。
+```bash
+# 5. Query intent model in torch serving with specified version - 1.0
+curl --location --request GET 'http://localhost:8080/predictions/intent/1.0' \
+--header 'Content-Type: text/plain' \
+--data-raw 'make a 10 minute timer'
+```
 
-使用管理 API 注册模型之外，我们还可以使用 scale worker API 动态调整任何版本模型的工作节点数量，以更好地服务不同的推理请求负载，如下例所示：
+## 2. 动态调整工作节点
 
-```py
-# 1\. Scale up the worker number for the intent model. Default number is 1.
+除了使用管理 API 注册模型之外，我们还可以使用 `scale worker` API 动态调整任何版本模型的工作节点数量，以更好地服务不同的推理请求负载，如下例所示：
+
+```bash
+# 1. Scale up the worker number for the intent model. Default number is 1.
 # Set minimum worker count to 3 and maximum worker count to 6 
 # for version 1.0 of the intent model 
-curl -v -X PUT "http:/ /localhost:8081/models/intent/1.0?min_worker=3&max_worker=6"
+curl -v -X PUT "http://localhost:8081/models/intent/1.0?min_worker=3&max_worker=6"
 
-# 2\. Use the describe model API to get detail runtime status of 
+# 2. Use the describe model API to get detail runtime status of 
 # default version of the intent model.
-curl http:/ /localhost:8081/models/intent
+curl http://localhost:8081/models/intent
 
-# 3\. Use the describe model API to get detail runtime status of 
+# 3. Use the describe model API to get detail runtime status of 
 # specific version (1.0) of the intent model.
-curl http:/ /localhost:8081/models/intent/1.0 
+curl http://localhost:8081/models/intent/1.0 
 ```
 
-回顾
+## 回顾
 
 TorchServe 是用于 PyTorch 模型的生产级模型服务解决方案；它专为高性能推理和生产用例而设计。TorchServe 的管理 API 增加了许多灵活性，用于自定义模型部署策略，并允许我们在每个模型级别管理计算资源。
 
 与 TensorFlow Serving 类似，TorchServe 的主要缺点是它是一种供应商锁定解决方案；它仅支持 PyTorch 模型。因此，如果您正在寻找一种训练框架不可知的方法，TorchServe 将不是您的选择。
 
-### 7.4.3 Triton 推理服务器
+# Triton 推理服务器
 
 Triton 推理服务器（[`developer.nvidia.com/nvidia-triton-inference-server`](https://developer.nvidia.com/nvidia-triton-inference-server)）是由 NVIDIA 开发的开源推理服务器。它提供了一个针对 CPU 和 GPU 优化的云和边缘推理解决方案。Triton 支持 HTTP/REST 和 gRPC 协议，允许远程客户端请求服务器管理的任何模型的推理。对于边缘部署，Triton 可作为具有 C API 的共享库提供，允许直接在应用程序中包含 Triton 的全部功能。
 
@@ -1159,7 +1198,7 @@ Triton 推理服务器（[`developer.nvidia.com/nvidia-triton-inference-server`]
 
 推理性能对于 Triton 也是一项优势。Triton 在 GPU 上并发运行模型，以最大化吞吐量和利用率；支持基于 x86 和 ARM CPU 的推断；并提供动态批处理、模型分析器、模型集成和音频流等功能。这些功能使模型服务内存高效且稳健。
 
-高层架构
+## 高层架构
 
 图 7.10 显示了 Triton 推理服务器的高级架构。所有推理请求都作为 REST 或 gRPC 请求发送，然后在内部转换为 C API 调用。模型从模型仓库加载，模型仓库是一个基于文件系统的仓库，我们可以将其视为文件夹/目录。
 
@@ -1169,29 +1208,23 @@ Triton 推理服务器（[`developer.nvidia.com/nvidia-triton-inference-server`]
 
 对于每个模型，Triton 准备一个调度程序。调度和批处理算法可以根据模型逐个配置。每个模型的调度程序可选择对推理请求进行批处理，然后将请求传递给与模型类型对应的后端，例如 PyTorch 模型的 PyTorch 后端。 Triton 后端是执行模型的实现。它可以是围绕深度学习框架（如 PyTorch、TensorFlow、TensorRT 或 ONNX Runtime）的包装器。一旦后端使用批处理请求中提供的输入执行推理以产生请求的输出，输出就会返回。
 
-值得注意的是，Triton 支持一个后端 C API，允许通过自定义预处理和后处理操作或甚至一个新的深度学习框架来扩展 Triton 的功能。这就是我们如何扩展 Triton 服务器的方式。您可以查看 triton-inference-server/backend GitHub 仓库（[`github.com/triton-inference-server/backend`](https://github.com/triton-inference-server/backend)）来找到所有 Triton 后端实现。作为一个额外的好处，由 Triton 服务的模型可以通过专用的模型管理 API 进行查询和控制，该 API 可通过 HTTP/REST、gRPC 协议或 C API 使用。
+值得注意的是，Triton 支持一个后端 C API，允许通过自定义预处理和后处理操作或甚至一个新的深度学习框架来扩展 Triton 的功能。这就是我们如何扩展 Triton 服务器的方式。您可以查看 `triton-inference-server/backend` GitHub 仓库（[`github.com/triton-inference-server/backend`](https://github.com/triton-inference-server/backend)）来找到所有 Triton 后端实现。作为一个额外的好处，由 Triton 服务的模型可以通过专用的模型管理 API 进行查询和控制，该 API 可通过 HTTP/REST、gRPC 协议或 C API 使用。
 
-特点
+## 特点
 
 Triton 提供以下功能：
 
 +   支持所有主要的深度学习和机器学习框架后端。
-
 +   在单个 GPU 或 CPU 上同时运行来自相同或不同框架的多个模型。在多 GPU 服务器上，Triton 会自动在每个 GPU 上创建每个模型的一个实例，以提高利用率。
-
 +   优化推理服务以进行实时推理、批量推理以最大化 GPU/CPU 利用率，并使用内置支持音频流输入的流推理。Triton 还支持模型集成，用于需要多个模型执行端到端推理的用例，例如对话型 AI。
-
 +   处理输入请求的动态批处理，以获得高吞吐量和利用率，并在严格的延迟约束下。
-
 +   在生产环境中实时更新模型，而无需重新启动推理服务器或中断应用程序。
-
 +   使用模型分析器自动找到最佳模型配置并最大化性能。
-
 +   支持大模型的多 GPU、多节点推理。
 
-Triton 模型文件
+## Triton 模型文件
 
-Triton 中的每个模型都必须包含一个模型配置，提供关于模型的必需和可选信息。通常，它是一个指定为 ModelConfig protobuf 的 config.pbtxt 文件（[`mng.bz/81Kz`](http://mng.bz/81Kz)）。以下是 PyTorch 模型的简单模型配置（config.pbtxt）：
+Triton 中的每个模型都必须包含一个模型配置，提供关于模型的必需和可选信息。通常，它是一个指定为 `ModelConfig` protobuf 的 `config.pbtxt` 文件（[`mng.bz/81Kz`](http://mng.bz/81Kz)）。以下是 PyTorch 模型的简单模型配置（`config.pbtxt`）：
 
 ```py
 platform: “pytorch_libtorch”    ❶
@@ -1219,54 +1252,50 @@ pytorch_libtorch                ❷
 ```
 
 ❶ 指定此模型的 PyTorch 服务后端
-
 ❷ 表示这是一个 PyTorch 后端配置
-
 ❸ 定义模型支持的最大批处理大小
-
 ❹ 模型输入数据架构
-
 ❺ 模型输出数据架构
 
-通常，训练应用程序在训练服务完成训练后会创建此 config.pbtxt 文件，然后将此配置作为模型文件的一部分上传到模型存储库。有关 Triton 模型配置的更多详细信息，请查看 Triton 模型配置文档（[`mng.bz/Y6mA`](http://mng.bz/Y6mA)）。
+通常，训练应用程序在训练服务完成训练后会创建此 `config.pbtxt` 文件，然后将此配置作为模型文件的一部分上传到模型存储库。有关 Triton 模型配置的更多详细信息，请查看 Triton 模型配置文档（[`mng.bz/Y6mA`](http://mng.bz/Y6mA)）。
 
-除了统一的配置文件外，Triton 模型文件格式因训练框架而异。例如，TensorFlow 模型以 SavedModel 格式（[`mng.bz/El4d`](http://mng.bz/El4d)）可以直接加载到 Triton 中。但 PyTorch 模型需要由 TorchScript 程序保存。
+除了统一的配置文件外，Triton 模型文件格式因训练框架而异。例如，TensorFlow 模型以 `SavedModel` 格式（[`mng.bz/El4d`](http://mng.bz/El4d)）可以直接加载到 Triton 中。但 PyTorch 模型需要由 TorchScript 程序保存。
 
-TorchScript
+### TorchScript
 
 TorchScript 是一种从 PyTorch 代码创建可序列化和可优化模型的方法。Triton 要求 PyTorch 模型被序列化为 TorchScript 的原因是 TorchScript 可以用作 PyTorch 模型的中间表示。它可以独立于 Python 运行，例如在独立的 C++ 程序中。请参阅以下代码片段，了解如何从 PyTorch 模型创建 TorchScript 模型：
 
 ```py
 #### Pytorch training code
 
-# 1\. Define an instance of your model.
+# 1. Define an instance of your model.
 Model = ...TorchModel()
 
-# 2\. Switch the model to eval model
+# 2. Switch the model to eval model
 model.eval()
 
-# 3\. Build an example input of the model’s forward() method.
+# 3. Build an example input of the model’s forward() method.
 Example = torch.rand(1, 3, 224, 224)
 
-# 4\. Use torch.jit.trace to generate a torch.jit.ScriptModule via tracing.
+# 4. Use torch.jit.trace to generate a torch.jit.ScriptModule via tracing.
 Traced_script_module = torch.jit.trace(model, example)
-# 5\. Save the TorchScript model
+# 5. Save the TorchScript model
 traced_script_module.save(“traced_torch_model.pt”)   
 ```
 
-对于其他训练框架的模型格式要求，请查看 triton-inference-server/backend GitHub 存储库（[`mng.bz/NmOn`](http://mng.bz/NmOn)）。
+对于其他训练框架的模型格式要求，请查看 `triton-inference-server/backend` GitHub 存储库（[`mng.bz/NmOn`](http://mng.bz/NmOn)）。
 
-模型服务
+## 模型服务
 
-Triton 中的模型服务包括以下三个步骤：首先，将模型文件复制到模型存储库；其次，调用管理 API（`POST v2/repository/ models/${MODEL_NAME}/load`）注册模型；第三，发送推理请求（`POST v2/models/${MODEL_NAME}/versions/${MODEL_VERSION}`）。有关 Triton 管理 API 的更多信息，请查看 Triton HTTP/REST 和 gRPC 协议文档（[`mng.bz/DZvR`](http://mng.bz/DZvR)）。有关推理 API，请查看 KServe 社区标准推理协议文档（[`kserve.github.io/website/0.10/modelserving/data_plane/v2_protocol/`](https://kserve.github.io/website/0.10/modelserving/data_plane/v2_protocol/)）。
+Triton 中的模型服务包括以下三个步骤：首先，将模型文件复制到模型存储库；其次，调用管理 API（`POST v2/repository/models/${MODEL_NAME}/load`）注册模型；第三，发送推理请求（`POST v2/models/${MODEL_NAME}/versions/${MODEL_VERSION}`）。有关 Triton 管理 API 的更多信息，请查看 Triton HTTP/REST 和 gRPC 协议文档（[`mng.bz/DZvR`](http://mng.bz/DZvR)）。有关推理 API，请查看 KServe 社区标准推理协议文档（[`kserve.github.io/website/0.10/modelserving/data_plane/v2_protocol/`](https://kserve.github.io/website/0.10/modelserving/data_plane/v2_protocol/)）。
 
-回顾
+## 回顾
 
 在撰写本书时，我们认为 Triton 是最佳的模型服务方法，原因有三。首先，Triton 不依赖任何训练框架；它提供了一个设计良好且可扩展的后端框架，使得它能够执行几乎任何训练框架构建的模型。其次，Triton 提供了更好的模型服务性能，例如服务吞吐量。Triton 有多种机制来提高其服务性能，例如动态批处理、GPU 优化和模型分析工具。第三，Triton 支持高级的模型服务用例，如模型集成和音频流式传输。
 
-警告 要小心！ Triton 可能不是免费的。Triton 采用 BSD 3-Clause "new" 或 "revised" 许可证，可以免费进行修改和商业发布。但是修复故障和错误呢？该项目非常复杂，代码量大，因此会在调试和修复性能问题（如内存泄漏）上带来一定困难。如果你想获取支持，可以考虑购买 NVIDIA 的 AI-Enterprise 许可证，但在本书撰写时，这将需要支付每年每块 GPU 数千美元的费用。所以在注册之前，请确保你了解 Triton 的代码库。
+> **警告** 要小心！ Triton 可能不是免费的。Triton 采用 BSD 3-Clause "new" 或 "revised" 许可证，可以免费进行修改和商业发布。但是修复故障和错误呢？该项目非常复杂，代码量大，因此会在调试和修复性能问题（如内存泄漏）上带来一定困难。如果你想获取支持，可以考虑购买 NVIDIA 的 AI-Enterprise 许可证，但在本书撰写时，这将需要支付每年每块 GPU 数千美元的费用。所以在注册之前，请确保你了解 Triton 的代码库。
 
-### 7.4.4 KServe 和其他工具
+# KServe 和其他工具
 
 开源服务工具的列表很长，包括 KServe ([`www.kubeflow.org/docs/external-add-ons/kserve/`](https://www.kubeflow.org/docs/external-add-ons/kserve/))、Seldon Core ([`www.seldon.io/solutions/open-source-projects/core`](https://www.seldon.io/solutions/open-source-projects/core)) 和 BentoML ([`github.com/bentoml/BentoML`](https://github.com/bentoml/BentoML))。这些工具各有其独特的优势。它们要么运行轻量且易于使用，像 BentoML 一样，要么使得在 Kubernetes 中轻松快速部署模型，就像 Seldon Core 和 KServe 一样。尽管服务工具的多样性，它们也有很多共同之处：它们都需要以一定的格式打包模型，定义一个模型包装器和配置文件来执行模型，将模型上传到存储库，并通过 gRPC 或 HTTP/REST 端点发送预测请求。通过阅读本章中的 TorchServe、TensorFlow 和 Triton 示例，你应该能够自己探索其他工具。
 
@@ -1274,9 +1303,11 @@ Triton 中的模型服务包括以下三个步骤：首先，将模型文件复�
 
 KServe 的目标是在 Kubernetes 上提供一种无服务器推断解决方案。它提供了一个抽象的模型服务接口，适用于像 TensorFlow、XGBoost、scikit-learn、PyTorch 和 ONNX 等常见的机器学习框架。
 
-从我们的角度来看，KServe 的主要贡献在于它创建了一个标准的服务接口，适用于所有主要的服务工具。例如，我们之前提到的所有服务工具现在都支持 KServe 模型推理协议。这意味着我们可以仅使用一组推理 API（KServe API）来查询由不同服务工具托管的任何模型，如 Triton、TorchServe 和 TensorFlow。
 
-KServe 的另一个优势是它被设计为在 Kubernetes 上本地提供无服务器解决方案。KServe 使用 Knative 来处理网络路由、模型工作器自动扩展（甚至到零）和模型版本跟踪。通过简单的配置（见下面的示例），您可以将模型部署到您的 Kubernetes 集群，然后使用标准化的 API 来查询它：
+
+从我们的角度来看，`KServe`的主要贡献在于它创建了一个标准的服务接口，适用于所有主要的服务工具。例如，我们之前提到的所有服务工具现在都支持`KServe`模型推理协议。这意味着我们可以仅使用一组推理 API（`KServe API`）来查询由不同服务工具托管的任何模型，如`Triton`、`TorchServe`和`TensorFlow`。
+
+`KServe`的另一个优势是它被设计为在`Kubernetes`上本地提供无服务器解决方案。`KServe`使用`Knative`来处理网络路由、模型工作器自动扩展（甚至到零）和模型版本跟踪。通过简单的配置（见下面的示例），您可以将模型部署到您的`Kubernetes`集群，然后使用标准化的 API 来查询它：
 
 ```py
 apiVersion: serving.kserve.io/v1beta1             ❶
@@ -1290,33 +1321,33 @@ spec:
           ➥ /torchserve/image_classifier         ❸
 ```
 
-❶ KServe 的样本模型部署配置
+❶ `KServe`的样本模型部署配置
 
 ❷ 后端服务器类型
 
 ❸ 模型文件位置
 
-在幕后，KServe 使用不同的服务工具来运行推理，如 TensorFlow Serving 和 Triton。KServe 提供了一个隐藏所有细节的简单 Kubernetes CRD 配置的好处。在前面的示例中，`InferenceService` CRD 配置隐藏了工作，包括预测服务器设置、模型复制、模型版本跟踪和预测请求路由。
+在幕后，`KServe`使用不同的服务工具来运行推理，如`TensorFlow Serving`和`Triton`。`KServe`提供了一个隐藏所有细节的简单`Kubernetes CRD`配置的好处。在前面的示例中，`InferenceService` CRD 配置隐藏了工作，包括预测服务器设置、模型复制、模型版本跟踪和预测请求路由。
 
-在书写本书时，KServe 的新版本（v2）仍处于测试阶段。虽然它还不够成熟，但其在跨平台支持和无服务器模型部署方面的独特优势使其在其他方法中脱颖而出。如果您想要建立一个适用于 Kubernetes 上所有主要训练框架的大型服务平台，那么 KServe 值得您的关注。
+在书写本书时，`KServe`的新版本（`v2`）仍处于测试阶段。虽然它还不够成熟，但其在跨平台支持和无服务器模型部署方面的独特优势使其在其他方法中脱颖而出。如果您想要建立一个适用于`Kubernetes`上所有主要训练框架的大型服务平台，那么`KServe`值得您的关注。
 
 ### 7.4.5 将服务工具集成到现有服务系统中
 
 在许多情况下，用新的服务后端替换现有的预测服务是不可行的选择。每个服务工具对于模型存储、模型注册和推理请求格式都有自己的要求。这些要求有时与现有系统的预测接口以及内部模型元数据和文件系统相冲突。为了引入新技术而不影响业务，我们通常采取集成方法，而不是完全替换它。
 
-在这里，我们以 Triton 服务器为例，展示如何将服务工具集成到现有的预测服务中。在这个示例中，我们假设三件事情：首先，现有的预测服务在 Kubernetes 中运行；其次，现有的预测服务的 Web 推理接口不允许更改；第三，有一个模型存储系统，将模型文件存储在云存储中，如 Amazon S3。图 7.11 显示了这个过程。
+在这里，我们以`Triton`服务器为例，展示如何将服务工具集成到现有的预测服务中。在这个示例中，我们假设三件事情：首先，现有的预测服务在`Kubernetes`中运行；其次，现有的预测服务的 Web 推理接口不允许更改；第三，有一个模型存储系统，将模型文件存储在云存储中，如`Amazon S3`。图 7.11 显示了这个过程。
 
 ![](img/07-11.png)
 
-图 7.11 提议将一系列 Triton 服务器实例集成到现有服务系统中
+图 7.11 提议将一系列`Triton`服务器实例集成到现有服务系统中
 
-图 7.11（A）说明了系统概述。一列 Triton 服务器 Kubernetes pod 被添加到现有的预测 API 后面。通过 Kubernetes 负载均衡器，预测请求可以落在任何 Triton pod 上。我们还添加了一个共享卷，所有 Triton pod 都可以访问；这个共享卷充当了所有 Triton 实例的共享 Triton 模型存储库。
+图 7.11（A）说明了系统概述。一列`Triton`服务器`Kubernetes pod`被添加到现有的预测 API 后面。通过`Kubernetes`负载均衡器，预测请求可以落在任何`Triton pod`上。我们还添加了一个共享卷，所有`Triton pod`都可以访问；这个共享卷充当了所有`Triton`实例的共享`Triton`模型存储库。
 
-图 7.11（B）显示了 Triton 服务器 Kubernetes pod 内部的内容。每个 Triton pod 都有两个 Docker 容器：一个 Triton 服务器容器和一个 sidecar 容器。Triton 服务器容器是我们在第 7.4.3 节中讨论的 Triton 推理服务器。模型预测发生在此容器中，我们可以简单地将此容器视为黑匣子。sidecar 容器充当适配器/代理，以准备 Triton 在将预测请求转发到 Triton 容器之前需要的内容。这个 sidecar 容器从云存储中下载模型到 Triton 的本地模型存储库（共享卷），调用 Triton 注册模型，并将预测请求转换为 Triton API 调用。
+图 7.11（B）显示了`Triton`服务器`Kubernetes pod`内部的内容。每个`Triton pod`都有两个`Docker`容器：一个`Triton`服务器容器和一个`sidecar`容器。`Triton`服务器容器是我们在第 7.4.3 节中讨论的`Triton`推理服务器。模型预测发生在此容器中，我们可以简单地将此容器视为黑匣子。`sidecar`容器充当适配器/代理，以准备`Triton`在将预测请求转发到`Triton`容器之前需要的内容。这个`sidecar`容器从云存储中下载模型到`Triton`的本地模型存储库（共享卷），调用`Triton`注册模型，并将预测请求转换为`Triton API`调用。
 
-使用这种集成方法，所有的更改都发生在预测服务内部。公共预测 API 和外部模型存储系统保持不变，当我们切换到 Triton 后端时，我们的用户不会受到影响。虽然我们使用了一个特定的工具（Triton）和一个特定的基础设施（Kubernetes）来演示这个想法，但只要它们使用 Docker，你就可以将这种模式应用到任何其他系统中。
+使用这种集成方法，所有的更改都发生在预测服务内部。公共预测 API 和外部模型存储系统保持不变，当我们切换到`Triton`后端时，我们的用户不会受到影响。虽然我们使用了一个特定的工具（`Triton`）和一个特定的基础设施（`Kubernetes`）来演示这个想法，但只要它们使用`Docker`，你就可以将这种模式应用到任何其他系统中。
 
-注意 因为 Triton 服务器支持主要的训练框架，KServe 提供了一个标准化的服务协议，我们可以将它们结合起来生成一个适用于不同框架训练的各种模型的服务系统。
+注意 因为`Triton`服务器支持主要的训练框架，`KServe`提供了一个标准化的服务协议，我们可以将它们结合起来生成一个适用于不同框架训练的各种模型的服务系统。
 
 ## 7.5 发布模型
 
@@ -1324,9 +1355,9 @@ spec:
 
 首先，当训练服务完成模型构建时，应自动将模型发布到生产环境中的预测服务。其次，新发布的模型及其先前版本应全部在预测服务中可访问，以便我们可以在相同环境中对它们进行评估并进行公平比较。在本节中，我们提出了一个三步模型发布过程来解决这些挑战。
 
-首先，数据科学家（Alex）或训练服务向元数据存储注册最近生成的模型（由模型文件和其元数据组成）—这是一个将在下一章中讨论的云元数据和工件存储系统。其次，Alex 对新注册的模型进行模型评估。他可以通过向预测服务发送具有特定模型版本的预测请求来测试这些模型的性能。预测服务具有从元数据存储加载任何特定版本模型的内置机制。
+首先，数据科学家（`Alex`）或训练服务向元数据存储注册最近生成的模型（由模型文件和其元数据组成）—这是一个将在下一章中讨论的云元数据和工件存储系统。其次，`Alex`对新注册的模型进行模型评估。他可以通过向预测服务发送具有特定模型版本的预测请求来测试这些模型的性能。预测服务具有从元数据存储加载任何特定版本模型的内置机制。
 
-第三，Alex 将性能最佳的模型版本设置为元数据存储中的发布模型版本。一旦设置完成，所选版本的模型将会公开！客户应用程序将不知不觉地开始使用来自预测服务的新发布版本的模型。图 7.12 说明了这个三步骤的过程。
+第三，`Alex`将性能最佳的模型版本设置为元数据存储中的发布模型版本。一旦设置完成，所选版本的模型将会公开！客户应用程序将不知不觉地开始使用来自预测服务的新发布版本的模型。图 7.12 说明了这个三步骤的过程。
 
 ![](img/07-12.png)
 
@@ -1350,13 +1381,13 @@ spec:
 
 当元数据存储接收到模型注册请求时，首先，它为此模型创建一个元数据对象。其次，通过添加一个新的搜索记录来更新模型查找表；该记录使我们能够通过使用模型名称和版本来找到该模型元数据对象。除了通过使用模型名称和版本搜索查找表外，元数据存储还允许通过使用模型 ID 进行模型元数据搜索。
 
-实际模型文件存储在工件存储中——云对象存储，例如 Amazon S3。模型在工件存储中的存储位置保存在模型的元数据对象中作为指针。
+实际模型文件存储在工件存储中——云对象存储，例如`Amazon S3`。模型在工件存储中的存储位置保存在模型的元数据对象中作为指针。
 
 图 7.13 显示了模型查找表中模型 A 的两个搜索记录：版本 1.0.0 和 1.1.0。每个搜索记录映射到不同的模型元数据对象（分别为 ID = 12345 和 ID = 12346）。有了这种存储结构，我们可以通过使用模型名称和模型版本找到任何模型元数据；例如，我们可以通过搜索“模型 A”和版本“1.1.0”找到模型元数据对象 ID = 12346。
 
 使用模型的规范名称和版本来查找实际的元数据和模型文件是预测服务同时提供不同模型版本的能力的基础。让我们在下一节中看看元数据存储在预测服务中的应用。
 
-### -   实时加载模型的任意版本与预测服务
+### 7.5.2 实时加载模型的任意版本与预测服务
 
 为了在生产环境中决定使用哪个模型版本，我们希望公平地（在相同的环境中）和轻松地（使用相同的 API）评估每个模型版本的模型性能。为此，我们可以调用预测服务以使用不同的模型版本运行预测请求。
 
@@ -1368,19 +1399,19 @@ spec:
 
 图 7.14 显示了预测服务实时加载指定的服务请求中的模型。在接收到预测请求时，路由层首先在元数据存储中找到请求的模型，下载模型文件，然后将请求传递给后端预测器。以下是运行时模型加载和服务过程的七个步骤的详细说明：
 
-1.  用户向预测服务发送预测请求。在请求中，他们可以通过提供模型名称和版本（`/predict/{model_name}/{version}`）或模型 ID（`/predict/{model_id}`）来指定要使用的模型。
+1. 用户向预测服务发送预测请求。在请求中，他们可以通过提供模型名称和版本（`/predict/{model_name}/{version}`）或模型 ID（`/predict/{model_id}`）来指定要使用的模型。
 
-1.  预测服务内部的路由层搜索元数据存储，并找到模型元数据对象。
+2. 预测服务内部的路由层搜索元数据存储，并找到模型元数据对象。
 
-1.  路由层然后将模型文件下载到所有预测器都可以访问的共享磁盘上。
+3. 路由层然后将模型文件下载到所有预测器都可以访问的共享磁盘上。
 
-1.  通过检查模型元数据，例如算法类型，路由层将预测请求路由到正确的后端预测器。
+4. 通过检查模型元数据，例如算法类型，路由层将预测请求路由到正确的后端预测器。
 
-1.  预测器从共享磁盘加载模型。
+5. 预测器从共享磁盘加载模型。
 
-1.  预测器处理数据预处理，执行模型，执行后处理，并将结果返回给路由层。
+6. 预测器处理数据预处理，执行模型，执行后处理，并将结果返回给路由层。
 
-1.  路由层将预测结果返回给调用者。
+7. 路由层将预测结果返回给调用者。
 
 ### 7.5.3 通过更新默认模型版本释放模型
 
@@ -1418,7 +1449,7 @@ spec:
 
 工程师可以为 *模型指标收集* 和 *模型质量门设置* 这两个最重要的领域做出贡献。让我们解释一下。
 
-为了运行检测模型漂移的分析，数据科学家需要分析数据，工程师可以找到途径提供必要的数据（指标）。尽管工程师可能必须创建一个单独的数据管道来收集模型性能指标，但在大多数情况下这将是不划算的。通常，模型性能指标可以使用现有的遥测系统（如 Datadog）和日志记录系统（如 Sumo 和 Splunk）进行收集和可视化。因此，请善用您已经拥有的现有日志记录和指标系统，而不是费力地建立一个新的指标系统。
+为了运行检测模型漂移的分析，数据科学家需要分析数据，工程师可以找到途径提供必要的数据（指标）。尽管工程师可能必须创建一个单独的数据管道来收集模型性能指标，但在大多数情况下这将是不划算的。通常，模型性能指标可以使用现有的遥测系统（如`Datadog`）和日志记录系统（如`Sumo`和`Splunk`）进行收集和可视化。因此，请善用您已经拥有的现有日志记录和指标系统，而不是费力地建立一个新的指标系统。
 
 工程师还可以帮助构建模型质量门。工程师可以与数据科学家合作，自动化他们的故障排除步骤，例如检查数据质量和生成模型推理分析报告。通过给定的阈值，这些检查最终将形成一个模型质量门。
 
@@ -1426,34 +1457,36 @@ spec:
 
 从理论上讲，我们需要收集至少五种指标来支持模型性能测量。它们是预测跟踪、预测日期、模型版本、观察和观察率、以及日期。让我们逐一来看看它们：
 
-+   *预测跟踪* — 通常，我们通过为每个预测请求分配一个唯一的请求 ID 来跟踪每个预测请求，但这还不够。对于一些复杂的场景，比如 PDF 扫描，我们将不同类型的模型预测组合在一起以产生最终结果。例如，我们首先将 PDF 文档发送到 OCR（光学字符识别）模型以提取文本信息，然后将文本发送到 NLP（自然语言处理）模型以识别目标实体。在这种情况下，除了为父预测请求分配唯一的请求 ID 外，我们还可以为每个子预测请求分配一个 `groupRequestID`，这样我们就可以在故障排除时将所有相关的预测请求分组起来。
++ *预测跟踪* — 通常，我们通过为每个预测请求分配一个唯一的请求 ID 来跟踪每个预测请求，但这还不够。对于一些复杂的场景，比如 PDF 扫描，我们将不同类型的模型预测组合在一起以产生最终结果。例如，我们首先将 PDF 文档发送到 OCR（光学字符识别）模型以提取文本信息，然后将文本发送到 NLP（自然语言处理）模型以识别目标实体。在这种情况下，除了为父预测请求分配唯一的请求 ID 外，我们还可以为每个子预测请求分配一个`groupRequestID`，这样我们就可以在故障排除时将所有相关的预测请求分组起来。
 
-+   *预测日期* — 通常，预测请求在一秒内完成。为了追踪预测的日期，我们可以使用预测开始时间或完成时间，因为它们之间没有太大的区别。但是对于像欺诈检测这样的情况，预测的完成时间戳可能与预测开始时间戳相差很大，因为它可能需要多天的用户活动作为输入。
++ *预测日期* — 通常，预测请求在一秒内完成。为了追踪预测的日期，我们可以使用预测开始时间或完成时间，因为它们之间没有太大的区别。但是对于像欺诈检测这样的情况，预测的完成时间戳可能与预测开始时间戳相差很大，因为它可能需要多天的用户活动作为输入。
 
-+   *模型版本* — 为了将模型性能数据映射到确切的模型文件，我们需要知道模型版本。此外，当我们组合多个模型来提供一个预测请求时，需要在日志中跟踪每个模型的版本。
++ *模型版本* — 为了将模型性能数据映射到确切的模型文件，我们需要知道模型版本。此外，当我们组合多个模型来提供一个预测请求时，需要在日志中跟踪每个模型的版本。
 
-+   *观察* —— 预测结果需要与预测输入一起记录，以供将来比较。此外，我们可以为客户提供反馈或调查 API，以报告模型性能问题。通过使用反馈 API，客户可以报告模型 ID、预期预测结果和当前预测结果。
++ *观察* —— 预测结果需要与预测输入一起记录，以供将来比较。此外，我们可以为客户提供反馈或调查 API，以报告模型性能问题。通过使用反馈 API，客户可以报告模型 ID、预期预测结果和当前预测结果。
 
-+   *观察日期和频率* —— 许多时候，观察是手动收集的，观察的频率也需要记录。数据科学家需要日期和频率来决定数据是否能够在统计上代表模型的整体性能。
++ *观察日期和频率* —— 许多时候，观察是手动收集的，观察的频率也需要记录。数据科学家需要日期和频率来决定数据是否能够在统计上代表模型的整体性能。
 
 你能读到这里真是太好了！模型服务是机器学习系统的重要组成部分，因为外部业务应用程序依赖于它。随着模型类型、预测请求数量和推理类型（在线/离线）的增加，许多模型服务框架/系统被发明出来，并且它们变得越来越复杂。如果你遵循第 6 和第七章介绍的服务心理模型，从模型如何加载和执行开始，你可以轻松地浏览这些服务系统，无论代码库有多大或组件数量有多少。
 
 ## 摘要
 
-+   这一章的模型服务示例由一个前端 API 组件和一个后端模型预测器容器组成。由于预测器是基于第三章的意图模型训练代码构建的，因此它只能为意图分类模型提供服务。
++ 这一章的模型服务示例由一个前端 API 组件和一个后端模型预测器容器组成。由于预测器是基于第三章的意图模型训练代码构建的，因此它只能为意图分类模型提供服务。
 
-+   模型服务器示例由与第三章相同的前端 API 和一个不同的后端 —— TorchServe 预测器组成。TorchServe 后端不仅限于意图分类模型；它可以为任意的 PyTorch 模型提供服务。这是模型服务器方法在模型服务方法上的一个巨大优势。
++ 模型服务器示例由与第三章相同的前端 API 和一个不同的后端 —— `TorchServe`预测器组成。`TorchServe`后端不仅限于意图分类模型；它可以为任意的`PyTorch`模型提供服务。这是模型服务器方法在模型服务方法上的一个巨大优势。
 
-+   对于实施模型服务器方法，我们建议使用现有工具，例如 Triton 服务器，而不是自己构建。
++ 对于实施模型服务器方法，我们建议使用现有工具，例如`Triton`服务器，而不是自己构建。
 
-+   模型服务方法适用于单个应用场景；它可以快速实施，并且您可以完全控制端到端工作流的代码实现。
++ 模型服务方法适用于单个应用场景；它可以快速实施，并且您可以完全控制端到端工作流的代码实现。
 
-+   模型服务器方法适用于平台场景；当服务系统需要支持五种或更多不同类型的模型时，它可以极大地减少开发和维护工作量。
++ 模型服务器方法适用于平台场景；当服务系统需要支持五种或更多不同类型的模型时，它可以极大地减少开发和维护工作量。
 
-+   TorchServe、TensorFlow Serving 和 Triton 都是可靠的开源模型服务工具，它们都采用了模型服务器方法。如果适用，我们推荐 Triton，因为它与大多数模型训练框架兼容，并且在 GPU 加速方面具有性能优势。
++ `TorchServe`、`TensorFlow Serving`和`Triton`都是可靠的开源模型服务工具，它们都采用了模型服务器方法。如果适用，我们推荐`Triton`，因为它与大多数模型训练框架兼容，并且在 GPU 加速方面具有性能优势。
 
-+   KServe 提供了一个标准的服务接口，适用于所有主要的服务工具，包括 TensorFlow Serving、TorchServe 和 Triton。KServe 可以极大地提高我们的服务系统的兼容性，因为我们可以使用单一集合的 API 来运行具有不同后端的模型服务。
 
-+   在生产中发布新模型或模型服务系统的新版本不应该是事后才考虑的事情；我们需要在设计阶段妥善考虑这一点。
 
-+   模型度量收集和模型质量门是工程师需要专注于模型性能监控的两个领域。
+KServe 提供了一个标准的服务接口，适用于所有主要的服务工具，包括 TensorFlow Serving、TorchServe 和 Triton。KServe 可以极大地提高我们的服务系统的兼容性，因为我们可以使用单一集合的 API 来运行具有不同后端的模型服务。
+
+在生产中发布新模型或模型服务系统的新版本不应该是事后才考虑的事情；我们需要在设计阶段妥善考虑这一点。
+
+模型度量收集和模型质量门是工程师需要专注于模型性能监控的两个领域。

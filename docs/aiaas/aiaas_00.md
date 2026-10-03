@@ -1,3 +1,4 @@
+
 # 前置材料
 
 ## 前言
@@ -50,7 +51,7 @@ Eóin 和 Peter 想感谢 fourTheorem 的联合创始人 Fiona McKenna 对这本
 
 我们想感谢闫翠为这本书撰写前言。闫翠是一位杰出的架构师，也是无服务器技术的倡导者，我们非常感激他的支持。
 
-感谢所有审阅者对文本和示例的反馈和建议改进：Alain Couniot、Alex Gascon、Andrew Hamor、Dwight Barry、Earl B. Bingham、Eros Pedrini、Greg Andress、Guillaume Alleon、Leemay Nassery、Manu Sareena、Maria Gemini、Matt Welke、Michael Jensen、Mykhaylo Rubezhanskyy、Nirupam Sharma、Philippe Vialatte、Polina Keselman、Rob Pacheco、Roger M. Meli、Sowmya Vajjala、Yvon Vieville，
+感谢所有审阅者对文本和示例的反馈和建议改进：Alain Couniot、Alex Gascon、Andrew Hamor、Dwight Barry、Earl B. Bingham、Eros Pedrini、Greg Andress、Guillaume Alleon、Leemay Nassery、Manu Sareena、Maria Gemini、Matt Welke、Michael Jensen、Mykhaylo Rubezhanskyy、Nirupam Sharma、Philippe Vialatte、Polina Keselman、Rob Pacheco、Roger M. Meli、Sowmya Vajjala、Yvon Vieville。
 
 特别感谢技术校对员 Guillaume Alleon，他为代码示例的仔细审阅和测试。
 
@@ -62,7 +63,7 @@ Eóin 和 Peter 想感谢 fourTheorem 的联合创始人 Fiona McKenna 对这本
 
 本书探讨了两个正在增长且日益重要的技术：无服务器计算和人工智能。我们从开发者的角度来审视这些技术，以提供实用的、动手操作的指南。
 
-所有主要的云服务提供商都在竞相提供相关的 AI 服务，例如
+所有主要的云服务提供商都在竞相提供相关的 AI 服务，例如：
 
 +   图像识别
 
@@ -131,7 +132,9 @@ Manning 对我们读者的承诺是提供一个平台，让读者之间以及读
 ## 关于作者
 
 | ![](img/Elger.png) | Peter Elger 是 fourTheorem 的联合创始人和 CEO。Peter 在英国的 JET 联合企业开始了他的职业生涯，在那里他花了七年时间构建用于核聚变研究的数据采集、控制和数据分析系统。他在软件行业的多个领域担任过技术领导角色，包括研究部门和商业部门，包括软件灾难恢复、电信和社交媒体。在创立 fourTheorem 之前，Peter 是两家公司的联合创始人兼 CTO：Stitcher Ads，一个社交广告平台；以及 nearForm，一家 Node.js 咨询公司。Peter 目前的重点是通过对尖端无服务器技术、云架构和机器学习的应用为客户创造商业价值。他的经验涵盖了从架构大型分布式软件系统到领导实施这些系统的国际团队。Peter 拥有物理学和计算机科学学位。 |
+
 | --- | --- |
+
 | ![](img/Shanaghy.png) | Eóin Shanaghy 很幸运，在 20 世纪 80 年代中期就能开始使用 Sinclair ZX Spectrum 编程。这是他第一次没有尝试拆解的电子产品。如今，他试图拆解软件系统。Eóin 是技术咨询服务公司 fourTheorem 的 CTO 和联合创始人，同时也是一位有经验的架构师和开发者，曾为初创公司和大型企业构建和扩展系统。Eóin 在许多不同的技术时代工作过，从 2000 年的基于 Java 的分布式系统到近年来全栈多语言容器和无服务器应用程序。Eóin 在都柏林三一学院获得了计算机科学学士学位。 |
 
 ## 关于封面插图

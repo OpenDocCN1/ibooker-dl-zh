@@ -1,20 +1,16 @@
+
 # 第二章：RAG 第一部分：索引你的数据
 
 在上一章中，你学习了使用 LangChain 创建 LLM 应用程序的重要构建块。你还构建了一个简单的 AI 聊天机器人，它由发送给模型的提示和模型生成的输出组成。但这个简单的聊天机器人存在重大局限性。
 
 如果你的用例需要模型未训练过的知识，怎么办？例如，假设你想使用 AI 来询问一家公司的问题，但这些信息包含在私有的 PDF 或其他类型的文档中。虽然我们已经看到模型提供商正在丰富他们的训练数据集，以包括越来越多的世界公共信息（无论其存储格式如何），但在 LLM 的知识库中仍然存在两个主要限制：
 
-私有数据
-
-根据定义，未公开的信息不包括在 LLM 的训练数据中。
-
-当前的新闻事件
-
-训练一个 LLM 是一个昂贵且耗时的过程，可能需要多年时间，数据收集是第一步之一。这导致了所谓的知识截止点，即 LLM 对现实世界事件没有知识的一个日期；这通常会是训练集最终确定的日期。这可能是几个月到几年前的日期，具体取决于所讨论的模型。
+- **私有数据**：根据定义，未公开的信息不包括在 LLM 的训练数据中。
+- **当前的新闻事件**：训练一个 LLM 是一个昂贵且耗时的过程，可能需要多年时间，数据收集是第一步之一。这导致了所谓的知识截止点，即 LLM 对现实世界事件没有知识的一个日期；这通常会是训练集最终确定的日期。这可能是几个月到几年前的日期，具体取决于所讨论的模型。
 
 在任何情况下，模型很可能会产生幻觉（找到误导性或错误的信息）并给出不准确的信息。调整提示也不会解决这个问题，因为它依赖于模型当前的知识。
 
-# 目标：为 LLM 选择相关上下文
+## 目标：为 LLM 选择相关上下文
 
 如果你需要的唯一私有/当前数据只是 LLM 用例中的一到两页文本，那么本章将会短得多：你只需要将整个文本包含在你发送给模型的每个提示中，就可以使该信息对 LLM 可用。
 
@@ -22,9 +18,8 @@
 
 在本章和下一章中，你将学习如何通过两个步骤克服这一挑战：
 
-1.  *索引*你的文档，即以你的应用程序可以轻松找到每个问题的最相关文档的方式预处理它们
-
-1.  *检索*来自索引的外部数据并将其用作 LLM 的*上下文*，以便根据你的数据生成准确输出的过程
+1. *索引*你的文档，即以你的应用程序可以轻松找到每个问题的最相关文档的方式预处理它们。
+2. *检索*来自索引的外部数据并将其用作 LLM 的*上下文*，以便根据你的数据生成准确输出的过程。
 
 本章重点介绍索引，这是第一步，涉及将你的文档预处理成 LLM 可以理解和搜索的格式。这种技术称为*检索增强生成*（RAG）。但在我们开始之前，让我们讨论一下*为什么*你的文档需要预处理。
 
@@ -32,45 +27,39 @@
 
 分解来看，有四个关键步骤（如图 2-1 所示）需要采取以实现这一目标：
 
-1.  从文档中提取文本。
-
-1.  将文本分割成可管理的块。
-
-1.  将文本转换为计算机可以理解的数字。
-
-1.  将这些文本的数字表示存储在某个地方，以便快速检索文档的相关部分以回答给定的问题。
+1. 从文档中提取文本。
+2. 将文本分割成可管理的块。
+3. 将文本转换为计算机可以理解的数字。
+4. 将这些文本的数字表示存储在某个地方，以便快速检索文档的相关部分以回答给定的问题。
 
 ![一个图表的图表  描述自动生成](img/lelc_0201.png)
 
-###### 图 2-1\. 预处理文档以供 LLM 使用的四个关键步骤
+###### 图 2-1. 预处理文档以供 LLM 使用的四个关键步骤
 
 图 2-1 说明了这种预处理和转换文档的流程，这个过程被称为摄取。*摄取*简单来说就是将你的文档转换为计算机可以理解和分析的数字，并将它们存储在一种特殊类型的数据库中以便高效检索。这些数字正式上被称为*嵌入*，而这种特殊类型的数据库被称为*向量存储器*。让我们更详细地了解一下嵌入是什么以及为什么它们很重要，从比 LLM 驱动的嵌入更简单的东西开始。
 
-# 嵌入：将文本转换为数字
+## 嵌入：将文本转换为数字
 
 *嵌入*指的是将文本表示为（长）数字序列。这是一种有损表示——也就是说，你不能从这些数字序列中恢复原始文本，因此你通常存储原始文本和这种数字表示。
 
 那么，为什么要费这个功夫呢？因为当你与数字打交道时，你会获得灵活性和力量：你可以在单词上做数学运算！让我们看看为什么这会令人兴奋。
 
-## LLM 出现之前的嵌入
+### LLM 出现之前的嵌入
 
 在 LLM 出现之前，计算机科学家就已经在使用嵌入技术了——例如，为了在网站上实现全文搜索功能或将电子邮件分类为垃圾邮件。让我们看看一个例子：
 
-1.  取这三个句子：
+1. 取这三个句子：
+   - 多么晴朗的一天啊。
+   - 今天的天空如此明亮。
+   - 好几周没见过晴朗的天气了。
 
-    +   多么晴朗的一天啊。
+2. 列出它们中的所有唯一单词：*what*，*a*，*sunny*，*day*，*such*，*bright*，等等。
 
-    +   今天的天空如此明亮。
-
-    +   好几周没见过晴朗的天气了。
-
-1.  列出它们中的所有唯一单词：*what*，*a*，*sunny*，*day*，*such*，*bright*，等等。
-
-1.  对于每个句子，逐个单词地检查，如果单词不存在，则分配数字 0，如果句子中只使用一次，则分配数字 1，如果出现两次，则分配数字 2，依此类推。
+3. 对于每个句子，逐个单词地检查，如果单词不存在，则分配数字 0，如果句子中只使用一次，则分配数字 1，如果出现两次，则分配数字 2，依此类推。
 
 表 2-1 显示了结果。
 
-表 2-1\. 三个句子的词嵌入
+**表 2-1. 三个句子的词嵌入**
 
 | Word | What a sunny day. | Such bright skies today. | I haven’t seen a sunny day in weeks. |
 | --- | --- | --- | --- |
@@ -92,33 +81,27 @@
 
 您可以使用此模型成功进行：
 
-关键词搜索
-
-您可以找到包含给定单词或单词的文档。
-
-文档分类
-
-您可以为之前标记为垃圾邮件或非垃圾邮件的示例集合计算嵌入，取平均值，并得到每个类别（垃圾邮件或非垃圾邮件）的平均词频。然后，每个新文档与这些平均值进行比较，并根据结果进行分类。
+- **关键词搜索**：您可以找到包含给定单词或单词的文档。
+- **文档分类**：您可以为之前标记为垃圾邮件或非垃圾邮件的示例集合计算嵌入，取平均值，并得到每个类别（垃圾邮件或非垃圾邮件）的平均词频。然后，每个新文档与这些平均值进行比较，并根据结果进行分类。
 
 这里的限制是模型没有对意义的认识，只有实际使用的词语。例如，*晴天*和*晴朗的天空*的嵌入看起来非常不同。事实上，它们没有共同的词语，尽管我们知道它们有相似的意义。或者，在电子邮件分类问题中，一个潜在的垃圾邮件发送者可以通过用同义词替换常见的“垃圾邮件单词”来欺骗过滤器。
 
 在下一节中，我们将看到语义嵌入如何通过使用数字来表示文本的意义，而不是文本中找到的确切词语，来解决这一限制。
 
-## 基于 LLM 的嵌入
+### 基于 LLM 的嵌入
 
 我们将跳过所有介于其中的 ML（机器学习）发展，直接跳到基于 LLM 的嵌入。只需知道，从上一节中概述的简单方法到本节中描述的复杂方法，有一个逐步的演变过程。
 
 您可以将嵌入模型视为 LLM（大型语言模型）训练过程的衍生。如果您还记得前言，LLM 的训练过程（从大量书面文本中学习）使 LLM 能够根据上下文理解词语和句子的意义，从而完成提示（或输入）的最合适的延续（输出）。这种能力源于从训练文本中词语如何共同使用中学习到的对上下文中词语和句子意义的理解。这种对提示（或语义）意义的*理解*可以提取为输入文本的数值表示（或嵌入），并且可以直接用于一些非常有趣的应用场景。
 
-实际上，大多数嵌入模型都是为了这个目的而训练的，它们遵循与 LLM 相似的一些架构和训练过程，因为这样更有效率，并且会产生高质量的嵌入。1
+实际上，大多数嵌入模型都是为了这个目的而训练的，它们遵循与 LLM 相似的一些架构和训练过程，因为这样更有效率，并且会产生高质量的嵌入。¹
 
 然后，*嵌入模型*是一种算法，它接受一段文本并输出其意义的数值表示——技术上讲，是一长串浮点数（小数），通常在 100 到 2000 个数字之间，或称为*维度*。这些也被称为*密集*嵌入，与上一节的*稀疏*嵌入相对，因为在这里通常所有维度都不同于 0。
 
-###### 小贴士
+> **小贴士**
+> 不同的模型产生不同的数字和不同大小的列表。所有这些都是针对每个模型的特定属性；也就是说，即使列表的大小匹配，也不能比较不同模型的嵌入。应始终避免将不同模型的嵌入组合在一起。
 
-不同的模型产生不同的数字和不同大小的列表。所有这些都是针对每个模型的特定属性；也就是说，即使列表的大小匹配，也不能比较不同模型的嵌入。应始终避免将不同模型的嵌入组合在一起。
-
-## 语义嵌入解释
+### 语义嵌入解释
 
 考虑这三个单词：*狮子*、*宠物*和*狗*。直观上，哪一对单词在第一眼看上去具有相似的特征？显然的答案是*宠物*和*狗*。但是计算机没有能力挖掘这种直觉或对英语语言的细微理解。为了使计算机能够区分狮子、宠物或狗，你需要能够将它们翻译成计算机的语言，即数字*。
 
@@ -142,7 +125,7 @@
 
 将句子转换为捕获语义意义的嵌入，然后执行计算以在不同句子之间找到语义相似性，这使得我们能够让 LLM 找到与我们的特斯拉 PDF 文档等大量文本相关的最相关文档。现在你已经了解了整体情况，让我们回顾一下预处理文档的第一步（索引）。
 
-# 将你的文档转换为文本
+## 将你的文档转换为文本
 
 如本章开头所述，预处理你的文档的第一步是将它转换为文本。为了实现这一点，你需要构建逻辑来解析和提取文档，同时尽量减少质量损失。幸运的是，LangChain 提供了处理解析逻辑的 *文档加载器*，使你能够将来自各种来源的数据“加载”到包含文本和相关元数据的 `Document` 类中。
 
@@ -176,11 +159,9 @@ const docs = await loader.load();
 
 之前的代码块假设你在当前目录下有一个名为 `test.txt` 的文件。所有 LangChain 文档加载器的使用遵循类似的模式：
 
-1.  从长长的 [集成](https://oreil.ly/iLJ33) 列表中挑选适合你文档类型的加载器。
-
-1.  创建一个加载器的实例，包括任何配置它的参数，包括你的文档位置（通常是文件系统路径或网址）。
-
-1.  通过调用 `load()` 加载文档，它返回一个列表，包含准备好传递到下一阶段的文档（更多内容即将揭晓）。
+1. 从长长的 [集成](https://oreil.ly/iLJ33) 列表中挑选适合你文档类型的加载器。
+2. 创建一个加载器的实例，包括任何配置它的参数，包括你的文档位置（通常是文件系统路径或网址）。
+3. 通过调用 `load()` 加载文档，它返回一个列表，包含准备好传递到下一阶段的文档（更多内容即将揭晓）。
 
 除了 *.txt* 文件外，LangChain 还提供了其他流行文件类型的文档加载器，包括 *.csv*、*.json* 和 Markdown，以及与 Slack 和 Notion 等流行平台的集成。
 
@@ -240,29 +221,25 @@ const loader = new PDFLoader("./test.pdf");
 const docs = await loader.load();
 ```
 
-文本已从 PDF 文档中提取出来，并存储在`Document`类中。但有一个问题。加载的文档长度超过 100,000 个字符，因此它无法适应大多数 LLMs 或嵌入模型的上下文窗口。为了克服这一限制，我们需要将`Document`分割成可管理的文本块，我们可以在以后将其转换为嵌入并执行语义搜索，这把我们带到了第二步（检索）。
+文本已从 PDF 文档中提取出来，并存储在 `Document` 类中。但有一个问题。加载的文档长度超过 100,000 个字符，因此它无法适应大多数 LLMs 或嵌入模型的上下文窗口。为了克服这一限制，我们需要将 `Document` 分割成可管理的文本块，我们可以在以后将其转换为嵌入并执行语义搜索，这把我们带到了第二步（检索）。
 
-###### 小贴士
+> **小贴士**
+> LLMs 和嵌入模型在设计时对它们可以处理的输入和输出标记的大小有一个硬性限制。这个限制通常被称为*上下文窗口*，通常适用于输入和输出的组合；也就是说，如果上下文窗口是 100（我们将在下一节讨论单位），而你的输入长度为 90，则输出长度最多为 10。上下文窗口通常以标记的数量来衡量，例如 8,192 个标记。正如在序言中提到的，标记是文本作为数字的表示，每个标记通常覆盖三个到四个英文字符。
 
-LLMs 和嵌入模型在设计时对它们可以处理的输入和输出标记的大小有一个硬性限制。这个限制通常被称为*上下文窗口*，通常适用于输入和输出的组合；也就是说，如果上下文窗口是 100（我们将在下一节讨论单位），而你的输入长度为 90，则输出长度最多为 10。上下文窗口通常以标记的数量来衡量，例如 8,192 个标记。正如在序言中提到的，标记是文本作为数字的表示，每个标记通常覆盖三个到四个英文字符。
+## 将文本分割成块
 
-# 将文本分割成块
+初看起来，将大量文本分割成块似乎很简单，但保持*语义上*相关的（通过意义相关）文本块在一起是一个复杂的过程。为了更容易地将大型文档分割成小但仍有意义的文本片段，LangChain 提供了 `RecursiveCharacterTextSplitter`，它执行以下操作：
 
-初看起来，将大量文本分割成块似乎很简单，但保持*语义上*相关的（通过意义相关）文本块在一起是一个复杂的过程。为了更容易地将大型文档分割成小但仍有意义的文本片段，LangChain 提供了`RecursiveCharacterTextSplitter`，它执行以下操作：
+1. 按重要性顺序列出分隔符。默认情况下，这些是：
+   - 段落分隔符：`\n\n`
+   - 行分隔符：`\n`
+   - 单词分隔符：空格字符
 
-1.  按重要性顺序列出分隔符。默认情况下，这些是：
+2. 为了尊重给定的块大小，例如，1,000 个字符，首先分割段落。
 
-    1.  段落分隔符：`\n\n`
+3. 对于任何超过所需块大小的段落，通过下一分隔符（行）进行分割。继续分割，直到所有块的大小都小于所需长度，或者没有更多的分隔符可以尝试。
 
-    1.  行分隔符：`\n`
-
-    1.  单词分隔符：空格字符
-
-1.  为了尊重给定的块大小，例如，1,000 个字符，首先分割段落。
-
-1.  对于任何超过所需块大小的段落，通过下一分隔符（行）进行分割。继续分割，直到所有块的大小都小于所需长度，或者没有更多的分隔符可以尝试。
-
-1.  将每个块作为`Document`发出，传递原始文档的元数据，以及关于原始文档中位置的其他信息。
+4. 将每个块作为 `Document` 发出，传递原始文档的元数据，以及关于原始文档中位置的其他信息。
 
 让我们看看一个例子：
 
@@ -298,11 +275,13 @@ const splitter = new RecursiveCharacterTextSplitter({
 const splittedDocs = await splitter.splitDocuments(docs)
 ```
 
+
+
 在前面的代码中，由文档加载器创建的文档被分割成每个 1,000 个字符的块，块之间有 200 个字符的重叠，以保持一定的上下文。结果也是一个文档列表，其中每个文档的长度最多为 1,000 个字符，沿着文本的自然分割进行分割——段落、换行符，最后是单词。这利用了文本的结构，以保持每个块是一致的、可读的文本片段。
 
 `RecursiveCharacterTextSplitter` 也可以用来将代码语言和 Markdown 分割成语义块。这是通过使用每个语言的特定关键字作为分隔符来完成的，这确保了例如每个函数的主体都保持在同一个块中，而不是被分割到几个块中。通常，由于编程语言比书面文本有更多的结构，因此不需要在块之间使用重叠。LangChain 包含了多种流行语言的分隔符，例如 Python、JS、Markdown、HTML 等。以下是一个示例：
 
-*Python*
+**Python**
 
 ```py
 from langchain_text_splitters import (
@@ -323,9 +302,9 @@ python_splitter = RecursiveCharacterTextSplitter.from_language(
 python_docs = python_splitter.create_documents([PYTHON_CODE])
 ```
 
-*JavaScript*
+**JavaScript**
 
-```py
+```js
 import { RecursiveCharacterTextSplitter } from "@langchain/textsplitters";
 
 const PYTHON_CODE = `
@@ -343,7 +322,7 @@ const pythonSplitter = RecursiveCharacterTextSplitter.fromLanguage("python", {
 const pythonDocs = await pythonSplitter.createDocuments([PYTHON_CODE]);
 ```
 
-*输出结果：*
+**输出结果：**
 
 ```py
 [Document(page_content='def hello_world():\n    print("Hello, World!")'),
@@ -356,7 +335,7 @@ const pythonDocs = await pythonSplitter.createDocuments([PYTHON_CODE]);
 
 让我们看看一个使用元数据参数的 Markdown 文本示例：
 
-*Python*
+**Python**
 
 ```py
 markdown_text = """
@@ -383,9 +362,9 @@ md_docs = md_splitter.create_documents([markdown_text],
     [{"source": "https://www.langchain.com"}])
 ```
 
-*JavaScript*
+**JavaScript**
 
-```py
+```js
 const markdownText = `
 # LangChain
 
@@ -409,7 +388,7 @@ const mdDocs = await mdSplitter.createDocuments([markdownText],
   [{"source": "https://www.langchain.com"}]);
 ```
 
-*输出结果：*
+**输出结果：**
 
 ```py
 [Document(page_content='# LangChain', 
@@ -443,7 +422,7 @@ LangChain 还有一个 `Embeddings` 类，用于与文本嵌入模型（包括 O
 
 这里是一个使用 [OpenAI 的嵌入模型](https://oreil.ly/9tnzQ)嵌入文档的示例：
 
-*Python*
+**Python**
 
 ```py
 from langchain_openai import OpenAIEmbeddings
@@ -459,9 +438,9 @@ embeddings = model.embed_documents([
 ])
 ```
 
-*JavaScript*
+**JavaScript**
 
-```py
+```js
 import { OpenAIEmbeddings } from "@langchain/openai";
 
 const model = new OpenAIEmbeddings();
@@ -475,7 +454,7 @@ const embeddings = await embeddings.embedDocuments([
 ]);
 ```
 
-*输出结果：*
+**输出结果：**
 
 ```py
 [
@@ -511,7 +490,7 @@ const embeddings = await embeddings.embedDocuments([
 
 这里是代码：
 
-*Python*
+**Python**
 
 ```py
 from langchain_community.document_loaders import TextLoader
@@ -561,9 +540,9 @@ embeddings = embeddings_model.embed_documents(
 """
 ```
 
-*JavaScript*
+**JavaScript**
 
-```py
+```js
 import { TextLoader } from "langchain/document_loaders/fs/text";
 import { RecursiveCharacterTextSplitter } from "@langchain/textsplitters";
 import { OpenAIEmbeddings } from "@langchain/openai";
@@ -603,15 +582,15 @@ await embeddings.embedDocuments(chunks.map(c => c.pageContent));
 
 图 2-4 说明了文档嵌入如何插入到向量存储中，以及当发送查询时，如何从向量存储中检索相似的嵌入。
 
+
+
 目前，有大量的向量存储提供商可供选择，每个都专注于不同的功能。您的选择应取决于您应用程序的关键需求，包括多租户、元数据过滤能力、性能、成本和可扩展性。
 
 尽管向量存储是专为管理向量数据而构建的利基数据库，但使用它们也有一些缺点：
 
-+   大多数向量存储相对较新，可能无法经受时间的考验。
-
-+   管理和优化向量存储可能具有相对陡峭的学习曲线。
-
-+   管理单独的数据库会增加您的应用程序的复杂性，并可能耗尽宝贵的资源。
++ 大多数向量存储相对较新，可能无法经受时间的考验。
++ 管理和优化向量存储可能具有相对陡峭的学习曲线。
++ 管理单独的数据库会增加您的应用程序的复杂性，并可能耗尽宝贵的资源。
 
 幸运的是，向量存储功能最近通过`pgvector`扩展扩展到了 PostgreSQL（一个流行的开源关系数据库）。这使得你可以使用你已熟悉的相同数据库，并为你的事务表（例如你的用户表）以及你的向量搜索表提供动力。
 
@@ -619,27 +598,26 @@ await embeddings.embedDocuments(chunks.map(c => c.pageContent));
 
 要使用 Postgres 和 PGVector，你需要遵循一些设置步骤：
 
-1.  确保你的计算机上已安装 Docker，按照[操作系统的说明](https://oreil.ly/Gn28O)进行操作。
+1. 确保你的计算机上已安装 Docker，按照[操作系统的说明](https://oreil.ly/Gn28O)进行操作。
+2. 在你的终端中运行以下命令；它将在你的计算机上启动一个运行在端口 6024 的 Postgres 实例：
 
-1.  在你的终端中运行以下命令；它将在你的计算机上启动一个运行在端口 6024 的 Postgres 实例：
+```bash
+docker run \
+    --name pgvector-container \
+    -e POSTGRES_USER=langchain \
+    -e POSTGRES_PASSWORD=langchain \
+    -e POSTGRES_DB=langchain \
+    -p 6024:5432 \
+    -d pgvector/pgvector:pg16
+```
 
-    ```py
-    docker run \
-        --name pgvector-container \
-        -e POSTGRES_USER=langchain \
-        -e POSTGRES_PASSWORD=langchain \
-        -e POSTGRES_DB=langchain \
-        -p 6024:5432 \
-        -d pgvector/pgvector:pg16
-    ```
+打开你的 Docker 仪表板容器，你应该在`pgvector-container`旁边看到绿色的运行状态。
 
-    打开你的 Docker 仪表板容器，你应该在`pgvector-container`旁边看到绿色的运行状态。
+3. 将连接字符串保存到你的代码中使用；我们稍后会用到它：
 
-1.  将连接字符串保存到你的代码中使用；我们稍后会用到它：
-
-    ```py
-    postgresql+psycopg://langchain:langchain@localhost:6024/langchain
-    ```
+```
+postgresql+psycopg://langchain:langchain@localhost:6024/langchain
+```
 
 ## 与向量存储一起工作
 
@@ -647,7 +625,7 @@ await embeddings.embedDocuments(chunks.map(c => c.pageContent));
 
 *Python*
 
-```py
+```python
 # first, pip install langchain-postgres
 from langchain_community.document_loaders import TextLoader
 from langchain_openai import OpenAIEmbeddings
@@ -670,7 +648,7 @@ db = PGVector.from_documents(documents, embeddings_model, connection=connection)
 
 *JavaScript*
 
-```py
+```javascript
 import { TextLoader } from "langchain/document_loaders/fs/text";
 import { RecursiveCharacterTextSplitter } from "@langchain/textsplitters";
 import { OpenAIEmbeddings } from "@langchain/openai";
@@ -699,43 +677,37 @@ const db = await PGVectorStore.fromDocuments(docs, embeddings_model, {
 
 接下来，我们有一行新的代码，它根据给定的文档、嵌入模型和连接字符串创建一个向量存储。这将执行以下几件事：
 
-+   建立与你在计算机上运行的 Postgres 实例的连接（见“使用 PGVector 进行设置”。）
-
-+   运行任何必要的设置，例如创建用于存储文档和向量的表，如果这是你第一次运行它。
-
-+   使用你选择的模型为每个传入的文档创建嵌入。
-
-+   在 Postgres 中存储嵌入、文档的元数据和文档的文本内容，以便进行搜索。
++ 建立与你在计算机上运行的 Postgres 实例的连接（见“使用 PGVector 进行设置”。）
++ 运行任何必要的设置，例如创建用于存储文档和向量的表，如果这是你第一次运行它。
++ 使用你选择的模型为每个传入的文档创建嵌入。
++ 在 Postgres 中存储嵌入、文档的元数据和文档的文本内容，以便进行搜索。
 
 让我们看看搜索文档的样子：
 
 *Python*
 
-```py
+```python
 db.similarity_search("query", k=4)
 ```
 
 *JavaScript*
 
-```py
+```javascript
 await pgvectorStore.similaritySearch("query", 4);
 ```
 
 此方法将通过以下过程找到最相关的文档（你之前已索引的文档）：
 
-+   搜索查询——在这个例子中，是单词`query`——将被发送到嵌入模型以检索其嵌入。
-
-+   然后，它将在 Postgres 上运行一个查询，以找到与你的查询最相似的 N（在这个例子中是 4）先前存储的嵌入。
-
-+   最后，它将检索与每个嵌入相关的文本内容和元数据。
-
-+   模型现在可以返回一个按与查询相似度排序的`Document`列表——最相似的排在第一位，其次是第二相似的，依此类推。
++ 搜索查询——在这个例子中，是单词`query`——将被发送到嵌入模型以检索其嵌入。
++ 然后，它将在 Postgres 上运行一个查询，以找到与你的查询最相似的 N（在这个例子中是 4）先前存储的嵌入。
++ 最后，它将检索与每个嵌入相关的文本内容和元数据。
++ 模型现在可以返回一个按与查询相似度排序的`Document`列表——最相似的排在第一位，其次是第二相似的，依此类推。
 
 你还可以向现有数据库添加更多文档。让我们看看一个例子：
 
 *Python*
 
-```py
+```python
 ids = [str(uuid.uuid4()), str(uuid.uuid4())]
 db.add_documents(
     [
@@ -754,7 +726,7 @@ db.add_documents(
 
 *JavaScript*
 
-```py
+```javascript
 const ids = [uuidv4(), uuidv4()];
 
 await db.addDocuments(
@@ -774,9 +746,8 @@ await db.addDocuments(
 
 我们在这里使用的`add_documents`方法将遵循与`fromDocuments`类似的过程：
 
-+   使用你选择的模型为每个传入的文档创建嵌入。
-
-+   将嵌入、文档的元数据和文档的文本内容存储在 Postgres 中，以便进行搜索。
++ 使用你选择的模型为每个传入的文档创建嵌入。
++ 将嵌入、文档的元数据和文档的文本内容存储在 Postgres 中，以便进行搜索。
 
 在这个例子中，我们使用可选的`ids`参数为每个文档分配标识符，这允许我们稍后更新或删除它们。
 
@@ -784,13 +755,13 @@ await db.addDocuments(
 
 *Python*
 
-```py
+```python
 db.delete(ids=[1])
 ```
 
 *JavaScript*
 
-```py
+```javascript
 await db.delete({ ids: [ids[1]] })
 ```
 
@@ -802,27 +773,23 @@ await db.delete({ ids: [ids[1]] })
 
 幸运的是，LangChain 提供了一个索引 API，使您能够轻松地将文档与向量存储保持同步。该 API 使用一个类（`RecordManager`）来跟踪写入向量存储的文档。在索引内容时，为每个文档计算哈希值，并在`RecordManager`中存储以下信息：
 
-+   文档哈希（页面内容和元数据的哈希）
-
-+   写入时间
-
-+   源 ID（每个文档应在其元数据中包含信息，以确定此文档的最终来源）。
++ 文档哈希（页面内容和元数据的哈希）
++ 写入时间
++ 源 ID（每个文档应在其元数据中包含信息，以确定此文档的最终来源）。
 
 此外，索引 API 提供了清理模式，以帮助您决定如何删除向量存储中现有的文档。例如，如果您在插入之前更改了文档的处理方式，或者源文档已更改，您可能希望删除任何来自与正在索引的新文档相同源的新文档。如果某些源文档已被删除，您将希望删除向量存储中的所有现有文档，并用重新索引的文档替换它们。
 
 模式如下：
 
-+   `None`模式不会进行任何自动清理，允许用户手动清理旧内容。
-
-+   `Incremental`和`full`模式如果源文档或派生文档的内容已更改，则会删除内容的前一个版本。
-
-+   `Full`模式将删除当前索引文档中未包含的任何文档。
++ `None`模式不会进行任何自动清理，允许用户手动清理旧内容。
++ `Incremental`和`full`模式如果源文档或派生文档的内容已更改，则会删除内容的前一个版本。
++ `Full`模式将删除当前索引文档中未包含的任何文档。
 
 这里是一个使用索引 API 的例子，其中 Postgres 数据库已设置为记录管理器：
 
 *Python*
 
-```py
+```python
 from langchain.indexes import SQLRecordManager, index
 from langchain_postgres.vectorstores import PGVector
 from langchain_openai import OpenAIEmbeddings
@@ -895,6 +862,8 @@ print("Index attempt 3:", index_3)
 ```
 
 *JavaScript*
+
+
 
 ```py
 /** 
@@ -1133,110 +1102,13 @@ retrieved_docs = retriever.invoke("chapter on philosophy")
 
 *JavaScript*
 
-```py
-import * as uuid from 'uuid';
-import { MultiVectorRetriever } from 'langchain/retrievers/multi_vector';
-import { OpenAIEmbeddings } from '@langchain/openai';
-import { RecursiveCharacterTextSplitter } from '@langchain/textsplitters';
-import { InMemoryStore } from '@langchain/core/stores';
-import { TextLoader } from 'langchain/document_loaders/fs/text';
-import { Document } from '@langchain/core/documents';
-import { PGVectorStore } from '@langchain/community/vectorstores/pgvector';
-import { ChatOpenAI } from '@langchain/openai';
-import { PromptTemplate } from '@langchain/core/prompts';
-import { RunnableSequence } from '@langchain/core/runnables';
-import { StringOutputParser } from '@langchain/core/output_parsers';
 
-const connectionString =
-  'postgresql://langchain:langchain@localhost:6024/langchain';
-const collectionName = 'summaries';
 
-const textLoader = new TextLoader('./test.txt');
-const parentDocuments = await textLoader.load();
-const splitter = new RecursiveCharacterTextSplitter({
-  chunkSize: 10000,
-  chunkOverlap: 20,
-});
-const docs = await splitter.splitDocuments(parentDocuments);
-
-const prompt = PromptTemplate.fromTemplate(
-  `Summarize the following document:\n\n{doc}`
-);
-
-const llm = new ChatOpenAI({ modelName: 'gpt-3.5-turbo' });
-
-const chain = RunnableSequence.from([
-  { doc: (doc) => doc.pageContent },
-  prompt,
-  llm,
-  new StringOutputParser(),
-]);
-
-// batch summarization chain across the chunks
-const summaries = await chain.batch(docs, {
-  maxConcurrency: 5,
-});
-
-const idKey = 'doc_id';
-const docIds = docs.map((_) => uuid.v4());
-// create summary docs with metadata linking to the original docs
-const summaryDocs = summaries.map((summary, i) => {
-  const summaryDoc = new Document({
-    pageContent: summary,
-    metadata: {
-      [idKey]: docIds[i],
-    },
-  });
-  return summaryDoc;
-});
-
-// The byteStore to use to store the original chunks
-const byteStore = new InMemoryStore();
-
-// vector store for the summaries
-const vectorStore = await PGVectorStore.fromDocuments(
-  docs,
-  new OpenAIEmbeddings(),
-  {
-    postgresConnectionOptions: {
-      connectionString,
-    },
-  }
-);
-
-const retriever = new MultiVectorRetriever({
-  vectorstore: vectorStore,
-  byteStore,
-  idKey,
-});
-
-const keyValuePairs = docs.map((originalDoc, i) => [docIds[i], originalDoc]);
-
-// Use the retriever to add the original chunks to the document store
-await retriever.docstore.mset(keyValuePairs);
-
-// Vectorstore alone retrieves the small chunks
-const vectorstoreResult = await retriever.vectorstore.similaritySearch(
-  'chapter on philosophy',
-  2
-);
-console.log(`summary: ${vectorstoreResult[0].pageContent}`);
-console.log(
-  `summary retrieved length: ${vectorstoreResult[0].pageContent.length}`
-);
-
-// Retriever returns larger chunk result
-const retrieverResult = await retriever.invoke('chapter on philosophy');
-console.log(
-  `multi-vector retrieved chunk length: ${retrieverResult[0].pageContent.length}`
-);
-```
-
-## RAPTOR：递归抽象处理用于树状检索
+# RAPTOR：递归抽象处理用于树状检索
 
 RAG 系统需要处理低级问题，这些问题引用了单个文档中找到的特定事实，或者处理高级问题，这些问题提炼了跨越多个文档的思想。使用典型的基于文档块的最邻近邻居（k-NN）检索处理这两种类型的问题可能是一个挑战。
 
-*递归抽象处理用于树状检索*（RAPTOR）是一种有效的策略，它涉及创建捕获高级概念的文档摘要，嵌入和聚类这些文档，然后[总结每个聚类](https://oreil.ly/VdIpJ).^(2)。这是递归进行的，产生了一个具有越来越高级概念的摘要树。然后，摘要和初始文档一起索引，覆盖从低级到高级的用户问题。图 2-6 说明了这一点。
+*递归抽象处理用于树状检索*（RAPTOR）是一种有效的策略，它涉及创建捕获高级概念的文档摘要，嵌入和聚类这些文档，然后[总结每个聚类](https://oreil.ly/VdIpJ)^(2)。这是递归进行的，产生了一个具有越来越高级概念的摘要树。然后，摘要和初始文档一起索引，覆盖从低级到高级的用户问题。图 2-6 说明了这一点。
 
 ![2024 年 3 月 16 日下午 6 点 16 分 21 秒的屏幕截图.png](img/lelc_0206.png)
 
@@ -1248,13 +1120,11 @@ RAG 系统需要处理低级问题，这些问题引用了单个文档中找到�
 
 解决这个问题的一个方案是执行以下操作：
 
-1.  为文档和查询中的每个标记生成上下文嵌入。
+1. 为文档和查询中的每个标记生成上下文嵌入。
+2. 计算并评分每个查询标记与所有文档标记之间的相似度。
+3. 将每个查询嵌入与任何文档嵌入的最大相似度分数相加，以获得每个文档的评分。
 
-1.  计算并评分每个查询标记与所有文档标记之间的相似度。
-
-1.  将每个查询嵌入与任何文档嵌入的最大相似度分数相加，以获得每个文档的评分。
-
-这导致了一种细粒度和有效的嵌入方法，以实现更好的检索。幸运的是，名为 ColBERT 的嵌入模型体现了解决这个问题的方案.^(3)
+这导致了一种细粒度和有效的嵌入方法，以实现更好的检索。幸运的是，名为 ColBERT 的嵌入模型体现了解决这个问题的方案^(3)。
 
 下面是如何利用 ColBERT 进行数据最优嵌入的方法：
 

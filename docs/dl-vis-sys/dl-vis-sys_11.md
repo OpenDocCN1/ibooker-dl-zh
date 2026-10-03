@@ -1,14 +1,12 @@
+
 # 8 生成对抗网络 (GANs)
 
 本章涵盖
 
-+   理解 GANs 的基本组件：生成模型和判别模型
-
-+   评估生成模型
-
-+   了解 GANs 在流行视觉应用中的使用
-
-+   构建 GAN 模型
++ 理解 GANs 的基本组件：生成模型和判别模型
++ 评估生成模型
++ 了解 GANs 在流行视觉应用中的使用
++ 构建 GAN 模型
 
 生成对抗网络 (GANs) 是由蒙特利尔大学的 Ian Goodfellow 及其他研究人员，包括 Yoshua Bengio，于 2014 年引入的一种新型神经网络架构。1 Facebook 的 AI 研究总监 Yann LeCun 将 GANs 称为“过去 10 年机器学习中最有趣的想法”。这种兴奋是有充分理由的。GANs 最显著的特点是它们能够创建超逼真的图像、视频、音乐和文本。例如，除了最右侧的列外，图 8.1 右侧显示的所有面部都不是真实人类的；它们都是伪造的。图左侧的手写数字也是如此。这表明 GAN 能够从训练图像中学习特征，并使用其学到的模式想象出新的图像。
 
@@ -16,7 +14,7 @@
 
 图 8.1 Goodfellow 及其合作者展示的 GANs 能力的说明。这些是在对两个数据集（MNIST 和多伦多面部数据集 [TFD]）进行训练后由 GANs 生成的样本。在两种情况下，最右侧的列包含真实数据。这表明生成数据确实是生成的，而不仅仅是网络记忆的。 (来源：Goodfellow 等，2014 年。)
 
-在过去的章节中，我们学习了如何使用深度神经网络来理解图像特征并在其上执行确定性任务，如对象分类和检测。在这本书的这一部分，我们将讨论计算机视觉世界中深度学习的另一种类型的应用：生成模型。这些是能够想象并产生以前未曾创造过的新内容的神经网络模型。它们能够以看似神奇的方式想象出新的世界、新的人和新的现实。我们通过提供特定领域的训练数据集来训练生成模型；它们的任务是创建看起来像真实数据的新对象图像。
+在过去的章节中，我们学习了如何使用深度神经网络来理解图像特征并在其上执行确定性任务，如对象分类和检测。在这本书的这一部分，我们将讨论计算机视觉世界中深度学习的另一种类型的应用：生成模型。这些是能够想象并产生以前未曾创造过的新内容的神经网络模型。它们能够以看似神奇的方式想象出新的世界、新的人和新现实。我们通过提供特定领域的训练数据集来训练生成模型；它们的任务是创建看起来像真实数据的新对象图像。
 
 很长一段时间以来，人类在计算机上拥有优势：想象和创造的能力。计算机在解决回归、分类和聚类等问题上表现出色。但随着生成网络的引入，研究人员可以让计算机生成与人类对手相同或更高质量的内容。通过学习模仿任何数据分布，计算机可以被教会创造与我们自己的世界相似的内容，无论在哪个领域：图像、音乐、语音、散文。从某种意义上说，它们是机器人艺术家，它们的产出令人印象深刻。GAN 也被视为实现通用人工智能（AGI）的重要垫脚石，这是一种能够匹配人类认知能力，在几乎任何领域获得专业知识的人工系统——从图像到语言，再到创作十四行诗所需的创造性技能。
 
@@ -26,9 +24,8 @@
 
 GAN 基于对抗性训练的理念。GAN 架构基本上由两个相互竞争的神经网络组成：
 
-+   生成器试图将随机噪声转换为看起来像是来自原始数据集的观察值。
-
-+   判别器试图预测一个观察值是否来自原始数据集或生成器的伪造品。
++ 生成器试图将随机噪声转换为看起来像是来自原始数据集的观察值。
++ 判别器试图预测一个观察值是否来自原始数据集或生成器的伪造品。
 
 这种竞争性帮助他们模仿任何数据分布。我喜欢将 GAN 架构想象成两个拳击手在打架（图 8.2）：在争取赢得比赛的过程中，他们都在学习对方的动作和技术。他们开始时对对手的了解较少，随着比赛的进行，他们不断学习和变得更好。
 
@@ -44,11 +41,9 @@ GAN 基于对抗性训练的理念。GAN 架构基本上由两个相互竞争的
 
 如你在图 8.4 的架构图中所见，GAN 执行以下步骤：
 
-1.  生成器接收随机数字并返回一个图像。
-
-1.  这个生成的图像被输入到判别器中，同时还有从实际的真实数据集中提取的图像流。
-
-1.  判别器接收真实和虚假的图像，并返回概率：介于 0 和 1 之间的数字，其中 1 代表对真实性的预测，0 代表对虚假的预测。
+1. 生成器接收随机数字并返回一个图像。
+2. 这个生成的图像被输入到判别器中，同时还有从实际的真实数据集中提取的图像流。
+3. 判别器接收真实和虚假的图像，并返回概率：介于 0 和 1 之间的数字，其中 1 代表对真实性的预测，0 代表对虚假的预测。
 
 ![图片](img/8-4.png)
 
@@ -74,43 +69,43 @@ GAN 基于对抗性训练的理念。GAN 架构基本上由两个相互竞争的
 
 ```
 def discriminator_model():
-       discriminator = Sequential()                                             ❶
+    discriminator = Sequential()                                             ❶
 
-       discriminator.add(Conv2D(32, kernel_size=3, strides=2,
-                         input_shape=(28,28,1),padding="same"))                 ❷
+    discriminator.add(Conv2D(32, kernel_size=3, strides=2,
+                      input_shape=(28,28,1),padding="same"))                 ❷
 
-       discriminator.add(LeakyReLU(alpha=0.2))                                  ❸
+    discriminator.add(LeakyReLU(alpha=0.2))                                  ❸
 
-       discriminator.add(Dropout(0.25))                                         ❹
+    discriminator.add(Dropout(0.25))                                         ❹
 
-       discriminator.add(Conv2D(64, kernel_size=3, strides=2, padding="same"))  ❺
-       discriminator.add(ZeroPadding2D(padding=((0,1),(0,1))))                  ❺
+    discriminator.add(Conv2D(64, kernel_size=3, strides=2, padding="same"))  ❺
+    discriminator.add(ZeroPadding2D(padding=((0,1),(0,1))))                  ❺
 
-       discriminator.add(BatchNormalization(momentum=0.8))                      ❻
-       discriminator.add(LeakyReLU(alpha=0.2))                                  ❻
-       discriminator.add(Dropout(0.25))                                         ❻
+    discriminator.add(BatchNormalization(momentum=0.8))                      ❻
+    discriminator.add(LeakyReLU(alpha=0.2))                                  ❻
+    discriminator.add(Dropout(0.25))                                         ❻
 
-       discriminator.add(Conv2D(128, kernel_size=3, strides=2, padding="same")) ❼
-       discriminator.add(BatchNormalization(momentum=0.8))                      ❼
-       discriminator.add(LeakyReLU(alpha=0.2))                                  ❼
-       discriminator.add(Dropout(0.25))                                         ❼
+    discriminator.add(Conv2D(128, kernel_size=3, strides=2, padding="same")) ❼
+    discriminator.add(BatchNormalization(momentum=0.8))                      ❼
+    discriminator.add(LeakyReLU(alpha=0.2))                                  ❼
+    discriminator.add(Dropout(0.25))                                         ❼
 
-       discriminator.add(Conv2D(256, kernel_size=3, strides=1, padding="same")) ❽
-       discriminator.add(BatchNormalization(momentum=0.8))                      ❽
-       discriminator.add(LeakyReLU(alpha=0.2))                                  ❽
-       discriminator.add(Dropout(0.25))                                         ❽
+    discriminator.add(Conv2D(256, kernel_size=3, strides=1, padding="same")) ❽
+    discriminator.add(BatchNormalization(momentum=0.8))                      ❽
+    discriminator.add(LeakyReLU(alpha=0.2))                                  ❽
+    discriminator.add(Dropout(0.25))                                         ❽
 
-       discriminator.add(Flatten())                                             ❾
-       discriminator.add(Dense(1, activation='sigmoid'))                        ❾
+    discriminator.add(Flatten())                                             ❾
+    discriminator.add(Dense(1, activation='sigmoid'))                        ❾
 
-       discriminator.summary()                                                  ❿
+    discriminator.summary()                                                  ❿
 
-       img_shape = (28,28,1)                                                    ⓫
-       img = Input(shape=img_shape)   
+    img_shape = (28,28,1)                                                    ⓫
+    img = Input(shape=img_shape)   
 
-       probability = discriminator(img)                                         ⓬
+    probability = discriminator(img)                                         ⓬
 
-       return Model(img, probability)                                           ⓭
+    return Model(img, probability)                                           ⓭
 ```
 
 ❶ 实例化了一个序列模型，并将其命名为 discriminator
@@ -182,30 +177,30 @@ keras.layers.UpSampling2D(size=(2, 2))
 现在，让我们构建`generator_model`函数，该函数构建生成器网络：
 
 ```
-   def generator_model():
-       generator = Sequential()                                              ❶
-       generator.add(Dense(128 * 7 * 7, activation="relu", input_dim=100))   ❷
-       generator.add(Reshape((7, 7, 128)))                                   ❸
-       generator.add(UpSampling2D(size=(2,2)))                               ❹
+def generator_model():
+    generator = Sequential()                                              ❶
+    generator.add(Dense(128 * 7 * 7, activation="relu", input_dim=100))   ❷
+    generator.add(Reshape((7, 7, 128)))                                   ❸
+    generator.add(UpSampling2D(size=(2,2)))                               ❹
 
-       generator.add(Conv2D(128, kernel_size=3, padding="same"))             ❺
-       generator.add(BatchNormalization(momentum=0.8))                       ❺
-       generator.add(Activation("relu"))
-       generator.add(UpSampling2D(size=(2,2)))                               ❻
+    generator.add(Conv2D(128, kernel_size=3, padding="same"))             ❺
+    generator.add(BatchNormalization(momentum=0.8))                       ❺
+    generator.add(Activation("relu"))
+    generator.add(UpSampling2D(size=(2,2)))                               ❻
 
-# convolutional + batch normalization layers
-       generator.add(Conv2D(64, kernel_size=3, padding="same"))              ❼
-       generator.add(BatchNormalization(momentum=0.8))                       ❼
-       generator.add(Activation("relu"))
+    # convolutional + batch normalization layers
+    generator.add(Conv2D(64, kernel_size=3, padding="same"))              ❼
+    generator.add(BatchNormalization(momentum=0.8))                       ❼
+    generator.add(Activation("relu"))
 
-# convolutional layer with filters = 1
-       generator.add(Conv2D(1, kernel_size=3, padding="same"))
-       generator.add(Activation("tanh"))
-       generator.summary()                                                   ❽
+    # convolutional layer with filters = 1
+    generator.add(Conv2D(1, kernel_size=3, padding="same"))
+    generator.add(Activation("tanh"))
+    generator.summary()                                                   ❽
 
-       noise = Input(shape=(100,))                                           ❾
-       fake_image = generator(noise)                                         ❿
-       return Model(noise, fake_image)                                       ⓫
+    noise = Input(shape=(100,))                                           ❾
+    fake_image = generator(noise)                                         ❿
+    return Model(noise, fake_image)                                       ⓫
 ```
 
 ❶ 实例化一个序列模型并将其命名为 generator
@@ -220,6 +215,18 @@ keras.layers.UpSampling2D(size=(2, 2))
 
 ❻ 将图像维度上采样到 28 × 28
 
+❼ 添加一个卷积层和批量归一化层
+
+❽ 打印模型摘要
+
+❾ 设置输入噪声的形状
+
+❿ 运行生成器模型以获取假图像
+
+⓫ 返回一个以噪声为输入并产生假图像输出的模型
+
+
+
 ❼ 我们在这里不添加上采样，因为 28 × 28 的图像大小与 MNIST 数据集中的图像大小相同。你可以根据你自己的问题进行调整。
 
 ❽ 打印模型摘要
@@ -230,7 +237,7 @@ keras.layers.UpSampling2D(size=(2, 2))
 
 ⓫ 返回一个模型，该模型以噪声向量为输入，并输出假图像
 
-生成器模型的输出总结如图 8.10 所示。在代码片段中，唯一的新组件是 `Upsampling` 层，通过重复像素来加倍其输入维度。与判别器类似，我们在每一层卷积层之上堆叠其他优化层，如 `BatchNormalization`。生成器模型的关键区别在于它从扁平化的向量开始；图像被上采样，直到它们的尺寸与训练数据集相似。所有这些层都有超参数，我们在训练网络时调整这些超参数。对于你的实现，你可以根据需要调整这些超参数，添加或删除层。
+生成器模型的输出总结如图 8.10 所示。在代码片段中，唯一的新组件是`Upsampling`层，通过重复像素来加倍其输入维度。与判别器类似，我们在每一层卷积层之上堆叠其他优化层，如`BatchNormalization`。生成器模型的关键区别在于它从扁平化的向量开始；图像被上采样，直到它们的尺寸与训练数据集相似。所有这些层都有超参数，我们在训练网络时调整这些超参数。对于你的实现，你可以根据需要调整这些超参数，添加或删除层。
 
 ![图 8-10](img/8-10.png)
 
@@ -244,9 +251,9 @@ keras.layers.UpSampling2D(size=(2, 2))
 
 训练 GAN 模型的过程涉及两个过程：
 
-1.  训练判别器。这是一个直接的监督训练过程。网络被提供了来自生成器（伪造）和训练数据（真实）的标记图像，并学习通过 sigmoid 预测输出区分真实和伪造图像。这里没有什么新内容。
+1. 训练判别器。这是一个直接的监督训练过程。网络被提供了来自生成器（伪造）和训练数据（真实）的标记图像，并学习通过 sigmoid 预测输出区分真实和伪造图像。这里没有什么新内容。
 
-1.  训练生成器。这个过程有点棘手。生成器模型不能像判别器那样单独训练。它需要判别器模型来告诉它是否成功地伪造了图像。因此，我们创建了一个由判别器和生成器模型组成的组合网络来训练生成器。
+2. 训练生成器。这个过程有点棘手。生成器模型不能像判别器那样单独训练。它需要判别器模型来告诉它是否成功地伪造了图像。因此，我们创建了一个由判别器和生成器模型组成的组合网络来训练生成器。
 
 将训练过程想象成两条平行的车道。一条车道单独训练判别器，另一条车道是训练生成器的组合模型。GAN 训练过程如图 8.11 所示。
 
@@ -267,8 +274,8 @@ keras.layers.UpSampling2D(size=(2, 2))
 让我们看看 Keras 实现构建和编译生成器的代码。请注意，这个代码片段本身并不是为了独立编译而设计的——它在这里是为了说明。在本章末尾，你可以找到这个项目的完整代码：
 
 ```
-       discriminator = discriminator_model()
-discriminator.compile(loss='binary_crossentropy',optimizer='adam',  metrics=['accuracy']) 
+discriminator = discriminator_model()
+discriminator.compile(loss='binary_crossentropy',optimizer='adam',  metrics=['accuracy'])
 ```
 
 我们可以通过使用 Keras 的`train_on_batch`方法创建随机训练批次来训练模型，对单个数据批次运行单个梯度更新：
@@ -299,16 +306,16 @@ d_loss_fake = discriminator.train_on_batch(gen_imgs, fake)
 现在，让我们构建组合模型：
 
 ```
-       generator = generator_model()      ❶
+generator = generator_model()      ❶
 
-       z = Input(shape=(100,))            ❷
-       image = generator(*z*)               ❷
+z = Input(shape=(100,))            ❷
+image = generator(z)               ❷
 
-       discriminator.trainable = False    ❸
+discriminator.trainable = False    ❸
 
-       valid = discriminator(img)         ❹
+valid = discriminator(img)         ❹
 
-       combined = Model(z, valid)         ❺
+combined = Model(z, valid)         ❺
 ```
 
 ❶ 构建生成器
@@ -371,19 +378,19 @@ GAN 在以下方程中玩一个最小-最大游戏，其中整个网络试图优
 
 判别器从两个来源获取输入：
 
-+   生成器的数据，*G*(*z*)--这是假数据(*z*)。生成器输出的判别器表示为 *D*(*G*(*z*)).
++ 生成器的数据，*G*(*z*)--这是假数据(*z*)。生成器输出的判别器表示为 *D*(*G*(*z*)).
 
-+   来自真实训练数据(*x*)的真实输入--来自真实数据的判别器输出表示为 log D(*x*).
++ 来自真实训练数据(*x*)的真实输入--来自真实数据的判别器输出表示为 log D(*x*).
 
 为了简化最小-最大方程，最好的方法是将其分解为两个部分：判别器训练函数和生成器训练（联合模型）函数。在训练过程中，我们创建了两个训练流程，每个流程都有自己的错误函数：
 
-+   一个是单独的判别器，以下函数旨在通过使预测尽可能接近 1 来最大化最小-最大函数：
++ 一个是单独的判别器，以下函数旨在通过使预测尽可能接近 1 来最大化最小-最大函数：
 
-    *E[x ~p[data]]* [log*D*(*x*)]
+  *E[x ~p[data]]* [log*D*(*x*)]
 
-+   另一个是用于训练生成器的联合模型，以下函数旨在通过使预测尽可能接近 0 来最小化最小-最大函数：
++ 另一个是用于训练生成器的联合模型，以下函数旨在通过使预测尽可能接近 0 来最小化最小-最大函数：
 
-    *E[z ~P z]*(*z*) [log(1 - *D*(*G*(*z*)))]
+  *E[z ~P z]*(*z*) [log(1 - *D*(*G*(*z*)))]
 
 现在我们已经理解了方程符号，并对最小-最大函数的工作原理有了更好的理解，让我们再次看看这个函数：
 
@@ -403,13 +410,13 @@ GAN 在以下方程中玩一个最小-最大游戏，其中整个网络试图优
 
 Salimans 等人和本节中我们将讨论的其他研究人员使用了其他非手动方法。一般来说，关于如何评估给定的 GAN 生成器模型还没有共识。这使得研究人员和实践者难以进行以下操作：
 
-+   在训练运行中选择最佳的 GAN 生成器模型--换句话说，决定何时停止训练。
++ 在训练运行中选择最佳的 GAN 生成器模型--换句话说，决定何时停止训练。
 
-+   选择生成的图像来展示 GAN 生成器模型的性能。
++ 选择生成的图像来展示 GAN 生成器模型的性能。
 
-+   比较和基准测试 GAN 模型架构。
++ 比较和基准测试 GAN 模型架构。
 
-+   调整模型超参数和配置，并比较结果。
++ 调整模型超参数和配置，并比较结果。
 
 寻找可量化的方法来理解 GAN 的进度和输出质量仍然是研究的一个活跃领域。已经开发了一套定性和定量技术，用于根据生成的合成图像的质量和多样性来评估 GAN 模型的性能。用于图像质量和多样性的两个常用评估指标是 Inception 分数和 Fréchet Inception 距离 (FID)。在本节中，你将了解基于生成的合成图像评估 GAN 模型的技术。
 
@@ -417,9 +424,9 @@ Salimans 等人和本节中我们将讨论的其他研究人员使用了其他�
 
 Inception 分数基于一个启发式方法，即现实样本应该能够在通过预训练网络（如 ImageNet 上的 Inception）时被分类（因此得名 Inception 分数）。这个想法真的很简单。启发式依赖于两个值：
 
-+   生成的图像高可预测性 -- 我们将预训练的 Inception 分类器模型应用于每个生成的图像，并获取其 softmax 预测。如果生成的图像足够好，那么它应该给出一个高可预测性分数。
++ 生成的图像高可预测性 -- 我们将预训练的 Inception 分类器模型应用于每个生成的图像，并获取其 softmax 预测。如果生成的图像足够好，那么它应该给出一个高可预测性分数。
 
-+   生成样本的多样性 -- 不应有任何类别主导生成的图像分布。
++ 生成样本的多样性 -- 不应有任何类别主导生成的图像分布。
 
 使用模型对大量生成的图像进行分类。具体来说，预测图像属于每个类的概率。然后将这些概率总结到分数中，以捕捉每个图像看起来像已知类别的程度以及图像集合在已知类别之间的多样性。如果这两个特性都满足，应该有一个较大的 inception score。较高的 inception score 表示生成的图像质量更好。
 
@@ -441,59 +448,60 @@ FID 分数是由 Martin Heusel 等人在 2017 年提出并使用的。4 该分�
 
 ## 8.3 流行 GAN 应用
 
-在过去的五年里，生成模型已经取得了长足的进步。该领域已经发展到预期下一代生成模型在创作艺术方面将比人类更加得心应手。现在，GANs（生成对抗网络）已经拥有了解决医疗保健、汽车、美术等多个行业问题的能力。在本节中，我们将了解一些对抗网络的用例以及用于该应用的 GAN 架构。本节的目标不是实现 GAN 网络的变体，而是提供一些关于 GAN 模型潜在应用的曝光以及进一步阅读的资源。
+
+
+在过去的五年里，生成模型已经取得了长足的进步。该领域已经发展到预期下一代生成模型在创作艺术方面将比人类更加得心应手。现在，`GANs`（生成对抗网络）已经拥有了解决医疗保健、汽车、美术等多个行业问题的能力。在本节中，我们将了解一些对抗网络的用例以及用于该应用的 `GAN` 架构。本节的目标不是实现 `GAN` 网络的变体，而是提供一些关于 `GAN` 模型潜在应用的曝光以及进一步阅读的资源。
 
 ### 8.3.1 文本到照片合成
 
 从文本描述合成高质量图像是计算机视觉中的一个挑战性问题。现有文本到图像方法生成的样本可以大致反映给定描述的意义，但它们缺乏必要的细节和生动的物体部分。
 
-为此应用构建的 GAN 网络是堆叠生成对抗网络（StackGAN）。6 张等人能够根据文本描述生成 256 × 256 的逼真图像。
+为此应用构建的 `GAN` 网络是堆叠生成对抗网络（`StackGAN`）。6 张等人能够根据文本描述生成 256 × 256 的逼真图像。
 
-StackGANs 在两个阶段工作（图 8.14）：
+`StackGANs` 在两个阶段工作（图 8.14）：
 
-+   第一阶段：StackGAN 根据给定的文本描述绘制对象的原始形状和颜色，生成低分辨率图像。
-
-+   第二阶段：StackGAN 以第一阶段的结果和文本描述作为输入，生成具有逼真细节的高分辨率图像。它能够纠正第一阶段创建的图像中的缺陷，并通过细化过程添加引人注目的细节。
++   第一阶段：`StackGAN` 根据给定的文本描述绘制对象的原始形状和颜色，生成低分辨率图像。
++   第二阶段：`StackGAN` 以第一阶段的结果和文本描述作为输入，生成具有逼真细节的高分辨率图像。它能够纠正第一阶段创建的图像中的缺陷，并通过细化过程添加引人注目的细节。
 
 ![图片](img/8-14.png)
 
-图 8.14 (*a*) 第一阶段：给定文本描述，StackGAN 绘制对象的粗糙形状和基本颜色，生成低分辨率图像。(*b*) 第二阶段以第一阶段的结果和文本描述作为输入，生成具有逼真细节的高分辨率图像。（来源：张等，2016 年。）
+图 8.14 (*a*) 第一阶段：给定文本描述，`StackGAN` 绘制对象的粗糙形状和基本颜色，生成低分辨率图像。(*b*) 第二阶段以第一阶段的结果和文本描述作为输入，生成具有逼真细节的高分辨率图像。（来源：张等，2016 年。）
 
 ### 8.3.2 图像到图像翻译（Pix2Pix GAN）
 
-图像到图像的转换被定义为在足够的训练数据下将场景的一种表示转换为另一种表示。它受到语言翻译类比的影响：正如一个想法可以用许多不同的语言表达一样，一个场景可以通过灰度图像、RGB 图像、语义标签图、边缘草图等来呈现。在图 8.15 中，图像到图像的转换任务在一系列应用中得到了演示，例如将街景分割标签转换为真实图像、灰度转换为彩色图像、产品草图转换为产品照片以及白天照片转换为夜晚照片。
+图像到图像的转换被定义为在足够的训练数据下将场景的一种表示转换为另一种表示。它受到语言翻译类比的影响：正如一个想法可以用许多不同的语言表达一样，一个场景可以通过灰度图像、`RGB` 图像、语义标签图、边缘草图等来呈现。在图 8.15 中，图像到图像的转换任务在一系列应用中得到了演示，例如将街景分割标签转换为真实图像、灰度转换为彩色图像、产品草图转换为产品照片以及白天照片转换为夜晚照片。
 
-Pix2Pix 是由 Phillip Isola 等人于 2016 年设计的 GAN 家族成员，用于通用图像到图像的转换。7 Pix2Pix 网络架构类似于 GAN 的概念：它包括一个生成器模型，用于输出看起来逼真的新合成图像，以及一个判别器模型，用于将图像分类为真实（来自数据集）或伪造（生成）。训练过程也与 GAN 类似：判别器模型直接更新，而生成器模型通过判别器模型更新。因此，这两个模型在对抗过程中同时训练，其中生成器试图更好地欺骗判别器，而判别器试图更好地识别伪造图像。
+`Pix2Pix` 是由 Phillip Isola 等人于 2016 年设计的 `GAN` 家族成员，用于通用图像到图像的转换。7 `Pix2Pix` 网络架构类似于 `GAN` 的概念：它包括一个生成器模型，用于输出看起来逼真的新合成图像，以及一个判别器模型，用于将图像分类为真实（来自数据集）或伪造（生成）。训练过程也与 `GAN` 类似：判别器模型直接更新，而生成器模型通过判别器模型更新。因此，这两个模型在对抗过程中同时训练，其中生成器试图更好地欺骗判别器，而判别器试图更好地识别伪造图像。
 
 ![](img/8-15.png)
 
-图 8.15 从原始论文中摘取的 Pix2Pix 应用示例。
+图 8.15 从原始论文中摘取的 `Pix2Pix` 应用示例。
 
-Pix2Pix 网络的新颖之处在于，它们学习一个适应当前任务和数据的损失函数，这使得它们可以在各种环境中应用。它们是一种条件生成对抗网络（cGAN），其中输出图像的生成取决于输入源图像。判别器被提供了源图像和目标图像，并必须确定目标是否是源图像的合理变换。
+`Pix2Pix` 网络的新颖之处在于，它们学习一个适应当前任务和数据的损失函数，这使得它们可以在各种环境中应用。它们是一种条件生成对抗网络（`cGAN`），其中输出图像的生成取决于输入源图像。判别器被提供了源图像和目标图像，并必须确定目标是否是源图像的合理变换。
 
-Pix2Pix 网络在许多图像到图像的转换任务中取得了非常令人鼓舞的结果。访问[`affinelayer.com/pixsrv`](https://affinelayer.com/pixsrv)来更多体验 Pix2Pix 网络；该网站有一个由 Isola 及其团队创建的交互式演示，您可以在其中将猫或产品的草图边缘转换为照片和立面转换为真实图像。
+`Pix2Pix` 网络在许多图像到图像的转换任务中取得了非常令人鼓舞的结果。访问[`affinelayer.com/pixsrv`](https://affinelayer.com/pixsrv)来更多体验 `Pix2Pix` 网络；该网站有一个由 Isola 及其团队创建的交互式演示，您可以在其中将猫或产品的草图边缘转换为照片和立面转换为真实图像。
 
 ### 8.3.3 图像超分辨率 GAN（SRGAN）
 
-一种特定的 GAN 模型可以用来将低分辨率图像转换为高分辨率图像。这种类型被称为超分辨率生成对抗网络（SRGAN），由 Christian Ledig 等人于 2016 年引入。8 图 8.16 展示了 SRGAN 如何创建一个非常高分辨率的图像。
+一种特定的 `GAN` 模型可以用来将低分辨率图像转换为高分辨率图像。这种类型被称为超分辨率生成对抗网络（`SRGAN`），由 Christian Ledig 等人于 2016 年引入。8 图 8.16 展示了 `SRGAN` 如何创建一个非常高分辨率的图像。
 
 ![](img/8-16.png)
 
-图 8.16 SRGAN 将低分辨率图像转换为高分辨率图像。（来源：Ledig 等人，2016 年。）
+图 8.16 `SRGAN` 将低分辨率图像转换为高分辨率图像。（来源：Ledig 等人，2016 年。）
 
 ### 8.3.4 准备好动手实践了吗？
 
-GAN 模型在创造和想象从未存在过的新现实方面具有巨大的潜力。本章中提到的应用只是几个例子，以给你一个关于 GAN 今天能做什么的印象。这样的应用每隔几周就会出现，值得一试。如果你对探索更多 GAN 应用感兴趣，请访问由 Erik Linder-Norén 维护的惊人的 Keras-GAN 存储库[`github.com/eriklindernoren/Keras-GAN`](https://github.com/eriklindernoren/Keras-GAN)，它包括许多使用 Keras 创建的 GAN 模型，是 Keras 示例的极好资源。本章中的大部分代码都受到了这个存储库的启发和改编。
+`GAN` 模型在创造和想象从未存在过的新现实方面具有巨大的潜力。本章中提到的应用只是几个例子，以给你一个关于 `GAN` 今天能做什么的印象。这样的应用每隔几周就会出现，值得一试。如果你对探索更多 `GAN` 应用感兴趣，请访问由 Erik Linder-Norén 维护的惊人的 `Keras-GAN` 存储库[`github.com/eriklindernoren/Keras-GAN`](https://github.com/eriklindernoren/Keras-GAN)，它包括许多使用 `Keras` 创建的 `GAN` 模型，是 `Keras` 示例的极好资源。本章中的大部分代码都受到了这个存储库的启发和改编。
 
 ## 8.4 项目：构建自己的 GAN
 
-在这个项目中，你将使用生成器和判别器中的卷积层构建一个 GAN。这被称为深度卷积 GAN（DCGAN）。DCGAN 架构最初由 Alec Radford 等人（2016 年）探索，如第 8.1.1 节所述，并在生成新图像方面取得了令人印象深刻的成果。你可以跟随本章中的实现或运行本书可下载代码中的项目笔记本中的代码。
+在这个项目中，你将使用生成器和判别器中的卷积层构建一个 `GAN`。这被称为深度卷积 `GAN`（`DCGAN`）。`DCGAN` 架构最初由 Alec Radford 等人（2016 年）探索，如第 8.1.1 节所述，并在生成新图像方面取得了令人印象深刻的成果。你可以跟随本章中的实现或运行本书可下载代码中的项目笔记本中的代码。
 
-在这个项目中，你将在 Fashion-MNIST 数据集上训练 DCGAN（[`github.com/zalandoresearch/fashion-mnist`](https://github.com/zalandoresearch/fashion-mnist)）。Fashion-MNIST 包含 60,000 个用于训练的灰度图像和 10,000 个图像的测试集（图 8.17）。每个 28 × 28 的灰度图像都与 10 个类别中的一个标签相关联。Fashion-MNIST 旨在作为原始 MNIST 数据集的直接替代品，用于基准测试机器学习算法。我选择灰度图像进行这个项目，因为与三通道彩色图像相比，在单通道灰度图像上训练卷积网络所需的计算能力更少，这使得在没有 GPU 的个人计算机上训练更容易。
+在这个项目中，你将在 `Fashion-MNIST` 数据集上训练 `DCGAN`（[`github.com/zalandoresearch/fashion-mnist`](https://github.com/zalandoresearch/fashion-mnist)）。`Fashion-MNIST` 包含 60,000 个用于训练的灰度图像和 10,000 个图像的测试集（图 8.17）。每个 28 × 28 的灰度图像都与 10 个类别中的一个标签相关联。`Fashion-MNIST` 旨在作为原始 `MNIST` 数据集的直接替代品，用于基准测试机器学习算法。我选择灰度图像进行这个项目，因为与三通道彩色图像相比，在单通道灰度图像上训练卷积网络所需的计算能力更少，这使得在没有 `GPU` 的个人计算机上训练更容易。
 
 ![](img/8-17.png)
 
-图 8.17 Fashion-MNIST 数据集示例
+图 8.17 `Fashion-MNIST` 数据集示例
 
 数据集被划分为 10 个时尚类别。类别标签如下：
 
@@ -530,15 +538,15 @@ import numpy as np                                                       ❸
 import matplotlib.pyplot as plt                                          ❸
 ```
 
-❶ 从 Keras 导入 fashion_mnist 数据集
+❶ 从 `Keras` 导入 `fashion_mnist` 数据集
 
-❷ 导入 Keras 层和模型
+❷ 导入 `Keras` 层和模型
 
-❸ 导入 numpy 和 matplotlib
+❸ 导入 `numpy` 和 `matplotlib`
 
 #### 第 2 步：下载并可视化数据集
 
-Keras 使我们能够通过一条命令：`fashion_mnist.load_data()`下载 Fashion-MNIST 数据集。在这里，我们下载了数据集并将训练集重新缩放到-1 到 1 的范围，以便模型更快地收敛（有关图像缩放的更多详细信息，请参阅第四章中的“数据归一化”部分）：
+`Keras` 使我们能够通过一条命令：`fashion_mnist.load_data()`下载 `Fashion-MNIST` 数据集。在这里，我们下载了数据集并将训练集重新缩放到 -1 到 1 的范围，以便模型更快地收敛（有关图像缩放的更多详细信息，请参阅第四章中的“数据归一化”部分）：
 
 ```
 (training_data, _), (_, _) = fashion_mnist.load_data()     ❶
@@ -549,7 +557,7 @@ X_train = np.expand_dims(X_train, axis=3)                  ❷
 
 ❶ 加载数据集
 
-❷ 将训练数据重新缩放到-1 到 1 的范围
+❷ 将训练数据重新缩放到 -1 到 1 的范围
 
 为了乐趣，让我们可视化图像矩阵（图 8.18）：
 
@@ -572,7 +580,7 @@ visualize_input(training_data[3343], ax)
 
 ![图片](img/8-18.png)
 
-图 8.18 Fashion-MNIST 数据集的可视化示例
+图 8.18 `Fashion-MNIST` 数据集的可视化示例
 
 #### 第 3 步：构建生成器
 
@@ -582,7 +590,7 @@ visualize_input(training_data[3343], ax)
 
 图 8.19 生成器模型的架构
 
-第一层是一个全连接层，然后将其重塑为一个深而窄的层，类似于 7 × 7 × 128（在原始 DCGAN 论文中，团队将输入重塑为 4 × 4 × 1024）。然后我们使用上采样层将特征图维度从 7 × 7 加倍到 14 × 14，然后再加倍到 28 × 28。在这个网络中，我们使用三个卷积层。我们还使用了批量归一化和 ReLU 激活。对于这些层中的每一层，一般的方案是卷积⇒批量归一化⇒ReLU。现在，让我们堆叠这些层，直到我们得到形状为 28 × 28 × 1 的最终转置卷积层：
+第一层是一个全连接层，然后将其重塑为一个深而窄的层，类似于 7 × 7 × 128（在原始 `DCGAN` 论文中，团队将输入重塑为 4 × 4 × 1024）。然后我们使用上采样层将特征图维度从 7 × 7 加倍到 14 × 14，然后再加倍到 28 × 28。在这个网络中，我们使用三个卷积层。我们还使用了批量归一化和 `ReLU` 激活。对于这些层中的每一层，一般的方案是卷积⇒批量归一化⇒`ReLU`。现在，让我们堆叠这些层，直到我们得到形状为 28 × 28 × 1 的最终转置卷积层：
 
 ```
    def build_generator():
@@ -629,7 +637,7 @@ visualize_input(training_data[3343], ax)
 
 ❻ 将图像尺寸上采样到 28 × 28
 
-❼ 我们在这里不添加上采样，因为 28 × 28 的图像大小与 MNIST 数据集中的图像大小相同。你可以根据你自己的问题进行调整。
+❼ 我们在这里不添加上采样，因为 28 × 28 的图像大小与 `MNIST` 数据集中的图像大小相同。你可以根据你自己的问题进行调整。
 
 ❽ 打印模型摘要
 
@@ -641,52 +649,58 @@ visualize_input(training_data[3343], ax)
 
 #### 第 4 步：构建判别器
 
-判别器只是一个卷积分类器，就像我们之前构建的那样（图 8.20）。判别器的输入是 28 × 28 × 1 的图像。我们想要几个卷积层，然后是一个全连接层作为输出。和之前一样，我们想要一个 sigmoid 输出，并且需要返回 logits。对于卷积层的深度，我建议从第一层的 32 或 64 个过滤器开始，然后随着层数的增加，深度加倍。在这个实现中，我们开始使用 64 层，然后是 128 层，然后是 256 层。对于下采样，我们不使用池化层。相反，我们只使用步长卷积层进行下采样，类似于 Radford 等人实现的方式。
+判别器只是一个卷积分类器，就像我们之前构建的那样（图 8.20）。判别器的输入是 28 × 28 × 1 的图像。我们想要几个卷积层，然后是一个全连接层作为输出。和之前一样，我们想要一个 `sigmoid` 输出，并且需要返回 `logits`。对于卷积层的深度，我建议从第一层的 32 或 64 个过滤器开始，然后随着层数的增加，深度加倍。在这个实现中，我们开始使用 64 层，然后是 128 层，然后是 256 层。对于下采样，我们不使用池化层。相反，我们只使用步长卷积层进行下采样，类似于 Radford 等人实现的方式。
 
 ![图片](img/8-20.png)
 
 图 8.20 判别器模型的架构
 
-我们还使用了批量归一化和 dropout 来优化训练，正如我们在第四章中学到的。对于四个卷积层中的每一个，一般的方案是卷积⇒批量归一化⇒漏 ReLU。现在，让我们构建`build_discriminator`函数：
+我们还使用了批量归一化和 `dropout` 来优化训练，正如我们在第四章中学到的。对于四个卷积层中的每一个，一般的方案是卷积⇒批量归一化⇒漏 `ReLU`。现在，让我们构建`build_discriminator`函数：
+
+
+
+# 构建 DCGAN 模型
+
+以下代码构建了判别器模型。该模型是一个典型的分类神经网络，旨在将生成器生成的图像分类为真实或伪造。
 
 ```
-   def build_discriminator():
-       discriminator = Sequential()                                             ❶
+def build_discriminator():
+    discriminator = Sequential()                                             ❶
 
-       discriminator.add(Conv2D(32, kernel_size=3, strides=2, 
+    discriminator.add(Conv2D(32, kernel_size=3, strides=2, 
  input_shape=(28,28,1), padding="same"))                ❷
 
-       discriminator.add(LeakyReLU(alpha=0.2))                                  ❸
+    discriminator.add(LeakyReLU(alpha=0.2))                                  ❸
 
-       discriminator.add(Dropout(0.25))                                         ❹
+    discriminator.add(Dropout(0.25))                                         ❹
 
-       discriminator.add(Conv2D(64, kernel_size=3, strides=2, 
+    discriminator.add(Conv2D(64, kernel_size=3, strides=2, 
  padding="same"))                                       ❺
 
-       discriminator.add(ZeroPadding2D(padding=((0,1),(0,1))))                  ❻
+    discriminator.add(ZeroPadding2D(padding=((0,1),(0,1))))                  ❻
 
-       discriminator.add(BatchNormalization(momentum=0.8))                      ❼
+    discriminator.add(BatchNormalization(momentum=0.8))                      ❼
 
-       discriminator.add(LeakyReLU(alpha=0.2))
-       discriminator.add(Dropout(0.25))
+    discriminator.add(LeakyReLU(alpha=0.2))
+    discriminator.add(Dropout(0.25))
 
-       discriminator.add(Conv2D(128, kernel_size=3, strides=2, padding="same")) ❽
-       discriminator.add(BatchNormalization(momentum=0.8))                      ❽
-       discriminator.add(LeakyReLU(alpha=0.2))                                  ❽
-       discriminator.add(Dropout(0.25))                                         ❽
+    discriminator.add(Conv2D(128, kernel_size=3, strides=2, padding="same")) ❽
+    discriminator.add(BatchNormalization(momentum=0.8))                      ❽
+    discriminator.add(LeakyReLU(alpha=0.2))                                  ❽
+    discriminator.add(Dropout(0.25))                                         ❽
 
-       discriminator.add(Conv2D(256, kernel_size=3, strides=1, padding="same")) ❾
-       discriminator.add(BatchNormalization(momentum=0.8))                      ❾
-       discriminator.add(LeakyReLU(alpha=0.2))                                  ❾
-       discriminator.add(Dropout(0.25))                                         ❾
+    discriminator.add(Conv2D(256, kernel_size=3, strides=1, padding="same")) ❾
+    discriminator.add(BatchNormalization(momentum=0.8))                      ❾
+    discriminator.add(LeakyReLU(alpha=0.2))                                  ❾
+    discriminator.add(Dropout(0.25))                                         ❾
 
-       discriminator.add(Flatten())                                             ❿
-       discriminator.add(Dense(1, activation='sigmoid'))                        ❿
+    discriminator.add(Flatten())                                             ❿
+    discriminator.add(Dense(1, activation='sigmoid'))                        ❿
 
-       img = Input(shape=(28,28,1))                                             ⓫
-       probability = discriminator(img)                                         ⓬
+    img = Input(shape=(28,28,1))                                             ⓫
+    probability = discriminator(img)                                         ⓬
 
-       return Model(inputs=img, outputs=probability)                            ⓭
+    return Model(inputs=img, outputs=probability)                            ⓭
 ```
 
 ❶ 实例化一个序列模型并将其命名为判别器
@@ -715,9 +729,9 @@ visualize_input(training_data[3343], ax)
 
 ⓭ 返回一个以图像作为输入并产生概率输出的模型
 
-#### 第 5 步：构建联合模型
+## 第 5 步：构建联合模型
 
-如第 8.1.3 节所述，为了训练生成器，我们需要构建一个包含生成器和判别器的联合网络（图 8.21）。联合模型将噪声信号（*z*）作为输入并输出判别器的预测输出，作为伪造或真实。
+如第 8.1.3 节所述，为了训练生成器，我们需要构建一个包含生成器和判别器的联合网络（图 8.21）。联合模型将噪声信号（`z`）作为输入并输出判别器的预测输出，作为伪造或真实。
 
 ![](img/8-21.png)
 
@@ -737,7 +751,7 @@ discriminator.trainable = False                                     ❸
 generator = build_generator()                                       ❹
 
 z = Input(shape=(100,))                                             ❺
-img = generator(*z*)                                                  ❺
+img = generator(z)                                                  ❺
 
 valid = discriminator(img)                                          ❻
 
@@ -753,13 +767,13 @@ combined.compile(loss='binary_crossentropy', optimizer=optimizer)   ❼
 
 ❹ 构建生成器
 
-❺ 生成器以 latent_dim = 100 的噪声作为输入并生成图像。
+❺ 生成器以 `latent_dim = 100` 的噪声作为输入并生成图像。
 
 ❻ 判别器将生成的图像作为输入并确定其有效性。
 
 ❼ 联合模型（堆叠的生成器和判别器）训练生成器以欺骗判别器。
 
-#### 第 6 步：构建训练函数
+## 第 6 步：构建训练函数
 
 在训练 GAN 模型时，我们训练两个网络：判别器和我们在上一节中创建的联合网络。让我们构建一个 `train` 函数，它接受以下参数：
 
@@ -812,9 +826,9 @@ print("%d [D loss: %f, acc.: %.2f%%] [G loss: %f]" %
 
 ❻ 打印进度
 
-❼ 如果在 save_interval 时保存生成的图像样本
+❼ 如果在 `save_interval` 时保存生成的图像样本
 
-在运行 `train()` 函数之前，您需要定义以下 `plot_generated` `_images()` 函数：
+在运行 `train()` 函数之前，您需要定义以下 `plot_generated_images()` 函数：
 
 ```
 def plot_generated_images(epoch, generator, examples=100, dim=(10, 10), 
@@ -832,7 +846,7 @@ def plot_generated_images(epoch, generator, examples=100, dim=(10, 10),
     plt.savefig('gan_generated_image_epoch_%d.png' % epoch)
 ```
 
-#### 第 7 步：训练并观察结果
+## 第 7 步：训练并观察结果
 
 现在代码实现已经完成，我们准备开始 DCGAN 的训练。要训练模型，运行以下代码片段：
 
@@ -854,7 +868,7 @@ train(epochs=1000, batch_size=32, save_interval=50)
 
 如您在图 8.23 中看到的，在 0 个时代，图像只是随机噪声——没有模式或有意义的数据。在 50 个时代，模式开始形成。一个非常明显的模式是图像中心开始形成的亮像素，以及周围的较暗像素。这是因为训练数据中，所有形状都位于图像的中心。在训练过程的后期，在 1,000 个时代，您可以清楚地看到形状，并且可以猜测出提供给 GAN 模型的训练数据类型。快进到 10,000 个时代，您可以看到生成器已经非常擅长重新创建训练数据集中不存在的新的图像。例如，选择在这个时代创建的任何对象：比如说左上角的图像（连衣裙）。这是一个完全新的连衣裙设计，在训练数据集中不存在。GAN 模型在从训练集中学习连衣裙模式后，创建了一个全新的连衣裙设计。您可以运行更长时间的训练，或者使生成器网络更深，以获得更精细的结果。
 
-#### 在结束之前
+## 在结束之前
 
 对于这个项目，我使用了 Fashion-MNIST 数据集，因为图像非常小，是灰度图（单通道），这使得您在本地计算机上没有 GPU 的情况下进行训练时计算成本很低。Fashion-MNIST 数据集也非常干净：所有图像都居中，噪声较少，因此在启动 GAN 训练之前不需要太多预处理。这使得它成为一个很好的玩具数据集，可以用来启动您的第一个 GAN 项目。
 
@@ -884,18 +898,20 @@ train(epochs=1000, batch_size=32, save_interval=50)
 
 ***
 
-1.伊恩·J·古德费尔、让·普吉特-阿巴迪、梅赫迪·米尔扎、丁旭、大卫·沃德-法雷利、谢吉尔·奥齐尔、阿隆·库维尔和约书亚·本吉奥，“生成对抗网络，”2014 年，[`arxiv.org/abs/1406.2661`](http://arxiv.org/abs/1406.2661).
+1. 伊恩·J·古德费尔、让·普吉特-阿巴迪、梅赫迪·米尔扎、丁旭、大卫·沃德-法雷利、谢吉尔·奥齐尔、阿隆·库维尔和约书亚·本吉奥，“生成对抗网络，”2014 年，[`arxiv.org/abs/1406.2661`](http://arxiv.org/abs/1406.2661).
 
-2.亚历克·拉德福德、卢克·梅茨和索乌米特·钦塔拉，“使用深度卷积生成对抗网络的无监督表示学习，”2016 年，[`arxiv.org/abs/1511.06434`](http://arxiv.org/abs/1511.06434).
+2. 亚历克·拉德福德、卢克·梅茨和索乌米特·钦塔拉，“使用深度卷积生成对抗网络的无监督表示学习，”2016 年，[`arxiv.org/abs/1511.06434`](http://arxiv.org/abs/1511.06434).
 
-3.蒂姆·萨利曼斯、伊恩·古德费尔、沃伊切赫·扎伦巴、维基·张、亚历克·拉德福德和*x[i]*陈。“改进 GAN 的训练技术，”2016 年，[`arxiv.org/abs/1606.03498`](http://arxiv.org/abs/1606.03498).
+3. 蒂姆·萨利曼斯、伊恩·古德费尔、沃伊切赫·扎伦巴、维基·张、亚历克·拉德福德和`x[i]`陈。“改进 GAN 的训练技术，”2016 年，[`arxiv.org/abs/1606.03498`](http://arxiv.org/abs/1606.03498).
 
-4.马丁·海塞尔、胡伯特·拉姆萨乌尔、托马斯·乌特纳、伯纳德·内斯勒和塞普·霍克赖特，“通过双时间尺度更新规则训练的 GAN 收敛到局部纳什均衡，”2017 年，[`arxiv.org/abs/1706.08500`](http://arxiv.org/abs/1706.08500).
+4. 马丁·海塞尔、胡伯特·拉姆萨乌尔、托马斯·乌特纳、伯纳德·内斯勒和塞普·霍克赖特，“通过双时间尺度更新规则训练的 GAN 收敛到局部纳什均衡，”2017 年，[`arxiv.org/abs/1706.08500`](http://arxiv.org/abs/1706.08500).
 
-5.康斯坦丁·施梅尔科夫、科德利亚·施密德和卡尔特克·阿拉哈里，“我的 GAN 有多好？”2018 年，[`arxiv.org/abs/1807.09499`](http://arxiv.org/abs/1807.09499).
+5. 康斯坦丁·施梅尔科夫、科德利亚·施密德和卡尔特克·阿拉哈里，“我的 GAN 有多好？”2018 年，[`arxiv.org/abs/1807.09499`](http://arxiv.org/abs/1807.09499).
 
-6.韩张、徐涛、李洪升、张少亭、王晓刚、黄晓雷和迪米特里斯·梅塔克萨斯，“StackGAN：使用堆叠生成对抗网络进行文本到逼真图像合成，”2016 年，[`arxiv.org/abs/1612.03242`](http://arxiv.org/abs/1612.03242).
 
-7.菲利普·伊索拉、朱俊彦、周廷辉和亚历克谢·A·埃夫罗，“条件对抗网络进行图像到图像翻译，”2016 年，[`arxiv.org/abs/1611.07004`](http://arxiv.org/abs/1611.07004).
+
+6. 韩张、徐涛、李洪升、张少亭、王晓刚、黄晓雷和迪米特里斯·梅塔克萨斯，“StackGAN：使用堆叠生成对抗网络进行文本到逼真图像合成，”2016 年，[`arxiv.org/abs/1612.03242`](http://arxiv.org/abs/1612.03242).
+
+7. 菲利普·伊索拉、朱俊彦、周廷辉和亚历克谢·A·埃夫罗，“条件对抗网络进行图像到图像翻译，”2016 年，[`arxiv.org/abs/1611.07004`](http://arxiv.org/abs/1611.07004).
 
 8. 克里斯蒂安·莱迪格，卢卡斯·泰斯，费伦茨·胡萨，何塞·卡巴列罗，安德鲁·坎宁安，亚历杭德罗·阿科斯塔，安德鲁·艾肯等，《使用生成对抗网络进行逼真单图像超分辨率》，2016 年，[`arxiv.org/abs/1609.04802`](http://arxiv.org/abs/1609.04802).

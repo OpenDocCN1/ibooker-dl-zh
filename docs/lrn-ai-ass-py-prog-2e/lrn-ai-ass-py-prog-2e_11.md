@@ -1,10 +1,11 @@
+
+
 # 第十二章：未来方向
 
-### 本章涵盖
+## 本章涵盖
 
-+   使用提示模式编写和解释代码
-
-+   生成式 AI 工具的当前局限性和未来方向
+- 使用提示模式编写和解释代码
+- 生成式 AI 工具的当前局限性和未来方向
 
 在这一章的最后，我们希望让你一窥人们目前正在使用生成式 AI 工具（如 GitHub Copilot 和 ChatGPT）的创造性方式。例如，可以使得 Copilot Chat 向你提问，而不是反过来。还可以让 Copilot 扮演不同的角色，以更好地帮助你完成当前的编程任务。我们将简要介绍，目前还不清楚这将成为多少标准做法，但我们想借此机会展示这些新工具的创造力。我们还将讨论一些生成式 AI 工具的当前局限性（你已经在本书中看到了一些！），并分享我们对未来可能性的看法。
 
@@ -34,7 +35,7 @@ elif ai_opponent == 'intermediate':
 
 为了让你了解提示模式的前沿状态，我们将在这里采样几个。对于更多，我们鼓励你查看我们使用的提示模式目录[2]。但请注意：我们正在引用一篇学术论文，而不是入门指南，因为我们目前不知道有任何入门指南（这还是新事物）。
 
-##### Copilot Chat 可能不会参与这些提示模式
+### Copilot Chat 可能不会参与这些提示模式
 
 在撰写本文时，Copilot Chat 拒绝参与一些已记录的提示模式，声称它们与编程辅助无关。虽然其中一些可能不太具体地与编程相关，但它们都是为了帮助程序员设计的。与 ChatGPT 不同，Copilot 被设计成始终试图专注于编程主题。如果你决定进一步探索各种模式，你可能希望在无法与 Copilot 有效互动时使用 ChatGPT。
 
@@ -44,65 +45,63 @@ elif ai_opponent == 'intermediate':
 
 此模式的目的是在我们不知道 AI 需要什么信息来完成任务时，帮助我们与之互动。动机是，AI 可能知道如何更快地通过询问我们达到其目标，而不是如果我们提供不完整或不帮助的信息。我们的提示结构将看起来像这样：
 
+```
 我希望你问我问题以达到 X。你应该继续提问，直到我们达到这个目标，其中 X 是我们想要达到的目标。
+```
 
 这种结构并不是为了精确地规定我们应该使用的提示。相反，它提示我们需要在提示中传达的关键思想。例如，这里的关键思想是我们希望 Copilot 提问，并且我们希望它在我们达到目标之前不要停止。
 
 在第三章中，我们编写了一个函数，不断询问用户输入密码，直到他们输入了一个强大的密码。假设我们不确定如何设计这个函数。我们可以通过提供代码提示让 Copilot 为我们设计它，但这样它可能会做出我们不认同的决定。相反，我们可以让 Copilot 提问。让我们使用 Copilot Chat 来做这件事。
 
-LPHuman 我想要一个 Python 函数，它会不断询问用户输入密码，直到他们提供了一个强大的密码。在你能写出那个 Python 函数之前，一次问我一个问题。
+**LPHuman** 我想要一个 Python 函数，它会不断询问用户输入密码，直到他们提供了一个强大的密码。在你能写出那个 Python 函数之前，一次问我一个问题。
 
-![chatGpt](img/chatGpt.png)GitHub Copilot 当然，我很乐意帮助你编写一个不断询问用户输入强大密码的 Python 函数！以下是一些开始的问题：
+![chatGpt](img/chatGpt.png)**GitHub Copilot** 当然，我很乐意帮助你编写一个不断询问用户输入强大密码的 Python 函数！以下是一些开始的问题：
 
-1.  你认为什么是一把强大的密码？
-
-1.  函数应该有任何输入参数吗？
-
-1.  函数应该返回什么？
-
-1.  函数应该有任何副作用，比如打印消息到控制台吗？
-
-1.  函数应该有任何错误处理，比如处理用户无效的输入吗？
+1. 你认为什么是一把强大的密码？
+2. 函数应该有任何输入参数吗？
+3. 函数应该返回什么？
+4. 函数应该有任何副作用，比如打印消息到控制台吗？
+5. 函数应该有任何错误处理，比如处理用户无效的输入吗？
 
 Copilot 未能遵循我们“一次问一个问题”的指示。让我们提醒它。
 
-LPHuman 一次问我一个问题。
+**LPHuman** 一次问我一个问题。
 
-![chatGpt](img/chatGpt.png)GitHub Copilot 当然，让我们从第一个问题开始：
+![chatGpt](img/chatGpt.png)**GitHub Copilot** 当然，让我们从第一个问题开始：
 
-1.  你认为什么是一把强大的密码？
+1. 你认为什么是一把强大的密码？
 
 现在，我们可以开始回答这些问题。Copilot 将使用这些答案为我们编写代码。
 
-LPHuman 密码必须至少包含一个大小写字母，至少一个数字和一个标点符号。
+**LPHuman** 密码必须至少包含一个大小写字母，至少一个数字和一个标点符号。
 
-![chatGpt](img/chatGpt.png)GitHub Copilot 很好，感谢你告诉我！接下来是下一个问题：
+![chatGpt](img/chatGpt.png)**GitHub Copilot** 很好，感谢你告诉我！接下来是下一个问题：
 
-1.  2. 函数应该有任何输入参数吗？
+2. 函数应该有任何输入参数吗？
 
-LPHuman 我不知道。它们会被用来做什么？
+**LPHuman** 我不知道。它们会被用来做什么？
 
-![chatGpt](img/chatGpt.png)GitHub Copilot 输入参数用于将数据传递给函数，以便函数可以对数据进行某些操作。例如，如果我们想编写一个将两个数字相加的函数，我们需要将这两个数字作为输入参数传递给函数。
+![chatGpt](img/chatGpt.png)**GitHub Copilot** 输入参数用于将数据传递给函数，以便函数可以对数据进行某些操作。例如，如果我们想编写一个将两个数字相加的函数，我们需要将这两个数字作为输入参数传递给函数。
 
 在我们的密码函数的情况下，我们可能想要传递一些参数来定义强大密码的要求。例如，我们可能想要传递密码的最小长度、所需的大小写字母数量、所需的数字数量和所需的标点符号数量。
 
 或者，我们可以将这些要求硬编码到函数本身中，但使用输入参数会使函数更加灵活和可重用。
 
-LPHuman 请将它们硬编码。
+**LPHuman** 请将它们硬编码。
 
-![chatGpt](img/chatGpt.png)GitHub Copilot 当然，我们可以将密码要求硬编码到函数本身中。这是下一个问题：
+![chatGpt](img/chatGpt.png)**GitHub Copilot** 当然，我们可以将密码要求硬编码到函数本身中。这是下一个问题：
 
-1.  3. 函数应该返回什么？
+3. 函数应该返回什么？
 
-LPHuman 该函数应返回用户的强密码。
+**LPHuman** 该函数应返回用户的强密码。
 
-![chatGpt](img/chatGpt.png)GitHub Copilot 很好，感谢你告诉我！这是下一个问题：
+![chatGpt](img/chatGpt.png)**GitHub Copilot** 很好，感谢你告诉我！这是下一个问题：
 
-1.  4. 函数是否应该有任何副作用，例如向控制台打印消息？
+4. 函数是否应该有任何副作用，例如向控制台打印消息？
 
 我们在这里停止，因为我们认为阅读完整的交互并不有趣。我们继续与 Copilot 交谈并回答了问题 4 和 5，Copilot 拥有了编写我们想要的代码所需的信息。在回答了所有五个问题后，我们最终收到的代码如下所示。
 
-##### 列表 12.1 通过翻转交互模式设计的函数
+#### 列表 12.1 通过翻转交互模式设计的函数
 
 ```py
 import string
@@ -137,15 +136,11 @@ def get_strong_password():
             return password                     #5
 ```
 
-#1 没有办法使这个 True 条件变为 False！
-
-#2 如果密码中没有大写字母
-
-#3 如果密码中没有数字字符
-
-#4 如果密码中没有标点符号
-
-#5 这就是我们退出“while True”循环的方法。
+- #1 没有办法使这个 `True` 条件变为 `False`！
+- #2 如果密码中没有大写字母
+- #3 如果密码中没有数字字符
+- #4 如果密码中没有标点符号
+- #5 这就是我们退出“`while True`”循环的方法。
 
 到目前为止，在我们的 `while` 循环中，我们始终使用一个我们希望最终变为 `False` 的循环条件（否则，我们会遇到无限循环）。例如，我们可以想象有一个循环，实际上说的是，“当密码无效时继续循环。”但在这里，代码使用的是 `while True`，而 `True` 是一个永远不会变为 `False` 的条件。必须有一种其他方式退出循环——确实有！当密码有效时，我们通过 `return` 语句退出循环。也就是说，这里的逻辑是“永远循环；如果密码有效，停止循环。”`while True` 形式的 `while` 循环是本书中看到的一种常见替代结构。
 
@@ -157,90 +152,95 @@ def get_strong_password():
 
 这种模式的目的是让 AI 扮演一个特定的角色或观点。我们为什么会想要这样做呢？好吧，这里有一个例子：假设你是一名入门级 Python 编程课程的学生。你的讲师正在课程中使用 Copilot，但他们禁止了一些他们认为会妨碍入门级 Python 学习的 Python 特性。你可以要求 Copilot 扮演那个讲师的角色，然后帮助你检查代码，以找到并（如果需要）移除任何不允许的 Python 特性。我们的提示结构将如下所示：
 
+```
 从现在起，扮演角色 X。提供角色 X 会创建的输出。
+```
 
-我们将用特定的角色来填充 X。让我们尝试使用我们的入门级编程讲师角色。我们将要求 Copilot 扮演这个角色，禁止一系列更高级的 Python 概念。（如果你从未听说过这些，请不要担心！）
+我们将用特定的角色来填充 `X`。让我们尝试使用我们的入门级编程讲师角色。我们将要求 Copilot 扮演这个角色，禁止一系列更高级的 Python 概念。（如果你从未听说过这些，请不要担心！）
 
-LPHuman 从现在起，扮演一个入门级 Python 编程讲师的角色。在你教授的课程中，以下 Python 特性是不允许的：列表推导式、生成器、“lambda”以及“any”函数。我会提供代码，你需要检查代码中是否有不允许的 Python 特性，并提出如何重写代码以避免使用这些特性。
+**LPHuman** 从现在起，扮演一个入门级 Python 编程讲师的角色。在你教授的课程中，以下 Python 特性是不允许的：列表推导式、生成器、`lambda` 以及 `any` 函数。我会提供代码，你需要检查代码中是否有不允许的 Python 特性，并提出如何重写代码以避免使用这些特性。
 
-![chatGpt](img/chatGpt.png)GitHub Copilot 当然，我可以做到！请提供你希望我审查的代码。
+![chatGpt](img/chatGpt.png)**GitHub Copilot** 当然，我可以做到！请提供你希望我审查的代码。
 
 让我们给它提供上一节中的 `get_strong_password` 函数。它使用了 `any` 函数，根据我们的角色规则，这个函数是不允许的。以下是我们的原始代码以及 Copilot 的响应。
 
 **LPHuman**
 
 ```py
-*`*def get_strong_password():*`*
- *`*'''*`*
- *`*Keep asking the user to enter a password until they provide*`* 
- *`*a strong password.*`*
- *`*A strong password has at least one uppercase character, one*`* 
- *`*number, and one punctuation character.*`*
- *`*'''*`*
- *`*# Print the password requirements*`*
- *`*print("Your password must contain at least:")*`*
- *`*print("- One uppercase letter")*`*
- *`*print("- One number")*`*
- *`*print("- One punctuation character")*`*
+def get_strong_password():
+    '''
+    Keep asking the user to enter a password until they provide 
+    a strong password.
+    A strong password has at least one uppercase character, one 
+    number, and one punctuation character.
+    '''
+    # Print the password requirements
+    print("Your password must contain at least:")
+    print("- One uppercase letter")
+    print("- One number")
+    print("- One punctuation character")
 
- *`*# Keep asking for a password until a strong one is provided*`*
- *`*while True:*`*
- *`*password = input("Enter a password: ")*`*
+    # Keep asking for a password until a strong one is provided
+    while True:
+        password = input("Enter a password: ")
 
- *`*# Check if the password meets the requirements*`*
- *`*if not any(c.isupper() for c in password):*`*
- *`*print("Password does not contain an uppercase letter.")*`*
- *`*elif not any(c.isdigit() for c in password):*`*
- *`*print("Password does not contain a number.")*`*
- *`*elif not any(c in string.punctuation for c in password):*`*
- *`*print("Password does not contain a punctuation character.")*`*
- *`*else:*`*
- *`*print("Password is strong!")*`*
- *`*return password*`*
+        # Check if the password meets the requirements
+        if not any(c.isupper() for c in password):
+            print("Password does not contain an uppercase letter.")
+        elif not any(c.isdigit() for c in password):
+            print("Password does not contain a number.")
+        elif not any(c in string.punctuation for c in password):
+            print("Password does not contain a punctuation character.")
+        else:
+            print("Password is strong!")
+            return password
 ```
 
-![chatGpt](img/chatGpt.png)GitHub Copilot `get_strong_password` 函数使用了 `any` 函数，这在你的课程中是不允许的。下面是修改后的函数版本，它没有使用 `any` 函数：
+![chatGpt](img/chatGpt.png)**GitHub Copilot** `get_strong_password` 函数使用了 `any` 函数，这在你的课程中是不允许的。下面是修改后的函数版本，它没有使用 `any` 函数：
+
+
+
 
 ```py
-*`*import string*`*
+import string
 
-*`*def get_strong_password():*`*
- *`*'''*`*
- *`*Keep asking the user to enter a password until they provide*`*
- *`*a strong password.*`*
- *`*A strong password has at least one uppercase character, one*`* 
- *`*number, and one punctuation character.*`*
- *`*'''*`*
- *`*# Print the password requirements*`*
- *`*print("Your password must contain at least:")*`*
- *`*print("- One uppercase letter")*`*
- *`*print("- One number")*`*
- *`*print("- One punctuation character")*`*
+def get_strong_password():
+    '''
+    Keep asking the user to enter a password until they provide
+    a strong password.
+    A strong password has at least one uppercase character, one
+    number, and one punctuation character.
+    '''
+    # Print the password requirements
+    print("Your password must contain at least:")
+    print("- One uppercase letter")
+    print("- One number")
+    print("- One punctuation character")
 
- *`*# Keep asking for a password until a strong one is provided*`*
- *`*while True:*`*
- *`*password = input("Enter a password: ")*`*
+    # Keep asking for a password until a strong one is provided
+    while True:
+        password = input("Enter a password: ")
 
- *`*# Check if the password meets the requirements*`*
- *`*has_uppercase = False*`*
- *`*has_number = False*`*
- *`*has_punctuation = False*`*
- *for c in password:* #1
- *`*if c.isupper():*`*
- *`*has_uppercase = True*`*
- *`*elif c.isdigit():*`*
- *`*has_number = True*`*
- *`*elif c in string.punctuation:*`*
- *`*has_punctuation = True*`*
- *`*if not has_uppercase:*`*
- *`*print("Password does not contain an uppercase letter.")*`*
- *`*elif not has_number:*`*
- *`*print("Password does not contain a number.")*`*
- *`*elif not has_punctuation:*`*
- *`*print("Password does not contain a punctuation character.")*`*
- *`*else:*`*
- *`*print("Password is strong!")*`*
- *`*return password*`*
+        # Check if the password meets the requirements
+        has_uppercase = False
+        has_number = False
+        has_punctuation = False
+        for c in password: #1
+            if c.isupper():
+                has_uppercase = True
+            elif c.isdigit():
+                has_number = True
+            elif c in string.punctuation:
+                has_punctuation = True
+        if not has_uppercase:
+            print("Password does not contain an uppercase letter.")
+        elif not has_number:
+            print("Password does not contain a number.")
+        elif not has_punctuation:
+            print("Password does not contain a punctuation character.")
+        else:
+            print("Password is strong!")
+            return password
 ```
 
 #1 替换“any”的循环
@@ -289,21 +289,17 @@ LPHuman 从现在起，扮演一个入门级 Python 编程讲师的角色。在�
 
 研究人员已经在这个使用 pandas 进行数据科学的环境中“跳过了代码”[3]。以下是它是如何工作的：
 
-1.  用户以自然语言（如英语）表达他们的意图。
-
-1.  人工智能生成 Python 代码并运行以获取结果（例如，分析结果表格或新的电子表格）供用户使用。重要的是，用户看不到这段 Python 代码。
-
-1.  人工智能将代码转换回自然语言，并将转换后的内容（而不是 Python 代码！）呈现给用户。用户收到的自然语言格式一致，可以被人工智能可靠地解释。研究人员这样描述人工智能响应的目的：“这就是你应该向系统提出你刚刚要求系统做的事情。”这个响应有助于用户了解人工智能的能力和有效的查询类型。
-
-1.  如果第 3 步的自然语言不正确，用户可以编辑。如果用户进行了编辑，他们可以提交新的提示，这会重复循环。
+1. 用户以自然语言（如英语）表达他们的意图。
+2. 人工智能生成 Python 代码并运行以获取结果（例如，分析结果表格或新的电子表格）供用户使用。重要的是，用户看不到这段 Python 代码。
+3. 人工智能将代码转换回自然语言，并将转换后的内容（而不是 Python 代码！）呈现给用户。用户收到的自然语言格式一致，可以被人工智能可靠地解释。研究人员这样描述人工智能响应的目的：“这就是你应该向系统提出你刚刚要求系统做的事情。”这个响应有助于用户了解人工智能的能力和有效的查询类型。
+4. 如果第 3 步的自然语言不正确，用户可以编辑。如果用户进行了编辑，他们可以提交新的提示，这会重复循环。
 
 研究人员提供的一个例子阐明了这个过程[3]。假设我们有一个电子表格，每行代表一名宇航员。每行有三个相关列：宇航员的名字、他们在太空中的总时间以及他们参与的以逗号分隔的任务列表。我们希望计算每位宇航员的平均任务长度。
 
 在第 1 步中，用户编写一个提示，如“计算平均任务长度”。在第 2 步中，人工智能生成与该提示相对应的代码。它运行代码，并在用户的电子表格中添加一个包含平均任务长度的新的列。在第 3 步中，人工智能将代码转换为自然语言任务列表，如下所示：
 
-1.  创建“任务长度”列。
-
-1.  “太空飞行时间（小时）”列除以（从“任务”列中“，”的数量加 1）。
+1. 创建“任务长度”列。
+2. “太空飞行时间（小时）”列除以（从“任务”列中“，”的数量加 1）。
 
 在第 4 步中，用户可以编辑第 3 步的自然语言，并将更新后的任务重新提交给 AI。我们是否能够在“Python 编程”这个更广泛的领域“跳过代码”，而不是在“使用 pandas 的数据科学”这个更受限的环境中呢？现在还言之过早。数据处理的好处在于可以在视觉媒介中工作，使用电子表格和图表可以直接展示给用户，用户可能能够判断分析是否正确，或者是否需要进一步的提示工程。这样的视觉表示对于通用编程来说并不明显。
 
@@ -325,36 +321,24 @@ LPHuman 从现在起，扮演一个入门级 Python 编程讲师的角色。在�
 
 ## 12.3 练习
 
-1.  解释如何使用人格模式来加强公司中的编码标准。例如，公司可能要求其员工始终使用驼峰命名法（例如，xVal、ZValOut）。提供一个提示示例，让 GitHub Copilot 扮演一个经理的角色，执行特定的编码标准。
+1. 解释如何使用人格模式来加强公司中的编码标准。例如，公司可能要求其员工始终使用驼峰命名法（例如，`xVal`、`ZValOut`）。提供一个提示示例，让 GitHub Copilot 扮演一个经理的角色，执行特定的编码标准。
 
-1.  你想创建一个 Python 函数，该函数根据用户的首选用户名和全名生成用户名。该函数应遵循以下规则：
-
-    1.  如果首选用户名可用（即尚未被占用），请使用它。
-
-    1.  如果首选用户名已被占用，通过在首选用户名后附加单个数字（例如，1、2、3、……）来生成新的用户名。
-
-    1.  如果生成的用户名也被占用，使用用户的全名通过组合他们的姓氏和名字的部分来生成用户名。
-
-    1.  如果生成的用户名也被占用，函数应继续请求新的首选用户名。
+2. 你想创建一个 Python 函数，该函数根据用户的首选用户名和全名生成用户名。该函数应遵循以下规则：
+   1. 如果首选用户名可用（即尚未被占用），请使用它。
+   2. 如果首选用户名已被占用，通过在首选用户名后附加单个数字（例如，1、2、3、……）来生成新的用户名。
+   3. 如果生成的用户名也被占用，使用用户的全名通过组合他们的姓氏和名字的部分来生成用户名。
+   4. 如果生成的用户名也被占用，函数应继续请求新的首选用户名。
 
 你会使用哪种交互模式（翻转交互模式或人格模式）来帮助 GitHub Copilot 设计这个功能？请证明你的选择，并概述你将如何开始交互。
 
 ## 摘要
 
-+   提示模式是一个模板，帮助我们构建一个提示以实现既定目标。
-
-+   翻转交互模式翻转了剧本：不是向 LLM 提出问题，而是 LLM 向我们提出问题。
-
-+   当我们不知道如何有效地提示 LLM 时，翻转交互模式很有用。
-
-+   人格模式用于让 AI 承担特定的角色，例如“入门级编程讲师”或特定的观点。
-
-+   当我们希望 LLM 从给定视角回应时，人格模式很有用。
-
-+   Copilot 目前在处理设计、定义不明确或规模较大的任务时存在困难。
-
-+   有些人认为 LLM 将取代编程语言；另一些人认为编程语言将永远存在。
-
-+   LLM 正在帮助人们执行数据科学任务，而这些人们从未见过底层编程语言代码。
-
-+   可能编程语言本身不会被取代，但主导语言将被开发得比今天的语言更易读。
++ 提示模式是一个模板，帮助我们构建一个提示以实现既定目标。
++ 翻转交互模式翻转了剧本：不是向 LLM 提出问题，而是 LLM 向我们提出问题。
++ 当我们不知道如何有效地提示 LLM 时，翻转交互模式很有用。
++ 人格模式用于让 AI 承担特定的角色，例如“入门级编程讲师”或特定的观点。
++ 当我们希望 LLM 从给定视角回应时，人格模式很有用。
++ Copilot 目前在处理设计、定义不明确或规模较大的任务时存在困难。
++ 有些人认为 LLM 将取代编程语言；另一些人认为编程语言将永远存在。
++ LLM 正在帮助人们执行数据科学任务，而这些人们从未见过底层编程语言代码。
++ 可能编程语言本身不会被取代，但主导语言将被开发得比今天的语言更易读。

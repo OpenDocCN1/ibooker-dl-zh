@@ -1,20 +1,21 @@
+
 # 第十一章\. 在 Streamlit 数据应用中使用 API
 
 > 现在的一个简单应用比三个月后一个过度设计的应用要好。
-> 
+>
 > Thiago Teixeira，Streamlit 联合创始人
 
-如果你想向其他人展示你的数据科学技能，没有比 *数据应用* 更好的方式——这是一个显示你的数据科学模型、图表、图表和电子表格的 Web 应用程序。向招聘人员或潜在客户发送你创建的数据应用的链接是吸引他们注意力的可靠方式。
+如果你想向其他人展示你的数据科学技能，没有比*数据应用*更好的方式——这是一个显示你的数据科学模型、图表、图表和电子表格的 Web 应用程序。向招聘人员或潜在客户发送你创建的数据应用的链接是吸引他们注意力的可靠方式。
 
 在本章中，你将使用 Streamlit 构建一个数据应用，Streamlit 是一个开源库，它帮助你使用 Python 创建色彩丰富且交互式的 Web 应用程序。Streamlit 处理所有 Web 界面的复杂性，这样你就可以专注于数据后端代码，例如数据文件、pandas DataFrame 和 API。
 
 Streamlit 应用可以免费在 Streamlit 社区云或付费 Web 托管平台上以有限的方式部署。
 
-# 通过交互式可视化吸引用户
+## 通过交互式可视化吸引用户
 
-两种主要的分析产品类型是 *表格报告* 和 *可视化*。表格报告以电子表格格式呈现数据行和列，提供了数据的详细视图。可视化用图表、图形、地图和其他图像替换表格数据，为数据提供背景和色彩。可视化可以传达在电子表格中难以看到的思想。
+两种主要的分析产品类型是*表格报告*和*可视化*。表格报告以电子表格格式呈现数据行和列，提供了数据的详细视图。可视化用图表、图形、地图和其他图像替换表格数据，为数据提供背景和色彩。可视化可以传达在电子表格中难以看到的思想。
 
-Streamlit 以非常互动的方式支持表格数据和可视化。它提供了内置的 *小部件*，例如滑块和选择框，允许用户实时过滤和与数据交互。为了一个有趣的例子，请查看图 11-1，它展示了我为跟踪我长期运行的幻想联赛中的一个冠军头衔而构建的数据应用。
+Streamlit 以非常互动的方式支持表格数据和可视化。它提供了内置的*小部件*，例如滑块和选择框，允许用户实时过滤和与数据交互。为了一个有趣的例子，请查看图 11-1，它展示了我为跟踪我长期运行的幻想联赛中的一个冠军头衔而构建的数据应用。
 
 ![幻想联赛数据应用](img/haad_1101.png)
 
@@ -22,7 +23,7 @@ Streamlit 以非常互动的方式支持表格数据和可视化。它提供了�
 
 内置的小部件允许数据科学家专注于提供准确和有用的数据，而 Streamlit 组件则使应用看起来非常出色。Streamlit 设计其产品以具有简单的默认设置，以便用户能够快速上手；这是 Streamlit 的设计原则之一[促进进步](https://oreil.ly/strlit)。
 
-# 本章使用的软件
+## 本章使用的软件
 
 本章基于你在前几章中学到的工具，特别是 pandas。表 11-1 显示了你将使用的新工具。
 
@@ -33,26 +34,26 @@ Streamlit 以非常互动的方式支持表格数据和可视化。它提供了�
 | nfl_data_py | NFL 数据库 |
 | Streamlit | 基于网络的分析软件 |
 
-## nfl_data_py
+### nfl_data_py
 
 为了进行数据分析，你通常希望从多个来源添加数据，以便使你的分析产品更具信息量或提供更广泛的背景。对于足球数据，[nflverse](https://oreil.ly/nfLV) 是一个包含 NFL 数据的丰富开源库和数据文件集。与数据交互的 Python 库是 [nfl_data_py](https://oreil.ly/2U7P8)。
 
-你将使用当前可用的最新版本的 nfl_data_py。
+你将使用当前可用的最新版本的 `nfl_data_py`。
 
-## Streamlit
+### Streamlit
 
-Streamlit 是一个开源的 Python 库，你可以使用`pip3`下载。通过包含这个库，一个单一的 Python 文件可以使用`streamlit run your_script.py`命令生成一个应用。这个库使用[Streamlit 入门指南](https://oreil.ly/-qxBe)很容易学习。
+Streamlit 是一个开源的 Python 库，你可以使用 `pip3` 下载。通过包含这个库，一个单一的 Python 文件可以使用 `streamlit run your_script.py` 命令生成一个应用。这个库使用 [Streamlit 入门指南](https://oreil.ly/-qxBe) 很容易学习。
 
-# 安装 Streamlit 和 nfl_data_py
+## 安装 Streamlit 和 nfl_data_py
 
-要安装本章所需的库，创建一个名为*chapter11/requirements.txt*的文件：
+要安装本章所需的库，创建一个名为 `chapter11/requirements.txt` 的文件：
 
 ```py
 .../analytics-project (main) $ cd chapter11
 .../chapter11 (main) $ touch requirements.txt
 ```
 
-将以下内容更新到*chapter11/requirements.txt*：
+将以下内容更新到 `chapter11/requirements.txt`：
 
 ```py
 streamlit>=1.38.0
@@ -70,7 +71,7 @@ backoff>=2.2.1
 
 你应该会看到一个消息，表明这些库已成功安装。
 
-# 在 Codespaces 中启动你的 API
+## 在 Codespaces 中启动你的 API
 
 图 11-2 显示了本章将创建的项目的高级架构。
 
@@ -84,18 +85,18 @@ backoff>=2.2.1
 
 当你的 API 或 Streamlit 应用在终端运行时，如果你想停止它，请按 Ctrl-C。
 
-# 重用第九章的 API 客户端文件
+## 重用第九章的 API 客户端文件
 
 在第九章中，你创建了一个独立的 Python 客户端文件来调用你的 API，同时添加了日志记录、错误处理和回退重试功能。你将在你的 Streamlit 应用中重用这个文件。将 API 客户端文件放在 Streamlit 应用之外，可以提供可重用性。
 
-将客户端文件从*chapter9/notebooks*目录（如果你还没有完成第九章，则从*chapter9/complete/notebooks*目录）复制到*chapter11/streamlit*目录：
+将客户端文件从 `chapter9/notebooks` 目录（如果你还没有完成第九章，则从 `chapter9/complete/notebooks` 目录）复制到 `chapter11/streamlit` 目录：
 
 ```py
 .../chapter11 (main) $ mkdir streamlit
 .../chapter11 (main) $ cp ../chapter9/notebooks/swc_simple_client.py streamlit
 ```
 
-# 创建你的 Streamlit 应用
+## 创建你的 Streamlit 应用
 
 你的 Streamlit 应用将包括一个*入口点文件*，这是 Streamlit 首先加载的文件。在这个应用中，你将使用入口点文件来设置初始配置和创建页面导航。你的应用还将包括执行工作的单个页面文件。
 
@@ -109,11 +110,11 @@ backoff>=2.2.1
 .../streamlit (main) $ touch page2.py
 ```
 
-# 更新入口点文件
+## 更新入口点文件
 
-入口点文件包含了一些对 Streamlit 应用至关重要的项目。第一个是`st.session_state`，它是应用程序中页面间共享信息的机制。接下来是`st.navigation`，这是创建具有共享导航栏的多页应用的方式。
+入口点文件包含了一些对 Streamlit 应用至关重要的项目。第一个是 `st.session_state`，它是应用程序中页面间共享信息的机制。接下来是 `st.navigation`，这是创建具有共享导航栏的多页应用的方式。
 
-将以下代码添加到*streamlit_football_app.py*，并将语句`[insert your API base URL]`替换为本地运行的 API 的基础 API URL：
+将以下代码添加到 `streamlit_football_app.py`，并将语句 `[insert your API base URL]` 替换为本地运行的 API 的基础 API URL：
 
 ```py
 import streamlit as st
@@ -163,7 +164,7 @@ pg.run() ![6](img/6.png)
 
 这条语句执行当前页面。
 
-# 运行您的 Streamlit 应用
+## 运行您的 Streamlit 应用
 
 要运行您的应用，请在终端中执行以下命令：
 
@@ -171,7 +172,7 @@ pg.run() ![6](img/6.png)
 .../streamlit (main) $ streamlit run streamlit_football_app.py
 ```
 
-您将看到 图 11-3 中所示的显示。
+您将看到图 11-3 中所示的显示。
 
 ![启动您的 Streamlit 应用](img/haad_1103.png)
 
@@ -183,7 +184,7 @@ pg.run() ![6](img/6.png)
 
 如果您被提示“源代码已更改”，请选择“始终重新运行”。这确保了代码更改立即应用于正在运行的应用程序。
 
-您将看到带有导航栏的空白应用，如图 图 11-4 所示。
+您将看到带有导航栏的空白应用，如图 11-4 所示。
 
 ![初始空白数据应用](img/haad_1104.png)
 
@@ -191,15 +192,15 @@ pg.run() ![6](img/6.png)
 
 ###### 小贴士
 
-您可以打开 VS Code Simple Browser 并使其在代码窗口旁边运行。通过点击 Ctrl-Shift-P 打开 VS Code 命令面板。输入 **Simple Browser:Show**，然后输入应用程序的地址（以 *app.github.dev* 结尾）。
+您可以打开 VS Code Simple Browser 并使其在代码窗口旁边运行。通过点击 Ctrl-Shift-P 打开 VS Code 命令面板。输入 **Simple Browser:Show**，然后输入应用程序的地址（以 `app.github.dev` 结尾）。
 
-# 创建团队名单页面
+## 创建团队名单页面
 
 当您的应用程序执行时，将显示团队名单子页面。它将调用 SportsWorldCentral API，使用 pandas 处理数据，然后显示 pandas DataFrame。
 
 文件的前半部分执行一些库导入并设置日志记录。然后，它调用 API 以检索将在页面上用于过滤和显示的所有数据。数据被用来创建一个 pandas DataFrame，这是在 Python 中处理数据的一种方便方式。pandas 库支持许多强大的数据处理函数，您将在下一节中看到。
 
-将以下代码添加到 *page1.py*：
+将以下代码添加到 `page1.py`：
 
 ```py
 import streamlit as st
@@ -248,7 +249,7 @@ try: ![4](img/4.png)
 
 ![5](img/5.png)(#co_using_apis_in_streamlit_data_apps_CO2-5)
 
-这使用 *swc_simple_client.py* 调用 API 并将 `httpx.response` 存储在一个变量中。
+这使用 `swc_simple_client.py` 调用 API 并将 `httpx.response` 存储在一个变量中。
 
 ![6](img/6.png)(#co_using_apis_in_streamlit_data_apps_CO2-6)
 
@@ -274,35 +275,36 @@ try: ![4](img/4.png)
 
 剩余的代码创建导航栏，然后使用 pandas 格式化数据并在页面上显示。它还包含与之前代码匹配的错误处理和异常处理语句。
 
-将以下代码添加到 *page1.py*:
+将以下代码添加到 `page1.py`：
+
+
 
 ```py
-        selected_league = st.sidebar.selectbox('Pick league ID',unique_leagues)![1](img/1.png)
+selected_league = st.sidebar.selectbox('Pick league ID', unique_leagues) ![1](img/1.png)
 
-        st.sidebar.divider()
-        st.sidebar.subheader(":blue[Data sources]")
-        st.sidebar.text("SportsWorldCentral")
+st.sidebar.divider()
+st.sidebar.subheader(":blue[Data sources]")
+st.sidebar.text("SportsWorldCentral")
 
-        flat_team_df = pd.json_normalize(
-           team_data, 'players', ['team_id', 'team_name','league_id']) ![2](img/2.png)
-       column_order = ['league_id','team_id','team_name','position',
-                       'player_id', 'gsis_id', 'first_name', 'last_name']
-        flat_team_df_ordered = flat_team_df[column_order]
+flat_team_df = pd.json_normalize(
+    team_data, 'players', ['team_id', 'team_name', 'league_id']) ![2](img/2.png)
+column_order = ['league_id', 'team_id', 'team_name', 'position',
+                'player_id', 'gsis_id', 'first_name', 'last_name']
+flat_team_df_ordered = flat_team_df[column_order]
 
-        if 'flat_team_df_ordered' not in st.session_state:
-            st.session_state['flat_team_df_ordered'] = flat_team_df_ordered
+if 'flat_team_df_ordered' not in st.session_state:
+    st.session_state['flat_team_df_ordered'] = flat_team_df_ordered
 
-        display_df = flat_team_df_ordered.drop(columns=['team_id','player_id'])
+display_df = flat_team_df_ordered.drop(columns=['team_id', 'player_id'])
 
-        display_df['league_id'] = display_df['league_id'].astype(str) 
-        display_df = display_df[display_df['league_id'] == selected_league] ![3](img/3.png)
+display_df['league_id'] = display_df['league_id'].astype(str)
+display_df = display_df[display_df['league_id'] == selected_league] ![3](img/3.png)
 
-        st.dataframe(display_df,hide_index=True) ![4](img/4.png)
+st.dataframe(display_df, hide_index=True) ![4](img/4.png)
 
-    else:
-        logger.error(f"Error encountered: {team_api_response.status_code} 
-                     {team_api_response.text}") ![5](img/5.png)
-        st.write("Error encountered while accessing data source.")
+else:
+    logger.error(f"Error encountered: {team_api_response.status_code} {team_api_response.text}") ![5](img/5.png)
+    st.write("Error encountered while accessing data source.")
 
 except Exception as e:
     logger.error(f"Exception encountered: {str(e)}") ![6](img/6.png)
@@ -311,19 +313,19 @@ except Exception as e:
 
 ![1](img/1.png)(#co_using_apis_in_streamlit_data_apps_CO3-1)
 
-在导航栏中创建一个选择框以选择 `league_id` 值。
+在导航栏中创建一个选择框以选择`league_id`值。
 
 ![2](img/2.png)(#co_using_apis_in_streamlit_data_apps_CO3-2)
 
-使用 pandas 的 `json_normalize()` 函数将嵌套 JSON 数据重新格式化为行和列。然后创建一个新的变量，具有不同的列顺序。
+使用 pandas 的`json_normalize()`函数将嵌套 JSON 数据重新格式化为行和列。然后创建一个新的变量，具有不同的列顺序。
 
 ![3](img/3.png)(#co_using_apis_in_streamlit_data_apps_CO3-3)
 
-创建一个只包含与用户在选择框中选择的 `selected_league` 匹配的值的过滤 DataFrame。
+创建一个只包含与用户在选择框中选择的`selected_league`匹配的值的过滤 DataFrame。
 
 ![4](img/4.png)(#co_using_apis_in_streamlit_data_apps_CO3-4)
 
-使用 Streamlit 内置的 `DataFrame()` 函数在页面上显示过滤后的 DataFrame。
+使用 Streamlit 内置的`DataFrame()`函数在页面上显示过滤后的 DataFrame。
 
 ![5](img/5.png)(#co_using_apis_in_streamlit_data_apps_CO3-5)
 
@@ -341,7 +343,7 @@ except Exception as e:
 
 # 创建团队统计数据页面
 
-当用户在导航栏中选择团队统计数据时，将显示团队统计数据页面。它不再调用 SportsWorldCentral API，而是重用存储在 `SessionState` 中的数据作为 pandas DataFrame。
+当用户在导航栏中选择团队统计数据时，将显示团队统计数据页面。它不再调用 SportsWorldCentral API，而是重用存储在`SessionState`中的数据作为 pandas DataFrame。
 
 文件的前部分导入库并设置日志记录。接下来，它为侧边栏创建项目并过滤数据集以匹配选择框中选择的条目。
 
@@ -354,7 +356,7 @@ import logging
 import nfl_data_py as nfl
 import matplotlib.pyplot as plt ![1](img/1.png)
 
-logger = logging.getLogger(__name__) 
+logger = logging.getLogger(__name__)
 
 st.header("SportsWorldCentral Data App")
 st.subheader("Team Touchdown Totals")
@@ -364,15 +366,15 @@ try:
     flat_team_df_ordered = st.session_state['flat_team_df_ordered'] ![2](img/2.png)
 
     unique_leagues = st.session_state['unique_leagues'] ![3](img/3.png)
-    selected_league = st.sidebar.selectbox('Pick league ID',unique_leagues)
+    selected_league = st.sidebar.selectbox('Pick league ID', unique_leagues)
 
     st.sidebar.divider()
     st.sidebar.subheader(":blue[Data sources]")
     st.sidebar.text("SportsWorldCentral")
     st.sidebar.text("NFLDataPy")
 
-  flat_team_df_ordered['league_id'] = flat_team_df_ordered[
-       'league_id'].astype(str) ![4](img/4.png)
+    flat_team_df_ordered['league_id'] = flat_team_df_ordered[
+        'league_id'].astype(str) ![4](img/4.png)
     flat_team_df_ordered = flat_team_df_ordered[
         flat_team_df_ordered['league_id'] == selected_league]
 ```
@@ -387,50 +389,50 @@ try:
 
 ![3](img/3.png)(#co_using_apis_in_streamlit_data_apps_CO4-3)
 
-这将检索在团队阵容页面创建的 `unique_leagues`，并在侧边栏中添加一个选择框。
+这将检索在团队阵容页面创建的`unique_leagues`，并在侧边栏中添加一个选择框。
 
 ![4](img/4.png)(#co_using_apis_in_streamlit_data_apps_CO4-4)
 
-这些过滤器将 DataFrame 过滤以匹配导航栏中选择框中的 `league_id`。
+这些过滤器将 DataFrame 过滤以匹配导航栏中选择框中的`league_id`。
 
-你不仅限于 SportsWorldCentral API 中可用的数据——你可以将其与外部来源结合。对于团队统计数据页面，你将通过在 `GSIS_ID` 值上连接来丰富从 nfl_data_py 库中获取的数据。这允许你的应用程序构建一个包含触地数据的条形图，这些数据在 API 中不可用。
+你不仅限于 SportsWorldCentral API 中可用的数据——你可以将其与外部来源结合。对于团队统计数据页面，你将通过在`GSIS_ID`值上连接来丰富从 nfl_data_py 库中获取的数据。这允许你的应用程序构建一个包含触地数据的条形图，这些数据在 API 中不可用。
 
 ###### 注意
 
-在本书的 第 I 部分 中，你选择在 API 中包含 `gsis_id`，它来自 NFL 的比赛统计数据和信息系统。你不需要它进行内部操作，但你决定它将有利于想要将数据与外部来源结合的数据科学用户。现在，这种额外的思考将为你的用户带来回报，因为它允许你将你的 API 数据与 nfl_data_py 的数据结合。
+在本书的 第 I 部分 中，你选择在 API 中包含`gsis_id`，它来自 NFL 的比赛统计数据和信息系统。你不需要它进行内部操作，但你决定它将有利于想要将数据与外部来源结合的数据科学用户。现在，这种额外的思考将为你的用户带来回报，因为它允许你将你的 API 数据与 nfl_data_py 的数据结合。
 
-页面上的剩余代码首先将数据从 nfl_data_py 加载到 pandas DataFrame 中，选择四列，然后创建一个新的 `total_tds` 列。接下来，代码使用 `merge` 命令将 API 数据与 nfl_data_py 数据连接，聚合它并显示图表。
+页面上的剩余代码首先将数据从 nfl_data_py 加载到 pandas DataFrame 中，选择四列，然后创建一个新的`total_tds`列。接下来，代码使用`merge`命令将 API 数据与 nfl_data_py 数据连接，聚合它并显示图表。
 
 将以下代码添加到 *page2.py*：
 
 ```py
 nfl_data_2023_df = nfl.import_seasonal_data([2023], 'REG') ![1](img/1.png)
 
- columns_to_select = [
-       'player_id', 'passing_tds', 'rushing_tds', 'receiving_tds'] ![2](img/2.png)
-    nfl_data_2023_subset_df = nfl_data_2023_df[columns_to_select].copy() 
+columns_to_select = [
+    'player_id', 'passing_tds', 'rushing_tds', 'receiving_tds'] ![2](img/2.png)
+nfl_data_2023_subset_df = nfl_data_2023_df[columns_to_select].copy()
 
-    nfl_data_2023_subset_df['total_tds'] = ( ![3](img/3.png)
-        nfl_data_2023_subset_df['passing_tds'] + 
-        nfl_data_2023_subset_df['rushing_tds'] + 
-        nfl_data_2023_subset_df['receiving_tds']
-    )
+nfl_data_2023_subset_df['total_tds'] = ( ![3](img/3.png)
+    nfl_data_2023_subset_df['passing_tds'] +
+    nfl_data_2023_subset_df['rushing_tds'] +
+    nfl_data_2023_subset_df['receiving_tds']
+)
 
-    merged_df = pd.merge(  ![4](img/4.png)
-        flat_team_df_ordered,
-        nfl_data_2023_subset_df,
-        how='left',   
-        left_on='gsis_id',
-        right_on='player_id'
-    )
+merged_df = pd.merge(  ![4](img/4.png)
+    flat_team_df_ordered,
+    nfl_data_2023_subset_df,
+    how='left',
+    left_on='gsis_id',
+    right_on='player_id'
+)
 
-    grouped_df = merged_df.groupby('team_name')['total_tds'].sum() ![5](img/5.png)
+grouped_df = merged_df.groupby('team_name')['total_tds'].sum() ![5](img/5.png)
 
-    fig, ax = plt.subplots() ![6](img/6.png)
-    grouped_df.plot(kind="barh", xlabel='Total TDs', 
-                    ylabel="Team Name", title="Total TDs - 2023", ax=ax)
+fig, ax = plt.subplots() ![6](img/6.png)
+grouped_df.plot(kind="barh", xlabel='Total TDs',
+                ylabel="Team Name", title="Total TDs - 2023", ax=ax)
 
-    st.pyplot(fig) ![7](img/7.png)
+st.pyplot(fig) ![7](img/7.png)
 
 except Exception as e:
     st.write(f"An unexpected error occurred: {str(e)}")
@@ -438,7 +440,7 @@ except Exception as e:
 
 ![1](img/1.png)(#co_using_apis_in_streamlit_data_apps_CO5-1)
 
-此命令调用 nfl_data_py 的 `import_seasonal_data` 方法，并请求 2023 赛季的数据。
+此命令调用 nfl_data_py 的`import_seasonal_data`方法，并请求 2023 赛季的数据。
 
 ![2](img/2.png)(#co_using_apis_in_streamlit_data_apps_CO5-2)
 
@@ -450,11 +452,11 @@ except Exception as e:
 
 ![4](img/#co_using_apis_in_streamlit_data_apps_CO5-4)
 
-这条语句使用 `pandas.merge()` 函数，该函数允许你连接两个 DataFrame。你正在连接 API DataFrame 和 nfl_data_py DataFrame。
+这条语句使用`pandas.merge()`函数，该函数允许你连接两个 DataFrame。你正在连接 API DataFrame 和 nfl_data_py DataFrame。
 
 ![5](img/#co_using_apis_in_streamlit_data_apps_CO5-5)
 
-pandas 的 `groupby` 语句将每个团队的球员合并在一起，并计算 `total_tds` 列的总和。
+pandas 的`groupby`语句将每个团队的球员合并在一起，并计算`total_tds`列的总和。
 
 ![6](img/#co_using_apis_in_streamlit_data_apps_CO5-6)
 
@@ -462,18 +464,18 @@ pandas 的 `groupby` 语句将每个团队的球员合并在一起，并计算 `
 
 ![7](img/#co_using_apis_in_streamlit_data_apps_CO5-7)
 
-这使用 Streamlit 的 `pyplot()` 函数显示在前面步骤中创建的图表。
+这使用 Streamlit 的`pyplot()`函数显示在前面步骤中创建的图表。
 
 你将看到团队阵容页面显示，如图 图 11-6 所示。
 
 ![团队统计页面](img/haad_1106.png)
 
-###### 图 11-6\. 团队统计页面
+###### 图 11-6. 团队统计页面
 
-要查看 Streamlit 应用的最终结构，执行以下 `tree` 命令：
+要查看 Streamlit 应用的最终结构，执行以下`tree`命令：
 
 ```py
-.../streamlit (main) $  tree --prune -I 'build|*.egg-info|__pycache__'
+.../streamlit (main) $ tree --prune -I 'build|*.egg-info|__pycache__'
 .
 ├── football_app.log
 ├── page1.py
@@ -518,7 +520,13 @@ branch 'learning-branch' set up to track 'origin/learning-branch'.
 
 接下来，你将对目录结构进行一些更改。输入以下命令：
 
-```py
+
+
+# 项目整理与提交
+
+首先，将你的 Codespace 切换回仓库的 `main` 分支，并清理各章节的目录结构，为最终项目做准备：
+
+```
 .../analytics-project/ (learning-branch) $ git checkout main ![1](img/1.png)
 Switched to branch 'main'
 Your branch is up to date with 'origin/main'.
@@ -536,7 +544,7 @@ Your branch is up to date with 'origin/main'.
 
 ![1](img/#co_using_apis_in_streamlit_data_apps_CO7-1)
 
-将你的 Codespace 切换回你的仓库的 *main* 分支。
+将你的 Codespace 切换回你的仓库的 `main` 分支。
 
 ![2](img/2.png)(#co_using_apis_in_streamlit_data_apps_CO7-2)
 
@@ -544,11 +552,11 @@ Your branch is up to date with 'origin/main'.
 
 ![3](img/3.png)(#co_using_apis_in_streamlit_data_apps_CO7-3)
 
-将第十章的 *airflow* 文件移动到新文件夹。
+将第十章的 `airflow` 文件移动到新文件夹。
 
 ![4](img/4.png)(#co_using_apis_in_streamlit_data_apps_CO7-4)
 
-将第十一章的 *streamlit* 文件夹移动到根目录。
+将第十一章的 `streamlit` 文件夹移动到根目录。
 
 ![5](img/5.png)(#co_using_apis_in_streamlit_data_apps_CO7-5)
 
@@ -556,7 +564,7 @@ Your branch is up to date with 'origin/main'.
 
 要查看已完成项目的目录结构，请运行以下命令：
 
-```py
+```
 .../portfolio-project (main) $ tree -d  --prune -I 'build|*.egg-info|__pycache__'
 .
 ├── airflow
@@ -567,9 +575,9 @@ Your branch is up to date with 'origin/main'.
 4 directories
 ```
 
-至少更新 *README.md* 文件中的以下内容，然后添加你对自己在项目中学习到的内容以及如何定制项目的个人思考：
+至少更新 `README.md` 文件中的以下内容，然后添加你对自己在项目中学习到的内容以及如何定制项目的个人思考：
 
-```py
+```
 # Analytics Portfolio Project
 This repository contains programs using industry-standard Python frameworks,
 based on projects from the book _Hands-on APIs for AI and Data Science_

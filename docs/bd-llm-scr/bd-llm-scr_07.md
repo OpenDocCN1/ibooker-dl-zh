@@ -1,30 +1,32 @@
+
+
 # 附录 A PyTorch 简介
 
-本附录旨在为您提供将深度学习应用于实践并从头开始实现大型语言模型（LLMs）所需的基本技能和知识。PyTorch，一个流行的基于 Python 的深度学习库，将是本书的主要工具。我将指导您使用 PyTorch 和 GPU 支持设置深度学习工作空间。
+本附录旨在为您提供将深度学习应用于实践并从头开始实现大型语言模型（LLMs）所需的基本技能和知识。`PyTorch`，一个流行的基于 Python 的深度学习库，将是本书的主要工具。我将指导您使用 `PyTorch` 和 GPU 支持设置深度学习工作空间。
 
-接下来，您将了解张量这一基本概念及其在 PyTorch 中的使用。我们还将深入了解 PyTorch 的自动微分引擎，这是一个使我们能够方便且高效地使用反向传播的功能，而反向传播是神经网络训练的关键方面。
+接下来，您将了解张量这一基本概念及其在 `PyTorch` 中的使用。我们还将深入了解 `PyTorch` 的自动微分引擎，这是一个使我们能够方便且高效地使用反向传播的功能，而反向传播是神经网络训练的关键方面。
 
-本附录旨在为那些刚开始使用 PyTorch 进行深度学习的人提供入门指南。虽然它从底层解释了 PyTorch，但它并不旨在全面覆盖 PyTorch 库。相反，我们将专注于我们将用于实现 LLMs 的 PyTorch 基础知识。如果您已经熟悉深度学习，您可以跳过本附录，直接进入第二章。
+本附录旨在为那些刚开始使用 `PyTorch` 进行深度学习的人提供入门指南。虽然它从底层解释了 `PyTorch`，但它并不旨在全面覆盖 `PyTorch` 库。相反，我们将专注于我们将用于实现 LLMs 的 `PyTorch` 基础知识。如果您已经熟悉深度学习，您可以跳过本附录，直接进入第二章。
 
 ## A.1 什么是 PyTorch？
 
-PyTorch ([`pytorch.org/`](https://pytorch.org/)) 是一个开源的基于 Python 的深度学习库。根据 *Papers With Code* ([`paperswithcode.com/trends`](https://paperswithcode.com/trends)) 平台，该平台跟踪和分析研究论文，PyTorch 自 2019 年以来一直是研究中最广泛使用的深度学习库，并且差距很大。根据 *Kaggle 数据科学和机器学习调查 2022* ([`www.kaggle.com/c/kaggle-survey-2022`](https://www.kaggle.com/c/kaggle-survey-2022))，使用 PyTorch 的受访者数量大约为 40%，并且每年都在增长。
+`PyTorch`（[`pytorch.org/`](https://pytorch.org/)）是一个开源的基于 Python 的深度学习库。根据 *Papers With Code*（[`paperswithcode.com/trends`](https://paperswithcode.com/trends)）平台，该平台跟踪和分析研究论文，`PyTorch` 自 2019 年以来一直是研究中最广泛使用的深度学习库，并且差距很大。根据 *Kaggle 数据科学和机器学习调查 2022*（[`www.kaggle.com/c/kaggle-survey-2022`](https://www.kaggle.com/c/kaggle-survey-2022)），使用 `PyTorch` 的受访者数量大约为 40%，并且每年都在增长。
 
-PyTorch 之所以如此受欢迎，其中一个原因就是其用户友好的界面和效率。尽管它易于访问，但它并没有在灵活性上妥协，允许高级用户调整模型的高级方面以进行定制和优化。简而言之，对于许多实践者和研究人员来说，PyTorch 在可用性和功能之间提供了恰到好处的平衡。
+`PyTorch` 之所以如此受欢迎，其中一个原因就是其用户友好的界面和效率。尽管它易于访问，但它并没有在灵活性上妥协，允许高级用户调整模型的高级方面以进行定制和优化。简而言之，对于许多实践者和研究人员来说，`PyTorch` 在可用性和功能之间提供了恰到好处的平衡。
 
 ### A.1.1 PyTorch 的三个核心组件
 
-PyTorch 是一个相对全面的库，一种接近它的方法是关注其三个主要组件，如图 A.1 所示。
+`PyTorch` 是一个相对全面的库，一种接近它的方法是关注其三个主要组件，如图 A.1 所示。
 
 ![figure](img/A-1.png)
 
 ##### 图 A.1 PyTorch 的三个主要组件包括作为计算基本构建块的张量库、用于模型优化的自动微分以及深度学习实用函数，这使得实现和训练深度神经网络模型变得更加容易。
 
-首先，PyTorch 是一个*张量库*，它扩展了数组导向编程库 NumPy 的概念，并增加了加速 GPU 上计算的功能，从而在 CPU 和 GPU 之间提供无缝切换。其次，PyTorch 是一个*自动微分引擎*，也称为 autograd，它能够自动计算张量操作的梯度，简化了反向传播和模型优化。最后，PyTorch 是一个*深度学习库*。它提供了模块化、灵活且高效的构建块，包括预训练模型、损失函数和优化器，用于设计和训练各种深度学习模型，满足研究人员和开发者的需求。
+首先，`PyTorch` 是一个*张量库*，它扩展了数组导向编程库 `NumPy` 的概念，并增加了加速 GPU 上计算的功能，从而在 CPU 和 GPU 之间提供无缝切换。其次，`PyTorch` 是一个*自动微分引擎*，也称为 `autograd`，它能够自动计算张量操作的梯度，简化了反向传播和模型优化。最后，`PyTorch` 是一个*深度学习库*。它提供了模块化、灵活且高效的构建块，包括预训练模型、损失函数和优化器，用于设计和训练各种深度学习模型，满足研究人员和开发者的需求。
 
 ### A.1.2 定义深度学习
 
-在新闻中，大型语言模型（LLMs）通常被称为 AI 模型。然而，LLMs 也是一种深度神经网络，PyTorch 是一个深度学习库。听起来很复杂？在我们继续之前，让我们简要总结一下这些术语之间的关系。
+在新闻中，大型语言模型（LLMs）通常被称为 AI 模型。然而，LLMs 也是一种深度神经网络，`PyTorch` 是一个深度学习库。听起来很复杂？在我们继续之前，让我们简要总结一下这些术语之间的关系。
 
 *人工智能*的基本目标是创建能够执行通常需要人类智能的任务的计算机系统。这些任务包括理解自然语言、识别模式和做出决策。（尽管取得了重大进展，但 AI 距离达到这种通用智能水平还有很长的路要走。）
 
@@ -50,29 +52,29 @@ PyTorch 是一个相对全面的库，一种接近它的方法是关注其三个
 
 ### A.1.3 安装 PyTorch
 
-PyTorch 的安装方法与其他 Python 库或包类似。然而，由于 PyTorch 是一个包含 CPU 和 GPU 兼容代码的综合库，安装可能需要额外的解释。
+`PyTorch` 的安装方法与其他 Python 库或包类似。然而，由于 `PyTorch` 是一个包含 CPU 和 GPU 兼容代码的综合库，安装可能需要额外的解释。
 
 ##### Python 版本
 
-许多科学计算库并不立即支持 Python 的最新版本。因此，在安装 PyTorch 时，建议使用一个比最新版本早一两个发布版本的 Python。例如，如果 Python 的最新版本是 3.13，那么使用 Python 3.11 或 3.12 是推荐的。
+许多科学计算库并不立即支持 Python 的最新版本。因此，在安装 `PyTorch` 时，建议使用一个比最新版本早一两个发布版本的 Python。例如，如果 Python 的最新版本是 3.13，那么使用 Python 3.11 或 3.12 是推荐的。
 
-例如，PyTorch 有两个版本：一个仅支持 CPU 计算的精简版和一个支持 CPU 和 GPU 计算的完整版。如果您的机器有一个可用于深度学习的 CUDA 兼容 GPU（理想情况下是 NVIDIA T4、RTX 2080 Ti 或更新的型号），我建议安装 GPU 版本。无论如何，在代码终端中安装 PyTorch 的默认命令是：
+例如，`PyTorch` 有两个版本：一个仅支持 CPU 计算的精简版和一个支持 CPU 和 GPU 计算的完整版。如果您的机器有一个可用于深度学习的 CUDA 兼容 GPU（理想情况下是 NVIDIA T4、RTX 2080 Ti 或更新的型号），我建议安装 GPU 版本。无论如何，在代码终端中安装 `PyTorch` 的默认命令是：
 
 ```py
 pip install torch
 ```
 
-假设您的计算机支持 CUDA 兼容的 GPU，那么它将自动安装支持通过 CUDA 进行 GPU 加速的 PyTorch 版本，前提是您正在工作的 Python 环境已安装必要的依赖项（如 `pip`）。
+假设您的计算机支持 CUDA 兼容的 GPU，那么它将自动安装支持通过 CUDA 进行 GPU 加速的 `PyTorch` 版本，前提是您正在工作的 Python 环境已安装必要的依赖项（如 `pip`）。
 
-注意：截至本文撰写时，PyTorch 还通过 ROCm 添加了对 AMD GPU 的实验性支持。有关更多信息，请参阅 [`pytorch.org`](https://pytorch.org)。
+注意：截至本文撰写时，`PyTorch` 还通过 ROCm 添加了对 AMD GPU 的实验性支持。有关更多信息，请参阅 [`pytorch.org`](https://pytorch.org)。
 
-要明确安装与 CUDA 兼容的 PyTorch 版本，通常最好指定 PyTorch 要兼容的 CUDA 版本。PyTorch 的官方网站 ([`pytorch.org`](https://pytorch.org)) 为不同操作系统提供了安装具有 CUDA 支持的 PyTorch 的命令。图 A.4 显示了一个将安装 PyTorch 以及可选的 `torchvision` 和 `torchaudio` 库的命令。
+要明确安装与 CUDA 兼容的 `PyTorch` 版本，通常最好指定 `PyTorch` 要兼容的 CUDA 版本。`PyTorch` 的官方网站（[`pytorch.org`](https://pytorch.org)）为不同操作系统提供了安装具有 CUDA 支持的 `PyTorch` 的命令。图 A.4 显示了一个将安装 `PyTorch` 以及可选的 `torchvision` 和 `torchaudio` 库的命令。
 
 ![图](img/A-4.png)
 
 ##### 图 A.4 通过 [`pytorch.org`](https://pytorch.org) 访问 PyTorch 安装推荐，以自定义并选择适合您系统的安装命令。
 
-我在示例中使用 PyTorch 2.4.0，因此我建议您使用以下命令安装确切版本，以确保与本书兼容：
+我在示例中使用 `PyTorch` 2.4.0，因此我建议您使用以下命令安装确切版本，以确保与本书兼容：
 
 ```py
 pip install torch==2.4.0
@@ -80,7 +82,7 @@ pip install torch==2.4.0
 
 然而，如前所述，根据您的操作系统，安装命令可能与这里显示的略有不同。因此，我建议您访问 [`pytorch.org`](https://pytorch.org) 并使用安装菜单（见图 A.4）选择适合您操作系统的安装命令。请记住，在命令中将 `torch` 替换为 `torch==2.4.0`。
 
-要检查 PyTorch 的版本，请在 PyTorch 中执行以下代码：
+要检查 `PyTorch` 的版本，请在 `PyTorch` 中执行以下代码：
 
 ```py
 import torch
@@ -95,11 +97,11 @@ torch.__version__
 
 ##### PyTorch 和 Torch
 
-Python 库被命名为 PyTorch，主要是因为它是 Torch 库的延续，但已针对 Python 进行了适配（因此称为“PyTorch”）。“Torch”承认该库起源于 Torch，这是一个广泛支持机器学习算法的科学计算框架，最初是用 Lua 编程语言创建的。
+Python 库被命名为 `PyTorch`，主要是因为它是 `Torch` 库的延续，但已针对 Python 进行了适配（因此称为“PyTorch”）。“Torch”承认该库起源于 `Torch`，这是一个广泛支持机器学习算法的科学计算框架，最初是用 Lua 编程语言创建的。
 
 如果您需要额外的建议和说明，用于设置 Python 环境或安装本书中使用的其他库，请访问本书的补充 GitHub 仓库 [`github.com/rasbt/LLMs-from-scratch`](https://github.com/rasbt/LLMs-from-scratch)。
 
-安装 PyTorch 后，您可以通过在 Python 中运行以下代码来检查您的安装是否识别了内置的 NVIDIA GPU：
+安装 `PyTorch` 后，您可以通过在 Python 中运行以下代码来检查您的安装是否识别了内置的 NVIDIA GPU：
 
 ```py
 import torch
@@ -112,9 +114,9 @@ torch.cuda.is_available()
 True
 ```
 
-如果命令返回 `True`，则一切准备就绪。如果命令返回 `False`，则您的计算机可能没有兼容的 GPU，或者 PyTorch 无法识别它。虽然本书的前几章不需要 GPU，这些章节主要关注于教育目的实现 LLM，但 GPU 可以显著加快深度学习相关计算。
+如果命令返回 `True`，则一切准备就绪。如果命令返回 `False`，则您的计算机可能没有兼容的 GPU，或者 `PyTorch` 无法识别它。虽然本书的前几章不需要 GPU，这些章节主要关注于教育目的实现 LLM，但 GPU 可以显著加快深度学习相关计算。
 
-如果您无法访问 GPU，有几个云计算提供商允许用户按小时计费运行 GPU 计算。一个流行的类似 Jupyter 笔记本的环境是 Google Colab ([`colab.research.google.com`](https://colab.research.google.com))，截至本文撰写时，它提供了时间有限的 GPU 访问。使用运行时菜单，可以选择一个 GPU，如图 A.5 中的截图所示。
+如果您无法访问 GPU，有几个云计算提供商允许用户按小时计费运行 GPU 计算。一个流行的类似 Jupyter 笔记本的环境是 Google Colab（[`colab.research.google.com`](https://colab.research.google.com)），截至本文撰写时，它提供了时间有限的 GPU 访问。使用运行时菜单，可以选择一个 GPU，如图 A.5 中的截图所示。
 
 ![figure](img/A-5.png)
 
@@ -122,17 +124,17 @@ True
 
 ##### 苹果硅上的 PyTorch
 
-如果您有一台配备苹果硅芯片的苹果 Mac（如 M1、M2、M3 或更新的型号），您可以使用其功能来加速 PyTorch 代码的执行。要使用您的苹果硅芯片为 PyTorch，您首先需要像平常一样安装 PyTorch。然后，为了检查您的 Mac 是否支持使用其苹果硅芯片进行 PyTorch 加速，您可以在 Python 中运行一个简单的代码片段：
+如果您有一台配备苹果硅芯片的苹果 Mac（如 M1、M2、M3 或更新的型号），您可以使用其功能来加速 `PyTorch` 代码的执行。要使用您的苹果硅芯片为 `PyTorch`，您首先需要像平常一样安装 `PyTorch`。然后，为了检查您的 Mac 是否支持使用其苹果硅芯片进行 `PyTorch` 加速，您可以在 Python 中运行一个简单的代码片段：
 
 ```py
 print(torch.backends.mps.is_available())
 ```
 
-如果它返回 `True`，则意味着您的 Mac 拥有可以用于加速 PyTorch 代码的苹果硅芯片。
+如果它返回 `True`，则意味着您的 Mac 拥有可以用于加速 `PyTorch` 代码的苹果硅芯片。
 
 ##### 练习 A.1
 
-在您的计算机上安装和设置 PyTorch
+在您的计算机上安装和设置 `PyTorch`
 
 ##### 练习 A.2
 
@@ -146,17 +148,17 @@ print(torch.backends.mps.is_available())
 
 ##### 图 A.6 不同阶的张量。其中 0D 对应阶数为 0，1D 对应阶数为 1，2D 对应阶数为 2。一个由三个元素组成的三维向量仍然是一个阶数为 1 的张量。
 
-从计算的角度来看，张量作为数据容器。例如，它们持有多维数据，其中每个维度代表一个不同的特征。像 PyTorch 这样的张量库可以高效地创建、操作和计算这些数组。在这种情况下，张量库充当数组库。
+从计算的角度来看，张量作为数据容器。例如，它们持有多维数据，其中每个维度代表一个不同的特征。像 `PyTorch` 这样的张量库可以高效地创建、操作和计算这些数组。在这种情况下，张量库充当数组库。
 
-PyTorch 张量类似于 NumPy 数组，但具有几个对深度学习非常重要的附加功能。例如，PyTorch 添加了一个自动微分引擎，简化了*计算梯度*（见第 A.4 节）。PyTorch 张量还支持 GPU 计算，以加快深度神经网络训练（见第 A.9 节）。
+`PyTorch` 张量类似于 `NumPy` 数组，但具有几个对深度学习非常重要的附加功能。例如，`PyTorch` 添加了一个自动微分引擎，简化了*计算梯度*（见第 A.4 节）。`PyTorch` 张量还支持 GPU 计算，以加快深度神经网络训练（见第 A.9 节）。
 
 ##### 带有 NumPy-like API 的 PyTorch
 
-PyTorch 采用了 NumPy 数组 API 和语法的大多数部分来执行其张量操作。如果您是 NumPy 的新手，您可以通过我的文章“Python 中的科学计算：NumPy 和 Matplotlib 简介”快速了解最相关的概念，该文章可在[`sebastianraschka.com/blog/2020/numpy-intro.html`](https://sebastianraschka.com/blog/2020/numpy-intro.html)找到。
+`PyTorch` 采用了 `NumPy` 数组 API 和语法的大多数部分来执行其张量操作。如果您是 `NumPy` 的新手，您可以通过我的文章“Python 中的科学计算：NumPy 和 Matplotlib 简介”快速了解最相关的概念，该文章可在[`sebastianraschka.com/blog/2020/numpy-intro.html`](https://sebastianraschka.com/blog/2020/numpy-intro.html)找到。
 
 ### A.2.1 标量、向量、矩阵和张量
 
-如前所述，PyTorch 张量是类似数组的结构的数据容器。标量是零维张量（例如，只是一个数字），向量是一维张量，矩阵是二维张量。对于更高维度的张量没有特定的术语，所以我们通常将三维张量称为 3D 张量，依此类推。我们可以使用 `torch.tensor` 函数创建 PyTorch 的 `Tensor` 类对象，如下所示。
+如前所述，`PyTorch` 张量是类似数组的结构的数据容器。标量是零维张量（例如，只是一个数字），向量是一维张量，矩阵是二维张量。对于更高维度的张量没有特定的术语，所以我们通常将三维张量称为 3D 张量，依此类推。我们可以使用 `torch.tensor` 函数创建 `PyTorch` 的 `Tensor` 类对象，如下所示。
 
 ##### 列表 A.1 创建 PyTorch 张量
 
@@ -184,7 +186,7 @@ tensor3d = torch.tensor([[[1, 2], [3, 4]],
 
 ### A.2.2 张量数据类型
 
-PyTorch 采用 Python 的默认 64 位整数数据类型。我们可以通过张量的 `.dtype` 属性访问张量的数据类型：
+`PyTorch` 采用 Python 的默认 64 位整数数据类型。我们可以通过张量的 `.dtype` 属性访问张量的数据类型：
 
 ```py
 tensor1d = torch.tensor([1, 2, 3])
@@ -197,7 +199,7 @@ print(tensor1d.dtype)
 torch.int64
 ```
 
-如果我们从 Python 浮点数创建张量，PyTorch 默认创建 32 位精度的张量：
+如果我们从 Python 浮点数创建张量，`PyTorch` 默认创建 32 位精度的张量：
 
 ```py
 floatvec = torch.tensor([1.0, 2.0, 3.0])
@@ -225,11 +227,11 @@ print(floatvec.dtype)
 torch.float32
 ```
 
-有关 PyTorch 中可用的不同张量数据类型的更多信息，请查看官方文档[`pytorch.org/docs/stable/tensors.html`](https://pytorch.org/docs/stable/tensors.html)。
+有关 `PyTorch` 中可用的不同张量数据类型的更多信息，请查看官方文档[`pytorch.org/docs/stable/tensors.html`](https://pytorch.org/docs/stable/tensors.html)。
 
 ### A.2.3 常见的 PyTorch 张量操作
 
-本书不涵盖所有不同的 PyTorch 张量操作和命令的全面介绍。然而，随着我们在书中介绍这些操作，我会简要描述相关的操作。
+本书不涵盖所有不同的 `PyTorch` 张量操作和命令的全面介绍。然而，随着我们在书中介绍这些操作，我会简要描述相关的操作。
 
 我们已经介绍了 `torch.tensor()` 函数来创建新的张量：
 
@@ -272,7 +274,7 @@ tensor([[1, 2],
         [5, 6]])
 ```
 
-然而，请注意，在 PyTorch 中重塑张量的更常见命令是 `.view()`：
+然而，请注意，在 `PyTorch` 中重塑张量的更常见命令是 `.view()`：
 
 ```py
 print(tensor2d.view(3, 2))
@@ -280,15 +282,18 @@ print(tensor2d.view(3, 2))
 
 输出是
 
+
+
+
 ```py
 tensor([[1, 2],
         [3, 4],
         [5, 6]])
 ```
 
-与 `.reshape` 和 `.view` 类似，在几个情况下，PyTorch 为执行相同的计算提供了多个语法选项。PyTorch 最初遵循原始 Lua Torch 语法约定，但后来，根据普遍的要求，添加了与 NumPy 类似的语法。（PyTorch 中 `.view()` 和 `.reshape()` 之间的细微差别在于它们对内存布局的处理：`.view()` 要求原始数据是连续的，如果不是，将会失败，而 `.reshape()` 将会工作，如果需要，会复制数据以确保所需的形状。）
+与`.reshape`和`.view`类似，在几个情况下，PyTorch 为执行相同的计算提供了多个语法选项。PyTorch 最初遵循原始 Lua Torch 语法约定，但后来，根据普遍的要求，添加了与 NumPy 类似的语法。（PyTorch 中`.view()`和`.reshape()`之间的细微差别在于它们对内存布局的处理：`.view()`要求原始数据是连续的，如果不是，将会失败，而`.reshape()`将会工作，如果需要，会复制数据以确保所需的形状。）
 
-接下来，我们可以使用 `.T` 来转置一个张量，这意味着沿着其对角线翻转它。请注意，这与重塑张量不同，正如以下结果所示：
+接下来，我们可以使用`.T`来转置一个张量，这意味着沿着其对角线翻转它。请注意，这与重塑张量不同，正如以下结果所示：
 
 ```py
 print(tensor2d.T)
@@ -302,7 +307,7 @@ tensor([[1, 4],
         [3, 6]])
 ```
 
-最后，PyTorch 中乘以两个矩阵的常用方法是 `.matmul` 方法：
+最后，PyTorch 中乘以两个矩阵的常用方法是`.matmul`方法：
 
 ```py
 print(tensor2d.matmul(tensor2d.T))
@@ -315,7 +320,7 @@ tensor([[14, 32],
         [32, 77]])
 ```
 
-然而，我们也可以采用 `@` 操作符，它可以更紧凑地完成相同的事情：
+然而，我们也可以采用`@`操作符，它可以更紧凑地完成相同的事情：
 
 ```py
 print(tensor2d @ tensor2d.T)
@@ -370,9 +375,9 @@ loss = F.binary_cross_entropy(a, y)
 
 ![figure](img/A-7.png)
 
-##### 图 A.7 展示了逻辑回归的前向传递作为计算图。输入特征 x[1]乘以模型权重 w[1]，在添加偏差后通过激活函数 s，然后通过比较模型输出 a 与给定的标签 y 来计算损失。
+##### 图 A.7 展示了逻辑回归的前向传递作为计算图。输入特征`x[1]`乘以模型权重`w[1]`，在添加偏差后通过激活函数`s`，然后通过比较模型输出`a`与给定的标签`y`来计算损失。
 
-事实上，PyTorch 在后台构建这样的计算图，我们可以使用它来计算损失函数相对于模型参数（此处*w*[1]和*b*）的梯度，以训练模型。
+事实上，PyTorch 在后台构建这样的计算图，我们可以使用它来计算损失函数相对于模型参数（此处`w[1]`和`b`）的梯度，以训练模型。
 
 ## A.4 自动微分变得简单
 
@@ -410,7 +415,7 @@ grad_L_w1 = grad(loss, w1, retain_graph=True)   #1
 grad_L_b = grad(loss, b, retain_graph=True)
 ```
 
-#1 默认情况下，PyTorch 在计算梯度后会销毁计算图以释放内存。然而，由于我们很快将重用这个计算图，我们设置 retain_graph=True 以使其留在内存中。
+#1 默认情况下，PyTorch 在计算梯度后会销毁计算图以释放内存。然而，由于我们很快将重用这个计算图，我们设置`retain_graph=True`以使其留在内存中。
 
 给定模型参数的损失梯度的结果值是
 
@@ -419,14 +424,14 @@ print(grad_L_w1)
 print(grad_L_b)
 ```
 
-This prints
+这会打印
 
 ```py
 (tensor([-0.0898]),)
 (tensor([-0.0817]),)
 ```
 
-在这里，我们一直在手动使用 grad 函数，这对于实验、调试和展示概念可能很有用。但是，在实践中，PyTorch 提供了更多高级工具来自动化这个过程。例如，我们可以在损失上调用 `.backward`，PyTorch 将计算图中所有叶节点的梯度，这些梯度将通过张量的 `.grad` 属性存储：
+在这里，我们一直在手动使用`grad`函数，这对于实验、调试和展示概念可能很有用。但是，在实践中，PyTorch 提供了更多高级工具来自动化这个过程。例如，我们可以在损失上调用`.backward`，PyTorch 将计算图中所有叶节点的梯度，这些梯度将通过张量的`.grad`属性存储：
 
 ```py
 loss.backward()
@@ -441,7 +446,7 @@ print(b.grad)
 (tensor([-0.0817]),)
 ```
 
-我已经提供了很多信息，你可能被微积分概念所淹没，但不用担心。虽然这种微积分术语是解释 PyTorch 的 autograd 组件的手段，但你只需要记住 PyTorch 通过 `.backward` 方法为我们处理微积分——我们不需要手动计算任何导数或梯度。
+我已经提供了很多信息，你可能被微积分概念所淹没，但不用担心。虽然这种微积分术语是解释 PyTorch 的 autograd 组件的手段，但你只需要记住 PyTorch 通过`.backward`方法为我们处理微积分——我们不需要手动计算任何导数或梯度。
 
 ## A.5 实现多层神经网络
 
@@ -451,9 +456,9 @@ print(b.grad)
 
 ##### 图 A.9 具有两个隐藏层的多层感知器。每个节点代表相应层中的一个单元。为了说明目的，每个层都有非常少的节点。
 
-当在 PyTorch 中实现神经网络时，我们可以通过继承 `torch.nn.Module` 类来定义我们自己的自定义网络架构。这个 `Module` 基类提供了很多功能，使得构建和训练模型变得更加容易。例如，它允许我们封装层和操作，并跟踪模型的参数。
+当在 PyTorch 中实现神经网络时，我们可以通过继承`torch.nn.Module`类来定义我们自己的自定义网络架构。这个`Module`基类提供了很多功能，使得构建和训练模型变得更加容易。例如，它允许我们封装层和操作，并跟踪模型的参数。
 
-在这个子类中，我们在 `__init__` 构造函数中定义网络层，并在 `forward` 方法中指定层之间的交互方式。`forward` 方法描述了输入数据如何通过网络，并作为一个计算图汇集在一起。相比之下，我们通常不需要自己实现的 `backward` 方法，在训练期间用于根据模型参数计算损失函数的梯度（参见 A.7 节）。以下列表中的代码实现了一个具有两个隐藏层的经典多层感知器，以展示 `Module` 类的典型用法。
+在这个子类中，我们在`__init__`构造函数中定义网络层，并在`forward`方法中指定层之间的交互方式。`forward`方法描述了输入数据如何通过网络，并作为一个计算图汇集在一起。相比之下，我们通常不需要自己实现的`backward`方法，在训练期间用于根据模型参数计算损失函数的梯度（参见 A.7 节）。以下列表中的代码实现了一个具有两个隐藏层的经典多层感知器，以展示`Module`类的典型用法。
 
 ##### 列表 A.4 具有两个隐藏层的多层感知器
 
@@ -612,6 +617,10 @@ tensor([[-0.1262,  0.1080, -0.1792]], grad_fn=<AddmmBackward0>)
 ```
 
 在前面的代码中，我们生成了一个单一的随机训练示例`X`作为玩具输入（注意我们的网络期望 50 维的特征向量），并将其输入到模型中，返回三个分数。当我们调用`model(x)`时，它将自动执行模型的正向传递。
+
+
+
+## 正向传递与反向传播
 
 正向传递是指从输入张量计算输出张量的过程。这涉及到将输入数据通过所有神经网络层，从输入层开始，通过隐藏层，最后到输出层。
 
@@ -892,6 +901,8 @@ Epoch: 003/003 | Batch 001/002 | Train Loss: 0.00
 注意：为了防止不希望的梯度累积，在每个更新轮次中包含一个`optimizer.zero_grad()`调用以将梯度重置为 0 是非常重要的。否则，梯度将累积，这可能是我们不希望的。
 
 在我们训练了模型之后，我们可以使用它来进行预测：
+
+
 
 ```py
 model.eval()
@@ -1238,13 +1249,15 @@ device = torch.device(
 
 使用 DDP 的好处是它提供的处理数据集的速度比单个 GPU 更快。除了 DDP 使用时设备之间附带的一点点通信开销外，理论上，使用两个 GPU 可以在一半的时间内处理一个训练周期，而只用一个 GPU 则不行。时间效率随着 GPU 数量的增加而提高，如果我们有八个 GPU，我们可以将一个周期处理得快八倍，依此类推。
 
+
+
 注意：DDP 在像 Jupyter 笔记本这样的交互式 Python 环境中无法正常工作，因为这些环境没有像独立 Python 脚本那样处理多进程。因此，以下代码应作为脚本执行，而不是在 Jupyter 这样的笔记本界面中执行。DDP 需要生成多个进程，并且每个进程都应该有自己的 Python 解释器实例。
 
 现在我们来看看这在实践中是如何工作的。为了简洁起见，我专注于需要调整以进行 DDP 训练的代码的核心部分。然而，那些想在他们的多 GPU 机器或他们选择的云实例上运行代码的读者应使用本书 GitHub 仓库中提供的独立脚本，网址为[`github.com/rasbt/LLMs-from-scratch`](https://github.com/rasbt/LLMs-from-scratch)。
 
 首先，我们导入了一些用于分布式训练的 PyTorch 的附加子模块、类和函数，如下所示。
 
-##### 列表 A.12 PyTorch 分布式训练实用工具
+## 列表 A.12 PyTorch 分布式训练实用工具
 
 ```py
 import torch.multiprocessing as mp
@@ -1259,7 +1272,7 @@ PyTorch 的`multiprocessing`子模块包含`multiprocessing.spawn`等函数，�
 
 `init_process_group`和`destroy_process_group`用于初始化和退出分布式训练模块。应在训练脚本的开始处调用`init_process_group`函数来初始化分布式设置中每个进程的过程组，并在训练脚本的末尾调用`destroy_process_group`来销毁给定过程组并释放其资源。以下列表中的代码说明了如何使用这些新组件来实现我们之前实现的`NeuralNetwork`模型的 DDP 训练。
 
-##### 列表 A.13 使用`DistributedDataParallel`策略进行模型训练
+## 列表 A.13 使用`DistributedDataParallel`策略进行模型训练
 
 ```py
 def ddp_setup(rank, world_size):
@@ -1350,7 +1363,7 @@ if __name__ == "__main__":
 
 最后要讨论的函数是 `ddp_setup`。它设置主节点的地址和端口，以便不同进程之间的通信，使用 NCCL 后端（专为 GPU 到 GPU 通信设计）初始化进程组，并设置 `rank`（进程标识符）和世界大小（进程总数）。最后，它指定与当前模型训练进程 `rank` 对应的 GPU 设备。
 
-#### 在多 GPU 机器上选择可用的 GPU
+### 在多 GPU 机器上选择可用的 GPU
 
 如果您希望限制在多 GPU 机器上用于训练的 GPU 数量，最简单的方法是使用 `CUDA_VISIBLE_DEVICES` 环境变量。为了说明这一点，假设您的机器有多个 GPU，您只想使用一个 GPU——例如，索引为 0 的 GPU。您可以从终端运行以下代码而不是 `python some_script.py`：
 
@@ -1419,7 +1432,7 @@ if rank == 0:                  #1
 
 简而言之，这就是通过 DDP 进行分布式训练的工作方式。如果您对更多细节感兴趣，我建议您查看官方 API 文档，网址为 [`mng.bz/9dPr`](https://mng.bz/9dPr)。
 
-##### 多 GPU 训练的替代 PyTorch API
+### 多 GPU 训练的替代 PyTorch API
 
 如果您更喜欢在 PyTorch 中使用多个 GPU 的更直接的方法，您可以考虑附加 API，如开源的 Fabric 库。我在“加速 PyTorch 模型训练：使用混合精度和完全分片数据并行”一文中提到了它（[`mng.bz/jXle`](https://mng.bz/jXle)）。
 

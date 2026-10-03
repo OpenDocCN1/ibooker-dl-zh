@@ -1,12 +1,12 @@
-# 第三章：开始基线: 基准测试和优化
+
+
+# 第三章：开始基线：基准测试和优化
 
 本章内容包括
 
-+   分析一对自然语言处理（NLP）问题
-
-+   使用关键的传统方法建立问题基线
-
-+   使用代表性的深度预训练语言模型 ELMo 和 BERT 进行基线
++ 分析一对自然语言处理（NLP）问题
++ 使用关键的传统方法建立问题基线
++ 使用代表性的深度预训练语言模型 ELMo 和 BERT 进行基线
 
 在本章中，我们继续直接深入解决 NLP 问题，这是我们在上一章开始的。我们继续追求建立一套具体 NLP 问题的基线，稍后我们将能够利用这些基线来衡量从越来越复杂的迁移学习方法中获得的逐渐改进。我们完成了我们在第二章开始的练习，那里我们介绍了一对实际问题，预处理了相应的数据，并通过探索一些广义线性方法开始了基线。特别是，我们介绍了电子邮件垃圾邮件和互联网电影数据库（IMDB）电影评论分类示例，并使用了逻辑回归和支持向量机（SVM）来建立它们的基线。
 
@@ -24,9 +24,9 @@
 
 *随机森林*（RFs）通过生成大量专门的树并收集它们的输出，为应用决策树提供了一种实用的机器学习方法。RFs 非常灵活和广泛适用，通常是从逻辑回归后从业者尝试的第二种算法用于建立基线。有关 RFs 及其历史背景的更详细讨论，请参阅第一章。
 
-让我们使用流行的库 scikit-learn 来构建我们的分类器，如下所示。
+让我们使用流行的库 `scikit-learn` 来构建我们的分类器，如下所示。
 
-列出 3.1 训练和测试随机森林分类器
+**列表 3.1 训练和测试随机森林分类器**
 
 ```py
 from sklearn.ensemble import RandomForestClassifier          ❶
@@ -46,7 +46,7 @@ print("The RF testing accuracy score is::")
 print(acc_score)
 ```
 
-❶ 加载 scikit 的随机森林分类器库
+❶ 加载 `scikit` 的随机森林分类器库
 
 ❷ 创建一个随机森林分类器
 
@@ -58,9 +58,9 @@ print(acc_score)
 
 这种基于决策树的机器学习算法的变体迭代地学习新的基于决策树的模型，以解决前次迭代模型的弱点。在撰写本文时，它们被普遍认为是解决非感知机器学习问题的最佳类方法。不幸的是，它们确实存在一些缺点，包括较大的模型大小、过拟合的风险更高以及比其他一些决策树模型更少的可解释性。
 
-训练梯度提升机（GBM）分类器的代码显示在下一个列表中。同样，我们使用 scikit-learn 中这些模型的实现。请注意，Python 库 XGBoost 中的实现被普遍认为更具有内存效率，并且更容易扩展/并行化。
+训练梯度提升机（GBM）分类器的代码显示在下一个列表中。同样，我们使用 `scikit-learn` 中这些模型的实现。请注意，Python 库 `XGBoost` 中的实现被普遍认为更具有内存效率，并且更容易扩展/并行化。
 
-列表 3.2 训练/测试梯度提升机分类器
+**列表 3.2 训练/测试梯度提升机分类器**
 
 ```py
 from sklearn.ensemble import GradientBoostingClassifier        ❶
@@ -86,7 +86,7 @@ def modelfit(alg, train_x, train_y, predictors, test_x, performCV=True, cv_folds
 
 ❶ GBM 算法
 
-❷ 附加的 sklearn 函数
+❷ 附加的 `sklearn` 函数
 
 ❸ 在整体数据上拟合算法
 
@@ -100,7 +100,7 @@ def modelfit(alg, train_x, train_y, predictors, test_x, performCV=True, cv_folds
 
 注意，在列表 3.2 中，除了通常的训练准确率分数外，我们还报告了 *k 折交叉验证* 和 *受试者工作特征曲线*（ROC）下的 *曲线下面积* 来评估模型。这是必要的，因为 GBMs 特别容易过拟合，报告这些指标有助于我们监控这种风险。另一个原因是，这个练习可以让你复习这些概念。
 
-更具体地说，k 折交叉验证（默认值为 k=5 折）将训练数据集随机分为 k 个分区或折叠，并在 k-1 个分区上训练模型，同时在剩余的第 k 个分区上评估/验证性能，重复这个过程 k 次，每个分区都作为验证集。然后，它使用这些 k 次评估迭代的统计数据报告性能。这个过程允许我们减少模型在数据集的某些部分过拟合和在其他部分表现不佳的风险。
+更具体地说，k 折交叉验证（默认值为 `k=5` 折）将训练数据集随机分为 k 个分区或折叠，并在 k-1 个分区上训练模型，同时在剩余的第 k 个分区上评估/验证性能，重复这个过程 k 次，每个分区都作为验证集。然后，它使用这些 k 次评估迭代的统计数据报告性能。这个过程允许我们减少模型在数据集的某些部分过拟合和在其他部分表现不佳的风险。
 
 简而言之，过拟合是指将太多参数拟合到太少的数据中。这种情况会损害模型对新数据的泛化能力，并且通常表现为改善训练指标但验证指标没有改善。可以通过收集更多数据、简化模型以减少训练参数的数量以及本书中我们将重点介绍的其他方法来减轻这种情况。
 
@@ -143,7 +143,7 @@ The Gradient Boosting testing accuracy score is::
 0.665   
 ```
 
-乍一看，看着这些结果，人们可能会倾向于认为与我们之前看过的先前方法相比，GBM 数值实验更昂贵——在 Kaggle 上 IMDB 示例完成需要将近 10 分钟。然而，我们必须考虑到当进行 k 折交叉验证练习时，模型会被训练 k=5 次以获得更可靠的性能估计。因此，每次训练大约需要两分钟——这并不像不考虑 k 折交叉验证而推断出的训练时间增加那么剧烈。
+乍一看，看着这些结果，人们可能会倾向于认为与我们之前看过的先前方法相比，GBM 数值实验更昂贵——在 Kaggle 上 IMDB 示例完成需要将近 10 分钟。然而，我们必须考虑到当进行 k 折交叉验证练习时，模型会被训练 `k=5` 次以获得更可靠的性能估计。因此，每次训练大约需要两分钟——这并不像不考虑 k 折交叉验证而推断出的训练时间增加那么剧烈。
 
 我们可以看到一些过拟合的证据——第一个示例的测试准确度低于 k 折训练准确度。此外，在 IMDB 示例中，k 折交叉验证分数明显低于整个数据集的训练分数，强调了在这种模型类型中使用 k 折交叉验证方法跟踪过拟合的重要性。我们在本章的倒数第二节中讨论了一些进一步提高分类器准确性的方法。
 
@@ -171,17 +171,17 @@ plt.show()
 
 ❷ 计算 ROC 曲线值
 
-❸ 使用 matplotlib 库生成标记的 ROC 曲线图
+❸ 使用 `matplotlib` 库生成标记的 ROC 曲线图
 
 邮件分类示例的结果 ROC 曲线如图 3.1 所示。斜率为 1 的直线代表 FPR 与 TPR 之间的权衡对应于随机机会。ROC 曲线越远离此线的左侧，分类器性能越好。因此，ROC 曲线下面积可用作性能的度量。
 
 ![03_01](img/03_01.png)
 
-图 3.1 邮件分类示例的 ROC 曲线
+**图 3.1 邮件分类示例的 ROC 曲线**
 
 决策树方法的一个重要特性是它们可以提供特征的重要性得分，这可以用来检测给定数据集中最重要的特征。我们通过在列表 3.2 函数的返回语句之前插入几行代码来做到这一点，如列表 3.3 中所示。
 
-列表 3.3 梯度提升机分类代码和特征重要性分数
+**列表 3.3 梯度提升机分类代码和特征重要性分数**
 
 ```py
 from sklearn.ensemble import GradientBoostingClassifier               ❶
@@ -210,7 +210,7 @@ def modelfit(alg, train_x, train_y, predictors, test_x, performCV=True, cv_folds
 
 ❶ GBM 算法
 
-❷ 其他 sklearn 函数
+❷ 其他 `sklearn` 函数
 
 ❸ 在整体数据上拟合算法
 
@@ -234,21 +234,24 @@ def modelfit(alg, train_x, train_y, predictors, test_x, performCV=True, cv_folds
 
 正如我们在第一章讨论的那样，神经网络是处理感知问题（如计算机视觉和自然语言处理）最重要的机器学习算法类别之一。
 
-在本节中，我们将在本章和上一章中基线化的两个示例问题上训练两个代表性的预训练神经网络语言模型。我们考虑来自语言模型的嵌入 (ELMo) 和来自 transformers 的双向编码器表示 (BERT)。
+在本节中，我们将在本章和上一章中基线化的两个示例问题上训练两个代表性的预训练神经网络语言模型。我们考虑来自语言模型的嵌入（ELMo）和来自 transformers 的双向编码器表示（BERT）。
 
 ![03_02](img/03_02.png)
 
-图 3.2 在 IMDB 分类示例中由梯度提升机分类器发现的各种标记的重要性分数
+**图 3.2 在 IMDB 分类示例中由梯度提升机分类器发现的各种标记的重要性分数**
+
+
+
 
 ELMo 包含卷积和循环（特别是*长短期记忆* [LSTM]）元素，而合适命名的 BERT 是基于 transformers 的。这些术语在第一章中介绍过，并将在后续章节中更详细地讨论。我们采用了最简单的迁移学习微调形式，在对应的预训练嵌入之上，通过我们前几节的标签数据集训练了一个单独的密集分类层。
 
-### 3.2.1 语言模型的嵌入 (ELMo)
+## 3.2.1 语言模型的嵌入 (ELMo)
 
-语言模型嵌入（ELMo）模型以热门的*Sesame Street*角色命名，是最早证明在一般 NLP 任务中将预训练的语言模型知识转移的有效性的模型之一。该模型被训练以预测一系列单词中的下一个单词，在非监督的大型语料库上可以进行，结果显示得到的权重可以推广到各种其他 NLP 任务。我们将不会在本节详细讨论该模型的架构--我们将在后面的章节中讨论该问题。在这里，我们专注于建立直觉,但足够提到的是，该模型利用了字符级卷积来构建每个单词标记的初步嵌入，接着是双向 LSTM 层，将上下文信息引入模型产生的最终嵌入中。
+语言模型嵌入（ELMo）模型以热门的*Sesame Street*角色命名，是最早证明在一般 NLP 任务中将预训练的语言模型知识转移的有效性的模型之一。该模型被训练以预测一系列单词中的下一个单词，在非监督的大型语料库上可以进行，结果显示得到的权重可以推广到各种其他 NLP 任务。我们将不会在本节详细讨论该模型的架构——我们将在后面的章节中讨论该问题。在这里，我们专注于建立直觉，但足够提到的是，该模型利用了字符级卷积来构建每个单词标记的初步嵌入，接着是双向 LSTM 层，将上下文信息引入模型产生的最终嵌入中。
 
 简要介绍了 ELMo 之后，让我们开始为两个运行示例数据集中的每个数据集训练它。ELMo 模型可以通过 TensorFlow Hub 获得，TensorFlow Hub 提供了一个简单的平台用于共享 TensorFlow 模型。我们将使用使用 TensorFlow 作为后端的 Keras 来构建我们的模型。为了使 TensorFlow Hub 模型可以被 Keras 使用，我们需要定义一个自定义的 Keras 层，以正确的格式实例化它。下面的代码段展示了如何实现这个功能。
 
-代码段 3.4：将 TensorFlow Hub ELMo 实例化为自定义的 Keras 层
+**代码段 3.4：将 TensorFlow Hub ELMo 实例化为自定义的 Keras 层**
 
 ```py
 import tensorflow as tf                                                 ❶
@@ -269,7 +272,7 @@ class ElmoEmbeddingLayer(Layer):                                        ❸
         super(ElmoEmbeddingLayer, self).__init__(**kwargs)
 
     def build(self, input_shape):
-        self.elmo =hub.Module('https:/ /tfhub.dev/google/elmo/2', trainable=self.trainable,
+        self.elmo =hub.Module('https://tfhub.dev/google/elmo/2', trainable=self.trainable,
                                name="{}_module".format(self.name))      ❹
 
         self.trainable_weights += 
@@ -295,15 +298,15 @@ class ElmoEmbeddingLayer(Layer):                                        ❸
 
 ❹ 从 TensorFlow Hub 下载预训练的 ELMo 模型
 
-❺ 提取可训练参数--ELMo 模型层加权平均值中的四个权重；更多详细信息请参阅之前的 TensorFlow Hub 链接
+❺ 提取可训练参数——ELMo 模型层加权平均值中的四个权重；更多详细信息请参阅之前的 TensorFlow Hub 链接
 
 ❻ 指定输出的形状
 
 在使用这个函数来训练模型之前，我们需要对我们的预处理数据进行一些调整，以适应这个模型结构。特别是，回想一下，我们为传统模型组装了变量`raw_data`的词袋表示，该变量由第 2.7 节的代码生成，并且这是一个包含每封电子邮件的单词标记列表的 NumPy 数组。在这种情况下，我们将使用第 3.5 节的函数和代码将每个这样的列表合并成一个单一的文本字符串。这是 ELMo TensorFlow Hub 模型期望的输入格式，我们很高兴满足要求。
 
-注意 深度学习实践中，由于人工神经网络极具发现重要性和非重要性的神奇能力，通常不需要去除停用词这一步骤。但在我们的情况下，因为我们试图比较不同模型类型在这个问题上的优点和缺点，对所有算法应用相同的预处理是有意义的，同时也可以说是正确的方法。然而，需要注意的是，ELMo 和 BERT 都是在包含停用词的语料库上进行预训练的。
+**注意**：深度学习实践中，由于人工神经网络极具发现重要性和非重要性的神奇能力，通常不需要去除停用词这一步骤。但在我们的情况下，因为我们试图比较不同模型类型在这个问题上的优点和缺点，对所有算法应用相同的预处理是有意义的，同时也可以说是正确的方法。然而，需要注意的是，ELMo 和 BERT 都是在包含停用词的语料库上进行预训练的。
 
-列表 3.5 将数据转换为 ELMo TensorFlow Hub 模型所需的形式
+**列表 3.5 将数据转换为 ELMo TensorFlow Hub 模型所需的形式**
 
 ```py
 def convert_data(raw_data,header):                              ❶
@@ -335,7 +338,7 @@ test_x, test_y = convert_data(raw_data[idx:],header[idx:])      ❺
 
 在将数据转换为正确的格式之后，我们使用下一个列表中的代码构建和训练 Keras ELMo TensorFlow Hub 模型。
 
-列表 3.6 使用列表 3.4 中定义的自定义层构建 ELMo Keras 模型
+**列表 3.6 使用列表 3.4 中定义的自定义层构建 ELMo Keras 模型**
 
 ```py
 def build_model(): 
@@ -398,7 +401,7 @@ Non-trainable params: 0
 
 ![03_03](img/03_03.png)
 
-图 3.3 显示了在电子邮件分类示例中训练 ELMo 模型的前五个时代的验证和训练准确性比分的趋势。
+**图 3.3** 显示了在电子邮件分类示例中训练 ELMo 模型的前五个时代的验证和训练准确性比分的趋势。
 
 每个时代需要大约 10 秒来完成——这些信息是由我们的代码打印的。我们看到第四个时代达到了约 97.3%的验证准确性（意味着在不到一分钟的时间内达到了结果）。这个性能与 Logistic Regression 方法的性能相当，后者只稍好一点，为 97.7%（也见表 3.1）。我们注意到这个算法的行为是随机的——它的运行在每次运行时都表现出不同的行为。因此，即使在与我们使用的类似的架构上，你自己的收敛性也会有所不同。实践中通常尝试几次运行算法，并在随机和不同的结果中选择最佳的参数集。最后，我们注意到训练和验证准确性的背离表明了过拟合的开始，正如图中所示的那样。这证实了将通过增加超参数`maxtokenlen`指定的标记长度以及通过`maxtokens`指定的每封电子邮件的标记数量来增加信号量的数量可能会进一步提高性能的假设。自然地，通过打开`Nsamp`来增加每类样本的数量也应该有助于提高性能。
 
@@ -406,11 +409,11 @@ Non-trainable params: 0
 
 ![03_04](img/03_04.png)
 
-图 3.4 显示了在 IMDB 电影评论分类示例上训练 ELMo 模型的前五个时代的验证和训练准确性比分的趋势。
+**图 3.4** 显示了在 IMDB 电影评论分类示例上训练 ELMo 模型的前五个时代的验证和训练准确性比分的趋势。
 
 每个时代再次需要大约 10 秒，并且在第二个时代不到一分钟的时间内就实现了约 70%左右的验证准确性。我们将看到如何在本章的下一个和最后一个部分提高这些模型的性能。请注意，在第三个以及之后的时代，可以观察到一些过拟合的证据，因为训练准确性继续提高——对数据的拟合改善了，而验证准确性仍然较低。
 
-### 3.2.2 双向编码器表示来自转换（BERT）
+## 3.2.2 双向编码器表示来自转换（BERT）
 
 双向编码器表示来自变换器（BERT）模型也是以流行的*Sesame Street*角色命名的，以向 ELMo 开始的趋势致敬。在撰写本文时，其变体在将预训练语言模型知识转移到下游自然语言处理任务方面取得了一些最佳性能。该模型同样被训练来预测词语序列中的词语，尽管确切的*masking*过程略有不同，将在本书后面详细讨论。它也可以在非常大的语料库上以无监督的方式进行，并且生成的权重同样适用于各种其他自然语言处理任务。可以说，要熟悉自然语言处理中的迁移学习，熟悉 BERT 也是不可或缺的。
 
@@ -419,6 +422,8 @@ Non-trainable params: 0
 简要介绍了 BERT 之后，让我们继续为两个运行示例数据集中的每一个训练它。BERT 模型也可以通过 TensorFlow Hub 获得。为了使 hub 模型能够被 Keras 使用，我们同样定义了一个自定义 Keras 层，以正确的格式实例化它，如下一个清单所示。
 
 [使用自定义 Keras 层实例化 TensorFlow Hub BERT](https://wiki.example.org/instantiating_tensorflow_hub_bert_as_custom_keras_layer)
+
+
 
 ```py
 import tensorflow as tf
@@ -434,7 +439,7 @@ class BertLayer(tf.keras.layers.Layer):
         self,
         n_fine_tune_layers=10,                                             ❶
         pooling="mean",                                                    ❷
-        bert_path="https:/ /tfhub.dev/google/bert_uncased_L-12_H-768_A-12/1",❸
+        bert_path="https://tfhub.dev/google/bert_uncased_L-12_H-768_A-12/1",❸
         **kwargs,
     ):
         self.n_fine_tune_layers = n_fine_tune_layers
@@ -556,17 +561,17 @@ def initialize_vars(sess):                                                 ❸
     sess.run(tf.tables_initializer())
     K.set_session(sess)
 
-bert_path = "https:/ /tfhub.dev/google/bert_uncased_L-12_H-768_A-12/1"
+bert_path = "https://tfhub.dev/google/bert_uncased_L-12_H-768_A-12/1"
 tokenizer = create_tokenizer_from_hub_module(bert_path)                    ❹
 
 train_examples = convert_text_to_examples(train_x, train_y)                ❺
 test_examples = convert_text_to_examples(test_x, test_y)
 
 # Convert to features
-(train_input_ids,train_input_masks,train_segment_ids,train_labels) =       ❻
+(train_input_ids, train_input_masks, train_segment_ids, train_labels) =    ❻
      convert_examples_to_features(tokenizer, train_examples,               ❻
      max_seq_length=maxtokens)                                             ❻
-(test_input_ids,test_input_masks,test_segment_ids,test_labels) = 
+(test_input_ids, test_input_masks, test_segment_ids, test_labels) = 
      convert_examples_to_features(tokenizer, test_examples,  
      max_seq_length=maxtokens)
 
@@ -575,8 +580,8 @@ model = build_model(maxtokens)                                             ❼
 initialize_vars(sess)                                                      ❽
 
 history = model.fit([train_input_ids, train_input_masks, train_segment_ids],❾
-train_labels,validation_data=([test_input_ids, test_input_masks, 
-test_segment_ids],test_labels), epochs=5, batch_size=32)
+train_labels, validation_data=([test_input_ids, test_input_masks, 
+test_segment_ids], test_labels), epochs=5, batch_size=32)
 ```
 
 ❶ 用于构建模型的函数
@@ -617,9 +622,9 @@ test_segment_ids],test_labels), epochs=5, batch_size=32)
 
 | 通用超参数设置 | LR | SVM | RF | GBM | ELMo | BERT |
 | --- | --- | --- | --- | --- | --- | --- |
-| Nsamp = 1000 maxtokens = 50 maxtokenlen = 20 | 97.7% | 70.2% | 94.5% | 94.2% | 97.3% | 98.3% |
-| Nsamp = 1000 maxtokens = 100 maxtokenlen = 100 | 99.2% | 72.3% | 97.2% | 97.3% | 98.2% | 98.8% |
-| Nsamp = 1000, maxtokens = 200, maxtokenlen = 100 | 98.7% | 90.0% | 97.7% | 97.2% | 99.7% | 98.8% |
+| `Nsamp` = 1000, `maxtokens` = 50, `maxtokenlen` = 20 | 97.7% | 70.2% | 94.5% | 94.2% | 97.3% | 98.3% |
+| `Nsamp` = 1000, `maxtokens` = 100, `maxtokenlen` = 100 | 99.2% | 72.3% | 97.2% | 97.3% | 98.2% | 98.8% |
+| `Nsamp` = 1000, `maxtokens` = 200, `maxtokenlen` = 100 | 98.7% | 90.0% | 97.7% | 97.2% | 99.7% | 98.8% |
 
 根据这个结果，我们可以看到，虽然 SVM 显然是这个问题中表现最差的分类器，但 logistic 回归、ELMo 和 BERT 几乎可以达到完美的性能。还要注意，ELMo 在更多信号存在时表现最好——这是我们在没有优化步骤的情况下可能会错过的东西。但是，logistic 回归的简单性和速度可能导致它被选为此电子邮件分类问题的生产中首选的分类器。
 
@@ -627,11 +632,13 @@ test_segment_ids],test_labels), epochs=5, batch_size=32)
 
 表 3.2 IMDB 电影评论分类示例中手动调整过程中探索的不同通用超参数设置的算法准确度比较
 
+
+
 | 通用超参数设置 | 逻辑回归 | 支持向量机 | 随机森林 | 梯度提升机 | ELMo | BERT |
 | --- | --- | --- | --- | --- | --- | --- |
-| Nsamp = 1000 maxtokens = 50 maxtokenlen = 20 | 69.1% | 66.0% | 63.9% | 67.0% | 69.7% | 71.0% |
-| Nsamp = 1000 maxtokens = 100 maxtokenlen = 100 | 74.3% | 72.5% | 70.0% | 72.0% | 75.2% | 79.1% |
-| Nsamp = 1000 maxtokens = 200 maxtokenlen = 100 | 79.0% | 78.3% | 67.2% | 77.5% | 77.7% | 81.0% |
+| `Nsamp = 1000` `maxtokens = 50` `maxtokenlen = 20` | 69.1% | 66.0% | 63.9% | 67.0% | 69.7% | 71.0% |
+| `Nsamp = 1000` `maxtokens = 100` `maxtokenlen = 100` | 74.3% | 72.5% | 70.0% | 72.0% | 75.2% | 79.1% |
+| `Nsamp = 1000` `maxtokens = 200` `maxtokenlen = 100` | 79.0% | 78.3% | 67.2% | 77.5% | 77.7% | 81.0% |
 
 对于这个问题，BERT 似乎是最佳模型，其次是 ELMo 和逻辑回归。注意，这个问题有更多的改进空间，这与我们早期观察到的这个问题比电子邮件分类问题更难的观察一致。这使我们假设，预训练知识转移对更难的问题有更大的影响，这是直观的。这个概念也符合一般建议，即在有大量标记数据可用时，神经网络模型可能优于其他方法，假设要解决的问题足够复杂，需要额外的数据。
 
@@ -649,9 +656,9 @@ print("Available hyper-parameters for systematic tuning available with RF:")
 print(clf.get_params())                                ❷
 ```
 
-❶ GridSearchCV scikit-learn 导入语句
+❶ `GridSearchCV` scikit-learn 导入语句
 
-❷ clf 是列表 2.13 中的 RF 分类器。
+❷ `clf` 是列表 2.13 中的 RF 分类器。
 
 这产生了以下输出：
 
@@ -666,7 +673,7 @@ param_grid = {
     'min_samples_leaf': [1, 2, 3],
     'min_samples_split': [2, 6, 10],
     'n_estimators': [10, 100, 1000]
-
+}
 ```
 
 然后我们使用以下代码进行网格搜索，确保打印出最终的测试准确性和最佳的超参数值：
@@ -697,22 +704,21 @@ print(acc_score)
 Best parameters found:
 {'min_samples_leaf': 2, 'min_samples_split': 10, 'n_estimators': 1000}
 Estimated accuracy is:
-
 ```
 
 的确，当我们在所有分类器上进行全面调整时，我们发现可以将每个分类器的性能提升 1-2%，而不会影响在前一小节中达到的每个问题的最佳分类器的结论。
 
 ## 摘要
 
-+   通常会尝试多种算法来解决感兴趣的任何问题，以找到模型复杂性和性能的最佳组合，以适应您的情况。
++ 通常会尝试多种算法来解决感兴趣的任何问题，以找到模型复杂性和性能的最佳组合，以适应您的情况。
 
-+   基线通常从最简单的算法开始，例如逻辑回归，然后逐渐变得更复杂，直到达到正确的性能/复杂性折衷。
++ 基线通常从最简单的算法开始，例如逻辑回归，然后逐渐变得更复杂，直到达到正确的性能/复杂性折衷。
 
-+   重要的模型设计选择包括用于评估性能的指标，用于指导训练算法的损失函数以及最佳验证实践，等等，这些可以根据模型和问题类型而异。
++ 重要的模型设计选择包括用于评估性能的指标，用于指导训练算法的损失函数以及最佳验证实践，等等，这些可以根据模型和问题类型而异。
 
-+   超参数调整是模型开发流程的重要步骤，因为初始超参数设置可能严重误代表通过调整可以找到的最佳性能。
++ 超参数调整是模型开发流程的重要步骤，因为初始超参数设置可能严重误代表通过调整可以找到的最佳性能。
 
-+   简单模型在可用数据量不大和/或问题较简单时往往效果最佳，而复杂的神经网络模型在有更多数据可用时往往表现更好，因此值得额外复杂性，当更多数据可用时。
++ 简单模型在可用数据量不大和/或问题较简单时往往效果最佳，而复杂的神经网络模型在有更多数据可用时往往表现更好，因此值得额外复杂性，当更多数据可用时。
 
 1. P. Goyal 等人，“准确的、大型小批次 SGD：在 1 小时内训练 ImageNet”，*arXhiv*（2018 年）。
 

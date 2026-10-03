@@ -1,3 +1,5 @@
+
+
 # 第四章：使用 GPT 模型进行文本生成
 
 在本书的前几章中，我们已迈出了进入大型语言模型（LLMs）世界的第一步。我们深入探讨了各种应用，如分类和语义搜索，采用了专注于文本表示的模型，例如 BERT 及其衍生模型。
@@ -6,11 +8,11 @@
 
 在本章中，我们将更详细地探讨这些生成模型，并深入探讨提示工程、与生成模型推理、验证甚至评估其输出的领域。
 
-# 使用文本生成模型
+## 使用文本生成模型
 
 在开始提示工程的基本知识之前，探索如何利用文本生成模型的基础知识是至关重要的。我们如何选择使用的模型？我们是使用专有模型还是开源模型？我们如何控制生成的输出？这些问题将作为我们使用文本生成模型的垫脚石。
 
-## 选择文本生成模型
+### 选择文本生成模型
 
 选择文本生成模型始于在专有模型和开源模型之间进行选择。尽管专有模型通常性能更优，但我们在本书中更多地关注开源模型，因为它们提供了更多灵活性并且可以免费使用。
 
@@ -28,7 +30,7 @@
 
 如果你在生成 AI 领域刚起步，重要的是从一个较小的模型开始。这为初学者提供了很好的介绍，并为进阶到更大的模型打下坚实的基础。
 
-## 加载文本生成模型
+### 加载文本生成模型
 
 “如何加载文本生成模型”实际上可以单独成为一个章节。市面上有几十个包，各自拥有不同的压缩和推理策略来提高性能。
 
@@ -39,10 +41,10 @@ import torch
 from transformers import pipeline
 # Load our model
 pipe = pipeline(
-    "text-generation", 
-    model="HuggingFaceH4/zephyr-7b-beta", 
-    torch_dtype=torch.bfloat16, 
-    device_map="auto"
+    "text-generation", 
+    model="HuggingFaceH4/zephyr-7b-beta", 
+    torch_dtype=torch.bfloat16, 
+    device_map="auto"
 )
 ```
 
@@ -51,24 +53,24 @@ pipe = pipeline(
 为了说明这一点，让我们请 LLM 讲个关于鸡的笑话：
 
 ```py
-`def` format_prompt(query="", messages=`False`):
-    """Use the internal chat template to format our query"""
-    # The system prompt (what the LLM should know before answering) and our query:
-    `if` `not` messages:
-        messages = [
-            {
-                "role": "system",
-                "content": "You are a helpful assistant.",
-            },
-            {"role": "user", "content": query},
-        ]
-    # We apply the LLMs internal chat template to our input prompt
-    prompt = pipe.tokenizer.apply_chat_template(
-        messages,
-        tokenize=`False`,
-        add_generation_prompt=`True`
-    )
-    `return` prompt
+def format_prompt(query="", messages=False):
+    """Use the internal chat template to format our query"""
+    # The system prompt (what the LLM should know before answering) and our query:
+    if not messages:
+        messages = [
+            {
+                "role": "system",
+                "content": "You are a helpful assistant.",
+            },
+            {"role": "user", "content": query},
+        ]
+    # We apply the LLMs internal chat template to our input prompt
+    prompt = pipe.tokenizer.apply_chat_template(
+        messages,
+        tokenize=False,
+        add_generation_prompt=True
+    )
+    return prompt
 prompt = format_prompt("Write a short joke about chickens.")
 ```
 
@@ -83,11 +85,11 @@ prompt = format_prompt("Write a short joke about chickens.")
 ```py
 # Generate the output
 outputs = pipe(
-    prompt, 
-    max_new_tokens=256, 
-    do_sample=`True`, 
-    temperature=0.1, 
-    top_p=0.95
+    prompt, 
+    max_new_tokens=256, 
+    do_sample=True, 
+    temperature=0.1, 
+    top_p=0.95
 )
 print(outputs[0]["generated_text"])
 ```
@@ -108,7 +110,7 @@ Because the Eggspressway was closed for pavement!
 
 既然我们知道如何使用聊天模板创建提示，让我们深入探讨如何控制模型的输出。
 
-## 控制模型输出
+### 控制模型输出
 
 除了提示工程，我们还可以通过调整模型参数来控制我们想要的输出类型。在之前的示例中，你可能注意到我们在`pipe`函数中使用了多个参数，包括`temperature`和`top_p`。
 
@@ -120,7 +122,7 @@ Because the Eggspressway was closed for pavement!
 
 ###### 图 4-3\. 模型根据它们的可能性评分选择生成下一个标记。
 
-### 温度
+#### 温度
 
 `temperature` 控制生成文本的随机性或创造性。它定义了选择不太可能的标记的可能性。基本思想是，温度为 0 时每次都会生成相同的响应，因为它总是选择最可能的单词。如 图 4-4 所示，较高的值允许生成不太可能的单词。
 
@@ -130,9 +132,9 @@ Because the Eggspressway was closed for pavement!
 
 结果是，较高的温度（例如 0.8）通常会导致更具多样性的输出，而较低的温度（例如 0.2）则会产生更确定性的输出。
 
-### top_p
+#### top_p
 
-`top_p`，也称为核采样，是一种控制 LLM 可以考虑哪些标记（核）的采样技术。它会考虑标记直到达到其累积概率。如果我们将 top_p 设置为 0.1，它会考虑标记直到达到该值。如果我们将 `top_p` 设置为 1，它会考虑所有标记。
+`top_p`，也称为核采样，是一种控制 LLM 可以考虑哪些标记（核）的采样技术。它会考虑标记直到达到其累积概率。如果我们将 `top_p` 设置为 0.1，它会考虑标记直到达到该值。如果我们将 `top_p` 设置为 1，它会考虑所有标记。
 
 如 图 4-5 所示，通过降低该值，将考虑更少的标记，通常会产生较少的“创造性”输出，而增加该值则允许 LLM 从更多的标记中进行选择。
 
@@ -148,7 +150,7 @@ Because the Eggspressway was closed for pavement!
 
 ###### 图 4-6。选择 `temperature` 和 `top_p` 值时的使用案例示例。
 
-# 提示工程简介
+## 提示工程简介
 
 与文本生成 LLM 相关的重要部分是提示工程。通过仔细设计我们的提示，我们可以引导 LLM 生成所需的响应。无论提示是问题、陈述还是指令，提示工程的主要目标是从模型中引发有用的响应。
 
@@ -158,7 +160,7 @@ Because the Eggspressway was closed for pavement!
 
 我们首先回答问题：提示中应该包含什么？
 
-## 提示的基本组成部分
+### 提示的基本组成部分
 
 LLM 是一种预测机器。根据特定输入（提示），它尝试预测可能跟随的词语。在其核心，正如图 4-7 所示，提示不需要超过几个词就能引出 LLM 的响应。
 
@@ -186,7 +188,7 @@ LLM 是一种预测机器。根据特定输入（提示），它尝试预测可�
 
 尽管提示是单一的文本，但将提示视为更大拼图的一部分是非常有帮助的。我是否描述了我的问题的上下文？提示中是否包含了输出的示例？
 
-## 基于指令的提示
+### 基于指令的提示
 
 尽管提示有很多种形式，从与 LLM 讨论哲学到与自己喜欢的超级英雄角色扮演，提示通常用于让 LLM 回答特定问题或解决某项任务。这被称为基于指令的提示。
 
@@ -204,59 +206,31 @@ LLM 是一种预测机器。根据特定输入（提示），它尝试预测可�
 
 尽管这些任务需要不同的指令，但实际上在用于提高输出质量的提示技术上有很多重叠。这些技术的非详尽列表包括：
 
-特异性
-
-准确描述你想要实现的目标。与其问 LLM“写一个产品描述。”不如问它“用少于两句话写一个产品描述，并使用正式的语气。”。
-
-幻觉
-
-LLM 可能会自信地生成不正确的信息，这被称为幻觉。为了减少其影响，我们可以要求 LLM 仅在知道答案的情况下生成回答。如果它不知道答案，则回应“我不知道”。
-
-顺序
-
-要么在提示的开始或结束时给出指令。尤其是在长提示中，中间的信息往往被遗忘。LLM 倾向于关注提示开头（首因效应）或结尾（近因效应）中的信息。
+- **特异性**：准确描述你想要实现的目标。与其问 LLM“写一个产品描述。”不如问它“用少于两句话写一个产品描述，并使用正式的语气。”。
+- **幻觉**：LLM 可能会自信地生成不正确的信息，这被称为幻觉。为了减少其影响，我们可以要求 LLM 仅在知道答案的情况下生成回答。如果它不知道答案，则回应“我不知道”。
+- **顺序**：要么在提示的开始或结束时给出指令。尤其是在长提示中，中间的信息往往被遗忘。LLM 倾向于关注提示开头（首因效应）或结尾（近因效应）中的信息。
 
 在这里，特异性可以说是最重要的方面。一个大型语言模型（LLM）不知道你想要什么，除非你对自己想要实现的目标和原因非常具体。
 
-# 高级提示工程
+## 高级提示工程
 
 表面上，创建一个好的提示似乎很简单。问一个具体的问题，准确，添加一些示例，你就完成了！然而，提示很快就会变得复杂，因此常常被低估为利用 LLM 的一个组成部分。
 
 在这里，我们将通过几种高级技术来构建你的提示，从构建复杂提示的迭代工作流程开始，一直到顺序使用 LLM 以获得更好的结果。最终，我们甚至将建立高级推理技术。
 
-## 提示的潜在复杂性
+### 提示的潜在复杂性
 
 正如我们在提示工程导言中探讨的，提示通常由多个组件组成。在我们的第一个示例中，提示由指令、数据和输出指标组成。正如我们之前提到的，没有提示仅限于这三种组件，你可以根据需要构建得越复杂越好。
 
 这些高级组件可以快速使提示变得相当复杂。一些常见的组件包括：
 
-*角色*
-
-描述 LLM 应该扮演的角色。例如，如果你想问关于天体物理学的问题，可以使用*“你是天体物理学专家。”*
-
-*指令*
-
-任务本身。确保这一点尽可能具体。我们不想留太多解释的余地。
-
-*上下文*
-
-描述问题或任务上下文的额外信息。它回答类似*“指令的原因是什么？”*的问题。
-
-*格式*
-
-LLM 应使用的输出生成文本的格式。如果没有它，LLM 将自行生成格式，这在自动化系统中是麻烦的。
-
-*受众*
-
-生成文本应面向谁。这也描述了生成输出的级别。出于教育目的，使用 ELI5（*“像我 5 岁时那样解释。”*）往往很有帮助。
-
-*语气*
-
-LLM 在生成文本时应使用的语气。如果你正在给老板写正式邮件，可能不想使用非正式的语气。
-
-*数据*
-
-与任务本身相关的主要数据。
+- **角色**：描述 LLM 应该扮演的角色。例如，如果你想问关于天体物理学的问题，可以使用*“你是天体物理学专家。”*
+- **指令**：任务本身。确保这一点尽可能具体。我们不想留太多解释的余地。
+- **上下文**：描述问题或任务上下文的额外信息。它回答类似*“指令的原因是什么？”*的问题。
+- **格式**：LLM 应使用的输出生成文本的格式。如果没有它，LLM 将自行生成格式，这在自动化系统中是麻烦的。
+- **受众**：生成文本应面向谁。这也描述了生成输出的级别。出于教育目的，使用 ELI5（*“像我 5 岁时那样解释。”*）往往很有帮助。
+- **语气**：LLM 在生成文本时应使用的语气。如果你正在给老板写正式邮件，可能不想使用非正式的语气。
+- **数据**：与任务本身相关的主要数据。
 
 为了说明这一点，让我们扩展之前的分类提示，并使用上述所有组件。这在图 4-12 中展示。
 
@@ -266,13 +240,20 @@ LLM 在生成文本时应使用的语气。如果你正在给老板写正式邮�
 
 这个复杂的提示展示了提示的模块化特性。我们可以自由添加和删除组件，并判断它们对输出的影响。如图 4-13 所示，我们可以逐步构建提示，并探索每次变化的影响。
 
-**![对模块组件的迭代是提示工程的重要部分。](img/text_generation_with_gpt_models_479875_13.png)**
+![对模块组件的迭代是提示工程的重要部分。](img/text_generation_with_gpt_models_479875_13.png)
 
-###### 图 4-13\. 迭代模块组件是提示工程的重要组成部分。**  **这些变化不仅限于简单地引入或移除组件。正如我们之前看到的近期效应和首因效应，它们的顺序会影响 LLM 的输出质量。
+###### 图 4-13\. 迭代模块组件是提示工程的重要组成部分。
+
+这些变化不仅限于简单地引入或移除组件。正如我们之前看到的近期效应和首因效应，它们的顺序会影响 LLM 的输出质量。
 
 换句话说，实验在找到适合你用例的最佳提示时至关重要。通过提示，我们实际上处于一个迭代实验的循环中。
 
 尝试一下！使用复杂提示添加和/或移除部分，以观察其对生成提示的影响。当你发现拼图中值得保留的部分时，会很快注意到。你可以通过将自己的数据添加到`data`变量中来使用自己的数据：
+
+
+
+
+# 提示组件
 
 ```py
 # Prompt components
@@ -294,7 +275,9 @@ prompt = format_prompt(query)
 
 提示工程的一大乐趣在于你可以尽可能地富有创造力，以找出哪些提示组件的组合对你的用例有帮助。开发一个适合你的格式几乎没有约束。
 
-然而，请注意，某些提示对特定模型的效果更好，因为它们的训练数据可能不同，或者它们的训练目的不同。**  **## 上下文学习：提供示例
+然而，请注意，某些提示对特定模型的效果更好，因为它们的训练数据可能不同，或者它们的训练目的不同。
+
+## 上下文学习：提供示例
 
 在之前的章节中，我们试图准确描述大型语言模型（LLM）应该做什么。尽管准确和具体的描述有助于 LLM 理解用例，但我们可以更进一步。
 
@@ -306,7 +289,7 @@ prompt = format_prompt(query)
 
 ![复杂提示的示例，包含多个组件。](img/text_generation_with_gpt_models_479875_14.png)
 
-###### 图 4-14\. 复杂提示的示例，包含多个组件。
+###### 图 4-14. 复杂提示的示例，包含多个组件。
 
 采用原始短语，我们认为“一个例子胜过千言万语”。这些示例提供了 LLM 应该如何实现的直接示例。
 
@@ -317,9 +300,9 @@ prompt = format_prompt(query)
 ```py
 # Use a single example of using the made-up word in a sentence
 one_shot_prompt = format_prompt(messages=[
-    {"role": "user", "content": "Q: A 'Gigamuru' is a type of Japanese musical instrument. An example of a sentence that uses the word Gigamuru is:"},
-    {"role": "assistant", "content": "A: I have a Gigamuru that my uncle gave me as a gift. I love to play it at home."},
-    {"role": "user", "content": "Q: To 'screeg' something is to swing a sword at it. An example of a sentence that uses the word screeg is:"}
+    {"role": "user", "content": "Q: A 'Gigamuru' is a type of Japanese musical instrument. An example of a sentence that uses the word Gigamuru is:"},
+    {"role": "assistant", "content": "A: I have a Gigamuru that my uncle gave me as a gift. I love to play it at home."},
+    {"role": "user", "content": "Q: To 'screeg' something is to swing a sword at it. An example of a sentence that uses the word screeg is:"}
 ])
 print(one_shot_prompt)
 ```
@@ -366,7 +349,7 @@ print(outputs[0]["generated_text"])
 
 ![使用产品特征的描述，链式提示创建合适的名称、口号和销售推介。](img/text_generation_with_gpt_models_479875_15.png)
 
-###### 图 4-15\. 使用产品特征的描述，链式提示创建合适的名称、口号和销售推介。
+###### 图 4-15. 使用产品特征的描述，链式提示创建合适的名称、口号和销售推介。
 
 这种链式提示的技术使 LLM 能够在每个单独问题上花费更多时间，而不是处理整个问题。
 
@@ -414,7 +397,9 @@ Introducing LLM Assistant, the revolutionary chatbot that transforms the way you
 
 利用 LLM 撰写书籍或故事，可以将问题拆解为各个组成部分。例如，首先撰写摘要，再发展角色并构建故事情节，然后再深入创作对话。
 
-在第六章中，我们将超越链接 LLM，连接其他技术组件，如内存、搜索等！在此之前，提示链的这一概念将在接下来的部分中进一步探讨，描述更复杂的提示链方法，如自一致性、链式思维和树状思维。**  **# 与生成模型的推理
+在第六章中，我们将超越链接 LLM，连接其他技术组件，如内存、搜索等！在此之前，提示链的这一概念将在接下来的部分中进一步探讨，描述更复杂的提示链方法，如自一致性、链式思维和树状思维。
+
+# 与生成模型的推理
 
 在之前的部分中，我们主要集中于提示的模块化组件，通过迭代构建它们。这些先进的提示工程技术，如提示链，证明了实现生成模型复杂推理的第一步。
 
@@ -441,9 +426,9 @@ Introducing LLM Assistant, the revolutionary chatbot that transforms the way you
 ```py
 # Answering without explicit reasoning
 standard_prompt = format_prompt(messages=[
-    {"role": "user", "content": "Q: Roger has 5 tennis balls. He buys 2 more cans of tennis balls. Each can has 3 tennis balls. How many tennis balls does he have now?"},
-    {"role": "assistant", "content": "A: The answer is 11."},
-    {"role": "user", "content": "Q: The cafeteria had 23 apples. If they used 20 to make lunch and bought 6 more, how many apples do they have?"}
+    {"role": "user", "content": "Q: Roger has 5 tennis balls. He buys 2 more cans of tennis balls. Each can has 3 tennis balls. How many tennis balls does he have now?"},
+    {"role": "assistant", "content": "A: The answer is 11."},
+    {"role": "user", "content": "Q: The cafeteria had 23 apples. If they used 20 to make lunch and bought 6 more, how many apples do they have?"}
 ])
 # Run generative model
 outputs = pipe(standard_prompt, max_new_tokens=64, do_sample=`True`, return_full_text=`False`)
@@ -461,9 +446,9 @@ print(outputs[0]["generated_text"])
 ```py
 # Answering with chain-of-thought
 cot_prompt = format_prompt(messages=[
-    {"role": "user", "content": "Q: Roger has 5 tennis balls. He buys 2 more cans of tennis balls. Each can has 3 tennis balls. How many tennis balls does he have now?"},
-    {"role": "assistant", "content": "A: Roger started with 5 balls. 2 cans of 3 tennis balls each is 6 tennis balls. 5 + 6 = 11\. The answer is 11."},
-    {"role": "user", "content": "Q: The cafeteria had 23 apples. If they used 20 to make lunch and bought 6 more, how many apples do they have?"}
+    {"role": "user", "content": "Q: Roger has 5 tennis balls. He buys 2 more cans of tennis balls. Each can has 3 tennis balls. How many tennis balls does he have now?"},
+    {"role": "assistant", "content": "A: Roger started with 5 balls. 2 cans of 3 tennis balls each is 6 tennis balls. 5 + 6 = 11. The answer is 11."},
+    {"role": "user", "content": "Q: The cafeteria had 23 apples. If they used 20 to make lunch and bought 6 more, how many apples do they have?"}
 ])
 # Run generative model
 outputs = pipe(cot_prompt, max_new_tokens=256, do_sample=`True`, return_full_text=`False`)
@@ -482,6 +467,8 @@ print(outputs[0]["generated_text"])
 
 尽管 CoT 是增强生成模型输出的好方法，但它确实需要一个或多个推理示例，而用户可能没有这些示例。
 
+
+
 我们可以简单地要求生成模型提供推理，而不是提供示例。有许多不同的形式有效，但一个常见且有效的方法是使用短语“让我们一步一步思考”，如图 4-17 所示。
 
 ![不使用示例的思维链提示。相反，它使用短语“让我们一步一步思考”来激发其回答中的推理。](img/text_generation_with_gpt_models_479875_17.png)
@@ -493,7 +480,7 @@ print(outputs[0]["generated_text"])
 ```py
 # Zero-shot Chain-of-Thought
 zeroshot_cot = format_prompt(
-    "The cafeteria had 23 apples. If they used 20 to make lunch and bought 6 more, how many apples do they have? Let's think step-by-step."
+    "The cafeteria had 23 apples. If they used 20 to make lunch and bought 6 more, how many apples do they have? Let's think step-by-step."
 )
 # Run generative model
 outputs = pipe(zeroshot_cot, max_new_tokens=512, do_sample=`True`, return_full_text=`False`)
@@ -521,9 +508,9 @@ print(outputs[0]["generated_text"])
 
 **自我一致性：抽样输出**
 
-如果通过 `temperature` 和 `top_p` 等参数允许一定程度的创造性，使用相同的提示多次可能会导致不同的结果。因此，输出的质量可能会因随机选择的词元而提高或降低。换句话说，这全看运气！
+如果通过`temperature`和`top_p`等参数允许一定程度的创造性，使用相同的提示多次可能会导致不同的结果。因此，输出的质量可能会因随机选择的词元而提高或降低。换句话说，这全看运气！
 
-为了抵消这种随机性并提高生成模型的性能，引入了自我一致性。这种方法多次向生成模型提出相同的提示，并将多数结果作为最终答案。在这个过程中，每个答案可能会受到不同 `temperature` 和 `top_p` 值的影响，以增加抽样的多样性。
+为了抵消这种随机性并提高生成模型的性能，引入了自我一致性。这种方法多次向生成模型提出相同的提示，并将多数结果作为最终答案。在这个过程中，每个答案可能会受到不同`temperature`和`top_p`值的影响，以增加抽样的多样性。
 
 如图 4-18 所示，通过添加链式思维提示，可以进一步改进此方法，以提高推理能力，同时仅使用答案进行投票程序。
 
@@ -531,7 +518,7 @@ print(outputs[0]["generated_text"])
 
 ###### 图 4-18。通过从多个推理路径中采样，我们可以使用多数投票提取最可能的答案。
 
-尽管此方法在提高输出方面效果良好，但确实需要对同一个问题进行多次提问。因此，尽管该方法可以提高性能，但它变得* n * 倍慢，其中 * n * 是输出样本的数量。
+尽管此方法在提高输出方面效果良好，但确实需要对同一个问题进行多次提问。因此，尽管该方法可以提高性能，但它变得 *n* 倍慢，其中 *n* 是输出样本的数量。
 
 ## 思维树：探索中间步骤
 
@@ -554,7 +541,7 @@ print(outputs[0]["generated_text"])
 ```py
 # Zero-shot Chain-of-Thought
 zeroshot_tot = format_prompt(
-    "Imagine three different experts are answering this question. All experts will write down 1 step of their thinking, then share it with the group. Then all experts will go on to the next step, etc. If any expert realises they're wrong at any point then they leave. The question is 'The cafeteria had 23 apples. If they used 20 to make lunch and bought 6 more, how many apples do they have?'"
+    "Imagine three different experts are answering this question. All experts will write down 1 step of their thinking, then share it with the group. Then all experts will go on to the next step, etc. If any expert realises they're wrong at any point then they leave. The question is 'The cafeteria had 23 apples. If they used 20 to make lunch and bought 6 more, how many apples do they have?'"
 )
 ```
 
@@ -640,15 +627,15 @@ print(outputs[0]["generated_text"])
 
 ```py
 {
-  "name": "Aurelia",
-  "race": "Human",
-  "class": "Mage",
-  "age": 22,
-  "gender": "Female",
-  "description": "Aurelia is a young woman with a striking golden mane and...",
-  "stats": {
-    "strength": 8
-  }
+  "name": "Aurelia",
+  "race": "Human",
+  "class": "Mage",
+  "age": 22,
+  "gender": "Female",
+  "description": "Aurelia is a young woman with a striking golden mane and...",
+  "stats": {
+    "strength": 8
+  }
 }
 ```
 
@@ -658,10 +645,10 @@ print(outputs[0]["generated_text"])
 # Providing an example of the output structure
 one_shot_prompt = format_prompt("""Create a character profile for an RPG game. Make sure to only use this format:
 {
-  "description": "A SHORT DESCRIPTION",
-  "name": "THE CHARACTER'S NAME",
-  "armor": "ONE PIECE OF ARMOR",
-  "weapon": "ONE OR MORE WEAPONS"
+  "description": "A SHORT DESCRIPTION",
+  "name": "THE CHARACTER'S NAME",
+  "armor": "ONE PIECE OF ARMOR",
+  "weapon": "ONE OR MORE WEAPONS"
 }
 """)
 outputs = pipe(one_shot_prompt, max_new_tokens=256, do_sample=`True`, return_full_text=`False`)
@@ -672,13 +659,13 @@ print(outputs[0]["generated_text"])
 
 ```py
 {
-  "description": "A human wizard with long, wild grey hair and...",
-  "name": "Sybil Astrid",
-  "armor": "None",
-  "weapon": [
-    "Crystal Staff",
-    "Oak Wand"
-  ]
+  "description": "A human wizard with long, wild grey hair and...",
+  "name": "Sybil Astrid",
+  "armor": "None",
+  "weapon": [
+    "Crystal Staff",
+    "Oak Wand"
+  ]
 }
 ```
 
@@ -718,4 +705,68 @@ print(outputs[0]["generated_text"])
 wget https://huggingface.co/TheBloke/zephyr-7B-beta-GGUF/resolve/main/zephyr-7b-beta.Q4_K_M.gguf
 ```
 
-```py`Then, we load the model using llama-cpp-python and choose a JSON grammar to use. This will ensure that the output of the model adheres to JSON:    ``` 从 llama_cpp.llama 导入 httpx、Llama 和 LlamaGrammar # 我们从官方的 llama.cpp 存储库加载 JSON 语法 grammar = httpx.get(     "https://raw.githubusercontent.com/ggerganov/llama.cpp/master/grammars/json_arr.gbnf" ) grammar = LlamaGrammar.from_string(grammar.text) # 加载一个预量化的 LLM llm = Llama("zephyr-7b-beta.Q4_K_M.gguf") ```py    The rules are described in the grammar file we downloaded.    Using the JSON grammar, we can ask the model for an RPG character in JSON format to be used in our Dungeons and Dragons session:    ``` 导入 json # 运行生成模型，并要求它以 JSON 格式创建一个角色 response = llm(     "为 RPG 创建一个 JSON 格式的战士。",     max_tokens=-1,     grammar=grammar ) # 以格式良好的 JSON 打印输出 print(json.dumps(json.loads(response['choices'][0]['text']), indent=4)) ```py    This gives us valid JSON:    ``` [     {         "name": "剑术大师",         "level": 10,         "health": 250,         "mana": 100,         "strength": 18,         "dexterity": 16,         "intelligence": 10,         "armor": 75,         "weapon": "双手剑",         "specialty": "单手剑"     } ] ```py    This allows us to more confidently use generative models in applications where we expect the output to adhere to certain formats.     ###### Note    Note that we set the number of tokens to be generated with `max_tokens` to be, in principle, unlimited. This means that the model will continue generating until is has completed its JSON output or until it reaches its context limit.````  `# 概要    在这一章中，我们通过提示工程和输出验证探讨了生成模型的基础知识。我们关注了提示工程带来的创造力和潜在复杂性。我们发现提示的组件是生成符合我们用例输出的关键。因此，在进行提示工程时，实验至关重要。    在下一章中，我们将探索利用生成模型的高级技术。这些技术超越了提示工程，旨在增强这些模型的能力。从给模型提供外部记忆到使用外部工具，我们旨在赋予生成模型超级能力！`**
+
+
+然后，我们使用 `llama-cpp-python` 加载模型，并选择一个 JSON 语法来使用。这将确保模型的输出符合 JSON 格式：
+
+```py
+from llama_cpp.llama import httpx, Llama, LlamaGrammar
+
+# 我们从官方的 llama.cpp 存储库加载 JSON 语法
+grammar = httpx.get(
+    "https://raw.githubusercontent.com/ggerganov/llama.cpp/master/grammars/json_arr.gbnf"
+)
+grammar = LlamaGrammar.from_string(grammar.text)
+
+# 加载一个预量化的 LLM
+llm = Llama("zephyr-7b-beta.Q4_K_M.gguf")
+```
+
+规则描述在我们下载的语法文件中。
+
+使用 JSON 语法，我们可以要求模型以 JSON 格式生成一个 RPG 角色，用于我们的龙与地下城会话：
+
+```py
+import json
+
+# 运行生成模型，并要求它以 JSON 格式创建一个角色
+response = llm(
+    "为 RPG 创建一个 JSON 格式的战士。",
+    max_tokens=-1,
+    grammar=grammar
+)
+
+# 以格式良好的 JSON 打印输出
+print(json.dumps(json.loads(response['choices'][0]['text']), indent=4))
+```
+
+这给我们提供了有效的 JSON：
+
+```json
+[
+    {
+        "name": "剑术大师",
+        "level": 10,
+        "health": 250,
+        "mana": 100,
+        "strength": 18,
+        "dexterity": 16,
+        "intelligence": 10,
+        "armor": 75,
+        "weapon": "双手剑",
+        "specialty": "单手剑"
+    }
+]
+```
+
+这使我们能够更自信地在期望输出符合特定格式的应用中使用生成模型。
+
+###### 注意
+
+请注意，我们将 `max_tokens` 设置为原则上无限制的生成令牌数。这意味着模型将继续生成，直到完成其 JSON 输出或达到其上下文限制为止。
+
+# 概要
+
+在这一章中，我们通过提示工程和输出验证探讨了生成模型的基础知识。我们关注了提示工程带来的创造力和潜在复杂性。我们发现提示的组件是生成符合我们用例输出的关键。因此，在进行提示工程时，实验至关重要。
+
+在下一章中，我们将探索利用生成模型的高级技术。这些技术超越了提示工程，旨在增强这些模型的能力。从给模型提供外部记忆到使用外部工具，我们旨在赋予生成模型超级能力！

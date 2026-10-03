@@ -1,10 +1,12 @@
+
+
 # 第九章：分布式 TensorFlow
 
 在本章中，我们讨论了使用 TensorFlow 进行分布式计算。我们首先简要调查了在机器学习中分布模型训练的不同方法，特别是深度学习。然后介绍了为支持分布式计算而设计的 TensorFlow 元素，最后通过一个端到端的示例将所有内容整合在一起。
 
-# 分布式计算
+## 分布式计算
 
-*分布式* *计算*，在最一般的术语中，意味着利用多个组件来执行所需的计算或实现目标。在我们的情况下，这意味着使用多台机器来加快深度学习模型的训练。
+*分布式计算*，在最一般的术语中，意味着利用多个组件来执行所需的计算或实现目标。在我们的情况下，这意味着使用多台机器来加快深度学习模型的训练。
 
 这背后的基本思想是通过使用更多的计算能力，我们应该能够更快地训练相同的模型。尽管通常情况下确实如此，但实际上更快多少取决于许多因素（即，如果您期望使用 10 倍资源并获得 10 倍加速，您很可能会感到失望！）。
 
@@ -12,7 +14,7 @@
 
 在接下来的小节中，我们将详细介绍并行化的许多方面。
 
-## 并行化发生在哪里？
+### 并行化发生在哪里？
 
 在并行化类型的分类中，第一个分割是位置。我们是在单台机器上使用多个计算设备还是跨集群？
 
@@ -22,7 +24,7 @@
 
 另一方面，虽然同一板上的几个设备可以使用共享内存，但集群方法引入了节点之间通信的时间成本。当需要共享的信息量很大且通信相对缓慢时，这可能成为一个限制因素。
 
-## 并行化的目标是什么？
+### 并行化的目标是什么？
 
 第二个分割是实际目标。我们是想使用更多硬件使相同的过程更快，还是为了并行化多个模型的训练？
 
@@ -32,15 +34,13 @@
 
 例如，当使用梯度下降训练深度学习模型时，该过程由以下步骤组成：
 
-1.  计算一批训练样本的梯度。
-
-1.  对梯度求和。
-
-1.  相应地对模型参数应用更新。
+1. 计算一批训练样本的梯度。
+2. 对梯度求和。
+3. 相应地对模型参数应用更新。
 
 很明显，这个模式的第 1 步适合并行化。简单地使用多个设备计算梯度（针对不同的训练样本），然后在第 2 步中聚合结果并求和，就像常规情况下一样。
 
-# **同步与异步数据并行**
+## 同步与异步数据并行
 
 在刚才描述的过程中，来自不同训练示例的梯度被聚合在一起，以对模型参数进行单次更新。这就是所谓的*同步*训练，因为求和步骤定义了一个流必须等待所有节点完成梯度计算的点。
 
@@ -48,11 +48,11 @@
 
 *异步*选项是在每个节点完成为其分配的训练示例的梯度计算后独立应用更新步骤。
 
-# TensorFlow 元素
+## TensorFlow 元素
 
 在本节中，我们将介绍在并行计算中使用的 TensorFlow 元素和概念。这不是完整的概述，主要作为本章结束的并行示例的介绍。
 
-## tf.app.flags
+### `tf.app.flags`
 
 我们从一个与并行计算完全无关但对本章末尾的示例至关重要的机制开始。实际上，在 TensorFlow 示例中广泛使用`flags`机制，值得讨论。
 
@@ -62,15 +62,13 @@
 
 ```py
 'python distribute.py --job_name="ps" --task_index=0'
-
 ```
 
-程序*distribute.py*传递以下内容：
+程序`distribute.py`传递以下内容：
 
 ```py
-	job_name="ps"
-	task_index=0
-
+job_name="ps"
+task_index=0
 ```
 
 然后在 Python 脚本中提取这些信息，使用：
@@ -78,7 +76,6 @@
 ```py
 tf.app.flags.DEFINE_string("job_name", "", "name of job")
 tf.app.flags.DEFINE_integer("task_index", 0, "Index of task")
-
 ```
 
 参数（字符串和整数）由命令行中的名称、默认值和参数描述定义。
@@ -86,16 +83,13 @@ tf.app.flags.DEFINE_integer("task_index", 0, "Index of task")
 `flags`机制允许以下类型的参数：
 
 +   `tf.app.flags.DEFINE_string`定义一个字符串值。
-
 +   `tf.app.flags.DEFINE_boolean`定义一个布尔值。
-
 +   `tf.app.flags.DEFINE_float`定义一个浮点值。
-
 +   `tf.app.flags.DEFINE_integer`定义一个整数值。
 
 最后，`tf.app.flags.FLAGS`是一个结构，包含从命令行输入解析的所有参数的值。参数可以通过`FLAGS.arg`访问，或者在必要时通过字典`FLAGS.__flags`访问（然而，强烈建议使用第一种选项——它设计的方式）。
 
-## 集群和服务器
+### 集群和服务器
 
 一个 TensorFlow 集群只是参与计算图并行处理的节点（也称为任务）的集合。每个任务由其可以访问的网络地址定义。例如：
 
@@ -118,18 +112,17 @@ cluster = tf.train.ClusterSpec({"parameter_server": parameter_servers,
 server = tf.train.Server(cluster,
 job_name="worker",
 task_index=0)
-
 ```
 
 由`Server()`接收的参数让它知道自己的身份，以及集群中其他成员的身份和地址。
 
 一旦我们有了集群和服务器，我们就构建计算图，这将使我们能够继续进行并行计算。
 
-## 在设备之间复制计算图
+### 在设备之间复制计算图
 
 如前所述，有多种方法可以进行并行训练。在“设备放置”中，我们简要讨论如何直接将操作放置在集群中特定任务上。在本节的其余部分，我们将介绍对于图间复制所必需的内容。
 
-*图间* *复制* 指的是常见的并行化模式，其中在每个 worker 任务上构建一个单独但相同的计算图。在训练期间，每个 worker 计算梯度，并由参数服务器组合，参数服务器还跟踪参数的当前版本，以及可能是训练的其他全局元素（如全局步骤计数器等）。
+*图间复制*指的是常见的并行化模式，其中在每个 worker 任务上构建一个单独但相同的计算图。在训练期间，每个 worker 计算梯度，并由参数服务器组合，参数服务器还跟踪参数的当前版本，以及可能是训练的其他全局元素（如全局步骤计数器等）。
 
 我们使用`tf.train.replica_device_setter()`来在每个任务上复制模型（计算图）。`worker_device`参数应该指向集群中当前任务。例如，在第一个 worker 上我们运行这个：
 
@@ -145,12 +138,11 @@ cluster=cluster)):
 
 ```py
 server.join()
-
 ```
 
 这将在并行计算的过程中保持参数服务器的运行。
 
-## 管理的会话
+### 管理的会话
 
 在这一部分，我们将介绍我们将在模型的并行训练中使用的机制。首先，我们定义一个`Supervisor`：
 
@@ -159,7 +151,6 @@ sv = tf.train.Supervisor(is_chief=...,
 logdir=...,
 global_step=...,
 init_op=...)
-
 ```
 
 正如其名称所示，`Supervisor`用于监督训练，在并行设置中提供一些必要的实用程序。
@@ -187,12 +178,12 @@ init_op=...)
 ```py
 with sv.managed_session(server.target) as sess:
 
-# Train ... 
+# Train ...
 ```
 
 在这一点上，chief 将初始化变量，而所有其他任务等待这个过程完成。
 
-## 设备放置
+### 设备放置
 
 在本节中我们讨论的最终 TensorFlow 机制是*设备放置*。虽然这个主题的全部内容超出了本章的范围，但概述中没有提到这种能力是不完整的，这在工程高级系统时非常有用。
 
@@ -202,15 +193,13 @@ with sv.managed_session(server.target) as sess:
 
 ```py
 tf.Session(config=tf.ConfigProto(log_device_placement=True))
-
 ```
 
 为了明确选择一个设备，我们使用：
 
 ```py
 with tf.device('/gpu:0'):
-  op = ...  
-
+  op = ...
 ```
 
 `'/gpu:0'`指向系统上的第一个 GPU；同样，我们可以使用`'/cpu:0'`将操作放置在 CPU 上，或者在具有多个 GPU 设备的系统上使用`'/gpu:X'`，其中`X`是我们想要使用的 GPU 的索引。
@@ -218,14 +207,13 @@ with tf.device('/gpu:0'):
 最后，跨集群的放置是通过指向特定任务来完成的。例如：
 
 ```py
-with tf.device("/job:worker/task:2"): 
+with tf.device("/job:worker/task:2"):
   op = ...
-
 ```
 
 这将分配给集群规范中定义的第二个`worker`任务。
 
-# 跨 CPU 的放置
+### 跨 CPU 的放置
 
 默认情况下，TensorFlow 使用系统上所有可用的 CPU，并在内部处理线程。因此，设备放置`'/cpu:0'`是完整的 CPU 功率，`'/cpu:1'`默认情况下不存在，即使在多 CPU 环境中也是如此。
 
@@ -236,20 +224,25 @@ config = tf.ConfigProto(device_count={"CPU": 8},
 inter_op_parallelism_threads=8,
 intra_op_parallelism_threads=1)
 sess = tf.Session(config=config)
-
 ```
 
 在这里，我们定义了两个参数：
 
 +   `inter_op_parallelism_threads=8`，意味着我们允许八个线程用于不同的操作
-
 +   `intra_op_parallelism_threads=1`，表示每个操作都有一个线程
 
 这些设置对于一个 8-CPU 系统是有意义的。
 
-# 分布式示例
+## 分布式示例
 
-在本节中，我们将所有内容整合在一起，以端到端的方式展示了我们在第四章中看到的 MNIST CNN 模型的分布式训练示例。我们将使用一个参数服务器和三个工作任务。为了使其易于重现，我们将假设所有任务都在单台机器上本地运行（通过将`localhost`替换为 IP 地址，如前所述，可以轻松适应多机设置）。像往常一样，我们首先呈现完整的代码，然后将其分解为元素并加以解释：
+在本节中，我们将所有内容整合在一起，以端到端的方式展示了我们在第四章中看到的 MNIST CNN 模型的分布式训练示例。我们将使用一个参数服务器和三个工作任务。为了使其易于重现，我们将假设所有任务都在单台机器上本地运行（通过将`localhost`替换为 IP 地址，如前所述，可以轻松适应多机设置）。像往常一样，我们首先呈现完整的代码，然后将其分解为元素并加以解释。
+
+
+
+
+# 分布式 TensorFlow 训练示例
+
+## 完整代码
 
 ```py
 import tensorflow as tf
@@ -341,8 +334,9 @@ test_acc = sess.run(accuracy, feed_dict={x: mnist.test.images,
 print "Test-Accuracy: {}".format(test_acc)
 
 sv.stop()
-
 ```
+
+## 运行分布式示例
 
 为了运行这个分布式示例，我们从四个不同的终端执行四个命令来分派每个任务（我们将很快解释这是如何发生的）：
 
@@ -351,7 +345,6 @@ python distribute.py --job_name="ps" --task_index=0
 python distribute.py --job_name="worker" --task_index=0
 python distribute.py --job_name="worker" --task_index=1
 python distribute.py --job_name="worker" --task_index=2
-
 ```
 
 或者，以下将自动分派四个任务（取决于您使用的系统，输出可能全部发送到单个终端或四个单独的终端）：
@@ -366,10 +359,13 @@ subprocess.Popen('python distribute.py --job_name="worker" --task_index=1',
                  shell=True)
 subprocess.Popen('python distribute.py --job_name="worker" --task_index=2', 
                  shell=True)
-
 ```
 
+## 代码解析
+
 接下来，我们将检查前面示例中的代码，并突出显示这与我们迄今在书中看到的示例有何不同。
+
+### 导入和常量
 
 第一个块处理导入和常量：
 
@@ -386,21 +382,12 @@ LOG_DIR = "/tmp/log"
 
 在这里我们定义：
 
-`BATCH_SIZE`
+- `BATCH_SIZE`：在每个小批次训练中要使用的示例数。
+- `TRAINING_STEPS`：我们将在训练中使用的小批次总数。
+- `PRINT_EVERY`：打印诊断信息的频率。由于在我们使用的分布式训练中，所有任务都有一个当前步骤的计数器，因此在某个步骤上的`print`只会从一个任务中发生。
+- `LOG_DIR`：训练监督员将把日志和临时信息保存到此位置。在程序运行之间应该清空，因为旧信息可能导致下一个会话崩溃。
 
-在每个小批次训练中要使用的示例数。
-
-`TRAINING_STEPS`
-
-我们将在训练中使用的小批次总数。
-
-`PRINT_EVERY`
-
-打印诊断信息的频率。由于在我们使用的分布式训练中，所有任务都有一个当前步骤的计数器，因此在某个步骤上的`print`只会从一个任务中发生。
-
-`LOG_DIR`
-
-训练监督员将把日志和临时信息保存到此位置。在程序运行之间应该清空，因为旧信息可能导致下一个会话崩溃。
+### 定义集群
 
 接下来，我们定义集群，如本章前面讨论的：
 
@@ -411,10 +398,11 @@ workers = ["localhost:2223",
            "localhost:2225"]
 
 cluster = tf.train.ClusterSpec({"ps": parameter_servers, "worker": workers})
-
 ```
 
 我们在本地运行所有任务。为了使用多台计算机，将`localhost`替换为正确的 IP 地址。端口 2222-2225 也是任意的，当然（但在使用单台机器时必须是不同的）：在分布式设置中，您可能会在所有机器上使用相同的端口。
+
+### 定义命令行参数
 
 在接下来的内容中，我们使用`tf.app.flags`机制来定义两个参数，我们将通过命令行在每个任务调用程序时提供：
 
@@ -422,18 +410,14 @@ cluster = tf.train.ClusterSpec({"ps": parameter_servers, "worker": workers})
 tf.app.flags.DEFINE_string("job_name", "", "'ps' / 'worker'")
 tf.app.flags.DEFINE_integer("task_index", 0, "Index of task")
 FLAGS = tf.app.flags.FLAGS
-
 ```
 
 参数如下：
 
-`job_name`
+- `job_name`：这将是`'ps'`表示单参数服务器，或者对于每个工作任务将是`'worker'`。
+- `task_index`：每种类型工作中任务的索引。因此，参数服务器将使用`task_index = 0`，而对于工作任务，我们将有`0`，`1`和`2`。
 
-这将是`'ps'`表示单参数服务器，或者对于每个工作任务将是`'worker'`。
-
-`task_index`
-
-每种类型工作中任务的索引。因此，参数服务器将使用`task_index = 0`，而对于工作任务，我们将有`0`，`1`和`2`。
+### 定义服务器
 
 现在我们准备使用我们在本章中定义的集群中当前任务的身份来定义此当前任务的服务器。请注意，这将在我们运行的四个任务中的每一个上发生。这四个任务中的每一个都知道自己的身份（`job_name`，`task_index`），以及集群中其他每个人的身份（由第一个参数提供）：
 
@@ -442,6 +426,8 @@ server = tf.train.Server(cluster,
                          job_name=FLAGS.job_name,
                          task_index=FLAGS.task_index)
 ```
+
+### 定义网络和加载数据
 
 在开始实际训练之前，我们定义我们的网络并加载要使用的数据。这类似于我们在以前的示例中所做的，所以我们不会在这里再次详细说明。为了简洁起见，我们使用 TF-Slim：
 
@@ -460,15 +446,18 @@ def net(x):
     return net
 ```
 
+### 参数服务器处理
+
 在训练期间要执行的实际处理取决于任务的类型。对于参数服务器，我们希望机制主要是为参数提供服务。这包括等待请求并处理它们。要实现这一点，只需要这样做：
 
 ```py
 if FLAGS.job_name == "ps":
 server.join()
-
 ```
 
 服务器的`.join()`方法即使在所有其他任务终止时也不会终止，因此一旦不再需要，必须在外部终止此进程。
+
+### 工作任务处理
 
 在每个工作任务中，我们定义相同的计算图：
 
@@ -502,6 +491,8 @@ with tf.device(tf.train.replica_device_setter(
 
 其余的代码是我们在整本书中已经看过的许多示例中看到的标准设置。
 
+### 监督器和会话
+
 接下来，我们设置一个`Supervisor`和一个`managed_session`：
 
 ```py
@@ -514,6 +505,8 @@ with sv.managed_session(server.target) as sess:
 ```
 
 这类似于我们在整个过程中使用的常规会话，只是它能够处理分布式的一些方面。变量的初始化将仅在一个任务中完成（通过`is_chief`参数指定的首席任务；在我们的情况下，这将是第一个工作任务）。所有其他任务将等待这个任务完成，然后继续。
+
+### 训练循环
 
 会话开启后，我们开始训练：
 
@@ -528,7 +521,6 @@ while not sv.should_stop() and step <= TRAINING_STEPS:
     if step % PRINT_EVERY == 0:
         print "Worker : {}, Step: {}, Accuracy (batch): {}".\
             format(FLAGS.task_index, step, acc)
-
 ```
 
 每隔`PRINT_EVERY`步，我们打印当前小批量的当前准确率。这将很快达到 100%。例如，前两行可能是：
@@ -536,10 +528,11 @@ while not sv.should_stop() and step <= TRAINING_STEPS:
 ```py
 Worker : 1, Step: 0.0, Accuracy (batch): 0.140000000596
 Worker : 0, Step: 100.0, Accuracy (batch): 0.860000014305
-
 ```
 
-最后，我们运行测试准确率：
+最后，我们运行测试准确率。
+
+
 
 ```py
 test_acc = sess.run(accuracy,

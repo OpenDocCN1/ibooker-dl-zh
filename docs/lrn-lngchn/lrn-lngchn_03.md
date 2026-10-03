@@ -1,16 +1,17 @@
-# 第三章\. RAG 第二部分：与数据对话
+
+# 第三章 RAG 第二部分：与数据对话
 
 在上一章中，你学习了如何处理数据，并在向量存储中创建和存储嵌入。在本章中，你将学习如何根据用户的查询高效地检索最相关的嵌入和文档片段。这使你能够构建一个包含相关文档作为背景的提示，从而提高 LLM 最终输出的准确性。
 
-这个过程——涉及嵌入用户的查询，从数据源检索相似文档，然后将它们作为背景传递给发送给 LLM 的提示——正式上被称为 *检索增强生成* (RAG)。
+这个过程——涉及嵌入用户的查询，从数据源检索相似文档，然后将它们作为背景传递给发送给 LLM 的提示——正式上被称为*检索增强生成*（RAG）。
 
 RAG 是构建准确、高效且最新的聊天功能 LLM 应用的一个关键组件。在本章中，你将从基础知识进步到高级策略，以构建针对各种数据源（如向量存储和数据库）和数据结构（结构化和非结构化）的有效 RAG 系统。
 
 但首先，让我们定义 RAG 并讨论其优势。
 
-# 介绍检索增强生成
+## 介绍检索增强生成
 
-RAG 是一种技术，通过提供外部来源的上下文来增强 LLM 生成输出的准确性。这个术语最初是由 Meta AI 研究人员在一篇论文中提出的，他们发现启用 RAG 的模型比非 RAG 模型更具事实性和具体性.^(1)
+RAG 是一种技术，通过提供外部来源的上下文来增强 LLM 生成输出的准确性。这个术语最初是由 Meta AI 研究人员在一篇论文中提出的，他们发现启用 RAG 的模型比非 RAG 模型更具事实性和具体性。^(1)
 
 没有 RAG，LLM 完全依赖于其预训练的数据，这些数据可能已经过时。例如，让我们向 ChatGPT 提出一个关于当前事件的问题，看看它的响应：
 
@@ -28,7 +29,7 @@ The most recent FIFA World Cup winner was France, who won the tournament in 2018
 
 LLM 的响应在事实上是不正确的，并且过时。在本书出版时，最新的冠军是阿根廷，他们在 2022 年赢得了世界杯。虽然这个例子中的问题可能微不足道，但如果 LLM 的答案被用于事实核查或重要决策，LLM 的幻觉可能会产生灾难性的后果。
 
-为了解决这个问题，我们需要向 LLM 提供事实性、最新的信息，以便它能据此形成准确的响应。继续上一个例子，让我们转到维基百科的 [FIFA 世界杯](https://oreil.ly/LpLOV) 页面，复制简介段落，然后将它作为 *背景* 添加到我们的 ChatGPT 提示中：
+为了解决这个问题，我们需要向 LLM 提供事实性、最新的信息，以便它能据此形成准确的响应。继续上一个例子，让我们转到维基百科的 [FIFA 世界杯](https://oreil.ly/LpLOV) 页面，复制简介段落，然后将它作为*背景*添加到我们的 ChatGPT 提示中：
 
 ```py
 Which country is the latest winner of the men's FIFA World Cup?
@@ -53,7 +54,7 @@ title at the 2022 tournament.
 
 由于提供了最新的附加背景信息，LLM 能够对提示生成准确的响应。但是，将相关信息作为背景复制粘贴并不适用于生产 AI 应用，也不具备可扩展性。我们需要一个自动化的系统，根据用户的查询获取相关信息，将其作为背景添加到提示中，然后向 LLM 执行生成请求。
 
-## 检索相关文档
+### 检索相关文档
 
 一个 AI 应用的 RAG 系统通常遵循三个核心阶段：
 
@@ -73,7 +74,7 @@ title at the 2022 tournament.
 
 ![文档的示意图  自动生成的描述](img/lelc_0301.png)
 
-###### 图 3-1\. RAG 的关键阶段
+###### 图 3-1 RAG 的关键阶段
 
 此过程的索引阶段在第二章中进行了详细说明，其中你学习了如何使用文档加载器、文本分割器、嵌入和向量存储。
 
@@ -131,15 +132,13 @@ const db = await PGVectorStore.fromDocuments(docs, model, {
 
 ![2024-02-12 下午 1:36:56 的屏幕截图.png](img/lelc_0302.png)
 
-###### 图 3-2\. 从向量存储中检索相关文档的同时索引文档的示例流程；分层可导航小世界（HNSW）框表示计算文档与用户查询的相似度
+###### 图 3-2 从向量存储中检索相关文档的同时索引文档的示例流程；分层可导航小世界（HNSW）框表示计算文档与用户查询的相似度
 
 图 3-2 说明了检索过程中的步骤：
 
-1.  将用户查询转换为嵌入。
-
-1.  计算与用户查询最相似的向量存储中的嵌入。
-
-1.  检索相关文档嵌入及其对应的文本片段。
+1. 将用户查询转换为嵌入。
+2. 计算与用户查询最相似的向量存储中的嵌入。
+3. 检索相关文档嵌入及其对应的文本片段。
 
 我们可以使用 LangChain 以编程方式表示这些步骤，如下所示：
 
@@ -147,10 +146,10 @@ const db = await PGVectorStore.fromDocuments(docs, model, {
 
 ```py
 # create retriever
-retriever `=` db`.`as_retriever()
+retriever = db.as_retriever()
 
 # fetch relevant documents
-docs `=` retriever`.`invoke("""Who are the key figures in the ancient greek 
+docs = retriever.invoke("""Who are the key figures in the ancient greek 
  history of philosophy?""")
 ```
 
@@ -197,13 +196,13 @@ const docs = await retriever.invoke(`Who are the key figures in the ancient
 
 现在我们已经完成了 RAG 系统的检索阶段，让我们继续到最后生成阶段。
 
-## 使用相关文档生成 LLM 预测
+### 使用相关文档生成 LLM 预测
 
-一旦我们根据用户的查询检索到相关文档，下一步就是将它们添加到原始提示中作为上下文，然后调用模型生成最终输出(图 3-3)。
+一旦我们根据用户的查询检索到相关文档，下一步就是将它们添加到原始提示中作为上下文，然后调用模型生成最终输出（图 3-3）。
 
 ![一个图表的图表 描述自动生成](img/lelc_0303.png)
 
-###### 图 3-3\. 一个示例流程，展示了索引文档、从向量存储中检索相关文档，并将检索到的文档作为上下文包含在 LLM 提示中
+###### 图 3-3 一个示例流程，展示了索引文档、从向量存储中检索相关文档，并将检索到的文档作为上下文包含在 LLM 提示中
 
 这里是一个代码示例，继续我们之前的例子：
 
@@ -264,13 +263,10 @@ await chain.invoke({context: docs, question: `Who are the key figures in the
 
 注意以下更改：
 
-+   我们将动态的`context`和`question`变量实现到我们的提示中，这使得我们可以定义一个模型可以使用的`ChatPromptTemplate`来生成响应。
-
-+   我们定义了一个`ChatOpenAI`接口来作为我们的 LLM。温度设置为 0 以消除模型输出中的创造性。
-
-+   我们创建一个链来组合提示和 LLM。提醒：`|`运算符（或在 JS 中的`pipe`方法）将`prompt`的输出用作`llm`的输入。
-
-+   我们`调用`链，传入`context`变量（我们检索到的相关文档）和用户的问题来生成最终输出。
++ 我们将动态的`context`和`question`变量实现到我们的提示中，这使得我们可以定义一个模型可以使用的`ChatPromptTemplate`来生成响应。
++ 我们定义了一个`ChatOpenAI`接口来作为我们的 LLM。温度设置为 0 以消除模型输出中的创造性。
++ 我们创建一个链来组合提示和 LLM。提醒：`|`运算符（或在 JS 中的`pipe`方法）将`prompt`的输出用作`llm`的输入。
++ 我们`调用`链，传入`context`变量（我们检索到的相关文档）和用户的问题来生成最终输出。
 
 我们可以将这个检索逻辑封装在一个单独的函数中：
 
@@ -307,6 +303,8 @@ qa.invoke("Who are the key figures in the ancient greek history of philosophy?")
 ```
 
 *JavaScript*
+
+
 
 ```py
 import {ChatOpenAI} from '@langchain/openai'
@@ -455,7 +453,7 @@ Based on the given context, there is no information provided.
 *Python*
 
 ```py
-rewrite_prompt = ChatPromptTemplate.from_template("""Provide a better search 
+rewrite_prompt = ChatPromptTemplate.fromTemplate("""Provide a better search 
  query for web search engine to answer the given question, end the queries 
  with ’**’. Question: {x} Answer:""")
 
@@ -585,6 +583,8 @@ retrieval_chain = query_gen | retriever.batch | get_unique_union
 ```
 
 *JavaScript*
+
+
 
 ```py
 const retrievalChain = queryGen
@@ -861,6 +861,16 @@ RAG-Fusion 的优势在于其捕捉用户意图表达、导航复杂查询和扩
 
 *Python*
 
+
+
+# 查询转换与路由
+
+## 查询转换
+
+在构建 RAG 系统时，查询转换是提升检索质量的关键步骤。以下示例展示了如何通过假设性文档（HyDE）技术将用户查询转换为更利于检索的文档形式。
+
+*Python*
+
 ```py
 from langchain.prompts import ChatPromptTemplate
 from langchain_core.output_parsers import StrOutputParser
@@ -896,7 +906,7 @@ const generateDoc = prompt.pipe(llm).pipe(msg => msg.content)
 *Python*
 
 ```py
-retrieval_chain `=` generate_doc `|` retriever 
+retrieval_chain = generate_doc | retriever 
 ```
 
 *JavaScript*
@@ -963,19 +973,15 @@ await qa.invoke(`Who are some key figures in the ancient greek history of
 
 为了回顾本节中我们所学的内容，查询转换包括以下步骤：获取用户的原始查询并执行以下操作：
 
-+   将查询重写为一个或多个查询
-
-+   将这些查询的结果合并成一个包含最相关结果的单一集合
++ 将查询重写为一个或多个查询
++ 将这些查询的结果合并成一个包含最相关结果的单一集合
 
 查询重写可以采取多种形式，但通常是以类似的方式进行的：获取用户的原始查询——您编写的提示——并要求 LLM 编写新的查询或查询。一些典型的更改示例包括：
 
-+   从查询中删除无关或不相关的文本。
-
-+   将查询与过去的对话历史联系起来。例如，为了理解像*关于洛杉矶怎么样*这样的查询，我们需要将其与关于旧金山天气的假设性问题结合起来，以得到一个有用的查询，如*洛杉矶的天气*。
-
-+   通过也检索相关查询的文档来扩大检索相关文档的范围。
-
-+   将复杂的问题分解成多个更简单的问题，然后在最终提示中包含所有这些问题的结果以生成答案。
++ 从查询中删除无关或不相关的文本。
++ 将查询与过去的对话历史联系起来。例如，为了理解像*关于洛杉矶怎么样*这样的查询，我们需要将其与关于旧金山天气的假设性问题结合起来，以得到一个有用的查询，如*洛杉矶的天气*。
++ 通过也检索相关查询的文档来扩大检索相关文档的范围。
++ 将复杂的问题分解成多个更简单的问题，然后在最终提示中包含所有这些问题的结果以生成答案。
 
 应用的正确重写策略将取决于您的用例。
 
@@ -1035,7 +1041,7 @@ prompt = ChatPromptTemplate.from_messages(
 )
 
 # Define router 
-router `=` prompt `|` structured_llm
+router = prompt | structured_llm
 ```
 
 *JavaScript*
@@ -1157,6 +1163,8 @@ const fullChain = router.pipe(chooseRoute)
 以下是一个语义路由的示例：
 
 *Python*
+
+
 
 ```py
 from langchain.utils.math import cosine_similarity
@@ -1443,6 +1451,8 @@ chain.invoke('How many employees are there?');
 
 *JavaScript*
 
+
+
 ```py
 import { ChatOpenAI } from "@langchain/openai";
 import { createSqlQueryChain } from "langchain/chains/sql_db";
@@ -1474,11 +1484,9 @@ await chain.invoke('How many employees are there?');
 
 我们首先将用户的查询转换为适合我们数据库方言的 SQL 查询。然后我们在数据库上执行该查询。请注意，在生产应用程序中，由 LLM 从用户输入生成的任意 SQL 查询在数据库上执行是危险的。要在生产中使用这些想法，你需要考虑一系列安全措施以降低意外查询在数据库中运行的风险。以下是一些示例：
 
-+   使用具有只读权限的用户在你的数据库上运行查询。
-
-+   运行查询的数据库用户应只能访问你希望用于查询的表。
-
-+   为此应用程序运行的查询添加超时；这将确保即使生成昂贵的查询，它也会在占用太多数据库资源之前被取消。
++ 使用具有只读权限的用户在你的数据库上运行查询。
++ 运行查询的数据库用户应只能访问你希望用于查询的表。
++ 为此应用程序运行的查询添加超时；这将确保即使生成昂贵的查询，它也会在占用太多数据库资源之前被取消。
 
 这并不是安全考虑的完整列表。LLM 应用的安全是一个目前处于开发中的领域，随着新漏洞的发现，更多的安全措施被添加到建议中。
 

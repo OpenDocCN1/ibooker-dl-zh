@@ -1,3 +1,4 @@
+
 # 附录 C：创建使用 Kubeflow Katib 的 HPO 服务
 
 我们将向您介绍一个开源的超参数优化（HPO）服务——Kubeflow Katib，它满足了我们在第五章讨论的几乎所有 HPO 要求。我们强烈建议您在构建自己的 HPO 服务之前考虑采用 Katib。除了向您展示如何使用 Katib 外，我们还将介绍其系统设计和代码库，以使您对这个开源服务感到舒适。
@@ -38,15 +39,15 @@ Katib 在 Kubernetes 集群内部运行。Katib 服务本身并不消耗大量�
 
 对于 Katib 用户来说，实验、建议和试验是需要熟悉的三个最重要的实体/概念。定义如下。
 
-实验
+**实验**
 
 一个实验是单一的优化运行；它是一个端到端的 HPO 过程。一个实验配置包含以下主要组件：用于训练代码的 Docker 镜像，一个我们要优化的客观指标（也称为目标值），需要调整的超参数，以及一个值搜索空间和 HPO 算法。
 
-建议
+**建议**
 
 一个建议是一个由 HPO 算法提出的一组超参数值。Katib 创建一个试验作业来评估建议的值集。
 
-试验
+**试验**
 
 试验是实验的一次迭代。一次试验会接受一个建议，执行一个训练过程（一个试验作业）以产生一个模型，并评估模型的性能。
 
@@ -58,7 +59,7 @@ Katib 在 Kubernetes 集群内部运行。Katib 服务本身并不消耗大量�
 
 在准备 Docker 镜像时，有两个需要注意的地方：将超参数定义为训练代码的命令行参数，以及将训练指标报告给 Katib。让我们来看一个例子。
 
-首先，我们在训练代码中将需要优化的超参数定义为命令行参数。因为 Katib 需要为不同的超参数值执行训练代码作为一个 docker 容器，所以训练代码需要从命令行参数中获取超参数值。在下面的代码示例中，我们定义了两个要调整的超参数：lr（学习率）和批量大小。在优化过程中，Katib 将在训练容器启动时传入这些值；请参见以下代码：
+首先，我们在训练代码中将需要优化的超参数定义为命令行参数。因为 Katib 需要为不同的超参数值执行训练代码作为一个 docker 容器，所以训练代码需要从命令行参数中获取超参数值。在下面的代码示例中，我们定义了两个要调整的超参数：`lr`（学习率）和批量大小。在优化过程中，Katib 将在训练容器启动时传入这些值；请参见以下代码：
 
 ```py
 def main():
@@ -74,9 +75,9 @@ def main():
 
 ❶ 从命令行参数解析超参数值
 
-其次，我们让训练代码报告训练指标，尤其是目标指标，给 Katib，这样它就可以跟踪每个试验执行的进度和结果。Katib 可以从以下三个位置收集指标：stdout（操作系统的标准输出位置），任意文件和 TensorFlow 事件。如果你有特殊的指标收集或存储要求，也可以编写自己的指标收集容器。
+其次，我们让训练代码报告训练指标，尤其是目标指标，给 Katib，这样它就可以跟踪每个试验执行的进度和结果。Katib 可以从以下三个位置收集指标：`stdout`（操作系统的标准输出位置），任意文件和 TensorFlow 事件。如果你有特殊的指标收集或存储要求，也可以编写自己的指标收集容器。
 
-最简单的选项是将评估（目标）指标打印到训练代码的标准输出（stdout）中，并使用 Katib 的标准指标收集器收集它们。例如，如果我们将目标指标定义为`Validation-accuracy`，并希望优化过程找到最小化此值的最优超参数，我们可以将以下日志写入到 stdout 中。Katib 的标准指标收集器将在 stdout 中检测到`Validation-accuracy=0.924463`，并将解析该值。如下所示是标准输出样本：
+最简单的选项是将评估（目标）指标打印到训练代码的标准输出（`stdout`）中，并使用 Katib 的标准指标收集器收集它们。例如，如果我们将目标指标定义为`Validation-accuracy`，并希望优化过程找到最小化此值的最优超参数，我们可以将以下日志写入到 `stdout` 中。Katib 的标准指标收集器将在 `stdout` 中检测到`Validation-accuracy=0.924463`，并将解析该值。如下所示是标准输出样本：
 
 ```py
 2022-01-23T05:19:53Z INFO  Epoch[5] Train-accuracy=0.932769
@@ -95,7 +96,7 @@ Katib 默认使用的正则表达式格式来解析日志中的目标指标是`(
 
 通过使用 Kubernetes API 或`kubectl`命令，我们可以通过指定一个 YAML 配置来创建实验 CRD。以下是一个示例配置。为了便于阅读，我们将示例配置分成了三个部分。我们逐个部分讨论一下。
 
-第一部分：目标
+**第一部分：目标**
 
 第一部分是定义 HPO 实验的目标，并确定如何衡量每个试验（训练执行）的性能。Katib 使用`objectiveMetric`和`additionalMetric`的值作为目标值，以监控建议的超参数与模型的配合情况。如果一个试验的目标值达到了目标，Katib 将将建议的超参数标记为最佳值，并停止进一步的试验。 
 
@@ -118,7 +119,7 @@ spec:
 
 ❶ 定义了目标指标
 
-第二部分：HPO 算法和超参数
+**第二部分：HPO 算法和超参数**
 
 设置完 HPO 的目标后，我们可以配置 HPO 算法并声明它们的搜索空间以及需要调整的超参数。我们分别来看这些配置。
 
@@ -161,7 +162,7 @@ Parameters:                              ❷
 
 ❷ 定义了要优化的超参数及其值的搜索空间
 
-最后一节：试验配置
+**最后一节：试验配置**
 
 在这个*trial template config*中，我们定义了要执行的训练代码（Docker 镜像）和要传递给训练代码的超参数。Katib 为几乎每个模型训练框架（如 TensorFlow、PyTorch、MXNet 等）都内置了作业，它负责在 Kubernetes 中执行实际的训练。
 
@@ -222,13 +223,15 @@ NAME                    TYPE      STATUS   AGE
 bayesian-optimization   Created   True     46s
 ```
 
-从 `kubectl get experiment -n kubeflow` 的返回消息中，我们看到实验 `bayesian-optimization` 被创建为 Experiment CRD 资源。从现在开始，Katib 将完全拥有 HPO 实验，直到获得结果。
+
+
+从`kubectl get experiment -n kubeflow`的返回消息中，我们看到实验`bayesian-optimization`被创建为`Experiment` CRD 资源。从现在开始，Katib 将完全拥有 HPO 实验，直到获得结果。
 
 请注意，Katib 完全依赖于 Kubernetes CRD 对象来管理 HPO 实验和试验。它还使用 CRD 对象来存储其 HPO 活动的指标和状态，因此我们说 Katib 是一个 Kubernetes 原生应用程序。
 
-除了上述 `kubectl` 命令之外，我们还可以使用 Katib SDK、其 Web UI 或发送 HTTP 请求来启动实验。
+除了上述`kubectl`命令之外，我们还可以使用 Katib SDK、其 Web UI 或发送 HTTP 请求来启动实验。
 
-### C.2.6 步骤 6：查询进度和结果
+## C.2.6 步骤 6：查询进度和结果
 
 您可以使用以下命令来检查实验的运行状态：
 
@@ -236,7 +239,7 @@ bayesian-optimization   Created   True     46s
 % kubectl describe experiment bayesian-optimization -n kubeflow
 ```
 
-`kubectl describe` 命令将返回有关实验的所有信息，例如其配置、元数据和状态。从进度跟踪的角度来看，我们主要关注状态部分。请参阅以下示例：
+`kubectl describe`命令将返回有关实验的所有信息，例如其配置、元数据和状态。从进度跟踪的角度来看，我们主要关注状态部分。请参阅以下示例：
 
 ```py
 Status:
@@ -297,13 +300,13 @@ Status:
 
 以下是对前面示例响应的几点解释：
 
-+   *状态/条件*—显示当前和以前的状态。在前面的示例中，我们看到实验经历了三个状态：创建、运行和成功。从消息中，我们知道实验已完成，因为它用完了训练预算——最大试验计数。
++ *状态/条件*—显示当前和以前的状态。在前面的示例中，我们看到实验经历了三个状态：创建、运行和成功。从消息中，我们知道实验已完成，因为它用完了训练预算——最大试验计数。
 
-+   *当前最佳试验*—显示当前的“最佳”试验以及试验使用的超参数值。它还显示目标度量的统计信息。随着实验的进行，这些值将不断更新，直到实验中的所有试验都完成，然后我们将 `status.currentOptimalTrial.parameterAssignment`（超参数值分配）作为最终结果。
++ *当前最佳试验*—显示当前的“最佳”试验以及试验使用的超参数值。它还显示目标度量的统计信息。随着实验的进行，这些值将不断更新，直到实验中的所有试验都完成，然后我们将`status.currentOptimalTrial.parameterAssignment`（超参数值分配）作为最终结果。
 
-+   *成功的试验列表/失败的试验列表/试验*—通过列出实验执行的所有试验来显示实验的进展情况。
++ *成功的试验列表/失败的试验列表/试验*—通过列出实验执行的所有试验来显示实验的进展情况。
 
-### C.2.7 步骤 7：故障排除
+## C.2.7 步骤 7：故障排除
 
 如果有失败的试验，我们可以运行以下命令来检查失败的试验作业的错误消息。参见以下失败的 HPO 示例：
 
@@ -336,14 +339,14 @@ Status:
 
 从返回的数据中，我们可以看到试验中使用的超参数值以及相关的错误消息。
 
-除了 `describe` 命令的错误消息外，我们还可以通过检查训练容器的日志来找到根本原因。如果选择使用 Katib 标准度量收集器，Katib 将在同一 pod 中的训练代码容器中运行 `metrics-logger-and-collector` 容器。该度量收集器捕获来自训练容器的所有 stdout 日志；您可以使用以下命令检查这些日志：`kubectl logs ${trial_pod} -c metrics-logger-and-collector -n kubeflow`。参见以下示例命令：
+除了`describe`命令的错误消息外，我们还可以通过检查训练容器的日志来找到根本原因。如果选择使用 Katib 标准度量收集器，Katib 将在同一 pod 中的训练代码容器中运行`metrics-logger-and-collector`容器。该度量收集器捕获来自训练容器的所有 stdout 日志；您可以使用以下命令检查这些日志：`kubectl logs ${trial_pod} -c metrics-logger-and-collector -n kubeflow`。参见以下示例命令：
 
 ```py
 % kubectl logs bayesian-optimization-mkqgq6nm--1-qnbtt -c \
  metrics-logger-and-collector -n kubeflow
 ```
 
-`logs` 命令输出大量有价值的信息，例如训练过程的初始参数，数据集下载结果和模型训练指标。在以下示例日志输出中，我们可以看到 `Validation-accuracy` 和 `Train-accuracy`。Katib 度量收集器将解析这些值，因为它们在实验配置中被定义为目标度量：
+`logs`命令输出大量有价值的信息，例如训练过程的初始参数，数据集下载结果和模型训练指标。在以下示例日志输出中，我们可以看到`Validation-accuracy`和`Train-accuracy`。Katib 度量收集器将解析这些值，因为它们在实验配置中被定义为目标度量：
 
 ```py
 Trial Name: bayesian-optimization-mkqgq6nm                                                                ❶
@@ -379,11 +382,11 @@ HPO 是一项耗时且昂贵的操作。Katib 提供了三种方法来加速该�
 
 ### C.3.1 并行试验
 
-通过在实验配置中指定 `parallelTrialCount`，您可以并行运行试验。我们应该注意的一件事是，一些 HPO 算法不支持并行试验执行。因为这种类型的算法对试验执行顺序有线性要求，下一个试验需要等到当前试验完成。
+通过在实验配置中指定`parallelTrialCount`，您可以并行运行试验。我们应该注意的一件事是，一些 HPO 算法不支持并行试验执行。因为这种类型的算法对试验执行顺序有线性要求，下一个试验需要等到当前试验完成。
 
 ### C.3.2 分布式试验（训练）作业
 
-为了更快完成试验作业，Katib 允许我们为运行训练代码启用分布式训练。正如我们在 C.2（步骤 4）中所解释的那样，Katib 为不同的训练框架（如 PyTorch、TensorFlow 和 MXNet）在 `trialTemplate` 中定义了不同的作业类型。
+为了更快完成试验作业，Katib 允许我们为运行训练代码启用分布式训练。正如我们在 C.2（步骤 4）中所解释的那样，Katib 为不同的训练框架（如 PyTorch、TensorFlow 和 MXNet）在`trialTemplate`中定义了不同的作业类型。
 
 以下是如何为 Katib 实验中的 PyTorch 训练代码启用分布式训练（一个主节点，两个工作节点）的示例：
 
@@ -440,13 +443,13 @@ trialTemplate:
 
 ❹ 配置工作训练器
 
-在前面的示例中，与第 C.2 节中的非分布式实验配置相比（步骤 4），唯一的区别是 `trialSpec` 部分。作业类型现在变为 `PyTorchJob`，并且具有主训练器和工作训练器的副本数等单独的设置。您可以在以下两个 GitHub 仓库中找到 Katib 训练操作符及其配置示例的详细信息：Kubeflow 训练操作符（[`github.com/kubeflow/training-operator`](https://github.com/kubeflow/training-operator)）和 Katib 操作符配置示例（[`mng.bz/rdgB`](http://mng.bz/rdgB)）。
+在前面的示例中，与第 C.2 节中的非分布式实验配置相比（步骤 4），唯一的区别是`trialSpec`部分。作业类型现在变为`PyTorchJob`，并且具有主训练器和工作训练器的副本数等单独的设置。您可以在以下两个 GitHub 仓库中找到 Katib 训练操作符及其配置示例的详细信息：Kubeflow 训练操作符（[`github.com/kubeflow/training-operator`](https://github.com/kubeflow/training-operator)）和 Katib 操作符配置示例（[`mng.bz/rdgB`](http://mng.bz/rdgB)）。
 
 ### C.3.3 早期停止
 
 Katib 提供的另一个有用技巧是早期停止。当试验的目标指标不再改善时，早期停止结束试验。它通过终止不太有希望的试验来节省计算资源并减少执行时间。
 
-在 Katib 中使用早期停止的优点是我们只需要更新实验配置文件，而不需要修改训练代码。只需在 `.spec.algorithm` 部分中定义 `.earlyStopping.algorithmName` 和 `.earlyStopping.algorithmSettings`，您就可以开始使用了。
+在 Katib 中使用早期停止的优点是我们只需要更新实验配置文件，而不需要修改训练代码。只需在`.spec.algorithm`部分中定义`.earlyStopping.algorithmName`和`.earlyStopping.algorithmSettings`，您就可以开始使用了。
 
 Katib 当前支持的早期停止算法是中位数停止规则，如果试验的最佳目标值比所有其他已完成试验的目标报告到相同步骤的运行平均值的中位数值更差，则停止试验。请在 Katib 官方文档“使用早期停止”中阅读更多详细信息。
 
@@ -459,6 +462,8 @@ Katib 当前支持的早期停止算法是中位数停止规则，如果试验�
 ### C.4.1 Kubernetes 控制器/操作器模式
 
 我们已经在第 3.4.2 节中讨论了控制器设计模式。但是，为了帮助您记住，我们在此将图 3.10 重新发布为图 C.2。如果图 C.2 看起来不太熟悉，请回顾第 3.4.2 节。
+
+
 
 ![](img/C-2.png)
 
@@ -478,7 +483,7 @@ Katib 当前支持的早期停止算法是中位数停止规则，如果试验�
 
 图 C.3 显示了 Katib 系统设计图和用户工作流程
 
-第 1 步：创建实验请求
+**第 1 步：创建实验请求**
 
 在第 1 步中，Alex 使用客户端工具（如 Katib SDK、Katib web UI 或 `kubectl` 命令）创建了一个实验 CRD 对象。这个实验对象包含了所有 HPO 实验的定义，如训练算法、超参数及其搜索空间、HPO 算法和试验预算。
 
@@ -486,23 +491,23 @@ Katib 当前支持的早期停止算法是中位数停止规则，如果试验�
 
 一旦在第 1 步中创建了 Alex 的实验对象，Katib 就会为 Alex 的实验部署一个 HPO 算法建议服务（组件 D），以便运行所需的 HPO 算法。在这个建议服务中，实验 CRD 对象中定义的 HPO 搜索算法（库）被加载并通过 gRPC 接口公开，允许建议控制器与其通信并请求建议的超参数。
 
-第 2 步：获取下一个试验的超参数
+**第 2 步：获取下一个试验的超参数**
 
 当实验控制器在第 2 步中发现了 Alex 的实验 CRD 对象时，它会创建一个建议 CRD 对象作为建议控制器（组件 B）的输入请求。在此建议 CRD 对象中指定了超参数及其值，以及搜索算法和建议的数量。
 
 随后，建议控制器调用在第 1 步创建的建议算法服务来计算建议的超参数值。此外，建议控制器在建议 CRD 对象中维护建议的超参数值的历史记录。
 
-第 3 步：创建试验请求
+**第 3 步：创建试验请求**
 
 作为第 3 步的一部分，在建议控制器提供一组试验超参数值后，实验控制器（组件 A）创建一个试验 CRD 对象来启动模型训练试验。试验使用建议服务（组件 D）计算出的超参数值集来训练模型。
 
-第 4 步：启动训练作业
+**第 4 步：启动训练作业**
 
 在第 4 步中，试验控制器（组件 C）读取新创建的试验 CRD 对象（在第 3 步创建），并创建一个 TrialJob CRD 对象。有几种类型的 TrialJob CRD 对象，包括 Kubernetes 作业、PyTorch 作业、TF 作业和 MXNet 作业。对于每种作业类型，Kubeflow（[`www.kubeflow.org/docs/components/training/`](https://www.kubeflow.org/docs/components/training/)）提供了一个专用的训练运算符来执行它，如 PyTorch 训练运算符或 TensorFlow 训练运算符（组件 E）。
 
 在检测到其类型中新创建的 TrialJob CRD 对象后，训练运算符（组件 E）会根据试验作业中定义的超参数创建 Kubernetes Pod 来执行训练图像。Alex 的 HPO 实验的训练试验将由 PyTorch 训练运算符运行，因为他的训练代码是用 PyTorch 编写的。
 
-第 5 步：返回试验结果
+**第 5 步：返回试验结果**
 
 当模型试训练开始时，度量收集器边车（一个位于 Kubernetes 训练 Pod 中的 Docker 容器）在第 5 步收集训练指标，并将其报告给 Katib 指标存储（一个 MySQL 数据库）。使用这些指标，试验控制器（组件 C）将试验执行状态更新到试验 CRD 对象上。当实验控制器注意到试验 CRD 对象的最新更改时，它读取更改并使用最新的试验执行信息更新实验 CRD 对象，以便实验对象具有最新状态。最新状态以这种方式聚合到实验对象中。
 
@@ -530,13 +535,13 @@ HPO 实验由试验组成。Katib 为每个试验创建一个试验 CRD 对象�
 
 虽然 Katib 有一个庞大的代码库（[`github.com/kubeflow/katib`](https://github.com/kubeflow/katib)），但阅读和调试其代码并不太困难。
 
-从哪里开始阅读代码
+**从哪里开始阅读代码**
 
 所有 Katib 核心组件都采用了控制器模式：`experiment_controller`、`trial_controller`和`suggestion_controller`。控制器的工作是确保对于任何给定的对象，Kubernetes 世界的实际状态与对象中的期望状态相匹配。我们称这个过程为*reconciling*。例如，在`experiment_controller`中的 reconcile 函数会读取实验对象的集群状态，并根据所读取的状态进行更改（建议、试验）。通过遵循这个思路，我们可以从每个控制器类的 reconcile 函数开始理解其核心逻辑。
 
 你可以在`pkg/controller.v1beta1/experiment/experiment_controller.go`找到实验控制器，建议控制器在`pkg/controller.v1beta1/suggestion/suggestion_controller.go`，试验控制器在`pkg/controller.v1beta1/trial/trial_controller.go`。记得从这些文件的 reconcile 函数开始。
 
-调试
+**调试**
 
 Katib 核心应用（katib-controller）作为控制台应用程序运行。这个控制台应用程序中没有 UI 或者 Web 代码，只有纯逻辑代码，因此它的本地调试设置很简单。要调试 Katib，首先设置好你的本地 Kubernetes 集群，然后通过断点在本地运行 katib-controller，接着你可以通过创建一个测试实验请求，例如`kubectl apply -f {test_experiment.yaml}`来启动 HPO 过程。reconcile 函数中的断点会被触发，你可以从那里开始调试和探索代码。
 
@@ -645,8 +650,10 @@ suggestion: |-
 
 ## C.7 使用它的时机
 
-从这次讨论中我们可以看到，Katib 满足了 HPO 服务的所有设计原则。它对训练框架和训练代码是不可知的；它可以扩展以纳入不同的 HPO 算法和不同的指标收集器；并且由于 Kubernetes 的存在，它是可移植和可扩展的。如果你正在寻找一个生产级别的 HPO 服务，Katib 是最佳选择。
 
-对于 Katib 唯一的注意事项是它的前期成本很高。你需要建立一个 Kubernetes 集群，安装 Katib，并将训练代码 Docker 化才能开始。你需要了解 Kubernetes 命令来排查故障。这需要专门的工程师来操作和维护系统，因为这些都是非常重要的任务。
 
-对于生产场景，这些挑战并不是主要问题，因为通常模型训练系统的设置与 Kubernetes 中的 Katib 相同。只要工程师有操作模型训练系统的经验，就可以轻松管理 Katib。但对于小团队或原型项目来说，如果你更喜欢简单的东西，像 Ray Tune 这样的 HPO 库方法更合适。
+从这次讨论中我们可以看到，`Katib` 满足了 HPO 服务的所有设计原则。它对训练框架和训练代码是不可知的；它可以扩展以纳入不同的 HPO 算法和不同的指标收集器；并且由于 `Kubernetes` 的存在，它是可移植和可扩展的。如果你正在寻找一个生产级别的 HPO 服务，`Katib` 是最佳选择。
+
+对于 `Katib` 唯一的注意事项是它的前期成本很高。你需要建立一个 `Kubernetes` 集群，安装 `Katib`，并将训练代码 Docker 化才能开始。你需要了解 `Kubernetes` 命令来排查故障。这需要专门的工程师来操作和维护系统，因为这些都是非常重要的任务。
+
+对于生产场景，这些挑战并不是主要问题，因为通常模型训练系统的设置与 `Kubernetes` 中的 `Katib` 相同。只要工程师有操作模型训练系统的经验，就可以轻松管理 `Katib`。但对于小团队或原型项目来说，如果你更喜欢简单的东西，像 `Ray Tune` 这样的 HPO 库方法更合适。

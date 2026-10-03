@@ -1,48 +1,43 @@
+
 # 第七章：教会机器更好地看：改善 CNNs 并让它们承认
 
 本章内容包括
 
-+   减少图像分类器的过拟合
++ 减少图像分类器的过拟合
++ 通过更好的模型架构提升模型性能
++ 使用预训练模型和迁移学习进行图像分类
++ 现代 ML 解释技术来解剖图像分类器
 
-+   通过更好的模型架构提升模型性能
-
-+   使用预训练模型和迁移学习进行图像分类
-
-+   现代 ML 解释技术来解剖图像分类器
-
-我们已经开发并训练了一款名为 Inception net v1 的最先进的图像分类器，它在一个物体分类数据集上进行了训练。Inception net v1 是计算机视觉中一个广为人知的图像分类模型。你学习了 Inception 块是如何通过在多个尺度上聚合卷积窗口来创建的，这鼓励了模型中的稀疏性。你还看到了如何使用 1 × 1 卷积来保持层的维度最小。最后，我们观察到 Inception net v1 如何在网络中部使用辅助分类层来稳定和维持整个网络中的梯度流。然而，结果并没有真正达到模型的声誉，它在验证和测试准确性上过度拟合，验证和测试准确率约为 30%，而训练准确率则高达约 94%。在本章中，我们将讨论通过减少过拟合和提高验证和测试准确率来改善模型，最终将使我们得到一个在验证和测试集上达到约 80% 准确率（相当于能够准确识别 160/200 类物体）的模型。此外，我们还将研究允许我们探索模型思维的技术，以获得洞察。
+我们已经开发并训练了一款名为 `Inception net v1` 的最先进的图像分类器，它在一个物体分类数据集上进行了训练。`Inception net v1` 是计算机视觉中一个广为人知的图像分类模型。你学习了 `Inception` 块是如何通过在多个尺度上聚合卷积窗口来创建的，这鼓励了模型中的稀疏性。你还看到了如何使用 `1 × 1` 卷积来保持层的维度最小。最后，我们观察到 `Inception net v1` 如何在网络中部使用辅助分类层来稳定和维持整个网络中的梯度流。然而，结果并没有真正达到模型的声誉，它在验证和测试准确性上过度拟合，验证和测试准确率约为 30%，而训练准确率则高达约 94%。在本章中，我们将讨论通过减少过拟合和提高验证和测试准确率来改善模型，最终将使我们得到一个在验证和测试集上达到约 80% 准确率（相当于能够准确识别 160/200 类物体）的模型。此外，我们还将研究允许我们探索模型思维的技术，以获得洞察。
 
 本章将带你走过一个激动人心的旅程，在这个旅程中，我们将把一个次优的机器学习模型变成一个显著优秀的模型。这个过程将使人联想起我们在上一章所做的事情。我们将增加一个额外的步骤来解释/解读模型所做的决策。我们将使用特殊的技术来看看模型在做出预测时对图像的哪个部分支付了最多的注意力。这有助于我们对模型建立信任。在这个过程中，我们识别出模型中潜藏的问题，并系统地修复它们以提高性能。我们将讨论几种重要的技术，包括以下内容：
 
-+   通过使用各种图像变换技术如亮度/对比度调整、旋转和平移来增广数据，为模型创建更多标记数据
-
-+   实现一个更适合所使用的数据大小和类型的 Inception net 变体
-
-+   使用迁移学习来利用已经在更大数据集上训练过的模型，并对其进行微调，以在我们拥有的数据集上表现良好
++ 通过使用各种图像变换技术如亮度/对比度调整、旋转和平移来增广数据，为模型创建更多标记数据
++ 实现一个更适合所使用的数据大小和类型的 `Inception net` 变体
++ 使用迁移学习来利用已经在更大数据集上训练过的模型，并对其进行微调，以在我们拥有的数据集上表现良好
 
 如果你曾经需要为不熟悉的问题实施深度学习解决方案，那么这一章可能会与你产生共鸣。通常，仅仅实施“某些”深度网络并不会让你登上成功的顶峰。如果问题的新颖性或手头问题的定制性质没有处理好，它会阻碍你的进展。这样的难题会把你带入未知领域，你需要小心行事，找到解决方案而不至于筋疲力尽。本章将为任何可能在计算机视觉领域面对类似情况的人提供指导。
 
 ## 7.1 减少过拟合的技术
 
-我们正在追求一个雄心勃勃的目标，即开发一个智能购物助手应用程序，其中会使用图像/物体分类器作为重要组件。为此，我们将使用数据集 tiny-imagenet-200，它是大型 ImageNet 图像分类数据集的一个较小版本，由图像和表示该图像中存在的对象类别组成。该数据集有一个训练子集和一个测试子集。你进一步将训练子集分成训练集（原始的 90%）和验证集（原始的 10%）。
+我们正在追求一个雄心勃勃的目标，即开发一个智能购物助手应用程序，其中会使用图像/物体分类器作为重要组件。为此，我们将使用数据集 `tiny-imagenet-200`，它是大型 `ImageNet` 图像分类数据集的一个较小版本，由图像和表示该图像中存在的对象类别组成。该数据集有一个训练子集和一个测试子集。你进一步将训练子集分成训练集（原始的 90%）和验证集（原始的 10%）。
 
-你已经基于著名的 Inception 网络模型开发了一个模型，但它严重过拟合。需要缓解过拟合，因为它会导致模型在训练数据上表现非常好，但在测试/真实世界数据上表现不佳。你知道几种减少过拟合的技术，即数据增强（从现有数据中创建更多数据；对于图像，这包括通过引入随机亮度/对比度调整、平移、旋转等方式创建相同图像的变体）、随机失活（即在训练期间随机关闭网络中的节点）以及提前停止（即在过拟合发生前终止模型训练）。你希望利用 Keras API 来减少过拟合。
+你已经基于著名的 `Inception` 网络模型开发了一个模型，但它严重过拟合。需要缓解过拟合，因为它会导致模型在训练数据上表现非常好，但在测试/真实世界数据上表现不佳。你知道几种减少过拟合的技术，即数据增强（从现有数据中创建更多数据；对于图像，这包括通过引入随机亮度/对比度调整、平移、旋转等方式创建相同图像的变体）、随机失活（即在训练期间随机关闭网络中的节点）以及提前停止（即在过拟合发生前终止模型训练）。你希望利用 `Keras` API 来减少过拟合。
 
-通常，减少过拟合需要仔细检查整个机器学习流程。这涉及到输入的数据、模型结构和模型训练。在这一节中，我们将看看所有这些方面，并了解如何防止过拟合。此部分的代码可在 Ch07-Improving-CNNs-and-Explaining/7.1.Image_Classification_Advance.ipynb 中找到。
+通常，减少过拟合需要仔细检查整个机器学习流程。这涉及到输入的数据、模型结构和模型训练。在这一节中，我们将看看所有这些方面，并了解如何防止过拟合。此部分的代码可在 `Ch07-Improving-CNNs-and-Explaining/7.1.Image_Classification_Advance.ipynb` 中找到。
 
 ### 7.1.1 使用 Keras 进行图像数据增强
 
-首先是在训练集中增加数据。 数据增强是一种常见的方法，可以增加深度学习网络可用的数据量，而无需对新数据进行标记。 例如，在图像分类问题中，您可以通过创建同一图像的多个变换版本（例如，移动图像，更改亮度）并具有与原始图像相同的标签（图 7.1）来从单个图像创建多个数据点。 如前所述，更多数据通过增加泛化能力（减少过拟合）来增强深度学习模型的强度，从而在实际应用中实现可靠的性能。 对于图像数据，您可以使用许多不同的增强技术：
+首先是在训练集中增加数据。数据增强是一种常见的方法，可以增加深度学习网络可用的数据量，而无需对新数据进行标记。例如，在图像分类问题中，您可以通过创建同一图像的多个变换版本（例如，移动图像，更改亮度）并具有与原始图像相同的标签（图 7.1）来从单个图像创建多个数据点。如前所述，更多数据通过增加泛化能力（减少过拟合）来增强深度学习模型的强度，从而在实际应用中实现可靠的性能。对于图像数据，您可以使用许多不同的增强技术：
 
-+   随机调整亮度、对比度等
-
-+   随机缩放、旋转、平移等
++ 随机调整亮度、对比度等
++ 随机缩放、旋转、平移等
 
 ![07-01](img/07-01.png)
 
-图 7.1 在增强步骤之后的训练数据和验证数据之间的差异。 图清楚地显示了对训练数据应用的各种转换，而对验证数据未应用，正如我们所预期的那样。
+图 7.1 在增强步骤之后的训练数据和验证数据之间的差异。图清楚地显示了对训练数据应用的各种转换，而对验证数据未应用，正如我们所预期的那样。
 
-通过向我们之前使用的 ImageDataGenerator 提供几个额外参数，可以轻松地实现这种增强。 让我们定义一个新的 Keras ImageDataGenerator，具有数据增强功能。 在 Keras 中，您可以执行大多数这些增强，几乎不需要去其他地方寻找。 让我们看看 ImageDataGenerator 提供的各种选项（仅显示了最重要的参数）。 图 7.2 说明了此处列出的不同参数的效果。
+通过向我们之前使用的 `ImageDataGenerator` 提供几个额外参数，可以轻松地实现这种增强。让我们定义一个新的 Keras `ImageDataGenerator`，具有数据增强功能。在 `Keras` 中，您可以执行大多数这些增强，几乎不需要去其他地方寻找。让我们看看 `ImageDataGenerator` 提供的各种选项（仅显示了最重要的参数）。图 7.2 说明了此处列出的不同参数的效果。
 
 ```py
 data_gen = tf.keras.preprocessing.image.ImageDataGenerator(
@@ -52,82 +47,54 @@ data_gen = tf.keras.preprocessing.image.ImageDataGenerator(
     height_shift_range=0.0, brightness_range=None, shear_range=0.0, 
 ➥ zoom_range=0.0,
     channel_shift_range=0.0, horizontal_flip=False, 
-    vertical_flip=False, fill_mode=”nearest”, rescale=None,
+    vertical_flip=False, fill_mode="nearest", rescale=None,
     preprocessing_function=None, validation_split=0.0
 )
 ```
 
 其中
 
-+   featurewise_center 指定是否通过减去整个数据集的平均值来使图像居中（例如，True/False）。
-
-+   samplewise_center 指定是否通过减去每个图像的单个平均值来使图像居中（例如，True/False）。
-
-+   featurewise_std_normalization 与 featurewise_center 相同，但是将图像除以标准偏差而不是减去平均值（True/False）。
-
-+   samplewise_std_normalization 与 samplewise_center 相同，但是将图像除以标准偏差而不是减去平均值（True/False）。
-
-+   zca_whitening 是一种特殊类型的图像归一化，旨在减少图像像素中存在的相关性（请参阅[`mng.bz/DgP0`](http://mng.bz/DgP0)）（True/False）。
-
-+   rotation_range 指定在数据增强期间进行的随机图像旋转的边界（以度为单位）。 具有值在(0, 360)之间的浮点数； 例如，30 表示-30 到 30 的范围； 0 禁用。
-
-+   width_shift_range 指定在数据增强期间在宽度轴上进行的随机移位的边界（作为比例或像素）。
-
-+   值在(-1, 1)之间的元组被视为宽度的比例（例如，(-0.4, 0.3)）。
-
-+   像素的值在(-inf, inf)之间的元组被视为像素（例如，(-150, 250)）。
-
-+   height_shift_range 与 width_shift_range 相同，只是针对高度维度。
-
-+   `brightness_range`指定在数据增强期间对数据进行的随机亮度调整的范围。
-
-+   元组中的值介于（-inf，inf）之间，例如，（-0.2，0.5）或（-5，10）；0 表示禁用。
-
-+   `shear_range`与`brightness_range`相同，但用于在数据增强期间剪切（即倾斜）图像。
-
-+   以度为单位的浮点数，例如，30.0。
-
-+   `zoom_range`与`brightness_range`相同，除了在数据增强期间对图像进行缩放。
-
-+   `horizontal_flip`指定在数据增强期间是否随机水平翻转图像（是/否）。
-
-+   `vertical_flip`与`horizontal_flip`相同，但垂直翻转（是/否）。
-
-+   `fill_mode`定义了通过各种图像变换（例如，将图像向左移动会在右侧创建空白空间）创建的空白空间如何处理。可能的选项是“reflect”，“nearest”和“constant”。图 7.2 的最后一行显示了差异。
-
-+   `rescale`通过常量值重新缩放输入。
-
-+   `preprocessing_function`接受一个 Python 函数，该函数可用于引入额外的数据增强/预处理步骤，这些步骤不容易获得。
-
-+   `validation_split`解决了应该将多少数据用作验证数据的问题。我们不使用此参数，因为我们单独为验证集创建数据生成器，因为我们不希望有增强应用。一个浮点数，例如，0.2。
++ `featurewise_center` 指定是否通过减去整个数据集的平均值来使图像居中（例如，`True`/`False`）。
++ `samplewise_center` 指定是否通过减去每个图像的单个平均值来使图像居中（例如，`True`/`False`）。
++ `featurewise_std_normalization` 与 `featurewise_center` 相同，但是将图像除以标准偏差而不是减去平均值（`True`/`False`）。
++ `samplewise_std_normalization` 与 `samplewise_center` 相同，但是将图像除以标准偏差而不是减去平均值（`True`/`False`）。
++ `zca_whitening` 是一种特殊类型的图像归一化，旨在减少图像像素中存在的相关性（请参阅[`mng.bz/DgP0`](http://mng.bz/DgP0)）（`True`/`False`）。
++ `rotation_range` 指定在数据增强期间进行的随机图像旋转的边界（以度为单位）。具有值在 `(0, 360)` 之间的浮点数；例如，`30` 表示 `-30` 到 `30` 的范围；`0` 禁用。
++ `width_shift_range` 指定在数据增强期间在宽度轴上进行的随机移位的边界（作为比例或像素）。
+  + 值在 `(-1, 1)` 之间的元组被视为宽度的比例（例如，`(-0.4, 0.3)`）。
+  + 像素的值在 `(-inf, inf)` 之间的元组被视为像素（例如，`(-150, 250)`）。
++ `height_shift_range` 与 `width_shift_range` 相同，只是针对高度维度。
++ `brightness_range` 指定在数据增强期间对数据进行的随机亮度调整的范围。
+  + 元组中的值介于 `(-inf, inf)` 之间，例如，`(-0.2, 0.5)` 或 `(-5, 10)`；`0` 表示禁用。
++ `shear_range` 与 `brightness_range` 相同，但用于在数据增强期间剪切（即倾斜）图像。
+  + 以度为单位的浮点数，例如，`30.0`。
++ `zoom_range` 与 `brightness_range` 相同，除了在数据增强期间对图像进行缩放。
++ `horizontal_flip` 指定在数据增强期间是否随机水平翻转图像（是/否）。
++ `vertical_flip` 与 `horizontal_flip` 相同，但垂直翻转（是/否）。
++ `fill_mode` 定义了通过各种图像变换（例如，将图像向左移动会在右侧创建空白空间）创建的空白空间如何处理。可能的选项是 `"reflect"`，`"nearest"` 和 `"constant"`。图 7.2 的最后一行显示了差异。
++ `rescale` 通过常量值重新缩放输入。
++ `preprocessing_function` 接受一个 Python 函数，该函数可用于引入额外的数据增强/预处理步骤，这些步骤不容易获得。
++ `validation_split` 解决了应该将多少数据用作验证数据的问题。我们不使用此参数，因为我们单独为验证集创建数据生成器，因为我们不希望有增强应用。一个浮点数，例如，`0.2`。
 
 ![07-02](img/07-02.png)
 
-图 7.2 不同增强参数及其`ImageDataGenerator`的值的效果。
+图 7.2 不同增强参数及其 `ImageDataGenerator` 的值的效果。
 
 通过对不同参数有良好的理解，我们将定义两个图像数据生成器：一个用于数据增强（训练数据），另一个不用于数据增强（测试数据）。对于我们的项目，我们将以以下方式增强数据：
 
-+   随机旋转图像。
++ 随机旋转图像。
++ 在宽度维度上随机平移。
++ 在高度维度上随机平移。
++ 随机调整亮度。
++ 随机剪切。
++ 随机缩放。
++ 随机水平翻转图像。
++ 随机伽马校正（自定义实现）。
++ 随机遮挡（自定义实现）。
 
-+   在宽度维度上随机平移。
+以下列表显示了如何使用验证分割定义 `ImageDataGenerator`。
 
-+   在高度维度上随机平移。
-
-+   随机调整亮度。
-
-+   随机剪切。
-
-+   随机缩放。
-
-+   随机水平翻转图像。
-
-+   随机伽马校正（自定义实现）。
-
-+   随机遮挡（自定义实现）。
-
-以下列表显示了如何使用验证分割定义`ImageDataGenerator`。
-
-列表 7.1 定义了具有验证分割的`ImageDataGenerator`。
+列表 7.1 定义了具有验证分割的 `ImageDataGenerator`。
 
 ```py
 image_gen_aug = ImageDataGenerator(                     ❶
@@ -144,17 +111,13 @@ image_gen_aug = ImageDataGenerator(                     ❶
 image_gen = ImageDataGenerator(samplewise_center=False) ❺
 ```
 
-❶ 定义用于训练/验证数据的`ImageDataGenerator`。
-
-❷ 我们将暂时关闭`samplewise_center`并稍后重新引入它。
-
+❶ 定义用于训练/验证数据的 `ImageDataGenerator`。
+❷ 我们将暂时关闭 `samplewise_center` 并稍后重新引入它。
 ❸ 先前讨论的各种增强参数（经验设置）。
-
 ❹ 将训练数据的 10% 部分用作验证数据。
+❺ 定义了用于测试数据的单独 `ImageDataGenerator`。
 
-❺ 定义了用于测试数据的单独`ImageDataGenerator`。
-
-我们经验地选择了这些参数的参数。随意尝试其他参数，并查看它们对模型性能的影响。一个重要的事情要注意的是，与以前的例子不同，我们设置了 samplewise_center=False。这是因为我们计划在标准化之前进行少量自定义预处理步骤。因此，我们将关闭 ImageDataGenerator 中的标准化，并稍后重新引入它（通过自定义函数）。接下来，我们将定义训练和测试数据生成器（使用流函数）。与上一章类似的模式，我们将通过同一数据生成器（使用 validation_split 和 subset 参数）获取训练和验证数据生成器（参见下一个列表）。
+我们经验地选择了这些参数的参数。随意尝试其他参数，并查看它们对模型性能的影响。一个重要的事情要注意的是，与以前的例子不同，我们设置了 `samplewise_center=False`。这是因为我们计划在标准化之前进行少量自定义预处理步骤。因此，我们将关闭 `ImageDataGenerator` 中的标准化，并稍后重新引入它（通过自定义函数）。接下来，我们将定义训练和测试数据生成器（使用流函数）。与上一章类似的模式，我们将通过同一数据生成器（使用 `validation_split` 和 `subset` 参数）获取训练和验证数据生成器（参见下一个列表）。
 
 列表 7.2：定义训练、验证和测试集的数据生成器
 
@@ -184,16 +147,12 @@ test_gen = image_gen.flow_from_dataframe(                   ❺
 ```
 
 ❶ 定义一个偏函数，除了子集参数之外所有参数都已固定。
-
 ❷ 获取训练数据子集。
-
 ❸ 获取验证数据子集。
-
-❹ 读取存储在 txt 文件中的测试标签。
-
+❹ 读取存储在 `txt` 文件中的测试标签。
 ❺ 定义测试数据生成器。
 
-为了恢复我们的记忆，flow_from_directory(...)具有以下函数签名：
+为了恢复我们的记忆，`flow_from_directory(...)` 具有以下函数签名：
 
 ```py
 image_gen.flow_from_directory (
@@ -208,15 +167,17 @@ image_gen.flow_from_directory (
 )
 ```
 
-train_gen 和 valid_gen 使用 image_gen_aug（进行数据增强）来获取数据。train_gen 和 valid_gen 被定义为原始 image_gen.flow_from_directory()的偏函数，它们共享除子集参数之外的所有参数。但是，重要的是要记住，增强仅应用于训练数据，不得应用于验证子集。这是我们需要的期望行为，因为我们希望验证数据集跨多个周期保持固定。接下来，test_gen 使用 image_gen（无数据增强）。
+`train_gen` 和 `valid_gen` 使用 `image_gen_aug`（进行数据增强）来获取数据。`train_gen` 和 `valid_gen` 被定义为原始 `image_gen.flow_from_directory()` 的偏函数，它们共享除子集参数之外的所有参数。但是，重要的是要记住，增强仅应用于训练数据，不得应用于验证子集。这是我们需要的期望行为，因为我们希望验证数据集跨多个周期保持固定。接下来，`test_gen` 使用 `image_gen`（无数据增强）。
 
 为什么不应该增强验证/测试数据？
 
 在进行数据增强时，应该只对训练数据集进行增强，不要对验证和测试集进行增强。在验证和测试集上进行增强会导致不同测试/运行之间结果不一致（因为数据增强引入了随机修改）。我们希望保持验证和测试数据集在训练期间始终保持一致。因此，数据增强只针对训练数据进行。
 
-记住，Inception Net v1 有三个输出层；因此，生成器的输出需要是一个输入和三个输出。我们通过定义一个新的 Python 生成器，修改内容以实现这一点（见下一个列表）。
+记住，`Inception Net v1` 有三个输出层；因此，生成器的输出需要是一个输入和三个输出。我们通过定义一个新的 Python 生成器，修改内容以实现这一点（见下一个列表）。
 
 列表 7.3：定义带有几个修饰的数据生成器
+
+
 
 ```py
 def data_gen_augmented_inceptionnet_v1(gen, random_gamma=False, 
@@ -275,9 +236,9 @@ test_gen_aux = data_gen_augmented_inceptionnet_v1(test_gen)                ❿
 
 +   *随机遮挡*—我们将在图像上随机遮挡一个随机的补丁（10 × 10），用白色、灰色或黑色像素（随机选择）。
 
-当我们定义 ImageDataGenerator 时，也需要对图像进行居中处理，因为我们将 samplewise_center 参数设置为 False。这通过从每个图像的像素中减去其平均像素值来完成。定义了 data_gen_augmented_inceptionnet_v1 函数后，我们可以为训练/验证/测试数据分别创建修改后的数据生成器 train_gen_aux、valid_gen_aux 和 test_gen_aux。
+当我们定义`ImageDataGenerator`时，也需要对图像进行居中处理，因为我们将`samplewise_center`参数设置为`False`。这通过从每个图像的像素中减去其平均像素值来完成。定义了`data_gen_augmented_inceptionnet_v1`函数后，我们可以为训练/验证/测试数据分别创建修改后的数据生成器`train_gen_aux`、`valid_gen_aux`和`test_gen_aux`。
 
-检查，检查，检查以避免模型性能缺陷
+## 检查，检查，检查以避免模型性能缺陷
 
 如果你不检查只有训练数据是否被增强，那你可能会陷入麻烦。如果它不能按预期工作，它很容易被忽视。从技术上讲，你的代码是正常工作的，并且没有功能性的 bug。但这会让你在实际情况下不断琢磨为什么模型没有按预期执行。
 
@@ -317,7 +278,7 @@ Inception 网 v1（见图 7.6）只对全连接层和最后一个平均池化层
 
 图 7.6 Inception 网络 v1 的抽象架构。Inception 网络以一个称为干线的组件开始，这是一个典型 CNN 中会找到的普通的卷积/池化层序列。然后 Inception 网络引入了一个称为 Inception 块的新组件。最后，Inception 网络还利用了辅助输出层。
 
-在 TensorFlow 中，应用 dropout 就像写一行代码一样简单。一旦你得到了全连接层 dense1 的输出，你就可以使用以下方法应用 dropout：
+在 TensorFlow 中，应用 dropout 就像写一行代码一样简单。一旦你得到了全连接层`dense1`的输出，你就可以使用以下方法应用 dropout：
 
 ```py
 dense1 = Dropout(0.7)(dense1)
@@ -325,13 +286,13 @@ dense1 = Dropout(0.7)(dense1)
 
 在这里，我们使用了 70% 的 dropout 率（正如原始 Inception 网络 v1 论文中建议的）用于辅助输出。
 
-卷积层上的 dropout
+### 卷积层上的 dropout
 
 Dropout 主要应用在密集层上，所以人们不禁会想，“为什么我们不在卷积层上应用 dropout 呢？”这仍然是一个争论未决的问题。例如，Nitish Srivastava 等人的原始 dropout 论文（[`mng.bz/o2Nv`](http://mng.bz/o2Nv)）认为，在低卷积层上使用 dropout 可以提高性能。相反，Yarin Gal 等人的论文“具有伯努利近似变分推断的贝叶斯 CNN”（[`arxiv.org/pdf/1506.02158v6.pdf`](https://arxiv.org/pdf/1506.02158v6.pdf)）认为，在卷积层上应用 dropout 并不会有太大帮助，因为它们的参数数量较低（与密集层相比），已经很好地被正则化了。因此，dropout 可以阻碍卷积层的学习。你需要考虑的一件事是出版时间。dropout 论文是在贝叶斯 CNN 论文之前两年写的。在那段时间内引入的正则化和其他改进可能对改进深度网络产生了重大影响，因此，在卷积层中使用 dropout 的好处可能变得微不足道。你可以在 [`mng.bz/nNQ4`](http://mng.bz/nNQ4) 找到更多非正式的讨论。
 
 辅助输出的最终代码如下列表所示。
 
-列表 7.4 修改了 Inception 网络的辅助输出
+**列表 7.4 修改了 Inception 网络的辅助输出**
 
 ```py
 def aux_out(inp,name=None):    
@@ -346,7 +307,7 @@ def aux_out(inp,name=None):
 
 ❶ 应用了 70% 的 dropout 层
 
-接下来，我们将在最后一个平均池化层的输出上应用 dropout，然后是最后的预测层。在将平均池化层的输出（flat_out）馈送到全连接（即密集）层之前，我们必须将其展平。然后，使用以下方法在 flat_out 上应用 dropout：
+接下来，我们将在最后一个平均池化层的输出上应用 dropout，然后是最后的预测层。在将平均池化层的输出（`flat_out`）馈送到全连接（即密集）层之前，我们必须将其展平。然后，使用以下方法在`flat_out`上应用 dropout：
 
 ```py
 flat_out = Dropout(0.4)(flat_out)
@@ -390,21 +351,21 @@ def get_steps_per_epoch(n_data, batch_size):
         return int(n_data*1.0/batch_size)+1
 ```
 
-接下来，我们将使用 Keras 提供的 EarlyStopping 回调（[`mng.bz/v6lr`](http://mng.bz/v6lr)）来在训练过程中启用早停。Keras 回调是在每个 epoch 结束时让某些事情发生的简单方法。例如，对于早停，我们只需在每个 epoch 结束时分析验证准确度，如果没有显示任何改善，就终止训练。回调是实现这一目标的理想选择。我们已经使用了 CSVLogger 回调来记录每个 epoch 的指标数量。EarlyStopping 回调有几个参数：
+接下来，我们将使用 Keras 提供的`EarlyStopping`回调（[`mng.bz/v6lr`](http://mng.bz/v6lr)）来在训练过程中启用早停。Keras 回调是在每个 epoch 结束时让某些事情发生的简单方法。例如，对于早停，我们只需在每个 epoch 结束时分析验证准确度，如果没有显示任何改善，就终止训练。回调是实现这一目标的理想选择。我们已经使用了`CSVLogger`回调来记录每个 epoch 的指标数量。`EarlyStopping`回调有几个参数：
 
-+   monitor—需要监测的指标以终止训练。可以使用 Keras 模型的 model.metric_names 属性获取定义的指标名称列表。在我们的示例中，这将设置为 val_loss（即在验证数据上计算的损失值）。
++   `monitor`—需要监测的指标以终止训练。可以使用 Keras 模型的`model.metric_names`属性获取定义的指标名称列表。在我们的示例中，这将设置为`val_loss`（即在验证数据上计算的损失值）。
 
-+   min_delta—被监测指标所需的最小改变，以被视为改进（即任何改进<min_delta 将被视为“没有改进” [默认为零]）。
++   `min_delta`—被监测指标所需的最小改变，以被视为改进（即任何改进<`min_delta`将被视为“没有改进” [默认为零]）。
 
-+   patience—如果在这么多个 epochs 之后没有改进，则训练将停止（默认为零）。
++   `patience`—如果在这么多个 epochs 之后没有改进，则训练将停止（默认为零）。
 
-+   mode—可以是 auto/min/max。在 min 中，如果指标停止减少（如损失），则训练将停止。在 max 中，如果指标停止增加（如准确度），则训练将停止。该模式将自动从指标名称中推断（默认为 auto）。
++   `mode`—可以是`auto`/`min`/`max`。在`min`中，如果指标停止减少（如损失），则训练将停止。在`max`中，如果指标停止增加（如准确度），则训练将停止。该模式将自动从指标名称中推断（默认为`auto`）。
 
-+   baseline—指标的基准值。如果指标未超出基准值，则训练将停止（默认为无）。
++   `baseline`—指标的基准值。如果指标未超出基准值，则训练将停止（默认为无）。
 
-+   restore_best_weights—在训练开始和终止之间恢复显示选择指标的最佳权重结果（默认为 false）。
++   `restore_best_weights`—在训练开始和终止之间恢复显示选择指标的最佳权重结果（默认为`false`）。
 
-首先，如果不存在，我们将创建一个名为 eval 的目录。这将用于存储由 CSVLogger 返回的 CSV 文件：
+首先，如果不存在，我们将创建一个名为`eval`的目录。这将用于存储由`CSVLogger`返回的 CSV 文件：
 
 ```py
 # Create a directory called eval which stores model performance
@@ -414,14 +375,16 @@ if not os.path.exists('eval'):
 csv_logger = CSVLogger(os.path.join('eval','2_eval_data_aug_early_stopping.log'))
 ```
 
-然后我们定义 EarlyStopping 回调函数。我们选择 val_loss 作为监测的指标，以及五个 epochs 的耐心。这意味着在五个 epochs 内训练将容忍“没有改进”。我们将保留其他参数为默认值：
+然后我们定义`EarlyStopping`回调函数。我们选择`val_loss`作为监测的指标，以及五个 epochs 的耐心。这意味着在五个 epochs 内训练将容忍“没有改进”。我们将保留其他参数为默认值：
 
 ```py
 # Early stopping callback
 es_callback = EarlyStopping(monitor='val_loss', patience=5)
 ```
 
-最后使用数据和适当的回调函数调用 model.fit()。在这里，我们使用先前定义的 train_gen_aux 和 valid_gen_aux 作为训练和验证数据（分别）。我们还将 epochs 设置为 50，并使用 get_steps_per_epoch 函数设置训练步数和验证步数。最后，我们提供 EarlyStopping 和 CSVLogger 回调函数，所以在指定条件下没有改进时训练停止：
+
+
+最后使用数据和适当的回调函数调用`model.fit()`。在这里，我们使用先前定义的`train_gen_aux`和`valid_gen_aux`作为训练和验证数据（分别）。我们还将`epochs`设置为50，并使用`get_steps_per_epoch`函数设置训练步数和验证步数。最后，我们提供`EarlyStopping`和`CSVLogger`回调函数，所以在指定条件下没有改进时训练停止：
 
 ```py
 history = model.fit(
@@ -434,7 +397,7 @@ history = model.fit(
 
 下一个清单展示了训练日志的摘要。
 
-列表 7.5 在训练模型期间提供的训练日志
+**列表 7.5 在训练模型期间提供的训练日志**
 
 ```py
 Train for 703 steps, validate for 78 steps
@@ -464,17 +427,17 @@ Epoch 38/50
 ➥ 0.2599 - val_aux2_accuracy: 0.2590
 ```
 
-❶ 因为我们对一些层使用了高达 70%的丢失率，TensorFlow 会对此进行警告，因为意外的高丢失率可能会影响模型的性能。
+❶ 因为我们对一些层使用了高达70%的丢失率，TensorFlow会对此进行警告，因为意外的高丢失率可能会影响模型的性能。
 
-看起来模型没有在 50 个 epochs 中训练到利益。在第 38 个 epoch 之后，它决定终止训练。这在于训练在达到第 50 个 epoch 之前停止（如第 38/50 行所示）。另一个重要的观察结果是，你可以看到训练准确度没有像我们在上一章中看到的那样激增到很高的值。训练准确度一直与验证准确度（~30%）相当接近。尽管我们没有看到很大的性能提升，但我们成功地显著减少了过拟合。因此，我们可以着重提高准确度。
+看起来模型没有在50个`epochs`中训练到利益。在第38个`epoch`之后，它决定终止训练。这在于训练在达到第50个`epoch`之前停止（如第38/50行所示）。另一个重要的观察结果是，你可以看到训练准确度没有像我们在上一章中看到的那样激增到很高的值。训练准确度一直与验证准确度（~30%）相当接近。尽管我们没有看到很大的性能提升，但我们成功地显著减少了过拟合。因此，我们可以着重提高准确度。
 
-注意 在一台配备 Intel Core i5 处理器和 NVIDIA GeForce RTX 2070 8GB 显卡的机器上，训练大约需要 1 小时 30 分钟才能完成 38 个周期。
+**注意** 在一台配备Intel Core i5处理器和NVIDIA GeForce RTX 2070 8GB显卡的机器上，训练大约需要1小时30分钟才能完成38个周期。
 
 接下来，我们将重新审视我们的模型。我们将深入研究一些研究，并实现一个已经被证明在这个特定分类问题上运行良好的模型。
 
-练习 1
+### 练习 1
 
-你手头有一个模型呈现给你，你发现它严重欠拟合。欠拟合发生在你的模型没有足够近似数据分布时。建议你如何改变 dropout 层以减少欠拟合。你可以选择 20%、50%和 80%作为 dropout 率：
+你手头有一个模型呈现给你，你发现它严重欠拟合。欠拟合发生在你的模型没有足够近似数据分布时。建议你如何改变`dropout`层以减少欠拟合。你可以选择20%、50%和80%作为`dropout`率：
 
 ```py
 model = tf.keras.models.Sequential([
@@ -487,79 +450,68 @@ model.compile
 model.fit(X, y, epochs=25)
 ```
 
-练习 2
+### 练习 2
 
-定义一个早停回调函数，如果验证损失值（即 val_loss）在五个周期后没有增加 0.01，则终止训练。为此目的使用 tf.keras.callbacks.EarlyStopping 回调函数。
+定义一个早停回调函数，如果验证损失值（即`val_loss`）在五个周期后没有增加0.01，则终止训练。为此目的使用`tf.keras.callbacks.EarlyStopping`回调函数。
 
 ## 7.2 朝向极简主义：Minception 而不是 Inception
 
-我们现在有一个几乎不存在过拟合的模型。然而，模型的测试性能仍然没有达到我们想要的水平。你觉得你需要对这个问题有一个新的视角，并咨询团队中的一位高级数据科学家。你解释了你如何在 tiny-imagenet-200 图像分类数据集上训练了一个 Inception net v1 模型，以及模型的性能不佳。他提到他最近读过一篇论文（[cs231n.stanford.edu/reports/2017/pdfs/930.pdf](http://cs231n.stanford.edu/reports/2017/pdfs/930.pdf)），该论文使用了一个受 Inception-ResNet v2 启发的修改版本的 Inception 网络，在数据集上取得了更好的性能。
+我们现在有一个几乎不存在过拟合的模型。然而，模型的测试性能仍然没有达到我们想要的水平。你觉得你需要对这个问题有一个新的视角，并咨询团队中的一位高级数据科学家。你解释了你如何在`tiny-imagenet-200`图像分类数据集上训练了一个Inception net v1模型，以及模型的性能不佳。他提到他最近读过一篇论文（[cs231n.stanford.edu/reports/2017/pdfs/930.pdf](http://cs231n.stanford.edu/reports/2017/pdfs/930.pdf)），该论文使用了一个受Inception-ResNet v2启发的修改版本的Inception网络，在数据集上取得了更好的性能。
 
-他进一步解释了两种新技术，批量标准化和残差连接（它们在修改后的 Inception 网络以及 Inception-ResNet v2 中使用），以及它们在帮助模型训练方面产生的重大影响，特别是在深度模型中。现在，你将实现这个新的修改后的模型，看看它是否会提高性能。
+他进一步解释了两种新技术，批量标准化和残差连接（它们在修改后的Inception网络以及Inception-ResNet v2中使用），以及它们在帮助模型训练方面产生的重大影响，特别是在深度模型中。现在，你将实现这个新的修改后的模型，看看它是否会提高性能。
 
-我们看到验证和测试准确率略有提高。但是在性能方面，我们仍然只是触及到了表面。例如，有关这个数据集的测试准确率约为 85%（[`mng.bz/44ev`](http://mng.bz/44ev)）。因此，我们需要寻找其他提高模型性能的方法。
+我们看到验证和测试准确率略有提高。但是在性能方面，我们仍然只是触及到了表面。例如，有关这个数据集的测试准确率约为85%（[`mng.bz/44ev`](http://mng.bz/44ev)）。因此，我们需要寻找其他提高模型性能的方法。
 
 你与团队中的高级数据科学家进行的那次会议简直再好不过了。我们将尝试他所读过的新网络。
 
-这个网络主要受到了前一章节简要提及的 Inception-Resnet-v2 网络的启发。这个新网络（我们将其称为 Minception）利用了 Inception-ResNet v2 模型中使用的所有最先进的组件，并对它们进行了修改以适应手头的问题。在本节中，你将深入了解这个新模型。特别是，Minception 网络具有以下元素：
+这个网络主要受到了前一章节简要提及的Inception-Resnet-v2网络的启发。这个新网络（我们将其称为Minception）利用了Inception-ResNet v2模型中使用的所有最先进的组件，并对它们进行了修改以适应手头的问题。在本节中，你将深入了解这个新模型。特别是，Minception网络具有以下元素：
 
 +   一个干扰项
-
-+   Inception-ResNet 块 A
-
-+   Inception-ResNet 块 B
-
++   Inception-ResNet块A
++   Inception-ResNet块B
 +   减少块（一种新的用于减少输出大小的块）
-
 +   平均池化层
-
 +   最终预测层
 
-与其他 Inception 模型一样，这个模型也有一个干部和 Inception 块。但是，Minception 与 Inception Net v1 不同，因为它没有辅助输出，因为它们有其他稳定训练的技术。另一个值得注意的区别是，Minception 有两种类型的 Inception 块，而 Inception Net v1 在整个网络中重用相同的格式。在讨论 Minception 的不同方面时，我们将更详细地与我们实现的 Inception Net v1 进行比较。在后面的章节中，我们将更详细地讨论 Inception-ResNet v2 模型的架构，并将其与 Minception 进行比较。此代码可在 Ch07-Improving-CNNs-and-Explaining/7.1.Image_Classification_Advance.ipynb 中找到。
+与其他Inception模型一样，这个模型也有一个干部和Inception块。但是，Minception与Inception Net v1不同，因为它没有辅助输出，因为它们有其他稳定训练的技术。另一个值得注意的区别是，Minception有两种类型的Inception块，而Inception Net v1在整个网络中重用相同的格式。在讨论Minception的不同方面时，我们将更详细地与我们实现的Inception Net v1进行比较。在后面的章节中，我们将更详细地讨论Inception-ResNet v2模型的架构，并将其与Minception进行比较。此代码可在`Ch07-Improving-CNNs-and-Explaining/7.1.Image_Classification_Advance.ipynb`中找到。
 
 ### 7.2.1 实施干部
 
-首先，我们应该关注模型的干部。为了更新我们的知识，干部是一系列卷积和池化层，类似于典型的 CNN。然而，Minception 的布局更加复杂，如图 7.9 所示。
+首先，我们应该关注模型的干部。为了更新我们的知识，干部是一系列卷积和池化层，类似于典型的CNN。然而，Minception的布局更加复杂，如图7.9所示。
 
 ![07-09](img/07-09.png)
 
-图 7.9 比较 Minception 和 Inception-v1 的干部。请注意 Minception 如何分离卷积层的非线性激活。这是因为批量归一化必须插入到卷积输出和非线性激活之间。
+**图 7.9** 比较Minception和Inception-v1的干部。请注意Minception如何分离卷积层的非线性激活。这是因为批量归一化必须插入到卷积输出和非线性激活之间。
 
-您可以看到它在干部上有并行的卷积层流。Minception 的干部与 Inception Net v1 相比非常不同。另一个关键区别是 Minception 不使用局部响应归一化（LRN），而是使用更强大的批量归一化。
+您可以看到它在干部上有并行的卷积层流。Minception的干部与Inception Net v1相比非常不同。另一个关键区别是Minception不使用局部响应归一化（LRN），而是使用更强大的批量归一化。
 
-Batch normalization：一种多功能的归一化技术，用于稳定和加速深度网络的训练。
+**Batch normalization**：一种多功能的归一化技术，用于稳定和加速深度网络的训练。
 
-批量归一化（BN）是由 Sergey Ioffe 等人在论文“Batch Normalization: Accelerating Deep Network Training by Reducing Internal Covariate Shift”中引入的。正如其名称所示，它是一种归一化技术，用于归一化深度网络的中间输出。([`proceedings.mlr.press/v37/ioffe15.pdf`](http://proceedings.mlr.press/v37/ioffe15.pdf))
+批量归一化（BN）是由Sergey Ioffe等人在论文“Batch Normalization: Accelerating Deep Network Training by Reducing Internal Covariate Shift”中引入的。正如其名称所示，它是一种归一化技术，用于归一化深度网络的中间输出。([`proceedings.mlr.press/v37/ioffe15.pdf`](http://proceedings.mlr.press/v37/ioffe15.pdf))
 
-“你可能会问，这很重要吗？” 结果深度网络如果没有得到正确的关注，可能会导致严重的头痛。例如，在训练期间，一批未正确缩放/异常输入或不正确的权重初始化可能导致模型不佳。此外，此类问题可能会随着网络深度或时间的推移而放大，导致每个层接收到的输入分布随时间而改变。输入分布随时间发生变化的现象称为*协变量转移*。这在流数据问题中非常常见。批量归一化是为了解决这个问题而发明的。让我们了解一下 BN 如何解决这个问题。批量归一化层执行以下操作：
+“你可能会问，这很重要吗？” 结果深度网络如果没有得到正确的关注，可能会导致严重的头痛。例如，在训练期间，一批未正确缩放/异常输入或不正确的权重初始化可能导致模型不佳。此外，此类问题可能会随着网络深度或时间的推移而放大，导致每个层接收到的输入分布随时间而改变。输入分布随时间发生变化的现象称为*协变量转移*。这在流数据问题中非常常见。批量归一化是为了解决这个问题而发明的。让我们了解一下BN如何解决这个问题。批量归一化层执行以下操作：
 
-+   使用 *x*^((k))，网络的第 *k*^(th) 层的输出进行归一化
-
++   使用*x*^((k))，网络的第*k*^(th)层的输出进行归一化
 +   ![07_09a](img/07_09a.png)
-
-+   这里，*E*[*x*^((k))] 表示输出的平均值，*Var*[*x*^((k))] 表示输出的方差。*E*[*x*^((k))] 和 *Var*[*x*^((k))] 都是向量。对于具有 n 个节点的全连接层，*E*[*x*^((k))] 和 *Var*[*x*^((k))] 都是长度为 n 的向量（通过对批次维度求平均计算）。对于具有 f 个滤波器/卷积核的卷积层，*E*[*x*^((k))] 和 *Var*[*x*^((k))] 将是长度为 f 的向量（通过对批次、高度和宽度维度求平均计算）。
-
-+   使用两个可训练的超参数 *γ* 和 *β*（分别针对每一层）来缩放和偏移归一化后的输出，如下所示：
-
++   这里，*E*[*x*^((k))]表示输出的平均值，*Var*[*x*^((k))]表示输出的方差。*E*[*x*^((k))]和*Var*[*x*^((k))]都是向量。对于具有n个节点的全连接层，*E*[*x*^((k))]和*Var*[*x*^((k))]都是长度为n的向量（通过对批次维度求平均计算）。对于具有f个滤波器/卷积核的卷积层，*E*[*x*^((k))]和*Var*[*x*^((k))]将是长度为f的向量（通过对批次、高度和宽度维度求平均计算）。
++   使用两个可训练的超参数*γ*和*β*（分别针对每一层）来缩放和偏移归一化后的输出，如下所示：
 +   *y*^((k)) = *γ*^((k))*x̂*^((k)) + *β^((k))*
++   在这个过程中，计算*E*(*x*)和*Var*(*x*)会有些棘手，因为在训练和测试阶段需要对它们进行不同处理。
++   在训练过程中，根据训练的随机性（即一次只查看一个随机数据批次而不是整个数据集），对于每个批次，只使用该批次的数据计算*E*(*x*)（平均值）和*Var*(*x*)（方差）。因此，对于每个批次，你可以计算出*E*(*x*)和*Var*(*x*)（不必担心除了当前批次以外的任何事情）。
++   然后，利用每个数据批次计算出的*E*(*x*)和*Var*(*x*)，我们估算出了总体的*E*(*x*)和*Var*(*x*)。这是通过计算*E*(*x*)和*Var*(*x*)的运行均值来实现的。我们不会讨论运行均值的工作原理。但你可以想象运行均值是对大数据集的真实均值的高效计算的近似表示。
++   在测试阶段，我们使用之前计算出的基于总体的*E*(*x*)和*Var*(*x*)，并执行之前定义的计算以获得*y*^((k))。
 
-+   在这个过程中，计算 *E*(*x*) 和 *Var*(*x*) 会有些棘手，因为在训练和测试阶段需要对它们进行不同处理。
-
-+   在训练过程中，根据训练的随机性（即一次只查看一个随机数据批次而不是整个数据集），对于每个批次，只使用该批次的数据计算 *E*(*x*)（平均值）和 *Var*(*x*)（方差）。因此，对于每个批次，你可以计算出 *E*(*x*) 和 *Var*(*x*)（不必担心除了当前批次以外的任何事情）。
-
-+   然后，利用每个数据批次计算出的 *E*(*x*) 和 *Var*(*x*)，我们估算出了总体的 *E*(*x*) 和 *Var*(*x*)。这是通过计算 *E*(*x*) 和 *Var*(*x*) 的运行均值来实现的。我们不会讨论运行均值的工作原理。但你可以想象运行均值是对大数据集的真实均值的高效计算的近似表示。
-
-+   在测试阶段，我们使用之前计算出的基于总体的 *E*(*x*) 和 *Var*(*x*)，并执行之前定义的计算以获得 *y*^((k))。
-
-由于批归一化涉及的步骤复杂，从头开始实现会需要相当多的工作。幸运的是，你不必这样做。TensorFlow 提供了一个批归一化层（[`mng.bz/Qv0Q`](http://mng.bz/Qv0Q)）。如果你有某些密集层的输出（我们称之为 dense1）要应用批归一化，你只需要
+由于批归一化涉及的步骤复杂，从头开始实现会需要相当多的工作。幸运的是，你不必这样做。TensorFlow提供了一个批归一化层（[`mng.bz/Qv0Q`](http://mng.bz/Qv0Q)）。如果你有某些密集层的输出（我们称之为`dense1`）要应用批归一化，你只需要
 
 ```py
 dense1_bn = BatchNormalization()(dense1)
 ```
 
-然后 TensorFlow 将自动处理批归一化需要在内部发生的所有复杂计算。现在是时候在我们的 Minception 模型中使用这一强大的技术了。在下一个列表中，你可以看到 Minception 网络的基干的实现。我们将编写一个名为 stem 的函数，它允许我们随意开启/关闭批归一化。
+然后TensorFlow将自动处理批归一化需要在内部发生的所有复杂计算。现在是时候在我们的Minception模型中使用这一强大的技术了。在下一个列表中，你可以看到Minception网络的基干的实现。我们将编写一个名为`stem`的函数，它允许我们随意开启/关闭批归一化。
 
-列表 7.6 定义 Minception 的基干
+**列表 7.6 定义Minception的基干**
+
+
 
 ```py
 def stem(inp, activation='relu', bn=True):                              ❶
@@ -690,9 +642,9 @@ def stem(inp, activation='relu', bn=True):                              ❶
 
 在我们已经讨论了网络的干部后，让我们继续看看在 Minception 网络中 Inception 块是什么样子的。让我们快速回顾一下 Inception 块是什么以及为什么会开发它。Inception 块的开发旨在最大化卷积层的表示能力，同时鼓励模型参数的稀疏性，而不会使内存需求激增。它通过具有不同感知域大小（即内核大小）的几个并行卷积层来实现这一点。Minception 网络中的 Inception 块主要使用相同的框架。但是，它引入了一个新概念，称为*残差连接*。
 
-残差/跳过连接：稳定梯度的捷径
+**残差/跳过连接：稳定梯度的捷径**
 
-我们已经简要讨论了残差连接，它引入了数学中可以想象的最简单的操作之一：将输入逐元素添加到输出中。换句话说，您取网络的前一个输出（称为 x）并将其添加到当前输出（称为 y）中，因此您得到最终输出 z 为 z = x + y。
+我们已经简要讨论了残差连接，它引入了数学中可以想象的最简单的操作之一：将输入逐元素添加到输出中。换句话说，您取网络的前一个输出（称为 `x`）并将其添加到当前输出（称为 `y`）中，因此您得到最终输出 `z` 为 `z = x + y`。
 
 ![07-09-unnumb-1](img/07-09-unnumb-1.png)
 
@@ -700,31 +652,31 @@ def stem(inp, activation='relu', bn=True):                              ❶
 
 在实现残差连接时需要注意的一点是确保它们的尺寸匹配，因为这是逐元素的加法。
 
-残差连接的数学观点是什么？
+**残差连接的数学观点是什么？**
 
-起初可能不太明显，但是跳过连接中的残差之处并不清楚。假设以下情景。您有一个输入 x；接下来您有一些层，F(x) = y，它将输入 x 映射到 y。您实现了以下网络。
+起初可能不太明显，但是跳过连接中的残差之处并不清楚。假设以下情景。您有一个输入 `x`；接下来您有一些层，`F(x) = y`，它将输入 `x` 映射到 `y`。您实现了以下网络。
 
 ![07-09-unnumb-2](img/07-09-unnumb-2.png)
 
 残差连接的数学观点
 
-y[k] = F(x)
+`y[k] = F(x)`
 
-y[k] [+ 1] = F(y[k])
+`y[k] [+ 1] = F(y[k])`
 
-y[k] [+ 2] = y[k] [+ 1] + x
+`y[k] [+ 2] = y[k] [+ 1] + x`
 
-y[k] [+ 2] = y[k] [+ 1] + G(x); 让我们将残差连接视为一个执行恒等映射的层，并将其称为 G。
+`y[k] [+ 2] = y[k] [+ 1] + G(x)`; 让我们将残差连接视为一个执行恒等映射的层，并将其称为 `G`。
 
-y[k] [+ 2] - y[k] [+ 1] = G(x) 或
+`y[k] [+ 2] - y[k] [+ 1] = G(x)` 或
 
-G(x) = y[k] [+ 2] - y[k] [+ 1]; 实际上，G 代表了最终输出和前一个输出之间的残差。
+`G(x) = y[k] [+ 2] - y[k] [+ 1]`; 实际上，`G` 代表了最终输出和前一个输出之间的残差。
 
-通过将最终输出视为一个将 x 和 y[k] [+ 1] 作为输入的层 H，我们得到以下方程：
+通过将最终输出视为一个将 `x` 和 `y[k] [+ 1]` 作为输入的层 `H`，我们得到以下方程：
 
-G(x) = H(x, y[k] [+ 1]) - F(y[k])
+`G(x) = H(x, y[k] [+ 1]) - F(y[k])`
 
-你可以看到残差是如何发挥作用的。本质上，G(x) 是最终层输出与上一层输出之间的残差
+你可以看到残差是如何发挥作用的。本质上，`G(x)` 是最终层输出与上一层输出之间的残差
 
 实现残差连接再简单不过了。假设你有以下网络：
 
@@ -737,7 +689,7 @@ d2 = Dense(20, activation='relu')(d1)
 d3 = Dense(20, activation='relu')(d2)
 ```
 
-你想要从 d1 到 d3 创建一个残差连接。你所需要做的就是
+你想要从 `d1` 到 `d3` 创建一个残差连接。你所需要做的就是
 
 ```py
 d4 = d3 + d1
@@ -749,7 +701,7 @@ d4 = d3 + d1
 d4 = Add()([d3, d1])
 ```
 
-现在你明白了：d4 是一个残差连接的输出。你可能还记得我说过，为了添加残差连接，输出尺寸必须匹配。我们尝试添加两个不兼容的形状。例如，让我们将 Dense 层的节点数从 20 改为 30：
+现在你明白了：`d4` 是一个残差连接的输出。你可能还记得我说过，为了添加残差连接，输出尺寸必须匹配。我们尝试添加两个不兼容的形状。例如，让我们将 `Dense` 层的节点数从 20 改为 30：
 
 ```py
 inp = Input(shape=(10,))
@@ -770,7 +722,7 @@ ValueError                                Traceback (most recent call last)
 ValueError: Operands could not be broadcast together with shapes (30,) (20,)
 ```
 
-正如你所看到的，TensorFlow 抱怨它无法广播（在这种情况下，这意味着执行逐元素加法）两个形状分别为 30 和 20 的张量。这是因为 TensorFlow 不知道如何将一个形状为（batch_size，20）的张量与一个形状为（batch_size，30）的张量相加。如果在尝试实现残差连接时出现类似的错误，你应该检查网络输出，并确保它们匹配。要消除此错误，你所需要做的就是按照以下方式更改代码：
+正如你所看到的，TensorFlow 抱怨它无法广播（在这种情况下，这意味着执行逐元素加法）两个形状分别为 30 和 20 的张量。这是因为 TensorFlow 不知道如何将一个形状为 `(batch_size, 20)` 的张量与一个形状为 `(batch_size, 30)` 的张量相加。如果在尝试实现残差连接时出现类似的错误，你应该检查网络输出，并确保它们匹配。要消除此错误，你所需要做的就是按照以下方式更改代码：
 
 ```py
 inp = Input(shape=(10,))
@@ -780,7 +732,7 @@ d3 = Dense(20, activation='relu')(d2)
 d4 = Add()([d3, d1])
 ```
 
-Minception 有两种类型的 Inception 块（类型 A 和类型 B）。现在让我们将 Inception-ResNet 块（类型 A）写成一个名为 inception_resnet_a 的函数。与之前实现的 Inception 块相比，这个新的 inception 块有以下增加：
+Minception 有两种类型的 Inception 块（类型 A 和类型 B）。现在让我们将 Inception-ResNet 块（类型 A）写成一个名为 `inception_resnet_a` 的函数。与之前实现的 Inception 块相比，这个新的 inception 块有以下增加：
 
 +   使用批量归一化
 
@@ -798,7 +750,9 @@ Minception 有两种类型的 Inception 块（类型 A 和类型 B）。现在�
 
 图 7.11 Minception-ResNet 块 A 的示意图，带有代码清单 7.7 的注释
 
-清单 7.7 Minception-ResNet 块 A 的实现
+**清单 7.7 Minception-ResNet 块 A 的实现**
+
+
 
 ```py
 def inception_resnet_a(inp, n_filters, initializer, activation='relu', 
@@ -964,7 +918,7 @@ def inception_resnet_b(inp, n_filters, initializer, activation='relu',
 
 ❺ 应用了加权残差连接
 
-这与函数 inception_resnet_a（...）非常相似，具有两个并行流和残余连接。 需要注意的区别是类型 A 块的卷积层数量比类型 B 块多。 另外，类型 A 块使用 5×5 卷积（分解为两个 3×3 卷积层），而类型 B 使用 7×7 卷积（分解为 1×7 和 7×1 卷积层）。 我将让读者自行详细了解该函数。
+这与函数`inception_resnet_a(...)`非常相似，具有两个并行流和残余连接。 需要注意的区别是类型 A 块的卷积层数量比类型 B 块多。 另外，类型 A 块使用 5×5 卷积（分解为两个 3×3 卷积层），而类型 B 使用 7×7 卷积（分解为 1×7 和 7×1 卷积层）。 我将让读者自行详细了解该函数。
 
 ### 7.2.4 实现减少块
 
@@ -1056,13 +1010,15 @@ def reduction(inp, n_filters, initializer, activation='relu', bn=True):
 
 +   *验证/测试阶段* — 从原始图像中心裁剪一个 56 × 56 × 3 大小的图像
 
-此外，我们将在训练期间引入另一个增强步骤，随机对比图像（与论文中使用的相同）。不幸的是，您无法使用 ImageDataGenerator 实现这两个步骤中的任何一个。好消息是，自 TensorFlow 2.2 以来，引入了几个新的图像预处理层（[`mng.bz/yvzy`](http://mng.bz/yvzy)）。我们可以像模型中的任何其他层一样使用这些层。例如，我们像以前一样从输入开始：
+
+
+此外，我们将在训练期间引入另一个增强步骤，随机对比图像（与论文中使用的相同）。不幸的是，您无法使用`ImageDataGenerator`实现这两个步骤中的任何一个。好消息是，自`TensorFlow 2.2`以来，引入了几个新的图像预处理层（[`mng.bz/yvzy`](http://mng.bz/yvzy)）。我们可以像模型中的任何其他层一样使用这些层。例如，我们像以前一样从输入开始：
 
 ```py
 inp = Input(shape=(64,64,3))
 ```
 
-然后导入 RandomCrop 和 RandomContrast 层，并按如下方式使用它们：
+然后导入`RandomCrop`和`RandomContrast`层，并按如下方式使用它们：
 
 ```py
 from tensorflow.keras.layers.experimental.preprocessing import RandomCrop, 
@@ -1177,7 +1133,7 @@ history = model.fit(                                                      ❹
 
 ❹ 训练模型
 
-在训练深度网络时，使用学习率计划而不是固定学习率非常常见。通常，我们通过在模型训练开始时使用较高的学习率，然后随着模型的进展逐渐减小学习率来获得更好的性能。这是因为，在优化过程中，当模型收敛时，您应该使步长变小（即学习率）。否则，较大的步长会使模型表现不稳定。我们可以在观察到指标没有增加时智能地执行此过程，并在固定间隔内减小学习率。在 Keras 中，您可以通过回调 ReduceLROnPlateau ([`mng.bz/M5Oo`](http://mng.bz/M5Oo)) 轻松将此纳入模型训练中：
+在训练深度网络时，使用学习率计划而不是固定学习率非常常见。通常，我们通过在模型训练开始时使用较高的学习率，然后随着模型的进展逐渐减小学习率来获得更好的性能。这是因为，在优化过程中，当模型收敛时，您应该使步长变小（即学习率）。否则，较大的步长会使模型表现不稳定。我们可以在观察到指标没有增加时智能地执行此过程，并在固定间隔内减小学习率。在 Keras 中，您可以通过回调`ReduceLROnPlateau` ([`mng.bz/M5Oo`](http://mng.bz/M5Oo)) 轻松将此纳入模型训练中：
 
 ```py
 lr_callback = tf.keras.callbacks.ReduceLROnPlateau(
@@ -1187,13 +1143,13 @@ lr_callback = tf.keras.callbacks.ReduceLROnPlateau(
 
 使用回调时，您需要设置以下关键字参数：
 
-+   monitor——定义观察的指标。在我们的示例中，我们将根据验证损失决定何时降低学习率。
++   `monitor`——定义观察的指标。在我们的示例中，我们将根据验证损失决定何时降低学习率。
 
-+   factor——减少学习率的乘法因子。如果学习率为 0.01，0.1 的因子，这意味着在减少时学习率将为 0.001。
++   `factor`——减少学习率的乘法因子。如果学习率为 0.01，0.1 的因子，这意味着在减少时学习率将为 0.001。
 
-+   沉着——与早停类似，等待多少个时期在指标没有改善的情况下降低学习率。
++   `patience`——与早停类似，等待多少个时期在指标没有改善的情况下降低学习率。
 
-+   mode——与早停类似，指标的最小化/最大化是否应被视为改进。
++   `mode`——与早停类似，指标的最小化/最大化是否应被视为改进。
 
 当您训练模型时，您应该得到以下输出：
 
@@ -1222,7 +1178,7 @@ Epoch 50/50
 ➥ accuracy: 0.7959 - val_loss: 3.3133 - val_accuracy: 0.4792
 ```
 
-太棒了！通过调整模型架构，我们获得了巨大的准确性提升。我们现在有一个模型，在验证集上的准确率约为 50%（相当于准确识别了 100/200 个类别的对象，或者每个类别的图像有 50% 被准确分类）。您可以在输出中看到 ReduceLROnPlateau 回调所进行的干预。
+太棒了！通过调整模型架构，我们获得了巨大的准确性提升。我们现在有一个模型，在验证集上的准确率约为 50%（相当于准确识别了 100/200 个类别的对象，或者每个类别的图像有 50% 被准确分类）。您可以在输出中看到`ReduceLROnPlateau`回调所进行的干预。
 
 最后，我们使用以下方式保存模型
 
@@ -1286,35 +1242,36 @@ def my_conv_block(input, activation):
 
 首先，你在一个你已经拥有大型标记数据集的任务上训练模型（称为预训练任务）。例如，在图像分类中，你有几个大型标记数据集，包括 ImageNet 数据集。一旦你在大型数据集上训练了一个模型，你就会得到网络的权重（除了最后的预测层），并拟合一个匹配新任务的新预测层。这给了网络解决新任务的一个非常好的起点。然后，你可以用较小的数据集解决新任务，因为你已经在类似的较大数据集上训练了模型。
 
-我们如何使用迁移学习来解决我们的问题？这并不难。Keras 为图像分类任务提供了一个巨大的模型库（[`mng.bz/aJdo`](http://mng.bz/aJdo)）。这些模型主要是在 ImageNet 图像分类任务上进行训练的。让我们驯服 Inception 网络系列中产生的野兽：Inception-ResNet v2。请注意，本节的代码可以在 Ch07-Improving-CNNs-and-Explaining/7.2.Transfer_Learning.ipynb 中找到。
 
-Inception-ResNet v2
 
-我们简要讨论了 Inception-ResNet v2 模型。这是最后一个生产的 Inception 模型。Inception-ResNet v2 具有以下特点，使其与其他 Inception 模型区别开来：
+# 使用迁移学习解决图像分类问题
 
-+   重新设计的起始模块，消除了任何表征瓶颈
+我们如何使用迁移学习来解决我们的问题？这并不难。`Keras`为图像分类任务提供了一个巨大的模型库（[`mng.bz/aJdo`](http://mng.bz/aJdo)）。这些模型主要是在 `ImageNet` 图像分类任务上进行训练的。让我们驯服 `Inception` 网络系列中产生的野兽：`Inception-ResNet v2`。请注意，本节的代码可以在 `Ch07-Improving-CNNs-and-Explaining/7.2.Transfer_Learning.ipynb` 中找到。
 
-+   使用残差连接的 Inception 块
+## Inception-ResNet v2
 
-+   减少输入高度/宽度维度的减少模块
+我们简要讨论了 `Inception-ResNet v2` 模型。这是最后一个生产的 `Inception` 模型。`Inception-ResNet v2` 具有以下特点，使其与其他 `Inception` 模型区别开来：
 
-+   不像早期的 Inception 网络那样使用辅助输出
+- 重新设计的起始模块，消除了任何表征瓶颈
+- 使用残差连接的 `Inception` 块
+- 减少输入高度/宽度维度的减少模块
+- 不像早期的 `Inception` 网络那样使用辅助输出
 
-正如你所看到的，Minception 模型中使用了重新设计的起始模块、Inception-ResNet 块和减少模块。如果你比较一下 Minception 的图表与原始论文中提供的图表，你会看到它们有多么相似。因此，我们不会重复讨论这些组件。如果你仍然想看到不同组件的具体细节和插图，请参考原始论文（[`arxiv.org/pdf/1602.07261.pdf`](https://arxiv.org/pdf/1602.07261.pdf)）。然而，Inception-ResNet v2 的高层架构如下图所示。
+正如你所看到的，`Minception` 模型中使用了重新设计的起始模块、`Inception-ResNet` 块和减少模块。如果你比较一下 `Minception` 的图表与原始论文中提供的图表，你会看到它们有多么相似。因此，我们不会重复讨论这些组件。如果你仍然想看到不同组件的具体细节和插图，请参考原始论文（[`arxiv.org/pdf/1602.07261.pdf`](https://arxiv.org/pdf/1602.07261.pdf)）。然而，`Inception-ResNet v2` 的高层架构如下图所示。
 
 ![07-14-unnumb-3](img/07-14-unnumb-3.png)
 
-Inception-ResNet v2 的整体架构
+`Inception-ResNet v2` 的整体架构
 
-您可以使用一行代码下载 Inception-ResNet v2 模型：
+您可以使用一行代码下载 `Inception-ResNet v2` 模型：
 
 ```py
-    InceptionResNetV2(include_top=False, pooling='avg')
+InceptionResNetV2(include_top=False, pooling='avg')
 ```
 
-这里 include_top=False 意味着最终的预测层将被丢弃。这是必要的，因为原始的 inception 网络是为 1000 类设计的。但是，我们只有 200 类。pooling=‘avg’ 确保模型中的最后一个汇合层是平均汇合层。接下来，我们将创建一个新模型，将预训练的 Inception-ResNet v2 模型作为核心，但修改为解决 Tiny ImageNet 分类任务，如下图所示。
+这里 `include_top=False` 意味着最终的预测层将被丢弃。这是必要的，因为原始的 `Inception` 网络是为 1000 类设计的。但是，我们只有 200 类。`pooling='avg'` 确保模型中的最后一个汇合层是平均汇合层。接下来，我们将创建一个新模型，将预训练的 `Inception-ResNet v2` 模型作为核心，但修改为解决 `Tiny ImageNet` 分类任务，如下图所示。
 
-列出了基于预训练 Inception-ResNet v2 模型的模型实现
+列出了基于预训练 `Inception-ResNet v2` 模型的模型实现
 
 ```py
 from tensorflow.keras.applications import InceptionResNetV2   ❶
@@ -1329,7 +1286,7 @@ model = Sequential([
 ])
 
 adam = tf.keras.optimizers.Adam(learning_rate=0.0001)         ❻
-model.compile(loss=’categorical_crossentropy’, optimizer=adam, 
+model.compile(loss='categorical_crossentropy', optimizer=adam, 
 ➥ metrics=['accuracy'])
 model.summary()
 ```
@@ -1338,27 +1295,24 @@ model.summary()
 
 ❷ 为 224 × 224 的图像定义输入层
 
-❸ Inception-ResNet v2 模型的预训练权重
+❸ `Inception-ResNet v2` 模型的预训练权重
 
-❹ 应用了 40% 的 dropout
+❹ 应用了 40% 的 `dropout`
 
 ❺ 最终的预测层有 200 个类
 
-❻ 由于网络已经在 ImageNet 数据上进行了训练，所以使用较小的学习率（经验选择）
+❻ 由于网络已经在 `ImageNet` 数据上进行了训练，所以使用较小的学习率（经验选择）
 
-在这里，我们定义了一个顺序模型，
+在这里，我们定义了一个顺序模型：
 
-+   首先定义了一个大小为 224 × 224 × 3 的输入层（即，高度 = 224，宽度 = 224，通道 = 3）
+- 首先定义了一个大小为 224 × 224 × 3 的输入层（即，高度 = 224，宽度 = 224，通道 = 3）
+- 将 `Inception-ResNet v2` 模型定义为一个层
+- 在最后一个平均汇合层上使用 40% 的 `dropout`
+- 定义了一个使用 `Softmax` 激活的密集层，具有 200 个节点
 
-+   将 Inception-ResNet v2 模型定义为一个层
+我们需要应对的一个关键挑战是，原始的 `Inception-ResNet v2` 输入大小为 224 × 224 × 3。因此，我们需要找到一种方法来呈现我们的输入（即，64 × 64 × 3）以符合 `Inception-ResNet v2` 的要求。为了做到这一点，我们将对 `ImageDataGenerator` 进行一些更改，如下面的列表所示。
 
-+   在最后一个平均汇合层上使用 40% 的 dropout
-
-+   定义了一个使用 Softmax 激活的密集层，具有 200 个节点
-
-我们需要应对的一个关键挑战是，原始的 Inception-ResNet v2 输入大小为 224 × 224 × 3。因此，我们需要找到一种方法来呈现我们的输入（即，64 × 64 × 3）以符合 Inception-ResNet v2 的要求。为了做到这一点，我们将对 ImageDataGenerator 进行一些更改，如下面的列表所示。
-
-列出了生成 224 × 224 图像的修改版 ImageDataGenerator。
+列出了生成 224 × 224 图像的修改版 `ImageDataGenerator`。
 
 ```py
 def get_train_valid_test_data_generators(batch_size, target_size):
@@ -1391,7 +1345,7 @@ def get_train_valid_test_data_generators(batch_size, target_size):
 ➥ 'val', 'val_annotations.txt'))                             ❻
     test_gen = image_gen.flow_from_dataframe(
         test_df, 
-        directory=os.path.join('data','tiny-imagenet-200',  'val', 'images'), 
+        directory=os.path.join('data','tiny-imagenet-200', 'val', 'images'), 
         target_size=target_size,                              ❼
         classes=None,
         class_mode='categorical', 
@@ -1404,7 +1358,7 @@ def get_train_valid_test_data_generators(batch_size, target_size):
 batch_size = 32                                               ❽
 target_size = (224,224)                                       ❽
 
-# Getting the train,valid, test data generators
+# Getting the train, valid, test data generators
 train_gen, valid_gen, test_gen = 
 ➥ get_train_valid_test_data_generators(batch_size, target_size)
 
@@ -1431,7 +1385,7 @@ test_gen_aux = data_gen_augmented(test_gen)                   ❾
 
 ❽ 定义了批量大小和目标大小
 
-❾ 使用 data_gen_augmented 函数获得训练集/验证集/测试集的修改过的数据生成器
+❾ 使用 `data_gen_augmented` 函数获得训练集/验证集/测试集的修改过的数据生成器
 
 最终，是时候展示我们最好的模型了：
 
@@ -1451,15 +1405,13 @@ history = model.fit(
 )
 ```
 
-训练将与先前训练 Miniception 模型所使用的训练配置相同。我们不会重复细节。我们使用以下内容：
+训练将与先前训练 `Minception` 模型所使用的训练配置相同。我们不会重复细节。我们使用以下内容：
 
-+   记录指标
+- 记录指标
+- 早期停止
+- 学习率调整
 
-+   早期停止
-
-+   学习率调整
-
-注意，在一台配有 NVIDIA GeForce RTX 2070 8GB 的 Intel Core i5 机器上，训练 23 epoch 大约需要 9 小时 20 分钟。
+注意，在一台配有 `NVIDIA GeForce RTX 2070 8GB` 的 `Intel Core i5` 机器上，训练 23 epoch 大约需要 9 小时 20 分钟。
 
 您应该得到类似以下的结果：
 
@@ -1489,31 +1441,35 @@ test_res = model.evaluate(test_gen_aux, steps=get_steps_per_epoch(500*50,
 
 在下一节中，我们将看看模型可解释性的重要性。我们将学习一种技术，可以用来解释嵌入模型的知识。
 
-Inception-ResNet v2 对比 Minception
+## Inception-ResNet v2 对比 Minception
 
-Minception 和 Inception-Resnet-v2 的茎在引入的创新方面是相同的（例如，Inception-ResNet 块，缩减块等）。然而，存在以下低级差异：
+`Minception` 和 `Inception-ResNet v2` 的茎在引入的创新方面是相同的（例如，`Inception-ResNet` 块，缩减块等）。然而，存在以下低级差异：
 
-+   Inception-ResNet v2 有三种不同的 Inception 块类型；Minception 只有两种。
+- `Inception-ResNet v2` 有三种不同的 `Inception` 块类型；`Minception` 只有两种。
+- `Inception-ResNet v2` 有两种不同类型的缩减块；`Minception` 只有一个。
+- `Inception-ResNet v2` 有 25 个 `Inception` 层，但我们实现的 `Minception`（版本）只有三个。
 
-+   Inception-ResNet v2 有两种不同类型的缩减块；Minception 只有一个。
+还有其他一些小的差异，例如 `Inception-ResNet v2` 在模型的几个层中使用有效填充。如果你想了解详情，请参阅 `Inception-ResNet v2` 论文。另一个值得注意的观察是，`Minception` 和 `Inception-ResNet v2` 都没有使用局部响应归一化（`LRN`），因为它们使用了更强大的东西：批归一化。
 
-+   Inception-ResNet v2 有 25 个 Inception 层，但我们实现的 Minception（版本）只有三个。
+## 练习 4
 
-还有其他一些小的差异，例如 Inception-ResNet v2 在模型的几个层中使用有效填充。如果你想了解详情，请参阅 Inception-ResNet v2 论文。另一个值得注意的观察是，Minception 和 Inception-ResNet v2 都没有使用局部响应归一化（LRN），因为它们使用了更强大的东西：批归一化。
+你想使用另一个名为 `VGGNet`（16 层）的不同预训练网络实现一个网络。你可以从 `tf.keras.applications.VGG16` 获取预训练网络。接下来，你丢弃顶层并在顶部引入一个最大池化层。然后你想在预训练网络的顶部添加两个具有 100（`ReLU` 激活）和 50（`Softmax` 激活）个节点的稠密层。实现这个网络。
 
-练习 4
+# 7.4 Grad-CAM: 让 CNN 供认
 
-你想使用另一个名为 VGGNet（16 层）的不同预训练网络实现一个网络。你可以从 tf.keras.applications.VGG16 获取预训练网络。接下来，你丢弃顶层并在顶部引入一个最大池化层。然后你想在预训练网络的顶部添加两个具有 100（ReLU 激活）和 50（Softmax 激活）个节点的稠密层。实现这个网络。
+公司对你为他们所做的一切感到非常高兴。你成功地建立了一个不仅击败了竞争对手的性能，而且是生产中最好的模型。然而，你的老板希望在发布任何消息之前确认模型是可信的。仅准确性是不够的！你决定演示模型如何进行预测，使用一种名为*Grad-CAM*的最新模型解释技术。`Grad-CAM` 使用相对于模型预测而生成的给定输入的梯度的大小来提供模型关注的可视化。图像中某一区域的梯度大小较大意味着图像更关注该区域。通过将梯度大小叠加成热图，你能够产生一个有吸引力的可视化，显示模型在给定输入中关注的内容。
 
-## 7.4 Grad-CAM: 让 CNN 供认
+`Grad-CAM`（梯度类激活映射）是由 `Ramprasaath R. Selvaraju` 等人在“Grad-CAM: Visual Explanations from Deep Networks via Gradient-based Localization”中为深度神经网络引入的一种模型解释技术（[`arxiv.org/pdf/1610.02391.pdf`](https://arxiv.org/pdf/1610.02391.pdf)）。深度网络因其不可解释性而臭名昭著，因此被称为*黑匣子*。因此，我们必须进行一些分析，确保模型正常运行。
 
-公司对你为他们所做的一切感到非常高兴。你成功地建立了一个不仅击败了竞争对手的性能，而且是生产中最好的模型。然而，你的老板希望在发布任何消息之前确认模型是可信的。仅准确性是不够的！你决定演示模型如何进行预测，使用一种名为*Grad-CAM*的最新模型解释技术。Grad-CAM 使用相对于模型预测而生成的给定输入的梯度的大小来提供模型关注的可视化。图像中某一区域的梯度大小较大意味着图像更关注该区域。通过将梯度大小叠加成热图，你能够产生一个有吸引力的可视化，显示模型在给定输入中关注的内容。
+下面的代码详细说明了 `Grad-CAM` 如何发挥其作用，并且实现代码在笔记本 `Ch07-Improving-CNNs-and-Explaining/7.3.Interpreting_CNNs_GradCAM.ipynb` 中可用。为了节省本章的篇幅，我们将仅讨论该方法的伪代码，技术细节留给附录 B（参见下一个清单）。
 
-Grad-CAM（梯度类激活映射）是由 Ramprasaath R. Selvaraju 等人在“Grad-CAM: Visual Explanations from Deep Networks via Gradient-based Localization”中为深度神经网络引入的一种模型解释技术（[`arxiv.org/pdf/1610.02391.pdf`](https://arxiv.org/pdf/1610.02391.pdf)）。深度网络因其不可解释性而臭名昭著，因此被称为*黑匣子*。因此，我们必须进行一些分析，确保模型正常运行。
+## 清单 7.14 Grad-CAM 计算的伪代码
 
-下面的代码详细说明了 Grad-CAM 如何发挥其作用，并且实现代码在笔记本 Ch07-Improving-CNNs-and-Explaining/7.3 .Interpreting_CNNs_GradCAM.ipynb 中可用。为了节省本章的篇幅，我们将仅讨论该方法的伪代码，技术细节留给附录 B（参见下一个清单）。
 
-清单 7.14 Grad-CAM 计算的伪代码
+
+# 模型解释与 Grad-CAM 可视化
+
+## 算法流程
 
 ```py
 Define: model (Trained Inception Resnet V2 model)
@@ -1545,6 +1501,8 @@ For img, cls in probe_ds:
     Plot the image and the image with the gradient heatmap superimposed 
 ➥ side by side
 ```
+
+## 原理说明
 
 Grad-CAM 执行的关键计算是，给定输入图像，计算与图像真实类别相对应的节点对模型的最后卷积输出的梯度。
 

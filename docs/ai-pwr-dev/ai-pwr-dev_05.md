@@ -1,14 +1,13 @@
+
+
 # 第四章：使用 GitHub Copilot 构建软件
 
 本章涵盖
 
-+   使用 Copilot 开发我们系统的核心
-
-+   重构以应用模式
-
-+   集成六边形架构
-
-+   结合事件驱动原则
++ 使用 Copilot 开发我们系统的核心
++ 重构以应用模式
++ 集成六边形架构
++ 结合事件驱动原则
 
 在上一章中，我们使用 ChatGPT 帮助我们设计我们的信息技术资产管理（ITAM）系统。现在，随着设计的确定，我们开始构建这个应用程序，从领域模型开始。领域模型是我们系统的核心。它代表了将应用和执行我们业务规则的课程。在本章中，我们将广泛使用 GitHub Copilot。本章最重要的收获是使用大型语言模型（LLM）有助于阐明未知未知：即在我们构建的系统中非显而易见、神秘或隐藏的复杂性。它使困难的事情变得容易，使看似不可能的事情成为可能。
 
@@ -30,11 +29,11 @@
 
 ![图片](img/CH04_F02_Crocker2.png)
 
-![图 4.2 ChatGPT 为我们生成的领域对象模型，突出显示类之间的关系](img/CH04_F02_Crocker2.png)
+图 4.2 ChatGPT 为我们生成的领域对象模型，突出显示类之间的关系
 
 如果我们深入查看我们在上一章中创建的`Asset`类的方法和字段（见图 4.3），请注意两点。首先，它与我们在第二章中创建的`Asset`类不同。其次，ChatGPT 建议我们为这个类提供一个接受所有属性的构造函数；然而，它还添加了所有属性的修改器方法——即*设置器*。
 
-![图 4.3](img/CH04_F03_Crocker2.png)
+![图片](img/CH04_F03_Crocker2.png)
 
 图 4.3：我们借助 ChatGPT 创建的`Asset`类。它包括每个属性的构造函数和修改器方法。
 
@@ -64,7 +63,7 @@
 
 当你通过文件进行缩进以让 GitHub Copilot 为你自动生成代码时，你可能注意到它会创建修改器，尽管我们明确指示它不要这样做。出于这个原因以及许多其他原因（正如我们将在本章中看到的），你必须保持警惕和专注地编写代码。当然，你可以表达你的意图，但这些工具可能会以工具构建代码的方式覆盖你的愿望。此外，你可能注意到 Copilot 添加了`@dataclasses`装饰器。
 
-装饰器设计模式
+**装饰器设计模式**
 
 装饰器设计模式是一种结构型设计模式，它允许你动态地向对象添加新行为或修改现有行为，而无需更改现有类。这是通过将现有对象包装在装饰对象中实现的。
 
@@ -119,7 +118,7 @@ class Asset:
 
 接下来，让我们回顾一下我们在上一章中创建的 Mermaid 图中的`Hardware`类（见图 4.4）。从这个图中我们可以注意几个事项：它既不包含访问器方法，也不包含修改器方法。我们需要在我们的提示中添加访问器方法。
 
-![](img/CH04_F04_Crocker2.png)
+![图片](img/CH04_F04_Crocker2.png)
 
 图 4.4 使用 ChatGPT 辅助绘制的`Hardware`类。请注意，它没有任何访问器方法。
 
@@ -231,11 +230,14 @@ class FundingDetails:
 
 本章我们将生成的最终类是`DepreciationStrategy`。在上章中，我们简要介绍了这个类。当时我们没有提到的是，这个类将采用一种新的设计模式：*策略模式*。
 
-策略模式
+**策略模式**
+
+
+
 
 策略模式是一种行为设计模式，它允许你定义一组算法，将每个算法封装为一个对象，并使它们可互换。策略模式背后的思想是为一组算法定义一个公共接口，以便它们尽管可能有非常不同的实现，但仍可互换。
 
-### 4.1.4 调整折旧策略
+## 4.1.4 调整折旧策略
 
 在我们尝试创建`DepreciationStrategy`类之前，让我们回顾一下我们在上章中创建的类图（见图 4.6）。这个类的实现包含大量的隐藏复杂性。如果我们不对 Copilot 关于如何执行计算给出非常具体的指示，它将不会提出正确的算法。例如，这是一个创建`DepreciationStrategy`的不完整、不精确的提示：
 
@@ -315,21 +317,21 @@ class NoDepreciationStrategy(DepreciationStrategy):
         return 0
 ```
 
-许多其他类都未定义。请随意练习通过实现缺失的类来完善你的提示工程。例如，你可能想添加 `Organizations`、`MaintenanceSchedule`、`Address`、`UsageStatistics`、`User`、`Role` 和 `Warranty`。在下一节中，我们将与 Copilot 一起将模式应用于我们的代码，从熟悉的一个开始。
+许多其他类都未定义。请随意练习通过实现缺失的类来完善你的提示工程。例如，你可能想添加`Organizations`、`MaintenanceSchedule`、`Address`、`UsageStatistics`、`User`、`Role`和`Warranty`。在下一节中，我们将与 Copilot 一起将模式应用于我们的代码，从熟悉的一个开始。
 
 ## 4.2 编织模式，模式，模式
 
-在本节中，我们通过常用设计模式丰富我们的领域模型。它们代表最佳实践，可以通过提供一组经过验证的解决方案来加速开发过程，解决某些问题。设计模式不是现成的代码片段，而是关于如何以灵活的方式解决特定问题的通用指南，并且可以在不同的项目中重用。  
+在本节中，我们通过常用设计模式丰富我们的领域模型。它们代表最佳实践，可以通过提供一组经过验证的解决方案来加速开发过程，解决某些问题。设计模式不是现成的代码片段，而是关于如何以灵活的方式解决特定问题的通用指南，并且可以在不同的项目中重用。
 
 ### 4.2.1 访问我们的部门
 
-我们将重新审视的第一个模式是 *访问者*。如您在第三章中回忆的那样，您使用访问者模式向给定的类添加新行为或更改现有行为。图 4.7 显示了它在上一章中的建模方式。
+我们将重新审视的第一个模式是*访问者*。如您在第三章中回忆的那样，您使用访问者模式向给定的类添加新行为或更改现有行为。图 4.7 显示了它在上一章中的建模方式。
 
 ![图片](img/CH04_F07_Crocker2.png)
 
-图 4.7 `DepartmentVisitor` 接口（更新为新名称；之前称为 `LineOfBusinessVisitor`）。这个类“访问”硬件和软件，内部持有总成本和折旧。
+图 4.7 `DepartmentVisitor`接口（更新为新名称；之前称为`LineOfBusinessVisitor`）。这个类“访问”硬件和软件，内部持有总成本和折旧。
 
-让我们设计一个提示，让 Copilot 生成我们的 `Visitor` 模式实现，`DepartmentVisitor`，它访问我们的 `Asset`：
+让我们设计一个提示，让 Copilot 生成我们的`Visitor`模式实现，`DepartmentVisitor`，它访问我们的`Asset`：
 
 ```py
 # Define an interface called class DepartmentVisitor with the following methods:
@@ -339,7 +341,7 @@ class NoDepreciationStrategy(DepreciationStrategy):
 
 Copilot 生成这个类的直接实现。
 
-列表 4.6 `Vistor` 实现
+列表 4.6 `Vistor`实现
 
 ```py
 from abc import ABC, abstractmethod
@@ -373,7 +375,7 @@ class DepartmentStatisticsVisitor(DepartmentVisitor):
 
 ### 4.2.2 在工厂（模式）中创建对象
 
-*工厂模式* 是另一种创建模式，它允许你抽象出你试图创建的对象的一些细节。在我们的 ITAM 系统中，我们有两种类型的 `Asset`（目前）：`Hardware` 和 `Software`。这些对象各自都有独特的属性。这种做法的一个效果是，我们的应用程序不需要知道具体类（例如 `Hardware`）的详细信息。从应用程序的角度来看，它只是得到一个带有额外字段的 `Asset` 实例。让我们看看如何让 Copilot 为我们创建一个 `AssetFactory` 类：
+*工厂模式*是另一种创建模式，它允许你抽象出你试图创建的对象的一些细节。在我们的 ITAM 系统中，我们有两种类型的`Asset`（目前）：`Hardware`和`Software`。这些对象各自都有独特的属性。这种做法的一个效果是，我们的应用程序不需要知道具体类（例如`Hardware`）的详细信息。从应用程序的角度来看，它只是得到一个带有额外字段的`Asset`实例。让我们看看如何让 Copilot 为我们创建一个`AssetFactory`类：
 
 ```py
 # Define a class called AssetFactory
@@ -389,9 +391,11 @@ class DepartmentStatisticsVisitor(DepartmentVisitor):
 # The HardwareAssetFactory and the SoftwareAssetFactory should get the id from the AssetFactory on each call to new.
 ```
 
-这个提示是我们遇到的最详细的之一。随着我们的需求越来越专业化，我们的提示将自然变得更加细致。让我们详细检查这段代码，从 `new` 方法开始。
+这个提示是我们遇到的最详细的之一。随着我们的需求越来越专业化，我们的提示将自然变得更加细致。让我们详细检查这段代码，从`new`方法开始。
 
-列表 4.7 `AssetFactory` 代码，包含两个内嵌的工厂
+列表 4.7 `AssetFactory`代码，包含两个内嵌的工厂
+
+
 
 ```py
 from datetime import datetime
@@ -538,7 +542,7 @@ depreciation_strategy: str) -> DepreciationStrategy:
 
 但有一种更简单的方式来处理这种去重。为此，我们将查看下一个设计模式：*建造者模式*。
 
-建造者模式
+## 建造者模式
 
 建造者模式是一种创建型设计模式，它通过提供如何创建对象的逐步说明，提供了一个流畅的 API 来创建对象。
 
@@ -590,6 +594,8 @@ class AssetBuilder:
 
 列表 4.11 `AssetBuilder` 类的 `build()` 方法
 
+
+
 ```py
 def build(self) -> Asset:
         if self.category == "hardware":
@@ -627,9 +633,9 @@ def build(self) -> Asset:
             )
 ```
 
-现在我们可以看看 `FundingDetailsBuilder` 类。这个类与 `AssetBuilder` 类非常相似，但没有多态的 `build()` 方法。
+现在我们可以看看`FundingDetailsBuilder`类。这个类与`AssetBuilder`类非常相似，但没有多态的`build()`方法。
 
-列表 4.12 `FundingDetailsBuilder` 类
+列表 4.12 `FundingDetailsBuilder`类
 
 ```py
 class FundingDetailsBuilder:
@@ -646,9 +652,9 @@ class FundingDetailsBuilder:
     ...
 ```
 
-类的 `build()` 方法实现相当简单；它只是在将参数应用到构造函数后返回 `FundingDetails` 对象的实例。
+类的`build()`方法实现相当简单；它只是在将参数应用到构造函数后返回`FundingDetails`对象的实例。
 
-列表 4.13 `FundingDetailsBuilder` 类的 `build()` 方法
+列表 4.13 `FundingDetailsBuilder`类的`build()`方法
 
 ```py
 def build(self) -> FundingDetails:
@@ -689,7 +695,7 @@ _get_depreciation_strategy(depreciation_strategy),
 
 现在我们已经编写了构建器，我们可以修改`AssetFactory`来使用它们。
 
-隐藏在明处的模式：适配器
+## 隐藏在明处的模式：适配器
 
 **适配器模式**是一种结构型设计模式，它允许我们弥合目标接口与具有不兼容接口的类之间的差距。例如，在我们的案例中，我们可以在名为`StringDepreciationStrategyAdapter`的适配器中正式化`str` -> `DepreciationStrategy`的接口。
 
@@ -739,7 +745,7 @@ _get_depreciation_strategy(depreciation_strategy),
 
 接下来，我们将把**观察者模式**应用到我们的 ITAM 系统中。这个模式的真实价值将在下一章中变得更加明显，但我们将在这里播下种子。
 
-观察者模式
+## 观察者模式
 
 观察者模式是一种行为型模式，其中`Subject`类通过通知向观察者类报告某些状态变化。这个模式在用户界面和事件驱动系统中非常有用。
 
@@ -856,6 +862,8 @@ class AssetManager:
 
 ### 4.3.1 回顾六边形架构
 
+
+
 如您所回忆的那样，六边形架构是一种设计软件的方法，它强调将核心业务逻辑与外部服务分离。业务逻辑可以被视为应用程序的“大脑”。它包含所有重要的规则和结构，这些规则和结构是应用程序需要保证程序正确性的。在这个类比中，外部服务是你的“手”或“眼睛”；它们允许与外部世界的交互（用户界面、数据库等）。
 
 六边形架构将主要程序逻辑与外部部分（如按钮、屏幕和数据库）分开。这使得在不更改主要程序的情况下轻松更改这些外部部分。它是通过使用定义外部部分如何与主要程序交互的**端口**和使这些交互以具体方式发生的**适配器**来实现的。
@@ -870,7 +878,7 @@ class AssetManager:
 
 我们将首先构建系统的驱动程序。**驱动程序**是指位于应用程序上下文边界之外的系统，它向系统发送请求，并且可选地从应用程序接收响应。一个传统的例子是从网络浏览器到 REST 控制器的表示状态转移（通常称为 REST）调用。
 
-首先，我们将向我们的 ITAM 系统添加一个 REST 控制器。它将公开`AssetManager`类提供的功能。创建一个名为 infrastructure/API 的目录，在其中创建一个名为 asset_controller.py 的文件。在这个文件的开始处，添加以下提示：
+首先，我们将向我们的 ITAM 系统添加一个 REST 控制器。它将公开`AssetManager`类提供的功能。创建一个名为`infrastructure/API`的目录，在其中创建一个名为`asset_controller.py`的文件。在这个文件的开始处，添加以下提示：
 
 ```py
 # Import statements for Asset, AssetService, AssetFactory, AssetIn, AssetOut, and from_asset
@@ -895,7 +903,7 @@ async def create_asset(asset_in: AssetIn):
 
 你可以选择手动更新代码以反映你的路径偏好。然而，最重要的是，确保它在各种方法中保持一致。以下列表显示了如何初始化运行应用程序所需的所有服务。
 
-列表 4.19 更新 `main` 类以反映一致的路径
+列表 4.19 更新`main`类以反映一致的路径
 
 ```py
 from fastapi import APIRouter, HTTPException
@@ -911,9 +919,9 @@ asset_manager = AssetManager()
 asset_factory = AssetFactory()
 ```
 
-接下来，让我们看看路由是如何定义的，以及它们的方法是如何使用的。前两个路由定义了如何访问我们的 `Asset` 对象。第一个 GET 请求获取系统中当前所有的 `Asset`。在现实世界中，我们会包括便利功能，如分页和排序。然而，鉴于系统中当前条目数量有限，我们将放弃这些功能。下一个 GET 方法通过标识符获取特定的 `Asset`。
+接下来，让我们看看路由是如何定义的，以及它们的方法是如何使用的。前两个路由定义了如何访问我们的`Asset`对象。第一个 GET 请求获取系统中当前所有的`Asset`。在现实世界中，我们会包括便利功能，如分页和排序。然而，鉴于系统中当前条目数量有限，我们将放弃这些功能。下一个 GET 方法通过标识符获取特定的`Asset`。
 
-列表 4.20 访问 `Asset` 的 `AssetController` 方法
+列表 4.20 访问`Asset`的`AssetController`方法
 
 ```py
 @router.get('/assets', response_model=list[AssetOut])
@@ -931,9 +939,9 @@ async def read_asset(asset_id: int):
         raise HTTPException(status_code=404, detail="Asset not found")
 ```
 
-最终的路由集定义了如何在我们的系统中创建 `Asset`、更新它们以及从系统中删除它们。注意，我们不是进行“软删除”，这只会设置一个标志，而不会在后续查询中返回这个 `Asset`。
+最终的路由集定义了如何在我们的系统中创建`Asset`、更新它们以及从系统中删除它们。注意，我们不是进行“软删除”，这只会设置一个标志，而不会在后续查询中返回这个`Asset`。
 
-列表 4.21 修改和删除 `Asset` 的 `AssetController` 方法
+列表 4.21 修改和删除`Asset`的`AssetController`方法
 
 ```py
 @router.post('/assets', response_model=AssetOut)
@@ -970,7 +978,7 @@ async def delete_asset(asset_id: int):
         raise HTTPException(status_code=404, detail="Asset not found")
 ```
 
-注意到 `Asset` 类的简化表示，称为 `AssetIn` 和 `AssetOut`，这并非巧合。你可以在 `AssetController` 中定义这些类，或者你可以添加一个单独的类并在那里定义它们。在本书的参考实现中，它们定义在一个名为 asset_model.py 的文件中。这个提示定义了 `AssetIn` 和 `AssetOut` 类：
+注意到`Asset`类的简化表示，称为`AssetIn`和`AssetOut`，这并非巧合。你可以在`AssetController`中定义这些类，或者你可以添加一个单独的类并在那里定义它们。在本书的参考实现中，它们定义在一个名为`asset_model.py`的文件中。这个提示定义了`AssetIn`和`AssetOut`类：
 
 ```py
 # Define a pydantic model for AssetIn
@@ -1000,7 +1008,7 @@ async def delete_asset(asset_id: int):
 
 在文件开头定义的提示下，Copilot 生成了类似于以下列表的代码。
 
-列表 4.22 asset_model.py 中的 `AssetIn` 和 `AssetOut` 类
+列表 4.22 `asset_model.py`中的`AssetIn`和`AssetOut`类
 
 ```py
 from pydantic import BaseModel
@@ -1043,7 +1051,7 @@ def from_asset(asset: Asset) -> AssetOut:
     )
 ```
 
-可选地，我们可以在 `AssetController` 和 `AssetManager` 之间添加另一层抽象。这样做可能被认为是极端的六边形架构，但计算机科学中很少有挑战不能通过添加另一层抽象来解决。我们将添加一个用于与 `AssetController` 接口的端口。让我们为类 `AssetRestPort` 创建一个提示，并让 Copilot 生成代码：
+可选地，我们可以在`AssetController`和`AssetManager`之间添加另一层抽象。这样做可能被认为是极端的六边形架构，但计算机科学中很少有挑战不能通过添加另一层抽象来解决。我们将添加一个用于与`AssetController`接口的端口。让我们为类`AssetRestPort`创建一个提示，并让 Copilot 生成代码：
 
 ```py
 # Define an interface called AssetRestPort
@@ -1052,7 +1060,7 @@ def from_asset(asset: Asset) -> AssetOut:
 
 这个提示指示 Copilot 创建一个我们将很快实现的接口。
 
-列表 4.23 `AssetRestPort` 的完整源代码
+列表 4.23 `AssetRestPort`的完整源代码
 
 ```py
 from itam.domain.asset import Asset
@@ -1080,7 +1088,7 @@ class AssetRestPort:
         pass
 ```
 
-接下来，我们将使用一个适配器来实现这个端口，该适配器将用于与控制器交互，以进一步抽象组件。如果我们想的话，可以替换这个适配器为另一个，例如，将其转换为命令行应用程序。`AssetRestAdapter` 的提示如下：
+接下来，我们将使用一个适配器来实现这个端口，该适配器将用于与控制器交互，以进一步抽象组件。如果我们想的话，可以替换这个适配器为另一个，例如，将其转换为命令行应用程序。`AssetRestAdapter`的提示如下：
 
 ```py
 # Define an interface called AssetRestAdapter
@@ -1089,9 +1097,11 @@ class AssetRestPort:
 # It should inherit from AssetRestPort
 ```
 
-这个提示有两个重要的元素。第一个是它实现了我们之前定义的端口接口。第二个是它封装了 `AssetManager` 的功能。
+这个提示有两个重要的元素。第一个是它实现了我们之前定义的端口接口。第二个是它封装了`AssetManager`的功能。
 
-列表 4.24 `AssetRestAdapter` 的源代码
+列表 4.24 `AssetRestAdapter`的源代码
+
+
 
 ```py
 from itam.domain.asset import Asset
@@ -1198,9 +1208,9 @@ Copilot 引入了一个`Generic`类型，允许在实现时提供一些类型提
 # Make sure to use type hints for the input parameters and return values.
 ```
 
-我们的内存实现将使用一个简单的列表来存储 `Asset`s。我们将能够执行所有 CRUD 操作。此外，Copilot 将为我们添加类型提示，让其他人知道它应该接受和返回 `Asset`s。这就是 `BaseRepository`[`Asset`] 的意思：它是一个 `BaseRepository` 的实现，其 `Generic` 类型是 `Asset`。
+我们的内存实现将使用一个简单的列表来存储`Asset`。我们将能够执行所有 CRUD 操作。此外，Copilot 将为我们添加类型提示，让其他人知道它应该接受和返回`Asset`。这就是`BaseRepository[Asset]`的意思：它是一个`BaseRepository`的实现，其`Generic`类型是`Asset`。
 
-列表 4.27 `InMemoryAssetRepository` 的代码
+列表 4.27 `InMemoryAssetRepository`的代码
 
 ```py
 from itam.infrastructure.repository.base_repository import BaseRepository
@@ -1231,9 +1241,9 @@ if asset.id != asset_id]
         return self._assets
 ```
 
-最后，我们将更新 `AssetManager` 以将 `Asset`s 的 CRUD 操作委托给一个 `BaseRepository` 实例 (`_repository`)。以下是完整的源代码，包括文件开头的提示。
+最后，我们将更新`AssetManager`以将`Asset`的 CRUD 操作委托给一个`BaseRepository`实例（`_repository`）。以下是完整的源代码，包括文件开头的提示。
 
-列表 4.28 使用 `InMemoryAssetRepository` 的 `AssetManager`
+列表 4.28 使用`InMemoryAssetRepository`的`AssetManager`
 
 ```py
 # Define a class called AssetManager
@@ -1285,9 +1295,13 @@ class AssetManager:
 # The environment variables should be named: DB_USERNAME, DB_PASSWORD, DB_HOST, DB_PORT, and DB_NAME
 ```
 
-我们要求 Copilot 使用 SQLAlchemy，一个对象关系映射（ORM）工具，对数据库执行操作。Copilot 将巧妙地组装我们的源代码。`@staticmethod` 关键字创建了一个属于类而不是类实例的方法。这个关键字用于获取 `DatabaseConnection` 类的实例。因为静态方法不能修改实例数据，所以它可以用来确保这个类只有一个实例在运行，因此是一个单例。构造函数使用字符串插值和环境变量初始化数据库连接。
+我们要求 Copilot 使用 SQLAlchemy，一个对象关系映射（ORM）工具，对数据库执行操作。Copilot 将巧妙地组装我们的源代码。`@staticmethod`关键字创建了一个属于类而不是类实例的方法。这个关键字用于获取`DatabaseConnection`类的实例。因为静态方法不能修改实例数据，所以它可以用来确保这个类只有一个实例在运行，因此是一个单例。构造函数使用字符串插值和环境变量初始化数据库连接。
 
-列表 4.29 `DatabaseConnection` 的实现
+列表 4.29 `DatabaseConnection`的实现
+
+
+
+# 数据库连接与仓储实现
 
 ```py
 from sqlalchemy import create_engine
@@ -1322,7 +1336,7 @@ create_engine(f"postgresql://
 
 现在我们能够连接到我们的数据库，我们需要创建一个仓库，该仓库将使用此连接来存储和检索我们的 `Asset` 对象。我们将创建一个名为 `SQLAlchemyAssetRepository` 的类来完成这项工作。
 
-列表 4.30 `SQLAlchemyAssetRepository` 类的提示和代码
+**列表 4.30** `SQLAlchemyAssetRepository` 类的提示和代码
 
 ```py
 # Define a class called SQLAlchemyAssetRepository that implements the AssetRepository interface for data access using SQLAlchemy. 
@@ -1361,7 +1375,7 @@ class SQLAlchemyAssetRepository(BaseRepository[Asset]):
 
 接下来，我们将重构 `AssetController` 以允许我们传入 `AssetRestPort`。通过这样做，我们可以替换应用程序的驱动方面。这次重构进一步将驱动从业务核心中抽象出来。
 
-列表 4.31 更新后的 `AssetController`，公开路由
+**列表 4.31** 更新后的 `AssetController`，公开路由
 
 ```py
 from itam.infrastructure.ports.asset_rest_port import AssetRestPort
@@ -1423,9 +1437,9 @@ asset_in.purchase_date)
         return from_asset(asset)
 ```
 
-我们现在可以将应用程序的初始化逻辑整合到 main.py 文件中。这是最大的回报。我们的系统将具有分层结构，便于根据需要或当需求发生变化时替换组件。
+我们现在可以将应用程序的初始化逻辑整合到 `main.py` 文件中。这是最大的回报。我们的系统将具有分层结构，便于根据需要或当需求发生变化时替换组件。
 
-列表 4.32 main.py 的最终版本，将我们的应用程序连接在一起
+**列表 4.32** `main.py` 的最终版本，将我们的应用程序连接在一起
 
 ```py
 from fastapi import FastAPI

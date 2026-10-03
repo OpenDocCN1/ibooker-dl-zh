@@ -1,12 +1,12 @@
+
+
 # 三、Keras 和 TensorFlow 简介
 
 本章内容包括
 
-+   仔细研究 TensorFlow、Keras 及它们之间的关系
-
-+   设置深度学习工作空间
-
-+   深入了解核心深度学习概念如何转化为 Keras 和 TensorFlow
++ 仔细研究 TensorFlow、Keras 及它们之间的关系
++ 设置深度学习工作空间
++ 深入了解核心深度学习概念如何转化为 Keras 和 TensorFlow
 
 本章旨在为您提供开始实践深度学习所需的一切。我将为您快速介绍 Keras（[`keras.io`](https://keras.io)）和 TensorFlow（[`tensorflow.org`](https://www.tensorflow.org/)），这是本书中将使用的基于 Python 的深度学习工具。您将了解如何设置深度学习工作空间，使用 TensorFlow、Keras 和 GPU 支持。最后，基于您在第二章中对 Keras 和 TensorFlow 的初步接触，我们将回顾神经网络的核心组件以及它们如何转化为 Keras 和 TensorFlow 的 API。
 
@@ -16,13 +16,10 @@
 
 TensorFlow 是一个基于 Python 的免费、开源的机器学习平台，主要由 Google 开发。与 NumPy 类似，TensorFlow 的主要目的是使工程师和研究人员能够在数值张量上操作数学表达式。但是 TensorFlow 在以下方面远远超出了 NumPy 的范围：
 
-+   它可以自动计算任何可微表达式的梯度（正如您在第二章中看到的），使其非常适合机器学习。
-
-+   它不仅可以在 CPU 上运行，还可以在 GPU 和 TPU 上运行，高度并行的硬件加速器。
-
-+   在 TensorFlow 中定义的计算可以轻松地分布到许多机器上。
-
-+   TensorFlow 程序可以导出到其他运行时，例如 C++、JavaScript（用于基于浏览器的应用程序）或 TensorFlow Lite（用于在移动设备或嵌入式设备上运行的应用程序）等。这使得 TensorFlow 应用程序在实际环境中易于部署。
++ 它可以自动计算任何可微表达式的梯度（正如您在第二章中看到的），使其非常适合机器学习。
++ 它不仅可以在 CPU 上运行，还可以在 GPU 和 TPU 上运行，高度并行的硬件加速器。
++ 在 TensorFlow 中定义的计算可以轻松地分布到许多机器上。
++ TensorFlow 程序可以导出到其他运行时，例如 C++、JavaScript（用于基于浏览器的应用程序）或 TensorFlow Lite（用于在移动设备或嵌入式设备上运行的应用程序）等。这使得 TensorFlow 应用程序在实际环境中易于部署。
 
 重要的是要记住，TensorFlow 远不止是一个单一的库。它实际上是一个平台，拥有庞大的组件生态系统，其中一些由 Google 开发，一些由第三方开发。例如，有用于强化学习研究的 TF-Agents，用于工业强度机器学习工作流管理的 TFX，用于生产部署的 TensorFlow Serving，以及预训练模型的 TensorFlow Hub 存储库。这些组件共同涵盖了非常广泛的用例，从前沿研究到大规模生产应用。
 
@@ -64,11 +61,9 @@ Keras 比 TensorFlow 早八个月发布。它于 2015 年 3 月发布，而 Tens
 
 要在 GPU 上进行深度学习，你有三个选择：
 
-+   在你的工作站上购买并安装一块物理 NVIDIA GPU。
-
-+   使用 Google Cloud 或 AWS EC2 上的 GPU 实例。
-
-+   使用 Colaboratory 提供的免费 GPU 运行时，这是 Google 提供的托管笔记本服务（有关“笔记本”是什么的详细信息，请参见下一节）。
++ 在你的工作站上购买并安装一块物理 NVIDIA GPU。
++ 使用 Google Cloud 或 AWS EC2 上的 GPU 实例。
++ 使用 Colaboratory 提供的免费 GPU 运行时，这是 Google 提供的托管笔记本服务（有关“笔记本”是什么的详细信息，请参见下一节）。
 
 Colaboratory 是最简单的入门方式，因为它不需要购买硬件，也不需要安装软件——只需在浏览器中打开一个标签页并开始编码。这是我们推荐在本书中运行代码示例的选项。然而，Colaboratory 的免费版本只适用于小型工作负载。如果你想扩大规模，你将不得不使用第一或第二个选项。
 
@@ -88,7 +83,7 @@ Jupyter 笔记本是运行深度学习实验的绝佳方式，特别是本书中
 
 Colaboratory（简称 Colab）是一个免费的 Jupyter 笔记本服务，无需安装，完全在云端运行。实际上，它是一个网页，让您可以立即编写和执行 Keras 脚本。它为您提供免费（但有限）的 GPU 运行时，甚至还有 TPU 运行时，因此您不必购买自己的 GPU。Colaboratory 是我们推荐用于运行本书中代码示例的工具。
 
-使用 Colaboratory 的第一步
+**使用 Colaboratory 的第一步**
 
 要开始使用 Colab，请访问 [`colab.research.google.com`](https://colab.research.google.com) 并单击 New Notebook 按钮。您将看到图 3.2 中显示的标准笔记本界面。
 
@@ -110,7 +105,7 @@ Colaboratory（简称 Colab）是一个免费的 Jupyter 笔记本服务，无�
 
 文本单元格对于为您的笔记本提供可读的结构非常有用：使用它们为您的代码添加部分标题和长说明段落或嵌入图像。笔记本旨在成为一种多媒体体验！
 
-使用 pip 安装软件包
+**使用 pip 安装软件包**
 
 默认的 Colab 环境已经安装了 TensorFlow 和 Keras，因此您可以立即开始使用它，无需任何安装步骤。但是，如果您需要使用 `pip` 安装某些内容，您可以在代码单元格中使用以下语法进行安装（请注意，该行以 `!` 开头，表示这是一个 shell 命令而不是 Python 代码）：
 
@@ -118,7 +113,7 @@ Colaboratory（简称 Colab）是一个免费的 Jupyter 笔记本服务，无�
 !pip install package_name
 ```
 
-使用 GPU 运行时
+**使用 GPU 运行时**
 
 要在 Colab 中使用 GPU 运行时，请在菜单中选择 Runtime > Change Runtime Type，并选择 GPU 作为硬件加速器（参见图 3.5）。
 
@@ -136,27 +131,19 @@ Colaboratory（简称 Colab）是一个免费的 Jupyter 笔记本服务，无�
 
 正如你在之前的章节中看到的，训练神经网络围绕着以下概念展开：
 
-+   首先，低级张量操作——支撑所有现代机器学习的基础设施。这转化为 TensorFlow API：
++ 首先，低级张量操作——支撑所有现代机器学习的基础设施。这转化为 TensorFlow API：
+  + *张量*，包括存储网络状态的特殊张量（*变量*）
+  + *张量操作*，如加法、`relu`、`matmul`
+  + *反向传播*，一种计算数学表达式梯度的方法（在 TensorFlow 中通过 `GradientTape` 对象处理）
 
-    +   *张量*，包括存储网络状态的特殊张量（*变量*）
++ 其次，高级深度学习概念。这转化为 Keras API：
+  + *层*，这些层组合成一个*模型*
+  + 一个*损失函数*，定义用于学习的反馈信号
+  + 一个*优化器*，确定学习如何进行
+  + *指标*用于评估模型性能，如准确度
+  + 执行小批量随机梯度下降的*训练循环*
 
-    +   *张量操作*，如加法、`relu`、`matmul`
-
-    +   *反向传播*，一种计算数学表达式梯度的方法（在 TensorFlow 中通过`GradientTape`对象处理）
-
-+   其次，高级深度学习概念。这转化为 Keras API：
-
-    +   *层*，这些层组合成一个*模型*
-
-    +   一个*损失函数*，定义用于学习的反馈信号
-
-    +   一个*优化器*，确定学习如何进行
-
-    +   *指标*用于评估模型性能，如准确度
-
-    +   执行小批量随机梯度下降的*训练循环*
-
-在上一章中，你已经初步接触了一些对应的 TensorFlow 和 Keras API：你已经简要使用了 TensorFlow 的`Variable`类、`matmul`操作和`GradientTape`。你实例化了 Keras 的`Dense`层，将它们打包成一个`Sequential`模型，并用`fit()`方法训练了该模型。
+在上一章中，你已经初步接触了一些对应的 TensorFlow 和 Keras API：你已经简要使用了 TensorFlow 的 `Variable` 类、`matmul` 操作和 `GradientTape`。你实例化了 Keras 的 `Dense` 层，将它们打包成一个 `Sequential` 模型，并用 `fit()` 方法训练了该模型。
 
 现在让我们深入了解如何使用 TensorFlow 和 Keras 在实践中处理所有这些不同概念。
 
@@ -164,7 +151,7 @@ Colaboratory（简称 Colab）是一个免费的 Jupyter 笔记本服务，无�
 
 要在 TensorFlow 中做任何事情，我们需要一些张量。张量需要用一些初始值创建。例如，你可以创建全为 1 或全为 0 的张量（见列表 3.1），或者从随机分布中抽取值的张量（见列表 3.2）。
 
-列表 3.1 全为 1 或全为 0 的张量
+**列表 3.1 全为 1 或全为 0 的张量**
 
 ```py
 >>> import tensorflow as tf
@@ -180,11 +167,16 @@ tf.Tensor(
  [0.]], shape=(2, 1), dtype=float32)
 ```
 
-❶ 等同于 np.ones(shape=(2, 1))
+❶ 等同于 `np.ones(shape=(2, 1))`
 
-❷ 等同于 np.zeros(shape=(2, 1))
+❷ 等同于 `np.zeros(shape=(2, 1))`
 
-列表 3.2 随机张量
+**列表 3.2 随机张量**
+
+
+
+
+### 3.5.1 张量：TensorFlow 中的数据容器
 
 ```py
 >>> x = tf.random.normal(shape=(3, 1), mean=0., stddev=1.)      # ❶
@@ -201,13 +193,13 @@ tf.Tensor(
  [0.7749394 ]], shape=(3, 1), dtype=float32)
 ```
 
-❶ 从均值为 0、标准差为 1 的正态分布中抽取的随机值张量。等同于 np.random.normal(size=(3, 1), loc=0., scale=1.)。
+❶ 从均值为 0、标准差为 1 的正态分布中抽取的随机值张量。等同于`np.random.normal(size=(3, 1), loc=0., scale=1.)`。
 
-❷ 从 0 到 1 之间均匀分布的随机值张量。等同于 np.random.uniform(size=(3, 1), low=0., high=1.)。
+❷ 从 0 到 1 之间均匀分布的随机值张量。等同于`np.random.uniform(size=(3, 1), low=0., high=1.)`。
 
 NumPy 数组和 TensorFlow 张量之间的一个重要区别是 TensorFlow 张量不可赋值：它们是常量。例如，在 NumPy 中，你可以这样做。
 
-列表 3.3 NumPy 数组是可赋值的
+**列表 3.3 NumPy 数组是可赋值的**
 
 ```py
 import numpy as np
@@ -217,7 +209,7 @@ x[0, 0] = 0.
 
 尝试在 TensorFlow 中做同样的事情，你会得到一个错误：“EagerTensor 对象不支持项目赋值。”
 
-列表 3.4 TensorFlow 张量不可赋值
+**列表 3.4 TensorFlow 张量不可赋值**
 
 ```py
 x = tf.ones(shape=(2, 2))
@@ -230,7 +222,7 @@ x[0, 0] = 0.             # ❶
 
 要创建一个变量，你需要提供一些初始值，比如一个随机张量。
 
-列表 3.5 创建一个 TensorFlow 变量
+**列表 3.5 创建一个 TensorFlow 变量**
 
 ```py
 >>> v = tf.Variable(initial_value=tf.random.normal(shape=(3, 1)))
@@ -242,7 +234,7 @@ array([[-0.75133973],
 
 变量的状态可以通过其`assign`方法修改，如下所示。
 
-列表 3.6 给 TensorFlow 变量赋值
+**列表 3.6 给 TensorFlow 变量赋值**
 
 ```py
 >>> v.assign(tf.ones((3, 1)))
@@ -253,7 +245,7 @@ array([[1.],
 
 它也适用于一部分系数。
 
-列表 3.7 给 TensorFlow 变量的子集赋值
+**列表 3.7 给 TensorFlow 变量的子集赋值**
 
 ```py
 >>> v[0, 0].assign(3.)
@@ -264,7 +256,7 @@ array([[3.],
 
 同样，`assign_add()` 和 `assign_sub()` 是`+=` 和 `-=` 的高效等价物，如下所示。
 
-列表 3.8 使用`assign_add()`
+**列表 3.8 使用`assign_add()`**
 
 ```py
 >>> v.assign_add(tf.ones((3, 1)))
@@ -277,7 +269,7 @@ array([[2.],
 
 就像 NumPy 一样，TensorFlow 提供了大量的张量操作来表达数学公式。以下是一些示例。
 
-列表 3.9 几个基本数学操作
+**列表 3.9 几个基本数学操作**
 
 ```py
 a = tf.ones((2, 2))
@@ -304,7 +296,7 @@ e *= d                 # ❺
 
 到目前为止，TensorFlow 看起来很像 NumPy。但这里有一件 NumPy 做不到的事情：检索任何可微表达式相对于其任何输入的梯度。只需打开一个`GradientTape`范围，对一个或多个输入张量应用一些计算，并检索结果相对于输入的梯度。
 
-列表 3.10 使用`GradientTape`
+**列表 3.10 使用`GradientTape`**
 
 ```py
 input_var = tf.Variable(initial_value=3.) 
@@ -313,11 +305,11 @@ with tf.GradientTape() as tape:
 gradient = tape.gradient(result, input_var)
 ```
 
-这通常用于检索模型损失相对于其权重的梯度：`gradients` `=` `tape.gradient(loss,` `weights)`。你在第二章中看到了这个过程。
+这通常用于检索模型损失相对于其权重的梯度：`gradients = tape.gradient(loss, weights)`。你在第二章中看到了这个过程。
 
 到目前为止，你只看到了`tape.gradient()`中输入张量是 TensorFlow 变量的情况。实际上，这些输入可以是任意张量。然而，默认只有*可训练变量*会被跟踪。对于常量张量，你需要手动调用`tape.watch()`来标记它被跟踪。
 
-列表 3.11 使用带有常量张量输入的`GradientTape`
+**列表 3.11 使用带有常量张量输入的`GradientTape`**
 
 ```py
 input_const = tf.constant(3.) 
@@ -331,9 +323,9 @@ gradient = tape.gradient(result, input_const)
 
 梯度磁带是一个强大的实用工具，甚至能够计算*二阶梯度*，也就是说，一个梯度的梯度。例如，一个物体的位置相对于时间的梯度是该物体的速度，而二阶梯度是它的加速度。
 
-如果你测量一个沿垂直轴下落的苹果随时间的位置，并发现它验证`position(time)` `=` `4.9` `*` `time` `**` `2`，那么它的加速度是多少？让我们使用两个嵌套的梯度磁带来找出答案。
+如果你测量一个沿垂直轴下落的苹果随时间的位置，并发现它验证`position(time) = 4.9 * time ** 2`，那么它的加速度是多少？让我们使用两个嵌套的梯度磁带来找出答案。
 
-列表 3.12 使用嵌套的梯度磁带计算二阶梯度
+**列表 3.12 使用嵌套的梯度磁带计算二阶梯度**
 
 ```py
 time = tf.Variable(0.) 
@@ -354,7 +346,7 @@ acceleration = outer_tape.gradient(speed, time)    # ❶
 
 首先，让我们想出一些线性可分的合成数据来处理：2D 平面上的两类点。我们将通过从具有特定协方差矩阵和特定均值的随机分布中绘制它们的坐标来生成每一类点。直观地，协方差矩阵描述了点云的形状，均值描述了它在平面上的位置（参见图 3.6）。我们将为两个点云重复使用相同的协方差矩阵，但我们将使用两个不同的均值值——点云将具有相同的形状，但不同的位置。
 
-列表 3.13 在 2D 平面上生成两类随机点
+**列表 3.13 在 2D 平面上生成两类随机点**
 
 ```py
 num_samples_per_class = 1000 
@@ -368,21 +360,21 @@ positive_samples = np.random.multivariate_normal(   # ❷
     size=num_samples_per_class)                     # ❷
 ```
 
-❶ 生成第一类点：1000 个随机的 2D 点。cov=[[1, 0.5],[0.5, 1]] 对应于一个从左下到右上方向的椭圆形点云。
+❶ 生成第一类点：1000 个随机的 2D 点。`cov=[[1, 0.5],[0.5, 1]]` 对应于一个从左下到右上方向的椭圆形点云。
 
 ❷ 用不同均值和相同协方差矩阵生成另一类点。
 
-在上述代码中，`negative_samples` 和 `positive_samples` 都是形状为 `(1000,` `2)` 的数组。让我们将它们堆叠成一个形状为 `(2000,` `2)` 的单一数组。
+在上述代码中，`negative_samples` 和 `positive_samples` 都是形状为 `(1000, 2)` 的数组。让我们将它们堆叠成一个形状为 `(2000, 2)` 的单一数组。
 
-列表 3.14 将两类堆叠成形状为 (2000, 2) 的数组
+**列表 3.14 将两类堆叠成形状为 (2000, 2) 的数组**
 
 ```py
 inputs = np.vstack((negative_samples, positive_samples)).astype(np.float32)
 ```
 
-让我们生成相应的目标标签，一个形状为 `(2000,` `1)` 的零和一的数组，其中 `targets[i,` `0]` 为 0，如果 `inputs[i]` 属于类 0（反之亦然）。
+让我们生成相应的目标标签，一个形状为 `(2000, 1)` 的零和一的数组，其中 `targets[i, 0]` 为 0，如果 `inputs[i]` 属于类 0（反之亦然）。
 
-列表 3.15 生成相应的目标值 (0 和 1)
+**列表 3.15 生成相应的目标值 (0 和 1)**
 
 ```py
 targets = np.vstack((np.zeros((num_samples_per_class, 1), dtype="float32"),
@@ -391,7 +383,7 @@ targets = np.vstack((np.zeros((num_samples_per_class, 1), dtype="float32"),
 
 接下来，让我们用 Matplotlib 绘制我们的数据。
 
-列表 3.16 绘制两类点（参见图 3.6）
+**列表 3.16 绘制两类点（参见图 3.6）**
 
 ```py
 import matplotlib.pyplot as plt
@@ -401,15 +393,15 @@ plt.show()
 
 ![](img/03-06.png)
 
-图 3.6 我们的合成数据：2D 平面上的两类随机点
+**图 3.6 我们的合成数据：2D 平面上的两类随机点**
 
-现在让我们创建一个线性分类器，它可以学会分离这两个斑点。线性分类器是一个仿射变换（`prediction` `=` `W` `•` `input` `+` `b`），训练以最小化预测与目标之间差的平方。
+现在让我们创建一个线性分类器，它可以学会分离这两个斑点。线性分类器是一个仿射变换（`prediction = W • input + b`），训练以最小化预测与目标之间差的平方。
 
 正如你将看到的，这实际上比第二章末尾看到的玩具两层神经网络的端到端示例要简单得多。然而，这次你应该能够逐行理解代码的一切。
 
 让我们创建我们的变量，`W` 和 `b`，分别用随机值和零值初始化。
 
-列表 3.17 创建线性分类器变量
+**列表 3.17 创建线性分类器变量**
 
 ```py
 input_dim = 2      # ❶
@@ -424,18 +416,18 @@ b = tf.Variable(initial_value=tf.zeros(shape=(output_dim,)))
 
 这是我们的前向传播函数。
 
-列表 3.18 前向传播函数
+**列表 3.18 前向传播函数**
 
 ```py
 def model(inputs):
     return tf.matmul(inputs, W) + b
 ```
 
-因为我们的线性分类器操作在 2D 输入上，`W` 实际上只是两个标量系数，`w1` 和 `w2`：`W` `=` `[[w1],` `[w2]]`。同时，`b` 是一个单一的标量系数。因此，对于给定的输入点 `[x,` `y]`，其预测值为 `prediction` `=` `[[w1],` `[w2]]` `•` `[x,` `y]` `+` `b` `=` `w1` `*` `x` `+` `w2` `*` `y` `+` `b`。
+因为我们的线性分类器操作在 2D 输入上，`W` 实际上只是两个标量系数，`w1` 和 `w2`：`W = [[w1], [w2]]`。同时，`b` 是一个单一的标量系数。因此，对于给定的输入点 `[x, y]`，其预测值为 `prediction = [[w1], [w2]] • [x, y] + b = w1 * x + w2 * y + b`。
 
 以下列表显示了我们的损失函数。
 
-列表 3.19 均方误差损失函数
+**列表 3.19 均方误差损失函数**
 
 ```py
 def square_loss(targets, predictions):
@@ -443,13 +435,13 @@ def square_loss(targets, predictions):
     return tf.reduce_mean(per_sample_losses)               # ❷
 ```
 
-❶ per_sample_losses 将是一个与目标和预测相同形状的张量，包含每个样本的损失分数。
+❶ `per_sample_losses` 将是一个与目标和预测相同形状的张量，包含每个样本的损失分数。
 
-❷ 我们需要将这些每个样本的损失函数平均为单个标量损失值：这就是 reduce_mean 所做的。
+❷ 我们需要将这些每个样本的损失函数平均为单个标量损失值：这就是`reduce_mean`所做的。
 
 接下来是训练步骤，它接收一些训练数据并更新权重 `W` 和 `b`，以使数据上的损失最小化。
 
-列表 3.20 训练步骤函数
+**列表 3.20 训练步骤函数**
 
 ```py
 learning_rate = 0.1 
@@ -470,9 +462,9 @@ def training_step(inputs, targets):
 
 ❸ 更新权重。
 
-为了简单起见，我们将进行*批量训练*而不是*小批量训练*：我们将对所有数据运行每个训练步骤（梯度计算和权重更新），而不是在小批量中迭代数据。一方面，这意味着每个训练步骤将需要更长时间运行，因为我们将一次计算 2,000 个样本的前向传播和梯度。另一方面，每个梯度更新将更有效地减少训练数据上的损失，因为它将包含所有训练样本的信息，而不是仅仅 128 个随机样本。因此，我们将需要更少的训练步骤，并且我们应该使用比通常用于小批量训练更大的学习率（我们将使用`learning_rate` `=` `0.1`，在列表 3.20 中定义）。
+为了简单起见，我们将进行*批量训练*而不是*小批量训练*：我们将对所有数据运行每个训练步骤（梯度计算和权重更新），而不是在小批量中迭代数据。一方面，这意味着每个训练步骤将需要更长的时间运行，因为我们将一次计算 2,000 个样本的前向传播和梯度。另一方面，每个梯度更新将更有效地减少训练数据上的损失，因为它将包含所有训练样本的信息，而不是仅仅 128 个随机样本。因此，我们将需要更少的训练步骤，并且我们应该使用比通常用于小批量训练更大的学习率（我们将使用`learning_rate = 0.1`，在列表 3.20 中定义）。
 
-列表 3.21 批量训练循环
+**列表 3.21 批量训练循环**
 
 ```py
 for step in range(40):
@@ -490,9 +482,11 @@ plt.show()
 
 ![](img/03-07.png)
 
-图 3.7 我们模型对训练输入的预测：与训练目标非常相似
+**图 3.7 我们模型对训练输入的预测：与训练目标非常相似**
 
-请记住，给定点`[x,` `y]`的预测值简单地为`prediction` `==` `[[w1],` `[w2]]` `•` `[x,` `y]` `+` `b` `==` `w1` `*` `x` `+` `w2` `*` `y` `+` `b`。因此，类 0 被定义为`w1` `*` `x` `+` `w2` `*` `y` `+` `b` `<` `0.5`，类 1 被定义为`w1` `*` `x` `+` `w2` `*` `y` `+` `b` `>` `0.5`。你会注意到你所看到的实际上是二维平面上的一条直线方程：`w1` `*` `x` `+` `w2` `*` `y` `+` `b` `=` `0.5`。在直线上方是类 1，在直线下方是类 0。你可能习惯于看到直线方程的格式为`y` `=` `a` `*` `x` `+` `b`；以相同格式，我们的直线变成了`y` `=` `-` `w1` `/` `w2` `*` `x` `+` `(0.5` `-` `b)` `/` `w2`。
+
+
+请记住，给定点`[x, y]`的预测值简单地为`prediction == [[w1], [w2]] • [x, y] + b == w1 * x + w2 * y + b`。因此，类 0 被定义为`w1 * x + w2 * y + b < 0.5`，类 1 被定义为`w1 * x + w2 * y + b > 0.5`。你会注意到你所看到的实际上是二维平面上的一条直线方程：`w1 * x + w2 * y + b = 0.5`。在直线上方是类 1，在直线下方是类 0。你可能习惯于看到直线方程的格式为`y = a * x + b`；以相同格式，我们的直线变成了`y = - w1 / w2 * x + (0.5 - b) / w2`。
 
 让我们绘制这条直线（如图 3.8 所示）：
 
@@ -507,7 +501,7 @@ plt.scatter(inputs[:, 0], inputs[:, 1], c=predictions[:, 0] > 0.5)   # ❹
 
 ❷ 这是我们直线的方程。
 
-❸ 绘制我们的直线（"-r"表示“将其绘制为红色线”）。
+❸ 绘制我们的直线（`"-r"`表示“将其绘制为红色线”）。
 
 ❹ 绘制我们模型的预测在同一图中。
 
@@ -627,7 +621,7 @@ model = NaiveSequential([
 ])
 ```
 
-如果一个层用于生成其输出形状的规则很复杂，情况会变得更糟。例如，如果我们的层返回形状为`(batch,` `input_ size` `*` `2` `if` `input_size` `%` `2` `==` `0` `else` `input_size` `*` `3)`的输出会怎样？
+如果一个层用于生成其输出形状的规则很复杂，情况会变得更糟。例如，如果我们的层返回形状为`(batch, input_size * 2 if input_size % 2 == 0 else input_size * 3)`的输出会怎样？
 
 如果我们要将我们的`NaiveDense`层重新实现为一个能够自动推断形状的 Keras 层，它将看起来像之前的`SimpleDense`层（见列表 3.22），具有其`build()`和`call()`方法。
 
@@ -725,7 +719,7 @@ model.compile(optimizer=keras.optimizers.RMSprop(learning_rate=1e-4),
 
 在第七章中，我们将介绍如何创建自定义损失和指标。一般来说，您不必从头开始创建自己的损失、指标或优化器，因为 Keras 提供了广泛的内置选项，很可能包括您需要的内容：
 
-优化器： 
+优化器：
 
 +   `SGD`（带有或不带有动量）
 
@@ -741,33 +735,24 @@ model.compile(optimizer=keras.optimizers.RMSprop(learning_rate=1e-4),
 
 +   `CategoricalCrossentropy`
 
-+   `SparseCategoricalCrossentropy`
 
-+   `BinaryCrossentropy`
 
-+   `MeanSquaredError`
-
-+   `KLDivergence`
-
-+   `CosineSimilarity`
-
-+   等等。
++ `SparseCategoricalCrossentropy`
++ `BinaryCrossentropy`
++ `MeanSquaredError`
++ `KLDivergence`
++ `CosineSimilarity`
++ 等等。
 
 指标：
 
-+   `CategoricalAccuracy`
-
-+   `SparseCategoricalAccuracy`
-
-+   `BinaryAccuracy`
-
-+   `AUC`
-
-+   `Precision`
-
-+   `Recall`
-
-+   等等。
++ `CategoricalAccuracy`
++ `SparseCategoricalAccuracy`
++ `BinaryAccuracy`
++ `AUC`
++ `Precision`
++ `Recall`
++ 等等。
 
 在本书中，您将看到许多这些选项的具体应用。
 
@@ -777,15 +762,13 @@ model.compile(optimizer=keras.optimizers.RMSprop(learning_rate=1e-4),
 
 幸运的是，对于常见问题如分类、回归和序列预测，你可以遵循简单的准则来选择正确的损失函数。例如，对于两类分类问题，你将使用二元交叉熵，对于多类分类问题，你将使用分类交叉熵，依此类推。只有在处理真正新的研究问题时，你才需要开发自己的损失函数。在接下来的几章中，我们将明确详细地介绍为各种常见任务选择哪些损失函数。
 
-### 3.6.5 理解 fit() 方法
+### 3.6.5 理解 `fit()` 方法
 
 在 `compile()` 之后是 `fit()`。`fit()` 方法实现了训练循环本身。以下是它的关键参数：
 
-+   用于训练的*数据*（输入和目标）。通常会以 NumPy 数组或 TensorFlow `Dataset` 对象的形式传递。你将在接下来的章节中更多地了解 `Dataset` API。
-
-+   训练的*轮数*：训练循环应该迭代传递的数据多少次。
-
-+   在每个迷你批次梯度下降的 epoch 中使用的批次大小：用于计算一次权重更新步骤的训练示例数量。
++ 用于训练的*数据*（输入和目标）。通常会以 NumPy 数组或 TensorFlow `Dataset` 对象的形式传递。你将在接下来的章节中更多地了解 `Dataset` API。
++ 训练的*轮数*：训练循环应该迭代传递的数据多少次。
++ 在每个迷你批次梯度下降的 epoch 中使用的批次大小：用于计算一次权重更新步骤的训练示例数量。
 
 第 3.23 节 使用 NumPy 数据调用 `fit()`
 
@@ -860,17 +843,17 @@ model.fit(
 
 在验证数据上的损失值称为“验证损失”，以区别于“训练损失”。请注意，保持训练数据和验证数据严格分开是至关重要的：验证的目的是监测模型学习的内容是否实际上对新数据有用。如果模型在训练过程中看到任何验证数据，您的验证损失和指标将是有缺陷的。
 
-请注意，如果您想在训练完成后计算验证损失和指标，可以调用`evaluate()`方法：
+请注意，如果您想在训练完成后计算验证损失和指标，可以调用 `evaluate()` 方法：
 
 ```py
 loss_and_metrics = model.evaluate(val_inputs, val_targets, batch_size=128)
 ```
 
-`evaluate()`将在传递的数据上以批量（大小为`batch_size`）迭代，并返回一个标量列表，其中第一个条目是验证损失，后一个条目是验证指标。如果模型没有指标，只返回验证损失（而不是列表）。
+`evaluate()` 将在传递的数据上以批量（大小为 `batch_size`）迭代，并返回一个标量列表，其中第一个条目是验证损失，后一个条目是验证指标。如果模型没有指标，只返回验证损失（而不是列表）。
 
 ### 3.6.7 推断：在训练后使用模型
 
-一旦您训练好模型，您将想要使用它在新数据上进行预测。这被称为*推断*。为此，一个简单的方法就是简单地`__call__()`模型：
+一旦您训练好模型，您将想要使用它在新数据上进行预测。这被称为*推断*。为此，一个简单的方法就是简单地 `__call__()` 模型：
 
 ```py
 predictions = model(new_inputs)    # ❶
@@ -878,9 +861,9 @@ predictions = model(new_inputs)    # ❶
 
 ❶ 接受一个 NumPy 数组或 TensorFlow 张量，并返回一个 TensorFlow 张量
 
-然而，这将一次性处理`new_inputs`中的所有输入，如果你要处理大量数据可能不可行（特别是可能需要比你的 GPU 更多的内存）。
+然而，这将一次性处理 `new_inputs` 中的所有输入，如果你要处理大量数据可能不可行（特别是可能需要比你的 GPU 更多的内存）。
 
-进行推断的更好方法是使用`predict()`方法。它将以小批量迭代数据，并返回一个预测的 NumPy 数组。与`__call__()`不同，它还可以处理 TensorFlow 的`Dataset`对象。
+进行推断的更好方法是使用 `predict()` 方法。它将以小批量迭代数据，并返回一个预测的 NumPy 数组。与 `__call__()` 不同，它还可以处理 TensorFlow 的 `Dataset` 对象。
 
 ```py
 predictions = model.predict(new_inputs, batch_size=128)     # ❶
@@ -888,7 +871,7 @@ predictions = model.predict(new_inputs, batch_size=128)     # ❶
 
 ❶ 接受一个 NumPy 数组或数据集，并返回一个 NumPy 数组
 
-例如，如果我们对之前训练过的线性模型使用`predict()`在一些验证数据上，我们会得到对应于模型对每个输入样本的预测的标量分数：
+例如，如果我们对之前训练过的线性模型使用 `predict()` 在一些验证数据上，我们会得到对应于模型对每个输入样本的预测的标量分数：
 
 ```py
 >>> predictions = model.predict(val_inputs, batch_size=128)
@@ -909,16 +892,10 @@ predictions = model.predict(new_inputs, batch_size=128)     # ❶
 
 ## 摘要
 
-+   TensorFlow 是一个工业强度的数值计算框架，可以在 CPU、GPU 或 TPU 上运行。它可以自动计算任何可微表达式的梯度，可以分布到许多设备，还可以将程序导出到各种外部运行时，甚至 JavaScript。
-
-+   Keras 是使用 TensorFlow 进行深度学习的标准 API。这是我们将在整本书中使用的。
-
-+   TensorFlow 的关键对象包括张量、变量、张量操作和梯度带。
-
-+   Keras 的核心类是`Layer`。一个*层*封装了一些权重和一些计算。层被组装成*模型*。
-
-+   在开始训练模型之前，您需要选择一个*优化器*，一个*损失*和一些*指标*，您可以通过`model.compile()`方法指定。
-
-+   要训练一个模型，您可以使用`fit()`方法，它为您运行小批量梯度下降。您还可以使用它来监视您在*验证数据*上的损失和指标，这是模型在训练过程中没有看到的一组输入。
-
-+   一旦您的模型训练完成，您可以使用`model.predict()`方法在新输入上生成预测。
++ TensorFlow 是一个工业强度的数值计算框架，可以在 CPU、GPU 或 TPU 上运行。它可以自动计算任何可微表达式的梯度，可以分布到许多设备，还可以将程序导出到各种外部运行时，甚至 JavaScript。
++ Keras 是使用 TensorFlow 进行深度学习的标准 API。这是我们将在整本书中使用的。
++ TensorFlow 的关键对象包括张量、变量、张量操作和梯度带。
++ Keras 的核心类是 `Layer`。一个*层*封装了一些权重和一些计算。层被组装成*模型*。
++ 在开始训练模型之前，您需要选择一个*优化器*，一个*损失*和一些*指标*，您可以通过 `model.compile()` 方法指定。
++ 要训练一个模型，您可以使用 `fit()` 方法，它为您运行小批量梯度下降。您还可以使用它来监视您在*验证数据*上的损失和指标，这是模型在训练过程中没有看到的一组输入。
++ 一旦您的模型训练完成，您可以使用 `model.predict()` 方法在新输入上生成预测。

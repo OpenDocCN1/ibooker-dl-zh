@@ -1,19 +1,15 @@
+
+
 ## 第十五章\. 对未见数据进行的深度学习：介绍联邦学习
 
 **本章内容**
 
 +   深度学习中的隐私问题
-
 +   联邦学习
-
 +   学习检测垃圾邮件
-
 +   窃取联邦学习
-
 +   安全聚合
-
 +   同态加密
-
 +   同态加密联邦学习
 
 > “朋友不会互相监视；真正的友谊也关乎隐私。”
@@ -30,13 +26,7 @@
 
 但在 2017 年，谷歌发布了一篇非常激动人心的论文和博客文章，对这次对话产生了重大影响。谷歌提出，我们不需要集中一个数据集来在上面训练模型。公司提出了这个问题：如果我们不能将所有数据带到一处，我们能否将模型带到数据那里？这是一个新的、令人兴奋的机器学习子领域，称为*联邦学习*，这正是本章的主题。
 
-| |
-| --- |
-
 如果不是将训练数据集带到一处来训练模型，而是能够将模型带到数据生成的任何地方，会怎么样呢？
-
-| |
-| --- |
 
 这种简单的逆转极其重要。首先，这意味着为了参与深度学习供应链，人们实际上不必将他们的数据发送给任何人。在医疗保健、个人管理和其他敏感领域，有价值的模型可以在不要求任何人透露个人信息的情况下进行训练。理论上，人们可以保留对自己个人数据唯一副本的控制权（至少在深度学习方面）。
 
@@ -66,7 +56,7 @@ for row in raw:
     for word in spam[-1]:
         vocab.add(word)
 
-with codecs.open(`ham.txt',"r",encoding='utf-8',errors='ignore') as f:
+with codecs.open('ham.txt',"r",encoding='utf-8',errors='ignore') as f:
     raw = f.readlines()
 
 for row in raw:
@@ -90,7 +80,7 @@ def to_indices(input, l=500):
     return indices
 ```
 
-+   ***1* 数据集来自 [`www2.aueb.gr/users/ion/data/enron-spam/`](http://www2.aueb.gr/users/ion/data/enron-spam/)**
++   *1* 数据集来自 [`www2.aueb.gr/users/ion/data/enron-spam/`](http://www2.aueb.gr/users/ion/data/enron-spam/)
 
 ### 学习检测垃圾邮件
 
@@ -98,7 +88,7 @@ def to_indices(input, l=500):
 
 我们将要讨论的使用案例是电子邮件分类。第一个模型将在一个公开可用的数据集上训练，这个数据集被称为 Enron 数据集，它是一批来自著名 Enron 诉讼案（现在是一个行业标准的电子邮件分析语料库）的大量电子邮件。有趣的事实：我曾经认识一个人，他专业地阅读/注释了这个数据集，人们互相发送了各种各样的疯狂东西（其中很多非常私人）。但由于它在法庭案件中公开发布，现在可以免费使用。
 
-上一节和这一节的代码只是预处理。输入数据文件（ham.txt 和 spam.txt）可在本书的网站上找到，[www.manning.com/books/grokking-deep-learning](http://www.manning.com/books/grokking-deep-learning)；以及 GitHub 上[`github.com/iamtrask/Grokking-Deep-Learning`](https://github.com/iamtrask/Grokking-Deep-Learning)。你预处理它以准备好将其前向传播到在第十三章中创建的嵌入类。和之前一样，这个语料库中的所有单词都被转换成了索引列表。你还通过截断电子邮件或用 `<unk>` 标记填充它，使所有电子邮件正好 500 个单词长。这样做使得最终数据集是方形的。
+上一节和这一节的代码只是预处理。输入数据文件（`ham.txt` 和 `spam.txt`）可在本书的网站上找到，[www.manning.com/books/grokking-deep-learning](http://www.manning.com/books/grokking-deep-learning)；以及 GitHub 上 [`github.com/iamtrask/Grokking-Deep-Learning`](https://github.com/iamtrask/Grokking-Deep-Learning)。你预处理它以准备好将其前向传播到在第十三章中创建的嵌入类。和之前一样，这个语料库中的所有单词都被转换成了索引列表。你还通过截断电子邮件或用 `<unk>` 标记填充它，使所有电子邮件正好 500 个单词长。这样做使得最终数据集是方形的。
 
 ```
 spam_idx = to_indices(spam)
@@ -139,7 +129,7 @@ def train(model, input_data, target_data, batch_size=500, iterations=5):
             # padding token should stay at 0
             model.weight.data[w2i['<unk>']] *= 0
             input = Tensor(input_data[b_i*bs:(b_i+1)*bs], autograd=True)
-           target = Tensor(target_data[b_i*bs:(b_i+1)*bs], autograd=True)
+            target = Tensor(target_data[b_i*bs:(b_i+1)*bs], autograd=True)
 
             pred = model.forward(input).sum(1).sigmoid()
             loss = criterion.forward(pred,target)
@@ -165,8 +155,6 @@ def test(model, test_input, test_output):
 
 有这些不错的 `train()` 和 `test()` 函数，你可以使用以下几行代码初始化一个神经网络并对其进行训练。仅经过三次迭代，网络就可以在测试数据集上以 99.45%的准确率进行分类（测试数据集是平衡的，所以这相当不错）：
 
-|
-
 ```
 model = Embedding(vocab_size=len(vocab), dim=1)
 model.weight.data *= 0
@@ -179,10 +167,6 @@ for i in range(3):
           str(test(model, test_data, test_target)*100))
 ```
 
-|
-
-|
-
 ```
        Loss:0.037140416860871446
 % Correct on Test Set: 98.65
@@ -191,8 +175,6 @@ for i in range(3):
        Loss:0.008068268387986223
 % Correct on Test Set: 99.45
 ```
-
-|
 
 ### 让我们将其变为联邦学习
 
@@ -276,7 +258,7 @@ bobs_model = train(copy.deepcopy(model),
 ```
 for i, v in enumerate(bobs_model.weight.data - model.weight.data):
     if(v != 0):
-    print(vocab[i])
+        print(vocab[i])
 ```
 
 ```
@@ -295,23 +277,20 @@ my
 
 解决方案是永远不要让鲍勃像那样公开地发布梯度。如果人们不应该看到它，鲍勃如何贡献他的梯度？社会科学使用一种有趣的技巧，称为*随机响应*。
 
+
+
+
 它是这样的。假设你正在进行一项调查，你想询问 100 个人他们是否犯过严重的罪行。当然，即使你承诺不会告诉任何人，他们也会回答“没有”。相反，你让他们抛两次硬币（在你看不见的地方），并告诉他们如果第一次抛硬币是正面，他们应该诚实地回答；如果是反面，他们应该根据第二次抛硬币的结果回答“是”或“否”。
 
 在这种情况下，你实际上从未要求人们告诉你他们是否犯了罪。真正的答案隐藏在第一次和第二次抛硬币的随机噪声中。如果 60%的人说“是”，你可以通过简单的数学计算确定，大约 70%的受访者犯了严重的罪行（上下几个百分点）。这个想法是，随机噪声使得你了解到关于个人的任何信息可能来自噪声而不是他们自己。
-
-| |
-| --- |
 
 **通过可辩驳的否认来保护隐私**
 
 特定答案来自随机噪声而不是个人的概率水平，通过提供可辩驳的否认来保护他们的隐私。这构成了安全聚合的基础，以及更广泛地，差分隐私的大部分内容。
 
-| |
-| --- |
-
 你只看到整体的汇总统计数据。（你永远不会直接看到任何人的答案；你只看到答案对或更大的分组。）因此，在添加噪声之前，你可以聚合更多的人，你就不需要添加太多的噪声来隐藏他们（并且结果会更加准确）。
 
-在联邦学习的背景下，你可以（如果你愿意）添加大量的噪声，但这会损害训练。相反，首先将所有参与者的梯度求和，这样没有人能看到除了自己的梯度以外的任何人的梯度。这类问题被称为 *安全聚合*，为了做到这一点，你还需要一个额外的（非常酷）工具：*同态加密*。
+在联邦学习的背景下，你可以（如果你愿意）添加大量的噪声，但这会损害训练。相反，首先将所有参与者的梯度求和，这样没有人能看到除了自己的梯度以外的任何人的梯度。这类问题被称为*安全聚合*，为了做到这一点，你还需要一个额外的（非常酷）工具：*同态加密*。
 
 ### 同态加密
 
@@ -319,9 +298,9 @@ my
 
 研究中最激动人心的前沿之一是人工智能（包括深度学习）与密码学的交叉领域。在这个激动人心的交叉点中，有一个非常酷的技术叫做同态加密。简单来说，同态加密允许你在不解密的情况下对加密值进行计算。
 
-尤其是我们对在这些值上执行加法感兴趣。详细解释其工作原理需要一本整本书，但我会用几个定义来展示它是如何工作的。首先，一个 *公钥* 允许你加密数字。一个 *私钥* 允许你解密加密的数字。加密的值称为 *密文*，未加密的值称为 *明文*。
+尤其是我们对在这些值上执行加法感兴趣。详细解释其工作原理需要一本整本书，但我会用几个定义来展示它是如何工作的。首先，一个*公钥*允许你加密数字。一个*私钥*允许你解密加密的数字。加密的值称为*密文*，未加密的值称为*明文*。
 
-让我们通过使用 phe 库的例子来看看同态加密。（要安装库，请运行 `pip install phe` 或从 GitHub [`github.com/n1analytics/python-paillier`](https://github.com/n1analytics/python-paillier) 下载）：
+让我们通过使用`phe`库的例子来看看同态加密。（要安装库，请运行`pip install phe`或从 GitHub [`github.com/n1analytics/python-paillier`](https://github.com/n1analytics/python-paillier)下载）：
 
 ```
 import phe
@@ -339,11 +318,8 @@ print("The Answer: " + str(z_))
 ```
 
 +   ***1* 加密数字 5**
-
 +   ***2* 加密数字 3**
-
 +   ***3* 将两个加密值相加**
-
 +   ***4* 解密结果**
 
 ```

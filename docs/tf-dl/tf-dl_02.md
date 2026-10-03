@@ -1,3 +1,4 @@
+
 # 第二章：TensorFlow 基本概念介绍
 
 本章将介绍 TensorFlow 的基本概念。特别是，您将学习如何使用 TensorFlow 执行基本计算。本章的大部分内容将用于介绍张量的概念，并讨论在 TensorFlow 中如何表示和操作张量。这个讨论将需要简要概述一些支撑张量数学的数学概念。特别是，我们将简要回顾基本线性代数，并演示如何使用 TensorFlow 执行基本线性代数运算。
@@ -6,41 +7,50 @@
 
 我们通过讨论变量的概念来结束本章。TensorFlow 中的变量保存张量，并允许进行有状态的计算以修改变量。我们演示如何通过 TensorFlow 创建变量并更新它们的值。
 
-# 介绍张量
+## 介绍张量
 
 张量是物理和工程等领域中的基本数学构造。然而，从历史上看，张量在计算机科学中的应用较少，计算机科学传统上更多地与离散数学和逻辑相关。随着机器学习的出现及其基础建立在连续的、矢量化的数学上，这种情况已经开始发生显著变化。现代机器学习建立在对张量的操作和微积分之上。
 
-## 标量、向量和矩阵
+### 标量、向量和矩阵
 
-首先，我们将给出一些您可能熟悉的张量的简单示例。张量的最简单示例是标量，即从实数中取出的单个常数值（请记住，实数是任意精度的十进制数，允许包含正数和负数）。在数学上，我们用<math><mi>ℝ</mi></math>来表示实数。更正式地说，我们将标量称为秩为 0 的张量。
+首先，我们将给出一些您可能熟悉的张量的简单示例。张量的最简单示例是标量，即从实数中取出的单个常数值（请记住，实数是任意精度的十进制数，允许包含正数和负数）。在数学上，我们用ℝ来表示实数。更正式地说，我们将标量称为秩为 0 的张量。
 
-# 关于域的说明
+#### 关于域的说明
 
-在数学上精通的读者可能会反对基于复数或二进制数定义张量是完全有意义的。更一般地说，只要数字来自一个*域*：一个数学上定义了 0、1、加法、乘法、减法和除法的数字集合。常见的域包括实数<math alttext="double-struck upper R"><mi>ℝ</mi></math>、有理数<math alttext="double-struck upper Q"><mi>ℚ</mi></math>、复数<math alttext="double-struck upper C"><mi>ℂ</mi></math>和有限域，如<math alttext="double-struck upper Z 2"><msub><mi>ℤ</mi> <mn>2</mn></msub></math>。在讨论中，我们将假设张量的值为实数，但是用其他域的值替代是完全合理的。
+在数学上精通的读者可能会反对基于复数或二进制数定义张量是完全有意义的。更一般地说，只要数字来自一个*域*：一个数学上定义了 0、1、加法、乘法、减法和除法的数字集合。常见的域包括实数ℝ、有理数ℚ、复数ℂ和有限域，如ℤ₂。在讨论中，我们将假设张量的值为实数，但是用其他域的值替代是完全合理的。
 
 如果标量是秩为 0 的张量，那么什么构成了秩为 1 的张量？严格来说，秩为 1 的张量是一个向量；一个实数列表。传统上，向量被写成列向量
 
-<math display="block"><mfenced open="(" close=")"><mtable><mtr><mtd><mi>a</mi></mtd></mtr> <mtr><mtd><mi>b</mi></mtd></mtr></mtable></mfenced></math>
+```
+(a)
+(b)
+```
 
 或者作为行向量
 
-<math display="block"><mfenced open="(" close=")"><mtable><mtr><mtd><mi>a</mi></mtd> <mtd><mi>b</mi></mtd></mtr></mtable></mfenced></math>
+```
+(a b)
+```
 
-在符号上，长度为 2 的所有列向量表示为<math alttext="double-struck upper R Superscript 2 times 1"><msup><mi>ℝ</mi> <mrow><mn>2</mn><mo>×</mo><mn>1</mn></mrow></msup></math>，而长度为 2 的所有行向量集合是<math alttext="double-struck upper R Superscript 1 times 2"><msup><mi>ℝ</mi> <mrow><mn>1</mn><mo>×</mo><mn>2</mn></mrow></msup></math>。更具体地说，我们可以说列向量的形状是（2, 1），而行向量的形状是（1, 2）。如果我们不想指定一个向量是行向量还是列向量，我们可以说它来自于集合<math alttext="double-struck upper R squared"><msup><mi>ℝ</mi> <mn>2</mn></msup></math>，形状为（2）。这种张量形状的概念对于理解 TensorFlow 计算非常重要，我们将在本章后面再次回到这个概念。
+在符号上，长度为 2 的所有列向量表示为ℝ^(2×1)，而长度为 2 的所有行向量集合是ℝ^(1×2)。更具体地说，我们可以说列向量的形状是（2, 1），而行向量的形状是（1, 2）。如果我们不想指定一个向量是行向量还是列向量，我们可以说它来自于集合ℝ²，形状为（2）。这种张量形状的概念对于理解 TensorFlow 计算非常重要，我们将在本章后面再次回到这个概念。
 
-向量最简单的用途之一是表示现实世界中的坐标。假设我们决定一个原点（比如你当前站立的位置）。那么世界上的任何位置都可以用从你当前位置的三个位移值来表示（左右位移、前后位移、上下位移）。因此，向量空间<math alttext="double-struck upper R cubed"><msup><mi>ℝ</mi> <mn>3</mn></msup></math>可以表示世界上的任何位置。
+向量最简单的用途之一是表示现实世界中的坐标。假设我们决定一个原点（比如你当前站立的位置）。那么世界上的任何位置都可以用从你当前位置的三个位移值来表示（左右位移、前后位移、上下位移）。因此，向量空间ℝ³可以表示世界上的任何位置。
 
 举个不同的例子，假设一只猫由它的身高、体重和颜色描述。那么一个视频游戏中的猫可以被表示为一个向量。
 
-<math display="block"><mfenced open="(" close=")"><mtable><mtr><mtd><mi>height</mi></mtd></mtr> <mtr><mtd><mi>weight</mi></mtd></mtr> <mtr><mtd><mi>color</mi></mtd></mtr></mtable></mfenced></math>
+```
+(height)
+(weight)
+(color)
+```
 
-在空间<math><msup><mi>ℝ</mi> <mn>3</mn></msup></math>。这种类型的表示通常被称为*特征化*。也就是说，特征化是将现实世界实体表示为向量（或更一般地表示为张量）。几乎所有的机器学习算法都是在向量或张量上运行的。因此，特征化过程是任何机器学习流程中的关键部分。通常，特征化系统可能是机器学习系统中最复杂的部分。假设我们有一个如图 2-1 所示的苯分子。
+在空间ℝ³。这种类型的表示通常被称为*特征化*。也就是说，特征化是将现实世界实体表示为向量（或更一般地表示为张量）。几乎所有的机器学习算法都是在向量或张量上运行的。因此，特征化过程是任何机器学习流程中的关键部分。通常，特征化系统可能是机器学习系统中最复杂的部分。假设我们有一个如图 2-1 所示的苯分子。
 
 ![images/Benzene-2D-flat.png](img/tfdl_0201.png)
 
 ###### 图 2-1。苯分子的表示。
 
-我们如何将这个分子转换成适合查询机器学习系统的向量？对于这个问题有许多潜在的解决方案，其中大多数利用了标记分子的亚片段存在的想法。特定亚片段的存在或不存在通过在二进制向量中设置索引（在<math alttext="StartSet 0 comma 1 EndSet Superscript n"><msup><mrow><mo>{</mo><mn>0</mn><mo>,</mo><mn>1</mn><mo>}</mo></mrow> <mi>n</mi></msup></math>）分别设置为 1/0 来标记。这个过程在图 2-2 中有所说明。
+我们如何将这个分子转换成适合查询机器学习系统的向量？对于这个问题有许多潜在的解决方案，其中大多数利用了标记分子的亚片段存在的想法。特定亚片段的存在或不存在通过在二进制向量中设置索引（在{0, 1}ⁿ）分别设置为 1/0 来标记。这个过程在图 2-2 中有所说明。
 
 ![images/molecular_fingerprint.jpg](img/tfdl_0202.png)
 
@@ -48,17 +58,26 @@
 
 请注意，这个过程听起来（也是）相当复杂。事实上，构建一个机器学习系统最具挑战性的方面之一是决定如何将所涉及的数据转换成张量格式。对于某些类型的数据，这种转换是显而易见的。对于其他类型的数据（比如分子），所需的转换可能相当微妙。对于机器学习从业者来说，通常不需要发明新的特征化方法，因为学术文献非常丰富，但通常需要阅读研究论文以了解将新数据流转换的最佳实践。
 
-现在我们已经确定了秩为 0 的张量是标量（<math alttext="双划线上标 R"><mi>ℝ</mi></math>），而秩为 1 的张量是向量（<math alttext="双划线上标 R 上标 n"><msup><mi>ℝ</mi> <mi>n</mi></msup></math>），那么秩为 2 的张量是什么？传统上，秩为 2 的张量被称为矩阵：
+现在我们已经确定了秩为 0 的张量是标量（ℝ），而秩为 1 的张量是向量（ℝⁿ），那么秩为 2 的张量是什么？传统上，秩为 2 的张量被称为矩阵：
 
-<math display="block"><mfenced open="(" close=")"><mtable><mtr><mtd><mi>a</mi></mtd> <mtd><mi>b</mi></mtd></mtr> <mtr><mtd><mi>c</mi></mtd> <mtd><mi>d</mi></mtd></mtr></mtable></mfenced></math>
+```
+(a b)
+(c d)
+```
 
-这个矩阵有两行两列。所有这样的矩阵集合被称为<math alttext="双划线上标 R 2 乘 2"><msup><mi>ℝ</mi> <mrow><mn>2</mn><mo>×</mo><mn>2</mn></mrow></msup></math>。回到我们之前对张量形状的概念，这个矩阵的形状是(2, 2)。矩阵通常用来表示向量的变换。例如，通过矩阵
+这个矩阵有两行两列。所有这样的矩阵集合被称为ℝ^(2×2)。回到我们之前对张量形状的概念，这个矩阵的形状是(2, 2)。矩阵通常用来表示向量的变换。例如，通过矩阵
 
-<math display="block"><mrow><msub><mi>R</mi> <mi>α</mi></msub> <mo>=</mo> <mfenced open="(" close=")"><mtable><mtr><mtd><mrow><mo form="prefix">cos</mo> <mo>(</mo> <mi>α</mi> <mo>)</mo></mrow></mtd> <mtd><mrow><mo form="prefix">–sin</mo> <mo>(</mo> <mi>α</mi> <mo>)</mrow></mtd></mtr> <mtr><mtd><mrow><mo form="prefix">sin</mo> <mo>(</mo> <mi>α</mi> <mo>)</mo></mrow></mtd> <mtd><mrow><mo form="prefix">cos</mo> <mo>(</mo> <mi>α</mi> <mo>)</mo></mrow></mtd></mtr></mtable></mfenced></mrow></math>
+```
+R_α = (cos(α)  –sin(α))
+      (sin(α)   cos(α))
+```
 
 要看到这一点，注意*x*单位向量（1, 0）通过矩阵乘法转换为向量（cos(α)，sin(α)）。（我们将在本章后面详细介绍矩阵乘法的定义，但目前只是显示结果）。
 
-<math display="block"><mrow><mfenced open="(" close=")"><mtable><mtr><mtd><mrow><mo form="prefix">cos</mo> <mo>(</mo> <mi>α</mi> <mo>)</mo></mrow></mtd> <mtd><mrow><mo form="prefix">–sin</mo> <mo>(</mo> <mi>α</mi> <mo>)</mrow></mtd></mtr> <mtr><mtd><mrow><mo form="prefix">sin</mo> <mo>(</mo> <mi>α</mi> <mo>)</mo></mrow></mtd> <mtd><mrow><mo form="prefix">cos</mo> <mo>(</mo> <mi>α</mi> <mo>)</mo></mrow></mtd></mtr></mtable></mfenced> <mo>·</mo> <mfenced open="(" close=")"><mtable><mtr><mtd><mn>1</mn></mtd></mtr> <mtr><mtd><mn>0</mn></mtd></mtr></mtable></mfenced> <mo>=</mo> <mfenced open="(" close=")"><mtable><mtr><mtd><mrow><mo form="prefix">cos</mo> <mo>(</mo> <mi>α</mi> <mo>)</mo></mrow></mtd></mtr> <mtr><mtd><mrow><mo form="prefix">sin</mo> <mo>(</mo> <mi>α</mi> <mo>)</mo></mrow></mtd></mtr></mtable></mfenced></mrow></math>
+```
+(cos(α)  –sin(α)) · (1) = (cos(α))
+(sin(α)   cos(α))   (0)   (sin(α))
+```
 
 这种转换也可以以图形方式可视化。图 2-3 展示了最终向量如何对应于原始单位向量的旋转。
 
@@ -66,41 +85,68 @@
 
 ###### 图 2-3。单位圆上的位置由余弦和正弦参数化。
 
-## 机器学习程序经常使用矩阵的一些标准数学运算。我们将简要回顾其中一些最基本的运算。
+### 机器学习程序经常使用矩阵的一些标准数学运算。我们将简要回顾其中一些最基本的运算。
 
 在平面上旋转向量的操作可以通过这个矩阵来执行。
 
-矩阵的转置是一个方便的操作，它将矩阵沿对角线翻转。数学上，假设*A*是一个矩阵；那么转置矩阵<math><msup><mi>A</mi> <mi>T</mi></msup></math>由方程<math><mrow><msubsup><mi>A</mi> <mrow><mi>i</mi><mi>j</mi></mrow> <mi>T</mi></msubsup> <mo>=</mo> <msub><mi>A</mi> <mrow><mi>j</mi><mi>i</mi></mrow></msub></mrow></math>定义。例如，旋转矩阵<math alttext="上标 R 下标 alpha"><msub><mi>R</mi> <mi>α</mi></msub></math>的转置是
+矩阵的转置是一个方便的操作，它将矩阵沿对角线翻转。数学上，假设*A*是一个矩阵；那么转置矩阵`Aᵀ`由方程`Aᵀᵢⱼ = Aⱼᵢ`定义。例如，旋转矩阵`R_α`的转置是
 
-<math display="block"><mrow><msubsup><mi>R</mi> <mrow><mi>α</mi></mrow> <mi>T</mi></msubsup> <mo>=</mo> <mfenced open="(" close=")"><mtable><mtr><mtd><mrow><mo form="prefix">cos</mo> <mo>(</mo> <mi>α</mi> <mo>)</mo></mrow></mtd> <mtd><mrow><mo form="prefix">sin</mo> <mo>(</mo> <mi>α</mi> <mo>)</mo></mrow></mtd></mtr> <mtr><mtd><mrow><mo form="prefix">–sin</mo> <mo>(</mo> <mi>α</mi> <mo>)</mo></mrow></mtd> <mtd><mrow><mo form="prefix">cos</mo> <mo>(</mo> <mi>α</mi> <mo>)</mo></mrow></mtd></mtr></mtable></mfenced></mrow></math>
+```
+R_αᵀ = (cos(α)  sin(α))
+       (–sin(α) cos(α))
+```
 
 矩阵的加法仅对形状相同的矩阵定义，并且仅是逐元素执行。例如：
 
-<math display="block"><mrow><mfenced open="(" close=")"><mtable><mtr><mtd><mn>1</mn></mtd> <mtd><mn>2</mn></mtd></mtr> <mtr><mtd><mn>3</mn></mtd> <mtd><mn>4</mn></mtd></mtr></mtable></mfenced> <mo>+</mo> <mfenced open="(" close=")"><mtable><mtr><mtd><mn>1</mn></mtd> <mtd><mn>1</mn></mtd></mtr> <mtr><mtd><mn>1</mn></mtd> <mtd><mn>1</mn></mtd></mtr></mtable></mfenced> <mo>=</mo> <mfenced open="(" close=")"><mtable><mtr><mtd><mn>2</mn></mtd> <mtd><mn>3</mn></mtd></mtr> <mtr><mtd><mn>4</mn></mtd> <mtd><mn>5</mn></mtd></mtr></mtable></mfenced></mrow></math>
+```
+(1 2) + (1 1) = (2 3)
+(3 4)   (1 1)   (4 5)
+```
 
 同样，矩阵可以乘以标量。在这种情况下，矩阵的每个元素都简单地逐元素乘以相关的标量：
 
-<math display="block"><mrow><mn>2</mn> <mo>·</mo> <mfenced open="(" close=")"><mtable><mtr><mtd><mn>1</mn></mtd> <mtd><mn>2</mn></mtd></mtr> <mtr><mtd><mn>3</mn></mtd> <mtd><mn>4</mn></mtd></mtr></mtable></mfenced> <mo>=</mo> <mfenced open="(" close=")"><mtable><mtr><mtd><mn>2</mn></mtd> <mtd><mn>4</mn></mtd></mtr> <mtr><mtd><mn>6</mn></mtd> <mtd><mn>8</mn></mtd></mtr></mtable></mfenced></mrow></math>
+```
+2 · (1 2) = (2 4)
+    (3 4)   (6 8)
+```
 
 此外，有时可以直接相乘两个矩阵。矩阵乘法的概念可能是与矩阵相关的最重要的数学概念。特别注意，矩阵乘法不同于矩阵的逐元素乘法！假设我们有一个形状为（*m*，*n*）的矩阵*A*，其中*m*行*n*列。那么，*A*可以右乘任何形状为（*n*，*k*）的矩阵*B*（其中*k*是任意正整数），形成形状为（*m*，*k*）的矩阵*AB*。对于实际的数学描述，假设*A*是形状为（*m*，*n*）的矩阵，*B*是形状为（*n*，*k*）的矩阵。那么*AB*由以下定义：
 
-<math display="block"><mrow><msub><mrow><mo>(</mo><mi>A</mi><mi>B</mi><mo>)</mo></mrow> <mrow><mi>i</mi><mi>j</mi></mrow></msub> <mo>=</mo> <munder><mo>∑</mo> <mi>k</mi></munder> <msub><mi>A</mi> <mrow><mi>i</mi><mi>k</mi></mrow></msub> <msub><mi>B</mi> <mrow><mi>k</mi><mi>j</mi></mrow></msub></mrow></math>
+
 
 我们之前简要展示了一个矩阵乘法方程。现在让我们扩展这个例子，因为我们有了正式的定义：
 
-<math display="block"><mrow><mfenced open="(" close=")"><mtable><mtr><mtd><mrow><mo form="prefix">cos</mo> <mo>(</mo> <mi>α</mi> <mo>)</mo></mrow></mtd> <mtd><mrow><mo form="prefix">–sin</mo> <mo>(</mo> <mi>α</mi> <mo>)</mo></mrow></mtd></mtr> <mtr><mtd><mrow><mo form="prefix">sin</mo> <mo>(</mo> <mi>α</mi> <mo>)</mo></mrow></mtd> <mtd><mrow><mo form="prefix">cos</mo> <mo>(</mo> <mi>α</mi> <mo>)</mo></mrow></mtd></mtr></mtable></mfenced> <mo>·</mo> <mfenced open="(" close=")"><mtable><mtr><mtd><mn>1</mn></td></mtr> <mtr><mtd><mn>0</mn></mtr></mtable></mfenced> <mo>=</mo> <mfenced open="(" close=")"><mtable><mtr><mtd><mrow><mo form="prefix">cos</mo> <mo>(</mo> <mi>α</mi> <mo>)</mo> <mo>·</mo> <mn>1</mn> <mo>–</mo> <mo form="prefix">sin</mo> <mo>(</mo> <mi>α</mi> <mo>)</mo> <mo>·</mo> <mn>0</mn></mrow></mtd></mtr> <mtr><mtd><mrow><mo form="prefix">sin</mo> <mo>(</mo> <mi>α</mi> <mo>)</mo> <mo>·</mo> <mn>1</mn> <mo>–</mo> <mo form="prefix">cos</mo> <mo>(</mo> <mi>α</mi> <mo>)</mo> <mo>·</mo> <mn>0</mn></mrow></mtd></mtr></mtable></mfenced> <mo>=</mo> <mfenced open="(" close=")"><mtable><mtr><mtd><mrow><mo form="prefix">cos</mo> <mo>(</mo> <mi>α</mi> <mo>)</mo></mrow></mtd></mtr> <mtr><mtd><mrow><mo form="prefix">sin</mo> <mo>(</mo> <mi>α</mi> <mo>)</mo></mrow></mtd></mtr></mtable></mfenced></mrow></math>
+$$
+(AB)_{ij} = \sum_k A_{ik} B_{kj}
+$$
+
+$$
+\begin{pmatrix} \cos(\alpha) & -\sin(\alpha) \\ \sin(\alpha) & \cos(\alpha) \end{pmatrix} \cdot \begin{pmatrix} 1 \\ 0 \end{pmatrix} = \begin{pmatrix} \cos(\alpha) \cdot 1 - \sin(\alpha) \cdot 0 \\ \sin(\alpha) \cdot 1 - \cos(\alpha) \cdot 0 \end{pmatrix} = \begin{pmatrix} \cos(\alpha) \\ \sin(\alpha) \end{pmatrix}
+$$
 
 基本要点是一个矩阵的行与另一个矩阵的列相乘。
 
-这个定义隐藏了许多微妙之处。首先注意矩阵乘法不是交换的。也就是说，<math><mrow><mi>A</mi> <mi>B</mi> <mo>≠</mo> <mi>B</mi> <mi>A</mi></mrow></math> 通常不成立。实际上，当 *BA* 没有意义时，*AB* 可能存在。例如，假设 *A* 是一个形状为 (2, 3) 的矩阵，*B* 是一个形状为 (3, 4) 的矩阵。那么 *AB* 是一个形状为 (2, 4) 的矩阵。然而，*BA* 没有定义，因为各自的维度（4 和 2）不匹配。另一个微妙之处是，正如旋转示例中所示，一个形状为 (*m*, *n*) 的矩阵可以右乘一个形状为 (*n*, 1) 的矩阵。然而，一个形状为 (*n*, 1) 的矩阵简单地是一个列向量。因此，将矩阵乘以向量是有意义的。矩阵-向量乘法是常见机器学习系统的基本构建块之一。
+这个定义隐藏了许多微妙之处。首先注意矩阵乘法不是交换的。也就是说，$AB \neq BA$ 通常不成立。实际上，当 $BA$ 没有意义时，$AB$ 可能存在。例如，假设 $A$ 是一个形状为 (2, 3) 的矩阵，$B$ 是一个形状为 (3, 4) 的矩阵。那么 $AB$ 是一个形状为 (2, 4) 的矩阵。然而，$BA$ 没有定义，因为各自的维度（4 和 2）不匹配。另一个微妙之处是，正如旋转示例中所示，一个形状为 ($m$, $n$) 的矩阵可以右乘一个形状为 ($n$, 1) 的矩阵。然而，一个形状为 ($n$, 1) 的矩阵简单地是一个列向量。因此，将矩阵乘以向量是有意义的。矩阵-向量乘法是常见机器学习系统的基本构建块之一。
 
-标准乘法的一个最好的特性是它是一个线性操作。更准确地说，如果一个函数 *f* 被称为线性，那么 <math alttext="f left-parenthesis x plus y right-parenthesis equals f left-parenthesis x right-parenthesis plus f left-parenthesis y right-parenthesis"><mrow><mi>f</mi> <mo>(</mo> <mi>x</mi> <mo>+</mo> <mi>y</mi> <mo>)</mo> <mo>=</mo> <mi>f</mi> <mo>(</mo> <mi>x</mi> <mo>)</mo> <mo>+</mo> <mi>f</mi> <mo>(</mo> <mi>y</mi> <mo>)</mo></mrow></math> 和 <math><mrow><mi>f</mi> <mo>(</mo> <mi>c</mi> <mi>x</mi> <mo>)</mo> <mo>=</mo> <mi>c</mi> <mi>f</mi> <mo>(</mo> <mi>x</mi> <mo>)</mo></mrow></math> 其中 *c* 是一个标量。为了证明标量乘法是线性的，假设 *a*, *b*, *c*, *d* 都是实数。那么我们有
+标准乘法的一个最好的特性是它是一个线性操作。更准确地说，如果一个函数 $f$ 被称为线性，那么 $f(x + y) = f(x) + f(y)$ 和 $f(cx) = cf(x)$ 其中 $c$ 是一个标量。为了证明标量乘法是线性的，假设 $a$, $b$, $c$, $d$ 都是实数。那么我们有
 
-<math display="block"><mrow><mi>a</mi> <mo>·</mo> <mo>(</mo> <mi>b</mi> <mo>·</mo> <mi>c</mi> <mo>)</mo> <mo>=</mo> <mi>b</mi> <mo>·</mo> <mo>(</mo> <mi>a</mi> <mi>c</mi> <mo>)</mo></mrow></math><math display="block"><mrow><mi>a</mi> <mo>·</mo> <mo>(</mo> <mi>c</mi> <mo>+</mo> <mi>d</mi> <mo>)</mo> <mo>=</mo> <mi>a</mi> <mi>c</mi> <mo>+</mo> <mi>a</mi> <mi>d</mi></mrow></math>
+$$
+a \cdot (b \cdot c) = b \cdot (ac)
+$$
 
-我们在这里利用了标量乘法的交换和分配性质。现在假设相反，*A*, *C*, *D* 现在是矩阵，其中 *C*, *D* 的大小相同，并且将 *A* 右乘以 *C* 或 *D* 是有意义的（*b* 仍然是一个实数）。那么矩阵乘法是一个线性操作符：
+$$
+a \cdot (c + d) = ac + ad
+$$
 
-<math display="block"><mrow><mi>A</mi> <mo>(</mo> <mi>b</mi> <mo>·</mo> <mi>C</mi> <mo>)</mo> <mo>=</mo> <mi>b</mi> <mo>·</mo> <mo>(</mo> <mi>A</mi> <mi>C</mi> <mo>)</mo></mrow></math><math display="block"><mrow><mi>A</mi> <mo>(</mo> <mi>C</mi> <mo>+</mo> <mi>D</mi> <mo>)</mo> <mo>=</mo> <mi>A</mi> <mi>C</mi> <mo>+</mo> <mi>A</mi> <mi>D</mi></mrow></math>
+我们在这里利用了标量乘法的交换和分配性质。现在假设相反，$A$, $C$, $D$ 现在是矩阵，其中 $C$, $D$ 的大小相同，并且将 $A$ 右乘以 $C$ 或 $D$ 是有意义的（$b$ 仍然是一个实数）。那么矩阵乘法是一个线性操作符：
+
+$$
+A(b \cdot C) = b \cdot (AC)
+$$
+
+$$
+A(C + D) = AC + AD
+$$
 
 换句话说，矩阵乘法是可分配的，并且与标量乘法交换。事实上，可以证明向量上的任何线性变换对应于矩阵乘法。对于计算机科学的类比，将线性性视为超类中要求的属性。然后标准乘法和矩阵乘法是该抽象方法的具体实现，分别适用于不同子类（实数和矩阵）。
 
@@ -112,21 +158,23 @@
 
 ###### 图 2-4。秩为 3 的张量可以被视为数字的长方体。
 
-图中显示的秩为 3 的张量*T*的形状为(*N*, *N*, *N*)。那么张量的任意元素将通过指定(*i*, *j*, *k*)作为索引来选择。
+图中显示的秩为 3 的张量 $T$ 的形状为 ($N$, $N$, $N$)。那么张量的任意元素将通过指定 ($i$, $j$, $k$) 作为索引来选择。
 
-张量和形状之间存在联系。秩为 1 的张量具有 1 维形状，秩为 2 的张量具有 2 维形状，秩为 3 的张量具有 3 维形状。你可能会质疑这与我们之前讨论的行向量和列向量相矛盾。根据我们的定义，列向量的形状是(*n*, 1)。这难道不会使列向量成为一个秩为 2 的张量（或矩阵）吗？这确实发生了。回想一下，未指定为行向量或列向量的向量的形状是(*n*)。当我们指定一个向量是行向量还是列向量时，实际上我们指定了一种将基础向量转换为矩阵的方法。这种维度扩展是张量操作中的常见技巧。
+张量和形状之间存在联系。秩为 1 的张量具有 1 维形状，秩为 2 的张量具有 2 维形状，秩为 3 的张量具有 3 维形状。你可能会质疑这与我们之前讨论的行向量和列向量相矛盾。根据我们的定义，列向量的形状是 ($n$, 1)。这难道不会使列向量成为一个秩为 2 的张量（或矩阵）吗？这确实发生了。回想一下，未指定为行向量或列向量的向量的形状是 ($n$)。当我们指定一个向量是行向量还是列向量时，实际上我们指定了一种将基础向量转换为矩阵的方法。这种维度扩展是张量操作中的常见技巧。
 
-注意，另一种思考秩为 3 的张量的方式是将其视为具有相同形状的矩阵列表。假设*W*是一个形状为(*n*, *n*)的矩阵。那么张量 <math alttext="upper T Subscript i j k Baseline equals left-parenthesis upper W 1 comma ellipsis comma upper W Subscript n Baseline right-parenthesis"><mrow><msub><mi>T</mi> <mrow><mi>i</mi><mi>j</mi><mi>k</mi></mrow></msub> <mo>=</mo> <mrow><mo>(</mo> <msub><mi>W</mi> <mn>1</mn></sub> <mo>,</mo> <mo>⋯</mo> <mo>,</mo> <msub><mi>W</mi> <mi>n</mi></sub> <mo>)</mo></mrow></mrow></math> 包含了*W*的*n*个副本。
+注意，另一种思考秩为 3 的张量的方式是将其视为具有相同形状的矩阵列表。假设 $W$ 是一个形状为 ($n$, $n$) 的矩阵。那么张量 $T_{ijk} = (W_1, \cdots, W_n)$ 包含了 $W$ 的 $n$ 个副本。
 
-请注意，黑白图像可以表示为二阶张量。假设我们有一个 224×224 像素的黑白图像。那么，像素（*i*，*j*）是 1/0 来编码黑/白像素。因此，黑白图像可以表示为形状为(224, 224)的矩阵。现在，考虑一个 224×224 的彩色图像。一个特定像素的颜色通常由三个单独的 RGB 通道表示。也就是说，像素（*i*，*j*）被表示为一个包含三个数字（*r*，*g*，*b*）的元组，分别编码像素中的红色、绿色和蓝色的量。*r*，*g*，*b*通常是从 0 到 255 的整数。因此，彩色图像可以被编码为形状为(224, 224, 3)的三阶张量。继续类比，考虑一个彩色视频。假设视频的每一帧是一个 224×224 的彩色图像。那么一分钟的视频（以 60 帧每秒的速度）将是一个形状为(224, 224, 3, 3600)的四阶张量。进一步地，10 个这样的视频集合将形成一个形状为(10, 224, 224, 3, 3600)的五阶张量。总的来说，张量提供了对数值数据的便捷表示。在实践中，看到高于五阶张量的张量并不常见，但设计任何张量软件以允许任意张量是明智的，因为聪明的用户总会提出设计者没有考虑到的用例。
+请注意，黑白图像可以表示为二阶张量。假设我们有一个 224×224 像素的黑白图像。那么，像素（$i$，$j$）是 1/0 来编码黑/白像素。因此，黑白图像可以表示为形状为 (224, 224) 的矩阵。现在，考虑一个 224×224 的彩色图像。一个特定像素的颜色通常由三个单独的 RGB 通道表示。也就是说，像素（$i$，$j$）被表示为一个包含三个数字（$r$，$g$，$b$）的元组，分别编码像素中的红色、绿色和蓝色的量。$r$，$g$，$b$ 通常是从 0 到 255 的整数。因此，彩色图像可以被编码为形状为 (224, 224, 3) 的三阶张量。继续类比，考虑一个彩色视频。假设视频的每一帧是一个 224×224 的彩色图像。那么一分钟的视频（以 60 帧每秒的速度）将是一个形状为 (224, 224, 3, 3600) 的四阶张量。进一步地，10 个这样的视频集合将形成一个形状为 (10, 224, 224, 3, 3600) 的五阶张量。总的来说，张量提供了对数值数据的便捷表示。在实践中，看到高于五阶张量的张量并不常见，但设计任何张量软件以允许任意张量是明智的，因为聪明的用户总会提出设计者没有考虑到的用例。
 
 ## 物理学中的张量
 
-张量在物理学中被广泛用于编码基本物理量。例如，应力张量通常用于材料科学中定义材料内某点的应力。从数学上讲，应力张量是一个形状为(3, 3)的二阶张量：
+张量在物理学中被广泛用于编码基本物理量。例如，应力张量通常用于材料科学中定义材料内某点的应力。从数学上讲，应力张量是一个形状为 (3, 3) 的二阶张量：
 
-<math display="block"><mrow><mi>σ</mi> <mo>=</mo> <mfenced open="(" close=")"><mtable><mtr><mtd><msub><mi>σ</mi> <mn>11</mn></msub></mtd> <mtd><msub><mi>τ</mi> <mn>12</mn></msub></mtd> <mtd><msub><mi>τ</mi> <mn>13</mn></msub></mtd></mtr> <mtr><mtd><msub><mi>τ</mi> <mn>21</mn></msub></mtd> <mtd><msub><mi>σ</mi> <mn>22</mn></msub></mtd> <mtd><msub><mi>τ</mi> <mn>23</mn></msub></mtd></mtr> <mtr><mtd><msub><mi>τ</mi> <mn>31</mn></msub></mtd> <mtd><msub><mi>τ</mi> <mn>32</mn></msub></mtd> <mtd><msub><mi>σ</mi> <mn>33</mn></msub></mtd></mtr></mtable></mfenced></mrow></math>
+$$
+\sigma = \begin{pmatrix} \sigma_{11} & \tau_{12} & \tau_{13} \\ \tau_{21} & \sigma_{22} & \tau_{23} \\ \tau_{31} & \tau_{32} & \sigma_{33} \end{pmatrix}
+$$
 
-然后，假设*n*是一个形状为(3)的向量，编码一个方向。在方向*n*上的应力<math><msup><mi>T</mi> <mi>n</mi></msup></math>由向量<math><mrow><msup><mi>T</mi> <mi>n</mi></msup> <mo>=</mo> <mi>T</mi> <mo>·</mo> <mi>n</mi></mrow></math>（注意矩阵-向量乘法）指定。这种关系在图 2-5 中以图形方式描述。
+然后，假设 $n$ 是一个形状为 (3) 的向量，编码一个方向。在方向 $n$ 上的应力 $T^n$ 由向量 $T^n = T \cdot n$（注意矩阵-向量乘法）指定。这种关系在图 2-5 中以图形方式描述。
 
 ![images/stress_energy_small.png](img/tfdl_0205.png)
 
@@ -134,9 +182,11 @@
 
 作为另一个物理例子，爱因斯坦的广义相对论场方程通常以张量格式表达：
 
-<math display="block"><mrow><msub><mi>R</mi> <mrow><mi>μ</mi><mi>ν</mi></mrow></msub> <mo>-</mo> <mfrac><mn>1</mn> <mn>2</mn></mfrac> <mi>R</mi> <msub><mi>g</mi> <mrow><mi>μ</mi><mi>ν</mi></mrow></msub> <mo>+</mo> <mi>Λ</mi> <msub><mi>g</mi> <mrow><mi>μ</mi><mi>ν</mi></mrow></msub> <mo>=</mo> <mfrac><mrow><mn>8</mn><mi>π</mi><mi>G</mi></mrow> <msup><mi>c</mi> <mn>4</mn></msup></mfrac> <msub><mi>T</mi> <mrow><mi>μ</mi><mi>ν</mi></mrow></msub></mrow></math>
+$$
+R_{\mu\nu} - \frac{1}{2} R g_{\mu\nu} + \Lambda g_{\mu\nu} = \frac{8\pi G}{c^4} T_{\mu\nu}
+$$
 
-这里<math alttext="上标 mu nu 的 R"><msub><mi>R</mi> <mrow><mi>μ</mi><mi>ν</mi></mrow></msub></math>是里奇曲率张量，<math><msub><mi>g</mi> <mrow><mi>μ</mi><mi>ν</mi></mrow></msub></math>是度规张量，<math><msub><mi>T</mi> <mrow><mi>μ</mi><mi>ν</mi></mrow></msub></math>是应力能量张量，其余量是标量。然而，需要注意的是，这些张量和我们之前讨论过的其他张量之间有一个重要的微妙区别。像度规张量这样的量为时空中的每个点提供一个单独的张量（在数字数组的意义上，数学上，度规张量是一个张量场）。之前讨论过的应力张量也是如此，这些方程中的其他张量也是如此。在时空中的特定点，这些量中的每一个都变成了一个对称的秩 2 张量，使用我们的符号形状为（4，4）。
+这里 $R_{\mu\nu}$ 是里奇曲率张量，$g_{\mu\nu}$ 是度规张量，$T_{\mu\nu}$ 是应力能量张量，其余量是标量。然而，需要注意的是，这些张量和我们之前讨论过的其他张量之间有一个重要的微妙区别。像度规张量这样的量为时空中的每个点提供一个单独的张量（在数字数组的意义上，数学上，度规张量是一个张量场）。之前讨论过的应力张量也是如此，这些方程中的其他张量也是如此。在时空中的特定点，这些量中的每一个都变成了一个对称的秩 2 张量，使用我们的符号形状为（4，4）。
 
 现代张量微积分系统（如 TensorFlow）的一部分力量在于，一些长期用于经典物理学的数学机器现在可以被改编用于解决图像处理和语言理解等应用问题。与此同时，今天的张量微积分系统与物理学家的数学机器相比仍然有限。例如，目前还没有简单的方法来使用 TensorFlow 谈论度规张量这样的量。我们希望随着张量微积分对计算机科学变得更加基础，情况会发生变化，像 TensorFlow 这样的系统将成为物理世界和计算世界之间的桥梁。
 
@@ -144,9 +194,13 @@
 
 到目前为止，在本章中的讨论通过示例和插图非正式地介绍了张量。在我们的定义中，张量简单地是一组数字的数组。通常方便将张量视为一个函数。最常见的定义将张量引入为从向量空间的乘积到实数的多线性函数：
 
-<math display="block"><mrow><mi>T</mi> <mo>:</mo> <msub><mi>V</mi> <mn>1</mn></msub> <mo>×</mo> <msub><mi>V</mi> <mn>2</mn></msub> <mo>×</mo> <mo>⋯</mo> <msub><mi>V</mi> <mi>n</mi></msub> <mo>→</mo> <mi>ℝ</mi></mrow></math>
+$$
+T: V_1 \times V_2 \times \cdots V_n \rightarrow \mathbb{R}
+$$
 
-这个定义使用了一些你没有见过的术语。一个向量空间简单地是向量的集合。你已经见过一些向量空间的例子，比如<math><msup><mi>ℝ</mi> <mn>3</mn></msup></math>或者一般的<math alttext="双击上标 n 的 R"><msup><mi>ℝ</mi> <mi>n</mi></msup></math>。我们可以假设<math alttext="V 下标 i 等于双击上标 d 下标 i 的 R"><mrow><msub><mi>V</mi> <mi>i</mi></msub> <mo>=</mo> <msup><mi>ℝ</mi> <msub><mi>d</mi> <mi>i</mi></msub></msup></mrow></math>而不会失去一般性。正如我们之前定义的，一个函数*f*是线性的，如果<math alttext="f 左括号 x 加 y 右括号等于 f 左括号 x 右括号加 f 左括号 y 右括号"><mrow><mi>f</mi> <mo>(</mo> <mi>x</mi> <mo>+</mo> <mi>y</mi> <mo>)</mo> <mo>=</mo> <mi>f</mi> <mo>(</mo> <mi>x</mi> <mo>)</mo> <mo>+</mo> <mi>f</mi> <mo>(</mo> <mi>y</mi> <mo>)</mo></mrow></math>和<math><mrow><mi>f</mi> <mo>(</mo> <mi>c</mi> <mi>x</mi> <mo>)</mo> <mo>=</mo> <mi>c</mi> <mi>f</mi> <mo>(</mo> <mi>x</mi> <mo>)</mo></mrow></math>。一个多线性函数简单地是一个在每个参数上都是线性的函数。当提供数组索引作为参数时，这个函数可以被看作是给定多维数组的单个条目。
+
+
+这个定义使用了一些你没有见过的术语。一个向量空间简单地是向量的集合。你已经见过一些向量空间的例子，比如ℝ³或者一般的ℝⁿ。我们可以假设`Vᵢ = ℝᵈⁱ`而不会失去一般性。正如我们之前定义的，一个函数*f*是线性的，如果`f(x + y) = f(x) + f(y)`和`f(cx) = cf(x)`。一个多线性函数简单地是一个在每个参数上都是线性的函数。当提供数组索引作为参数时，这个函数可以被看作是给定多维数组的单个条目。
 
 在本书中我们不会经常使用这个更数学化的定义，但它作为一个有用的桥梁，将你将要学习的深度学习概念与物理学和数学界对张量进行的几个世纪的研究联系起来。
 
@@ -417,35 +471,13 @@ array([[[ 1.,  1.],
 
 ##### 示例 2-17。获取张量的形状
 
-```py
->>> a = tf.ones(2)
->>> a.get_shape()
-TensorShape([Dimension(2)])
->>> a.eval()
-array([ 1.,  1.], dtype=float32)
->>> b = tf.expand_dims(a, 0)
->>> b.get_shape()
-TensorShape([Dimension(1), Dimension(2)])
->>> b.eval()
-array([[ 1.,  1.]], dtype=float32)
->>> c = tf.expand_dims(a, 1)
->>> c.get_shape()
-TensorShape([Dimension(2), Dimension(1)])
->>> c.eval()
-array([[ 1.],
-       [ 1.]], dtype=float32)
->>> d = tf.squeeze(b)
->>> d.get_shape()
-TensorShape([Dimension(2)])
->>> d.eval()
-array([ 1.,  1.], dtype=float32)
-```
+
 
 ## 广播简介
 
 广播是一个术语（由 NumPy 引入），用于当张量系统的矩阵和不同大小的向量可以相加时。这些规则允许像将向量添加到矩阵的每一行这样的便利。广播规则可能相当复杂，因此我们不会深入讨论规则。尝试并查看广播的工作方式通常更容易（示例 2-18）。
 
-##### 示例 2-18。广播的示例
+### 示例 2-18：广播的示例
 
 ```py
 >>> a = tf.ones((2, 2))
@@ -463,7 +495,7 @@ array([[ 1.,  2.],
 
 注意向量`b`被添加到矩阵`a`的每一行。注意另一个微妙之处；我们明确为`b`设置了`dtype`。如果没有设置`dtype`，TensorFlow 将报告类型错误。让我们看看如果我们没有设置`dtype`会发生什么（示例 2-19）。
 
-##### 示例 2-19。TensorFlow 不执行隐式类型转换
+### 示例 2-19：TensorFlow 不执行隐式类型转换
 
 ```py
 >>> b = tf.range(0, 2, 1)
@@ -476,11 +508,11 @@ ValueError: Tensor conversion requested dtype float32 for Tensor with dtype int3
 
 与 C 语言不同，TensorFlow 在底层不执行隐式类型转换。在进行算术运算时通常需要执行显式类型转换。
 
-# 命令式和声明式编程
+## 命令式和声明式编程
 
 计算机科学中的大多数情况涉及命令式编程。考虑一个简单的 Python 程序（示例 2-20）。
 
-##### 示例 2-20。以命令式方式执行加法的 Python 程序
+### 示例 2-20：以命令式方式执行加法的 Python 程序
 
 ```py
 >>> a = 3
@@ -494,7 +526,7 @@ ValueError: Tensor conversion requested dtype float32 for Tensor with dtype int3
 
 另一种编程风格是*声明式*。在声明式系统中，计算机程序是要执行的计算的高级描述。它不会明确告诉计算机如何执行计算。示例 2-21 是示例 2-20 的 TensorFlow 等价物。
 
-##### 示例 2-21。以声明式方式执行加法的 TensorFlow 程序
+### 示例 2-21：以声明式方式执行加法的 TensorFlow 程序
 
 ```py
 >>> a = tf.constant(3)
@@ -512,19 +544,19 @@ ValueError: Tensor conversion requested dtype float32 for Tensor with dtype int3
 
 值得注意的是，声明式编程的主要弱点是抽象性很差。例如，没有对关系数据库的底层实现有详细了解，长的 SQL 程序可能会变得难以忍受地低效。同样，没有对底层学习算法的理解实现的大型 TensorFlow 程序可能不会运行良好。在本节的其余部分，我们将开始减少抽象，这个过程将贯穿整本书的其余部分。
 
-# TensorFlow Eager
+## TensorFlow Eager
 
 TensorFlow 团队最近添加了一个新的实验模块，TensorFlow Eager，使用户能够以命令式方式运行 TensorFlow 计算。随着时间的推移，这个模块很可能会成为新程序员学习 TensorFlow 的首选入口模式。然而，在撰写时，这个模块仍然非常新，并且存在许多问题。因此，我们不会教授您关于 Eager 模式，但鼓励您自行了解。
 
 重要的是要强调，即使 Eager 成熟后，TensorFlow 的很多部分仍然会保持声明式，所以学习声明式的 TensorFlow 是值得的。
 
-## TensorFlow 图
+### TensorFlow 图
 
 在 TensorFlow 中，任何计算都表示为`tf.Graph`对象的实例。这样的图由一组`tf.Tensor`对象实例和`tf.Operation`对象实例组成。我们已经详细介绍了`tf.Tensor`，但`tf.Operation`对象是什么？在本章的过程中，您已经看到了它们。对`tf.matmul`等操作的调用会创建一个`tf.Operation`实例，以标记执行矩阵乘法操作的需求。
 
 当未明确指定`tf.Graph`时，TensorFlow 会将张量和操作添加到隐藏的全局`tf.Graph`实例中。可以通过`tf.get_default_graph()`获取此实例（示例 2-22）。
 
-##### 示例 2-22。获取默认的 TensorFlow 图
+#### 示例 2-22：获取默认的 TensorFlow 图
 
 ```py
 >>> tf.get_default_graph()
@@ -533,11 +565,11 @@ TensorFlow 团队最近添加了一个新的实验模块，TensorFlow Eager，�
 
 可以指定 TensorFlow 操作应在除默认之外的图中执行。我们将在未来章节中演示这方面的示例。
 
-## TensorFlow 会话
+### TensorFlow 会话
 
 在 TensorFlow 中，`tf.Session()`对象存储计算执行的上下文。在本章的开头，我们使用`tf.InteractiveSession()`为所有 TensorFlow 计算设置环境。此调用创建了一个隐藏的全局上下文，用于执行所有计算。然后我们使用`tf.Tensor.eval()`来执行我们声明指定的计算。在幕后，此调用在这个隐藏的全局`tf.Session`上下文中进行评估。使用显式上下文进行计算而不是隐藏上下文可能会更方便（通常也更必要）（示例 2-23）。
 
-##### 示例 2-23。显式操作 TensorFlow 会话
+#### 示例 2-23：显式操作 TensorFlow 会话
 
 ```py
 >>> sess = tf.Session()
@@ -550,7 +582,7 @@ array([[ 2.,  2.],
 
 此代码在`sess`的上下文中评估`b`，而不是隐藏的全局会话。实际上，我们可以使用另一种符号更明确地表示这一点（示例 2-24）。
 
-##### 示例 2-24。在会话中运行计算
+#### 示例 2-24：在会话中运行计算
 
 ```py
 >>> sess.run(b)
@@ -560,15 +592,15 @@ array([[ 2.,  2.],
 
 事实上，调用`b.eval(session=sess)`只是调用`sess.run(b)`的语法糖。
 
-整个讨论可能有点诡辩。鉴于所有不同的方法似乎返回相同的答案，哪个会话正在进行并不重要？直到您开始执行具有状态的计算时，显式会话才能展现其价值，这是您将在下一节中了解的主题。
+整个讨论可能有点诡辩。鉴于所有不同的方法似乎都返回相同的答案，哪个会话正在进行并不重要？直到您开始执行具有状态的计算时，显式会话才能展现其价值，这是您将在下一节中了解的主题。
 
-## TensorFlow 变量
+### TensorFlow 变量
 
 本节中的所有示例代码都使用了常量张量。虽然我们可以以任何方式组合和重组这些张量，但我们永远无法更改张量本身的值（只能创建具有新值的新张量）。到目前为止，编程风格一直是*函数式*而不是*有状态*的。虽然函数式计算非常有用，但机器学习往往严重依赖有状态的计算。学习算法本质上是更新存储的张量以解释提供的数据的规则。如果无法更新这些存储的张量，学习将变得困难。
 
 `tf.Variable()`类提供了一个围绕张量的包装器，允许进行有状态的计算。变量对象充当张量的持有者。创建变量非常容易（示例 2-25）。
 
-##### 示例 2-25。创建 TensorFlow 变量
+#### 示例 2-25：创建 TensorFlow 变量
 
 ```py
 >>> a = tf.Variable(tf.ones((2, 2)))
@@ -578,7 +610,7 @@ array([[ 2.,  2.],
 
 当我们尝试评估变量`a`，就像在示例 2-26 中一样，作为张量时会发生什么？
 
-##### 示例 2-26。评估未初始化的变量失败
+#### 示例 2-26：评估未初始化的变量失败
 
 ```py
 >>> a.eval()
@@ -587,7 +619,7 @@ FailedPreconditionError: Attempting to use uninitialized value Variable
 
 评估失败，因为必须显式初始化变量。初始化所有变量的最简单方法是调用`tf.global_variables_initializer`。在会话中运行此操作将初始化程序中的所有变量（示例 2-27）。
 
-##### 示例 2-27。评估初始化的变量
+#### 示例 2-27：评估初始化的变量
 
 ```py
 >>> sess = tf.Session()
@@ -599,7 +631,7 @@ array([[ 1.,  1.],
 
 初始化后，我们可以获取存储在变量中的值，就像它是一个普通的张量一样。到目前为止，变量没有比普通张量更有趣的地方。只有当我们可以对变量进行赋值时，变量才变得有趣。`tf.assign()`让我们可以做到这一点。使用`tf.assign()`，我们可以更新现有变量的值（示例 2-28）。
 
-##### 示例 2-28。为变量赋值
+#### 示例 2-28：为变量赋值
 
 ```py
 >>> sess.run(a.assign(tf.zeros((2,2))))
@@ -612,7 +644,7 @@ array([[ 0.,  0.],
 
 如果我们尝试为变量`a`分配一个不是形状`(2,2)`的值会发生什么？让我们在示例 2-29 中找出答案。
 
-##### 示例 2-29。当形状不相等时，赋值失败
+#### 示例 2-29：当形状不相等时，赋值失败
 
 ```py
 >>> sess.run(a.assign(tf.zeros((3,3))))
@@ -622,7 +654,7 @@ ValueError: Dimension 0 in both shapes must be equal, but are 2 and 3 for 'Assig
 
 你可以看到 TensorFlow 会抱怨。变量的形状在初始化时是固定的，必须在更新时保持不变。另一个有趣的地方是，`tf.assign`本身是底层全局`tf.Graph`实例的一部分。这使得 TensorFlow 程序可以在每次运行时更新其内部状态。在接下来的章节中，我们将大量使用这个特性。
 
-# 回顾
+## 回顾
 
 在这一章中，我们介绍了张量的数学概念，并简要回顾了与张量相关的一些数学概念。然后我们演示了如何在 TensorFlow 中创建张量并在 TensorFlow 中执行相同的数学运算。我们还简要介绍了一些底层的 TensorFlow 结构，比如计算图、会话和变量。如果你还没有完全掌握本章讨论的概念，不要太担心。在本书的剩余部分中，我们将反复使用这些概念，所以会有很多机会让这些想法深入人心。
 

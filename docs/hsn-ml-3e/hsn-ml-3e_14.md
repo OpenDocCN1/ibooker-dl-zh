@@ -1,36 +1,33 @@
+
 # 第十二章：使用 TensorFlow 进行自定义模型和训练
 
-到目前为止，我们只使用了 TensorFlow 的高级 API，Keras，但它已经让我们走得很远：我们构建了各种神经网络架构，包括回归和分类网络，Wide & Deep 网络，自正则化网络，使用各种技术，如批量归一化，dropout 和学习率调度。事实上，您将遇到的 95%用例不需要除了 Keras（和 tf.data）之外的任何东西（请参见第十三章）。但现在是时候深入研究 TensorFlow，看看它的低级[Python API](https://homl.info/tf2api)。当您需要额外控制以编写自定义损失函数，自定义指标，层，模型，初始化程序，正则化器，权重约束等时，这将非常有用。您甚至可能需要完全控制训练循环本身；例如，应用特殊的转换或约束到梯度（超出仅仅剪切它们）或为网络的不同部分使用多个优化器。我们将在本章中涵盖所有这些情况，并且还将看看如何使用 TensorFlow 的自动生成图功能来提升您的自定义模型和训练算法。但首先，让我们快速浏览一下 TensorFlow。
+到目前为止，我们只使用了 TensorFlow 的高级 API，Keras，但它已经让我们走得很远：我们构建了各种神经网络架构，包括回归和分类网络，Wide & Deep 网络，自正则化网络，使用各种技术，如批量归一化，dropout 和学习率调度。事实上，您将遇到的 95% 用例不需要除了 Keras（和 `tf.data`）之外的任何东西（请参见第十三章）。但现在是时候深入研究 TensorFlow，看看它的低级 [Python API](https://homl.info/tf2api)。当您需要额外控制以编写自定义损失函数，自定义指标，层，模型，初始化程序，正则化器，权重约束等时，这将非常有用。您甚至可能需要完全控制训练循环本身；例如，应用特殊的转换或约束到梯度（超出仅仅剪切它们）或为网络的不同部分使用多个优化器。我们将在本章中涵盖所有这些情况，并且还将看看如何使用 TensorFlow 的自动生成图功能来提升您的自定义模型和训练算法。但首先，让我们快速浏览一下 TensorFlow。
 
-# TensorFlow 的快速浏览
+## TensorFlow 的快速浏览
 
 正如您所知，TensorFlow 是一个强大的用于数值计算的库，特别适用于大规模机器学习（但您也可以用它来进行需要大量计算的任何其他任务）。它由 Google Brain 团队开发，驱动了谷歌许多大规模服务，如 Google Cloud Speech，Google Photos 和 Google Search。它于 2015 年 11 月开源，现在是业界最广泛使用的深度学习库：无数项目使用 TensorFlow 进行各种机器学习任务，如图像分类，自然语言处理，推荐系统和时间序列预测。
 
 那么 TensorFlow 提供了什么？以下是一个摘要：
 
-+   它的核心与 NumPy 非常相似，但支持 GPU。
+- 它的核心与 NumPy 非常相似，但支持 GPU。
+- 它支持分布式计算（跨多个设备和服务器）。
+- 它包括一种即时（JIT）编译器，允许它优化计算以提高速度和内存使用。它通过从 Python 函数中提取*计算图*，优化它（例如通过修剪未使用的节点），并有效地运行它（例如通过自动并行运行独立操作）来工作。
+- 计算图可以导出为可移植格式，因此您可以在一个环境中训练 TensorFlow 模型（例如在 Linux 上使用 Python），并在另一个环境中运行它（例如在 Android 设备上使用 Java）。
+- 它实现了反向模式自动微分（请参见第十章和附录 B）并提供了一些优秀的优化器，如 RMSProp 和 Nadam（请参见第十一章），因此您可以轻松最小化各种损失函数。
 
-+   它支持分布式计算（跨多个设备和服务器）。
-
-+   它包括一种即时（JIT）编译器，允许它优化计算以提高速度和内存使用。它通过从 Python 函数中提取*计算图*，优化它（例如通过修剪未使用的节点），并有效地运行它（例如通过自动并行运行独立操作）来工作。
-
-+   计算图可以导出为可移植格式，因此您可以在一个环境中训练 TensorFlow 模型（例如在 Linux 上使用 Python），并在另一个环境中运行它（例如在 Android 设备上使用 Java）。
-
-+   它实现了反向模式自动微分（请参见第十章和附录 B）并提供了一些优秀的优化器，如 RMSProp 和 Nadam（请参见第十一章），因此您可以轻松最小化各种损失函数。
-
-TensorFlow 提供了许多建立在这些核心功能之上的功能：最重要的当然是 Keras，但它还有数据加载和预处理操作（tf.data，tf.io 等），图像处理操作（tf.image），信号处理操作（tf.signal）等等（请参见图 12-1 以获取 TensorFlow 的 Python API 概述）。
+TensorFlow 提供了许多建立在这些核心功能之上的功能：最重要的当然是 Keras，但它还有数据加载和预处理操作（`tf.data`，`tf.io` 等），图像处理操作（`tf.image`），信号处理操作（`tf.signal`）等等（请参见图 12-1 以获取 TensorFlow 的 Python API 概述）。
 
 ###### 提示
 
 我们将涵盖 TensorFlow API 的许多包和函数，但不可能覆盖所有内容，因此您应该花些时间浏览 API；您会发现它非常丰富且有很好的文档。
 
-在最低级别上，每个 TensorFlow 操作（简称 op）都是使用高效的 C++代码实现的。许多操作有多个称为内核的实现：每个内核专门用于特定设备类型，如 CPU、GPU，甚至 TPU（张量处理单元）。正如您可能知道的，GPU 可以通过将计算分成许多较小的块并在许多 GPU 线程上并行运行来显着加快计算速度。TPU 速度更快：它们是专门用于深度学习操作的定制 ASIC 芯片（我们将在第十九章讨论如何使用 GPU 或 TPU 与 TensorFlow）。
+在最低级别上，每个 TensorFlow 操作（简称 op）都是使用高效的 C++ 代码实现的。许多操作有多个称为内核的实现：每个内核专门用于特定设备类型，如 CPU、GPU，甚至 TPU（张量处理单元）。正如您可能知道的，GPU 可以通过将计算分成许多较小的块并在许多 GPU 线程上并行运行来显着加快计算速度。TPU 速度更快：它们是专门用于深度学习操作的定制 ASIC 芯片（我们将在第十九章讨论如何使用 GPU 或 TPU 与 TensorFlow）。
 
 ![mls3 1201](img/mls3_1201.png)
 
 ###### 图 12-1\. TensorFlow 的 Python API
 
-TensorFlow 的架构如图 12-2 所示。大部分时间，您的代码将使用高级 API（特别是 Keras 和 tf.data），但当您需要更灵活性时，您将使用较低级别的 Python API，直接处理张量。无论如何，TensorFlow 的执行引擎将有效地运行操作，即使跨多个设备和机器，如果您告诉它的话。
+TensorFlow 的架构如图 12-2 所示。大部分时间，您的代码将使用高级 API（特别是 Keras 和 `tf.data`），但当您需要更灵活性时，您将使用较低级别的 Python API，直接处理张量。无论如何，TensorFlow 的执行引擎将有效地运行操作，即使跨多个设备和机器，如果您告诉它的话。
 
 TensorFlow 不仅可以在 Windows、Linux 和 macOS 上运行，还可以在移动设备上运行（使用 TensorFlow Lite），包括 iOS 和 Android（请参阅第十九章）。请注意，如果您不想使用 Python API，还可以使用其他语言的 API：有 C++、Java 和 Swift 的 API。甚至还有一个名为 TensorFlow.js 的 JavaScript 实现，可以直接在浏览器中运行您的模型。
 
@@ -38,23 +35,23 @@ TensorFlow 不仅可以在 Windows、Linux 和 macOS 上运行，还可以在移
 
 ###### 图 12-2\. TensorFlow 的架构
 
-TensorFlow 不仅仅是一个库。TensorFlow 是一个庞大生态系统中心。首先，有用于可视化的 TensorBoard（请参阅第十章）。接下来，有由 Google 构建的用于将 TensorFlow 项目投入生产的一套库，称为[TensorFlow Extended (TFX)](https://tensorflow.org/tfx)：它包括用于数据验证、预处理、模型分析和服务的工具（使用 TF Serving；请参阅第十九章）。Google 的 TensorFlow Hub 提供了一种轻松下载和重复使用预训练神经网络的方式。您还可以在 TensorFlow 的[model garden](https://github.com/tensorflow/models)中获得许多神经网络架构，其中一些是预训练的。查看[TensorFlow 资源](https://tensorflow.org/resources)和[*https://github.com/jtoy/awesome-tensorflow*](https://github.com/jtoy/awesome-tensorflow)以获取更多基于 TensorFlow 的项目。您可以在 GitHub 上找到数百个 TensorFlow 项目，因此通常很容易找到您正在尝试做的任何事情的现有代码。
+TensorFlow 不仅仅是一个库。TensorFlow 是一个庞大生态系统中心。首先，有用于可视化的 TensorBoard（请参阅第十章）。接下来，有由 Google 构建的用于将 TensorFlow 项目投入生产的一套库，称为 [TensorFlow Extended (TFX)](https://tensorflow.org/tfx)：它包括用于数据验证、预处理、模型分析和服务的工具（使用 TF Serving；请参阅第十九章）。Google 的 TensorFlow Hub 提供了一种轻松下载和重复使用预训练神经网络的方式。您还可以在 TensorFlow 的 [model garden](https://github.com/tensorflow/models) 中获得许多神经网络架构，其中一些是预训练的。查看 [TensorFlow 资源](https://tensorflow.org/resources) 和 [*https://github.com/jtoy/awesome-tensorflow*](https://github.com/jtoy/awesome-tensorflow) 以获取更多基于 TensorFlow 的项目。您可以在 GitHub 上找到数百个 TensorFlow 项目，因此通常很容易找到您正在尝试做的任何事情的现有代码。
 
 ###### 提示
 
-越来越多的机器学习论文随着它们的实现发布，有时甚至附带预训练模型。请查看[*https://paperswithcode.com*](https://paperswithcode.com)以轻松找到它们。
+越来越多的机器学习论文随着它们的实现发布，有时甚至附带预训练模型。请查看 [*https://paperswithcode.com*](https://paperswithcode.com) 以轻松找到它们。
 
-最后但并非最不重要的是，TensorFlow 拥有一支充满激情和乐于助人的开发团队，以及一个庞大的社区为其改进做出贡献。要提出技术问题，您应该使用[*https://stackoverflow.com*](https://stackoverflow.com)，并在问题中标记*tensorflow*和*python*。您可以通过[GitHub](https://github.com/tensorflow/tensorflow)提交错误和功能请求。要进行一般讨论，请加入[TensorFlow 论坛](https://discuss.tensorflow.org)。
+最后但并非最不重要的是，TensorFlow 拥有一支充满激情和乐于助人的开发团队，以及一个庞大的社区为其改进做出贡献。要提出技术问题，您应该使用 [*https://stackoverflow.com*](https://stackoverflow.com)，并在问题中标记 *tensorflow* 和 *python*。您可以通过 [GitHub](https://github.com/tensorflow/tensorflow) 提交错误和功能请求。要进行一般讨论，请加入 [TensorFlow 论坛](https://discuss.tensorflow.org)。
 
 好了，现在是开始编码的时候了！
 
-# 像 NumPy 一样使用 TensorFlow
+## 像 NumPy 一样使用 TensorFlow
 
-TensorFlow 的 API 围绕着*张量*展开，这些张量从操作流向操作，因此得名 Tensor*Flow*。张量与 NumPy 的`ndarray`非常相似：通常是一个多维数组，但也可以保存标量（例如`42`）。当我们创建自定义成本函数、自定义指标、自定义层等时，这些张量将非常重要，让我们看看如何创建和操作它们。
+TensorFlow 的 API 围绕着*张量*展开，这些张量从操作流向操作，因此得名 Tensor*Flow*。张量与 NumPy 的 `ndarray` 非常相似：通常是一个多维数组，但也可以保存标量（例如 `42`）。当我们创建自定义成本函数、自定义指标、自定义层等时，这些张量将非常重要，让我们看看如何创建和操作它们。
 
-## 张量和操作
+### 张量和操作
 
-您可以使用`tf.constant()`创建一个张量。例如，这里是一个表示具有两行三列浮点数的矩阵的张量：
+您可以使用 `tf.constant()` 创建一个张量。例如，这里是一个表示具有两行三列浮点数的矩阵的张量：
 
 ```py
 >>> import tensorflow as tf
@@ -65,7 +62,7 @@ array([[1., 2., 3.],
  [4., 5., 6.]], dtype=float32)>
 ```
 
-就像`ndarray`一样，`tf.Tensor`有一个形状和一个数据类型（`dtype`）：
+就像 `ndarray` 一样，`tf.Tensor` 有一个形状和一个数据类型（`dtype`）：
 
 ```py
 >>> t.shape
@@ -104,11 +101,11 @@ array([[14., 32.],
  [32., 77.]], dtype=float32)>
 ```
 
-请注意，编写`t + 10`等同于调用`tf.add(t, 10)`（实际上，Python 调用了魔术方法`t.__add__(10)`，它只是调用了`tf.add(t, 10)`）。其他运算符，如`-`和`*`，也受支持。`@`运算符在 Python 3.5 中添加，用于矩阵乘法：它等同于调用`tf.matmul()`函数。
+请注意，编写 `t + 10` 等同于调用 `tf.add(t, 10)`（实际上，Python 调用了魔术方法 `t.__add__(10)`，它只是调用了 `tf.add(t, 10)`）。其他运算符，如 `-` 和 `*`，也受支持。`@` 运算符在 Python 3.5 中添加，用于矩阵乘法：它等同于调用 `tf.matmul()` 函数。
 
 ###### 注意
 
-许多函数和类都有别名。例如，`tf.add()`和`tf.math.add()`是相同的函数。这使得 TensorFlow 可以为最常见的操作保留简洁的名称，同时保持良好组织的包。
+许多函数和类都有别名。例如，`tf.add()` 和 `tf.math.add()` 是相同的函数。这使得 TensorFlow 可以为最常见的操作保留简洁的名称，同时保持良好组织的包。
 
 张量也可以保存标量值。在这种情况下，形状为空：
 
@@ -119,11 +116,11 @@ array([[14., 32.],
 
 ###### 注意
 
-Keras API 有自己的低级 API，位于`tf.keras.backend`中。这个包通常被导入为`K`，以简洁为主。它曾经包括函数如`K.square()`、`K.exp()`和`K.sqrt()`，您可能在现有代码中遇到：这在 Keras 支持多个后端时编写可移植代码很有用，但现在 Keras 只支持 TensorFlow，您应该直接调用 TensorFlow 的低级 API（例如，使用`tf.square()`而不是`K.square()`）。从技术上讲，`K.square()`及其相关函数仍然存在以保持向后兼容性，但`tf.keras.backend`包的文档只列出了一些实用函数，例如`clear_session()`（在第十章中提到）。
+Keras API 有自己的低级 API，位于 `tf.keras.backend` 中。这个包通常被导入为 `K`，以简洁为主。它曾经包括函数如 `K.square()`、`K.exp()` 和 `K.sqrt()`，您可能在现有代码中遇到：这在 Keras 支持多个后端时编写可移植代码很有用，但现在 Keras 只支持 TensorFlow，您应该直接调用 TensorFlow 的低级 API（例如，使用 `tf.square()` 而不是 `K.square()`）。从技术上讲，`K.square()` 及其相关函数仍然存在以保持向后兼容性，但 `tf.keras.backend` 包的文档只列出了一些实用函数，例如 `clear_session()`（在第十章中提到）。
 
-您将找到所有您需要的基本数学运算（`tf.add()`、`tf.multiply()`、`tf.square()`、`tf.exp()`、`tf.sqrt()`等）以及大多数您可以在 NumPy 中找到的操作（例如`tf.reshape()`、`tf.squeeze()`、`tf.tile()`）。一些函数的名称与 NumPy 中的名称不同；例如，`tf.reduce_mean()`、`tf.reduce_sum()`、`tf.reduce_max()`和`tf.math.log()`相当于`np.mean()`、`np.sum()`、`np.max()`和`np.log()`。当名称不同时，通常有很好的理由。例如，在 TensorFlow 中，您必须编写`tf.transpose(t)`；您不能像在 NumPy 中那样只写`t.T`。原因是`tf.transpose()`函数与 NumPy 的`T`属性并不完全相同：在 TensorFlow 中，将创建一个具有其自己的转置数据副本的新张量，而在 NumPy 中，`t.T`只是相同数据的一个转置视图。同样，`tf.reduce_sum()`操作之所以被命名为这样，是因为其 GPU 核心（即 GPU 实现）使用的减少算法不保证元素添加的顺序：因为 32 位浮点数的精度有限，每次调用此操作时结果可能会发生微小变化。`tf.reduce_mean()`也是如此（当然`tf.reduce_max()`是确定性的）。
+您将找到所有您需要的基本数学运算（`tf.add()`、`tf.multiply()`、`tf.square()`、`tf.exp()`、`tf.sqrt()` 等）以及大多数您可以在 NumPy 中找到的操作（例如 `tf.reshape()`、`tf.squeeze()`、`tf.tile()`）。一些函数的名称与 NumPy 中的名称不同；例如，`tf.reduce_mean()`、`tf.reduce_sum()`、`tf.reduce_max()` 和 `tf.math.log()` 相当于 `np.mean()`、`np.sum()`、`np.max()` 和 `np.log()`。当名称不同时，通常有很好的理由。例如，在 TensorFlow 中，您必须编写 `tf.transpose(t)`；您不能像在 NumPy 中那样只写 `t.T`。原因是 `tf.transpose()` 函数与 NumPy 的 `T` 属性并不完全相同：在 TensorFlow 中，将创建一个具有其自己的转置数据副本的新张量，而在 NumPy 中，`t.T` 只是相同数据的一个转置视图。同样，`tf.reduce_sum()` 操作之所以被命名为这样，是因为其 GPU 核心（即 GPU 实现）使用的减少算法不保证元素添加的顺序：因为 32 位浮点数的精度有限，每次调用此操作时结果可能会发生微小变化。`tf.reduce_mean()` 也是如此（当然 `tf.reduce_max()` 是确定性的）。
 
-## 张量和 NumPy
+### 张量和 NumPy
 
 张量与 NumPy 兼容：您可以从 NumPy 数组创建张量，反之亦然。您甚至可以将 TensorFlow 操作应用于 NumPy 数组，将 NumPy 操作应用于张量：
 
@@ -144,9 +141,9 @@ array([[ 1.,  4.,  9.],
 
 ###### 警告
 
-请注意，NumPy 默认使用 64 位精度，而 TensorFlow 使用 32 位。这是因为 32 位精度通常对神经网络来说足够了，而且运行速度更快，使用的内存更少。因此，当您从 NumPy 数组创建张量时，请确保设置`dtype=tf.float32`。
+请注意，NumPy 默认使用 64 位精度，而 TensorFlow 使用 32 位。这是因为 32 位精度通常对神经网络来说足够了，而且运行速度更快，使用的内存更少。因此，当您从 NumPy 数组创建张量时，请确保设置 `dtype=tf.float32`。
 
-## 类型转换
+### 类型转换
 
 类型转换可能会严重影响性能，并且当它们自动完成时很容易被忽略。为了避免这种情况，TensorFlow 不会自动执行任何类型转换：如果您尝试在具有不兼容类型的张量上执行操作，它只会引发异常。例如，您不能将浮点张量和整数张量相加，甚至不能将 32 位浮点数和 64 位浮点数相加：
 
@@ -157,7 +154,7 @@ array([[ 1.,  4.,  9.],
 [...] InvalidArgumentError: [...] expected to be a float tensor [...]
 ```
 
-这可能一开始有点烦人，但请记住这是为了一个好的目的！当然，当您真正需要转换类型时，您可以使用`tf.cast()`：
+这可能一开始有点烦人，但请记住这是为了一个好的目的！当然，当您真正需要转换类型时，您可以使用 `tf.cast()`：
 
 ```py
 >>> t2 = tf.constant(40., dtype=tf.float64)
@@ -165,9 +162,9 @@ array([[ 1.,  4.,  9.],
 <tf.Tensor: id=136, shape=(), dtype=float32, numpy=42.0>
 ```
 
-## 变量
+### 变量
 
-到目前为止，我们看到的`tf.Tensor`值是不可变的：我们无法修改它们。这意味着我们不能使用常规张量来实现神经网络中的权重，因为它们需要通过反向传播进行调整。此外，其他参数可能也需要随时间变化（例如，动量优化器会跟踪过去的梯度）。我们需要的是`tf.Variable`：
+到目前为止，我们看到的 `tf.Tensor` 值是不可变的：我们无法修改它们。这意味着我们不能使用常规张量来实现神经网络中的权重，因为它们需要通过反向传播进行调整。此外，其他参数可能也需要随时间变化（例如，动量优化器会跟踪过去的梯度）。我们需要的是 `tf.Variable`：
 
 ```py
 >>> v = tf.Variable([[1., 2., 3.], [4., 5., 6.]])
@@ -177,7 +174,7 @@ array([[1., 2., 3.],
  [4., 5., 6.]], dtype=float32)>
 ```
 
-`tf.Variable`的行为很像`tf.Tensor`：您可以执行相同的操作，它与 NumPy 很好地配合，对类型也一样挑剔。但是它也可以使用`assign()`方法（或`assign_add()`或`assign_sub()`，它们会增加或减少给定值来就地修改变量）。您还可以使用单个单元格（或切片）的`assign()`方法或使用`scatter_update()`或`scatter_nd_update()`方法来修改单个单元格（或切片）：
+`tf.Variable` 的行为很像 `tf.Tensor`：您可以执行相同的操作，它与 NumPy 很好地配合，对类型也一样挑剔。但是它也可以使用 `assign()` 方法（或 `assign_add()` 或 `assign_sub()`，它们会增加或减少给定值来就地修改变量）。您还可以使用单个单元格（或切片）的 `assign()` 方法或使用 `scatter_update()` 或 `scatter_nd_update()` 方法来修改单个单元格（或切片）：
 
 ```py
 v.assign(2 * v)           # v now equals [[2., 4., 6.], [8., 10., 12.]]
@@ -188,6 +185,8 @@ v.scatter_nd_update(      # v now equals [[100., 42., 0.], [8., 10., 200.]]
 ```
 
 直接赋值不起作用：
+
+
 
 ```py
 >>> v[1] = [7., 8., 9.]
@@ -202,27 +201,27 @@ v.scatter_nd_update(      # v now equals [[100., 42., 0.], [8., 10., 200.]]
 
 TensorFlow 支持几种其他数据结构，包括以下内容（请参阅本章笔记本中的“其他数据结构”部分或附录 C 了解更多详细信息）：
 
-稀疏张量（`tf.SparseTensor`）
+**稀疏张量（`tf.SparseTensor`）**
 
 高效地表示大部分为零的张量。`tf.sparse`包含了稀疏张量的操作。
 
-张量数组（`tf.TensorArray`）
+**张量数组（`tf.TensorArray`）**
 
 是张量列表。它们默认具有固定长度，但可以选择性地扩展。它们包含的所有张量必须具有相同的形状和数据类型。
 
-不规则张量（`tf.RaggedTensor`）
+**不规则张量（`tf.RaggedTensor`）**
 
 表示张量列表，所有张量的秩和数据类型相同，但大小不同。张量大小变化的维度称为*不规则维度*。`tf.ragged`包含了不规则张量的操作。
 
-字符串张量
+**字符串张量**
 
 是类型为`tf.string`的常规张量。这些表示字节字符串，而不是 Unicode 字符串，因此如果您使用 Unicode 字符串（例如，像`"café"`这样的常规 Python 3 字符串）创建字符串张量，那么它将自编码为 UTF-8（例如，`b"caf\xc3\xa9"`）。或者，您可以使用类型为`tf.int32`的张量来表示 Unicode 字符串，其中每个项目表示一个 Unicode 代码点（例如，`[99, 97, 102, 233]`）。`tf.strings`包（带有`s`）包含用于字节字符串和 Unicode 字符串的操作（以及将一个转换为另一个的操作）。重要的是要注意`tf.string`是原子的，这意味着其长度不会出现在张量的形状中。一旦您将其转换为 Unicode 张量（即，一个包含 Unicode 代码点的`tf.int32`类型的张量），长度将出现在形状中。
 
-集合
+**集合**
 
 表示为常规张量（或稀疏张量）。例如，`tf.constant([[1, 2], [3, 4]])`表示两个集合{1, 2}和{3, 4}。更一般地，每个集合由张量的最后一个轴中的向量表示。您可以使用`tf.sets`包中的操作来操作集合。
 
-队列
+**队列**
 
 在多个步骤中存储张量。TensorFlow 提供各种类型的队列：基本的先进先出（FIFO）队列（`FIFOQueue`），以及可以优先处理某些项目的队列（`PriorityQueue`），对其项目进行洗牌的队列（`RandomShuffleQueue`），以及通过填充来批处理不同形状的项目的队列（`PaddingFIFOQueue`）。这些类都在`tf.queue`包中。
 
@@ -402,6 +401,12 @@ model.compile(loss="mse", optimizer="nadam", metrics=[create_huber(2.0)])
 
 在训练期间的每个批次，Keras 将计算这个指标并跟踪自开始时的平均值。大多数情况下，这正是你想要的。但并非总是如此！例如，考虑一个二元分类器的精度。正如你在第三章中看到的，精度是真正例的数量除以正例的预测数量（包括真正例和假正例）。假设模型在第一个批次中做出了五个正面预测，其中四个是正确的：这是 80%的精度。然后假设模型在第二个批次中做出了三个正面预测，但它们全部是错误的：这是第二个批次的 0%精度。如果你只计算这两个精度的平均值，你会得到 40%。但等一下——这*不是*这两个批次的模型精度！事实上，总共有四个真正例（4 + 0）中的八个正面预测（5 + 3），所以总体精度是 50%，而不是 40%。我们需要的是一个对象，它可以跟踪真正例的数量和假正例的数量，并且可以在需要时基于这些数字计算精度。这正是`tf.keras.metrics.Precision`类所做的：
 
+
+
+# 流式指标与自定义层
+
+## 流式指标
+
 ```py
 >>> precision = tf.keras.metrics.Precision()
 >>> precision([0, 1, 1, 1, 0, 1, 0, 1], [1, 1, 0, 1, 0, 1, 0, 1])
@@ -512,7 +517,7 @@ class MyDense(tf.keras.layers.Layer):
 
 +   `call()`方法执行所需的操作。在这种情况下，我们计算输入`X`和层的内核的矩阵乘法，添加偏置向量，并将激活函数应用于结果，这给出了层的输出。
 
-+   `get_config()`方法与以前的自定义类中的方法一样。请注意，通过调用`tf.keras.​activa⁠tions.serialize()`保存激活函数的完整配置。
++   `get_config()`方法与以前的自定义类中的方法一样。请注意，通过调用`tf.keras.activations.serialize()`保存激活函数的完整配置。
 
 现在您可以像使用任何其他层一样使用`MyDense`层！
 
@@ -595,6 +600,8 @@ class ResidualRegressor(tf.keras.Model):
 ```
 
 我们在构造函数中创建层，并在`call()`方法中使用它们。然后可以像任何其他模型一样使用此模型（编译、拟合、评估和使用它进行预测）。如果您还希望能够使用`save()`方法保存模型，并使用`tf.keras.models.load_model()`函数加载模型，则必须在`ResidualBlock`类和`ResidualRegressor`类中实现`get_config()`方法（就像我们之前做的那样）。或者，您可以使用`save_weights()`和`load_weights()`方法保存和加载权重。
+
+
 
 `Model`类是`Layer`类的子类，因此模型可以像层一样定义和使用。但是模型具有一些额外的功能，包括当然包括`compile()`、`fit()`、`evaluate()`和`predict()`方法（以及一些变体），还有`get_layer()`方法（可以通过名称或索引返回模型的任何层）和`save()`方法（以及对`tf.keras.models.load_model()`和`tf.keras.models.clone_model()`的支持）。
 
@@ -816,6 +823,8 @@ def my_softplus(z):
 
 首先，让我们构建一个简单的模型。不需要编译它，因为我们将手动处理训练循环：
 
+
+
 ```py
 l2_reg = tf.keras.regularizers.l2(0.05)
 model = tf.keras.models.Sequential([
@@ -825,7 +834,7 @@ model = tf.keras.models.Sequential([
 ])
 ```
 
-接下来，让我们创建一个小函数，从训练集中随机抽取一个批次的实例（在第十三章中，我们将讨论 tf.data API，它提供了一个更好的替代方案）：
+接下来，让我们创建一个小函数，从训练集中随机抽取一个批次的实例（在第十三章中，我们将讨论`tf.data` API，它提供了一个更好的替代方案）：
 
 ```py
 def random_batch(X, y, batch_size=32):
@@ -887,7 +896,7 @@ for epoch in range(1, n_epochs + 1):
 
 +   然后我们从训练集中抽取一个随机批次。
 
-+   在 `tf.GradientTape()` 块内，我们对一个批次进行预测，使用模型作为一个函数，并计算损失：它等于主要损失加上其他损失（在这个模型中，每层有一个正则化损失）。由于 `mean_squared_error()` 函数返回每个实例的一个损失，我们使用 `tf.reduce_mean()` 计算批次的平均值（如果您想对每个实例应用不同的权重，这就是您应该做的地方）。正则化损失已经被减少为每个单一标量，所以我们只需要对它们求和（使用 `tf.add_n()`，它对相同形状和数据类型的多个张量求和）。
++   在`tf.GradientTape()`块内，我们对一个批次进行预测，使用模型作为一个函数，并计算损失：它等于主要损失加上其他损失（在这个模型中，每层有一个正则化损失）。由于`mean_squared_error()`函数返回每个实例的一个损失，我们使用`tf.reduce_mean()`计算批次的平均值（如果您想对每个实例应用不同的权重，这就是您应该做的地方）。正则化损失已经被减少为每个单一标量，所以我们只需要对它们求和（使用`tf.add_n()`，它对相同形状和数据类型的多个张量求和）。
 
 +   接下来，我们要求磁带计算损失相对于每个可训练变量的梯度——*不是*所有变量！——并将它们应用于优化器以执行梯度下降步骤。
 
@@ -895,7 +904,7 @@ for epoch in range(1, n_epochs + 1):
 
 +   在每个时期结束时，我们重置平均损失和指标的状态。
 
-如果您想应用梯度裁剪（参见第十一章），请设置优化器的 `clipnorm` 或 `clipvalue` 超参数。如果您想对梯度应用任何其他转换，只需在调用 `apply_gradients()` 方法之前这样做。如果您想向模型添加权重约束（例如，在创建层时设置 `kernel_constraint` 或 `bias_constraint`），您应该更新训练循环以在 `apply_gradients()` 之后应用这些约束，就像这样：
+如果您想应用梯度裁剪（参见第十一章），请设置优化器的`clipnorm`或`clipvalue`超参数。如果您想对梯度应用任何其他转换，只需在调用`apply_gradients()`方法之前这样做。如果您想向模型添加权重约束（例如，在创建层时设置`kernel_constraint`或`bias_constraint`），您应该更新训练循环以在`apply_gradients()`之后应用这些约束，就像这样：
 
 ```py
 for variable in model.variables:
@@ -905,7 +914,7 @@ for variable in model.variables:
 
 ###### 警告
 
-在训练循环中调用模型时不要忘记设置 `training=True`，特别是如果您的模型在训练和测试期间表现不同（例如，如果它使用 `BatchNormalization` 或 `Dropout`）。如果是自定义模型，请确保将 `training` 参数传播到您的模型调用的层。
+在训练循环中调用模型时不要忘记设置`training=True`，特别是如果您的模型在训练和测试期间表现不同（例如，如果它使用`BatchNormalization`或`Dropout`）。如果是自定义模型，请确保将`training`参数传播到您的模型调用的层。
 
 正如您所看到的，有很多事情需要做对，很容易出错。但好的一面是，您可以完全控制。
 
@@ -929,7 +938,7 @@ def cube(x):
 <tf.Tensor: shape=(), dtype=float32, numpy=8.0>
 ```
 
-现在，让我们使用 `tf.function()` 将这个 Python 函数转换为 *TensorFlow* *函数*：
+现在，让我们使用`tf.function()`将这个 Python 函数转换为*TensorFlow* *函数*：
 
 ```py
 >>> tf_cube = tf.function(cube)
@@ -946,7 +955,7 @@ def cube(x):
 <tf.Tensor: shape=(), dtype=float32, numpy=8.0>
 ```
 
-在幕后，`tf.function()` 分析了 `cube()` 函数执行的计算，并生成了一个等效的计算图！正如您所看到的，这是相当轻松的（我们很快会看到这是如何工作的）。或者，我们也可以将 `tf.function` 用作装饰器；这实际上更常见：
+在幕后，`tf.function()`分析了`cube()`函数执行的计算，并生成了一个等效的计算图！正如您所看到的，这是相当轻松的（我们很快会看到这是如何工作的）。或者，我们也可以将`tf.function`用作装饰器；这实际上更常见：
 
 ```py
 @tf.function
@@ -954,14 +963,14 @@ def tf_cube(x):
     return x ** 3
 ```
 
-原始的 Python 函数仍然可以通过 TF 函数的 `python_function` 属性访问，以防您需要它：
+原始的 Python 函数仍然可以通过 TF 函数的`python_function`属性访问，以防您需要它：
 
 ```py
 >>> tf_cube.python_function(2)
 8
 ```
 
-TensorFlow 优化计算图，修剪未使用的节点，简化表达式（例如，1 + 2 将被替换为 3）等。一旦优化的图准备就绪，TF 函数将有效地执行图中的操作，按适当的顺序（并在可能时并行执行）。因此，TF 函数通常比原始 Python 函数运行得快得多，特别是如果它执行复杂计算。大多数情况下，您实际上不需要知道更多：当您想要提升 Python 函数时，只需将其转换为 TF 函数。就这样！
+TensorFlow 优化计算图，修剪未使用的节点，简化表达式（例如，`1 + 2`将被替换为`3`）等。一旦优化的图准备就绪，TF 函数将有效地执行图中的操作，按适当的顺序（并在可能时并行执行）。因此，TF 函数通常比原始 Python 函数运行得快得多，特别是如果它执行复杂计算。大多数情况下，您实际上不需要知道更多：当您想要提升 Python 函数时，只需将其转换为 TF 函数。就这样！
 
 此外，如果在调用`tf.function()`时设置`jit_compile=True`，那么 TensorFlow 将使用*加速线性代数*（XLA）为您的图编译专用内核，通常融合多个操作。例如，如果您的 TF 函数调用`tf.reduce_sum(a * b + c)`，那么没有 XLA，函数首先需要计算`a * b`并将结果存储在临时变量中，然后将`c`添加到该变量中，最后调用`tf.reduce_sum()`处理结果。使用 XLA，整个计算将编译为单个内核，该内核将一次性计算`tf.reduce_sum(a * b + c)`，而不使用任何大型临时变量。这不仅速度更快，而且使用的 RAM 大大减少。
 
@@ -971,7 +980,7 @@ TensorFlow 优化计算图，修剪未使用的节点，简化表达式（例如
 
 您可以通过在创建自定义层或自定义模型时设置`dynamic=True`来告诉 Keras*不*将您的 Python 函数转换为 TF 函数。或者，您可以在调用模型的`compile()`方法时设置`run_eagerly=True`。
 
-默认情况下，TF 函数为每个唯一的输入形状和数据类型生成一个新图，并将其缓存以供后续调用。例如，如果您调用`tf_cube(tf.constant(10))`，将为形状为[]的 int32 张量生成一个图。然后，如果您调用`tf_cube(tf.constant(20))`，将重用相同的图。但是，如果您随后调用`tf_cube(tf.constant([10, 20]))`，将为形状为[2]的 int32 张量生成一个新图。这就是 TF 函数处理多态性（即不同的参数类型和形状）的方式。但是，这仅适用于张量参数：如果将数值 Python 值传递给 TF 函数，则将为每个不同的值生成一个新图：例如，调用`tf_cube(10)`和`tf_cube(20)`将生成两个图。
+默认情况下，TF 函数为每个唯一的输入形状和数据类型生成一个新图，并将其缓存以供后续调用。例如，如果您调用`tf_cube(tf.constant(10))`，将为形状为`[]`的 int32 张量生成一个图。然后，如果您调用`tf_cube(tf.constant(20))`，将重用相同的图。但是，如果您随后调用`tf_cube(tf.constant([10, 20]))`，将为形状为`[2]`的 int32 张量生成一个新图。这就是 TF 函数处理多态性（即不同的参数类型和形状）的方式。但是，这仅适用于张量参数：如果将数值 Python 值传递给 TF 函数，则将为每个不同的值生成一个新图：例如，调用`tf_cube(10)`和`tf_cube(20)`将生成两个图。
 
 ###### 警告
 
@@ -985,7 +994,7 @@ TensorFlow 优化计算图，修剪未使用的节点，简化表达式（例如
 
 ###### 图 12-4\. TensorFlow 如何使用 AutoGraph 和跟踪生成图
 
-接下来，TensorFlow 调用这个“升级”函数，但不是传递参数，而是传递一个*符号张量*—一个没有实际值的张量，只有一个名称、一个数据类型和一个形状。例如，如果您调用`sum_squares(tf.constant(10))`，那么`tf__sum_squares()`函数将被调用，传递一个类型为 int32、形状为[]的符号张量。该函数将在*图模式*下运行，这意味着每个 TensorFlow 操作都会在图中添加一个节点来表示自己和其输出张量（与常规模式相反，称为*急切执行*或*急切模式*）。在图模式下，TF 操作不执行任何计算。图模式是 TensorFlow 1 中的默认模式。在图 12-4 中，您可以看到`tf__sum_squares()`函数被调用，其参数是一个符号张量（在这种情况下，一个形状为[]的 int32 张量），以及在跟踪期间生成的最终图。节点表示操作，箭头表示张量（生成的函数和图都被简化了）。
+接下来，TensorFlow 调用这个“升级”函数，但不是传递参数，而是传递一个*符号张量*—一个没有实际值的张量，只有一个名称、一个数据类型和一个形状。例如，如果您调用`sum_squares(tf.constant(10))`，那么`tf__sum_squares()`函数将被调用，传递一个类型为 int32、形状为`[]`的符号张量。该函数将在*图模式*下运行，这意味着每个 TensorFlow 操作都会在图中添加一个节点来表示自己和其输出张量（与常规模式相反，称为*急切执行*或*急切模式*）。在图模式下，TF 操作不执行任何计算。图模式是 TensorFlow 1 中的默认模式。在图 12-4 中，您可以看到`tf__sum_squares()`函数被调用，其参数是一个符号张量（在这种情况下，一个形状为`[]`的 int32 张量），以及在跟踪期间生成的最终图。节点表示操作，箭头表示张量（生成的函数和图都被简化了）。
 
 ###### 提示
 
@@ -997,21 +1006,23 @@ TensorFlow 优化计算图，修剪未使用的节点，简化表达式（例如
 
 +   如果调用任何外部库，包括 NumPy 甚至标准库，这个调用只会在跟踪期间运行；它不会成为图的一部分。实际上，TensorFlow 图只能包括 TensorFlow 构造（张量、操作、变量、数据集等）。因此，请确保使用`tf.reduce_sum()`而不是`np.sum()`，`tf.sort()`而不是内置的`sorted()`函数，等等（除非您真的希望代码只在跟踪期间运行）。这还有一些额外的影响：
 
-    +   如果您定义了一个 TF 函数`f(*x*)`，它只返回`np.random.rand()`，那么只有在跟踪函数时才会生成一个随机数，因此`f(tf.constant(2.))`和`f(tf.constant(3.))`将返回相同的随机数，但`f(tf.constant([2., 3.]))`将返回一个不同的随机数。如果将`np.random.rand()`替换为`tf.random.uniform([])`，那么每次调用都会生成一个新的随机数，因为该操作将成为图的一部分。
+    +   如果您定义了一个 TF 函数`f(x)`，它只返回`np.random.rand()`，那么只有在跟踪函数时才会生成一个随机数，因此`f(tf.constant(2.))`和`f(tf.constant(3.))`将返回相同的随机数，但`f(tf.constant([2., 3.]))`将返回一个不同的随机数。如果将`np.random.rand()`替换为`tf.random.uniform([])`，那么每次调用都会生成一个新的随机数，因为该操作将成为图的一部分。
 
     +   如果您的非 TensorFlow 代码具有副作用（例如记录某些内容或更新 Python 计数器），那么您不应该期望每次调用 TF 函数时都会发生这些副作用，因为它们只会在函数被跟踪时发生。
 
-    +   您可以在 `tf.py_function()` 操作中包装任意的 Python 代码，但这样做会影响性能，因为 TensorFlow 将无法对此代码进行任何图优化。这也会降低可移植性，因为图仅在安装了正确库的平台上运行 Python 可用（和 Python 可用的平台）。
+    +   您可以在`tf.py_function()`操作中包装任意的 Python 代码，但这样做会影响性能，因为 TensorFlow 将无法对此代码进行任何图优化。这也会降低可移植性，因为图仅在安装了正确库的平台上运行 Python 可用（和 Python 可用的平台）。
 
-+   您可以调用其他 Python 函数或 TF 函数，但它们应该遵循相同的规则，因为 TensorFlow 将捕获它们的操作在计算图中。请注意，这些其他函数不需要用 `@tf.function` 装饰。
++   您可以调用其他 Python 函数或 TF 函数，但它们应该遵循相同的规则，因为 TensorFlow 将捕获它们的操作在计算图中。请注意，这些其他函数不需要用`@tf.function`装饰。
 
-+   如果函数创建了 TensorFlow 变量（或任何其他有状态的 TensorFlow 对象，例如数据集或队列），它必须在第一次调用时才能这样做，否则您将收到异常。通常最好在 TF 函数之外创建变量（例如，在自定义层的 `build()` 方法中）。如果要为变量分配新值，请确保调用其 `assign()` 方法，而不是使用 `=` 运算符。
++   如果函数创建了 TensorFlow 变量（或任何其他有状态的 TensorFlow 对象，例如数据集或队列），它必须在第一次调用时才能这样做，否则您将收到异常。通常最好在 TF 函数之外创建变量（例如，在自定义层的`build()`方法中）。如果要为变量分配新值，请确保调用其`assign()`方法，而不是使用`=`运算符。
 
 +   您的 Python 函数的源代码应该对 TensorFlow 可用。如果源代码不可用（例如，如果您在 Python shell 中定义函数，无法访问源代码，或者如果您仅将编译后的 **.pyc* Python 文件部署到生产环境），则图生成过程将失败或功能有限。
 
-+   TensorFlow 仅会捕获对张量或 `tf.data.Dataset` 进行迭代的 `for` 循环（请参见第十三章）。因此，请确保使用 `for i in tf.range(*x*)` 而不是 `for i in range(*x*)`，否则循环将不会在图中被捕获。相反，它将在跟踪期间运行。（如果 `for` 循环旨在构建图，例如在神经网络中创建每个层，那么这可能是您想要的。）
 
-+   一如既往，出于性能原因，您应该尽可能使用矢量化实现，而不是使用循环。
+
+TensorFlow 仅会捕获对张量或`tf.data.Dataset`进行迭代的`for`循环（请参见第十三章）。因此，请确保使用`for i in tf.range(*x*)`而不是`for i in range(*x*)`，否则循环将不会在图中被捕获。相反，它将在跟踪期间运行。（如果`for`循环旨在构建图，例如在神经网络中创建每个层，那么这可能是您想要的。）
+
+一如既往，出于性能原因，您应该尽可能使用矢量化实现，而不是使用循环。
 
 是时候总结了！在本章中，我们从 TensorFlow 的简要概述开始，然后看了 TensorFlow 的低级 API，包括张量、操作、变量和特殊数据结构。然后我们使用这些工具来自定义 Keras API 中的几乎每个组件。最后，我们看了 TF 函数如何提升性能，如何使用 AutoGraph 和跟踪生成图形，以及编写 TF 函数时应遵循的规则（如果您想进一步打开黑匣子并探索生成的图形，您将在附录 D 中找到技术细节）。
 
@@ -1019,41 +1030,41 @@ TensorFlow 优化计算图，修剪未使用的节点，简化表达式（例如
 
 # 练习
 
-1.  您如何用简短的句子描述 TensorFlow？它的主要特点是什么？您能否列出其他流行的深度学习库？
+1. 您如何用简短的句子描述 TensorFlow？它的主要特点是什么？您能否列出其他流行的深度学习库？
 
-1.  TensorFlow 是否可以替代 NumPy？它们之间的主要区别是什么？
+2. TensorFlow 是否可以替代 NumPy？它们之间的主要区别是什么？
 
-1.  `tf.range(10)` 和 `tf.constant(np.​ara⁠nge(10))` 会得到相同的结果吗？
+3. `tf.range(10)`和`tf.constant(np.​ara⁠nge(10))`会得到相同的结果吗？
 
-1.  您能否列出 TensorFlow 中除了常规张量之外的其他六种数据结构？
+4. 您能否列出 TensorFlow 中除了常规张量之外的其他六种数据结构？
 
-1.  您可以通过编写函数或子类化 `tf.keras.losses.Loss` 类来定义自定义损失函数。您会在什么时候使用每个选项？
+5. 您可以通过编写函数或子类化`tf.keras.losses.Loss`类来定义自定义损失函数。您会在什么时候使用每个选项？
 
-1.  同样，您可以在函数中定义自定义指标，也可以作为 `tf.keras.metrics.Metric` 的子类。您会在什么时候使用每个选项？
+6. 同样，您可以在函数中定义自定义指标，也可以作为`tf.keras.metrics.Metric`的子类。您会在什么时候使用每个选项？
 
-1.  何时应该创建自定义层而不是自定义模型？
+7. 何时应该创建自定义层而不是自定义模型？
 
-1.  有哪些需要编写自定义训练循环的用例？
+8. 有哪些需要编写自定义训练循环的用例？
 
-1.  自定义 Keras 组件可以包含任意的 Python 代码吗，还是必须可转换为 TF 函数？
+9. 自定义 Keras 组件可以包含任意的 Python 代码吗，还是必须可转换为 TF 函数？
 
-1.  如果您希望函数可转换为 TF 函数，主要需要遵守哪些规则？
+10. 如果您希望函数可转换为 TF 函数，主要需要遵守哪些规则？
 
-1.  何时需要创建一个动态的 Keras 模型？如何做到这一点？为什么不将所有模型都设置为动态的呢？
+11. 何时需要创建一个动态的 Keras 模型？如何做到这一点？为什么不将所有模型都设置为动态的呢？
 
-1.  实现一个执行*层归一化*的自定义层（我们将在第十五章中使用这种类型的层）：
+12. 实现一个执行*层归一化*的自定义层（我们将在第十五章中使用这种类型的层）：
 
-    1.  `build()`方法应该定义两个可训练的权重**α**和**β**，形状都是`input_shape[-1:]`，数据类型为`tf.float32`。**α**应该初始化为 1，**β**初始化为 0。
+    - `build()`方法应该定义两个可训练的权重`α`和`β`，形状都是`input_shape[-1:]`，数据类型为`tf.float32`。`α`应该初始化为 1，`β`初始化为 0。
 
-    1.  `call()`方法应该计算每个实例特征的平均值*μ*和标准差*σ*。为此，您可以使用`tf.nn.moments(inputs, axes=-1, keepdims=True)`，它返回所有实例的平均值*μ*和方差*σ*²（计算方差的平方根以获得标准差）。然后函数应该计算并返回**α** ⊗ (**X** - *μ*)/(*σ* + *ε*) + **β**，其中 ⊗ 表示逐元素乘法（`*`），*ε*是一个平滑项（一个小常数，避免除以零，例如 0.001）。
+    - `call()`方法应该计算每个实例特征的平均值`μ`和标准差`σ`。为此，您可以使用`tf.nn.moments(inputs, axes=-1, keepdims=True)`，它返回所有实例的平均值`μ`和方差`σ²`（计算方差的平方根以获得标准差）。然后函数应该计算并返回`α ⊗ (X - μ)/(σ + ε) + β`，其中`⊗`表示逐元素乘法（`*`），`ε`是一个平滑项（一个小常数，避免除以零，例如 0.001）。
 
-    1.  确保您的自定义层产生与`tf.keras.layers.LayerNormalization`层相同（或非常接近）的输出。
+    - 确保您的自定义层产生与`tf.keras.layers.LayerNormalization`层相同（或非常接近）的输出。
 
-1.  使用自定义训练循环训练一个模型，以处理 Fashion MNIST 数据集（参见第十章）：
+13. 使用自定义训练循环训练一个模型，以处理 Fashion MNIST 数据集（参见第十章）：
 
-    1.  显示每个时代、迭代、平均训练损失和每个时代的平均准确率（在每次迭代更新），以及每个时代结束时的验证损失和准确率。
+    - 显示每个时代、迭代、平均训练损失和每个时代的平均准确率（在每次迭代更新），以及每个时代结束时的验证损失和准确率。
 
-    1.  尝试使用不同的优化器以及不同的学习率来处理上层和下层。
+    - 尝试使用不同的优化器以及不同的学习率来处理上层和下层。
 
 这些练习的解决方案可以在本章笔记本的末尾找到，网址为[*https://homl.info/colab3*](https://homl.info/colab3)。
 

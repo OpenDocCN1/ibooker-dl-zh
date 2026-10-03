@@ -1,16 +1,14 @@
+
+
 # 第二章：使用生成式 AI 确保足够的数据质量
 
-### 本章涵盖
+## 本章涵盖
 
-+   确保数据高质量的最佳实践
-
-+   使用生成式 AI 准备数据清洗协议
-
-+   评估数据内容质量
-
-+   处理数据错误
-
-+   调查不明确的数据
+- 确保数据高质量的最佳实践
+- 使用生成式 AI 准备数据清洗协议
+- 评估数据内容质量
+- 处理数据错误
+- 调查不明确的数据
 
 在 MS Excel 中，你可以在仅基于两个数据点的基础上计算样本的趋势线和标准差。显然，这样的“数据分析”是没有意义的。本章将帮助你将精力集中在你应该用数据做的事情上，而不仅仅是扩展你可以用它做的事情。它解释了进行任何分析所需的必要背景。你将了解最佳实践和不可协商的规则，确保你的结论与你要分析的商业活动相关，而不是与底层数据的缺陷相关。
 
@@ -40,27 +38,21 @@
 
 让我们清理我们的数据吧！拿起你桌面上或项目仓库中的第一个数据文件，然后打开它。它是“干净”的吗？（如果你确实在桌面上保留数据文件，不妨和你的选择之一的人工智能进行一番关于数据管理和治理的热烈讨论。）
 
-信任，但核实  如果你的数据是从告诉你它是“干净”的人那里获得的，问问自己一个问题——你是否足够信任这个人的数据技能和（不是“或”；具体是“和”）勤奋，以至于将你业务的成败建立在他们对数据“干净”含义的看法上？即使你信任他们，控制是数据世界中最高的信任形式：宁可信其有，不可信其无，三思而后行，等等。
+**信任，但核实**：如果你的数据是从告诉你它是“干净”的人那里获得的，问问自己一个问题——你是否足够信任这个人的数据技能和（不是“或”；具体是“和”）勤奋，以至于将你业务的成败建立在他们对数据“干净”含义的看法上？即使你信任他们，控制是数据世界中最高的信任形式：宁可信其有，不可信其无，三思而后行，等等。
 
 如果你不确定你的数据是否干净，我们正在走上一条正确的道路。在你认为数据足够干净以进行分析之前，必须检查以下几个方面的内容：
 
-+   *相关性*—数据应与特定业务问题或待解决的问题相关。不相关的数据可能导致混淆，并分散分析的焦点。
-
-+   *准确性*—数据应该是正确的，无错误的，并且与其所代表的现实世界中的对象或事件一致。
-
-+   *完整性*—所有*必需的*数据点都应存在。任何缺失或不完整的信息都应被识别并解决。同时，应避免虚假数据，以保持清晰。
-
-+   *时效性*—数据应是最新的，并且与所分析的时期相关。过时的数据可能导致误导或不相关的见解。
-
-+   *唯一性*—应识别并消除重复数据，以防止分析中的冗余和不准确性。
-
-+   *一致性*—数据应在不同的来源、格式和系统中保持一致。不一致可能导致错误的结论或见解。
-
-+   *完整性*—数据元素之间的关系应得到维护，确保在分析时数据是连贯且有意义的。
+- **相关性**——数据应与特定业务问题或待解决的问题相关。不相关的数据可能导致混淆，并分散分析的焦点。
+- **准确性**——数据应该是正确的，无错误的，并且与其所代表的现实世界中的对象或事件一致。
+- **完整性**——所有*必需的*数据点都应存在。任何缺失或不完整的信息都应被识别并解决。同时，应避免虚假数据，以保持清晰。
+- **时效性**——数据应是最新的，并且与所分析的时期相关。过时的数据可能导致误导或不相关的见解。
+- **唯一性**——应识别并消除重复数据，以防止分析中的冗余和不准确性。
+- **一致性**——数据应在不同的来源、格式和系统中保持一致。不一致可能导致错误的结论或见解。
+- **完整性**——数据元素之间的关系应得到维护，确保在分析时数据是连贯且有意义的。
 
 这看起来像很多工作，因为确实如此。你想要确保你的数据能够充分描述你正在分析的现实片段（前四点），并且其结构允许进行可靠的分析（最后三点）。
 
-慢慢来，稳稳当当  数据质量不是可以轻易忽视的地方。你需要习惯系统地做事。许多数据专家声称，至少 80%的数据工作与数据清理和准备有关，这些过程相当缓慢。不幸的是，你可能会因为一个非常不愉快的反馈循环而被迫省略它。企业看不到分析的价值，因此要求更多。要求越多，时间压力就越大。时间压力越大，就越会走捷径（通常是在不会出现在最终报告中的领域，因此对业务赞助者来说要么是看不见的，要么是无用的）。走捷径越多，分析就越不可靠。分析越不可靠，后续的价值就越低。分析的价值越低……从一开始就做好事情将减少你在分析旅程中遇到的颠簸和故障，因为你的利益相关者会回来要求进行更符合他们观察到的现实的重复分析。
+**慢慢来，稳稳当当**：数据质量不是可以轻易忽视的地方。你需要习惯系统地做事。许多数据专家声称，至少 80%的数据工作与数据清理和准备有关，这些过程相当缓慢。不幸的是，你可能会因为一个非常不愉快的反馈循环而被迫省略它。企业看不到分析的价值，因此要求更多。要求越多，时间压力就越大。时间压力越大，就越会走捷径（通常是在不会出现在最终报告中的领域，因此对业务赞助者来说要么是看不见的，要么是无用的）。走捷径越多，分析就越不可靠。分析越不可靠，后续的价值就越低。分析的价值越低……从一开始就做好事情将减少你在分析旅程中遇到的颠簸和故障，因为你的利益相关者会回来要求进行更符合他们观察到的现实的重复分析。
 
 确保数据质量可能会让人感到害怕——没有一劳永逸的解决方案，走捷径可能导致不可靠的数据（因此结果也不可靠）。但仍有希望：良好的结构可以在有限的时间内引导你完成这个过程。知道要寻找什么，以及何时寻找，可以帮助你发现质量问题和评估它们对最终分析的影响。
 
@@ -84,53 +76,41 @@
 
 让我们看看生成式 AI（在这种情况下，ChatGPT 4）如何处理一个类似“我迷路了，需要指导”的普通语言问题。
 
-**![image](img/Init-MA.png)**我想进行数据分析。我已经将我的数据导入到 pandas DataFrame 中。我应该首先对它做什么？
+**![image](img/Init-MA.png)** 我想进行数据分析。我已经将我的数据导入到 pandas DataFrame 中。我应该首先对它做什么？
 
-**![image](img/Response.png)**在将你的数据导入到 pandas DataFrame 之后，你应该首先探索并理解你的数据。你可以从以下步骤开始：
+**![image](img/Response.png)** 在将你的数据导入到 pandas DataFrame 之后，你应该首先探索并理解你的数据。你可以从以下步骤开始：
 
-1.  检查 DataFrame 的前几行：
-
-使用`head()`方法显示 DataFrame 的前几行。这将给你一个关于数据结构、列名以及每列包含的数据类型的快速概述。
+1. **检查 DataFrame 的前几行**：使用`head()`方法显示 DataFrame 的前几行。这将给你一个关于数据结构、列名以及每列包含的数据类型的快速概述。
 
 ```py
 df.head()
 ```
 
-1.  2. 检查 DataFrame 的形状：
-
-使用`shape`属性获取 DataFrame 的维度（行和列）。
+2. **检查 DataFrame 的形状**：使用`shape`属性获取 DataFrame 的维度（行和列）。
 
 ```py
 df.shape
 ```
 
-1.  3. 获取摘要统计信息和数据类型：
-
-使用`info()`方法获取数据类型的摘要、非空值的数量和 DataFrame 的内存使用情况。
+3. **获取摘要统计信息和数据类型**：使用`info()`方法获取数据类型的摘要、非空值的数量和 DataFrame 的内存使用情况。
 
 ```py
 df.info()
 ```
 
-1.  4. 为数值列生成摘要统计信息：
-
-使用`describe()`方法获取 DataFrame 中数值列的摘要统计信息。这将给你一个关于数值数据集中趋势和分散程度的直观感受。
+4. **为数值列生成摘要统计信息**：使用`describe()`方法获取 DataFrame 中数值列的摘要统计信息。这将给你一个关于数值数据集中趋势和分散程度的直观感受。
 
 ```py
 df.describe()
 ```
 
-1.  5. 检查缺失值：
-
-使用`isna()`方法与`sum()`方法结合，计算每列中缺失值的数量。
+5. **检查缺失值**：使用`isna()`方法与`sum()`方法结合，计算每列中缺失值的数量。
 
 ```py
 df.isna().sum()
 ```
 
-1.  6. 调查分类列：
-
-对于分类列，你可以使用`value_counts()`方法获取唯一值的计数及其频率。
+6. **调查分类列**：对于分类列，你可以使用`value_counts()`方法获取唯一值的计数及其频率。
 
 ```py
 df['column_name'].value_counts()
@@ -140,43 +120,36 @@ df['column_name'].value_counts()
 
 在其第一句话中，我们的 AI 顾问同意了理解你的数据的重要性。仔细阅读模型答案的其余部分可能会揭示一些不太令人印象深刻的部分。有些步骤似乎重复了。例如，`df.isna().sum()`方法并没有提供`df.info()`（实际上还包括`df.shape`返回的信息）之前未提供的信息。
 
-你需要决定你的优先级  在选择你将使用以达到目标的方法时，效率与可读性只是你必须做出的选择之一。当被询问时，生成式 AI 可以经常向你展示不同方法的优缺点。尽管如此，你需要意识到这些选择，有时需要明确请求特定的方法或解决方案，优先考虑一个特性而不是另一个。
+**你需要决定你的优先级**：在选择你将使用以达到目标的方法时，效率与可读性只是你必须做出的选择之一。当被询问时，生成式 AI 可以经常向你展示不同方法的优缺点。尽管如此，你需要意识到这些选择，有时需要明确请求特定的方法或解决方案，优先考虑一个特性而不是另一个。
 
 尽管如此，整体答案非常好。就像古老的木匠谚语所说，量两次比一次好。我们赞赏 ChatGPT 在冗余方面的倾向。如果你有一个足够广泛的工具集，你很快就能选择最适合你分析风格的工具。如果你工具不足，你可能就会陷入黑暗。
 
 总结来说，你需要检查以下内容：
 
-1.  整体数据的“外观”。
-
-1.  表的大小。
-
-1.  每一列中的变量类型。快速检查应该会揭示是否存在不匹配的数据类型，例如用文本字符串代替数值或反之。
-
-1.  对于数值列，基本统计信息，计数、平均值、极值等。
-
-1.  每一列中缺失值的数量。这里有一个警告：一些数据天生稀疏。简单地计算列中的缺失值并不能提供关于数据完整性的明确答案；然而，如果你结合对数据含义的了解，它应该可以。
-
-1.  每一列中唯一值的数量。
+1. 整体数据的“外观”。
+2. 表的大小。
+3. 每一列中的变量类型。快速检查应该会揭示是否存在不匹配的数据类型，例如用文本字符串代替数值或反之。
+4. 对于数值列，基本统计信息，计数、平均值、极值等。
+5. 每一列中缺失值的数量。这里有一个警告：一些数据天生稀疏。简单地计算列中的缺失值并不能提供关于数据完整性的明确答案；然而，如果你结合对数据含义的了解，它应该可以。
+6. 每一列中唯一值的数量。
 
 这应该会给你关于你正在处理的数据的良好直觉。
 
 让我们加载我们的示例数据，这样我们就有东西可以分析了：由 Olist 提供的巴西电子商务公共数据集（[www.kaggle.com/datasets/olistbr/brazilian-ecommerce](http://www.kaggle.com/datasets/olistbr/brazilian-ecommerce)）。正如我们在前言中提到的，你需要使用一个免费的 Kaggle 账户。以下列表显示了用于加载数据的代码。（我们展示的执行分析所需的所有代码都可在我们的 GitHub 仓库[`github.com/mariansiwiak/Generative_AI_for_Data_Analytics`](https://github.com/mariansiwiak/Generative_AI_for_Data_Analytics)中找到。）
 
-##### 列表 2.1 准备本章后续分析中的变量
+**列表 2.1 准备本章后续分析中的变量**
 
 ```py
 import pandas as pd
 
 df_customers = pd.read_csv('olist_customers_dataset.csv')
 df_order_items = pd.read_csv('olist_order_items_dataset.csv')
-df_order_payments = pd.read_
-csv('olist_order_payments_dataset.csv')
+df_order_payments = pd.read_csv('olist_order_payments_dataset.csv')
 df_order_reviews = pd.read_csv('olist_order_reviews_dataset.csv')
 df_orders = pd.read_csv('olist_orders_dataset.csv')
-df_products = pd.read_csv('olist_products_dataset.csv')Jupyter
+df_products = pd.read_csv('olist_products_dataset.csv')
 df_sellers = pd.read_csv('olist_sellers_dataset.csv')
-df_product_category_translation = 
-↪pd.read_csv('product_category_name_translation.csv')
+df_product_category_translation = pd.read_csv('product_category_name_translation.csv')
 ```
 
 作为下一步，我们将查看列表 2.1 中 DataFrame 的性质。不幸的是，这意味着要运行我们的生成式 AI 顾问提出的所有下载数据集的命令。这是一个你应该为导入的每一份数据培养的习惯。
@@ -185,31 +158,31 @@ df_product_category_translation =
 
 在我们浏览示例数据中的数据结构时，我们发现两个有趣的观点：
 
-+   `df_customers` DataFrame 中的客户数量和`df_orders` DataFrame 中的订单数量是相同的。有两种可能性。一种可能是每个客户，如系统所识别的，只购买了一次，另一种可能是我们得到了一个不完整的数据集。这两种可能性都与进一步分析有深远的影响。（99,441 行的数量是由为我们生成这个数据集的人任意设定的。在这种情况下，读取数据集的元数据会告诉我们这一点，但让我们假设它不可用。）
+- `df_customers` DataFrame 中的客户数量和`df_orders` DataFrame 中的订单数量是相同的。有两种可能性。一种可能是每个客户，如系统所识别的，只购买了一次，另一种可能是我们得到了一个不完整的数据集。这两种可能性都与进一步分析有深远的影响。（99,441 行的数量是由为我们生成这个数据集的人任意设定的。在这种情况下，读取数据集的元数据会告诉我们这一点，但让我们假设它不可用。）
 
-+   `df_customers` DataFrame 包含两个可疑地相似的列：`customer_id`和`customer_unique_id`。由于我们可能需要在其他 DataFrame 中分析客户属性，允许我们连接它们的列是`customer_id`。因此，这个列非常重要，我们应该停下来询问`customer_id`是否确实是客户的唯一标识。
+- `df_customers` DataFrame 包含两个可疑地相似的列：`customer_id`和`customer_unique_id`。由于我们可能需要在其他 DataFrame 中分析客户属性，允许我们连接它们的列是`customer_id`。因此，这个列非常重要，我们应该停下来询问`customer_id`是否确实是客户的唯一标识。
 
 正如我们提到的，并且会继续提到，不要忽视任何看起来不对的东西！你可以给提供数据的人发邮件询问问题，根据他们的工作量，你可以在几分钟或几个月内得到答案。
 
 如果你不够熟练地掌握现有的分析环境，不要担心！只要你知道你想做什么，你就有生成式 AI 顾问帮助你确定如何操作。
 
-**![image](img/Init-MA.png)**我有一个包含`customer_id`和`order_id`列的 pandas DataFrame。我如何快速检查每位客户是否只下了一单，或者是否有客户下了多单？
+**![image](img/Init-MA.png)** 我有一个包含`customer_id`和`order_id`列的 pandas DataFrame。我如何快速检查每位客户是否只下了一单，或者是否有客户下了多单？
 
-**![image](img/Response.png)**你可以通过在`'customer_id'`列上使用`value_counts()`方法，然后检查最大计数，快速检查每位客户是否只下了一单，或者是否有客户下了多单。以下是一个例子：
+**![image](img/Response.png)** 你可以通过在`'customer_id'`列上使用`value_counts()`方法，然后检查最大计数，快速检查每位客户是否只下了一单，或者是否有客户下了多单。以下是一个例子：
 
 ```py
 import pandas as pd
 
-*# Sample DataFrame*
+# Sample DataFrame
 data = {'customer_id': [1, 2, 3, 4, 2],
         'order_id': [101, 102, 103, 104, 105]}
 
 df = pd.DataFrame(data)
 
-*# Count orders per customer*
+# Count orders per customer
 order_counts = df['customer_id'].value_counts()
 
-*# Check if any customer made more than one order*
+# Check if any customer made more than one order
 if order_counts.max() > 1:
     print("There are customers with more than one order.")
 else:
@@ -218,33 +191,36 @@ else:
 
 在这个例子中，`df['customer_id'].value_counts()`返回一个包含每个唯一`'customer_id'`的订单数量的 pandas `Series`。如果这个`Series`中的最大值大于 1，这意味着至少有一位客户下了多单。
 
-生成式 AI 理解了我们想要达到的目标，并提出了我们可以根据我们的需求进行修改的代码，只需将测试的 DataFrame 名称替换为`df_orders`，就像我们在加载数据集时定义的那样。
 
-你可以在我们放在仓库中的文件中检查结果。它显示，要么我们是从存在客户保留率最低的在线平台获取的数据（每个用户一次访问），要么 `df_orders` DataFrame 中的 `customer_id` 列存在问题。
 
-我们之前提到，`df_customers` DataFrame 中的 `customer_id` 列旁边有一个 `customer_unique_id` 列，如果 `customer_id` 列构建正确，这似乎是多余的。接下来的对话将向你展示，与生成式 AI 一起工作确实不同于使用你以前遇到的任何其他软件。你所需要做的只是提供对需要解决的问题的简单语言解释。
 
-**![image](img/Init-MA.png)** 在我的包含客户数据的 DataFrame 中，我有两个列：`customer_id` 和 `customer_unique_id`。我该如何检查它们之间的关系以及哪个包含实际标识符？
+生成式 AI 理解了我们想要达到的目标，并提出了我们可以根据我们的需求进行修改的代码，只需将测试的 `DataFrame` 名称替换为`df_orders`，就像我们在加载数据集时定义的那样。
 
-**![image](img/Response.png)** 要检查 `customer_id` 和 `customer_unique_id` 列之间的关系以及哪个包含实际标识符，你可以分析每个列中值的唯一性和它们之间的关系。以下是一个使用 pandas 进行此操作的示例：
+你可以在我们放在仓库中的文件中检查结果。它显示，要么我们是从存在客户保留率最低的在线平台获取的数据（每个用户一次访问），要么 `df_orders` `DataFrame` 中的 `customer_id` 列存在问题。
+
+我们之前提到，`df_customers` `DataFrame` 中的 `customer_id` 列旁边有一个 `customer_unique_id` 列，如果 `customer_id` 列构建正确，这似乎是多余的。接下来的对话将向你展示，与生成式 AI 一起工作确实不同于使用你以前遇到的任何其他软件。你所需要做的只是提供对需要解决的问题的简单语言解释。
+
+**![image](img/Init-MA.png)** 在我的包含客户数据的 `DataFrame` 中，我有两个列：`customer_id` 和 `customer_unique_id`。我该如何检查它们之间的关系以及哪个包含实际标识符？
+
+**![image](img/Response.png)** 要检查 `customer_id` 和 `customer_unique_id` 列之间的关系以及哪个包含实际标识符，你可以分析每个列中值的唯一性和它们之间的关系。以下是一个使用 `pandas` 进行此操作的示例：
 
 ```py
 import pandas as pd
 
-*# Sample DataFrame*
+# Sample DataFrame
 data = {'customer_id': [1, 2, 3, 4, 5],
         'customer_unique_id': [1001, 1002, 1002, 1004, 1004]}
 
 df = pd.DataFrame(data)
 
-*# Check the number of unique values in each column*
+# Check the number of unique values in each column
 unique_customer_ids = df['customer_id'].nunique()
 unique_customer_unique_ids = df['customer_unique_id'].nunique()
 
 print(f"Unique customer_id values: {unique_customer_ids}")
 print(f"Unique customer_unique_id values: {unique_customer_unique_ids}")
 
-*# Check the relationship between the two columns*
+# Check the relationship between the two columns
 relationship = df.groupby('customer_unique_id')['customer_id'].nunique()
 
 print("\nRelationship between customer_unique_id and customer_id:")
@@ -253,7 +229,7 @@ print(relationship)
 
 在这个例子中，`df['customer_id'].nunique()` 和 `df['customer_unique_id'].nunique()` 返回每个列中独特值的数量。比较这些数字可以给你一个关于哪个列更有可能包含实际标识符的线索。
 
-接下来，`df.groupby('customer_unique_id')['customer_id'].nunique()` 通过 `customer_unique_id` 列对 DataFrame 进行分组，并计算每个组中独特的 `customer_id` 值的数量。这将帮助你理解这两列之间的关系。
+接下来，`df.groupby('customer_unique_id')['customer_id'].nunique()` 通过 `customer_unique_id` 列对 `DataFrame` 进行分组，并计算每个组中独特的 `customer_id` 值的数量。这将帮助你理解这两列之间的关系。
 
 根据结果，你可以确定哪个列包含实际标识符以及它们是如何相关的。例如，如果 `customer_unique_id` 有较少的独特值，并且每个 `customer_unique_id` 映射到多个 `customer_id` 值，这可能表明 `customer_unique_id` 是实际标识符，而 `customer_id` 代表每个独特客户的多条记录或交易。
 
@@ -263,39 +239,37 @@ print(relationship)
 
 **![image](img/Init-MA.png)** 使用我的数据，你之前代码生成的 `relationship` `Series` 太长，无法手动检查。你能提出一种分析其内容的方法吗？
 
-**![image](img/Response.png)** 当然！你可以通过生成 `relationship Series` 内容的总结来分析它，例如每个 `customer_unique_id` 的唯一 `customer_id` 值的最小值、最大值、平均值和计数。以下是如何做到这一点的示例：
+**![image](img/Response.png)** 当然！你可以通过生成 `relationship` `Series` 内容的总结来分析它，例如每个 `customer_unique_id` 的唯一 `customer_id` 值的最小值、最大值、平均值和计数。以下是如何做到这一点的示例：
 
 ```py
 import pandas as pd
 
-*# Sample DataFrame*
+# Sample DataFrame
 data = {'customer_id': [1, 2, 3, 4, 5, 6, 7],
         'customer_unique_id': [1001, 1002, 1002, 1004, 1004, 1001, 1004]}
 
 df = pd.DataFrame(data)
 
-*# Check the number of unique values in each column*
+# Check the number of unique values in each column
 unique_customer_ids = df['customer_id'].nunique()
 unique_customer_unique_ids = df['customer_unique_id'].nunique()
 
 print(f"Unique customer_id values: {unique_customer_ids}")
 print(f"Unique customer_unique_id values: {unique_customer_unique_ids}")
 
-*# Check the relationship between the two columns*
+# Check the relationship between the two columns
 relationship = df.groupby('customer_unique_id')['customer_id'].nunique()
 
-print("\nSummary of the relationship between customer_unique_id and
-↪customer_id:")
+print("\nSummary of the relationship between customer_unique_id and customer_id:")
 print(f"Min: {relationship.min()}")
 print(f"Max: {relationship.max()}")
 print(f"Mean: {relationship.mean()}")
-print(f"Count of unique customer_id values per
-↪customer_unique_id:\n{relationship.value_counts().sort_index()}")
+print(f"Count of unique customer_id values per customer_unique_id:\n{relationship.value_counts().sort_index()}")
 ```
 
 在这个例子中，`customer_unique_id` 和 `customer_id` 列之间的关系总结包括每个 `customer_unique_id` 的唯一 `customer_id` 值的最小值、最大值和平均值。此外，`relationship.value_counts().sort_index()` 方法返回每个 `customer_unique_id` 的唯一 `customer_id` 值的计数，并按索引（即唯一 `customer_id` 值的数量）排序。
 
-这个总结将帮助你更好地理解两个列之间的关系，而无需手动检查整个 `relationship Series`。
+这个总结将帮助你更好地理解两个列之间的关系，而无需手动检查整个 `relationship` `Series`。
 
 在我们运行生成式 AI 顾问建议的代码后，结果确实更容易消化：
 
@@ -336,13 +310,10 @@ Name: customer_id, dtype: int64
 
 为了确保你的数据在技术上干净，你应该做以下事情：
 
-1.  删除重复项。
-
-1.  处理缺失值。
-
-1.  纠正数据输入错误。
-
-1.  验证数据。
+1. 删除重复项。
+2. 处理缺失值。
+3. 纠正数据输入错误。
+4. 验证数据。
 
 这些步骤应确保你的表格包含描述业务流程的数据点，而不是数据收集和准备过程中的遗迹。下一阶段应使你对数据的含义有更好的理解。
 
@@ -352,13 +323,10 @@ Name: customer_id, dtype: int64
 
 你应该为所有你接触到的数据采用的 EDA 基本结构可能看起来像这样：
 
-1.  *变量分布测试*—数据样本的特征是什么，例如均值、标准差、范围等？
-
-1.  *变量可视化*—你能从数据的视觉表示中读出什么？
-
-1.  *数据含义澄清*—数据是否代表你所认为的含义？
-
-1.  *数据映射和协调*—所有数据点是否使用相同的单位进行采样，以及标题是否使用标准化的描述词汇？
+1. *变量分布测试*—数据样本的特征是什么，例如均值、标准差、范围等？
+2. *变量可视化*—你能从数据的视觉表示中读出什么？
+3. *数据含义澄清*—数据是否代表你所认为的含义？
+4. *数据映射和协调*—所有数据点是否使用相同的单位进行采样，以及标题是否使用标准化的描述词汇？
 
 有些人会在 EDA 中添加额外的步骤，比如相关性测试或文本分析。其他人也会添加特征工程。根据你的数据，他们的方法可能更适合你的需求。
 
@@ -366,11 +334,9 @@ Name: customer_id, dtype: int64
 
 我们认为并不存在一种通用的、万能的、万能的数据准备协议。我们相信将导致高质量数据的通用框架如下：
 
-+   理解你的数据与现实之间的关系（每个变量的含义以及它是如何生成的）。
-
-+   确保数据符合一些基本的技术标准（即你正在处理所有可用的*相关*数据点，并在需要时可以在数据源之间进行交叉关联）。
-
-+   在你使用数据分析现实之前，先分析数据本身（确保它符合基于专业知识或常识的预期）。
++ 理解你的数据与现实之间的关系（每个变量的含义以及它是如何生成的）。
++ 确保数据符合一些基本的技术标准（即你正在处理所有可用的*相关*数据点，并在需要时可以在数据源之间进行交叉关联）。
++ 在你使用数据分析现实之前，先分析数据本身（确保它符合基于专业知识或常识的预期）。
 
 在以下章节中，我们将通过一个示例来演示，并确保数据描述的是基于现实的现象。
 
@@ -390,20 +356,20 @@ Name: customer_id, dtype: int64
 
 你如何有效地消除重复记录，以避免过度表示某些数据点，这可能会歪曲分析结果？这取决于你的分析环境。你需要记住细节吗？当然不需要！
 
-**![image](img/Init-MA.png)**如何从 DataFrame 中删除重复项？
+**![image](img/Init-MA.png)**如何从 `DataFrame` 中删除重复项？
 
-**![image](img/Response.png)**要从 DataFrame 中删除重复项，可以使用 `drop_duplicates()` 方法。默认情况下，它在识别重复项时考虑所有列，并保留重复行的第一个出现。以下是一个示例：
+**![image](img/Response.png)**要从 `DataFrame` 中删除重复项，可以使用 `drop_duplicates()` 方法。默认情况下，它在识别重复项时考虑所有列，并保留重复行的第一个出现。以下是一个示例：
 
 ```py
 import pandas as pd
 
-*# Sample DataFrame with duplicate rows*
+# Sample DataFrame with duplicate rows
 data = {'A': [1, 2, 2, 4, 5, 1],
         'B': [6, 7, 7, 9, 10, 6]}
 
 df = pd.DataFrame(data)
 
-*# Remove duplicate rows*
+# Remove duplicate rows
 df_no_duplicates = df.drop_duplicates()
 
 print("Original DataFrame:")
@@ -416,7 +382,7 @@ print(df_no_duplicates)
 如果你想要根据一组特定的列删除重复项，可以使用 `subset` 参数：
 
 ```py
-*# Remove duplicates based on column 'A'*
+# Remove duplicates based on column 'A'
 df_no_duplicates = df.drop_duplicates(subset=['A'])
 
 print("\nDataFrame without duplicates based on column 'A':")
@@ -442,6 +408,8 @@ print(df_no_duplicates)
 在我们的示例数据中，我们应该注意到三个数据框，其中某些列的非空值数量与行数不同（这意味着不仅仅是空列）。这些是`df_orders`、`df_order_reviews`和`df_products`。
 
 在`df_orders`数据框中，我们注意到一些审批和交付日期缺失。我们将在第 2.6 节中使用这个数据框来分析数据所描述的底层过程以及订单状态与缺失日期之间的关系。
+
+
 
 在`df_products`的情况下，我们缺少一些类别名称、相同数量的产品名称、描述长度和图片，以及一些产品尺寸数据。让我们看看我们能否通过查看某些值缺失的产品来说明一些问题。
 
@@ -635,17 +603,31 @@ value_counts().sort_index().plot(kind='bar')
 
 1.  5. 审查响应时间：通过从`review_creation_date`中减去`review_answer_timestamp`来计算每个审查的响应时间。分析响应时间的分布，并调查响应时间与审查分数之间是否存在关系。
 
+
+
+# 文本分析与探索
+
+## 数据探索性分析（EDA）步骤
+
+首先，我们计算订单评论的响应时间：
+
 ```py
 df_order_reviews['response_time'] = 
 ↪df_order_reviews['review_answer_timestamp'] -
 ↪df_order_reviews['review_creation_date']
 ```
 
-1.  6. 文本分析：探索`review_comment_title`和`review_comment_message`列中的文本数据。你可以执行情感分析、主题建模或词频分析，以识别审查中提到的常见主题、模式或问题。
+### 文本分析
 
-1.  7. 调查不明确的列：为了理解`review_answer_timestamp`列，你可以分析它与其他列的关系，例如`review_creation_date`或`review_score`。绘制散点图、计算相关性或执行其他统计测试可以帮助你确定此列的目的。
+探索`review_comment_title`和`review_comment_message`列中的文本数据。你可以执行情感分析、主题建模或词频分析，以识别审查中提到的常见主题、模式或问题。
 
-1.  8. 具有多个审查的订单：检查是否存在具有多个审查的订单。这可能会表明数据输入错误或提供对审查过程的见解。
+### 调查不明确的列
+
+为了理解`review_answer_timestamp`列，你可以分析它与其他列的关系，例如`review_creation_date`或`review_score`。绘制散点图、计算相关性或执行其他统计测试可以帮助你确定此列的目的。
+
+### 具有多个审查的订单
+
+检查是否存在具有多个审查的订单。这可能会表明数据输入错误或提供对审查过程的见解。
 
 ```py
 order_review_counts = df_order_reviews['order_id'].value_counts()
@@ -656,7 +638,7 @@ multiple_review_orders = order_review_counts[order_review_counts > 1]
 
 上述答案来自 ChatGPT-v4，因为它是最全面的。它制定了一个坚实的 EDA 计划，一次涉及多个主题。它展示了不同分析层次之间的重叠。你看到我们在数据清理阶段执行的一些步骤并不奇怪。在我们看来，其他步骤是数据分析本身的元素。正如我们提到的，没有 EDA 的黄金标准，生成式 AI 通常提供最广泛的答案。
 
-### 2.6.1 审查分数分布
+## 审查分数分布
 
 让我们暂时回到我们的抛硬币赌博问题。如果你还记得，在本章开头，我们说，“……如果你多次抛硬币并且每次都得到预期的反面，那么这枚硬币可能根本不是随机的。”在投注硬币之前，你绝对应该检查结果分布。如果它是真的随机，你很可能根本不应该投注它，但如果它不是随机的，你可以利用它来获得优势。你可以像测试多维硬币一样思考审查分数分布。
 
@@ -676,53 +658,51 @@ multiple_review_orders = order_review_counts[order_review_counts > 1]
 
 ##### 图 2.2 常见的数据分布
 
-#### 正态分布
+### 正态分布
 
 正态分布也称为高斯分布或“钟形曲线”。由于中心极限定理，它通常是连续数据的第一个假设，该定理认为，足够大数量的独立随机变量的平均值，每个随机变量都有有限的平均值和方差，将大致呈正态分布，无论其基本分布如何。但要注意，一些统计测试高度依赖于数据分布的正态性假设。如果你的数据是偏斜的，你的测试结果可能会受到影响。
 
 正态分布对于销售数字、个人身高和测量误差等指标特别相关。
 
-#### 二项分布
+### 二项分布
 
 二项分布用于数据中的二元结果，如抛硬币。当处理成功/失败、是/否或 1/0 类型的结果时，例如 A/B 测试中的转化率、质量控制中的通过/失败率或在线广告中的点击率，这种分布是相关的。
 
 在二项分布图中看到超过两个条形图常常会导致混淆，所以让我们立即消除这种困惑。二项分布描述了在固定数量的独立伯努利试验中成功的次数，每个试验的成功概率相同。当你看到超过两个箱子的二项分布时，它并不只代表一个试验（这将只产生两种结果：成功或失败，1 或 0）。相反，它代表多个试验的结果，因此可以有超过两个箱子。
 
-例如，假设你分析了*n*=10 个不同试验的二项分布。在这种情况下，分布不仅显示两种结果，还显示了在 10 次试验中实现 0、1、2、...，直到 10 次成功的概率。在这个背景下，“条形”代表成功的次数：一个条形代表 0 次成功，另一个条形代表 1 次成功，以此类推，直到 10 次成功。所以虽然每个单独的试验都有二元结果，但
+例如，假设你分析了*n*=10 个不同试验的二项分布。在这种情况下，分布不仅显示两种结果，还显示了在 10 次试验中实现 0、1、2、...，直到 10 次成功的概率。在这个背景下，“条形”代表成功的次数：一个条形代表 0 次成功，另一个条形代表 1 次成功，以此类推，直到 10 次成功。所以虽然每个单独的试验都有二元结果，但多个试验的汇总结果可以从 0 次成功（全部失败）到*n*次成功（全部成功）不等，导致*n*+1 种可能的结果。因此，分布表示中的条形数量。
 
-多个试验的汇总结果可以从 0 次成功（全部失败）到*n*次成功（全部成功）不等，导致*n*+1 种可能的结果。因此，分布表示中的条形数量。
-
-#### 均匀分布
+### 均匀分布
 
 均匀分布假设所有结果的可能性相同。它通常是模拟或建模无偏随机变量（如随机数字、等概率场景的模拟或没有先验信息时）的起始假设。
 
 虽然这种分布在实际业务数据中不太常见，但值得记住。
 
-#### 泊松分布
+### 泊松分布
 
 泊松分布适用于计数数据，其中事件在空间或时间上以恒定的速率独立发生。它通常用于模拟在固定时间或空间间隔内事件发生的次数。
 
 你可能会在分析每小时客户到达次数、产品的日需求量或系统的故障次数时遇到这种分布。
 
-#### 指数分布
+### 指数分布
 
 指数分布通常用于模拟泊松过程中的事件之间的时间，表示事件发生的时间。
 
 在处理机器在故障前的工作寿命、客户下一次购买的时间或排队系统中的到达时间间隔时寻找这种分布。
 
-#### 对数正态分布
+### 对数正态分布
 
 对数正态分布在处理许多独立随机变量的乘积变量时发挥作用。当数据不能为负且分布右偏时使用。
 
 你会在涉及股票或房地产价格或收入分布的数据集中遇到这种分布。
 
-#### 贝塔分布
+### 贝塔分布
 
 贝塔分布用于建模两侧有界的变量，如比例和百分比。它灵活且可以假设多种形状，使其适合于建模限制在区间内的随机变量的行为。
 
 这种分布出现在数据表示转换率，其值介于 0 和 1 之间时。
 
-#### 伽马分布
+### 伽马分布
 
 伽马分布与指数分布相关，并且对于建模泊松过程中的第*n*个事件的等待时间很有用。
 
@@ -730,7 +710,7 @@ multiple_review_orders = order_review_counts[order_review_counts > 1]
 
 注意：能否使用多模态生成式 AI 从图表中识别分布类型？在撰写本书时，还不能。我们尝试将图 2.2 的部分内容输入到不同的生成式 AI 中，它们的答案往往像误导一样多样化。然而，生成式 AI 仍然可以指导你通过适当的测试程序。
 
-### 2.6.2 时间序列探索
+## 时间序列探索
 
 现在我们进入了一个灰色地带。你可能会遇到关于将分析随时间的变化作为 EDA 的一部分或作为深入分析本身的讨论。一方面，可视化所有时间序列是 EDA 的一部分。有时这会让你能够识别出需要清理的异常值或错误。另一方面，这些异常值可能编码了业务流程中的重大问题或事件。
 
@@ -740,7 +720,7 @@ multiple_review_orders = order_review_counts[order_review_counts > 1]
 
 我们建议在第一次 EDA 迭代时运行两个测试。首先，我们将可视化并查看数据以寻找异常值；其次，我们将执行周期性检测。
 
-#### 响应数量的变化：快速数据可视化
+### 响应数量的变化：快速数据可视化
 
 我们看到过这样的情况，一个项目被归功于成功，实际上是由整体市场变化或另一个业务功能的性能所引起的。仔细观察不同变量随时间的变化确实可以提供非常有价值的信息！
 
@@ -754,7 +734,7 @@ multiple_review_orders = order_review_counts[order_review_counts > 1]
 
 如果我们要定量比较不同时间点涉及评论数量的指标，这些信息可能是至关重要的。现在我们已经检查了评论数量，让我们继续检查与评论相关的分数。
 
-#### 随时间变化的评论分数变化
+### 随时间变化的评论分数变化
 
 一些数据预计将是周期性的，而其他数据则不是那么明显。发现和描述数据中的周期可以帮助你确定你提供的数据集是否与解释相关业务流程相关。
 
@@ -764,7 +744,7 @@ multiple_review_orders = order_review_counts[order_review_counts > 1]
 
 **![image](img/Response.png)**检测数据中的内部周期性涉及识别随时间重复出现的模式或周期性波动。时间序列数据是可能存在周期性的常见例子。以下是一些检测数据中周期性的技术：
 
-1.  视觉检查：将数据随时间绘制出来，以视觉检查是否存在任何明显的周期性模式。这可能是一种快速简单的方法来识别明显的模式。
+1. 视觉检查：将数据随时间绘制出来，以视觉检查是否存在任何明显的周期性模式。这可能是一种快速简单的方法来识别明显的模式。
 
 ```py
 import matplotlib.pyplot as plt
@@ -776,19 +756,19 @@ plt.title('Time Series Data')
 plt.show()
 ```
 
-1.  2. 季节性分解：使用经典分解或季节性和趋势分解使用局部加权回归（STL）等方法将时间序列数据分解为其趋势、季节性和残差成分。这可以帮助你直接观察到季节性成分。
+2. 季节性分解：使用经典分解或季节性和趋势分解使用局部加权回归（STL）等方法将时间序列数据分解为其趋势、季节性和残差成分。这可以帮助你直接观察到季节性成分。
 
 ```py
 <Dysfunctional code was here>
 ```
 
-1.  3. 自相关和偏自相关：绘制自相关函数（ACF）和偏自相关函数（PACF），以识别任何表明周期性模式的显著滞后。
+3. 自相关和偏自相关：绘制自相关函数（ACF）和偏自相关函数（PACF），以识别任何表明周期性模式的显著滞后。
 
 ```py
 <Dysfunctional code was here>
 ```
 
-1.  4. 频谱分析：使用快速傅里叶变换（FFT）或 Lomb-Scargle 周期图进行频谱分析，以识别数据中的主导频率，这些频率可能对应周期性模式。
+4. 频谱分析：使用快速傅里叶变换（FFT）或 Lomb-Scargle 周期图进行频谱分析，以识别数据中的主导频率，这些频率可能对应周期性模式。
 
 ```py
 <Dysfunctional code was here>
@@ -816,7 +796,7 @@ plt.show()
 
 下面是分析周期性依赖关系的分步指南：
 
-1.  根据你数据的长度和分辨率，将时间戳转换为更合适的频率（例如，每日、每周或每月）。
+1. 根据你数据的长度和分辨率，将时间戳转换为更合适的频率（例如，每日、每周或每月）。
 
 ```py
 *# Create a new column with the timestamp at the desired frequency* 
@@ -825,7 +805,7 @@ df_order_reviews['date_daily'] =
 ↪df_order_reviews['review_creation_date'].dt.date
 ```
 
-1.  2. 对每个时间段的每个得分进行汇总，并计算每个得分在各个时间段的占比。
+2. 对每个时间段的每个得分进行汇总，并计算每个得分在各个时间段的占比。
 
 ```py
 *# Group by date_daily and calculate the proportion of each score*
@@ -834,7 +814,7 @@ score_counts = df_order_reviews.groupby(['date_daily',
 score_proportions = score_counts.div(score_counts.sum(axis=1), axis=0)
 ```
 
-1.  3. 创建堆叠条形图来可视化得分随时间的占比。
+3. 创建堆叠条形图来可视化得分随时间的占比。
 
 ```py
 score_proportions.plot(kind='bar', stacked=True, figsize=(15, 6))
@@ -863,7 +843,7 @@ plt.show()
 
 **![image](img/Response.png)**要将频率改为每月一次，您需要相应地重新采样您的数据。以下是您如何修改代码以按月聚合数据的示例：
 
-1.  将时间戳转换为更合适的频率（例如，每月）。
+1. 将时间戳转换为更合适的频率（例如，每月）。
 
 ```py
 *# Create a new column with the timestamp at the desired frequency* 
@@ -872,7 +852,7 @@ df_order_reviews['month'] =
 ↪df_order_reviews['review_creation_date'].dt.to_period('M')
 ```
 
-1.  2. 对分数进行聚合，并计算每个时间段的每个分数的比例。
+2. 对分数进行聚合，并计算每个时间段的每个分数的比例。
 
 ```py
 *# Group by month and calculate the proportion of each score*
@@ -881,7 +861,7 @@ score_counts = df_order_reviews.groupby(['month',
 score_proportions = score_counts.div(score_counts.sum(axis=1), axis=0)
 ```
 
-1.  3. 创建一个堆叠条形图来可视化分数随时间的变化比例。
+3. 创建一个堆叠条形图来可视化分数随时间的变化比例。
 
 ```py
 score_proportions.plot(kind='bar', stacked=True, figsize=(15, 6))
@@ -894,6 +874,8 @@ plt.show()
 
 现在，分析将在月度级别进行，这有助于揭示数据中的长期周期性模式。请根据您的需求和数据的粒度自由调整频率。
 
+
+
 ……有很大可能性生成式 AI 能够解决这个问题。图 2.6 展示了按月聚合的评分随时间分布。
 
 我们可以看到，2016 年 11 月和 12 月低分有显著上升，也许，只是也许，春季低分有周期性上升，但信号如此微弱，除非我们想要运行一些精确的预测分析，否则我们不会深入挖掘。
@@ -902,9 +884,9 @@ plt.show()
 
 ![图](img/CH02_F06_Siwiak3.png)
 
-##### 图 2.6 *随时间变化的订单分数分布—月度汇总*
+##### 图 2.6 随时间变化的订单分数分布—月度汇总
 
-*### 2.6.3 神秘变量调查
+### 2.6.3 神秘变量调查
 
 如果神秘变量还没有成为你作为数据分析师日常生活中的困扰，那么你可能会期待它们的出现。我们提到过，并且还会再次强调，没有任何东西能比坚实的元数据更有效，但像详尽的文档和数据管道这样的东西，在日益增加的时间压力下被视为一种奢侈。因此，你的一些数据可能来自文档记录不佳的系统。尽管我们强烈反对出于任何原因（除了为你的服务器室供暖）使用未经证实的数据，但有时可以推断出一些变量的含义，达到令人满意的确定性水平。
 
@@ -922,7 +904,7 @@ plt.show()
 
 这里是分析这两列之间关系的逐步指南：
 
-1.  计算从`review_answer_timestamp`到`review_creation_date`的时间差异。
+1. 计算从`review_answer_timestamp`到`review_creation_date`的时间差异。
 
 ```py
 df_order_reviews['time_diff'] = 
@@ -932,18 +914,18 @@ df_order_reviews['time_diff'] =
 
 `time_diff`列现在包含秒为单位的时间差异。
 
-1.  2. 计算时间差异的基本统计量，以获得分布的概述。
+2. 计算时间差异的基本统计量，以获得分布的概述。
 
 ```py
 time_diff_summary = df_order_reviews['time_diff'].describe()
 print(time_diff_summary)
 ```
 
-1.  3. 使用直方图或箱线图可视化时间差异的分布。
+3. 使用直方图或箱线图可视化时间差异的分布。
 
 ```py
 import matplotlib.pyplot as plt
-*# Histogram*
+# Histogram
 df_order_reviews['time_diff'].plot(kind='hist', bins=50)
 plt.xlabel('Time Difference (Seconds)')
 plt.ylabel('Frequency')
@@ -951,7 +933,7 @@ plt.title('Distribution of Time Difference Between Review Creation and
 ↪Answer')
 plt.show()
 
-*# Box plot*
+# Box plot
 df_order_reviews['time_diff'].plot(kind='box', vert=False)
 plt.xlabel('Time Difference (Seconds)')
 plt.title('Box Plot of Time Difference Between Review Creation and
@@ -1030,7 +1012,7 @@ df_orders_reviews = merged_df
 
 **![image](img/Response.png)**要将 `df_customers` 中的有效 `customer_unique_id` 分配给 `df_order_reviews` 中的每个 `order_id`，你首先需要将 `df_orders` 与 `df_customers` 合并，以创建包含 `order_id` 和 `customer_unique_id` 列的 DataFrame。然后，将这个新的 DataFrame 与 `df_order_reviews` 合并。以下是逐步操作的方法：
 
-1.  在 `customer_id` 列上合并 `df_orders` 和 `df_customers` DataFrame。
+1. 在 `customer_id` 列上合并 `df_orders` 和 `df_customers` DataFrame。
 
 ```py
 orders_customers = df_orders.merge(df_customers, on='customer_id', 
@@ -1039,7 +1021,7 @@ orders_customers = df_orders.merge(df_customers, on='customer_id',
 
 现在，`orders_customers` DataFrame 包含 `order_id` 和 `customer_unique_id` 列。
 
-1.  2. 在 `order_id` 列上合并 `df_order_reviews` 和 `orders_customers` DataFrame。
+2. 在 `order_id` 列上合并 `df_order_reviews` 和 `orders_customers` DataFrame。
 
 ```py
 merged_df = df_order_reviews.merge(orders_customers[['order_id', 
@@ -1080,26 +1062,23 @@ else:
 
 ##### 询问生成式 AI 的事项
 
-+   来自 <some_business_area> 的数据通常的数据结构是什么？
++ 来自 `<some_business_area>` 的数据通常的数据结构是什么？
 
-+   我应该在提供的 DataFrame 中测试哪些数据质量问题？
++ 我应该在提供的 DataFrame 中测试哪些数据质量问题？
 
-+   描述 <some_activity> 的列我应该期望什么分布？
 
-+   我如何处理 <a_clear_description_of_the_encountered_problem>？
+
+# 常见问题
+
++ 描述 `<some_activity>` 的列我应该期望什么分布？
++ 我如何处理 `<a_clear_description_of_the_encountered_problem>`？
 
 ## 摘要
 
-+   注意你与你的生成式 AI 咨询师对话的上下文。请它总结其对上下文的理解（如果你想在同一主题上开始新的会话，这尤其有用，例如研究不同的方法）。
-
-+   不要害怕提醒你的 AI 咨询师当前工作的目的或使用的变量名。记住，它的目的是取悦，而不是精确。
-
-+   没有比查看数据更好的方式来理解数据了。
-
-+   在评估数据质量时，检查其结构、一致性和内容是至关重要的。
-
-+   仔细检查你的数据，三重检查，并在你仍有疑问时联系数据提供者以获得澄清。
-
-+   将数据质量调查与实际深入分析分开是一个良好的实践 . . .
-
-+   . . . 然而，数据清洗和探索性数据分析（EDA）是数据分析的不可或缺部分，你可能会比你希望的更早重复它们。*
++ 注意你与你的生成式 AI 咨询师对话的上下文。请它总结其对上下文的理解（如果你想在同一主题上开始新的会话，这尤其有用，例如研究不同的方法）。
++ 不要害怕提醒你的 AI 咨询师当前工作的目的或使用的变量名。记住，它的目的是取悦，而不是精确。
++ 没有比查看数据更好的方式来理解数据了。
++ 在评估数据质量时，检查其结构、一致性和内容是至关重要的。
++ 仔细检查你的数据，三重检查，并在你仍有疑问时联系数据提供者以获得澄清。
++ 将数据质量调查与实际深入分析分开是一个良好的实践……
++ ……然而，数据清洗和探索性数据分析（EDA）是数据分析的不可或缺部分，你可能会比你希望的更早重复它们。

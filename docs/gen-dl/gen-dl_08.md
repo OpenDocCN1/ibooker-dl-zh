@@ -1,3 +1,4 @@
+
 # 第五章：自回归模型
 
 到目前为止，我们已经探讨了两种涉及潜变量的生成模型家族——变分自动编码器（VAEs）和生成对抗网络（GANs）。在这两种情况下，引入了一个新变量，其分布易于抽样，模型学习如何将此变量*解码*回原始领域。
@@ -6,31 +7,31 @@
 
 在本章中，我们将探讨两种不同的自回归模型：长短期记忆网络和 PixelCNN。我们将把 LSTM 应用于文本数据，将 PixelCNN 应用于图像数据。我们将在第九章中详细介绍另一个非常成功的自回归模型 Transformer。
 
-# 介绍
+## 介绍
 
 为了理解 LSTM 的工作原理，我们将首先访问一个奇怪的监狱，那里的囚犯们组成了一个文学社团...​
 
 Sopp 先生及其众包寓言的故事是对一种臭名昭著的用于文本等序列数据的自回归技术的类比：长短期记忆网络。
 
-# 长短期记忆网络（LSTM）
+## 长短期记忆网络（LSTM）
 
 LSTM 是一种特殊类型的循环神经网络（RNN）。RNN 包含一个循环层（或*单元），能够通过使其在特定时间步的输出成为下一个时间步的输入的一部分来处理序列数据。
 
-当 RNN 首次引入时，循环层非常简单，仅包含一个 tanh 运算符，确保在时间步之间传递的信息在-1 和 1 之间缩放。然而，这种方法被证明存在梯度消失问题，并且在处理长序列数据时不具备良好的可扩展性。
+当 RNN 首次引入时，循环层非常简单，仅包含一个 `tanh` 运算符，确保在时间步之间传递的信息在 -1 和 1 之间缩放。然而，这种方法被证明存在梯度消失问题，并且在处理长序列数据时不具备良好的可扩展性。
 
 LSTM 单元最初是在 1997 年由 Sepp Hochreiter 和 Jürgen Schmidhuber 的一篇论文中首次引入的。¹在这篇论文中，作者描述了 LSTM 不会像普通 RNN 那样遭受梯度消失问题，并且可以在数百个时间步长的序列上进行训练。自那时以来，LSTM 架构已经被改进和改良，变体如门控循环单元（本章后面讨论）现在被广泛应用并作为 Keras 中的层可用。
 
 LSTM 已经应用于涉及序列数据的各种问题，包括时间序列预测、情感分析和音频分类。在本章中，我们将使用 LSTM 来解决文本生成的挑战。
 
-# 运行此示例的代码
+## 运行此示例的代码
 
-此示例的代码可以在位于书籍存储库中的 Jupyter 笔记本中找到，路径为*notebooks/05_autoregressive/01_lstm/lstm.ipynb*。
+此示例的代码可以在位于书籍存储库中的 Jupyter 笔记本中找到，路径为 `notebooks/05_autoregressive/01_lstm/lstm.ipynb`。
 
-## 食谱数据集
+### 食谱数据集
 
-我们将使用通过 Kaggle 提供的[Epicurious 食谱数据集](https://oreil.ly/laNUt)。这是一个包含超过 20,000 个食谱的数据集，附带有营养信息和配料清单等元数据。
+我们将使用通过 Kaggle 提供的 [Epicurious 食谱数据集](https://oreil.ly/laNUt)。这是一个包含超过 20,000 个食谱的数据集，附带有营养信息和配料清单等元数据。
 
-您可以通过在书籍存储库中运行 Kaggle 数据集下载脚本来下载数据集，如示例 5-1 所示。这将把食谱和相关元数据保存到本地的*/data*文件夹中。
+您可以通过在书籍存储库中运行 Kaggle 数据集下载脚本来下载数据集，如示例 5-1 所示。这将把食谱和相关元数据保存到本地的 `/data` 文件夹中。
 
 ##### 示例 5-1。下载 Epicurious 食谱数据集
 
@@ -38,7 +39,7 @@ LSTM 已经应用于涉及序列数据的各种问题，包括时间序列预测
 bash scripts/download_kaggle_data.sh hugodarwood epirecipes
 ```
 
-`示例 5-2 展示了如何加载和过滤数据，以便只保留具有标题和描述的食谱。示例中给出了一个食谱文本字符串，详见示例 5-3。
+示例 5-2 展示了如何加载和过滤数据，以便只保留具有标题和描述的食谱。示例中给出了一个食谱文本字符串，详见示例 5-3。
 
 ##### 示例 5-2。加载数据
 
@@ -73,25 +74,27 @@ cornichons, and potatoes. Pulse peas with marjoram, oil, 1/2 teaspoon pepper, an
 salad, over ham.
 ```
 
-在看如何在 Keras 中构建 LSTM 网络之前，我们必须先快速了解文本数据的结构以及它与本书中迄今为止看到的图像数据有何不同。## 处理文本数据
+在看如何在 Keras 中构建 LSTM 网络之前，我们必须先快速了解文本数据的结构以及它与本书中迄今为止看到的图像数据有何不同。
+
+### 处理文本数据
 
 文本和图像数据之间存在几个关键差异，这意味着许多适用于图像数据的方法并不适用于文本数据。特别是：
 
-+   文本数据由离散块（字符或单词）组成，而图像中的像素是连续色谱中的点。我们可以轻松地将绿色像素变成蓝色，但我们不清楚应该如何使单词“猫”更像单词“狗”，例如。这意味着我们可以轻松地将反向传播应用于图像数据，因为我们可以计算损失函数相对于单个像素的梯度，以确定像素颜色应该如何改变以最小化损失的方向。对于离散文本数据，我们不能明显地以同样的方式应用反向传播，因此我们需要找到解决这个问题的方法。
++ 文本数据由离散块（字符或单词）组成，而图像中的像素是连续色谱中的点。我们可以轻松地将绿色像素变成蓝色，但我们不清楚应该如何使单词“猫”更像单词“狗”，例如。这意味着我们可以轻松地将反向传播应用于图像数据，因为我们可以计算损失函数相对于单个像素的梯度，以确定像素颜色应该如何改变以最小化损失的方向。对于离散文本数据，我们不能明显地以同样的方式应用反向传播，因此我们需要找到解决这个问题的方法。
 
-+   文本数据具有时间维度但没有空间维度，而图像数据具有两个空间维度但没有时间维度。文本数据中单词的顺序非常重要，单词倒过来就没有意义，而图像通常可以翻转而不影响内容。此外，单词之间通常存在长期的顺序依赖关系，模型需要捕捉这些依赖关系：例如，回答问题或延续代词的上下文。对于图像数据，所有像素可以同时处理。
++ 文本数据具有时间维度但没有空间维度，而图像数据具有两个空间维度但没有时间维度。文本数据中单词的顺序非常重要，单词倒过来就没有意义，而图像通常可以翻转而不影响内容。此外，单词之间通常存在长期的顺序依赖关系，模型需要捕捉这些依赖关系：例如，回答问题或延续代词的上下文。对于图像数据，所有像素可以同时处理。
 
-+   文本数据对个体单位（单词或字符）的微小变化非常敏感。图像数据通常对个体像素单位的变化不太敏感——即使一些像素被改变，房子的图片仍然可以被识别为房子——但是对于文本数据，即使改变几个单词也可能极大地改变段落的含义，或使其毫无意义。这使得训练模型生成连贯文本非常困难，因为每个单词对段落的整体含义至关重要。
++ 文本数据对个体单位（单词或字符）的微小变化非常敏感。图像数据通常对个体像素单位的变化不太敏感——即使一些像素被改变，房子的图片仍然可以被识别为房子——但是对于文本数据，即使改变几个单词也可能极大地改变段落的含义，或使其毫无意义。这使得训练模型生成连贯文本非常困难，因为每个单词对段落的整体含义至关重要。
 
-+   文本数据具有基于规则的语法结构，而图像数据不遵循有关如何分配像素值的固定规则。例如，在任何情况下写“猫坐在上面”都没有语法意义。还有一些语义规则极其难以建模；即使从语法上讲，“我在海滩上”这个陈述没有问题，但意义上是不通顺的。
++ 文本数据具有基于规则的语法结构，而图像数据不遵循有关如何分配像素值的固定规则。例如，在任何情况下写“猫坐在上面”都没有语法意义。还有一些语义规则极其难以建模；即使从语法上讲，“我在海滩上”这个陈述没有问题，但意义上是不通顺的。
 
-# 基于文本的生成式深度学习的进展
+### 基于文本的生成式深度学习的进展
 
 直到最近，大多数最复杂的生成式深度学习模型都集中在图像数据上，因为前面列表中提到的许多挑战甚至超出了最先进技术的范围。然而，在过去的五年中，在基于文本的生成式深度学习领域取得了惊人的进展，这要归功于 Transformer 模型架构的引入，我们将在第九章中探讨。
 
 考虑到这些要点，让我们现在来看看我们需要采取哪些步骤，以便将文本数据整理成适合训练 LSTM 网络的形式。
 
-## 标记化
+#### 标记化
 
 第一步是清理和标记化文本。标记化是将文本分割成单独的单位，如单词或字符的过程。
 
@@ -99,23 +102,23 @@ salad, over ham.
 
 如果使用单词标记：
 
-+   所有文本都可以转换为小写，以确保句子开头的大写单词与句子中间出现的相同单词以相同方式进行标记化。然而，在某些情况下，这可能不是理想的；例如，一些专有名词，如姓名或地点，可能受益于保持大写，以便它们被独立标记化。
++ 所有文本都可以转换为小写，以确保句子开头的大写单词与句子中间出现的相同单词以相同方式进行标记化。然而，在某些情况下，这可能不是理想的；例如，一些专有名词，如姓名或地点，可能受益于保持大写，以便它们被独立标记化。
 
-+   文本*词汇*（训练集中不同单词的集合）可能非常庞大，有些单词可能非常稀疏，甚至可能只出现一次。将稀疏单词替换为*未知单词*的标记可能是明智的选择，而不是将它们作为单独的标记包含在内，以减少神经网络需要学习的权重数量。
++ 文本*词汇*（训练集中不同单词的集合）可能非常庞大，有些单词可能非常稀疏，甚至可能只出现一次。将稀疏单词替换为*未知单词*的标记可能是明智的选择，而不是将它们作为单独的标记包含在内，以减少神经网络需要学习的权重数量。
 
-+   单词可以进行*词干处理*，意味着它们被简化为最简单的形式，以便动词的不同时态保持标记化在一起。例如，*browse*、*browsing*、*browses*和*browsed*都将被词干处理为*brows*。
++ 单词可以进行*词干处理*，意味着它们被简化为最简单的形式，以便动词的不同时态保持标记化在一起。例如，*browse*、*browsing*、*browses*和*browsed*都将被词干处理为*brows*。
 
-+   您需要将标点标记化，或者完全删除它。
++ 您需要将标点标记化，或者完全删除它。
 
-+   使用单词标记化意味着模型永远无法预测训练词汇表之外的单词。
++ 使用单词标记化意味着模型永远无法预测训练词汇表之外的单词。
 
 如果您使用字符标记：
 
-+   模型可能生成字符序列，形成训练词汇表之外的新单词——在某些情况下，这可能是可取的，但在其他情况下则不是。
++ 模型可能生成字符序列，形成训练词汇表之外的新单词——在某些情况下，这可能是可取的，但在其他情况下则不是。
 
-+   大写字母可以转换为它们的小写对应词，也可以保留为单独的标记。
++ 大写字母可以转换为它们的小写对应词，也可以保留为单独的标记。
 
-+   使用字符标记时，词汇量通常较小。这对模型训练速度有益，因为最终输出层中需要学习的权重较少。
++ 使用字符标记时，词汇量通常较小。这对模型训练速度有益，因为最终输出层中需要学习的权重较少。
 
 在这个示例中，我们将使用小写单词标记化，不进行词干处理。我们还将标记化标点符号，因为我们希望模型能够预测何时结束句子或使用逗号，例如。
 
@@ -144,31 +147,21 @@ vectorize_layer.adapt(text_ds) # ④
 vocab = vectorize_layer.get_vocabulary() # ⑤
 ```
 
-①
+① 填充标点符号，将它们视为单独的单词。
 
-填充标点符号，将它们视为单独的单词。
+② 转换为 TensorFlow 数据集。
 
-②
+③ 创建一个 Keras `TextVectorization` 层，将文本转换为小写，为最常见的 10,000 个单词分配相应的整数标记，并将序列修剪或填充到 201 个标记长。
 
-转换为 TensorFlow 数据集。
+④ 将 `TextVectorization` 层应用于训练数据。
 
-③
-
-创建一个 Keras `TextVectorization`层，将文本转换为小写，为最常见的 10,000 个单词分配相应的整数标记，并将序列修剪或填充到 201 个标记长。
-
-④
-
-将`TextVectorization`层应用于训练数据。
-
-⑤
-
-`vocab`变量存储一个单词标记列表。
+⑤ `vocab` 变量存储一个单词标记列表。
 
 在标记化后，一个配方的示例显示在示例 5-5 中。我们用于训练模型的序列长度是训练过程的一个参数。在这个示例中，我们选择使用长度为 200 的序列长度，因此我们将配方填充或裁剪到比这个长度多一个，以便我们创建目标变量（在下一节中详细介绍）。为了实现这个期望的长度，向量的末尾用零填充。
 
-# 停止标记
+##### 停止标记
 
-`0`标记被称为*停止标记*，表示文本字符串已经结束。
+`0` 标记被称为*停止标记*，表示文本字符串已经结束。
 
 ##### 示例 5-5。示例 5-3 中的配方进行了标记化
 
@@ -190,9 +183,9 @@ vocab = vectorize_layer.get_vocabulary() # ⑤
     0    0    0    0    0]
 ```
 
-在示例 5-6 中，我们可以看到一部分标记列表映射到它们各自的索引。该层将`0`标记保留为填充（即停止标记），将`1`标记保留为超出前 10000 个单词的未知单词（例如，persillade）。其他单词按频率顺序分配标记。要包含在词汇表中的单词数量也是训练过程的一个参数。包含的单词越多，您在文本中看到的*未知*标记就越少；但是，您的模型需要更大以容纳更大的词汇量。
+在示例 5-6 中，我们可以看到一部分标记列表映射到它们各自的索引。该层将 `0` 标记保留为填充（即停止标记），将 `1` 标记保留为超出前 10000 个单词的未知单词（例如，persillade）。其他单词按频率顺序分配标记。要包含在词汇表中的单词数量也是训练过程的一个参数。包含的单词越多，您在文本中看到的*未知*标记就越少；但是，您的模型需要更大以容纳更大的词汇量。
 
-##### 示例 5-6。`TextVectorization`层的词汇表
+##### 示例 5-6。`TextVectorization` 层的词汇表
 
 ```py
 0:
@@ -207,7 +200,7 @@ vocab = vectorize_layer.get_vocabulary() # ⑤
 9: a
 ```
 
-## 创建训练集
+#### 创建训练集
 
 我们的 LSTM 将被训练以预测序列中的下一个单词，给定此点之前的一系列单词。例如，我们可以向模型提供*烤鸡配煮熟的*的标记，期望模型输出一个合适的下一个单词（例如*土豆*，而不是*香蕉*）。
 
@@ -228,13 +221,11 @@ def prepare_inputs(text):
 train_ds = text_ds.map(prepare_inputs) # ①
 ```
 
-①
+① 创建包含食谱标记（输入）和相同向量向后移动一个标记（目标）的训练集。
 
-创建包含食谱标记（输入）和相同向量向后移动一个标记（目标）的训练集。
+#### LSTM 架构
 
-## LSTM 架构
-
-整个 LSTM 模型的架构如表 5-1 所示。模型的输入是一系列整数标记，输出是 10,000 个词汇表中每个单词在序列中出现的概率。为了详细了解这是如何工作的，我们需要介绍两种新的层类型，即`Embedding`和`LSTM`。
+整个 LSTM 模型的架构如表 5-1 所示。模型的输入是一系列整数标记，输出是 10,000 个词汇表中每个单词在序列中出现的概率。为了详细了解这是如何工作的，我们需要介绍两种新的层类型，即 `Embedding` 和 `LSTM`。
 
 表 5-1。LSTM 模型的摘要
 
@@ -248,21 +239,23 @@ train_ds = text_ds.map(prepare_inputs) # ①
 | 可训练参数 | 2,407,248 |
 | 不可训练参数 | 0 |
 
-# LSTM 的输入层
+##### LSTM 的输入层
 
-请注意，`Input`层不需要我们提前指定序列长度。批处理大小和序列长度都是灵活的（因此形状为`(None, None)`）。这是因为所有下游层对通过的序列长度都是不可知的。
+请注意，`Input` 层不需要我们提前指定序列长度。批处理大小和序列长度都是灵活的（因此形状为 `(None, None)`）。这是因为所有下游层对通过的序列长度都是不可知的。
 
-## 嵌入层
+#### 嵌入层
 
-*嵌入层*本质上是一个查找表，将每个整数标记转换为长度为`embedding_size`的向量，如图 5-2 所示。模型通过*权重*学习查找向量。因此，该层学习的权重数量等于词汇表的大小乘以嵌入向量的维度（即 10,000 × 100 = 1,000,000）。
+*嵌入层*本质上是一个查找表，将每个整数标记转换为长度为 `embedding_size` 的向量，如图 5-2 所示。模型通过*权重*学习查找向量。因此，该层学习的权重数量等于词汇表的大小乘以嵌入向量的维度（即 10,000 × 100 = 1,000,000）。
 
 ![](img/gdl2_0502.png)
 
 ###### 图 5-2。嵌入层是每个整数标记的查找表
 
+
+
 我们将每个整数标记嵌入到连续向量中，因为这使得模型能够学习每个单词的表示，这些表示可以通过反向传播进行更新。我们也可以只对每个输入标记进行独热编码，但使用嵌入层更可取，因为它使得嵌入本身是可训练的，从而使模型在决定如何嵌入每个标记以提高性能时更加灵活。
 
-因此，`Input`层将形状为`[batch_size, seq_length]`的整数序列张量传递给`Embedding`层，后者输出形状为`[batch_size, seq_length, embedding_size]`的张量。然后将其传递给`LSTM`层(图 5-3)。
+因此，`Input`层将形状为`[batch_size, seq_length]`的整数序列张量传递给`Embedding`层，后者输出形状为`[batch_size, seq_length, embedding_size]`的张量。然后将其传递给`LSTM`层（图 5-3）。
 
 ![](img/gdl2_0503.png)
 
@@ -272,9 +265,9 @@ train_ds = text_ds.map(prepare_inputs) # ①
 
 要理解 LSTM 层，我们首先必须看一下通用循环层的工作原理。
 
-循环层具有特殊属性，能够处理顺序输入数据<math alttext="x 1 comma ellipsis comma x Subscript n Baseline"><mrow><msub><mi>x</mi> <mn>1</mn></msub> <mo>,</mo> <mo>⋯</mo> <mo>,</mo> <msub><mi>x</mi> <mi>n</mi></msub></mrow></math>。随着序列中的每个元素<math alttext="x Subscript t"><msub><mi>x</mi> <mi>t</mi></msub></math>逐个时间步通过，它会更新其*隐藏状态*<math alttext="h Subscript t"><msub><mi>h</mi> <mi>t</mi></msub></math>。
+循环层具有特殊属性，能够处理顺序输入数据 <math alttext="x 1 comma ellipsis comma x Subscript n Baseline"><mrow><msub><mi>x</mi> <mn>1</mn></msub> <mo>,</mo> <mo>⋯</mo> <mo>,</mo> <msub><mi>x</mi> <mi>n</mi></msub></mrow></math>。随着序列中的每个元素 <math alttext="x Subscript t"><msub><mi>x</mi> <mi>t</mi></msub></math> 逐个时间步通过，它会更新其*隐藏状态* <math alttext="h Subscript t"><msub><mi>h</mi> <mi>t</mi></msub></math>。
 
-隐藏状态是一个向量，其长度等于细胞中的*单元*数——它可以被视为细胞对序列的当前理解。在时间步<math alttext="t"><mi>t</mi></math>，细胞使用先前的隐藏状态值<math alttext="h Subscript t minus 1"><msub><mi>h</mi> <mrow><mi>t</mi><mo>-</mo><mn>1</mn></mrow></msub></math>，以及当前时间步的数据<math alttext="x Subscript t"><msub><mi>x</mi> <mi>t</mi></msub></math>，产生一个更新的隐藏状态向量<math alttext="h Subscript t"><msub><mi>h</mi> <mi>t</mi></msub></math>。这个循环过程持续到序列结束。一旦序列结束，该层输出细胞的最终隐藏状态<math alttext="h Subscript n"><msub><mi>h</mi> <mi>n</mi></msub></math>，然后传递给网络的下一层。这个过程在图 5-4 中显示。
+隐藏状态是一个向量，其长度等于细胞中的*单元*数——它可以被视为细胞对序列的当前理解。在时间步 <math alttext="t"><mi>t</mi></math>，细胞使用先前的隐藏状态值 <math alttext="h Subscript t minus 1"><msub><mi>h</mi> <mrow><mi>t</mi><mo>-</mo><mn>1</mn></mrow></msub></math>，以及当前时间步的数据 <math alttext="x Subscript t"><msub><mi>x</mi> <mi>t</mi></msub></math>，产生一个更新的隐藏状态向量 <math alttext="h Subscript t"><msub><mi>h</mi> <mi>t</mi></msub></math>。这个循环过程持续到序列结束。一旦序列结束，该层输出细胞的最终隐藏状态 <math alttext="h Subscript n"><msub><mi>h</mi> <mi>n</mi></msub></math>，然后传递给网络的下一层。这个过程在图 5-4 中显示。
 
 ![](img/gdl2_0504.png)
 
@@ -282,7 +275,7 @@ train_ds = text_ds.map(prepare_inputs) # ①
 
 为了更详细地解释这一点，让我们展开这个过程，这样我们就可以看到单个序列是如何通过该层传递的（图 5-5）。
 
-# 细胞权重
+### 细胞权重
 
 重要的是要记住，这个图中的所有细胞共享相同的权重（因为它们实际上是相同的细胞）。这个图与图 5-4 没有区别；只是以不同的方式绘制了循环层的机制。
 
@@ -312,31 +305,31 @@ LSTM 单元格维护一个单元格状态，<math alttext="上标 C 下标 t"><m
 
 隐藏状态在六个步骤中更新：
 
-1.  上一个时间步的隐藏状态，<math alttext="h 下标 t 减 1"><msub><mi>h</mi> <mrow><mi>t</mi><mo>-</mo><mn>1</mn></mrow></msub></math>，和当前的单词嵌入，<math alttext="x 下标 t"><msub><mi>x</mi> <mi>t</mi></msub></math>，被连接起来并通过*遗忘*门传递。这个门只是一个带有权重矩阵 <math alttext="上标 W 下标 f"><msub><mi>W</mi> <mi>f</mi></msub></math>，偏置 <math alttext="b 下标 f"><msub><mi>b</mi> <mi>f</mi></msub></math> 和 sigmoid 激活函数的稠密层。得到的向量，<math alttext="f 下标 t"><msub><mi>f</mi> <mi>t</msub></math>，长度等于单元格中的单元数，并包含介于 0 和 1 之间的值，确定了应该保留多少先前的单元格状态，<math alttext="上标 C 下标 t 减 1"><msub><mi>C</mi> <mrow><mi>t</mi><mo>-</mo><mn>1</mn></mrow></msub></math>。
+1. 上一个时间步的隐藏状态，<math alttext="h 下标 t 减 1"><msub><mi>h</mi> <mrow><mi>t</mi><mo>-</mo><mn>1</mn></mrow></msub></math>，和当前的单词嵌入，<math alttext="x 下标 t"><msub><mi>x</mi> <mi>t</mi></msub></math>，被连接起来并通过*遗忘*门传递。这个门只是一个带有权重矩阵 <math alttext="上标 W 下标 f"><msub><mi>W</mi> <mi>f</mi></msub></math>，偏置 <math alttext="b 下标 f"><msub><mi>b</mi> <mi>f</mi></msub></math> 和 sigmoid 激活函数的稠密层。得到的向量，<math alttext="f 下标 t"><msub><mi>f</mi> <mi>t</mi></msub></math>，长度等于单元格中的单元数，并包含介于 0 和 1 之间的值，确定了应该保留多少先前的单元格状态，<math alttext="上标 C 下标 t 减 1"><msub><mi>C</mi> <mrow><mi>t</mi><mo>-</mo><mn>1</mn></mrow></msub></math>。
 
 ![](img/gdl2_0506.png)
 
-###### 图 5-6\. LSTM 单元格
+###### 图 5-6。LSTM 单元格
 
-1.  连接的向量也通过一个*输入*门传递，类似于遗忘门，它是一个带有权重矩阵 <math alttext="上标 W 下标 i"><msub><mi>W</mi> <mi>i</mi></msub></math>，偏置 <math alttext="b 下标 i"><msub><mi>b</mi> <mi>i</msub></math> 和 sigmoid 激活函数的稠密层。这个门的输出，<math alttext="i 下标 t"><msub><mi>i</mi> <mi>t</msub></math>，长度等于单元格中的单元数，并包含介于 0 和 1 之间的值，确定了新信息将被添加到先前单元格状态，<math alttext="上标 C 下标 t 减 1"><msub><mi>C</mi> <mrow><mi>t</mi><mo>-</mo><mn>1</mn></mrow></msub></math>，的程度。
+2. 连接的向量也通过一个*输入*门传递，类似于遗忘门，它是一个带有权重矩阵 <math alttext="上标 W 下标 i"><msub><mi>W</mi> <mi>i</mi></msub></math>，偏置 <math alttext="b 下标 i"><msub><mi>b</mi> <mi>i</mi></msub></math> 和 sigmoid 激活函数的稠密层。这个门的输出，<math alttext="i 下标 t"><msub><mi>i</mi> <mi>t</mi></msub></math>，长度等于单元格中的单元数，并包含介于 0 和 1 之间的值，确定了新信息将被添加到先前单元格状态，<math alttext="上标 C 下标 t 减 1"><msub><mi>C</mi> <mrow><mi>t</mi><mo>-</mo><mn>1</mn></mrow></msub></math>，的程度。
 
-1.  连接的向量也通过一个带有权重矩阵 <math alttext="上标 W 上标 C"><msub><mi>W</mi> <mi>C</mi></msub></math>，偏置 <math alttext="b 上标 C"><msub><mi>b</mi> <mi>C</mi></msub></math> 和 tanh 激活函数的稠密层，生成一个向量 <math alttext="上标 C overTilde 下标 t"><msub><mover accent="true"><mi>C</mi> <mo>˜</mo></mover> <mi>t</msub></math>，其中包含单元格希望考虑保留的新信息。它的长度也等于单元格中的单元数，并包含介于-1 和 1 之间的值。
+3. 连接的向量也通过一个带有权重矩阵 <math alttext="上标 W 上标 C"><msub><mi>W</mi> <mi>C</mi></msub></math>，偏置 <math alttext="b 上标 C"><msub><mi>b</mi> <mi>C</mi></msub></math> 和 tanh 激活函数的稠密层，生成一个向量 <math alttext="上标 C overTilde 下标 t"><msub><mover accent="true"><mi>C</mi> <mo>˜</mo></mover> <mi>t</mi></msub></math>，其中包含单元格希望考虑保留的新信息。它的长度也等于单元格中的单元数，并包含介于-1 和 1 之间的值。
 
-1.  <math alttext="f 下标 t"><msub><mi>f</mi> <mi>t</mi></msub></math> 和 <math alttext="上标 C 下标 t 减 1"><msub><mi>C</mi> <mrow><mi>t</mi><mo>-</mo><mn>1</mn></mrow></msub></math> 逐元素相乘并加到 <math alttext="i 下标 t"><msub><mi>i</mi> <mi>t</mi></msub></math> 和 <math alttext="上标 C overTilde 下标 t"><msub><mover accent="true"><mi>C</mi> <mo>˜</mo></mover> <mi>t</mi></msub></math> 的逐元素乘积中。这代表了遗忘先前单元格状态的部分，并添加新的相关信息以生成更新后的单元格状态，<math alttext="上标 C 下标 t"><msub><mi>C</mi> <mi>t</mi></msub></math>。
+4. <math alttext="f 下标 t"><msub><mi>f</mi> <mi>t</mi></msub></math> 和 <math alttext="上标 C 下标 t 减 1"><msub><mi>C</mi> <mrow><mi>t</mi><mo>-</mo><mn>1</mn></mrow></msub></math> 逐元素相乘并加到 <math alttext="i 下标 t"><msub><mi>i</mi> <mi>t</mi></msub></math> 和 <math alttext="上标 C overTilde 下标 t"><msub><mover accent="true"><mi>C</mi> <mo>˜</mo></mover> <mi>t</mi></msub></math> 的逐元素乘积中。这代表了遗忘先前单元格状态的部分，并添加新的相关信息以生成更新后的单元格状态，<math alttext="上标 C 下标 t"><msub><mi>C</mi> <mi>t</mi></msub></math>。
 
-1.  连接后的向量通过一个*输出*门传递：一个带有权重矩阵<math alttext="upper W Subscript o"><msub><mi>W</mi> <mi>o</mi></msub></math>、偏置<math alttext="b Subscript o"><msub><mi>b</mi> <mi>o</mi></msub></math>和 sigmoid 激活函数的稠密层。得到的向量<math alttext="o Subscript t"><msub><mi>o</mi> <mi>t</mi></msub></math>的长度等于单元格中的单元数，并存储介于 0 和 1 之间的值，确定要从单元格中输出的更新后的单元格状态<math alttext="upper C Subscript t"><msub><mi>C</mi> <mi>t</mi></msub></math>的多少。
+5. 连接后的向量通过一个*输出*门传递：一个带有权重矩阵 <math alttext="upper W Subscript o"><msub><mi>W</mi> <mi>o</mi></msub></math>、偏置 <math alttext="b Subscript o"><msub><mi>b</mi> <mi>o</mi></msub></math> 和 sigmoid 激活函数的稠密层。得到的向量 <math alttext="o Subscript t"><msub><mi>o</mi> <mi>t</mi></msub></math> 的长度等于单元格中的单元数，并存储介于 0 和 1 之间的值，确定要从单元格中输出的更新后的单元格状态 <math alttext="upper C Subscript t"><msub><mi>C</mi> <mi>t</mi></msub></math> 的多少。
 
-1.  <math alttext="o Subscript t"><msub><mi>o</mi> <mi>t</mi></msub></math>与更新后的单元格状态<math alttext="upper C Subscript t"><msub><mi>C</mi> <mi>t</mi></msub></math>进行逐元素相乘，然后应用 tanh 激活函数产生新的隐藏状态<math alttext="h Subscript t"><msub><mi>h</mi> <mi>t</mi></msub></math>。
+6. <math alttext="o Subscript t"><msub><mi>o</mi> <mi>t</mi></msub></math> 与更新后的单元格状态 <math alttext="upper C Subscript t"><msub><mi>C</mi> <mi>t</mi></msub></math> 进行逐元素相乘，然后应用 tanh 激活函数产生新的隐藏状态 <math alttext="h Subscript t"><msub><mi>h</mi> <mi>t</mi></msub></math>。
 
-# Keras LSTM 层
+## Keras LSTM 层
 
-所有这些复杂性都包含在 Keras 的`LSTM`层类型中，因此您不必担心自己实现它！
+所有这些复杂性都包含在 Keras 的 `LSTM` 层类型中，因此您不必担心自己实现它！
 
-## 训练 LSTM
+### 训练 LSTM
 
 构建、编译和训练 LSTM 的代码在 Example 5-8 中给出。
 
-##### Example 5-8\. 构建、编译和训练 LSTM
+##### Example 5-8。构建、编译和训练 LSTM
 
 ```py
 inputs = layers.Input(shape=(None,), dtype="int32") # ①
@@ -350,55 +343,41 @@ lstm.compile("adam", loss_fn) # ⑥
 lstm.fit(train_ds, epochs=25) # ⑦
 ```
 
-①
+① `Input`层不需要我们提前指定序列长度（可以是灵活的），所以我们使用 `None` 作为占位符。
 
-`Input`层不需要我们提前指定序列长度（可以是灵活的），所以我们使用`None`作为占位符。
+② `Embedding`层需要两个参数，词汇量的大小（10,000 个标记）和嵌入向量的维度（100）。
 
-②
+③ `LSTM`层要求我们指定隐藏向量的维度（128）。我们还选择返回完整的隐藏状态序列，而不仅仅是最终时间步的隐藏状态。
 
-`Embedding`层需要两个参数，词汇量的大小（10,000 个标记）和嵌入向量的维度（100）。
+④ `Dense`层将每个时间步的隐藏状态转换为下一个标记的概率向量。
 
-③
+⑤ 整体的 `Model` 在给定一系列标记的输入序列时预测下一个标记。它为序列中的每个标记执行此操作。
 
-LSTM 层要求我们指定隐藏向量的维度（128）。我们还选择返回完整的隐藏状态序列，而不仅仅是最终时间步的隐藏状态。
+⑥ 该模型使用 `SparseCategoricalCrossentropy` 损失进行编译——这与分类交叉熵相同，但在标签为整数而不是独热编码向量时使用。
 
-④
-
-`Dense`层将每个时间步的隐藏状态转换为下一个标记的概率向量。
-
-⑤
-
-整体的`Model`在给定一系列标记的输入序列时预测下一个标记。它为序列中的每个标记执行此操作。
-
-⑥
-
-该模型使用`SparseCategoricalCrossentropy`损失进行编译——这与分类交叉熵相同，但在标签为整数而不是独热编码向量时使用。
-
-⑦
-
-模型适合训练数据集。
+⑦ 模型适合训练数据集。
 
 在 Figure 5-7 中，您可以看到 LSTM 训练过程的前几个时期——请注意随着损失指标下降，示例输出变得更加易懂。Figure 5-8 显示了整个训练过程中交叉熵损失指标的下降。
 
 ![](img/gdl2_0507.png)
 
-###### Figure 5-7\. LSTM 训练过程的前几个时期
+###### Figure 5-7。LSTM 训练过程的前几个时期
 
 ![](img/gdl2_0508.png)
 
-###### Figure 5-8\. LSTM 训练过程中的交叉熵损失指标按时期
+###### Figure 5-8。LSTM 训练过程中的交叉熵损失指标按时期
 
 ## LSTM 的分析
 
 现在我们已经编译和训练了 LSTM，我们可以开始使用它通过以下过程生成长文本字符串：
 
-1.  用现有的单词序列喂给网络，并要求它预测下一个单词。
+1. 用现有的单词序列喂给网络，并要求它预测下一个单词。
 
-1.  将这个单词附加到现有序列并重复。
+2. 将这个单词附加到现有序列并重复。
 
 网络将为每个单词输出一组概率，我们可以从中进行采样。因此，我们可以使文本生成具有随机性，而不是确定性。此外，我们可以引入一个*温度*参数到采样过程中，以指示我们希望过程有多确定性。
 
-# 温度参数
+### 温度参数
 
 接近 0 的温度使采样更加确定性（即，具有最高概率的单词很可能被选择），而温度为 1 意味着每个单词都以模型输出的概率被选择。
 
@@ -439,17 +418,17 @@ class TextGenerator(callbacks.Callback):
         self.generate("recipe for", max_tokens = 100, temperature = 1.0)
 ```
 
-①
-
-创建一个反向词汇映射（从单词到标记）。
+① 创建一个反向词汇映射（从单词到标记）。
 
 ②
+
+
 
 此函数使用`temperature`缩放因子更新概率。
 
 ③
 
-起始提示是您想要给模型以开始生成过程的一串单词（例如，*recipe for*）。首先将这些单词转换为标记列表。
+起始提示是您想要给模型以开始生成过程的一串单词（例如，`recipe for`）。首先将这些单词转换为标记列表。
 
 ④
 
@@ -501,7 +480,7 @@ class TextGenerator(callbacks.Callback):
 
 ![](img/gdl2_0511.png)
 
-###### 图 5-11。多层 RNN 的示意图：g[t]表示第一层的隐藏状态，h[t]表示第二层的隐藏状态
+###### 图 5-11。多层 RNN 的示意图：`g[t]`表示第一层的隐藏状态，`h[t]`表示第二层的隐藏状态
 
 表 5-2。堆叠 LSTM 的模型摘要
 
@@ -533,9 +512,8 @@ model = models.Model(text_in, probabilites)
 
 另一种常用的 RNN 层是*门控循环单元*（GRU）。² 与 LSTM 单元的主要区别如下：
 
-1.  *遗忘*和*输入*门被*重置*和*更新*门替换。
-
-1.  没有*细胞状态*或*输出*门，只有从细胞输出的*隐藏状态*。
+1. *遗忘*和*输入*门被*重置*和*更新*门替换。
+2. 没有*细胞状态*或*输出*门，只有从细胞输出的*隐藏状态*。
 
 隐藏状态通过四个步骤更新，如图 5-12 所示。
 
@@ -545,13 +523,13 @@ model = models.Model(text_in, probabilites)
 
 过程如下：
 
-1.  上一个时间步的隐藏状态，<math alttext="h Subscript t minus 1"><msub><mi>h</mi> <mrow><mi>t</mi><mo>-</mo><mn>1</mn></mrow></msub></math>，和当前单词嵌入，<math alttext="x Subscript t"><msub><mi>x</mi> <mi>t</mi></msub></math>，被串联并用于创建*重置*门。这个门是一个密集层，带有权重矩阵<math alttext="upper W Subscript r"><msub><mi>W</mi> <mi>r</mi></msub></math>和一个 sigmoid 激活函数。得到的向量，<math alttext="r Subscript t"><msub><mi>r</mi> <mi>t</mi></msub></math>，长度等于细胞中的单元数，并存储介于 0 和 1 之间的值，确定应该将多少上一个隐藏状态，<math alttext="h Subscript t minus 1"><msub><mi>h</mi> <mrow><mi>t</mi><mo>-</mo><mn>1</mn></mrow></msub></math>，传递到新信念的计算中。
+1. 上一个时间步的隐藏状态，<math alttext="h Subscript t minus 1"><msub><mi>h</mi> <mrow><mi>t</mi><mo>-</mo><mn>1</mn></mrow></msub></math>，和当前单词嵌入，<math alttext="x Subscript t"><msub><mi>x</mi> <mi>t</mi></msub></math>，被串联并用于创建*重置*门。这个门是一个密集层，带有权重矩阵<math alttext="upper W Subscript r"><msub><mi>W</mi> <mi>r</mi></msub></math>和一个 sigmoid 激活函数。得到的向量，<math alttext="r Subscript t"><msub><mi>r</mi> <mi>t</mi></msub></math>，长度等于细胞中的单元数，并存储介于 0 和 1 之间的值，确定应该将多少上一个隐藏状态，<math alttext="h Subscript t minus 1"><msub><mi>h</mi> <mrow><mi>t</mi><mo>-</mo><mn>1</mn></mrow></msub></math>，传递到新信念的计算中。
 
-1.  重置门应用于隐藏状态，<math alttext="h Subscript t minus 1"><msub><mi>h</mi> <mrow><mi>t</mi><mo>-</mo><mn>1</mn></mrow></msub></math>，并与当前单词嵌入<math alttext="x Subscript t"><msub><mi>x</mi> <mi>t</mi></msub></math>连接。然后将该向量馈送到具有权重矩阵<math alttext="upper W"><mi>W</mi></math>和 tanh 激活函数的密集层，以生成一个向量<math alttext="h overTilde Subscript t"><msub><mover accent="true"><mi>h</mi> <mo>˜</mo></mover> <mi>t</mi></msub></math>，其中存储了细胞的新信念。它的长度等于细胞中的单元数，并存储在-1 和 1 之间的值。
+2. 重置门应用于隐藏状态，<math alttext="h Subscript t minus 1"><msub><mi>h</mi> <mrow><mi>t</mi><mo>-</mo><mn>1</mn></mrow></msub></math>，并与当前单词嵌入<math alttext="x Subscript t"><msub><mi>x</mi> <mi>t</mi></msub></math>连接。然后将该向量馈送到具有权重矩阵<math alttext="upper W"><mi>W</mi></math>和 tanh 激活函数的密集层，以生成一个向量<math alttext="h overTilde Subscript t"><msub><mover accent="true"><mi>h</mi> <mo>˜</mo></mover> <mi>t</mi></msub></math>，其中存储了细胞的新信念。它的长度等于细胞中的单元数，并存储在-1 和 1 之间的值。
 
-1.  前一个时间步的隐藏状态<math alttext="h Subscript t minus 1"><msub><mi>h</mi> <mrow><mi>t</mi><mo>-</mo><mn>1</mn></mrow></msub></math>和当前单词嵌入<math alttext="x Subscript t"><msub><mi>x</mi> <mi>t</mi></msub></math>的连接也用于创建*更新*门。该门是一个具有权重矩阵<math alttext="upper W Subscript z"><msub><mi>W</mi> <mi>z</mi></msub></math>和 sigmoid 激活的密集层。生成的向量<math alttext="z Subscript t"><msub><mi>z</mi> <mi>t</msub></math>的长度等于细胞中的单元数，并存储在 0 和 1 之间的值，用于确定新信念<math alttext="h overTilde Subscript t"><msub><mover accent="true"><mi>h</mi> <mo>˜</mo></mover> <mi>t</mi></msub></math>的多少要混合到当前隐藏状态<math alttext="h Subscript t minus 1"><msub><mi>h</mi> <mrow><mi>t</mi><mo>-</mo><mn>1</mn></mrow></msub></math>中。
+3. 前一个时间步的隐藏状态<math alttext="h Subscript t minus 1"><msub><mi>h</mi> <mrow><mi>t</mi><mo>-</mo><mn>1</mn></mrow></msub></math>和当前单词嵌入<math alttext="x Subscript t"><msub><mi>x</mi> <mi>t</mi></msub></math>的连接也用于创建*更新*门。该门是一个具有权重矩阵<math alttext="upper W Subscript z"><msub><mi>W</mi> <mi>z</mi></msub></math>和 sigmoid 激活的密集层。生成的向量<math alttext="z Subscript t"><msub><mi>z</mi> <mi>t</msub></math>的长度等于细胞中的单元数，并存储在 0 和 1 之间的值，用于确定新信念<math alttext="h overTilde Subscript t"><msub><mover accent="true"><mi>h</mi> <mo>˜</mo></mover> <mi>t</mi></msub></math>的多少要混合到当前隐藏状态<math alttext="h Subscript t minus 1"><msub><mi>h</mi> <mrow><mi>t</mi><mo>-</mo><mn>1</mn></mrow></msub></math>中。
 
-1.  细胞的新信念<math alttext="h overTilde Subscript t"><msub><mover accent="true"><mi>h</mi> <mo>˜</mo></mover> <mi>t</mi></msub></math>和当前隐藏状态<math alttext="h Subscript t minus 1"><msub><mi>h</mi> <mrow><mi>t</mi><mo>-</mo><mn>1</mn></mrow></msub></math>按照更新门<math alttext="z Subscript t"><msub><mi>z</mi> <mi>t</msub></math>确定的比例混合，以产生更新后的隐藏状态<math alttext="h Subscript t"><msub><mi>h</mi> <mi>t</msub></math>，从细胞中输出。
+4. 细胞的新信念<math alttext="h overTilde Subscript t"><msub><mover accent="true"><mi>h</mi> <mo>˜</mo></mover> <mi>t</mi></msub></math>和当前隐藏状态<math alttext="h Subscript t minus 1"><msub><mi>h</mi> <mrow><mi>t</mi><mo>-</mo><mn>1</mn></mrow></msub></math>按照更新门<math alttext="z Subscript t"><msub><mi>z</mi> <mi>t</msub></math>确定的比例混合，以产生更新后的隐藏状态<math alttext="h Subscript t"><msub><mi>h</mi> <mi>t</msub></math>，从细胞中输出。
 
 ## 双向细胞
 
@@ -579,9 +557,9 @@ layer = layers.Bidirectional(layers.GRU(100))
 
 # 运行此示例的代码
 
-此示例的代码可以在位于书籍存储库中的 Jupyter 笔记本中找到，路径为*notebooks/05_autoregressive/02_pixelcnn/pixelcnn.ipynb*。
+此示例的代码可以在位于书籍存储库中的 Jupyter 笔记本中找到，路径为`notebooks/05_autoregressive/02_pixelcnn/pixelcnn.ipynb`。
 
-该代码改编自由 ADMoreau 创建的出色的[PixelCNN 教程](https://keras.io/examples/generative/pixelcnn)，可在 Keras 网站上找到。 
+该代码改编自由 ADMoreau 创建的出色的[PixelCNN 教程](https://keras.io/examples/generative/pixelcnn)，可在 Keras 网站上找到。
 
 ## 掩码卷积层
 
@@ -597,13 +575,12 @@ layer = layers.Bidirectional(layers.GRU(100))
 
 在 PixelCNN 中实际上有两种不同类型的掩码，如图 5-13 所示：
 
-+   类型 A，中心像素的值被掩码
-
-+   类型 B，中心像素的值*未*被掩码
++ 类型 A，中心像素的值被掩码
++ 类型 B，中心像素的值*未*被掩码
 
 ![](img/gdl2_0513.png)
 
-###### 图 5-13。左：卷积滤波器掩码；右：应用于一组像素以预测中心像素值分布的掩码（来源：[van den Oord 等人，2016](https://arxiv.org/pdf/1606.05328))
+###### 图 5-13。左：卷积滤波器掩码；右：应用于一组像素以预测中心像素值分布的掩码（来源：[van den Oord 等人，2016](https://arxiv.org/pdf/1606.05328)）
 
 初始的掩码卷积层（即直接应用于输入图像的层）不能使用中心像素，因为这正是我们希望网络猜测的像素！然而，后续层可以使用中心像素，因为这将仅根据原始输入图像中前面像素的信息计算出来。
 
@@ -632,29 +609,17 @@ class MaskedConvLayer(layers.Layer):
         return self.conv(inputs)
 ```
 
-①
+① `MaskedConvLayer`基于普通的`Conv2D`层。
 
-`MaskedConvLayer`基于普通的`Conv2D`层。
+② 掩码初始化为全零。
 
-②
+③ 前面行中的像素将被一个 1 解除掩码。
 
-掩码初始化为全零。
+④ 前面列中在同一行中的像素将被一个 1 解除掩码。
 
-③
+⑤ 如果掩码类型为 B，则中心像素将被一个 1 解除掩码。
 
-前面行中的像素将被一个 1 解除掩码。
-
-④
-
-前面列中在同一行中的像素将被一个 1 解除掩码。
-
-⑤
-
-如果掩码类型为 B，则中心像素将被一个 1 解除掩码。
-
-⑥
-
-掩码与滤波器权重相乘。
+⑥ 掩码与滤波器权重相乘。
 
 请注意，这个简化的例子假设是灰度图像（即，只有一个通道）。如果是彩色图像，我们将有三个颜色通道，我们也可以对它们进行排序，例如，红色通道在蓝色通道之前，蓝色通道在绿色通道之前。
 
@@ -673,6 +638,10 @@ class MaskedConvLayer(layers.Layer):
 我们可以使用示例 5-13 中显示的代码构建一个`ResidualBlock`。
 
 ##### 示例 5-13。一个`ResidualBlock`
+
+
+
+# 残差块
 
 ```py
 class ResidualBlock(layers.Layer):
@@ -699,21 +668,13 @@ class ResidualBlock(layers.Layer):
         return layers.add([inputs, x]) # ④
 ```
 
-①
+① 初始的`Conv2D`层将通道数量减半。
 
-初始的`Conv2D`层将通道数量减半。
+② Type B `MaskedConv2D`层，核大小为 3，仅使用来自五个像素的信息——上面一行中的三个像素，左边一个像素和焦点像素本身。
 
-②
+③ 最终的`Conv2D`层将通道数量加倍，以再次匹配输入形状。
 
-Type B `MaskedConv2D`层，核大小为 3，仅使用来自五个像素的信息——上面一行中的三个像素，左边一个像素和焦点像素本身。
-
-③
-
-最终的`Conv2D`层将通道数量加倍，以再次匹配输入形状。
-
-④
-
-卷积层的输出与输入相加——这是跳跃连接。
+④ 卷积层的输出与输入相加——这是跳跃连接。
 
 ## 训练 PixelCNN
 
@@ -721,7 +682,7 @@ Type B `MaskedConv2D`层，核大小为 3，仅使用来自五个像素的信息
 
 这种方法的一个挑战是网络无法理解，比如说，像素值 200 非常接近像素值 201。它必须独立学习每个像素输出值，这意味着即使对于最简单的数据集，训练也可能非常缓慢。因此，在我们的实现中，我们简化输入，使每个像素只能取四个值之一。这样，我们可以使用一个有 4 个滤波器的`Conv2D`输出层，而不是 256 个。
 
-##### 示例 5-14。PixelCNN 架构
+### 示例 5-14。PixelCNN 架构
 
 ```py
 inputs = layers.Input(shape=(16, 16, 1)) # ①
@@ -761,33 +722,19 @@ pixel_cnn.fit(
 ) # ⑦
 ```
 
-①
+① 模型的`Input`是一个尺寸为 16×16×1 的灰度图像，输入值在 0 到 1 之间缩放。
 
-模型的`Input`是一个尺寸为 16×16×1 的灰度图像，输入值在 0 到 1 之间缩放。
+② 第一个 Type A `MaskedConv2D`层，核大小为 7，使用来自 24 个像素的信息——在焦点像素上面的三行中的 21 个像素和左边的 3 个像素（焦点像素本身不使用）。
 
-②
+③ 五个`ResidualBlock`层组被顺序堆叠。
 
-第一个 Type A `MaskedConv2D`层，核大小为 7，使用来自 24 个像素的信息——在焦点像素上面的三行中的 21 个像素和左边的 3 个像素（焦点像素本身不使用）。
+④ 两个 Type B `MaskedConv2D`层，核大小为 1，作为每个像素通道数量的`Dense`层。
 
-③
+⑤ 最终的`Conv2D`层将通道数减少到四——本示例中的像素级别数。
 
-五个`ResidualBlock`层组被顺序堆叠。
+⑥ `Model`被构建为接受一幅图像并输出相同尺寸的图像。
 
-④
-
-两个 Type B `MaskedConv2D`层，核大小为 1，作为每个像素通道数量的`Dense`层。
-
-⑤
-
-最终的`Conv2D`层将通道数减少到四——本示例中的像素级别数。
-
-⑥
-
-`Model`被构建为接受一幅图像并输出相同尺寸的图像。
-
-⑦
-
-拟合模型——`input_data`在范围[0,1]（浮点数）内缩放；`output_data`在范围[0,3]（整数）内缩放。
+⑦ 拟合模型——`input_data`在范围[0,1]（浮点数）内缩放；`output_data`在范围[0,3]（整数）内缩放。
 
 ## PixelCNN 的分析
 
@@ -795,7 +742,7 @@ pixel_cnn.fit(
 
 因此，我们使用图像尺寸为 16×16，而不是 32×32，以加快生成新图像的速度。生成回调类如示例 5-15 所示。
 
-##### 示例 5-15。使用 PixelCNN 生成新图像
+### 示例 5-15。使用 PixelCNN 生成新图像
 
 ```py
 class ImageGenerator(callbacks.Callback):
@@ -835,27 +782,19 @@ class ImageGenerator(callbacks.Callback):
 img_generator_callback = ImageGenerator(num_img=10)
 ```
 
-①
+① 从一批空白图像（全零）开始。
 
-从一批空白图像（全零）开始。
+② 循环遍历当前图像的行、列和通道，预测下一个像素值的分布。
 
-②
+③ 从预测分布中抽取一个像素级别（对于我们的示例，范围在[0,3]内）。
 
-循环遍历当前图像的行、列和通道，预测下一个像素值的分布。
-
-③
-
-从预测分布中抽取一个像素级别（对于我们的示例，范围在[0,3]内）。
-
-④
-
-将像素级别转换为范围[0,1]并覆盖当前图像中的像素值，准备好进行下一次循环迭代。
+④ 将像素级别转换为范围[0,1]并覆盖当前图像中的像素值，准备好进行下一次循环迭代。
 
 在图 5-15 中，我们可以看到原始训练集中的几幅图像，以及由 PixelCNN 生成的图像。
 
 ![](img/gdl2_0515.png)
 
-###### 图 5-15。训练集中的示例图像和由 PixelCNN 模型生成的图像
+#### 图 5-15。训练集中的示例图像和由 PixelCNN 模型生成的图像
 
 该模型在重新创建原始图像的整体形状和风格方面做得很好！令人惊讶的是，我们可以将图像视为一系列令牌（像素值），并应用自回归模型如 PixelCNN 来生成逼真的样本。
 
@@ -867,21 +806,21 @@ img_generator_callback = ImageGenerator(num_img=10)
 
 对于我们之前的示例，我们将 PixelCNN 的输出减少到只有 4 个像素级别，以确保网络不必学习 256 个独立像素值的分布，这将减慢训练过程。然而，这远非理想——对于彩色图像，我们不希望我们的画布仅限于少数可能的颜色。
 
-为了解决这个问题，我们可以使网络的输出成为*混合分布*，而不是对 256 个离散像素值进行 softmax，遵循 Salimans 等人提出的想法。4 混合分布简单地是两个或更多其他概率分布的混合。例如，我们可以有五个具有不同参数的逻辑分布的混合分布。混合分布还需要一个离散分类分布，表示选择混合中包含的每个分布的概率。示例显示在图 5-16 中。 
+为了解决这个问题，我们可以使网络的输出成为*混合分布*，而不是对 256 个离散像素值进行 softmax，遵循 Salimans 等人提出的想法。⁴ 混合分布简单地是两个或更多其他概率分布的混合。例如，我们可以有五个具有不同参数的逻辑分布的混合分布。混合分布还需要一个离散分类分布，表示选择混合中包含的每个分布的概率。示例显示在图 5-16 中。
 
 ![](img/gdl2_0516.png)
 
-###### 图 5-16。三个具有不同参数的正态分布的混合分布——三个正态分布上的分类分布为`[0.5, 0.3, 0.2]`
+#### 图 5-16。三个具有不同参数的正态分布的混合分布——三个正态分布上的分类分布为`[0.5, 0.3, 0.2]`
 
 要从混合分布中抽样，我们首先从分类分布中抽样以选择特定的子分布，然后以通常的方式从中抽样。这样，我们可以用相对较少的参数创建复杂的分布。例如，图 5-16 中的混合分布仅需要八个参数——两个用于分类分布，以及三个正态分布的均值和方差。这与定义整个像素范围上的分类分布所需的 255 个参数相比要少。
 
 方便地，TensorFlow Probability 库提供了一个函数，允许我们用一行代码创建具有混合分布输出的 PixelCNN。示例 5-16 说明了如何使用此函数构建 PixelCNN。
 
-# 运行此示例的代码
+## 运行此示例的代码
 
 此示例的代码可以在书籍存储库中的 Jupyter 笔记本*notebooks/05_autoregressive/03_pixelcnn_md/pixelcnn_md.ipynb*中找到。
 
-##### 示例 5-16。使用 TensorFlow 函数构建 PixelCNN
+### 示例 5-16。使用 TensorFlow 函数构建 PixelCNN
 
 ```py
 import tensorflow_probability as tfp
@@ -903,25 +842,17 @@ model = models.Model(inputs=image_input, outputs=log_prob) # ③
 model.add_loss(-tf.reduce_mean(log_prob)) # ④
 ```
 
-①
+① 将 PixelCNN 定义为一个分布——即，输出层是由五个逻辑分布组成的混合分布。
 
-将 PixelCNN 定义为一个分布——即，输出层是由五个逻辑分布组成的混合分布。
+② 输入是大小为 32×32×1 的灰度图像。
 
-②
+③ `Model`以灰度图像作为输入，并输出在 PixelCNN 计算的混合分布下图像的对数似然。
 
-输入是大小为 32×32×1 的灰度图像。
-
-③
-
-`Model`以灰度图像作为输入，并输出在 PixelCNN 计算的混合分布下图像的对数似然。
-
-④
-
-损失函数是输入图像批次上的平均负对数似然。
+④ 损失函数是输入图像批次上的平均负对数似然。
 
 该模型的训练方式与以前相同，但这次接受整数像素值作为输入，范围为[0, 255]。可以使用`sample`函数从分布中生成输出，如示例 5-17 所示。
 
-##### 示例 5-17。从 PixelCNN 混合分布中抽样
+### 示例 5-17。从 PixelCNN 混合分布中抽样
 
 ```py
 dist.sample(10).numpy()
@@ -931,7 +862,7 @@ dist.sample(10).numpy()
 
 ![](img/gdl2_0517.png)
 
-###### 图 5-17。使用混合分布输出的 PixelCNN 的输出
+#### 图 5-17。使用混合分布输出的 PixelCNN 的输出
 
 # 总结
 

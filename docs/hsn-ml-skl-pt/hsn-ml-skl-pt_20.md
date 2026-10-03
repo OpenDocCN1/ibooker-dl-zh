@@ -1,4 +1,6 @@
-# 第十八章。自动编码器、GANs 和扩散模型
+
+
+# 第十八章 自动编码器、GANs 和扩散模型
 
 自动编码器是能够学习输入数据的密集表示的人工神经网络，这种表示被称为*潜在表示*或*编码*，无需任何监督（即，训练集是无标签的）。这些编码通常比输入数据具有更低的维度，这使得自动编码器在降维（见第七章）方面非常有用，特别是用于可视化目的。自动编码器还充当特征检测器，并且可以用于深度神经网络的非监督预训练（正如我们在第十一章中讨论的那样）。它们也常用于异常检测，我们将会看到。最后，一些自动编码器是*生成模型*：它们能够随机生成与训练数据非常相似的新数据。例如，您可以在面部图片上训练一个自动编码器，然后它就能够生成新的面部。
 
@@ -8,15 +10,15 @@
 
 自动编码器、GANs 和扩散模型都是无监督的，学习潜在表示，可以用作生成模型，并且有许多类似的应用。然而，它们的工作方式非常不同：
 
-自动编码器
+## 自动编码器
 
 自编码器简单地学习将它们的输入复制到输出。这听起来可能像是一项微不足道的任务，但正如你将看到的，以各种方式约束网络可以使任务变得任意困难。例如，你可以限制潜在表示的大小，或者你可以在输入中添加噪声并训练网络恢复原始输入。这些约束阻止了自编码器直接将输入复制到输出，这迫使它学习高效的数据表示方法。简而言之，编码是自编码器在某种约束下学习恒等函数的副产品。
 
-生成对抗网络（GANs）
+## 生成对抗网络（GANs）
 
 生成对抗网络（GANs）由两个神经网络组成：一个*生成器*，它试图生成看起来与训练数据相似的数据，以及一个*判别器*，它试图区分真实数据和假数据。这种架构在深度学习中非常独特，因为在训练过程中生成器和判别器相互竞争；这被称为*对抗训练*。生成器通常被比作一个试图制作逼真假币的罪犯，而判别器则像是一个试图区分真币和假币的警察调查员。
 
-扩散模型
+## 扩散模型
 
 扩散模型被训练以逐渐从图像中去除噪声。如果你然后取一个完全充满随机噪声的图像，并反复在该图像上运行扩散模型，一个高质量的图像将逐渐出现，类似于训练图像（但并不相同）。
 
@@ -193,7 +195,10 @@ plt.show()
 
 如我们在这章前面看到的，欠完备的自动编码器可以用于降维。然而，对于大多数数据集，它们在将维度降低到两维或三维方面可能不会做得很好；它们需要足够的维度来正确地重构输入。因此，它们通常不直接用于可视化。然而，它们在处理大型数据集方面非常出色，所以一种策略是使用自动编码器将维度降低到一个合理的水平，然后使用另一个降维算法进行可视化，例如我们在第七章中讨论的那些。
 
-让我们使用这种策略来可视化 Fashion MNIST。首先，我们将使用堆叠自动编码器的编码器将维度降低到 32，然后我们将使用 Scikit-Learn 实现的 t-SNE 算法将维度降低到 2 以进行可视化：
+让我们使用这种策略来可视化 Fashion MNIST。首先，我们将使用堆叠自动编码器的编码器将维度降低到 32，然后我们将使用 Scikit-Learn 实现的 t-SNE 算法将维度降低到 2 以进行可视化。
+
+
+
 
 ```py
 from sklearn.manifold import TSNE
@@ -212,7 +217,7 @@ plt.scatter(X_valid_2D[:, 0], X_valid_2D[:, 1], c=y_valid, s=10, cmap="tab10")
 plt.show()
 ```
 
-图 18-6 展示了生成的散点图，通过显示一些图像进行了一些美化。t-SNE 算法识别出几个与类别匹配得相当好的簇（每个类别用不同的颜色表示）。请注意，如果你使用不同的随机种子、略微不同的数据或在不同的平台上运行 t-SNE，其输出可能会有很大差异，因此你的图表可能看起来不同。
+图 18-6 展示了生成的散点图，通过显示一些图像进行了一些美化。`t-SNE`算法识别出几个与类别匹配得相当好的簇（每个类别用不同的颜色表示）。请注意，如果你使用不同的随机种子、略微不同的数据或在不同的平台上运行`t-SNE`，其输出可能会有很大差异，因此你的图表可能看起来不同。
 
 ![通过自动编码器和 t-SNE 可视化 Fashion MNIST 数据，显示由图像标记的不同服装类别的簇。](img/hmls_1806.png)
 
@@ -361,7 +366,7 @@ dropout_ae = nn.Sequential(dropout_encoder, dropout_decoder).to(device)
 
 一种基本的方法是在编码层中使用 sigmoid 激活函数（将编码约束在 0 到 1 之间的值），使用一个大的编码层（例如，有 256 个单元），并在编码层的激活上添加一些ℓ[1]正则化。这意味着将编码的ℓ[1]范数（即它们的绝对值之和）添加到损失中，并乘以一个稀疏超参数。这种*稀疏损失*将鼓励神经网络产生接近 0 的编码。然而，总损失仍然包括重建损失，因此模型将被迫输出至少几个非零值以正确重建输入。使用ℓ[1]范数而不是ℓ[2]范数将推动神经网络保留最重要的编码，同时消除对于输入图像不需要的编码（而不仅仅是减少所有编码）。
 
-另一种方法——通常会产生更好的结果——是测量编码层中每个神经元的平均稀疏度，跨每个训练批次，并在平均稀疏度与目标稀疏度（例如，10%）不同时惩罚模型。批大小不能太小，否则平均值将不准确。例如，如果我们测量到一个神经元的平均激活为 0.3，但目标稀疏度是 0.1，那么这个神经元必须被惩罚以减少激活。一种方法可能是简单地将平方误差（0.3 – 0.1）²加到损失函数中，但在实践中，最好使用 Kullback–Leibler（KL）散度（在第四章中简要讨论），因为它比均方误差具有更强的梯度，如图 18-11 所示。
+另一种方法——通常会产生更好的结果——是测量编码层中每个神经元的平均稀疏度，跨每个训练批次，并在平均稀疏度与目标稀疏度（例如，10%）不同时惩罚模型。批大小不能太小，否则平均值将不准确。例如，如果我们测量到一个神经元的平均激活为 0.3，但目标稀疏度是 0.1，那么这个神经元必须被惩罚以减少激活。一种方法可能是指简单地将平方误差（0.3 – 0.1）²加到损失函数中，但在实践中，最好使用 Kullback–Leibler（KL）散度（在第四章中简要讨论），因为它比均方误差具有更强的梯度，如图 18-11 所示。
 
 ![不同实际稀疏度水平下 KL 散度、MAE 和 MSE 成本函数的比较图，目标稀疏度为 0.1](img/hmls_1811.png)
 
@@ -378,6 +383,8 @@ $upper D Subscript KL Baseline left-parenthesis upper P parallel-to upper Q righ
 ##### 方程 18-2. 目标稀疏度 *p* 和实际稀疏度 *q* 之间的 KL 散度
 
 $upper D Subscript KL Baseline left-parenthesis p parallel-to q right-parenthesis equals p log StartFraction p Over q EndFraction plus left-parenthesis 1 minus p right-parenthesis log StartFraction 1 minus p Over 1 minus q EndFraction$
+
+
 
 要在 PyTorch 中实现这种方法，我们首先必须确保自动编码器输出重建和编码，因为它们都是计算损失所必需的。在此代码中，自动编码器的 `forward()` 方法返回一个包含两个字段的 `namedtuple` ——`output`（即重建）和`codings`：
 
@@ -404,7 +411,7 @@ class SparseAutoencoder(nn.Module):
         return AEOutput(output, codings)
 ```
 
-###### 注意
+### 注意
 
 您可能需要调整训练和评估函数以支持这些 `namedtuple` 预测。例如，您可以在调用模型后立即在 `evaluate_tm()` 函数中添加 `y_pred = y_pred.output`。
 
@@ -421,7 +428,7 @@ def mse_plus_sparsity_loss(y_pred, y_target, target_sparsity=0.1,
 
 此函数返回重建损失（均方误差）加上一个加权稀疏损失。稀疏损失是目标稀疏度与批次平均稀疏度之间的 KL 散度。`kl_weight` 是一个超参数，你可以调整它来控制鼓励稀疏度的程度：如果这个超参数太高，模型将紧密地遵循目标稀疏度，但它可能无法正确地重建输入，使得模型变得无用。相反，如果它太低，模型将主要忽略稀疏度目标，并且不会学习任何有趣的特征。`eps` 参数是一个平滑项，用于避免在计算 KL 散度时除以零。
 
-现在我们已经准备好创建模型并进行训练（使用与之前相同的 `train()` 函数，来自 第十章）：
+现在我们已经准备好创建模型并进行训练（使用与之前相同的 `train()` 函数，来自第十章）：
 
 ```py
 torch.manual_seed(42)
@@ -432,7 +439,7 @@ train(sparse_ae, optimizer, mse_plus_sparsity_loss, train_loader, n_epochs=10)
 
 在对 Fashion MNIST 上的稀疏自编码器进行训练后，编码层将大约有 10%的稀疏度。成功！
 
-###### 小贴士
+### 小贴士
 
 稀疏自编码器通常会产生相当可解释的编码，其中每个组件对应于图像中的一个可识别特征。例如，你可以绘制所有 *n*^(th) 编码值大于通常值（例如，高于 90^(th) 分位数）的图像：你通常会注意到所有图像都有一些共同点（例如，它们都是鞋子）。
 
@@ -456,7 +463,7 @@ train(sparse_ae, optimizer, mse_plus_sparsity_loss, train_loader, n_epochs=10)
 
 ###### 图 18-12\. 变分自动编码器（左侧）及其通过实例（右侧）
 
-###### 注意
+### 注意
 
 从随机分布中采样不是一个可微的操作，它将阻止反向传播，那么我们如何希望训练编码器呢？嗯，使用一个*重新参数化技巧*：从𝒩(0, 1)中采样 **ε** 并计算 **μ** + **σ** ⊗ **ε**（逐元素乘法）。这相当于从𝒩(**μ**, **σ**²)中采样，但它将过程的确定性和随机性部分分开，允许梯度通过 **μ** 和 **σ** 流回编码器。结果编码器梯度是随机的（由于 **ε**），但它们是无偏估计，并且在训练过程中随机性会平均化。
 
@@ -567,6 +574,8 @@ with torch.no_grad():
 
 变分自编码器使得进行**语义插值**成为可能：而不是在像素级别上对两张图像进行插值，这样看起来就像是两张图像只是简单地叠加在一起，我们可以在编码级别上进行插值。例如，如果我们采样两个随机编码并在它们之间进行插值，然后解码所有插值编码，我们得到一系列图像，这些图像逐渐从一个时尚单品过渡到另一个（参见图 18-14）：
 
+
+
 ```py
 codings = torch.randn(2, vae.codings_dim)  # start and end codings
 n_images = 7
@@ -584,13 +593,13 @@ VAEs 有一些变体，例如，对于潜在变量使用不同的分布。一个
 
 ## 离散变分自编码器
 
-一种**离散变分自编码器**（dVAE）与 VAE 非常相似，除了编码是离散的而不是连续的：每个编码向量包含*潜在编码*（也称为*类别*），每个编码都是一个介于 0 和*k* – 1 之间的整数，其中*k*是可能的潜在编码的数量。编码向量的长度通常表示为*d*。例如，如果你选择*k* = 10 和*d* = 6，那么就有 100 万个可能的编码向量（10⁶），例如[3, 0, 3, 9, 1, 4]。离散 VAEs 对于对连续输入进行标记以用于 transformers 和其他模型非常有用。例如，它们是 BEiT 和 DALL·E 等模型的核心（参见第十六章）。
+一种**离散变分自编码器**（dVAE）与 VAE 非常相似，除了编码是离散的而不是连续的：每个编码向量包含*潜在编码*（也称为*类别*），每个编码都是一个介于 0 和*k* – 1 之间的整数，其中*k*是可能的潜在编码的数量。编码向量的长度通常表示为*d*。例如，如果你选择*k* = 10 和*d* = 6，那么就有 100 万个可能的编码向量（10⁶），例如`[3, 0, 3, 9, 1, 4]`。离散 VAEs 对于对连续输入进行标记以用于 transformers 和其他模型非常有用。例如，它们是 BEiT 和 DALL·E 等模型的核心（参见第十六章）。
 
 使 VAEs 离散的最自然方式是使用分类分布而不是高斯分布。这暗示了一些变化：
 
-+   首先，编码器必须输出 logits 而不是均值和方差。对于每个输入图像，它输出一个形状为[*d*, *k*]的张量，包含 logits，例如如果*d* = 2 和*k* = 3，则为[[1.2, –0.8, 0.5], [–1.3, 0.4, 0.3]]。
++   首先，编码器必须输出 logits 而不是均值和方差。对于每个输入图像，它输出一个形状为`[*d*, *k*]`的张量，包含 logits，例如如果*d* = 2 和*k* = 3，则为`[[1.2, –0.8, 0.5], [–1.3, 0.4, 0.3]]`。
 
-+   其次，由于分类采样不是一个可微操作，我们必须再次使用重新参数化技巧，但我们不能像在常规 VAEs 中那样重用：我们需要一个为分类分布设计的。最受欢迎的是 Gumbel-softmax 技巧。我们不是直接从分类分布中采样，而是调用`F.gumble_softmax()`函数：这实现了分类采样的可微近似。给定之前的 logits，这个函数可能会输出离散编码向量[0, 2]。
++   其次，由于分类采样不是一个可微操作，我们必须再次使用重新参数化技巧，但我们不能像在常规 VAEs 中那样重用：我们需要一个为分类分布设计的。最受欢迎的是 Gumbel-softmax 技巧。我们不是直接从分类分布中采样，而是调用`F.gumble_softmax()`函数：这实现了分类采样的可微近似。给定之前的 logits，这个函数可能会输出离散编码向量`[0, 2]`。
 
 ###### 注意
 
@@ -661,7 +670,7 @@ VQ-VAEs 正确实现起来可能有点棘手，但你可以使用像[*https://gi
 
 这种两阶段方法也使得控制图像生成过程变得更加容易：在训练变换器时，可以将图像的文本描述输入到变换器中，例如作为代码序列的前缀。我们说变换器是**基于描述**的，这有助于它预测正确的下一个代码。这样，经过训练后，我们可以通过提供我们想要的图像描述来引导图像生成过程。变换器将使用这个描述来生成适当的代码序列。这正是第一个 DALL·E 系统工作的方式。
 
-在实践中，编码器和解码器通常是卷积网络，因此潜在表示通常组织成一个网格（但仍然被展平成一个序列以训练变换器）。例如，编码器可能输出形状为[256, 32, 32]的张量：这是一个 32 × 32 的网格，每个单元格包含 256 维的嵌入（或者 Gumbel-Softmax dVAEs 的情况下的 256 个 logits）。将这些嵌入映射到代码簿中最近嵌入的索引（或进行分类采样后），每个图像都表示为一个 32 × 32 的整数网格（代码），代码范围在 0 到 255 之间。要生成一个新图像，你使用变换器来预测一系列 1,024 个代码，将它们组织成一个 32 × 32 的网格，将每个代码替换为其代码簿向量，然后将结果传递给解码器以生成最终的图像。
+在实践中，编码器和解码器通常是卷积网络，因此潜在表示通常组织成一个网格（但仍然被展平成一个序列以训练变换器）。例如，编码器可能输出形状为`[256, 32, 32]`的张量：这是一个 32 × 32 的网格，每个单元格包含 256 维的嵌入（或者 Gumbel-Softmax dVAEs 的情况下的 256 个 logits）。将这些嵌入映射到代码簿中最近嵌入的索引（或进行分类采样后），每个图像都表示为一个 32 × 32 的整数网格（代码），代码范围在 0 到 255 之间。要生成一个新图像，你使用变换器来预测一系列 1,024 个代码，将它们组织成一个 32 × 32 的网格，将每个代码替换为其代码簿向量，然后将结果传递给解码器以生成最终的图像。
 
 ###### 小贴士
 
@@ -719,6 +728,8 @@ discriminator = nn.Sequential(
 
 由于训练循环不寻常，我们需要一个新的训练函数：
 
+
+
 ```py
 def train_gan(generator, discriminator, train_loader, codings_dim, n_epochs=20,
               g_lr=1e-3, d_lr=5e-4):
@@ -757,11 +768,11 @@ def train_gan(generator, discriminator, train_loader, codings_dim, n_epochs=20,
 
 如前所述，你可以在每个迭代中看到两个阶段：首先判别器执行梯度下降步骤，然后轮到生成器。我们为每个使用一个单独的优化器。让我们更详细地看看：
 
-第一阶段
+## 第一阶段
 
 我们向判别器输入一批真实图像，并计算等于一的标签给出的损失；确实，我们想让判别器预测这些图像是真实的。然后我们生成一些随机编码，并将它们输入到生成器中以生成一些假图像。注意，我们对这些图像调用`detach()`，因为我们不希望梯度下降影响生成器在这个阶段。然后我们将这些假图像传递给判别器，并计算等于零的标签给出的损失；我们想让判别器预测这些图像是假的。判别器的总损失是`real_loss`加上`fake_loss`。最后，我们执行梯度下降步骤，改进判别器。
 
-第二阶段
+## 第二阶段
 
 我们使用生成器生成一些假图像，并将它们传递给判别器，就像我们刚才做的那样。然而，这次我们不对假图像调用`detach()`，因为我们想训练生成器。此外，我们通过将每个参数`p`的`p.required_grad`设置为`False`来使判别器不可训练。然后我们使用等于一的标签来计算损失：确实，我们想让生成器欺骗判别器，所以想让判别器错误地预测这些是真实图像。最后，我们为生成器执行梯度下降步骤，并再次使判别器可训练。
 
@@ -832,19 +843,25 @@ $q left-parenthesis bold x Subscript t Baseline vertical-bar bold x 0 right-pare
 
 ##### 方程 18-7\. 前向扩散过程的方差调度方程
 
-$beta Subscript t Baseline equals 1 minus StartFraction alpha overbar Subscript t Baseline Over alpha overbar Subscript t minus 1 Baseline EndFraction$ with alpha overbar Subscript t Baseline equals StartFraction f left-parenthesis t right-parenthesis Over f left-parenthesis 0 right-parenthesis EndFraction and f left-parenthesis t right-parenthesis equals cosine squared left-parenthesis StartStartFraction StartFraction t Over upper T EndFraction plus s OverOver 1 plus s EndEndFraction dot StartFraction pi Over 2 EndFraction right-parenthesis$
+
+
+# 噪声方差计划与扩散模型
+
+## 方程 18-7：噪声方差计划
+
+$\beta_t = 1 - \frac{\bar{\alpha}_t}{\bar{\alpha}_{t-1}}$，其中 $\bar{\alpha}_t = \frac{f(t)}{f(0)}$，且 $f(t) = \cos^2\left(\frac{\frac{t}{T} + s}{1 + s} \cdot \frac{\pi}{2}\right)$
 
 在这个方程中：
 
-+   *s* 是一个非常小的值，它防止 *β*[*t*] 在 *t* = 0 附近变得太小。在论文中，作者使用了 *s* = 0.008。
++   `s` 是一个非常小的值，它防止 `β[t]` 在 `t = 0` 附近变得太小。在论文中，作者使用了 `s = 0.008`。
 
-+   *β*[*t*] 被限制在不超过 0.999，以避免在 *t* = *T* 附近的稳定性问题。
++   `β[t]` 被限制在不超过 `0.999`，以避免在 `t = T` 附近的稳定性问题。
 
 ![hmls 1819](img/hmls_1819.png)
 
-###### 图 18-19\. 噪声方差计划 *β*[*t*]，以及剩余的信号方差 *α̅*[*t*]
+**图 18-19**：噪声方差计划 `β[t]`，以及剩余的信号方差 `α̅[t]`
 
-让我们创建一个小的函数来计算 *α*[*t*]，*β*[*t*]，和 *α̅*[*t*]，使用 方程 18-7，并使用 *T* = 4,000 调用此函数：
+让我们创建一个小的函数来计算 `α[t]`、`β[t]` 和 `α̅[t]`，使用方程 18-7，并使用 `T = 4000` 调用此函数：
 
 ```py
 def variance_schedule(T, s=0.008, max_beta=0.999):
@@ -860,7 +877,9 @@ T = 4000
 alphas, betas, alpha_bars = variance_schedule(T)
 ```
 
-为了训练我们的模型以逆转扩散过程，我们需要来自正向过程不同时间步长的噪声图像。为此，让我们创建一个函数，该函数将使用 方程 18-6 接收一个图像 **x**[0] 和一个时间步 *t*，并返回一个噪声图像 **x**[*t*]：
+## 正向扩散过程
+
+为了训练我们的模型以逆转扩散过程，我们需要来自正向过程不同时间步长的噪声图像。为此，让我们创建一个函数，该函数将使用方程 18-6 接收一个图像 `x[0]` 和一个时间步 `t`，并返回一个噪声图像 `x[t]`：
 
 ```py
 def forward_diffusion(x0, t):
@@ -869,7 +888,7 @@ def forward_diffusion(x0, t):
     return xt, eps
 ```
 
-模型需要噪声图像 **x**[*t*] 和时间步 *t*，所以让我们创建一个小的类来保存这两个值。我们将给它一个方便的 `to()` 方法，将 **x**[*t*] 和 *t* 移动到 GPU：
+模型需要噪声图像 `x[t]` 和时间步 `t`，所以让我们创建一个小的类来保存这两个值。我们将给它一个方便的 `to()` 方法，将 `x[t]` 和 `t` 移动到 GPU：
 
 ```py
 class DiffusionSample(namedtuple("DiffusionSampleBase", ["xt", "t"])):
@@ -877,7 +896,7 @@ class DiffusionSample(namedtuple("DiffusionSampleBase", ["xt", "t"])):
         return DiffusionSample(self.xt.to(device), self.t.to(device))
 ```
 
-接下来，让我们创建一个数据集包装器类。它接收一个图像数据集——在我们的例子中是 Fashion MNIST，并预处理图像，使其像素值介于 -1 和 +1 之间（这是可选的，但通常效果更好），并使用 `forward_diffusion()` 函数向图像添加噪声。然后它将生成的噪声图像以及时间步封装在 `DiffusionSample` 对象中，并返回它以及目标，即未缩放的噪声 `eps`，在它被 $StartRoot 1 减去 alpha bar Subscript t Baseline EndRoot$ 缩放并添加到图像之前：
+接下来，让我们创建一个数据集包装器类。它接收一个图像数据集——在我们的例子中是 Fashion MNIST，并预处理图像，使其像素值介于 `-1` 和 `+1` 之间（这是可选的，但通常效果更好），并使用 `forward_diffusion()` 函数向图像添加噪声。然后它将生成的噪声图像以及时间步封装在 `DiffusionSample` 对象中，并返回它以及目标，即未缩放的噪声 `eps`，在它被 $\sqrt{1 - \bar{\alpha}_t}$ 缩放并添加到图像之前：
 
 ```py
 class DiffusionDataset:
@@ -900,7 +919,9 @@ train_loader = DataLoader(train_set, batch_size=32, shuffle=True)
 
 你可能想知道为什么不直接预测原始图像，而不是未缩放的噪声？一个原因是经验性的：作者尝试了两种方法，并观察到预测噪声而不是图像导致了更稳定的训练和更好的结果。另一个原因是噪声是高斯分布，这允许进行一些数学简化：特别是，两个高斯分布之间的 KL 散度与它们均值之间的平方距离成正比，因此我们可以使用 MSE 损失，它简单、快速且相当稳定。
 
-现在我们已经准备好构建实际的扩散模型本身。它可以是你想要的任何模型，只要它以`DiffusionSample`作为输入，并输出与输入图像相同形状的图像。DDPM 的作者使用了一个修改过的[U-Net 架构](https://homl.info/unet)，⁠^(18)，它与我们在第十二章中讨论的 FCN 架构在语义分割方面有很多相似之处。U-Net 是一种卷积神经网络，它逐渐下采样输入图像，然后再次逐渐上采样，通过跳过连接从下采样部分的每一级跨越到上采样部分的相应级。为了考虑时间步长，他们使用固定的正弦编码（即与原始 Transformer 架构中的位置编码相同的技巧）。在 U-Net 架构的每一级，他们都通过`Linear`层传递这些时间编码，并将它们输入到 U-Net 中。最后，他们在各个级别也使用了多头注意力层。参见本章的笔记本以获取基本实现（这里复制太长，细节不重要：许多其他模型架构也可以很好地工作）。
+## 扩散模型架构
+
+现在我们已经准备好构建实际的扩散模型本身。它可以是你想要的任何模型，只要它以 `DiffusionSample` 作为输入，并输出与输入图像相同形状的图像。DDPM 的作者使用了一个修改过的 [U-Net 架构](https://homl.info/unet)⁠^(18)，它与我们在第十二章中讨论的 FCN 架构在语义分割方面有很多相似之处。U-Net 是一种卷积神经网络，它逐渐下采样输入图像，然后再次逐渐上采样，通过跳过连接从下采样部分的每一级跨越到上采样部分的相应级。为了考虑时间步长，他们使用固定的正弦编码（即与原始 Transformer 架构中的位置编码相同的技巧）。在 U-Net 架构的每一级，他们都通过 `Linear` 层传递这些时间编码，并将它们输入到 U-Net 中。最后，他们在各个级别也使用了多头注意力层。参见本章的笔记本以获取基本实现（这里复制太长，细节不重要：许多其他模型架构也可以很好地工作）。
 
 ```py
 class DiffusionModel(nn.Module):  # see the notebook for full details
@@ -911,6 +932,8 @@ class DiffusionModel(nn.Module):  # see the notebook for full details
         [...]  # process the sample and predict the noise for each image
 ```
 
+## 训练扩散模型
+
 对于训练，作者指出使用 MAE 损失比 MSE 更有效。你也可以使用 Huber 损失：
 
 ```py
@@ -920,29 +943,39 @@ optimizer = torch.optim.NAdam(diffusion_model.parameters(), lr=3e-3)
 train(diffusion_model, optimizer, huber, train_loader, n_epochs=20)
 ```
 
-一旦模型训练完成，你可以通过从均值为 0、方差为 1 的高斯分布中随机采样**x**[*T*]来使用它生成新的图像，然后使用方程 18-8 得到**x**[*T*–1]。然后使用这个方程再重复 3,999 次，直到得到**x**[0]。如果一切顺利，**x**[0]应该看起来像一张普通的 Fashion MNIST 图像！
+## 反向扩散过程
 
-##### 方程 18-8\. 在 DDPM 扩散过程中的反向一步
+一旦模型训练完成，你可以通过从均值为 `0`、方差为 `1` 的高斯分布中随机采样 `x[T]` 来使用它生成新的图像，然后使用方程 18-8 得到 `x[T–1]`。然后使用这个方程再重复 `3,999` 次，直到得到 `x[0]`。如果一切顺利，`x[0]` 应该看起来像一张普通的 Fashion MNIST 图像！
 
-<mrow><msub><mi>𝐱</mi> <mrow><mi>t</mi> <mo>−</mo> <mn>1</mn></mrow></msub> <mo>=</mo> <mfrac><mn>1</mn> <msqrt><msub><mi>α</mi> <mi>t</mi></msub></msqrt></mfrac> <mrow><mo fence="true" form="prefix">(</mo> <msub><mi>𝐱</mi> <mi>t</mi></msub> <mo>−</mo> <mfrac><msub><mi>β</mi> <mi>t</mi></msub> <msqrt><mrow><mn>1</mn> <mo>−</mo> <msub><menclose notation="top"><mi>α</mi></menclose> <mi>t</mi></msub></mrow></msqrt></mfrac> <msub><mi mathvariant="bold">ε</mi> <mi mathvariant="bold">θ</mi></msub> <mo form="prefix" stretchy="false">(</mo> <msub><mi>𝐱</mi> <mi>t</mi></msub> <mo lspace="0%" rspace="0%" separator="true">,</mo> <mi>t</mi> <mo form="postfix" stretchy="false">)</mo> <mo fence="true" form="postfix">)</mo></mrow> <mo>+</mo> <msqrt><msub><mi>β</mi> <mi>t</mi></msub></msqrt> <mi>𝐳</mi></mrow>
+**方程 18-8**：在 DDPM 扩散过程中的反向一步
 
-在这个方程中，**ε[θ]**(**x**[*t*], *t*)表示模型根据输入图像**x**[*t*]和时间步长*t*预测的噪声。**θ**代表模型参数。此外，**z**是均值为 0、方差为 1 的高斯噪声。这使得反向过程是随机的：如果你多次运行它，你会得到不同的图像。
+$\mathbf{x}_{t-1} = \frac{1}{\sqrt{\alpha_t}} \left( \mathbf{x}_t - \frac{\beta_t}{\sqrt{1 - \bar{\alpha}_t}} \boldsymbol{\epsilon}_\theta(\mathbf{x}_t, t) \right) + \sqrt{\beta_t} \mathbf{z}$
 
-这方法效果不错，但生成一张图片需要 4,000 次迭代！这太慢了。幸运的是，在 DDPM 论文发表后的几个月里，斯坦福大学的研究人员提出了一种名为[去噪扩散隐式模型（DDIM）](https://homl.info/ddim)的技术⁠^(19)，可以在更少的步骤中生成图片：DDIM 可以一次下降任意多个时间步，而不是每次只下降一个时间步从*t* = 4,000 下降到 0，使用方程 18-9。此外，训练过程与 DDPM 完全相同，因此我们可以简单地重用我们训练好的 DDPM 模型。
+在这个方程中，`ε[θ](x[t], t)` 表示模型根据输入图像 `x[t]` 和时间步长 `t` 预测的噪声。`θ` 代表模型参数。此外，`z` 是均值为 `0`、方差为 `1` 的高斯噪声。这使得反向过程是随机的：如果你多次运行它，你会得到不同的图像。
 
-##### 方程 18-9\. 使用 DDIM 进行多步反向操作
+## 加速采样：DDIM
 
-<mtable displaystyle="true" style="width:100%;"><mtr><mtd style="padding-left:1em;padding-right:0em;"><mtable displaystyle="true" class="tml-jot"><mtr><mtd class="tml-right" style="padding-left:0em;padding-right:0em;"><mrow><msub><mi>𝐱</mi> <mi>p</mi></msub> <mo>=</mo> <msqrt><msub><menclose notation="top"><mi>α</mi></menclose> <mi>p</mi></msub></msqrt> <msub><mover><mi>𝐱</mi> <mo stretchy="false" class="wbk-acc" style="math-depth:0;">^</mo></mover> <mn>0</mn></msub> <mo>+</mo> <msqrt><mrow><mn>1</mn> <mo>−</mo> <msub><menclose notation="top"><mi>α</mi></menclose> <mi>p</mi></msub> <mo>−</mo> <msup><mi>σ</mi> <mn>2</mn></msup></mrow></msqrt> <mo>⋅</mo> <msub><mi mathvariant="bold">ε</mi> <mi mathvariant="bold">θ</mi></msub> <mo form="prefix" stretchy="false">(</mo> <msub><mi>𝐱</mi> <mi>t</mi></msub> <mo lspace="0%" rspace="0%" separator="true">,</mo> <mi>t</mi> <mo form="postfix" stretchy="false">)</mo> <mo>+</mo> <mi>σ</mi> <mi>𝐳</mi></mrow></mtd></mtr> <mtr><mtd style="padding-left:0em;padding-right:0em;"><mrow><mtext>其中</mtext> <msub><mover><mi>𝐱</mi> <mo stretchy="false" class="wbk-acc" style="math-depth:0;">^</mo></mover> <mn>0</mn></msub> <mo>=</mo> <mfrac><mn>1</mn> <msqrt><msub><menclose notation="top"><mi>α</mi></menclose> <mi>t</mi></msub></msqrt></mfrac> <mrow><mo fence="true" form="prefix">(</mo> <msub><mi>𝐱</mi> <mi>t</mi></msub> <mo>−</mo> <msqrt><mrow><mn>1</mn> <mo>−</mo> <msub><menclose notation="top"><mi>α</mi></menclose> <mi>t</mi></msub></mrow></msqrt> <msub><mi mathvariant="bold">ε</mi> <mi mathvariant="bold">θ</mi></msub> <mo form="prefix" stretchy="false">(</mo> <msub><mi>𝐱</mi> <mi>t</mi></msub> <mo lspace="0%" rspace="0%" separator="true">,</mo> <mi>t</mi> <mo form="postfix" stretchy="false">)</mo> <mo fence="true" form="postfix">)</mo></mrow></mrow></mtd></mtr> <mtr><mtd style="padding-left:0em;padding-right:0em;"><mrow><mtext>并且</mtext> <msup><mi>σ</mi> <mn>2</mn></msup> <mo>=</mo> <mi>η</mi> <mrow><mo fence="true" form="prefix">(</mo> <mfrac><mrow><mn>1</mn> <mo>−</mo> <msub><menclose notation="top"><mi>α</mi></menclose> <mi>p</mi></msub></mrow> <mrow><mn>1</mn> <mo>−</mo> <msub><menclose notation="top"><mi>α</mi></menclose> <mi>t</mi></msub></mrow></mfrac> <mo fence="true" form="postfix">)</mo></mrow> <msub><mi>β</mi> <mi>t</mi></msub></mrow></mtd></mtr></mtable></mtd></mtr></mtable>
+这方法效果不错，但生成一张图片需要 `4,000` 次迭代！这太慢了。幸运的是，在 DDPM 论文发表后的几个月里，斯坦福大学的研究人员提出了一种名为 [去噪扩散隐式模型（DDIM）](https://homl.info/ddim) 的技术⁠^(19)，可以在更少的步骤中生成图片：DDIM 可以一次下降任意多个时间步，而不是每次只下降一个时间步从 `t = 4000` 下降到 `0`，使用方程 18-9。此外，训练过程与 DDPM 完全相同，因此我们可以简单地重用我们训练好的 DDPM 模型。
+
+**方程 18-9**：使用 DDIM 进行多步反向操作
+
+$\mathbf{x}_p = \sqrt{\bar{\alpha}_p} \hat{\mathbf{x}}_0 + \sqrt{1 - \bar{\alpha}_p - \sigma^2} \cdot \boldsymbol{\epsilon}_\theta(\mathbf{x}_t, t) + \sigma \mathbf{z}$
+
+其中 $\hat{\mathbf{x}}_0 = \frac{1}{\sqrt{\bar{\alpha}_t}} \left( \mathbf{x}_t - \sqrt{1 - \bar{\alpha}_t} \boldsymbol{\epsilon}_\theta(\mathbf{x}_t, t) \right)$
+
+并且 $\sigma^2 = \eta \left( \frac{1 - \bar{\alpha}_p}{1 - \bar{\alpha}_t} \right) \beta_t$
 
 在这个方程中：
 
-+   **ε[θ]**(**x**[*t*], *t*), **θ**, 和 **z** 与 方程 18-8 中的含义相同。
++   `ε[θ](x[t], t)`、`θ` 和 `z` 与方程 18-8 中的含义相同。
 
-+   *p* 代表 *t* 之前的任何时间步。例如，它可以是 *p* = *t* – 50。
++   `p` 代表 `t` 之前的任何时间步。例如，它可以是 `p = t – 50`。
 
-+   *η* 是一个超参数，它控制生成过程中应该使用多少随机性，从 0（无随机性，完全确定）到 1（就像 DDPM）。
++   `η` 是一个超参数，它控制生成过程中应该使用多少随机性，从 `0`（无随机性，完全确定）到 `1`（就像 DDPM）。
 
 让我们编写一个实现这个反向过程的函数，并将其命名为生成几个图像：
+
+
 
 ```py
 def generate_ddim(model, batch_size=32, num_steps=50, eta=0.85):

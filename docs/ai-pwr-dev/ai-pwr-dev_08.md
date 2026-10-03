@@ -1,16 +1,14 @@
+
+
 # 第六章：使用大型语言模型进行测试、评估和解释
 
 本章涵盖
 
-+   轻松起草单元测试
-
-+   生成集成测试
-
-+   确定代码质量和覆盖率
-
-+   评估软件复杂性
-
-+   翻译代码和文本
++ 轻松起草单元测试
++ 生成集成测试
++ 确定代码质量和覆盖率
++ 评估软件复杂性
++ 翻译代码和文本
 
 本章将探讨软件工程的一个关键方面：测试。测试软件的行为具有多个基本目的。首先，它有助于识别可能影响软件功能、可用性或性能的缺陷、错误和问题。此外，它确保软件符合所需的质量标准。通过进行彻底的测试，我们可以验证软件是否满足指定的要求，是否按预期运行，并产生预期的结果。通过全面的测试，开发者可以评估软件在各种平台和环境中的可靠性、准确性、效率、安全性和兼容性。在开发早期阶段发现并解决软件缺陷可以显著节省时间和成本。
 
@@ -20,7 +18,7 @@
 
 测试在软件工程中扮演着至关重要的角色；因此，我们将详细探讨各种测试类型。这包括单元测试、集成测试和行为测试。首先，我们将使用 Copilot Chat 来帮助我们创建一个*单元测试*。
 
-定义 A *单元测试*专注于测试单个组件或代码单元，以确保它们在独立的情况下能正确运行。开发者通常运行单元测试来帮助识别特定软件单元中的错误和问题。
+定义：*单元测试*专注于测试单个组件或代码单元，以确保它们在独立的情况下能正确运行。开发者通常运行单元测试来帮助识别特定软件单元中的错误和问题。
 
 ### 6.1.1 单元测试
 
@@ -28,17 +26,17 @@
 
 第一个框架是`unittest`。这是 Python 创建单元测试的标准库。它随 Python 一起提供，无需单独安装。`unittest`提供了一套丰富的断言，非常适合编写简单到复杂的测试用例，但它可能会很冗长。对于编写基本的单元测试来说，这是一个不错的选择，尤其是如果你不想在你的项目中引入额外的依赖项。它在任何需要独立于系统其他部分确认代码单元功能的情况下都很有用。
 
-接下来，让我们来检查 `pytest`。这是一个流行的第三方库，可用于单元测试，尽管它足够灵活，可以处理不仅仅是单元测试。它比 `unittest` 需要更少的样板代码，并具有强大的功能，如设置和清理的 fixtures、参数化测试以及运行 `unittest` 和 `nose` 测试套件的能力。`pytest` 对于简单和复杂的单元测试案例都很好。它也适用于功能性和集成测试。如果你重视简单性和易用性，并且你的项目不受限于仅使用 Python 标准库，`pytest` 是一个极佳的选择。
+接下来，让我们来检查`pytest`。这是一个流行的第三方库，可用于单元测试，尽管它足够灵活，可以处理不仅仅是单元测试。它比`unittest`需要更少的样板代码，并具有强大的功能，如设置和清理的 fixtures、参数化测试以及运行`unittest`和`nose`测试套件的能力。`pytest`对于简单和复杂的单元测试案例都很好。它也适用于功能性和集成测试。如果你重视简单性和易用性，并且你的项目不受限于仅使用 Python 标准库，`pytest`是一个极佳的选择。
 
-`nose2` 是已弃用的 `nose` 测试框架的继任者。它扩展了 `unittest` 并使测试更加容易。它以其测试发现功能而闻名，该功能可以自动找到你的项目测试，这样你就不必手动列出它们。`nose2` 对于可以节省时间的较大项目来说是个不错的选择。像 `pytest` 一样，它可以运行 `unittest` 测试套件，所以如果你从 `unittest` 迁移但想保留现有的测试，它也是一个很好的选择。
+`nose2`是已弃用的`nose`测试框架的继任者。它扩展了`unittest`并使测试更加容易。它以其测试发现功能而闻名，该功能可以自动找到你的项目测试，这样你就不必手动列出它们。`nose2`对于可以节省时间的较大项目来说是个不错的选择。像`pytest`一样，它可以运行`unittest`测试套件，所以如果你从`unittest`迁移但想保留现有的测试，它也是一个很好的选择。
 
-最后，有 `doctest`。这是 Python 标准库的一部分模块。它不是一个像其他模块那样功能齐全的测试框架，但它允许你直接在你的文档字符串中编写测试。`doctest` 最适合于简单的案例，其中你想要展示如何使用一个函数或模块，并确认示例代码按预期工作。这是一种确保你的文档与代码保持同步的绝佳方式。
+最后，有`doctest`。这是 Python 标准库的一部分模块。它不是一个像其他模块那样功能齐全的测试框架，但它允许你直接在你的文档字符串中编写测试。`doctest`最适合于简单的案例，其中你想要展示如何使用一个函数或模块，并确认示例代码按预期工作。这是一种确保你的文档与代码保持同步的绝佳方式。
 
-Copilot Chat 建议我们使用 `unittest`，因此我们将这样做。你可以尝试自己询问它，看看是否会得出不同的结论，这可能是可能的，这取决于你如何构建问题。
+Copilot Chat 建议我们使用`unittest`，因此我们将这样做。你可以尝试自己询问它，看看是否会得出不同的结论，这可能是可能的，这取决于你如何构建问题。
 
-首先，我们将通过创建继承自 `unittest.TestCase` 类的类来定义测试案例。在编写我们的第一个单元测试时，我们将揭示一个迄今为止一直困扰我们的相当有害的错误；我们很快就会达到这一点。最后，我们将测试 `DepartmentStatisticsVisitor` 类的正确性。
+首先，我们将通过创建继承自`unittest.TestCase`类的类来定义测试案例。在编写我们的第一个单元测试时，我们将揭示一个迄今为止一直困扰我们的相当有害的错误；我们很快就会达到这一点。最后，我们将测试`DepartmentStatisticsVisitor`类的正确性。
 
-我们首先向 Copilot Chat 发送一个提示，要求它为 `DepartmentStatisticsVisitor` 创建一个单元测试。响应将是一个关于上下文重要性的提醒。由于我们开始了一个新的聊天会话，Copilot Chat 将尝试创建这个单元测试，但它缺少我们任何类的定义。
+我们首先向 Copilot Chat 发送一个提示，要求它为`DepartmentStatisticsVisitor`创建一个单元测试。响应将是一个关于上下文重要性的提醒。由于我们开始了一个新的聊天会话，Copilot Chat 将尝试创建这个单元测试，但它缺少我们任何类的定义。
 
 列表 6.1 第一次尝试定义单元测试
 
@@ -84,9 +82,9 @@ class TestDepartmentStatisticsVisitor(unittest.TestCase):
         self.assertEqual(visitor.get_total_allocation(), 0.8)
 ```
 
-单元测试接近我们需要的；然而，`Asset` 的定义是不正确的。我们可以从我们的 asset.py 类中输入正确的定义，然后 Copilot Chat 将继续细化单元测试。
+单元测试接近我们需要的；然而，`Asset`的定义是不正确的。我们可以从我们的`asset.py`类中输入正确的定义，然后 Copilot Chat 将继续细化单元测试。
 
-列表 6.3 下一次尝试定义单元测试，包含 `Asset` 定义
+列表 6.3 下一次尝试定义单元测试，包含`Asset`定义
 
 ```py
 import unittest
@@ -223,6 +221,9 @@ class FundingDetails:
 
 列表 6.7 Copilot Chat 生成的`AssetController`集成测试
 
+
+
+
 ```py
 from fastapi.testclient import TestClient
 from itam.infrastructure.adapters.memory_asset_repository import MemoryAssetRepository
@@ -278,11 +279,10 @@ def test_get_assets():
 
 我们将把模拟对象纳入提示中，为 `AssetManager` 创建一个行为测试：
 
-|
-
 ![logo-NC
 
-| 我们有一个名为 AssetManager 的类。AssetManager 的构造函数接受两个类 BaseRepository 和 AssetLocationMediator。BaseRepository 是一个存储资产的仓库。我们想使用 InMemoryAssetRepository，它是 BaseRepository 的一个子类，用于在内存中存储资产。为 AssetLocationMediator 使用模拟对象。AssetManager 使用 create 方法存储资产，并使用 get_assets 方法获取所有资产。一个资产有 10 个必需的位置参数：'id'、'name'、'status'、'category'、'cost'、'useful_life'、'salvage_value'、'purchase_date'、'locations' 和 'funding_details'。使用命名参数来清楚地说明哪个参数去哪里。创建一个 BDD 脚本，将两个资产添加到 AssetManager 中，确认所有资产的成本为 $4000.00。这应该用 Python 实现。一步一步地告诉我们你将使用哪些工具和库。 |
+| 我们有一个名为 `AssetManager` 的类。`AssetManager` 的构造函数接受两个类 `BaseRepository` 和 `AssetLocationMediator`。`BaseRepository` 是一个存储资产的仓库。我们想使用 `InMemoryAssetRepository`，它是 `BaseRepository` 的一个子类，用于在内存中存储资产。为 `AssetLocationMediator` 使用模拟对象。`AssetManager` 使用 `create` 方法存储资产，并使用 `get_assets` 方法获取所有资产。一个资产有 10 个必需的位置参数：`'id'`、`'name'`、`'status'`、`'category'`、`'cost'`、`'useful_life'`、`'salvage_value'`、`'purchase_date'`、`'locations'` 和 `'funding_details'`。使用命名参数来清楚地说明哪个参数去哪里。创建一个 BDD 脚本，将两个资产添加到 `AssetManager` 中，确认所有资产的成本为 $4000.00。这应该用 Python 实现。一步一步地告诉我们你将使用哪些工具和库。 |
+
 | --- |
 
 Copilot Chat 告诉我们，我们需要创建一个新的文件（一个 *feature 文件*），名为 `asset_manager.feature`。在这个文件中，我们将定义 `AssetManager` 的属性（以及任何支持类）。例如，该特征文件定义了一个场景，向 `AssetManager` 添加两个资产，确认所有资产的总成本为 $4,000.00，并模拟 `AssetLocationMediator` 类。
@@ -304,9 +304,9 @@ Feature: Asset Manager
     Then the total cost of all assets should be $4000.00
 ```
 
-我们需要在项目的根目录下创建一个名为 features 的目录，并将此文件放置在该目录中。此外，我们还需要添加一个名为 steps 的子目录。接下来，我们创建一个名为 steps.py 的新 Python 文件，并将其放置在 steps 目录中。这个 Python 文件定义了特征文件中场景的步骤实现。导入了 `AssetManager`、`InMemoryAssetRepository`、`AssetLocationMediator` 和 `Asset` 类，并定义了六个函数来对应场景中的步骤。这些函数使用上下文对象在步骤之间存储和检索数据。`unittest.mock` 库中的 `Mock` 类用于为 `AssetLocationMediator` 类创建一个模拟对象。使用命名参数实例化 `Asset` 类，以明确哪个参数属于哪个属性。如果我们向 Copilot Chat 请求 steps.py 文件的內容，我们将看到类似于以下列表的输出。
+我们需要在项目的根目录下创建一个名为 `features` 的目录，并将此文件放置在该目录中。此外，我们还需要添加一个名为 `steps` 的子目录。接下来，我们创建一个名为 `steps.py` 的新 Python 文件，并将其放置在 `steps` 目录中。这个 Python 文件定义了特征文件中场景的步骤实现。导入了 `AssetManager`、`InMemoryAssetRepository`、`AssetLocationMediator` 和 `Asset` 类，并定义了六个函数来对应场景中的步骤。这些函数使用上下文对象在步骤之间存储和检索数据。`unittest.mock` 库中的 `Mock` 类用于为 `AssetLocationMediator` 类创建一个模拟对象。使用命名参数实例化 `Asset` 类，以明确哪个参数属于哪个属性。如果我们向 Copilot Chat 请求 `steps.py` 文件的內容，我们将看到类似于以下列表的输出。
 
-列表 6.9 steps.py 中定义的行为测试的实现细节
+列表 6.9 `steps.py` 中定义的行为测试的实现细节
 
 ```py
 from behave import given, when, then
@@ -358,7 +358,7 @@ def step_impl(context, total_cost):
     assert sum(asset.cost for asset in assets) == float(total_cost)
 ```
 
-如果你还没有安装它，你需要使用 pip 安装 `behave` 库：`pip install behave`。此外，将其添加到 requirements.txt 文件中，以确保在稍后构建可部署版本的应用程序时将其拉入。我们从项目的根目录运行行为测试，使用以下命令。
+如果你还没有安装它，你需要使用 `pip` 安装 `behave` 库：`pip install behave`。此外，将其添加到 `requirements.txt` 文件中，以确保在稍后构建可部署版本的应用程序时将其拉入。我们从项目的根目录运行行为测试，使用以下命令。
 
 列表 6.10 运行行为测试及其输出结果
 
@@ -411,11 +411,13 @@ Took 0m0.001s
 
 软件越复杂，需要更多的测试用例才能实现彻底的测试。由于涉及逻辑的复杂性，编写这些测试用例可能也更困难。
 
+
+
 编写简单且易于维护的代码应该是我们最高的优先事项之一。观察伴随我们的代码的指标变化应该有助于我们实现这一目标。为此，我们可以（并且应该）使用的第一个指标是*循环复杂度*。
 
 定义*循环复杂度*是一个衡量软件模块中独立路径数量的指标。它衡量代码中决策的复杂度，包括循环、条件和分支。较高的循环复杂度值表示更高的复杂度，并暗示代码在理解和维护方面可能存在更多错误和挑战。
 
-在文件 department_visitor.py 的任何地方输入以下提示。Copilot 将立即输出答案：
+在文件`department_visitor.py`的任何地方输入以下提示。Copilot 将立即输出答案：
 
 ```py
 # Question: What is the cyclomatic complexity of the class Department- StatisticsVisitor?
@@ -434,7 +436,7 @@ Copilot 告诉我们这个类的复杂度是 1。你可能或可能不知道这�
 
 Copilot 告诉我们，如果圈复杂度低，那么它是好的。直观上，这很有道理。低复杂度的代码意味着它更容易理解，因此更容易推理。它也更有可能更容易维护。接下来，我们将探索*霍尔斯特德复杂度度量*。
 
-定义 *霍尔斯特德复杂度度量* 基于代码中使用的唯一操作符和操作数的数量来评估软件程序的复杂度。这些度量包括程序长度（N1）、程序词汇（n1）、体积（V）、难度（D）、努力（E）等指标。这些指标提供了对代码大小和认知复杂度的洞察。
+定义 *霍尔斯特德复杂度度量* 基于代码中使用的唯一操作符和操作数的数量来评估软件程序的复杂度。这些度量包括程序长度（`N1`）、程序词汇（`n1`）、体积（`V`）、难度（`D`）、努力（`E`）等指标。这些指标提供了对代码大小和认知复杂度的洞察。
 
 与上次类似，我们将从一个提示开始，要求 Copilot 确定我们的访客类的霍尔斯特德复杂度度量：
 
@@ -507,7 +509,7 @@ if __name__ == '__main__':
 
 图 6.1 Copilot Labs 工具箱菜单，包括查找和修复错误的选项。工具箱还提供了增强和记录代码的功能。
 
-我们将临时更改 main.py 文件的内容为列表 6.11 中列出的代码。一旦你做了这个更改，突出显示代码并点击 Copilot Labs 工具箱中的修复错误按钮。你应该看到如图 6.2 所示的输出。Copilot Labs 能够确定这段代码中的问题，并提供有关如何修复的建议。
+我们将临时更改`main.py`文件的内容为列表 6.11 中列出的代码。一旦你做了这个更改，突出显示代码并点击 Copilot Labs 工具箱中的修复错误按钮。你应该看到如图 6.2 所示的输出。Copilot Labs 能够确定这段代码中的问题，并提供有关如何修复的建议。
 
 ![图片](img/CH06_F02_Crocker2.png)
 
@@ -523,9 +525,9 @@ if __name__ == '__main__':
 
 为了确定我们的 Python 项目的代码覆盖率，我们将使用`coverage`库中提供的代码覆盖率工具。`coverage`库通过在代码运行时对其进行仪器化来收集覆盖率数据。它可以收集任何 Python 代码的覆盖率数据，包括测试、脚本和模块。通过使用像`coverage`这样的代码覆盖率工具，我们可以更好地了解我们的代码中有多少部分被测试执行，并识别可能需要更多测试的代码区域。
 
-首先，让我们使用 pip 安装`coverage`：`pip install coverage`。接下来，让我们使用覆盖率运行我们的测试：`coverage run -m pytest`。这将运行你的测试并收集覆盖率数据。
+首先，让我们使用`pip`安装`coverage`：`pip install coverage`。接下来，让我们使用覆盖率运行我们的测试：`coverage run -m pytest`。这将运行你的测试并收集覆盖率数据。
 
-现在我们将生成一个覆盖率报告（见图 6.3）。覆盖率报告显示了项目中每个文件的代码覆盖率。我们可以使用`coverage report`命令创建基于文本的覆盖率报告，或使用`coverage html`命令生成报告的 HTML 版本。报告的 HTML 版本位于 htmlcov 目录中。
+现在我们将生成一个覆盖率报告（见图 6.3）。覆盖率报告显示了项目中每个文件的代码覆盖率。我们可以使用`coverage report`命令创建基于文本的覆盖率报告，或使用`coverage html`命令生成报告的 HTML 版本。报告的 HTML 版本位于`htmlcov`目录中。
 
 ![图片](img/CH06_F03_Crocker2.png)
 
@@ -544,6 +546,7 @@ if __name__ == '__main__':
 ![图片](img/logo-NC.png)
 
 | 这段代码做什么？ |
+
 | --- |
 
 ![图片](img/CH06_F04_Crocker2.png)
@@ -598,9 +601,9 @@ async def get_asset(self, asset_id: int):
 
 ## 6.6 从一种语言翻译到另一种语言
 
-虽然这听起来可能很遥远，但你可能会发现自己正在查看一个用你只有肤浅了解的编程语言编写的代码库。或者，你可能渴望某个特定功能能在你当前的语言中使用。例如，如果将 `Asset` 和 `FundingDetails` 类用 JavaScript 重新编写，它们会是什么样子？好吧，让我们问问 Copilot Chat。
+虽然这听起来可能很遥远，但你可能会发现自己正在查看一个用你只有肤浅了解的编程语言编写的代码库。或者，你可能渴望某个特定功能能在你当前的语言中使用。例如，如果将`Asset`和`FundingDetails`类用 JavaScript 重新编写，它们会是什么样子？好吧，让我们问问 Copilot Chat。
 
-列表 6.13 将 `Asset` 和 `FundingDetails` 翻译成 JavaScript。
+列表 6.13 将`Asset`和`FundingDetails`翻译成 JavaScript。
 
 ```py
 class Asset {
@@ -637,11 +640,14 @@ class FundingDetails {
 ![图片](img/logo-NC.png)
 
 | 如果用 JavaScript 编写，AssetManager 的行为测试会是什么样子？ |
+
 | --- |
 
-列表 6.14 将 `AssetManager` 行为测试翻译成 JavaScript
 
-```py
+
+# 列表 6.14 将 `AssetManager` 行为测试翻译成 JavaScript
+
+```js
 const AssetManager = require('./asset_manager');
 const Asset = require('./asset');
 
@@ -696,20 +702,16 @@ describe('AssetManager', () => {
 });
 ```
 
-此外，你可能希望让 GPT 将代码重写为地道的 JavaScript。你只需要说
+此外，你可能希望让 GPT 将代码重写为地道的 JavaScript。你只需要说：
 
-|
-
-![图片](img/logo-NC.png)
-
-| 用地道的 JavaScript 编写 AssetManager |
+| ![图片](img/logo-NC.png) | 用地道的 JavaScript 编写 `AssetManager` |
 | --- |
 
 Copilot Chat 会告诉你它将使用 ES6 中引入的类语法来定义 `AssetManager` 类。
 
-列表 6.15 用地道的 JavaScript 重新编写的 `AssetManager` 类
+# 列表 6.15 用地道的 JavaScript 重新编写的 `AssetManager` 类
 
-```py
+```js
 class AssetManager {
   constructor() {
     this.assets = [];
@@ -734,9 +736,9 @@ class AssetManager {
 
 这里是一个使用 Jest 测试框架（Copilot Chat 没有建议就包含了）的 `AssetManager` 行为测试的例子。
 
-列表 6.16 `AssetManager`行为测试的惯用 JavaScript
+# 列表 6.16 `AssetManager` 行为测试的惯用 JavaScript
 
-```py
+```js
 const AssetManager = require('./asset_manager');
 const Asset = require('./asset');
 describe('AssetManager', () => {
@@ -785,24 +787,20 @@ describe('AssetManager', () => {
 });
 ```
 
-在这个例子中，我们使用 Jest 测试框架为`AssetManager`类定义一组行为测试。我们使用`describe`库来确定测试套件和单个测试。
+在这个例子中，我们使用 Jest 测试框架为 `AssetManager` 类定义一组行为测试。我们使用 `describe` 库来确定测试套件和单个测试。
 
-在每个测试中，我们创建一个`AssetManager`类的实例并在其上执行一些操作，例如添加或删除资产。然后我们使用`expect`函数对`AssetManager`类的行为进行断言，例如检查资产是否添加到资产列表或资产是否从资产列表中删除。请注意，JavaScript 中定义类和构造函数的语法与 Python 略有不同，我们使用所需的函数从各自的模块中导入`AssetManager`和`Asset`类。
+在每个测试中，我们创建一个 `AssetManager` 类的实例并在其上执行一些操作，例如添加或删除资产。然后我们使用 `expect` 函数对 `AssetManager` 类的行为进行断言，例如检查资产是否添加到资产列表或资产是否从资产列表中删除。请注意，JavaScript 中定义类和构造函数的语法与 Python 略有不同，我们使用所需的函数从各自的模块中导入 `AssetManager` 和 `Asset` 类。
 
 最后，是时候进入高潮部分了：我们将开始一个新的 ChatGPT 4.0 会话，并将第三章中的 Mermaid 图表粘贴进来。以下是一个提示：
 
-|
-
-![logo-NC](img/logo-NC.png)
-
-| 这里是我的应用程序的 Mermaid 图表。请用 Golang 实现。 |
+| ![logo-NC](img/logo-NC.png) | 这里是我的应用程序的 Mermaid 图表。请用 Golang 实现。 |
 | --- |
 
 惊讶地看到它返回的代码，是用 Golang 渲染的。
 
-列表 6.17 `Asset`类用惯用 Golang 重写
+# 列表 6.17 `Asset` 类用惯用 Golang 重写
 
-```py
+```go
 type Asset struct {
     id            int
     name          string
@@ -824,9 +822,9 @@ func NewAsset(name, status, category string,
 
 接下来，告诉它切换到 Java。
 
-列表 6.18 `Asset`类用惯用 Java 重写
+# 列表 6.18 `Asset` 类用惯用 Java 重写
 
-```py
+```java
 class Asset {
     private int id;
     private String name;
@@ -840,6 +838,7 @@ class Asset {
         this.category = category;
         this.fundingDetails = fundingDetails;
     }
+}
 ```
 
 ## 摘要

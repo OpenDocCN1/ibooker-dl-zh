@@ -1,3 +1,4 @@
+
 # 第三章. 学习 DNA 的逻辑
 
 在本章中，我们将构建一个深度学习模型来预测 DNA 序列是否被一类称为*转录因子*（TFs）的蛋白质所结合。转录因子在基因调控中起着核心作用：它们结合到特定的 DNA 序列上，并影响附近基因是开启还是关闭。通过识别这些序列模式，我们可以开始解码基因组中嵌入的调控逻辑。
@@ -6,15 +7,15 @@
 
 我们将分阶段解决这个问题，逐步增加复杂性：
 
-1. 从简单开始
+1. **从简单开始**
 
 首先，我们将训练一个基本的卷积网络来预测 DNA 序列是否结合一个名为 CTCF 的单个转录因子。其结合行为相对容易预测，使其成为一个很好的起点。我们将构建完整的管道：加载数据、训练模型，并检查它是否捕捉到有意义的生物信号。
 
-2. 增加复杂性
+2. **增加复杂性**
 
 接下来，我们将扩展到预测序列是否结合 10 种不同的 TFs。我们将介绍正则化和归一化，改进我们的评估指标，并开始检查单个预测。我们还将使用突变实验和输入梯度来突出模型所依赖的序列部分——这是可解释性的第一步。
 
-3. 集成高级技术
+3. **集成高级技术**
 
 最后，我们将尝试添加转换器层来探索它们是否提高了性能，并继续剖析模型行为，以了解不同的架构选择如何影响学习。
 
@@ -74,23 +75,23 @@ DNA 是遗传的分子——生命的根本代码。其双螺旋结构最早在 
 
 然而，并非每个匹配的基序在活细胞中实际上都结合了。事实上，基因组中基序匹配的数量远多于实际结合事件。这是因为结合取决于许多其他因素：
 
-染色质可及性
+**染色质可及性**
 
 紧密包装在染色质中的 DNA 对蛋白质的访问更困难。TF 更有可能在开放染色质区域结合。
 
-DNA 甲基化
+**DNA 甲基化**
 
 某些 TF，如 CTCF，对其结合位点上的甲基化（DNA 碱基的特定化学修饰）敏感，即使基序存在，也可能阻止结合。
 
-细胞信号
+**细胞信号**
 
 细胞内部的信号——例如激素或压力反应——可以激活或抑制转录因子（TF）结合的能力。
 
-其他蛋白质
+**其他蛋白质**
 
 局部环境中的辅助或阻断蛋白可以促进或抑制结合。
 
-协同结合
+**协同结合**
 
 许多 TF 在复合物中工作或招募其他因子以稳定结合并控制基因活性。
 
@@ -126,19 +127,19 @@ CNN 最初是为图像识别任务开发的。在图像中，低级特征如边�
 
 让我们简要地浏览一下典型 CNN 的关键组件：
 
-卷积层
+**卷积层**
 
 这些是 CNN 的核心。一个卷积层包含多个滤波器（也称为*核*）——在输入上滑动的小权重矩阵，并计算点积。每个滤波器都像一个模式检测器，当它在输入中找到良好的匹配时就会亮起。应用卷积的结果是一个*特征图*，显示了模式发生的位置。
 
-池化层
+**池化层**
 
 这些将特征图下采样以减少维度和计算。例如，*最大池化*只保留每个区域中最强的信号，帮助模型关注最显著的特征。
 
-归一化
+**归一化**
 
 类似于*批量归一化*的层会将激活值重新缩放，使训练更加稳定和高效。它们减少了内部*协变量偏移*——激活值在训练过程中漂移的趋势——并且通常可以加快收敛速度。
 
-全连接层
+**全连接层**
 
 这些位于网络的末端，并使用先前层提取的特征进行最终预测——例如，是否一个 DNA 序列被转录因子结合。
 
@@ -218,63 +219,62 @@ CNNs 已成为基于序列的生物学任务的标准架构，因为它们在能
 
 这种设计使得注意力工作像一个智能查找系统：标记宣传它们包含的内容（键），查询寻找匹配项，然后根据键与查询的匹配程度，以加权比例提取实际内容（值）。
 
-重要的是，Q、K 和 V 投影都是从数据中学习的。它们最初是随机的，模型通过训练找出——如何最好地塑造这些表示以完成当前任务，无论是学习语法、预测调控活性还是模拟蛋白质相互作用。
+
+
+重要的是，`Q`、`K`和`V`投影都是从数据中学习的。它们最初是随机的，模型通过训练找出——如何最好地塑造这些表示以完成当前任务，无论是学习语法、预测调控活性还是模拟蛋白质相互作用。
 
 ## 多头注意力
 
-*多头注意力*（MHA）通过并行运行多个注意力操作——称为*头*——来增强注意力机制。每个头学习专注于输入序列的不同部分或模式。例如，一个头可能专注于局部基序，而另一个头可能检测更广泛的相互作用或微妙的上下文线索。
+*多头注意力*（`MHA`）通过并行运行多个注意力操作——称为*头*——来增强注意力机制。每个头学习专注于输入序列的不同部分或模式。例如，一个头可能专注于局部基序，而另一个头可能检测更广泛的相互作用或微妙的上下文线索。
 
-通过结合这些多个视角，MHA 允许模型捕捉到更丰富、更多样化的数据关系集，这超出了单个注意力操作所能学习的内容。
+通过结合这些多个视角，`MHA`允许模型捕捉到更丰富、更多样化的数据关系集，这超出了单个注意力操作所能学习的内容。
 
 ###### 小贴士
 
 虽然不同的头通常学习到一些冗余的模式，但这种并行结构增加了模型的表达能力和灵活性。所有头的输出被连接起来，并通过线性变换产生最终的表示，然后输入到后续模型层中。
 
-从本质上讲，MHA 让 transformer 能够同时关注多种类型的交互，这对于存在不同尺度上的各种信号和依赖关系的复杂生物序列特别有用。
+从本质上讲，`MHA`让`transformer`能够同时关注多种类型的交互，这对于存在不同尺度上的各种信号和依赖关系的复杂生物序列特别有用。
 
 ## 表示位置信息
 
-最后一点：基本的自注意力是*位置不变的*，这意味着它本身不捕获序列中标记的顺序或位置。为了解决这个问题，transformer 模型包括位置编码或其他机制，注入关于标记相对或绝对位置的信息，使模型能够理解序列顺序。在原始的 transformer 论文中，将正弦函数添加到标记嵌入中，以提供这种位置信息。
+最后一点：基本的自注意力是*位置不变的*，这意味着它本身不捕获序列中标记的顺序或位置。为了解决这个问题，`transformer`模型包括位置编码或其他机制，注入关于标记相对或绝对位置的信息，使模型能够理解序列顺序。在原始的`transformer`论文中，将正弦函数添加到标记嵌入中，以提供这种位置信息。
 
 在完成对转换器的简要概述后，让我们继续本章中我们将应用的一些模型解释技术。
 
 ## 模型解释
 
-深度学习模型的一个常见批评是它们像一个 *黑盒*——它们可能产生准确的预测，但通常不清楚这些预测是如何做出的，或者模型使用了什么内部推理。虽然深度学习模型通常不如线性模型或决策树等简单方法可解释，但有一些技术可以探测其内部工作原理。这些技术属于 *模型解释* 的范畴。
+深度学习模型的一个常见批评是它们像一个*黑盒*——它们可能产生准确的预测，但通常不清楚这些预测是如何做出的，或者模型使用了什么内部推理。虽然深度学习模型通常不如线性模型或决策树等简单方法可解释，但有一些技术可以探测其内部工作原理。这些技术属于*模型解释*的范畴。
 
-深度学习的模型解释是一个广泛且活跃的研究领域，因此在这里我们简要概述了在 DNA 建模空间中最常用的技术：
+深度学习的模型解释是一个广泛且活跃的研究领域，因此在这里我们简要概述了在`DNA`建模空间中最常用的技术：
 
-突变
+### 突变
 
-为了了解模型依赖哪些输入特征，我们系统地改变（或 *突变*）输入的一部分，并观察模型的预测如何变化。例如，在从 DNA 序列预测基因表达时，我们可以打乱、替换或删除某些碱基，并观察预测是否发生显著变化。大的变化表明突变区域对模型很重要。
+为了了解模型依赖哪些输入特征，我们系统地改变（或*突变*）输入的一部分，并观察模型的预测如何变化。例如，在从`DNA`序列预测基因表达时，我们可以打乱、替换或删除某些碱基，并观察预测是否发生显著变化。大的变化表明突变区域对模型很重要。
 
 +   优点：这是直接且直观的。它提供了丰富且局部的洞察。
-
 +   缺点：它计算成本高，因为每个突变都需要模型的一次单独前向传递。
 
-输入梯度
+### 输入梯度
 
 一种更快但近似的方法是计算模型输出相对于每个输入特征的梯度。这个梯度显示了预测对每个输入元素微小变化的敏感性。
 
 +   优点：它效率高，因为它只需要一次反向传递来生成重要性图。
-
 +   缺点：它可能噪声大且不够精确，使得区分信号和噪声更困难。
 
-注意力机制
+### 注意力机制
 
 对于包含注意力的模型，我们可以检查注意力权重，以查看模型在做出预测时关注的地方。
 
 +   优点：这提供了模型关注点和交互的自然可解释的可视化。
-
-+   缺点：注意力与输入序列长度成平方级增长，这意味着在实践中，我们无法在不以某种方式压缩的情况下使用注意力来建模非常长的 DNA 字符串。
++   缺点：注意力与输入序列长度成平方级增长，这意味着在实践中，我们无法在不以某种方式压缩的情况下使用注意力来建模非常长的`DNA`字符串。
 
 这些方法有许多扩展和改进，模型解释在深度学习生物学研究论文中越来越标准化。
 
-接下来，我们将更深入地探讨本章中我们将实施的两种解释方法：*in silico* 突变和输入梯度。
+接下来，我们将更深入地探讨本章中我们将实施的两种解释方法：*in silico*突变和输入梯度。
 
 ## In Silico Saturation 突变
 
-*In silico 饱和突变生成*（ISM）可能听起来很复杂，但本质上它涉及系统地改变生物序列（如 DNA 或蛋白质）的每一个可能的改变（或突变），并为每个突变的序列生成一个单独的模型预测。因为这需要通过模型进行许多正向传递，所以计算成本很高。然而，它提供的关于每个可能的变异如何影响输出的详细见解通常可以证明这种成本是合理的。
+*In silico 饱和突变生成*（`ISM`）可能听起来很复杂，但本质上它涉及系统地改变生物序列（如`DNA`或蛋白质）的每一个可能的改变（或突变），并为每个突变的序列生成一个单独的模型预测。因为这需要通过模型进行许多正向传递，所以计算成本很高。然而，它提供的关于每个可能的变异如何影响输出的详细见解通常可以证明这种成本是合理的。
 
 ###### 注意
 
@@ -284,35 +284,34 @@ CNNs 已成为基于序列的生物学任务的标准架构，因为它们在能
 
 ![图片](img/dlfb_0304.png)
 
-###### 图 3-4\. 一个 in silico 饱和突变生成图的示例，显示了跨越 200 个碱基 DNA 序列的转录因子结合预测概率。x 轴代表 DNA 序列位置，而 y 轴显示了每个位置的三种可能的突变（包括对原始碱基的突变，这没有影响，设置为零）。在这个例子中，大多数突变效应是负的（颜色较深），表明改变碱基通常会降低预测的结合概率。这种方法由于需要大量正向传递来生成这个输出矩阵（这里，3 种突变×200 个位置=600 个模型预测）而计算成本高昂。
+###### 图 3-4\. 一个 in silico 饱和突变生成图的示例，显示了跨越 200 个碱基`DNA`序列的转录因子结合预测概率。`x`轴代表`DNA`序列位置，而`y`轴显示了每个位置的三种可能的突变（包括对原始碱基的突变，这没有影响，设置为零）。在这个例子中，大多数突变效应是负的（颜色较深），表明改变碱基通常会降低预测的结合概率。这种方法由于需要大量正向传递来生成这个输出矩阵（这里，3 种突变×200 个位置=600 个模型预测）而计算成本高昂。
 
-ISM 图有助于快速突出序列中哪些部分对模型的预测最重要。因为它们可视化最显著或最具影响力的输入区域，它们通常被称为*显著性图*。在这个例子中，图表明突变任何中央碱基可能会破坏蛋白质结合的基序，因为这些突变通常会导致预测的结合概率降低（用负值表示）。
+`ISM`图有助于快速突出序列中哪些部分对模型的预测最重要。因为它们可视化最显著或最具影响力的输入区域，它们通常被称为*显著性图*。在这个例子中，图表明突变任何中央碱基可能会破坏蛋白质结合的基序，因为这些突变通常会导致预测的结合概率降低（用负值表示）。
 
 ## 输入梯度
 
 输入梯度提供了一种更快的方法来生成显著性图，总结哪些序列部分对模型的预测影响最大。从概念上讲，它们是模型输出相对于其输入特征的导数。如果你之前训练过神经网络，你已经遇到过梯度——通常与模型参数相关联以指导权重更新。
 
-输入梯度遵循相同的原则，但它们将重点从参数转移到输入本身。通过计算输出如何对每个输入位置的微小扰动做出反应，我们可以评估模型的敏感性。对于 DNA 序列，这意味着确定哪些碱基对预测如 TF 结合有最大的影响。在给定碱基上的大梯度表明，改变它将显著影响模型的输出——表明该碱基很重要。
+输入梯度遵循相同的原则，但它们将重点从参数转移到输入本身。通过计算输出如何对每个输入位置的微小扰动做出反应，我们可以评估模型的敏感性。对于`DNA`序列，这意味着确定哪些碱基对预测如`TF`结合有最大的影响。在给定碱基上的大梯度表明，改变它将显著影响模型的输出——表明该碱基很重要。
 
-具体来说，对于一个 TF 结合预测：
+具体来说，对于一个`TF`结合预测：
 
 +   在一个碱基上的一个*大的负梯度*表明改变它将显著降低结合概率，可能破坏转录因子需要正确拟合的基序。
-
-+   一个*大的正梯度*表明改变它将显著增加结合概率，可能通过加强现有的基序或创建一个新的基序，从而提高 DNA 和转录因子之间的物理结合亲和力。
++   一个*大的正梯度*表明改变它将显著增加结合概率，可能通过加强现有的基序或创建一个新的基序，从而提高`DNA`和转录因子之间的物理结合亲和力。
 
 ###### 注意
 
-当输入是一个独热编码的 DNA 序列而不是连续标量值时，“对输入进行微小改变”意味着什么？每个 DNA 序列，每个碱基（A，T，C，G）通常表示为一个二进制向量（例如，`[1, 0, 0, 0]`表示`A`）。然而，在梯度计算过程中，我们将这些向量视为可以连续变化——允许像`[0.9, 0.1, 0, 0]`这样的分数值。虽然这样的分数碱基在生物学上没有意义，但这种数学抽象使我们能够计算梯度，并深入了解哪些位置对预测有影响。
+当输入是一个独热编码的`DNA`序列而不是连续标量值时，“对输入进行微小改变”意味着什么？每个`DNA`序列，每个碱基（`A`，`T`，`C`，`G`）通常表示为一个二进制向量（例如，`[1, 0, 0, 0]`表示`A`）。然而，在梯度计算过程中，我们将这些向量视为可以连续变化——允许像`[0.9, 0.1, 0, 0]`这样的分数值。虽然这样的分数碱基在生物学上没有意义，但这种数学抽象使我们能够计算梯度，并深入了解哪些位置对预测有影响。
 
 你可以将输入梯度视为一种更快但更近似的替代方法，即模拟饱和突变。输入梯度提供了一个关于重要区域的总体概念，而饱和突变直接测试了每种可能的突变效果，但计算成本高昂。
 
-这标志着生物学和机器学习入门课程的结束。现在让我们深入探索和建模数据，以预测 DNA 序列中的转录因子结合。
+这标志着生物学和机器学习入门课程的结束。现在让我们深入探索和建模数据，以预测`DNA`序列中的转录因子结合。
 
 # 构建一个简单的原型
 
-本章我们将要解决的是一项*二元分类问题*：给定一个 200 个碱基的 DNA 序列，我们能否预测它是否与一个称为 CTCF 的特定转录因子结合？在人类 1500 多个转录因子中，CTCF 因其对基因组 3D 结构的组织作用而突出——将 DNA 折叠成环和区域，以调节基因活性。
+本章我们将要解决的是一项*二元分类问题*：给定一个 200 个碱基的`DNA`序列，我们能否预测它是否与一个称为`CTCF`的特定转录因子结合？在人类 1500 多个转录因子中，`CTCF`因其对基因组 3D 结构的组织作用而突出——将`DNA`折叠成环和区域，以调节基因活性。
 
-CTCF 也是一个很好的起点，因为其结合行为相对容易建模。它识别一个被充分表征的、高度保守的基序，具有强烈的序列特异性，这意味着其结合位点比许多其他转录因子的结合位点更容易预测。这使得 CTCF 成为构建和解释基于序列的转录因子结合模型的理想起点。稍后，我们将扩大范围，预测 10 种不同的转录因子结合。
+`CTCF`也是一个很好的起点，因为其结合行为相对容易建模。它识别一个被充分表征的、高度保守的基序，具有强烈的序列特异性，这意味着其结合位点比许多其他转录因子的结合位点更容易预测。这使得`CTCF`成为构建和解释基于序列的转录因子结合模型的理想起点。稍后，我们将扩大范围，预测 10 种不同的转录因子结合。
 
 与本书中的其他章节一样，我们将从探索数据集、构建一个简单的原型模型开始，然后迭代地扩展和改进它。
 
@@ -322,7 +321,7 @@ CTCF 也是一个很好的起点，因为其结合行为相对容易建模。它
 
 ![](img/dlfb_0305.png)
 
-###### 图 3-5. 输入数据集由 200 个碱基长的 DNA 序列组成，每个序列都有一个相关的二进制标签，表示蛋白质 CTCF 是否与之结合。
+###### 图 3-5. 输入数据集由 200 个碱基长的`DNA`序列组成，每个序列都有一个相关的二进制标签，表示蛋白质`CTCF`是否与之结合。
 
 这个任务灵感来源于最近一篇 2024 年论文预印本中提出的一个评估挑战，该预印本的数据集来源于 2023 年的一项基因组学解释研究.^(3)，^(4)
 
@@ -337,7 +336,6 @@ from dlfb.utils.context import assets
 
 train_df = pd.read_csv(assets("dna/datasets/CTCF_train_sequences.csv"))
 train_df
-
 ```
 
 输出：
@@ -353,14 +351,12 @@ train_df
 61082  AAAACAGAAACTGAAA...      0                 CTCF  train
 
 [61083 rows x 4 columns]
-
 ```
 
 在训练数据集中，两个类别出现得相当平衡（均匀表示），因此我们不需要通过下采样多数类别来进行任何重平衡：
 
 ```py
 train_df["label"].value_counts()
-
 ```
 
 输出：
@@ -370,10 +366,9 @@ label
 1    30545
 0    30538
 Name: count, dtype: int64
-
 ```
 
-为了将 DNA 序列数值化，我们需要将它们转换为单热格式。函数`dna_to_one_hot`执行这个映射：
+为了将`DNA`序列数值化，我们需要将它们转换为单热格式。函数`dna_to_one_hot`执行这个映射：
 
 ```py
 import numpy as np
@@ -389,10 +384,9 @@ def dna_to_one_hot(dna_sequence: str) -> np.ndarray:
   }
   one_hot_encoded = np.array([base_to_one_hot[base] for base in dna_sequence])
   return one_hot_encoded
-
 ```
 
-让我们看看单热编码在样本 DNA 序列“AAACGT”上的样子：
+让我们看看单热编码在样本`DNA`序列“AAACGT”上的样子：
 
 ```py
 dna_to_one_hot("AAACGT")
@@ -407,7 +401,6 @@ array([[1, 0, 0, 0],
        [0, 1, 0, 0],
        [0, 0, 1, 0],
        [0, 0, 0, 1]])
-
 ```
 
 我们可以将这个转换器应用于整个训练数据集，以生成数值训练数据`x_train`，如下所示：
@@ -415,10 +408,9 @@ array([[1, 0, 0, 0],
 ```py
 x_train = np.array([dna_to_one_hot(seq) for seq in train_df["sequence"]])
 y_train = train_df["label"].values[:, None]
-
 ```
 
-在这里，`y_train`包含二进制目标标签：`0`表示序列不与 CTCF 结合，`1`表示序列与 CTCF 结合。
+在这里，`y_train`包含二进制目标标签：`0`表示序列不与`CTCF`结合，`1`表示序列与`CTCF`结合。
 
 对于这个问题，数据集加载代码相当简单，但我们可以将其包装成一个方便的函数`load_dataset`，以便更干净地使用：
 
@@ -430,12 +422,11 @@ def load_dataset(sequence_db) -> dict[str, np.ndarray]:
     "labels": df["label"].to_numpy()[:, None],
     "sequences": np.array([dna_to_one_hot(seq) for seq in df["sequence"]]),
   }
-
 ```
 
 ### 将数据转换为 TensorFlow 数据集
 
-接下来，我们将训练数据转换为 TensorFlow 数据集。这种格式使得在模型训练期间高效迭代批次变得容易，尤其是在对数据进行多次 epoch 的打乱和重复时：
+接下来，我们将训练数据转换为`TensorFlow`数据集。这种格式使得在模型训练期间高效迭代批次变得容易，尤其是在对数据进行多次`epoch`的打乱和重复时：
 
 ```py
 def convert_to_tfds(
@@ -450,7 +441,6 @@ def convert_to_tfds(
   ds = ds.batch(batch_size)
   ds = ds.prefetch(tf.data.experimental.AUTOTUNE)
   return ds
-
 ```
 
 ```py
@@ -461,7 +451,6 @@ train_ds = convert_to_tfds(
   batch_size=batch_size,
   is_training=True,
 )
-
 ```
 
 在前面的代码中，我们通过启用批处理、打乱和重复创建了一个训练数据集`train_ds`。让我们通过从数据集中抽取一个批次并检查其形状和内容来进行合理性检查：
@@ -472,7 +461,6 @@ print(f'Batch sequence shape: {batch["sequences"].shape}')
 print(f'Batch sequence instances: {batch["sequences"][:3,:3,]}...')
 print(f'Batch labels shape: {batch["labels"].shape}')
 print(f'Batch labels instances: {batch["labels"][:3,]}...')
-
 ```
 
 输出：
@@ -494,23 +482,29 @@ Batch labels shape: (32, 1)
 Batch labels instances: [[0]
  [1]
  [0]]...
-
 ```
 
-这看起来是合理的。我们看到数据具有形状（`32`，`200`，`4`），表示批次大小为`32`，序列长度为 200，每个 DNA 碱基有 4 个通道，正如预期的那样。标签具有形状（`32`，`1`），因为每个标签都是一个简单的二进制`0`或`1`。
+这看起来是合理的。我们看到数据具有形状（`32`，`200`，`4`），表示批次大小为`32`，序列长度为 200，每个`DNA`碱基有 4 个通道，正如预期的那样。标签具有形状（`32`，`1`），因为每个标签都是一个简单的二进制`0`或`1`。
 
 对于验证，由于数据集较小，我们可以将其结构化为一个单独的大批次：
 
 ```py
 valid_ds = load_dataset(assets("dna/datasets/CTCF_valid_sequences.csv"))
-
 ```
 
 现在我们已经将数据格式化为正确的格式，我们准备构建和训练我们的第一个简单模型。
 
 ## 定义一个简单的卷积模型
 
-接下来，我们定义一个由两个 1D 卷积层组成、随后是展平和全连接（密集）层的简单 CNN：
+接下来，我们定义一个由两个 1D 卷积层组成、随后是展平和全连接（密集）层的简单`CNN`：
+
+
+
+# 构建并训练一个简单的 CNN 模型
+
+## 定义模型架构
+
+我们首先定义一个基本的 CNN 模型，用于二元序列分类任务。该模型包含两个卷积层和两个全连接层，能够捕捉 DNA 序列中的局部模式。
 
 ```py
 class ConvModel(nn.Module):
@@ -549,15 +543,15 @@ class ConvModel(nn.Module):
 
     # Output layer (single unit for binary classification).
     return nn.Dense(1)(x)
-
 ```
 
-这个模型架构相当“无装饰”，但应该已经能够捕捉 DNA 序列中的局部模式。我们可以像这样实例化我们的模型：
+这个模型架构相当"无装饰"，但应该已经能够捕捉 DNA 序列中的局部模式。我们可以像这样实例化我们的模型：
 
 ```py
 model = ConvModel()
-
 ```
+
+## 初始化模型参数
 
 在 JAX 中初始化模型参数时，我们需要提供一个虚拟输入张量，该张量与模型输入的预期形状相匹配。虽然我们可以使用数据集的实际批次，但通常更简单的是使用一个大小为 1 的 ones 张量，其形状与单个编码的 DNA 序列相同。重要的是，用于这个虚拟输入的批次大小不会影响模型初始化——JAX 根据单个输入样本的形状（不包括批次维度）来初始化参数。这意味着模型可以在以后以任何批次大小进行训练或用于推理。
 
@@ -571,50 +565,44 @@ print(dummy_input.shape)
 rng_init = jax.random.PRNGKey(42)
 variables = model.init(rng_init, dummy_input)
 params = variables["params"]
-
 ```
 
 输出：
 
 ```py
 (1, 200, 4)
-
 ```
 
 这个虚拟输入允许 JAX 推断所有模型参数的形状，并且随机的键`rng_init`为任何随机初始化提供种子，确保可重复性。
 
-### 检查模型张量形状
+## 检查模型张量形状
 
 理解并跟踪张量形状是机器学习的关键部分。始终养成验证数据流经模型时数据形状的习惯。
 
-###### 小贴士
+### 小贴士
 
 作为一项实际练习，尝试在模型的`__call__`方法内部的不同位置添加`print(x.shape)`语句，然后重新运行`model.init`步骤，以观察数据流经模型层时形状如何变化。
 
 这里是模型中一些改变张量形状的关键操作：
 
-+   卷积层（`nn.Conv`）：这些层可以修改通道维度。例如，我们的输入开始时有四个通道（DNA 碱基），但第一个卷积将通道数增加到 64，有效地学习 64 个不同的序列特征或基序。此外，卷积的`padding`选项会影响序列长度维度：
+- 卷积层（`nn.Conv`）：这些层可以修改通道维度。例如，我们的输入开始时有四个通道（DNA 碱基），但第一个卷积将通道数增加到 64，有效地学习 64 个不同的序列特征或基序。此外，卷积的`padding`选项会影响序列长度维度：
+  - `adding='SAME'`保留序列长度。
+  - `padding='VALID'`根据核大小减少它。尝试在这两者之间切换以查看对序列长度的影响。
 
-    +   `adding='SAME'`保留序列长度。
+- 最大池化层（`nn.max_pool`）：这些层通过下采样减少序列长度。在我们的模型中，每个最大池化层将长度减半，从 200 → 100 → 50 碱基。为了更激进地减少空间轴（例如，每次减少 5 倍），相应地调整`window_shape`和`strides`参数（通常，这些参数设置为相同的值以避免重叠窗口并简化下采样）。
 
-    +   `padding='VALID'`根据核大小减少它。尝试在这两者之间切换以查看对序列长度的影响。
-
-+   最大池化层（`nn.max_pool`）：这些层通过下采样减少序列长度。在我们的模型中，每个最大池化层将长度减半，从 200 → 100 → 50 碱基。为了更激进地减少空间轴（例如，每次减少 5 倍），相应地调整`window_shape`和`strides`参数（通常，这些参数设置为相同的值以避免重叠窗口并简化下采样）。
-
-+   展平（`reshape`）：在将数据传递到密集层之前，张量从`(batch_size, sequence_length, channels)`重塑为`(batch_size, flattened_features)`。这将空间和通道维度折叠为每个示例的一个长向量，为全连接层做准备。
+- 展平（`reshape`）：在将数据传递到密集层之前，张量从`(batch_size, sequence_length, channels)`重塑为`(batch_size, flattened_features)`。这将空间和通道维度折叠为每个示例的一个长向量，为全连接层做准备。
 
 一旦初始化了模型参数，您可以检查它们以确认层结构和形状。使用以下方式检查参数键（层名称）：
 
 ```py
 params.keys()
-
 ```
 
 输出：
 
 ```py
 dict_keys(['Conv_0', 'Conv_1', 'Dense_0', 'Dense_1', 'Dense_2'])
-
 ```
 
 然后，检查每个层的核形状以验证预期的参数维度：
@@ -622,7 +610,6 @@ dict_keys(['Conv_0', 'Conv_1', 'Dense_0', 'Dense_1', 'Dense_2'])
 ```py
 for layer_name in params.keys():
   print(f'Layer {layer_name} param shape: {params[layer_name]["kernel"].shape}')
-
 ```
 
 输出：
@@ -633,18 +620,17 @@ Layer Conv_1 param shape: (10, 64, 64)
 Layer Dense_0 param shape: (3200, 128)
 Layer Dense_1 param shape: (128, 64)
 Layer Dense_2 param shape: (64, 1)
-
 ```
 
 关于这些形状的一些说明：
 
-+   对于卷积层，参数形状为`(kernel_size, input_channels, output_channels)`。例如，`Conv_0`的核大小为 10，输入通道为 4（DNA 碱基），并输出 64 个特征图。
+- 对于卷积层，参数形状为`(kernel_size, input_channels, output_channels)`。例如，`Conv_0`的核大小为 10，输入通道为 4（DNA 碱基），并输出 64 个特征图。
 
-+   密集层的形状为（`input_features`, `output_units`）。例如，`Dense_0`将 3200 个展平特征（50 序列长度 * 64）映射到 128 个单元。
+- 密集层的形状为（`input_features`, `output_units`）。例如，`Dense_0`将 3200 个展平特征（50 序列长度 * 64）映射到 128 个单元。
 
 在模型初始化并探索参数形状之后，让我们开始设置我们的训练循环。
 
-### 使用模型进行预测
+## 使用模型进行预测
 
 实际上，我们已经在使用随机初始化的参数从模型中获取预测，尽管预测将是随机的。我们通过在序列的一批上调用`model.apply`来做出预测：
 
@@ -656,7 +642,6 @@ probs = nn.sigmoid(logits)
 
 # Print just the first few predictions.
 print(probs[0:5])
-
 ```
 
 输出：
@@ -667,12 +652,11 @@ print(probs[0:5])
  [0.48638064]
  [0.4973824 ]
  [0.48106888]]
-
 ```
 
 由于模型未经过训练，预测概率将大约为 0.5，这反映了我们的随机参数化模型的纯猜测。
 
-### 定义损失函数
+## 定义损失函数
 
 现在让我们使用`optax`库定义一个二元交叉熵损失函数，我们可以使用它来训练我们的模型参数：
 
@@ -684,32 +668,29 @@ def calculate_loss(params, batch):
   logits = model.apply({"params": params}, batch["sequences"])
   loss = optax.sigmoid_binary_cross_entropy(logits, batch["labels"]).mean()
   return loss
-
 ```
 
 我们可以使用它来计算初始批次的损失：
 
 ```py
 calculate_loss(params, batch)
-
 ```
 
 输出：
 
 ```py
 Array(0.69774264, dtype=float32)
-
 ```
 
 这给出了训练前的基线损失值。随着模型的学习，这个损失应该大幅下降。
 
-###### 注意：
+### 注意
 
 为什么使用二元交叉熵损失？在本章中，我们预测 TF 是否绑定到给定的 DNA 序列——这是一个经典的二元分类任务。二元交叉熵是这种设置的标准损失函数：它衡量模型的预测概率与真实二元标签之间的匹配程度。
 
 它对自信但错误的预测施加更重的惩罚，鼓励接近 0 或 1 的准确输出。你也可以将其视为一个信号重建问题：模型试图逼近一个隐藏的二进制信号，而交叉熵对噪声或偏离目标的估计施加了尖锐的成本。
 
-### 定义 TrainState
+## 定义 TrainState
 
 要开始训练模型，我们首先需要定义优化器。我们将使用学习率为 1e-3 的 Adam，这是一个常见的默认值，通常适用于各种问题：
 
@@ -717,7 +698,6 @@ Array(0.69774264, dtype=float32)
 learning_rate = 0.001
 
 tx = optax.adam(learning_rate)
-
 ```
 
 通过这个，我们现在有了初始化训练状态的所有组件。为此，我们将使用 Flax 的`TrainState`类，它是一个包含所有重要训练对象（模型、参数和优化器）的容器：
@@ -726,7 +706,6 @@ tx = optax.adam(learning_rate)
 from flax.training.train_state import TrainState
 
 state = TrainState.create(apply_fn=model.apply, params=params, tx=tx)
-
 ```
 
 为了方便起见，让我们定义一个函数来创建训练状态：
@@ -738,24 +717,15 @@ def create_train_state(model, rng, dummy_input, tx) -> TrainState:
     apply_fn=model.apply, params=variables["params"], tx=tx
   )
   return state
-
 ```
 
-### 定义单个训练步骤
+## 定义单个训练步骤
 
 最后，将所有这些放在一起，我们可以编写一个函数来运行一个训练迭代，它执行以下步骤：
 
-1. 前向传播
-
-接收一批数据，根据当前参数进行模型预测并计算损失
-
-2. 向后传播：
-
-计算损失相对于参数的梯度
-
-3. 更新
-
-使用计算出的梯度，更新参数以最小化模型的损失
+1. 前向传播：接收一批数据，根据当前参数进行模型预测并计算损失
+2. 向后传播：计算损失相对于参数的梯度
+3. 更新：使用计算出的梯度，更新参数以最小化模型的损失
 
 这些步骤发生在`train_step`函数中：
 
@@ -767,33 +737,29 @@ def train_step(state, batch):
   loss, grads = grad_fn(state.params, batch)
   state = state.apply_gradients(grads=grads)
   return state, loss
-
 ```
 
 让我们运行一个训练步骤：
 
 ```py
 state, loss = train_step(state, batch)
-
 ```
 
 如果我们的设置工作良好，训练损失应该已经在这个批次上降低。让我们检查：
 
 ```py
 calculate_loss(state.params, batch)
-
 ```
 
 输出：
 
 ```py
 Array(0.63649833, dtype=float32)
-
 ```
 
 事实上，损失确实低于运行`train_step`之前的损失。随着模型和训练循环就绪，让我们设置一个完整的训练运行。
 
-### 训练简单模型
+## 训练简单模型
 
 现在我们将多次运行前面的`train_step`以优化模型。在这里，我们训练 500 步，并定期在验证集上进行评估：
 
@@ -825,7 +791,6 @@ losses = pd.concat(
     pd.DataFrame(valid_losses).assign(split="valid"),
   ]
 )
-
 ```
 
 在图 3-6 中，我们可以绘制出这次运行产生的训练和验证损失曲线：
@@ -844,7 +809,6 @@ sns.lineplot(
   style="split",
   palette=DEFAULT_SPLIT_COLORS
 );
-
 ```
 
 ![图片](img/dlfb_0306.png)
@@ -853,7 +817,7 @@ sns.lineplot(
 
 达到这个阶段——你有一个工作的模型、数据集，并且随着损失的下降进行训练——是一个重要的里程碑。本章的其余部分将专注于改进和扩展这个基础。
 
-### 检查模型的合理性
+## 检查模型的合理性
 
 在进行更复杂的操作之前，我们应该首先检查模型是否学到了一些合理的东西。一个简单的检查是验证训练好的模型在已知的 DNA 基序上的行为是否符合预期。例如，通过在线搜索，我们可以看到 CTCF 转录因子已知更喜欢结合包含类似`CCACCAGGGGGCGC`基序的 DNA 序列。让我们构建一个包含这个基序重复的 200 碱基长的 DNA 字符串，并将其转换为模型期望的 one-hot 编码格式：
 
@@ -864,7 +828,6 @@ print("Length of CTCF motif-filled DNA string:", len(ctcf_motif_dna))
 # We add the None here as a batch axis, since our model expects batched input.
 ctcf_input = dna_to_one_hot(ctcf_motif_dna)[None, :]
 ctcf_input.shape
-
 ```
 
 输出：
@@ -872,22 +835,21 @@ ctcf_input.shape
 ```py
 Length of CTCF motif-filled DNA string: 200
 (1, 200, 4)
-
 ```
 
 我们预计模型将预测 CTCF 结合这个序列的高概率，因为它富含相关的基序。让我们检查一下：
 
 ```py
 jax.nn.sigmoid(model.apply({"params": state.params}, ctcf_input))
-
 ```
 
 输出：
 
 ```py
 Array([[0.9994091]], dtype=float32)
-
 ```
+
+
 
 确实如此——预测的结合概率非常接近 1。这意味着模型已经学会了在 DNA 序列中识别这个基序，并将其与 CTCF 结合相关联。
 
@@ -915,7 +877,6 @@ for random_dna_string in random_dna_strings:
   )
 
 probabilities
-
 ```
 
 输出：
@@ -929,7 +890,6 @@ probabilities
  Array([0.00381694], dtype=float32),
  Array([0.01843039], dtype=float32),
  Array([0.00171606], dtype=float32)]
-
 ```
 
 如预期的那样，这些概率看起来相对较低，这意味着 CTCF 蛋白不太可能结合这些随机的 DNA 序列。这完成了对我们方法的基本合理性检查，但让我们进一步深入了解一下这个模型已经学到了关于 DNA 序列的哪些知识。
@@ -956,14 +916,12 @@ first_positive_index = np.argmax(valid_ds["labels"].flatten() == 1)
 
 original_sequence = valid_ds["sequences"][first_positive_index].copy()
 print(f'This sequence has label: {valid_ds["labels"][4]}')
-
 ```
 
 输出：
 
 ```py
 This sequence has label: [1]
-
 ```
 
 接下来，让我们检查模型对这个未修改的序列的预测：
@@ -973,14 +931,12 @@ pred = nn.sigmoid(
   model.apply({"params": state.params}, original_sequence[None, :])
 )
 pred
-
 ```
 
 输出：
 
 ```py
 Array([[0.9581409]], dtype=float32)
-
 ```
 
 原始序列的预测结合概率为 95.8%。
@@ -993,7 +949,6 @@ print(f"Original base at index 100: {sequence[100]}")
 
 sequence[100] = np.array([0, 1, 0, 0])
 print(f"Mutated base at index 100: {sequence[100]}")
-
 ```
 
 输出：
@@ -1001,7 +956,6 @@ print(f"Mutated base at index 100: {sequence[100]}")
 ```py
 Original base at index 100: [0 0 1 0]
 Mutated base at index 100: [0 1 0 0]
-
 ```
 
 我们现在将再次运行模型，看看这个突变是否对预测有可测量的影响：
@@ -1011,14 +965,12 @@ pred_with_mutation = nn.sigmoid(
   model.apply({"params": state.params}, sequence[None, :])
 )
 pred_with_mutation
-
 ```
 
 输出：
 
 ```py
 Array([[0.93434644]], dtype=float32)
-
 ```
 
 突变后，模型的预测结合概率降至 93.4%，下降了超过 2.4%。这表明即使在敏感位置的单碱基变化也会对模型的输出产生重大影响。
@@ -1060,14 +1012,12 @@ def generate_all_mutations(sequence: np.ndarray) -> np.ndarray:
 
 mutated_sequences = generate_all_mutations(sequence=original_sequence.copy())
 print(f"Shape of mutated sequences: {mutated_sequences.shape}")
-
 ```
 
 输出：
 
 ```py
 Shape of mutated sequences: (800, 200, 4)
-
 ```
 
 现在我们有 800 个序列：每个 200 个位置有四个变体。尽管每个位置只有三个是真正的突变（因为将`A`突变到`A`是无操作），但我们包括所有四个以简化下游逻辑。
@@ -1079,7 +1029,6 @@ preds = nn.sigmoid(model.apply({"params": state.params}, mutated_sequences))
 
 # Reshape to get the shape (sequence_length, dna_bases).
 preds = preds.reshape((200, 4))
-
 ```
 
 让我们可视化每个突变序列的预测结合概率，如图 3-7 图 3-7 所示：
@@ -1089,7 +1038,6 @@ plt.figure(figsize=(20, 3))
 sns.heatmap(preds.T, cmap="RdBu_r", yticklabels=["A", "C", "G", "T"])
 plt.xlabel("Position in DNA sequence")
 plt.ylabel("DNA Base");
-
 ```
 
 ![](img/dlfb_0307.png)
@@ -1114,7 +1062,6 @@ plt.figure(figsize=(20, 3))
 sns.heatmap(deltas.T, center=0, cmap="RdBu_r", yticklabels=["A", "C", "G", "T"])
 plt.xlabel("Position in DNA sequence")
 plt.ylabel("DNA Base");
-
 ```
 
 ![](img/dlfb_0308.png)
@@ -1134,7 +1081,6 @@ plt.ylabel("DNA Base");
 ```py
 for i in range(4):
   print(describe_change((100, i), deltas, original_sequence))
-
 ```
 
 输出：
@@ -1144,7 +1090,6 @@ position 100 with G→A (-4.20% decrease)
 position 100 with G→C (-2.38% decrease)
 position 100 with G→G (0.00% increase)
 position 100 with G→T (0.24% increase)
-
 ```
 
 让我们通过将每个位置上所有可能的碱基突变的所有绝对变化相加来总结 DNA 序列中每个位置的总体重要性。结果在图 3-9 中可视化，突出显示模型认为对其预测最有影响力的区域：
@@ -1159,7 +1104,6 @@ plot_binding_site(
     "line": {"label": "Importance", "values": importance},
   }
 );
-
 ```
 
 ![](img/dlfb_0309.png)
@@ -1191,21 +1135,18 @@ def one_hot_to_dna(one_hot_encoded: np.ndarray) -> str:
     one_hot_to_base[tuple(base)] for base in one_hot_encoded
   )
   return dna_sequence
-
 ```
 
 我们可以用它来分析我们的序列：
 
 ```py
 print(one_hot_to_dna(original_sequence)[0:25], "...")
-
 ```
 
 输出：
 
 ```py
 ACCCCAGGGTAGGGCCTATTGTATG ...
-
 ```
 
 在将序列转换后，我们将其粘贴到 FIMO（Find Individual Motif Occurrences）工具中，该工具是 MEME 套件中的一部分，用于基序发现和搜索工具。FIMO 允许基序进行模糊匹配——这意味着匹配不需要完全精确，这更好地反映了生物现实，因为转录因子通常可以容忍其结合位点的一些变化。
@@ -1226,7 +1167,6 @@ plot_binding_site(
   },
   highlight=(92, 106),
 );
-
 ```
 
 ![图片](img/dlfb_0311.png)
@@ -1241,7 +1181,9 @@ plot_binding_site(
 
 从数学上讲，这对应于计算模型预测相对于其输入序列的梯度。如果特定碱基的小幅度变化导致输出的大幅度变化，那么这个碱基一定是重要的。
 
-实现方法是直接的。我们使用 `jax.grad` 来计算模型预测的绑定概率相对于单热输入序列的导数：
+实现方法是直接的。我们使用 `jax.grad` 来计算模型预测的绑定概率相对于单热输入序列的导数。
+
+
 
 ```py
 @jax.jit
@@ -1258,7 +1200,6 @@ def compute_input_gradient(state, sequence):
 
   gradient = jax.grad(lambda x: predict(x))(sequence)
   return jnp.squeeze(gradient)
-
 ```
 
 让我们将其应用于与 ISM 相同的序列，并检查输出：
@@ -1266,19 +1207,17 @@ def compute_input_gradient(state, sequence):
 ```py
 input_gradient = compute_input_gradient(state, original_sequence)
 input_gradient.shape
-
 ```
 
 输出：
 
 ```py
 (200, 4)
-
 ```
 
 结果是一个与输入序列形状相同的矩阵，其中每个值表示模型预测对特定位置特定碱基的小幅度变化的敏感性。
 
-我们可以将此可视化为 图 3-12 中的热图：
+我们可以将此可视化为图 3-12 中的热图：
 
 ```py
 importance = np.sum(np.abs(input_gradient), axis=1)
@@ -1288,7 +1227,6 @@ plot_binding_site(
     "line": {"label": "Importance", "values": importance},
   },
 );
-
 ```
 
 就像 ISM 一样，我们发现大多数位置对预测的影响很小，而一个中心区域——大约位置 90 到 110——表现出强烈的梯度。这反映了模型在做出预测时最敏感的碱基。然而，输入梯度与 ISM 在关键方面有所不同：值不是限定在表示离散突变，而且每个位置的当前碱基也可以有一个非零梯度。这是因为梯度描述了模型输出如何随着该碱基激活的无限小增加而变化——而不是实际的突变。这使得梯度更加抽象，但也更加灵活和计算高效。
@@ -1312,14 +1250,12 @@ sns.heatmap(
   yticklabels=["A", "C", "G", "T"],
 )
 plt.tight_layout();
-
 ```
 
 输出：
 
 ```py
 Central DNA sequence with high importance:  TGGCCTCTGGGGGCGCTCTG
-
 ```
 
 这个图证实了我们使用 ISM 和 FIMO 工具看到的情况：模型高度重视序列的中心区域，这对应于一个标准的 CTCF 结合基序。
@@ -1336,7 +1272,6 @@ Central DNA sequence with high importance:  TGGCCTCTGGGGGCGCTCTG
 from dlfb.dna.inspect import plot_10_gradients
 
 plot_10_gradients(state, valid_ds, target_label=1);
-
 ```
 
 ![图片](img/dlfb_0314.png)
@@ -1349,7 +1284,6 @@ plot_10_gradients(state, valid_ds, target_label=1);
 
 ```py
 plot_10_gradients(state, valid_ds, target_label=0);
-
 ```
 
 ![图片](img/dlfb_0315.png)
@@ -1387,16 +1321,13 @@ transcription_factors = [
   "SRF",
   "ZNF24",
 ]
-
 ```
 
 每个 TF 都有自己的独特 DNA 结合偏好。例如：
 
-+   正如我们所见，CTCF 结合基序如`CCACCAGGGGGCGC`。
-
-+   MAX 更喜欢调节细胞增殖的 E-box 基序`CACGTG`。
-
-+   SRF 结合到`CCW6GG`（其中 W = A 或 T），这是一个涉及肌肉特异性基因表达的基序。
++ 正如我们所见，CTCF 结合基序如`CCACCAGGGGGCGC`。
++ MAX 更喜欢调节细胞增殖的 E-box 基序`CACGTG`。
++ SRF 结合到`CCW6GG`（其中 W = A 或 T），这是一个涉及肌肉特异性基因表达的基序。
 
 这些偏好通常在物种间得到保留，每个转录因子（TF）的作用可能深深植根于特定的细胞类型身份或发育过程中。如果你对此好奇，值得查阅一些这些蛋白质——例如，REST 是神经元中的关键抑制因子，而 MAX 通过与 MYC 的相互作用在肿瘤发生中已知有作用。
 
@@ -1404,11 +1335,11 @@ transcription_factors = [
 
 解决这个问题的两种常见策略是：
 
-多任务学习
+**多任务学习**
 
 训练一个模型，使其为每个 TF 输出一个预测，可能在学习任务间共享表示。
 
-单任务学习
+**单任务学习**
 
 独立地为每个 TF 训练单独的二分类模型。
 
@@ -1422,61 +1353,53 @@ transcription_factors = [
 
 我们将保留之前相同的核心卷积架构，但引入三种标准的深度学习技术——批归一化、dropout 和学习率调度，这些技术在 CNN 中广泛使用，并且经常帮助即使是相对较浅的模型和简单的数据集。
 
-批归一化
+**批归一化**
 
 我们在每个卷积层之后添加批归一化以提高训练稳定性：
 
-+   批归一化在整个批次中归一化激活，这有助于平滑优化景观并加速收敛。
-
-+   尽管我们的网络相对较浅，批归一化仍然可以提高性能和鲁棒性。
++ 批归一化在整个批次中归一化激活，这有助于平滑优化景观并加速收敛。
++ 尽管我们的网络相对较浅，批归一化仍然可以提高性能和鲁棒性。
 
 一些实现细节：
 
-+   批归一化在训练和推理期间表现不同。在训练期间，它从当前批次计算均值和方差并更新运行平均值；在推理时间，它使用学习到的平均值。
++ 批归一化在训练和推理期间表现不同。在训练期间，它从当前批次计算均值和方差并更新运行平均值；在推理时间，它使用学习到的平均值。
++ 在 Flax 中，你可以使用`is_training`标志通过`use_running_average=not is_training`模式来控制这种行为。
 
-+   在 Flax 中，你可以使用`is_training`标志通过`use_running_average=not is_training`模式来控制这种行为。
-
-Dropout 正则化
+**Dropout 正则化**
 
 为了减少过拟合，我们在密集（全连接）层之后添加 dropout：
 
-+   Dropout 在训练过程中随机将一部分激活设置为 0，这鼓励模型学习冗余和鲁棒的特征。
++ Dropout 在训练过程中随机将一部分激活设置为 0，这鼓励模型学习冗余和鲁棒的特征。
++ 它通常在密集层之后而不是卷积层之后使用，因为空间共享的卷积滤波器已经很好地泛化了。
++ 在 Flax 中，dropout 需要将 PRNG（伪随机数生成器）密钥传递给前向传递。
++ 我们使用 0.2 的中等 dropout 率，这增加了一些正则化，但不会显著降低模型容量。
 
-+   它通常在密集层之后而不是卷积层之后使用，因为空间共享的卷积滤波器已经很好地泛化了。
-
-+   在 Flax 中，dropout 需要将 PRNG（伪随机数生成器）密钥传递给前向传递。
-
-+   我们使用 0.2 的中等 dropout 率，这增加了一些正则化，但不会显著降低模型容量。
-
-学习率调度
+**学习率调度**
 
 与使用固定学习率不同，我们采用学习率调度来指导训练：
 
-+   动态学习率通常开始较高（鼓励快速探索），随着时间的推移逐渐降低，以帮助收敛。
++ 动态学习率通常开始较高（鼓励快速探索），随着时间的推移逐渐降低，以帮助收敛。
++ 流行的选项包括指数衰减、步长衰减和余弦退火。
++ 通过`optax.cosine_decay_schedule`实现，我们使用余弦衰减调度，该调度在训练过程中逐渐降低学习率。这个学习率调度的形状在图 3-16 中进行了可视化：
 
-+   流行的选项包括指数衰减、步长衰减和余弦退火。
+```py
+num_steps = 1000
 
-+   通过`optax.cosine_decay_schedule`实现，我们使用余弦衰减调度，该调度在训练过程中逐渐降低学习率。这个学习率调度的形状在图 3-16 中进行了可视化：
+scheduler = optax.cosine_decay_schedule(
+  init_value=0.001,
+  decay_steps=num_steps,  # How long to decay over.
+)
+learning_rates = [scheduler(i) for i in range(num_steps)]
 
-    ```py
-    num_steps = 1000
+plt.scatter(range(num_steps), learning_rates)
+plt.title("Learning Rate over Steps")
+plt.ylabel("Learning Rate")
+plt.xlabel("Step");
+```
 
-    scheduler = optax.cosine_decay_schedule(
-      init_value=0.001,
-      decay_steps=num_steps,  # How long to decay over.
-    )
-    learning_rates = [scheduler(i) for i in range(num_steps)]
+![图 3-16](img/dlfb_0316.png)
 
-    plt.scatter(range(num_steps), learning_rates)
-    plt.title("Learning Rate over Steps")
-    plt.ylabel("Learning Rate")
-    plt.xlabel("Step");
-
-    ```
-
-    ![图 3-16](img/dlfb_0316.png)
-
-    ###### 图 3-16。训练过程中使用的余弦衰减学习率调度。学习率从 0.001 开始，逐渐降低至 1000 步，帮助模型在早期进行探索，并在后期平滑收敛。
+###### 图 3-16。训练过程中使用的余弦衰减学习率调度。学习率从 0.001 开始，逐渐降低至 1000 步，帮助模型在早期进行探索，并在后期平滑收敛。
 
 尽管我们的数据集和架构相当简单，但这些添加应该有助于提高训练稳定性和模型在转录因子任务扩展集上的泛化能力。
 
@@ -1537,7 +1460,6 @@ class ConvModelV2(nn.Module):
       key=rng_dropout,
     )
     return state
-
 ```
 
 我们的`ConvModelV2`实现开始变得有点长且重复。在章节的后面，我们将通过将重复的逻辑重构到`ConvBlock`和`DenseBlock`组件中来解决这个问题，从而使模型定义更加简洁和模块化。
@@ -1550,14 +1472,15 @@ rng, rng_init, rng_train = jax.random.split(rng, 3)
 state = ConvModelV2().create_train_state(
   rng=rng_init, dummy_input=batch["sequences"], tx=optax.adam(scheduler)
 )
-
 ```
 
 训练步骤看起来与之前看到的相当相似，但现在它需要处理 dropout 和批量归一化。
 
+
+
 一个小的额外变化：损失函数直接在`train_step`中定义。这通常是为了可读性和封装而做的，尤其是在损失依赖于额外的可变模型状态（如`batch_stats`）或 dropout 时，这两者现在都是前向传递所必需的：
 
-```py
+```
 @jax.jit
 def train_step(state, batch, rng_dropout: jax.Array):
   """Run a training step and update parameters."""
@@ -1584,36 +1507,33 @@ def train_step(state, batch, rng_dropout: jax.Array):
   metrics = {"loss": loss}
 
   return state, metrics
-
 ```
 
 为了确认一切连接正确，我们可以对单个批次进行过拟合——也就是说，在同一个批次上运行几个步骤，并检查损失是否下降：
 
-```py
+```
 # Overfit on one batch.
 for i in range(5):
   rng, rng_dropout = jax.random.split(rng, 2)
   state, metrics = train_step(state, batch, rng_dropout)
   print(f"Step {i} loss: {metrics['loss']}")
-
 ```
 
 输出：
 
-```py
+```
 Step 0 loss: 0.6932974457740784
 Step 1 loss: 0.25415313243865967
 Step 2 loss: 0.08513301610946655
 Step 3 loss: 0.02221144177019596
 Step 4 loss: 0.019464049488306046
-
 ```
 
 看起来不错——损失迅速下降。这表明模型能够拟合数据。
 
 然而，仅损失并不是评估分类模型的最佳方式。我们希望监控额外的指标，如准确率和 ROC 曲线下的面积（auROC）。我们在评估步骤中计算这些指标：
 
-```py
+```
 def eval_step(state, batch):
   """Evaluate model on a single batch."""
   logits = state.apply_fn(
@@ -1636,30 +1556,27 @@ def compute_metrics(y_true: np.ndarray, logits: np.ndarray):
     "auc": roc_auc_score(y_true, logits).item(),
   }
   return metrics
-
 ```
 
 注意，由于`scikit-learn`函数与 JAX 不兼容，评估步骤没有使用`@jax.jit`装饰。
 
 让我们看看运行`eval_step`的输出：
 
-```py
+```
 # Evaluate the batch.
 metrics = eval_step(state, batch)
 print(metrics)
-
 ```
 
 输出：
 
-```py
+```
 {'loss': 0.45877009630203247, 'accuracy': 0.9375, 'auc': 1.0}
-
 ```
 
 现在我们已经实现了训练和评估步骤，让我们定义一个完整的训练循环。`train`函数接受初始化的模型状态、训练和验证数据集以及一些配置参数：
 
-```py
+```
 @restorable
 def train(
   state: TrainStateWithBatchNorm,
@@ -1690,22 +1607,18 @@ def train(
     steps.set_postfix_str(metrics.latest(["loss"]))
 
   return state, metrics.export()
-
 ```
 
 训练循环与之前相当相似，但作为一个快速回顾，以下是它所做的工作：
 
 +   使用进度条遍历训练步骤
-
 +   运行`train_step`来更新模型参数
-
 +   定期使用`eval_step`在验证集上进行评估
-
-+   使用自定义 MetricsLogger 在每个步骤记录和存储指标
++   使用自定义`MetricsLogger`在每个步骤记录和存储指标
 
 由于我们为每个 TF 训练一个模型，我们将使用一个实用函数来加载按 TF 名称分割的数据集：
 
-```py
+```
 def load_dataset_splits(
   path, transcription_factor, batch_size: int | None = None
 ):
@@ -1718,14 +1631,13 @@ def load_dataset_splits(
     ds = convert_to_tfds(dataset, batch_size, is_training=(split == "train"))
     dataset_splits.update({split: ds})
   return dataset_splits
-
 ```
 
 此函数加载给定`transcription_factor`的训练、验证和测试分割，并将它们转换为 TensorFlow 数据集，以便进行批处理。
 
 现在我们已经为每个 TF 训练一个模型做好了所有准备：
 
-```py
+```
 prefix = assets("dna/datasets")
 tf_metrics = {}
 
@@ -1758,17 +1670,15 @@ for transcription_factor in transcription_factors:
 
   # Store metrics.
   tf_metrics.update({transcription_factor: metrics})
-
 ```
 
 训练完成后，让我们看看图 3-17 中仅 CTCF 转录因子性能的情况：
 
-```py
+```
 from dlfb.dna.inspect import plot_learning
 
 tf = "CTCF"
 plot_learning(tf_metrics[tf], tf);
-
 ```
 
 ![](img/dlfb_0317.png)
@@ -1779,7 +1689,7 @@ plot_learning(tf_metrics[tf], tf);
 
 现在，让我们可视化所有 10 个 TFs 的训练曲线。我们首先处理记录的指标：
 
-```py
+```
 from dlfb.utils.metric_plots import to_df
 
 # Extract metrics logged per transcription factor.
@@ -1793,12 +1703,11 @@ auc_df = tf_df[(tf_df["metric"] == "auc") & (tf_df["split"] == "valid")]
 max_auc_by_tf = auc_df.groupby("TF")["mean"].max()
 tf_order = max_auc_by_tf.sort_values(ascending=False).index.tolist()
 tf_df["TF"] = pd.Categorical(tf_df["TF"], categories=tf_order, ordered=True)
-
 ```
 
 然后，我们可以按 auROC 性能（最佳性能的 TFs 排在前面）排序，在图 3-18 中可视化它们的学习曲线：
 
-```py
+```
 sns.set_context("notebook", font_scale=2, rc={"lines.linewidth": 2.5})
 sns.set_style("ticks", {"axes.grid": True})
 g = sns.relplot(
@@ -1817,7 +1726,6 @@ g = sns.relplot(
 )
 g.set_axis_labels("Step", "Value")
 g.set(ylim=(0, 1));
-
 ```
 
 ![](img/dlfb_0318.png)
@@ -1831,21 +1739,18 @@ g.set(ylim=(0, 1));
 以下是从论文图表中得出的关键要点：
 
 +   CTCF 和 ATF2 是最可预测的转录因子，一热编码和预训练模型都实现了超过 0.95 的 auROC 分数。这些转录因子具有强大的保守结合基序，易于模型学习。
-
 +   REST、MAX 和 ELK1 显示中等难度，auROC 在 0.83 到 0.85 之间。
-
 +   ZNF24、BACH1、ARID3 和 GABPA 通常更难预测，其 auROC 值在 0.75 到 0.80 之间徘徊。
 
 让我们现在看看我们的模型是如何比较的。以下打印出我们为每个 TF 独立训练的 CNN 达到的峰值验证 auROC：
 
-```py
+```
 print(max_auc_by_tf.sort_values(ascending=False))
-
 ```
 
 输出：
 
-```py
+```
 TF
 ATF2     0.985182
 CTCF     0.980479
@@ -1855,7 +1760,6 @@ ARID3    0.769149
 BACH1    0.767122
 ZNF24    0.761506
 Name: mean, Length: 10, dtype: float64
-
 ```
 
 我们的结果与论文中的排名和分数非常接近——特别是在哪些转录因子更容易或更难预测方面。这种一致性提供了令人放心的外部验证，表明我们的训练设置正在正常工作，我们的模型正在学习有意义的内容。
@@ -1867,6 +1771,10 @@ Name: mean, Length: 10, dtype: float64
 在我们介绍更复杂的模型组件之前，让我们首先通过将其重构为可重用构建块来提高我们模型架构的清晰度和模块化。这使得我们的代码更容易阅读、扩展和维护。
 
 我们将通过创建两个辅助模块`ConvBlock`和`MLPBlock`来模块化我们的卷积和 MLP 层：
+
+
+
+# 定义可重用的模型块
 
 ```py
 class ConvBlock(nn.Module):
@@ -1900,7 +1808,6 @@ class MLPBlock(nn.Module):
     x = nn.gelu(x)
     x = nn.Dropout(rate=self.dropout_rate)(x, deterministic=not is_training)
     return x
-
 ```
 
 在这些可重用块到位后，我们现在可以定义一个更紧凑和可配置的模型架构：
@@ -1943,18 +1850,16 @@ class ConvTransformerModel(nn.Module):
       )(x, is_training)
 
     return nn.Dense(1)(x)
-
 ```
 
 此架构支持在卷积特征提取器和 MLP 分类器之间插入可选的 Transformer 块。您还会注意到引入了`TransformerBlock`，我们将在下一节中探讨。
 
-## 添加自注意力和 Transformer 块
+# 添加自注意力和 Transformer 块
 
 我们最终架构结合了卷积层和 Transformer 块。虽然卷积层在从 DNA 中提取局部基序样模式方面非常出色，但 Transformer 块可以捕捉长距离依赖关系——跨越更大序列区域的模式。这两种类型的层高度互补。
 
-###### 注意
-
-在我们的案例中，序列相对较短（仅有 200 个碱基对），因此长距离注意力的好处可能有限。然而，随着输入长度的增加，注意力机制变得越来越有用。对于更长的基因组上下文——例如完整的基因体，或潜在的远距离调控元件之间的相互作用，如启动子和增强子序列——Transformer 可以整合比固定大小卷积核更广泛的信号。
+> **注意**
+> 在我们的案例中，序列相对较短（仅有 200 个碱基对），因此长距离注意力的好处可能有限。然而，随着输入长度的增加，注意力机制变得越来越有用。对于更长的基因组上下文——例如完整的基因体，或潜在的远距离调控元件之间的相互作用，如启动子和增强子序列——Transformer 可以整合比固定大小卷积核更广泛的信号。
 
 Flax 包含一个内置的`SelfAttention`模块，我们可以将其用作`TransformerBlock`的基础：
 
@@ -1983,32 +1888,20 @@ class TransformerBlock(nn.Module):
     x = nn.Dense(self.dense_units)(x)  # No GELU after this Dense.
     x += residual
     return x
-
 ```
 
 关于此设计的几点说明：
 
-自注意力
-
-核心操作是`nn.SelfAttention`，它使序列中的每个位置都能关注到其他所有位置，从而捕捉输入中的依赖关系。
-
-残差连接
-
-跳过连接有助于通过允许梯度更容易地通过深层架构来稳定训练。
-
-层归一化
-
-变换器通常使用层归一化而不是批量归一化，因为它对基于序列的模型来说更稳定，并且对批量大小不变。
-
-位置信息
-
-在我们当前的设置中，我们省略了显式的位置编码——这是一个简化，可能适用于短序列（例如，200 bp），其中基序的相对排列仍然可以通过注意力之前的卷积层来学习。对于更长的输入或如果注意力应用得非常早，请考虑添加学习或正弦位置编码。
+- **自注意力**：核心操作是`nn.SelfAttention`，它使序列中的每个位置都能关注到其他所有位置，从而捕捉输入中的依赖关系。
+- **残差连接**：跳过连接有助于通过允许梯度更容易地通过深层架构来稳定训练。
+- **层归一化**：变换器通常使用层归一化而不是批量归一化，因为它对基于序列的模型来说更稳定，并且对批量大小不变。
+- **位置信息**：在我们当前的设置中，我们省略了显式的位置编码——这是一个简化，可能适用于短序列（例如，200 bp），其中基序的相对排列仍然可以通过注意力之前的卷积层来学习。对于更长的输入或如果注意力应用得非常早，请考虑添加学习或正弦位置编码。
 
 这个可选的`TransformerBlock`现在可以包含在我们的`ConvTransformerModel`中的卷积和 MLP 层之间。
 
-## 定义各种模型架构
+# 定义各种模型架构
 
-现在我们模型是模块化的，我们可以尝试不同的架构设置来更好地理解它们对性能的影响。这种架构探索在调整深度学习模型时很常见——很少有一个明显的“最佳”模型，尝试多个变体可以揭示有价值的见解。
+现在我们模型是模块化的，我们可以尝试不同的架构设置来更好地理解它们对性能的影响。这种架构探索在调整深度学习模型时很常见——很少有一个明显的"最佳"模型，尝试多个变体可以揭示有价值的见解。
 
 在下面的代码中，我们定义了具有不同设置的几个模型：
 
@@ -2031,12 +1924,11 @@ models = {
   # Stack two transformer blocks.
   "add_two_transformer_block": ConvTransformerModel(num_transformer_blocks=2),
 }
-
 ```
 
 为了测试这些变体，我们将重点关注我们之前结果中最困难的 TF：ZNF24，它在我们的初始模型中达到了 0.76 的峰值验证 auROC。这使得它成为探索架构改进是否能带来更好的预测性能的理想候选者。
 
-## 检查不同的模型
+# 检查不同的模型
 
 现在我们所有的模型组件都已模块化，我们可以轻松运行系统实验来比较架构选择。
 
@@ -2082,7 +1974,6 @@ for name, model in models.items():
     store_path=assets(f"dna/models/{name}"),
   )
   model_metrics.update({name: metrics})
-
 ```
 
 训练每个模型后，我们提取训练时间内的记录指标并可视化结果：
@@ -2103,7 +1994,6 @@ model_order = max_auc_by_model.sort_values(ascending=False).index.tolist()
 model_df["model"] = pd.Categorical(
   model_df["model"], categories=model_order, ordered=True
 )
-
 ```
 
 使用此代码，我们可以在图 3-19 中绘制我们的学习曲线和随时间变化的指标：
@@ -2127,12 +2017,11 @@ g = sns.relplot(
 )
 g.set_axis_labels("Step", "Value")
 g.set(ylim=(0.4, 0.9));
-
 ```
 
 ![](img/dlfb_0319.png)
 
-###### 图 3-19\. 不同模型架构在 ZNF24 结合预测上的学习曲线。每个面板显示训练和验证损失、准确率和 auROC。我们看到添加 transformer 块略微提高了性能，而移除容量（例如，更少的卷积滤波器）则损害了性能。
+**图 3-19.** 不同模型架构在 ZNF24 结合预测上的学习曲线。每个面板显示训练和验证损失、准确率和 auROC。我们看到添加 transformer 块略微提高了性能，而移除容量（例如，更少的卷积滤波器）则损害了性能。
 
 为了更好地隔离模型差异，我们可以在图 3-20 中仅绘制随时间变化的验证 auROC：
 
@@ -2147,18 +2036,16 @@ g = sns.lineplot(
 )
 g.set_xlabel("Step")
 g.set_ylabel("auROC");
-
 ```
 
 ![](img/dlfb_0320.png)
 
-###### 图 3-20\. 每个模型变体在训练步骤中的验证 auROC。具有 transformer 块的模型优于更简单的基线，而减少卷积容量或移除 MLP 通常会损害性能。
+**图 3-20.** 每个模型变体在训练步骤中的验证 auROC。具有 transformer 块的模型优于更简单的基线，而减少卷积容量或移除 MLP 通常会损害性能。
 
 下面是每个模型（按步骤 1,000）的最大 auROC 值：
 
 ```py
 print(max_auc_by_model.sort_values(ascending=False))
-
 ```
 
 输出：
@@ -2172,24 +2059,19 @@ remove_MLP                   0.752024
 single_conv_only             0.719931
 fewer_conv_channels          0.697637
 Name: mean, dtype: float64
-
 ```
 
 基于这些结果的一些观察和假设：
 
-卷积至关重要
+- **卷积至关重要**：相对于基线，`single_conv_only` 模型表现不佳，减少卷积滤波器的数量进一步降低了性能。这表明拥有多个具有足够容量的卷积层对于学习有意义的序列特征很重要。探索更深的卷积堆叠或更宽的核可能值得考虑。
+- **Transformer 模块有助于**：添加一个或两个自注意力模块可以在 auROC 上带来适度但一致的提升，尽管输入序列只有 200 个碱基长。这支持了即使是短的 DNA 窗口也能从建模长距离依赖中受益的观点。
+- **MLP 可能是不必要的**：移除 MLP 层（`remove_MLP`）的性能与基线相当，这表明 MLP 层在最终分类中可能不是必需的，或者其作用可以被其他组件替代。
 
-相对于基线，`single_conv_only` 模型表现不佳，减少卷积滤波器的数量进一步降低了性能。这表明拥有多个具有足够容量的卷积层对于学习有意义的序列特征很重要。探索更深的卷积堆叠或更宽的核可能值得考虑。
 
-Transformer 模块有助于
-
-添加一个或两个自注意力模块可以在 auROC 上带来适度但一致的提升，尽管输入序列只有 200 个碱基长。这支持了即使是短的 DNA 窗口也能从建模长距离依赖中受益的观点。
-
-MLP 可能是不必要的
 
 令人惊讶的是，移除 MLP 模块并没有大幅损害性能。这表明大部分的表示能力来自早期的卷积层，额外的 MLP 层可能是多余的。
 
-训练动态
+## 训练动态
 
 带有 transformer 模块的模型在早期训练期间表现出更嘈杂的验证损失。这种不稳定性可能通过较小的初始学习率来减少。
 
@@ -2224,14 +2106,12 @@ state, _ = restore(
 test_batch = next(dataset_splits["test"].as_numpy_iterator())
 metrics = eval_step(state, test_batch)
 print(metrics)
-
 ```
 
 输出：
 
 ```py
 {'loss': 0.5123618841171265, 'accuracy': 0.75, 'auc': 0.8196078431372549}
-
 ```
 
 成功！我们的最佳模型在测试集上达到了与验证集上相当的 AUC，证明了良好的泛化能力。
@@ -2242,49 +2122,49 @@ print(metrics)
 
 一些分析想法：
 
-失败分析
+### 失败分析
 
 检查被错误分类的序列。它们是否对应于原本噪声较大或较低强度的 ChIP-seq 峰？它们内部是否存在弱基序匹配？将这些序列追踪回原始数据以了解预测错误的来源。
 
-基序发现
+### 基序发现
 
 使用显著性图提取高信号区域，并将它们与来自 JASPAR 或 HOCOMOCO 等数据库的已知基序对齐。您还可以探索基于贡献分数的自动基序发现工具，如 TF-MoDISco。
 
-归因比较
+### 归因比较
 
 比较不同 TF 之间的计算机模拟突变和输入梯度。更容易的任务会产生更一致或可解释的显著性模式吗？
 
-跨 TF 泛化
+### 跨 TF 泛化
 
 评估在一个 TF 上训练的模型与另一个验证数据集的对比。哪些 TF 泛化得很好？这可能揭示了共享的基序特征或结合逻辑的相似性。
 
-显著性可重复性
+### 显著性可重复性
 
 比较不同训练运行或架构中的显著性图，以评估基序模式被捕获的可靠性。
 
 以及一些潜在建模扩展：
 
-模型优化
+### 模型优化
 
 调整架构超参数，如卷积滤波器数量、核宽度、dropout 率或 transformer 头数和 MLP 大小。
 
-位置编码
+### 位置编码
 
 添加正弦波或学习到的位置嵌入以改善 transformer 对序列顺序的建模——特别是对于较长的 DNA 序列非常有价值。
 
-多任务设置
+### 多任务设置
 
 建立一个多任务模型，同时预测所有 TF 的结合。这允许任务之间的共享表示，并可能提高具有较少数据的 TF 的性能。
 
-定量结合预测
+### 定量结合预测
 
 与二分类不同，预测连续的结合强度（例如，ChIP-seq 信号）。这需要调整模型以进行序列到序列或密集回归输出。
 
-预训练
+### 预训练
 
 微调预训练的 DNA 模型，如 DNABERT 或 Nucleotide Transformer，以利用先前的基因组知识，并使用更少的数据提高性能。
 
-数据增强
+### 数据增强
 
 通过反向互补、移位窗口（抖动）或合成的基序插入来提高泛化能力。
 
@@ -2300,7 +2180,7 @@ print(metrics)
 
 ^(1) 国际人类基因组测序联盟，“人类基因组初步测序和分析。”自然 409 (2001): 860–921。
 
-^(2) Vaswani, Ashish, Noam Shazeer, Niki Parmar, Jakob Uszkoreit, Llion Jones, Aidan N. Gomez, Lukasz Kaiser, and Illia Polosukhin. 2017\. [“Attention Is All You Need”](https://oreil.ly/-Qa6G). *arXiv (康奈尔大学)* 30 (六月): 5998–6008。
+^(2) Vaswani, Ashish, Noam Shazeer, Niki Parmar, Jakob Uszkoreit, Llion Jones, Aidan N. Gomez, Lukasz Kaiser, and Illia Polosukhin. 2017\. [“Attention Is All You Need”](https://oreil.ly/-Qa6G). *arXiv (康奈尔大学)* 30 (六月): 5998–6008。
 
 ^(3) 唐泽，索米亚，余宇，与库帕·K. (2024). [评估预训练 DNA 语言模型在调控基因组学中的表征能力](https://doi.org/10.1101/2024.02.29.582810). bioRxiv (冷泉港实验室).
 

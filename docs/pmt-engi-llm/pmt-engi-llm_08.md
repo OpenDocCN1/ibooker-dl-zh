@@ -1,10 +1,11 @@
+
 # 第六章\. 组装提示
 
 在前几章中，你收集了大量将作为你提示构建块的内容。现在，是时候将这些碎片组合起来，制作一个能够有效传达你需求的提示了。本章将指导你通过首先探索你可用到的不同结构和选项来塑造你的提示。你如何选择组织这些单个片段将在你最终提示的有效性中扮演关键角色。
 
 下一步涉及对内容进行分类——决定保留什么和丢弃什么，以便它能够适应你可能有的任何大小限制。这个过程对于完善提示并确保其保持专注和相关性至关重要。内容确定后，你将进入组装提示的阶段，这将是你从模型中获取相关、连贯和上下文准确响应的工具。让我们深入探讨。
 
-# 理想提示的结构
+## 理想提示的结构
 
 在我们深入探讨如何达到那里的细节之前，让我们先可视化我们想要达到的地方。看看图 6-1，它提供了一个俯瞰你的提示应该如何看起来。我们将逐个分析其元素。简洁明了的提示通常更有效——此外，它们使用的计算能力更少，处理速度更快。此外，你还有一个与上下文窗口大小相关的硬截止点。
 
@@ -40,78 +41,14 @@
 
 | 提示语部分 | 三明治 | 提示语 |
 | --- | --- | --- |
-| 介绍 |   |
-
-```py
-[{"role": "system", "content" : "You are a helpful AI.”},
-```
-
-|
-
-| 三明治部分 1 |
-| --- |
-
-```py
-{"role": "user", "content" : "I want to suggest to Fiona 
-an idea for her next book to read.”
-```
-
-|
-
-|   |
-| --- |
-
-```py
-Please ask any questions you need to arrive at an informed
-suggestion."}, {"role": "assistant", "content" : "Of course! 
-The following information might be useful: What books did 
-she read last?”},
-```
-
-|
-
-| 上下文 |   |
-| --- | --- |
-
-```py
-{"role": "user", "content" : "Harry Potter, Lioness 
-Rampant, Mr Lemoncello’s Library”},
-```
-
-|
-
-|
-
-```py
-{"role": "assistant", "content" : "What did she post on 
-social media recently?”}, {"role": "user", "content" : […]
-```
-
-|
-
-| `[…]` |
-| --- |
-| `[…]` |
-| `[…]` |
-| 重新聚焦 + 过渡 |   |
-
-```py
-{"role": "assistant", "content" : "I believe this is all 
-the information I need to select a single best candidate 
-book suggestion.”},
-```
-
-|
-
-| 三明治部分 2 |
-| --- |
-
-```py
-{"role": "user", "content" : "Excellent! So based on 
-this, which book should I suggest to her?”}]
-```
-
-|
+| 介绍 |  | `[{"role": "system", "content" : "You are a helpful AI.”},` |
+| 三明治部分 1 |  | `{"role": "user", "content" : "I want to suggest to Fiona an idea for her next book to read.”` |
+|  |  | `Please ask any questions you need to arrive at an informed suggestion."}, {"role": "assistant", "content" : "Of course! The following information might be useful: What books did she read last?”},` |
+| 上下文 |  | `{"role": "user", "content" : "Harry Potter, Lioness Rampant, Mr Lemoncello’s Library”},` |
+|  |  | `{"role": "assistant", "content" : "What did she post on social media recently?”}, {"role": "user", "content" : […]` |
+| `[…]` |  | `[…]` |
+| 重新聚焦 + 过渡 |  | `{"role": "assistant", "content" : "I believe this is all the information I need to select a single best candidate book suggestion.”},` |
+| 三明治部分 2 |  | `{"role": "user", "content" : "Excellent! So based on this, which book should I suggest to her?”}]` |
 
 重新聚焦可以短至半行，但通常在这里包含关键澄清。介绍设定了舞台（“我在考虑为 X 推荐书籍。”），而重新聚焦提供了清晰的细节（“接下来推荐哪本书最好，专注于目前可用的叙事散文？”）。如果澄清变得很长，你可能需要在结束时进行简短的重新聚焦，尤其是在讨论输出格式时。
 
@@ -123,15 +60,15 @@ this, which book should I suggest to her?”}]
 
 ![](img/pefl_0602.png)
 
-###### 图 6-2\. 过渡的三种变体：缺失的，在左边；天真的，在中间；和精炼的，在右边（所有完成[阴影背景]都是使用 OpenAI 的 text-davinci-002 完成的，这是一个完成模型，而不是聊天模型）
+###### 图 6-2\. 过渡的三种变体：缺失的，在左边；天真的，在中间；和精炼的，在右边（所有完成[阴影背景]都是使用 OpenAI 的 `text-davinci-002` 完成的，这是一个完成模型，而不是聊天模型）
 
 如图 6-2 所示，你通常可以将重新聚焦和过渡合并。在这些情况下，你写下答案的开始部分，这部分只是重申或总结问题陈述。实际的答案随后由模型提供。
 
-# 什么类型的文档？
+## 什么类型的文档？
 
 一个提示和完成共同构成一个文档，正如第四章中提到的《小红帽原则》[ch04.html#ch04_designing_llm_applications_1728407230643376]所建议的，最好使用与训练数据中相似的文档，这样完成的格式就更容易预测。但你应该追求哪种类型的文档呢？有几种有用的类型，每种类型都有个性化的空间。让我们探索最常见的几种，以及何时使用每种。
 
-## 建议对话
+### 建议对话
 
 在最常见的范例中，你的文档代表两个人之间的对话。一个人寻求某种帮助，另一个人提供帮助。寻求帮助的人代表你的应用程序或其用户，而模型将扮演帮助提供者的角色。
 
@@ -159,11 +96,11 @@ this, which book should I suggest to her?”}]
 
 | 格式 | 自由文本 | 脚本格式 | 无标记 | 结构化 |
 | --- | --- | --- | --- | --- |
-| 简介 | 我问我的丈夫，“我们明天做什么？” | 我：我们明天做什么？ | 我们明天做什么？ | <我>我们明天做什么？</我> |
-| 上下文 | 他回答说，“嗯，天气怎么样？”我报告说，“我们预计整个波士顿地区的天气将温暖宜人，阳光明媚。” | 丈夫：嗯，天气怎么样？我：我们预计整个波士顿地区的天气将温暖宜人，阳光明媚。 | 嗯，天气怎么样？我们预计整个波士顿地区的天气将温暖宜人，阳光明媚。 | <husband>嗯，天气怎么样？</husband><me>我们预计整个波士顿地区的天气将温暖宜人，阳光明媚。</me> |
-| 重新聚焦 | 他稍微反思了一下，关于我们周日的好活动是什么， | 丈夫（在反思周日的好活动之后） | （反思周日的好活动） | <direction>丈夫反思周日的好活动</direction> |
-| 过渡 | 他建议说， | : | 我建议我们应该 | <husband> |
-| 完成内容（text-davinci-003） | “那我们去看海滩吧。我们可以买些咖啡和三明治，在沙滩上野餐。我们可以坐在毯子上，看着波浪。听起来不错。” | 我觉得骑自行车会很有趣，也许可以去附近的公园。也许我们可以带个野餐午餐，在阳光下度过一天。 | 带上野餐和一本书去查尔斯河，整天悠闲地阅读，享受阳光。 | 如果天气这么好，去蓝山徒步旅行怎么样？我们可以看看水库，野餐，并观赏日落。 </husband> |
+| 简介 | 我问我的丈夫，“我们明天做什么？” | 我：我们明天做什么？ | 我们明天做什么？ | `<me>我们明天做什么？</me>` |
+| 上下文 | 他回答说，“嗯，天气怎么样？”我报告说，“我们预计整个波士顿地区的天气将温暖宜人，阳光明媚。” | 丈夫：嗯，天气怎么样？我：我们预计整个波士顿地区的天气将温暖宜人，阳光明媚。 | 嗯，天气怎么样？我们预计整个波士顿地区的天气将温暖宜人，阳光明媚。 | `<husband>嗯，天气怎么样？</husband><me>我们预计整个波士顿地区的天气将温暖宜人，阳光明媚。</me>` |
+| 重新聚焦 | 他稍微反思了一下，关于我们周日的好活动是什么， | 丈夫（在反思周日的好活动之后） | （反思周日的好活动） | `<direction>丈夫反思周日的好活动</direction>` |
+| 过渡 | 他建议说， | : | 我建议我们应该 | `<husband>` |
+| 完成内容（`text-davinci-003`） | “那我们去看海滩吧。我们可以买些咖啡和三明治，在沙滩上野餐。我们可以坐在毯子上，看着波浪。听起来不错。” | 我觉得骑自行车会很有趣，也许可以去附近的公园。也许我们可以带个野餐午餐，在阳光下度过一天。 | 带上野餐和一本书去查尔斯河，整天悠闲地阅读，享受阳光。 | 如果天气这么好，去蓝山徒步旅行怎么样？我们可以看看水库，野餐，并观赏日落。 `</husband>` |
 
 虽然所有格式都很有效，但每种格式都有其独特的优势，我们已将它们排列得如此，以便每种格式都弥补了前一种格式的不足：
 
@@ -189,7 +126,7 @@ this, which book should I suggest to her?”}]
 
 从助手的视角编写提示有助于将上下文框架化为似乎是在回答他们提出的问题。这种方法确保了完成部分从答案开始，而不是另一个澄清问题。
 
-## 分析报告
+### 分析报告
 
 每年，数百万学生接受报告写作的训练。他们学习撰写引言、阐述、分析和结论的艺术，一旦他们毕业并进入职场，他们就会撰写分析市场、权衡成本和收益并提出可操作结论的报告。所有这些都是艰苦的工作，幸运的是，它有其目的：它为 LLM 提供了优秀的训练材料。而且，这些模型是在包含各种类型和规模的报告的大量数据集上训练的。
 
@@ -197,9 +134,9 @@ this, which book should I suggest to her?”}]
 
 然而，制作静态提示元素，如指令，需要一些思考，尤其是当你确保内容清晰、简洁时。一个有用的策略是包括一个*范围*部分，明确界定报告的边界。而不是在对话中来回确认排除的内容（例如，“请只建议小说，不要自助书籍。”），你可以一开始就声明，“本报告仅关注小说，不包括自助书籍。”LLM 在报告中比在对话中更一致地尊重这样的明确边界。
 
-报告还倾向于客观分析，这通过避免需要模拟社交互动来减轻 LLM 的认知负担。话虽如此，因为分析通常在结论之前，所以当你想让模型进入决策模式时，你必须确保有一个清晰的过渡。否则，你可能会得到一个需要额外解析的冗长回答。另一方面，这种格式非常适合思维链提示，这在第八章中有更详细的介绍 Chapter 8。
+报告还倾向于客观分析，这通过避免需要模拟社交互动来减轻 LLM 的认知负担。话虽如此，因为分析通常在结论之前，所以当你想让模型进入决策模式时，你必须确保有一个清晰的过渡。否则，你可能会得到一个需要额外解析的冗长回答。另一方面，这种格式非常适合思维链提示，这在第八章中有更详细的介绍 Chapter 8。
 
-对话可以采取多种形式，具体取决于上下文（见 Table 6-2）。然而，对于报告，我们建议您始终坚持一种格式：用 Markdown 编写您的提示。以下是原因：
+对话可以采取多种形式，具体取决于上下文（见 Table 6-2）。然而，对于报告，我们建议您始终坚持一种格式：用 Markdown 编写您的提示。以下是原因：
 
 +   它相当通用，互联网上充满了 Markdown 文件，所以 LLM 对它很熟悉。
 
@@ -207,264 +144,166 @@ this, which book should I suggest to her?”}]
 
 +   Markdown 的标题有助于定义层次结构，这使得您可以将提示元素组织成清晰的章节，可以轻松地重新排列或省略，同时保持结构。
 
-+   另一个有用的特性是缩进通常不重要，但对于技术内容（例如，源代码），您可以使用三重反引号打开和关闭的块（```py).
 
-*   If you want to display model output to the user directly, Markdown is very easy to render.
 
-*   Markdown’s hyperlink feature allows the model to include links that are easy to parse, which can help you verify sources and retrieve content programmatically.
+# Markdown 排版指南
 
-Additionally, it’s common to give a table of contents at the beginning of the Markdown file, and that can be quite useful. A table of contents can serve as a useful part of the introduction for a long prompt because it helps models orient themselves just as much as it helps people. It can also be a great tool for controlling the completion, in two ways:
+另一个有用的特性是缩进通常不重要，但对于技术内容（例如，源代码），您可以使用三重反引号打开和关闭的块（```py）。
 
-1.  For chain-of-thought prompting or managing overly verbose models, you can use a scratchpad approach. Adding sections like `# Ideas` or `# Analysis` before `# Conclusion` in the table of contents helps guide the model to a more informed conclusion while allowing you to ignore the earlier sections.
+- 如果您想直接向用户显示模型输出，Markdown 非常易于渲染。
+- Markdown 的超链接功能允许模型包含易于解析的链接，这可以帮助您验证来源并以编程方式检索内容。
 
-2.  You can easily signal when the model’s response should end by adding a section like `# Appendix` or `# Further Reading` after the conclusion. Setting `# Further Reading` as a stop sequence ensures the model finishes its task, conserving compute resources.
+此外，通常在 Markdown 文件的开头提供目录，这非常有用。目录可以作为长提示词引言的有用部分，因为它帮助模型定位自身，就像帮助人类一样。它还可以成为控制完成过程的绝佳工具，有两种方式：
 
-Both use cases for the table of contents are demonstrated in Figure 6-3. Note that since this is an example, the amount of context is less than what the model would need to give a proper answer to such a question. Also, LLMs aren’t oracles: with the appropriate context, a model can be a good tool for ideation, but there’s no reason its opinion should count for more than Jerry’s in Accounting.
+1. 对于思维链提示或管理过于冗长的模型，您可以使用草稿本方法。在目录中的`# Conclusion`之前添加诸如`# Ideas`或`# Analysis`之类的部分，有助于引导模型得出更明智的结论，同时允许您忽略前面的部分。
+2. 您可以通过在结论之后添加诸如`# Appendix`或`# Further Reading`之类的部分，轻松指示模型的响应应在何时结束。将`# Further Reading`设置为停止序列，可确保模型完成任务，从而节省计算资源。
+
+目录的这两种用例都在图 6-3 中进行了演示。请注意，由于这是一个示例，上下文量少于模型为正确回答此类问题所需的数量。此外，LLM 并非神谕：在适当的上下文中，模型可以成为构思的良好工具，但没有理由认为其意见应比会计部门的 Jerry 的意见更重要。
 
 ![A screenshot of a computer  Description automatically generated](img/pefl_0603.png)
 
-###### Figure 6-3\. A Markdown report using a table of contents (completion obtained using OpenAI’s text-davinci-003)
+###### Figure 6-3\. 使用目录的 Markdown 报告（使用 OpenAI 的 text-davinci-003 获得的完成）
 
-## The Structured Document
+## 结构化文档
 
-Structured documents follow a formal specification that allows you to make strong assumptions about the form of the completion. This makes parsing easier, including the parsing of complex outputs.
+结构化文档遵循正式规范，允许您对完成形式做出强有力的假设。这使得解析更容易，包括复杂输出的解析。
 
-A great example of this is found in Anthropic’s Artifacts prompt. Artifacts will come up again in the final chapter of this book, but for now, you should know that Artifacts are self-contained documents that the user and assistant collaborate on. Examples of Artifacts are Python scripts, small React apps, mermaid diagrams, and scalable vector graphics (SVG) diagrams. Artifacts are presented in the UI as text in a pane to the right of the conversation, and in the case of React, Mermaid, and SVG, they are rendered into functioning or visual prototypes.
+一个很好的例子是 Anthropic 的 Artifacts 提示词。Artifacts 将在本书最后一章再次出现，但就目前而言，您应该知道 Artifacts 是用户和助手协作完成的自包含文档。Artifacts 的示例包括 Python 脚本、小型 React 应用、mermaid 图表和可缩放矢量图形（SVG）图表。Artifacts 在 UI 中显示为对话右侧窗格中的文本，对于 React、Mermaid 和 SVG，它们会被渲染为功能性或视觉原型。
 
-An abridged version of the Artifacts prompt is shown in Table 6-3 ([this prompt was extracted by @elder_plinius](https://oreil.ly/Lwsp1)). To make Artifacts work, the prompt uses an XML document structure that clearly delineates the pieces of the interaction. The `artifacts_info` prompt holds the equivalent of the system message, explaining how artifacts work. It includes an `examples` section with several `example` blocks. Each example has a `user_query` and an `assistant_response`.
+表 6-3 显示了 Artifacts 提示词的删节版本（[此提示词由 @elder_plinius 提取](https://oreil.ly/Lwsp1)）。为了使 Artifacts 正常工作，提示词使用 XML 文档结构，清晰划分了交互的各个部分。`artifacts_info` 提示词持有相当于系统消息的内容，解释 Artifacts 的工作原理。它包含一个`examples`部分，其中有几个`example`块。每个示例都有一个`user_query`和一个`assistant_response`。
 
-Things get most interesting inside the `assistant_response`. First, the assistant starts its response, and then an `antThinking` block is injected so that the assistant can “think” about whether the user’s request should make use of an Artifact or just be handled as a normal conversation. If the decision is to use an Artifact, then the text will include an `antArtifact` block that contains the text of the Artifact. Notice that the `antArtifact` tag also includes attributes such as the title of the Artifact and the language used.
+在`assistant_response`内部，事情变得最有趣。首先，助手开始其响应，然后注入一个`antThinking`块，以便助手可以“思考”用户的请求是应该使用 Artifact 还是仅作为正常对话处理。如果决定使用 Artifact，则文本将包含一个`antArtifact`块，其中包含 Artifact 的文本。请注意，`antArtifact`标签还包含诸如 Artifact 标题和所用语言之类的属性。
 
-Table 6-3\. The Anthropic structured prompt used for generating Artifacts (abridged)
+表 6-3\. 用于生成 Artifacts 的 Anthropic 结构化提示词（删节版）
 
-| Prompt | `The assistant can create and reference Artifacts during conversations. Artifacts are for substantial, self-contained content that users might modify or reuse, and they are displayed in a separate UI window for clarity.``Here are some examples of correct usage of Artifacts by other AI assistants:` 
-```
+| 提示词 | `The assistant can create and reference Artifacts during conversations. Artifacts are for substantial, self-contained content that users might modify or reuse, and they are displayed in a separate UI window for clarity.``Here are some examples of correct usage of Artifacts by other AI assistants:` |
+|---|---|
+| | ```<examples>````<example>````<user_query>你能帮我创建一个计算阶乘的 Python 脚本吗？``factorial of a number?</user_query>````<assistant_response>``当然！这里有一个计算阶乘的 Python 脚本``数字：````<antThinking>创建一个计算阶乘的 Python 脚本符合``良好文件的标准。因此，我正在创建一个新的``文件。````</antThinking>````<antArtifact identifier="factorial-script"``type="application/vnd.ant.code" language="python"``标题="简单的 Python 阶乘脚本">``def factorial(n):``    if n == 0:``        return 1``    else:``        return n * factorial(n - 1)``...``</assistant_response>``</example>``[...省略几个示例...]``</examples>`````py````The assistant should always take care to not produce Artifacts that would be highly hazardous to human health or wellbeing if misused, even if is asked to produce them for seemingly benign reasons.``</artifacts_info>``Claude is now being connected with a human.``<user_query>**Can you help me create a Python script to factor a number into its prime factors?**</user_query>``<assistant_response>` |
+| 完成 | `Sure! Here's a Python script that factors a number into its prime factors:``<antThinking>This code is self-contained and is likely to be reused or modified. Therefore, I'm creating a new Artifact.</antThinking>``<antArtifact identifier="prime-factor-script"``type="application/vnd.ant.code" language="python"``title="Python script for factoring numbers into prime factors"> def prime_factors(n):` |
+| | ```factors = []``d = 2``while n > 1:``    while n % d == 0:``        factors.append(d)``        n /= d``    d += 1``return factors``print(prime_factors(24)) # 输出: [2, 2, 2, 3]``</assistant_response> |
 
-<examples>
 
-<example>
 
-    <user_query>你能帮我创建一个计算阶乘的 Python 脚本吗？
+由于在提示中设置了这种结构化模式，解析响应中的信息变得更加容易。具体来说，`antThinking` 会被解析出来并对用户隐藏，而 `antArtifact` 会被提取并放置到 Artifact 面板中，标题由属性中指定的内容决定。（在第 7 章中，我们将更详细地讨论如何从补全中提取内容。）
 
-    factorial of a number?</user_query>
+与对话记录一样，结构化文档可以有多种不同格式。小红帽原则建议使用训练数据中现成可用的格式。最合适的格式是 XML 和 YAML。这两种格式在需要精确性的技术文档中都很常见，并且都可以用于许多不同领域。在这两种情况下，整个文档按层级结构组织为通常命名的元素，这些元素可以包含多个子元素。
 
-    <assistant_response>
+在 [XML](https://oreil.ly/NvPU4)（见表 6-3）中，文档由一系列打开和关闭的标签组成。标签可以有属性，并且其内容可以包含子标签。如果您的单个元素相对较短，并且它们是多行的，缩进无关紧要，请选择 XML。但您可能需要小心转义序列：XML 中有五种：`&quot`（“）、`&apos`（'）、`&lt`（<）、`&gt`（>）和 `&amp`（&）。XML 还允许您添加 HTML 风格的注释，如 `<!-- this is a comment -->`，这对于模型的“编辑”提示有时很有用。
 
-    当然！这里有一个计算阶乘的 Python 脚本
-
-    数字：
-
-    <antThinking>创建一个计算阶乘的 Python 脚本符合
-
-    良好文件的标准。因此，我正在创建一个新的
-
-    文件。
-
-    </antThinking>
-
-    <antArtifact identifier="factorial-script"
-
-    type="application/vnd.ant.code" language="python"
-
-    标题="简单的 Python 阶乘脚本">
-
-        def factorial(n):
-
-            if n == 0:
-
-                return 1
-
-            else:
-
-                return n * factorial(n - 1)
-
-    ...
-
-    </assistant_response>
-
-</example>
-
-[...省略几个示例...]
-
-</examples>
-
-```py
-
-`The assistant should always take care to not produce Artifacts that would be highly hazardous to human health or wellbeing if misused, even if is asked to produce them for seemingly benign reasons.``</artifacts_info>``Claude is now being connected with a human.``<user_query>`**`Can you help me create a Python script to factor a number into its prime factors?`**`</user_query>``<assistant_response>` |
-| Completion | `Sure! Here's a Python script that factors a number into its prime factors:``<antThinking>This code is self-contained and is likely to be reused or modified. Therefore, I'm creating a new Artifact.</antThinking>``<antArtifact identifier="prime-factor-script"``type="application/vnd.ant.code" language="python"``title="Python script for factoring numbers into prime factors"> def prime_factors(n):` 
-```
-
-    factors = []
-
-    d = 2
-
-    while n > 1:
-
-        while n % d == 0:
-
-            factors.append(d)
-
-            n /= d
-
-        d += 1
-
-    return factors
-
-print(prime_factors(24)) # 输出: [2, 2, 2, 3]
-
-</assistant_response>
-
-```py
-
- |
-
-As a result of setting up this structured pattern in the prompt, it becomes much easier to parse out information from the response. In particular, `antThinking` is parsed out and hidden from the user, and `antArtifact` is extracted and placed into the Artifact pane, under the title specified in the attributes. (In Chapter 7, we get into much more detail about how content can be extracted from the completions.)
-
-Like conversation transcripts, structured documents can come in many different formats. The Little Red Riding Hood principle suggests that you use formats that are readily available in training data. The most suitable formats are XML and YAML. Both are common in technical documents where precision is of the essence, and both can be used in many different domains. In both cases, the whole document is hierarchically ordered into normally named elements, which can have several subelements.
-
-In [XML](https://oreil.ly/NvPU4) (see Table 6-3), the document consists of a series of tags that are opened and closed. The tag may have attributes and has content that may contain subtags. Choose XML if your individual elements are relatively short, and if they are multiline, indentation doesn’t matter. But you might need to be careful about escape sequences: there are five in XML: `&quot` (“), `&apos` ('), `&lt` (<), `&gt` (>), and `&amp` (&). XML also allows you to add HTML-style comments as`<!-- this is a comment -->`, which can occasionally be useful for “editorial” hints for the model.
-
-In [YAML](https://yaml.org), the document consists of a series of named fields or unnamed bullet points whose hierarchy levels are tracked by their indentation. This indentation tracking can be quite annoying because you need to get it right to be able to use standard parsers, but it’s helpful in cases where you need to be very precise about indentation, such as with code or formatted text. In particular, the syntax `fieldname: |2` opens a multiline text field that preserves indentation, as illustrated in Figure 6-4. Note that in such text fields, you don’t need to escape anything, which is nice. You’ll notice that such a text field is finished by encountering a line with smaller indentation than the text field’s “zero” indentation. Also note that the highlight boxes indicate the value of the content fields, including leading whitespace.
+在 [YAML](https://yaml.org) 中，文档由一系列命名字段或未命名项目符号组成，其层级级别通过缩进跟踪。这种缩进跟踪可能相当烦人，因为您需要正确缩进才能使用标准解析器，但在需要非常精确缩进的情况下（例如代码或格式化文本），它很有帮助。特别是，语法 `fieldname: |2` 打开一个保留缩进的多行文本字段，如图 6-4 所示。请注意，在此类文本字段中，您不需要转义任何内容，这很不错。您会注意到，当遇到缩进小于文本字段“零”缩进的行时，该文本字段即结束。还要注意，高亮框指示内容字段的值，包括前导空白。
 
 ![](img/pefl_0604.png)
 
-###### Figure 6-4\. Text fields specifying indented content in YAML
+###### 图 6-4\. 在 YAML 中指定缩进内容的文本字段
 
-Another markup language that should feature heavily in any LLM’s training set is JSON (or its variant, JSON Lines). At one point, we would have recommended against using JSON since it is very escape heavy and less readable. However, OpenAI in particular has put a lot of effort into making its models generate JSON accurately because JSON powers their tools API. Therefore, for OpenAI at least, JSON is still a reasonably good choice.
+另一种在任何 LLM 的训练集中都应大量出现的标记语言是 JSON（或其变体 JSON Lines）。曾几何时，我们会建议不要使用 JSON，因为它转义繁重且可读性较差。然而，OpenAI 尤其投入了大量精力使其模型能够准确生成 JSON，因为 JSON 为其工具 API 提供支持。因此，至少对于 OpenAI 来说，JSON 仍然是一个相当不错的选择。
 
-# Formatting Snippets
+# 格式化片段
 
-The way you format snippet text depends a lot on your document. In an advice conversation transcript, you can format snippet information into the back-and-forth turns of the conversation. For instance, say your application retrieves this weather forecast data:
+片段文本的格式化方式在很大程度上取决于您的文档。在咨询对话记录中，您可以将片段信息格式化为对话的来回轮次。例如，假设您的应用程序检索到以下天气预报数据：
 
 ```
-
 weather = {
-
-"description": "sunny",
-
-"temperature": 75
-
+    "description": "sunny",
+    "temperature": 75
 }
-
-```py
-
-That information can be packaged as the advice seeker asking a clarifying question and the assistant answering with the following information:
-
 ```
 
+该信息可以打包为咨询者提出澄清问题、助手回答以下信息的形式：
+
+```
 用户：天气怎么样？
-
 助手：天气将 {{ weather["description"] }} ，温度为
-
 {{ weather["temperature"] }} 摄氏度。
-
-```py
-
-In an analytic report, you normally want to state your knowledge in natural language. Results of API calls require you to know what the API returns, and then you can format the string into a sentence. Often, it’s useful to include the results of individual API calls as individual sections, like this:
-
 ```
 
+在分析报告中，您通常希望用自然语言陈述您的知识。API 调用的结果要求您知道 API 返回什么，然后您可以将字符串格式化为句子。通常，将单个 API 调用的结果作为单独的部分包含是很有用的，如下所示：
+
+```
 #### 天气预报
-
 {{ weather["description"] }} ，温度为 {{ weather["temperature"] }}
-
 摄氏度
-
-```py
-
-Finally, if you use a structured document, your life is often easy: just serialize all relevant fields of the object you have in memory that represents your piece of knowledge:
-
 ```
 
+最后，如果您使用结构化文档，您的生活通常很轻松：只需序列化内存中代表您知识片段的对象的所有相关字段：
+
+```
 <weather>
-
-<description>sunny</description>
-
-<temperature>75</temperature>
-
+    <description>sunny</description>
+    <temperature>75</temperature>
 </weather>
-
-```py
-
-No matter what type of document you use, a useful form of communicating background context can be a pretty explicitly stated side remark (e.g., “As an aside, …”). For example, in GitHub Copilot code completions, where our document template was in the form of a source code file, we found we could usefully include code from other files using a code comment stating explicitly that some quoted snippet was included for comparison reasons, like so:
-
 ```
 
+无论您使用哪种类型的文档，一种有用的传达背景信息的形式可以是明确陈述的旁注（例如，“顺便说一句，……”）。例如，在 GitHub Copilot 代码补全中，我们的文档模板是源代码文件的形式，我们发现可以使用代码注释明确说明某个引用的片段是出于比较原因而包含的，从而有效地包含来自其他文件的代码，如下所示：
+
+```
 // <consider this snippet from ../skill.go>
-
 // type Skill interface {
-
 //	Execute(data []byte) (refs, error)
-
 // }
-
 // </end snippet>
+```
 
-```py
+旁注为模型提供了强烈的提示，但不要求它以特定方式使用旁注，甚至不要求使用它。
 
-An aside provides a strong hint to the model, but without requiring it to use the side remark in a certain way or at all.
+格式化片段时，目标如下：
 
-When formatting your snippets, the things to aim for are as follows:
+**模块化**
 
-Modularity
+您希望片段是能够相对容易地插入或从提示中移除的字符串。理想情况下，您的文档类似于列表（带轮次的对话）或树（带层级部分的报告；结构化文档），这样片段作为列表项或树的叶子更容易处理。
 
-You want your snippets to be strings that can be inserted into or removed from the prompt with relative ease. Ideally, your document is like a list (a conversation with turns) or a tree (a report with hierarchical sections; a structured document), so that snippets are easier to handle as items in the list or leaves of the tree.
+**自然性**
 
-Naturalness
+片段应感觉像是文档的有机组成部分，并以此方式格式化。如果您让 LLM 补全源代码，任何自然语言信息都应格式化为注释，而不是逐字插入代码行之间。如果您的文档模板是对话或报告，则数据应插入到适合文档的自然文本中（参见前面的天气示例）。
 
-The snippet should feel like an organic part of your document and be formatted as such. If you’re letting the LLM complete source code, any natural language information should be formatted as a comment rather than dumped between the code lines verbatim. If your document template is a conversation or a report, then data should be interpolated into a natural text that sounds appropriate for the document (see the preceding weather examples).
+**简洁性**
 
-Brevity
+如果您能用更少的 token 传达相关上下文，那就太好了！
 
-If you can communicate relevant context with fewer tokens, great!
+**惰性**
 
-Inertness
+您希望只计算一次片段的 token 长度，因此一个片段的 token 化不应影响前一个或后一个片段的 token 化。
 
-You’d like to compute the token length of a snippet only once, so the tokenization of one snippet shouldn’t affect the tokenization of the previous or next snippet.
+## 关于惰性的更多内容
 
-## More on Inertness
+最后一点，惰性，取决于您的分词器，它可能使用不同的 token 来 token 化复合字符串 A + B，而不是单独 token 化每个字符串。这很容易增加或减少 token 化复合字符串所需的 token 数量（见表 6-4）。
 
-The last bit, inertness, depends on your tokenizer, which might use different tokens to tokenize a composite string A + B than to tokenize each string individually. That can easily increase or decrease the number of tokens needed to tokenize a composite string (see Table 6-4).
+将字符串拼接在一起并不意味着 token 数组只是被连接起来。Token ID 已针对 OpenAI 的 [GPT-3.5 及之后的分词器](https://oreil.ly/Cu9Q4) 获得，但两个示例也适用于许多非 OpenAI LLM 使用的 [GPT-3 及之前的分词器](https://oreil.ly/HyQNe)。
 
-Pasting strings together doesn’t mean the arrays of tokens just get concatenated. Token IDs have been obtained for OpenAI’s [GPT-3.5-and-later tokenizer](https://oreil.ly/Cu9Q4), but both examples also work for the [GPT-3-and-before tokenizer](https://oreil.ly/HyQNe) used in many non-OpenAI LLMs.
+表 6-4\. Token 计数不是可加的
 
-Table 6-4\. Token count isn’t additive
-
-|   | Example 1 | Example 2 |
+|   | 示例 1 | 示例 2 |
 | --- | --- | --- |
-| Strings | “be” + “am” ➜ “beam” | “cat” + “tail” ➜ “cattail” |
+| 字符串 | “be” + “am” ➜ “beam” | “cat” + “tail” ➜ “cattail” |
 | Tokens | [be] + [am] ➜ [beam] | [cat] + [tail] ➜ [c], [att], [ail] |
-| Token ids | 1395 + 309 ➜ 54971 | 4719 + 14928 ➜ 66, 1617, 607 |
-| Token count | 1 + 1 ➜ 1 | 1 + 1 ➜ 3 |
+| Token ID | 1395 + 309 ➜ 54971 | 4719 + 14928 ➜ 66, 1617, 607 |
+| Token 数量 | 1 + 1 ➜ 1 | 1 + 1 ➜ 3 |
 
-It’s generally a good idea to separate individual prompt elements with whitespace to prevent them from merging unexpectedly. However, be aware of potential issues: GPT tokenizers often include tokens that start with a blank space but not ones that end with it. To avoid problems, prefer prompt elements that start with a space rather than ending with one. Additionally, GPT tokenizers combine multiple newline characters, so it’s best to ensure that your snippets either never start or never end with a newline. Avoiding newlines at the beginning of snippets is usually easier for app developers.
+通常，用空白分隔各个提示元素以防止它们意外合并是个好主意。但是，请注意潜在问题：GPT 分词器通常包含以空格开头的 token，但不包含以空格结尾的 token。为避免问题，请优先选择以空格开头而不是以空格结尾的提示元素。此外，GPT 分词器会合并多个换行符，因此最好确保您的片段永远不以换行符开头或结尾。对于应用程序开发人员来说，避免在片段开头使用换行符通常更容易。
 
-## Formatting Few-Shot Examples
+## 格式化少样本示例
 
-When formatting snippets for few-shot examples, you usually have a choice. One option is to designate them explicitly as examples, as shown here:
+格式化少样本示例的片段时，您通常有选择。一种选择是明确将它们指定为示例，如下所示：
 
 ```
-
 在以下情况下，当我遇到像 "谁是第一任总统
-
 美国的第一任总统是谁？" 我会给出一个像 "乔治·华盛顿" 这样的答案。
-
 ```
 
-或者，您可以直接将示例集成到文档中，作为先前任务的解决方案。这种方法需要仔细的表述，但可能非常有效。它允许模型更自然地利用少量示例，并创建更平滑的提示。这种方法在 ChatML 或类似的对话记录设置中特别有用，您可以让模型相信它已经以示例风格成功解决了先前任务，从而鼓励它继续使用那种成功的方法。
+
+
+或者，您可以直接将示例集成到文档中，作为先前任务的解决方案。这种方法需要仔细的表述，但可能非常有效。它允许模型更自然地利用少量示例，并创建更平滑的提示。这种方法在 `ChatML` 或类似的对话记录设置中特别有用，您可以让模型相信它已经以示例风格成功解决了先前任务，从而鼓励它继续使用那种成功的方法。
 
 # 弹性片段
 
 当您将内容转换为片段时，每条信息通常对应一个单独的片段。然而，有时，一条内容可以被分割成多个片段，或者以各种形式表示。
 
-例如，考虑一个文学分析任务，询问亚历克斯·加兰德小说《海滩》中一个特定场景的重要性。如果您向 ChatGPT 询问这个场景，它可能不熟悉这个特定的场景，它给出的任何[答案](https://oreil.ly/2FPat)都可能是不明确的、错误的，或者两者兼而有之。为了改进响应，您需要在提示中包含来自书籍的相关上下文。您记得如何从第五章检索相关的书籍段落，并且假设您确定了两个关键时刻。
+例如，考虑一个文学分析任务，询问亚历克斯·加兰德小说《海滩》中一个特定场景的重要性。如果您向 `ChatGPT` 询问这个场景，它可能不熟悉这个特定的场景，它给出的任何[答案](https://oreil.ly/2FPat)都可能是不明确的、错误的，或者两者兼而有之。为了改进响应，您需要在提示中包含来自书籍的相关上下文。您记得如何从第五章检索相关的书籍段落，并且假设您确定了两个关键时刻。
 
-您可以用不同的方式将这些段落片段化，如图图 6-5 所示。理想情况下，您应该包括整个章节以获得完整的上下文。这是其中一种方法，但考虑到有限的提示空间和模型注意力有限，您可能必须稍微收紧上下文。但这给您留下了不同的可能性：
+您可以用不同的方式将这些段落片段化，如图 6-5 所示。理想情况下，您应该包括整个章节以获得完整的上下文。这是其中一种方法，但考虑到有限的提示空间和模型注意力有限，您可能必须稍微收紧上下文。但这给您留下了不同的可能性：
 
 +   添加两个没有上下文的片段。
-
 +   添加两个带有一些上下文的片段。
-
 +   添加一个带有将部分链接起来的上下文的组合片段。
 
 所有三种选项都有其可取之处。第一种选项较短，最后一种选项传达了大部分信息（包括片段之间如何相互关联），而中间选项则介于两者之间。当然，还有更多选项：您可以选择一点上下文，很多上下文，等等。您如何处理这种情况？
@@ -475,9 +314,9 @@ When formatting snippets for few-shot examples, you usually have a choice. One o
 
 在这种情况下，有两种一般方法可以处理包含可变数量上下文的情况。我们根据具体需求使用了这两种方法：
 
-1.  你可以使用我们所说的*弹性*提示元素，这些提示元素有不同的版本，从短到长不等。在这种情况下，最长的版本将是整个章节，稍微短一点的版本可能是一个段落被替换为“...”，而更短的版本则可能是两个段落被替换为“...”。这可以一直缩减到最短的版本，其中只包含你想要引用的两个片段，它们之间没有额外的上下文，并且用“...”隔开。然后，当你组装提示时，你不会问，“我们有没有空间包含这个片段？”而是问，“我们能为这个片段留出多大空间的最大版本？”
+1.  你可以使用我们所说的*弹性*提示元素，这些提示元素有不同的版本，从短到长不等。在这种情况下，最长的版本将是整个章节，稍微短一点的版本可能是一个段落被替换为`"..."`，而更短的版本则可能是两个段落被替换为`"..."`。这可以一直缩减到最短的版本，其中只包含你想要引用的两个片段，它们之间没有额外的上下文，并且用`"..."`隔开。然后，当你组装提示时，你不会问，"我们有没有空间包含这个片段？"而是问，"我们能为这个片段留出多大空间的最大版本？"
 
-1.  或者，你可以从检索到的信息中创建多个提示元素。例如，你可能有一个片段是第一段相关的文本，另一个是那段文本加上一些上下文，还有一个包含更多上下文。你必须记住只实际包含其中一个，因为它们有重叠。因此，这种方法需要一个允许你声明提示元素为不兼容的提示组装方法（见下一节）。
+2.  或者，你可以从检索到的信息中创建多个提示元素。例如，你可能有一个片段是第一段相关的文本，另一个是那段文本加上一些上下文，还有一个包含更多上下文。你必须记住只实际包含其中一个，因为它们有重叠。因此，这种方法需要一个允许你声明提示元素为不兼容的提示组装方法（见下一节）。
 
 # 提示元素之间的关系
 
@@ -485,27 +324,27 @@ When formatting snippets for few-shot examples, you usually have a choice. One o
 
 ## 位置
 
-*位置*决定了每个元素在提示中应该出现的位置。提示元素通常需要遵循特定的顺序——虽然你可能可以跳过一些，但*重新排列*它们可能会使文档变得混乱。例如，如果你正在引用参考文档，你应该保持原始顺序；不要将第二个片段放在第一个之前。在聊天或叙述中，坚持按时间顺序进行。在其他情况下，确保元素位于正确的部分；例如，用户喜欢的书籍描述不应该放在“我真的很讨厌的书籍”部分。
+*位置*决定了每个元素在提示中应该出现的位置。提示元素通常需要遵循特定的顺序——虽然你可能可以跳过一些，但*重新排列*它们可能会使文档变得混乱。例如，如果你正在引用参考文档，你应该保持原始顺序；不要将第二个片段放在第一个之前。在聊天或叙述中，坚持按时间顺序进行。在其他情况下，确保元素位于正确的部分；例如，用户喜欢的书籍描述不应该放在"我真的很讨厌的书籍"部分。
 
 为了管理这些关系，你可能可以使用提示元素的数组或链表、覆盖所有元素的索引，或者为每个元素提供一个独特的位置值。通常，顺序反映了你收集信息的方式（例如，扫描文档或逐节检索上下文）。在这种情况下，你通常只需要将新元素追加到末尾。
 
 ## 重要性
 
-**重要性** 决定了包含提示元素以向模型传达相关信息的必要性。初学者经常混淆位置和重要性，因为它们通常是相关的——最近的信息通常更重要。但有许多例外——例如，你的介绍通常比中间的大部分细节（这些细节理应归入图 6-1 中的“梅尔谷”）更重要。
+**重要性**决定了包含提示元素以向模型传达相关信息的必要性。初学者经常混淆位置和重要性，因为它们通常是相关的——最近的信息通常更重要。但有许多例外——例如，你的介绍通常比中间的大部分细节（这些细节理应归入图 6-1 中的"梅尔谷"）更重要。
 
 在评估每个元素的重要性时，考虑包含大量相关信息的块与包含许多较小、不那么关键的元素之间的权衡。决定是否根据片段长度或绝对尺度来衡量重要性，但选择一种方法并始终如一地应用。简短、高效的提示元素通常比传达相同信息量的长提示元素更可取。如果你最初没有考虑到长度，确保提示组装引擎可以在以后根据标记长度调整重要性。
 
-为了评估重要性，可以使用数值分数或离散优先级层级。*层级* 是你可以快速将来源分类到其中的少数几个级别，如果需要，较低层级首先被裁剪。一些元素——例如中心指令和输出格式的描述——如此关键，以至于它们必须不惜一切代价包含在内。这些元素需要占据最高层级。接下来通常是第二高层的解释，然后是第三层的环境。但随着你深入探讨细节并比较不同的环境来源或不同程度的相关性，考虑添加数字以进行更精细的优先级排序。
+为了评估重要性，可以使用数值分数或离散优先级层级。*层级*是你可以快速将来源分类到其中的少数几个级别，如果需要，较低层级首先被裁剪。一些元素——例如中心指令和输出格式的描述——如此关键，以至于它们必须不惜一切代价包含在内。这些元素需要占据最高层级。接下来通常是第二高层的解释，然后是第三层的环境。但随着你深入探讨细节并比较不同的环境来源或不同程度的相关性，考虑添加数字以进行更精细的优先级排序。
 
 分配重要性涉及判断，对于有效的提示工程至关重要。你还需要使用我们在第十章中将进一步探讨的方法来测试和细化这些重要性参数。
 
-## **依赖**
+## 依赖
 
-*依赖* 是提示元素之间关系的最终类型，它关注的是包含一个元素如何影响其他元素的包含。依赖关系可能很复杂，但在实践中，它们通常分为两类——需求和互斥性：
+*依赖*是提示元素之间关系的最终类型，它关注的是包含一个元素如何影响其他元素的包含。依赖关系可能很复杂，但在实践中，它们通常分为两类——需求和互斥性：
 
 **需求**
 
-当一个提示元素依赖于另一个元素时，就会发生这种情况。例如，在说“他在英国长大”之前，你需要确定“理查德是《海滩》的主角”。
+当一个提示元素依赖于另一个元素时，就会发生这种情况。例如，在说"他在英国长大"之前，你需要确定"理查德是《海滩》的主角"。
 
 **互斥性**
 
@@ -523,11 +362,11 @@ When formatting snippets for few-shot examples, you usually have a choice. One o
 
 您有两个主要约束：
 
-依赖结构
+**依赖结构**
 
 确保尊重元素之间的任何要求和兼容性问题。
 
-提示长度
+**提示长度**
 
 将提示的总长度保持在一定的限制内，通常是您的上下文窗口大小减去模型响应所需的标记数。如果您的上下文窗口非常大，您可能使用基于可用计算和避免包含过多无关上下文的较软的标记预算。
 
@@ -535,15 +374,15 @@ When formatting snippets for few-shot examples, you usually have a choice. One o
 
 这个问题类似于线性规划和 0-1 背包问题，其中您决定是否包含一个元素（尽管背包问题通常不考虑依赖关系）。然而，没有标准的工具可以自动为您解决这个问题，因此您需要创建自己的解决方案。这可能是一个有成就感的过程，让您能够根据具体需求进行定制。
 
-考虑您从提示汇编中需要什么；例如，如果您需要一个快速的汇编用于交互式应用程序，或者您有特定的依赖模式需要处理。在 Copilot 代码补全中，代码片段通常需要一个特定的后缀，因此我们使用自定义函数来管理代码行之间的依赖关系。
+考虑您从提示汇编中需要什么；例如，如果您需要一个快速的汇编用于交互式应用程序，或者您有特定的依赖模式需要处理。在 `Copilot` 代码补全中，代码片段通常需要一个特定的后缀，因此我们使用自定义函数来管理代码行之间的依赖关系。
 
-当您迭代开发您的应用程序时——从一个基本版本开始，然后扩展——使用图 6-7 中展示的最小提示构建器开始是有用的。这个简单的工具可以帮助您测试您的应用程序想法是否有潜力。采用这种方法，您不需要评估或优先考虑代码片段，因为提示构建器只使用您内容的最末端部分。这种方法效果很好，因为 LLMs 被训练来有效地处理文档后缀。它也适用于您基于主要文本构建的应用程序，或者对于最近交换最相关的聊天式应用程序。
+当您迭代开发您的应用程序时——从一个基本版本开始，然后扩展——使用图 6-7 中展示的最小提示构建器开始是有用的。这个简单的工具可以帮助您测试您的应用程序想法是否有潜力。采用这种方法，您不需要评估或优先考虑代码片段，因为提示构建器只使用您内容的最末端部分。这种方法效果很好，因为 `LLMs` 被训练来有效地处理文档后缀。它也适用于您基于主要文本构建的应用程序，或者对于最近交换最相关的聊天式应用程序。
 
 ![](img/pefl_0607.png)
 
 ###### 图 6-7\. 最小提示构建器，它按顺序排列提示元素，并尽可能在标记预算内保留尽可能多的元素
 
-随着你的应用发展，你需要一个更高级的提示构建引擎。为了速度，考虑使用如图图 6-8 所示的贪婪算法（可能结合一些对替代方案的有限探索）。你可以使用两种主要的贪婪算法类型，这取决于你的提示元素如何交互：一种加法方法，一种减法方法。
+随着你的应用发展，你需要一个更高级的提示构建引擎。为了速度，考虑使用如图 6-8 所示的贪婪算法（可能结合一些对替代方案的有限探索）。你可以使用两种主要的贪婪算法类型，这取决于你的提示元素如何交互：一种加法方法，一种减法方法。
 
 在*加法贪婪方法*中，你从一个空的提示开始，逐个添加元素。每一步都涉及添加满足所有要求、不与现有元素冲突且适合提示长度的最高价值元素。即使你有比提示中能容纳的更多元素，并且需要消除很多元素，这种方法也是有效的。然而，它需要很少的循环要求，以及很少的高价值元素依赖于低价值元素的情况。
 
@@ -563,7 +402,7 @@ When formatting snippets for few-shot examples, you usually have a choice. One o
 
 # 结论
 
-在本章中，我们介绍了从收集到的信息中构建有效提示的艺术。我们探讨了如何选择正确的文档格式，并检查了各种原型文档，这些文档在 LLMs（大型语言模型）擅长完成方面表现出色。
+在本章中，我们介绍了从收集到的信息中构建有效提示的艺术。我们探讨了如何选择正确的文档格式，并检查了各种原型文档，这些文档在 `LLMs`（大型语言模型）擅长完成方面表现出色。
 
 你还学会了如何将你的信息转化为提示元素——这些文本片段能够无缝地融入你的文档中，同时保持相关性、顺序和依赖性。现在，你将能够通过一个定制的提示构建引擎，轻松地精炼这些元素，创建一个简洁而有效的提示。
 

@@ -1,8 +1,10 @@
+
+
 # 附录 B：在 Arduino 上捕获音频
 
 以下文本将从第七章中唤醒词应用程序的音频捕获代码中走过。由于它与机器学习没有直接关系，所以作为附录提供。
 
-Arduino Nano 33 BLE Sense 具有内置麦克风。要从麦克风接收音频数据，我们可以注册一个回调函数，当有一块新的音频数据准备好时就会调用它。
+`Arduino Nano 33 BLE Sense`具有内置麦克风。要从麦克风接收音频数据，我们可以注册一个回调函数，当有一块新的音频数据准备好时就会调用它。
 
 每次发生这种情况，我们将新数据块写入存储数据储备的*缓冲区*中。由于音频数据占用大量内存，缓冲区只能容纳一定量的数据。当缓冲区变满时，这些数据将被覆盖。
 
@@ -13,10 +15,11 @@ Arduino Nano 33 BLE Sense 具有内置麦克风。要从麦克风接收音频数
 正如我们在第七章中看到的，*audio_provider.h*实现了这两个函数：
 
 +   `GetAudioSamples()`，提供指向一块原始音频数据的指针
-
 +   `LatestAudioTimestamp()`，返回最近捕获音频的时间戳
 
 实现这些功能的 Arduino 代码位于[*arduino/audio_provider.cc*](https://oreil.ly/Bfh4v)中。
+
+## 依赖项和变量
 
 在第一部分中，我们引入了一些依赖项。*PDM.h*库定义了我们将用来从麦克风获取数据的 API。文件*micro_model_settings.h*包含了与我们模型数据需求相关的常量，这将帮助我们以正确的格式提供音频数据。
 
@@ -50,6 +53,8 @@ volatile int32_t g_latest_audio_timestamp = 0;
 除了音频捕获缓冲区，我们还保留一个输出音频缓冲区`g_audio_output_buffer`，当调用`GetAudioSamples()`时，我们将返回一个指向它的指针。它的长度是`kMaxAudioSampleSize`，这是来自*micro_model_settings.h*的一个常量，定义了我们的预处理代码一次可以处理的 16 位音频样本的数量。
 
 最后，我们使用`g_latest_audio_timestamp`来跟踪我们最新音频样本所代表的时间。这不会与您手表上的时间匹配；它只是相对于音频捕获开始时的毫秒数。该变量声明为`volatile`，这意味着处理器不应尝试缓存其值。稍后我们会看到原因。
+
+## 回调函数
 
 设置这些变量后，我们定义回调函数，每当有新的音频数据可用时就会调用它。以下是完整的函数：
 
@@ -132,6 +137,8 @@ g_latest_audio_timestamp = time_in_ms;
 
 这将通过`LatestAudioTimestamp()`方法暴露给程序的其他部分，让它们知道何时有新数据可用。因为`g_latest_audio_timestamp`声明为`volatile`，每次访问时其值将从内存中查找。这很重要，否则变量将被处理器缓存。因为其值在回调中设置，处理器不会知道要刷新缓存的值，任何访问它的代码都不会收到其当前值。
 
+## 初始化音频录制
+
 您可能想知道是什么使`CaptureSamples()`充当回调函数。它如何知道何时有新音频可用？这是我们代码的下一部分处理的，这部分是启动音频捕获的函数：
 
 ```cpp
@@ -154,6 +161,8 @@ TfLiteStatus InitAudioRecording(tflite::ErrorReporter* error_reporter) {
 接下来，使用`PDM.setGain()`来配置*增益*，定义麦克风音频应放大多少。我们指定增益为`20`，这是在一些实验之后选择的。
 
 最后，我们循环直到`g_latest_audio_timestamp`评估为 true。因为它从`0`开始，这会阻止执行，直到回调捕获到一些音频，此时`g_latest_audio_timestamp`将具有非零值。
+
+## 获取音频样本
 
 我们刚刚探讨的两个函数允许我们启动捕获音频的过程并将捕获的音频存储在缓冲区中。接下来的函数`GetAudioSamples()`为我们代码的其他部分（即特征提供者）提供了获取音频数据的机制：
 
@@ -213,6 +222,8 @@ for (int i = 0; i < duration_sample_count; ++i) {
 
 最后，我们通过返回`kTfLiteOk`来结束函数，让调用者知道操作成功了。
 
+## 获取时间戳
+
 然后，在最后部分，我们定义`LatestAudioTimestamp()`：
 
 ```cpp
@@ -222,3 +233,4 @@ int32_t LatestAudioTimestamp() { return g_latest_audio_timestamp; }
 由于这总是返回最近音频的时间戳，其他部分的代码可以在循环中检查它，以确定是否有新的音频数据到达。
 
 这就是我们的音频提供程序的全部内容！我们现在确保我们的特征提供程序有稳定的新鲜音频样本供应。
+

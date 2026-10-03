@@ -1,3 +1,4 @@
+
 # 第十五章：音乐和深度学习
 
 这本书中的其他章节都是关于图像或文本的处理。这些章节代表了深度学习研究中媒体的平衡，但这并不意味着声音处理不是有趣的，我们在过去几年中也看到了一些重大进展。语音识别和语音合成使得像亚马逊 Alexa 和谷歌 Home 这样的家庭助手成为可能。自从 Siri 推出以来，那个老的情景喜剧笑话中电话拨错号码的情节并不是很现实。
@@ -313,6 +314,8 @@ The Byrds/00 Eve of Destruction.mp3 12
 Goldfinger _ Weezer _ NoFx _ L/00 AWESOME.mp3 6
 ```
 
+
+
 使用我们模型的最后一个全连接层对歌曲进行索引工作得相当不错。在这个例子中，它不仅找到了原始歌曲，还找到了一个略有不同版本的歌曲，恰好在 MP3 收藏中。其他两首返回的歌曲是否在风格上真的相似是一个判断问题，但它们并不完全不同。
 
 这里的代码可以用作构建类似 Shazam 的基础；录制一小段音乐，通过我们的向量化器运行，看看它与哪首索引歌曲最接近。Shazam 的算法是不同的，并且早于深度学习的流行。
@@ -343,7 +346,6 @@ Goldfinger _ Weezer _ NoFx _ L/00 AWESOME.mp3 6
 CLIENT_ID = '<your client id>'
 CLIENT_SECRET = '<your secret>'
 USER_ID = '<your user id>'
-
 ```
 
 您现在可以访问 Spotify API：
@@ -560,6 +562,8 @@ for t in find_song('the eye of the tiger'):
 62UagxK6LuPbqUmlygGjcU It's the Eye of the Tiger Be Cult 4
 6lUHKc9qrIHvkknXIrBq6d The Eye Of The Tiger Survivor 4
 ```
+
+
 
 现在我们可以选择我们真正想要的歌曲，这种情况下可能是 Survivor 的那首歌。现在开始建议歌曲。让我们的模型来做繁重的工作：
 

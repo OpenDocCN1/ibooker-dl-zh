@@ -1,3 +1,4 @@
+
 # 附录 E. Serverless Framework 内部机制
 
 在本附录中，我们将更详细地探讨 AWS 上的无服务器技术，特别是 Serverless Framework，它是本书中许多示例系统所使用的框架。
@@ -18,7 +19,7 @@ CloudFormation 可以通过创建 JSON 或 YAML 格式的模板文件进行配�
 
 图 E.1 CloudFormation 工作流程
 
-在部署时，Serverless 配置文件（serverless.yml）被“编译”成 CloudFormation 模板。创建一个部署存储桶，并将定义的每个 Lambda 函数的代码工件上传。为每个 Lambda 函数计算哈希值并将其包含在模板中。然后 Serverless 调用 CloudFormation 的 `UpdateStack` 方法，将部署工作委托给 CloudFormation。CloudFormation 然后继续查询现有基础设施。如果发现差异（例如，如果定义了新的 API Gateway 路由），CloudFormation 将进行必要的基础设施更新，以使部署与新的编译模板保持一致。
+在部署时，Serverless 配置文件（`serverless.yml`）被“编译”成 CloudFormation 模板。创建一个部署存储桶，并将定义的每个 Lambda 函数的代码工件上传。为每个 Lambda 函数计算哈希值并将其包含在模板中。然后 Serverless 调用 CloudFormation 的 `UpdateStack` 方法，将部署工作委托给 CloudFormation。CloudFormation 然后继续查询现有基础设施。如果发现差异（例如，如果定义了新的 API Gateway 路由），CloudFormation 将进行必要的基础设施更新，以使部署与新的编译模板保持一致。
 
 ## E.1 演示
 
@@ -107,7 +108,7 @@ serverless
 
 `<timestamp>` 被替换为你运行部署的时间。随着对服务的更新，框架会将更新的模板和代码推送到此存储桶以进行部署。
 
-接下来，使用 AWS 控制台导航到 API Gateway 和 Lambda 网络控制台。点击右上角的“服务”链接，然后搜索`lambda`和`api gateway`，如图 E.2 所示。
+接下来，使用 AWS 控制台导航到 API Gateway 和 Lambda 网络控制台。点击右上角的“服务”链接，然后搜索 `lambda` 和 `api gateway`，如图 E.2 所示。
 
 ![图片](img/APPE_F02_Elger.png)
 

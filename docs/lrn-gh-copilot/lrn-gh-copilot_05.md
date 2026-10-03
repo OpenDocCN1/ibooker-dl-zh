@@ -1,22 +1,19 @@
-# 第四章\. 在 IDE 中的高级编辑和自主工作流程
+
+# 第四章 在 IDE 中的高级编辑和自主工作流程
 
 在第二章和第三章中，我们介绍了使用 Copilot 在 IDE 中创建代码和使用聊天界面完成任务的基础知识。我们讨论的项目将有助于处理基本用例。但对于像重构、进行重大编辑或自动处理更复杂更改等更密集的编码工作，Copilot 提供了高级功能。
 
 在本章中，我们将探讨一组强大的功能，这些功能利用 AI 来处理更大的更改集和代码生成。以下包括以下内容：
 
-+   基于下一个编辑建议的预测性编辑
-
-+   使用 Copilot 编辑批量更改
-
-+   使用 Copilot 代理模式进行自动端到端更新
-
-+   使用 Copilot 视觉生成基于图像的代码
-
-+   使用 Copilot 进行调试
++ 基于下一个编辑建议的预测性编辑
++ 使用 Copilot 编辑批量更改
++ 使用 Copilot 代理模式进行自动端到端更新
++ 使用 Copilot 视觉生成基于图像的代码
++ 使用 Copilot 进行调试
 
 让我们从查看一个可以预测你的下一个编辑应该在哪里进行的特性开始。
 
-# 基于下一个编辑建议的预测性编辑
+## 基于下一个编辑建议的预测性编辑
 
 你是否曾经试图以某种方式重构你的代码，却发现自己在文件中搜索需要更改的所有位置？Copilot 的下一个编辑建议（NES）旨在消除这种需求，并简化识别和进行*下一个更改*的过程。
 
@@ -24,42 +21,42 @@ NES 根据你代码中的持续更改、打字错误或逻辑错误来预测和�
 
 当启用时，在你进行编辑后，NES 会查看你的代码并尝试预测其他相关内容以及应该更改的内容。NES 通过在编辑器的空白区域（gutter）中放置箭头来突出显示其下一个更改的建议。*空白区域*指的是编辑器中行号左侧的空白条带。例如，假设我们有一个表示二维点的 Python 类，它包括一个计算两点之间距离的方法。它还包括一个简单的示例。代码可能看起来像这样：
 
-```py
+```
 # Define a class Point with a
 # method to calculate the distance to another point
 class Point:
-    def __init__(self, x, y):
-        self.x = x
-        self.y = y
+    def __init__(self, x, y):
+        self.x = x
+        self.y = y
 
-    def distance(self, other):
-        return ((self.x - other.x)**2 +
-                (self.y - other.y)**2)
+    def distance(self, other):
+        return ((self.x - other.x)**2 +
+                (self.y - other.y)**2)
 
 p1 = Point(1, 2)
 p2 = Point(4, 6)
 print(p1.distance(p2)
 ```
 
-我们想将这个类更改为适用于三维点，因此我们将 `__init__` 语句更改为添加一个 `z` 值。如果 NES 已启用，在我们进行更改后，Copilot 将寻找代码中需要更改以处理新的 `z` 坐标的下一个位置。Copilot 确定它需要在 `init` 方法中添加该值的构造函数，建议代码更改，并用箭头在空白区域中突出显示，如图 图 4-2 所示。
+我们想将这个类更改为适用于三维点，因此我们将 `__init__` 语句更改为添加一个 `z` 值。如果 NES 已启用，在我们进行更改后，Copilot 将寻找代码中需要更改以处理新的 `z` 坐标的下一个位置。Copilot 确定它需要在 `init` 方法中添加该值的构造函数，建议代码更改，并用箭头在空白区域中突出显示，如图 4-2 所示。
 
 ![](img/lghc_0402.png)
 
-###### 图 4-2\. NES 识别下一个更改
+###### 图 4-2 NES 识别下一个更改
 
-要快速到达这个更改，您只需按 Tab 键。将鼠标悬停在侧边栏的箭头上会弹出一个包含使用 NES 的扩展选项的信息对话框(图 4-3)。在大多数情况下，您不需要这些。您可以直接按 Tab 键接受建议的更改，或按 Escape 键拒绝并继续。
+要快速到达这个更改，您只需按 Tab 键。将鼠标悬停在侧边栏的箭头上会弹出一个包含使用 NES 的扩展选项的信息对话框（图 4-3）。在大多数情况下，您不需要这些。您可以直接按 Tab 键接受建议的更改，或按 Escape 键拒绝并继续。
 
 ![图片](img/lghc_0403.png)
 
-###### 图 4-3\. NES 选项弹出
+###### 图 4-3 NES 选项弹出
 
-一旦我们处理了这个更改（接受或拒绝），过程就会继续，Copilot 会识别下一个建议的编辑(图 4-4)。只要 Copilot 识别出有资格的更改，这个过程就会重复。
+一旦我们处理了这个更改（接受或拒绝），过程就会继续，Copilot 会识别下一个建议的编辑（图 4-4）。只要 Copilot 识别出有资格的更改，这个过程就会重复。
 
 ![图片](img/lghc_0404.png)
 
-###### 图 4-4\. 下一个更改
+###### 图 4-4 下一个更改
 
-# 不要分心
+### 不要分心
 
 如果您有一个挂起的 NES 更改（侧边栏中可见的箭头）并且将焦点从编辑器移开，挂起的更改将消失，NES 过程将停止。
 
@@ -69,31 +66,31 @@ print(p1.distance(p2)
 
 ![图片](img/lghc_0406.png)
 
-###### 图 4-6\. NES 建议更改以修复逻辑错误
+###### 图 4-6 NES 建议更改以修复逻辑错误
 
 NES 还可以帮助捕捉需要跨多个文件进行的更改，但似乎目前仅限于在编辑器中打开的文件。如果您需要执行批量更改或自动添加跨越多个文件的特性，请考虑我们下一节中讨论的高级编辑功能。
 
-# Copilot Edits
+## Copilot Edits
 
 Copilot 包括跨所选文件集进行 AI 驱动更改的功能。这个功能称为*Copilot Edits*，允许 Copilot 根据自然语言提示更新多个文件。您可以将它视为一种由 AI 驱动的批量编辑功能。它对于从简单的重构到在现有代码子集添加功能等广泛任务都很有用。
 
-Copilot Edits 是 Copilot Chat 中的一个独立模式。要使用它，您首先需要从聊天的默认 Ask 模式切换到编辑模式。这通过点击提示输入区域底部的下拉箭头旁边的 Ask*，*旁边的菜单来完成(图 4-7)。
+Copilot Edits 是 Copilot Chat 中的一个独立模式。要使用它，您首先需要从聊天的默认 Ask 模式切换到编辑模式。这通过点击提示输入区域底部的下拉箭头旁边的 `Ask` 旁边的菜单来完成（图 4-7）。
 
 ![图片](img/lghc_0407.png)
 
-###### 图 4-7\. 将聊天切换到编辑模式
+###### 图 4-7 将聊天切换到编辑模式
 
 在此模式下，您可以选择要编辑的文件，并提供任何需要的上下文提示。Copilot 随后会为您在文件间提出代码编辑建议，您可以选择接受或拒绝。让我们来看一个简单的例子。
 
 假设我们有一组用 Python 编写的简单计算器函数，以及一些基本测试和一个 README 文件。
 
-# 我们的示例
+### 我们的示例
 
 我在这里分享代码，因为它为我们将在本章其余部分讨论的更改提供了背景。尽管这是用 Python 编写的，但你不必了解 Python 就能理解我们将要做什么。
 
 这是 *README.md* 文件：
 
-```py
+```
 # Calculator Application
 
 This is a simple Python calculator application that supports basic
@@ -105,126 +102,123 @@ arithmetic operations:
 - Division
 
 Run the unit tests in `test_calculator.py` to verify functionality
-
 ```
 
 计算器函数的代码位于名为 *calculator.py* 的文件中，如下所示：
 
-```py
+```
 def add(a, b):
-    return a + b
+    return a + b
 
 def subtract(a, b):
-    return a - b
+    return a - b
 
 def multiply(a, b):
-    return a * b
+    return a * b
 
 def divide(a, b):
-    if b == 0:
-        raise ValueError("Cannot divide by zero")
-    return a / 
+    if b == 0:
+        raise ValueError("Cannot divide by zero")
+    return a / 
 ```
 
 测试用例的代码位于名为 *test_calculator.py* 的文件中：
 
-```py
+```
 import unittest
 from calculator import add, subtract, multiply, divide
 
 class TestCalculator(unittest.TestCase):
-    def test_add(self):
-        self.assertEqual(add(2, 3), 5)
+    def test_add(self):
+        self.assertEqual(add(2, 3), 5)
 
-    def test_subtract(self):
-        self.assertEqual(subtract(5, 3), 2)
+    def test_subtract(self):
+        self.assertEqual(subtract(5, 3), 2)
 
-    def test_multiply(self):
-        self.assertEqual(multiply(4, 3), 12)
+    def test_multiply(self):
+        self.assertEqual(multiply(4, 3), 12)
 
-    def test_divide(self):
-        self.assertEqual(divide(10, 2), 5)
-        with self.assertRaises(ValueError):
-            divide(10, 0)
+    def test_divide(self):
+        self.assertEqual(divide(10, 2), 5)
+        with self.assertRaises(ValueError):
+            divide(10, 0)
 
 if __name__ == "__main__":
-    unittest.main()
+    unittest.main()
 ```
 
 （我们还在项目中有一个标准的 *.gitignore* 文件和一个 LICENSE 文件。）
 
 假设我们想要改进 Python 文件中的代码。以下是一组我们可以提示 Copilot 在编辑模式中执行的任务：
 
-+   将 `divide` 函数重构以更优雅地处理除以零的情况。
-
-+   在 *calculator.py* 中的所有函数中添加 [类型提示](https://oreil.ly/H6bfq)。
-
-+   在 *test_calculator.py* 中为边缘情况编写额外的单元测试。
++ 将 `divide` 函数重构以更优雅地处理除以零的情况。
++ 在 *calculator.py* 中的所有函数中添加[类型提示](https://oreil.ly/H6bfq)。
++ 在 *test_calculator.py* 中为边缘情况编写额外的单元测试。
 
 要开始编辑过程，我们需要添加 Copilot 将要处理的文件。在我们的简单案例中，对于我们使用的提示，我们只需要两个 Python 文件。我们可以通过从文件列表中选择并将它们拖放到聊天对话框的文本输入区域来最轻松地添加它们。或者，你可以使用 `#file` 聊天变量来包含它们。或者，你可以使用添加上下文控件从列表中选择它们。图 4-8 展示了作为上下文添加的文件和对话框中提供的提示。
 
 ![](img/lghc_0408.png)
 
-###### 图 4-8\. 准备好供 Copilot 编辑的选定文件
+###### 图 4-8 准备好供 Copilot 编辑的选定文件
 
 提交后，Copilot 将处理所选文件中的提示，并提议任何必要的更改以完成提示。这些提议的更改将在编辑器中显示。你可以选择审查每个提议的更改并保留/撤销每个提议的更改，或者根据聊天区域中的新“文件更改”部分一次性保留/撤销所有提议的更改。图 4-9 展示了在编辑模式下运行指定上下文提示的结果。
 
 ![](img/lghc_0409.png)
 
-###### 图 4-9\. 准备审查的已编辑文件
+###### 图 4-9 准备审查的已编辑文件
 
 如果需要达到更细致的控制，有控制按钮用于保留或撤销每个建议的编辑。对于有提议/待定更改的文件，在文件列表和编辑器中都有一个符号（方形内的点）。一旦你决定保留或撤销提议的更改，"文件更改"区域中的保留/撤销按钮将变为完成按钮。点击此按钮即可停止这一轮编辑。
 
-在你点击完成按钮之前，你可以改变主意并撤销 Copilot 提出的编辑，即使你选择保留一些或全部。你可以通过以下几种方式做到这一点。你可以在输入区域上方的“文件更改”区域使用撤销选项。或者，你可以点击聊天面板顶部的左曲箭头。或者，你可以将鼠标悬停在聊天对话的顶部，然后点击那里的 X，如图 图 4-10 所示。
+在你点击完成按钮之前，你可以改变主意并撤销 Copilot 提出的编辑，即使你选择保留一些或全部。你可以通过以下几种方式做到这一点。你可以在输入区域上方的“文件更改”区域使用撤销选项。或者，你可以点击聊天面板顶部的左曲箭头。或者，你可以将鼠标悬停在聊天对话的顶部，然后点击那里的 X，如图 4-10 所示。
 
 ![](img/lghc_0410.png)
 
-###### 图 4-10\. 回滚建议的编辑的几种选项之一
+###### 图 4-10 回滚建议的编辑的几种选项之一
 
-要在文件中保留更改，请点击“完成”按钮。在我们的例子中，*calculator.py* 文件已包含类型提示，并且 divide 函数已被重构：
+要在文件中保留更改，请点击“完成”按钮。在我们的例子中，*calculator.py* 文件已包含类型提示，并且 `divide` 函数已被重构：
 
-```py
+```
 from typing import Optional
 
 def add(a: float, b: float) -> float:
-    return a + b
+    return a + b
 
 def subtract(a: float, b: float) -> float:
-    return a - b
+    return a - b
 
 def multiply(a: float, b: float) -> float:
-    return a * b
+    return a * b
 
 def divide(a: float, b: float) -> Optional[float]:
-    if b == 0:
-        return None
-    return a / b
+    if b == 0:
+        return None
+    return a / b
 ```
 
 根据其他提示，已添加了额外的测试用例：
 
-```py
+```
 def test_divide_by_zero(self):
-    self.assertIsNone(divide(10, 0))
+    self.assertIsNone(divide(10, 0))
 
 def test_add_negative_numbers(self):
-    self.assertEqual(add(-2, -3), -5)
+    self.assertEqual(add(-2, -3), -5)
 
 def test_subtract_negative_numbers(self):
-    self.assertEqual(subtract(-5, -3), -2)
+    self.assertEqual(subtract(-5, -3), -2)
 
 def test_multiply_negative_numbers(self):
-    self.assertEqual(multiply(-4, 3), -12)
+    self.assertEqual(multiply(-4, 3), -12)
 
 def test_divide_negative_numbers(self):
-    self.assertEqual(divide(-10, 2), -5)
-    self.assertEqual(divide(10, -2), -5)
-    self.assertEqual(divide(-10, -2), 5
+    self.assertEqual(divide(-10, 2), -5)
+    self.assertEqual(divide(10, -2), -5)
+    self.assertEqual(divide(-10, -2), 5
 ```
 
-这是关于使用 Copilot Edits 的另一个小贴士。你不必选择单个文件，可以在你的提示中使用 `#codebase` 聊天变量（见第三章），让 Copilot 尝试选择合适的文件进行修改。例如，如果你使用了以下提示
+这是关于使用 Copilot Edits 的另一个小贴士。你不必选择单个文件，可以在你的提示中使用 `#codebase` 聊天变量（见第三章），让 Copilot 尝试选择合适的文件进行修改。例如，如果你使用了以下提示：
 
-```py
+```
 Add functional documentation in #codebase
 ```
 
@@ -232,33 +226,29 @@ Copilot 选择 *README.md* 文件来添加文档（图 4-11）。当然，你可
 
 ![](img/lghc_0411.png)
 
-###### 图 4-11\. 使用 `#codebase` 更新文件
+###### 图 4-11 使用 `#codebase` 更新文件
 
 这是为了展示一个简单的用例，但你可以在更大规模和更复杂的修改中使用 Copilot Edits。文件的具体性越高，你的提示越具体，效果越好。与任何来自 AI 的建议一样，结果可能符合或不符合你的预期，可能正确或错误。这就是为什么在编辑器中审查建议的更改步骤如此重要的原因。如果你没有得到预期的更改集，你可以尝试返回并调整提示，看看是否可以得到改进的建议。
 
 虽然 Copilot Edits 中的 AI 编辑功能对于建议修改你选择和审查的文件很有用，但有时我们可能不知道哪些内容需要被*挑选*进行修改。我们可能也不希望进行许多手动步骤来确保修改到位以便审查。出于这些原因（以及其他原因），Copilot 可以利用 AI 来更自主地执行简单或复杂的修改。这通过使用 Copilot 的其他模式来实现，该模式使用 AI 代理来为你处理繁重的工作。
 
-# 代理模式
+## 代理模式
 
 在 AI 术语中，一个 AI *代理* 是一种软件，它从其环境中收集输入，做出决策，并使用可用的 *工具* 自主地采取行动以实现特定目标。代理使用其底层的 AI 模型作为其 *大脑*，以帮助在自然语言或代码之间进行翻译，制定计划和做出决策。GitHub Copilot 的 Agent 模式是你的个人编码代理。
 
 在代理模式中，Copilot 将一个或多个提示作为任务来完成。然后它通过使用以下基本工作流程为每个任务以更自主的方式运行：
 
-1.  确定需要编辑的上下文和文件（而不是你必须指定它们）。此外，如果需要，它还可以创建新文件。
-
-1.  建议代码更改和终端命令以完成任务。例如，Copilot 可能会建议或运行安装依赖项或运行测试的命令。
-
-1.  检查代码编辑和终端命令输出的正确性。
-
-1.  如有必要，提示人工审查或交互。
-
-1.  重复前面的步骤，直到它评估任务已成功完成或它无法再自行进行下去。
+1. 确定需要编辑的上下文和文件（而不是你必须指定它们）。此外，如果需要，它还可以创建新文件。
+2. 建议代码更改和终端命令以完成任务。例如，Copilot 可能会建议或运行安装依赖项或运行测试的命令。
+3. 检查代码编辑和终端命令输出的正确性。
+4. 如有必要，提示人工审查或交互。
+5. 重复前面的步骤，直到它评估任务已成功完成或它无法再自行进行下去。
 
 在处理过程中，代理正在利用 GitHub 定义的一组工具来帮助完成任务。这些工具读取文件、在终端中运行命令、读取输出、应用提议的更改，等等。随着新工具的可用，工具列表会更新。
 
-# 识别上下文
+### 识别上下文
 
-虽然代理通常能很好地识别使用或更新的适当上下文，但您也可以使用常规方法（`#file`聊天变量、添加上下文控件等）来针对特定文件。
+虽然代理通常能很好地识别使用或更新的适当上下文，但您也可以使用常规方法（`#file` 聊天变量、添加上下文控件等）来针对特定文件。
 
 这些自主能力和使用迭代来完成任务的特性是关键功能。它们区分了 Copilot 的代理模式与更选择性的、定向的方法，如 Copilot Edits。
 
@@ -268,23 +258,21 @@ Copilot 选择 *README.md* 文件来添加文档（图 4-11）。当然，你可
 
 ![](img/lghc_0412.png)
 
-###### 图 4-12\. 切换到代理模式
+###### 图 4-12 切换到代理模式
 
 由于代理模式比编辑模式更强大、更自主，我们可以提示 Copilot 执行更重大的更改集。我们在这里仍然会保持它们相当简单，以介绍这个过程。但在“使用 Copilot 进行调试”中，您将看到如何利用代理模式来完成更高级的任务。
 
 在代理模式下使用 Copilot 时，我们将让它对我们的计算器代码进行三组更改。这些更改如下：
 
-+   在 *calculator.py* 中的所有函数中添加日志记录。
++ 在 *calculator.py* 中的所有函数中添加日志记录。
++ 为计算器应用程序创建一个命令行界面（CLI），并验证它是否按预期工作。
++ 使用文档字符串为所有函数生成文档。
 
-+   为计算器应用程序创建一个命令行界面（CLI），并验证它是否按预期工作。
-
-+   使用文档字符串为所有函数生成文档。
-
-如同往常，我们需要将提示添加到文本输入区域，如图图 4-14 所示。
+如同往常，我们需要将提示添加到文本输入区域，如图 4-14 所示。
 
 ![](img/lghc_0414.png)
 
-###### 图 4-14\. 通过代理模式进行更改的提示
+###### 图 4-14 通过代理模式进行更改的提示
 
 现在我们已经准备好提交提示。但是请注意，我们没有指定任何额外的上下文。我们没有像在编辑模式中那样指定文件。在代理模式中，Copilot 可以自主地确定需要完成的任务和需要更改的文件。根据提示，Copilot 甚至可以更进一步，通过应用代码编辑进行审查、建议终端命令，甚至创建新文件——具体取决于提示。随着您使用代理模式并注意到任何问题或期望的更改，您可以进一步提示它，并且它会迭代以解决任何问题。
 
@@ -292,13 +280,15 @@ Copilot 选择 *README.md* 文件来添加文档（图 4-11）。当然，你可
 
 ![](img/lghc_0415.png)
 
-###### 图 4-15\. 代理制定方法
+###### 图 4-15 代理制定方法
 
-在确定计划和需要更改的内容后，Copilot 将对现有代码进行*内联*编辑。与编辑模式一样，Copilot 完成后，建议的更改将以内联形式显示在编辑器中。您可以选择逐一审查每个更改并保留/撤销每个建议的更改，或者根据聊天区域中新的“文件更改”部分一次性保留/撤销所有建议的更改，如图图 4-16 所示。
+在确定计划和需要更改的内容后，Copilot 将对现有代码进行*内联*编辑。与编辑模式一样，Copilot 完成后，建议的更改将以内联形式显示在编辑器中。您可以选择逐一审查每个更改并保留/撤销每个建议的更改，或者根据聊天区域中新的“文件更改”部分一次性保留/撤销所有建议的更改，如图 4-16 所示。
 
 ![图片](img/lghc_0416.png)
 
-###### 图 4-16\. 内联进行的代理更改
+###### 图 4-16 内联进行的代理更改
+
+
 
 # 完成时间
 
@@ -382,8 +372,8 @@ labeled "text" to analyze its sentiment.
 2\. **Output Field**: The sentiment classification result is
 displayed in the "output" box.
 3\. **Buttons**:
-   - **Clear**: Clears the input field.
-   - **Submit**: Processes the input text and displays the sentiment
+   - **Clear**: Clears the input field.
+   - **Submit**: Processes the input text and displays the sentiment
 result.
 4\. **Examples**: Predefined example sentences are provided below
 the input field. Clicking on one of these examples populates the
@@ -456,7 +446,7 @@ the pasted image
 
 ###### 图 4-25\. 迭代后准备就绪
 
-图 4-26 显示了 Copilot 代理创建的实际计算器代码 Web 应用界面的最终结果。正如你所见，它与提供的参考图像非常相似，并且按预期工作。此外，请注意，根据添加处理指数函数的提示，Copilot 生成的 Web 应用界面有一个计算器按钮（第一行从左数第二个），用于执行指数（**），这在原始图像中并不存在。
+图 4-26 显示了 Copilot 代理创建的实际计算器代码 Web 应用界面的最终结果。正如你所见，它与提供的参考图像非常相似，并且按预期工作。此外，请注意，根据添加处理指数函数的提示，Copilot 生成的 Web 应用界面有一个计算器按钮（第一行从左数第二个），用于执行指数（`**`），这在原始图像中并不存在。
 
 ![](img/lghc_0426.png)
 
@@ -468,7 +458,7 @@ Copilot Vision，连同 NES 和代理模式，无疑可以简化代码的创建�
 
 我们之前讨论了几个对帮助调试问题有用的 Copilot 功能。我们谈到了`/explain`命令，它可以帮助解释可能存在问题的代码，以及`/fix`命令，让 Copilot 为错误提出修复建议。Copilot 还有一些其他功能可能很有帮助。
 
-在 VS Code 中，Copilot 可以帮助设置和自定义调试配置。例如，你可以使用`/startDebugging`快捷命令创建一个`*launch.json*`文件（如果不存在的话），如图 4-27 所示。同样，这也可以通过聊天中的提示来完成。
+在 VS Code 中，Copilot 可以帮助设置和自定义调试配置。例如，你可以使用`/startDebugging`快捷命令创建一个`launch.json`文件（如果不存在的话），如图 4-27 所示。同样，这也可以通过聊天中的提示来完成。
 
 ![](img/lghc_0427.png)
 
@@ -550,6 +540,8 @@ Copilot Vision 允许 Copilot 从图像中提取信息，例如问题的截图�
 
 关于代理模式，还有一个关键点需要说明。AI 代理的能力、实用性、与环境交互的能力以及处理各种任务的可适应性正在不断增长。预计 Copilot 的代理 AI 能力将继续扩展和增长，并用于 IDE 和 Copilot 界面的其他部分。只要提供适当的提示和工具，代理组件能够做的事情实际上是没有限制的。
 
-Copilot 还包括帮助调试的工具，例如 `/startDebugging` 命令的快捷方式。你甚至可以让 Copilot 分析和调试截图。结合之前讨论的其他功能，这些工具可以帮助你更快地确定问题的原因。然而，需要注意的是，并非所有 Copilot 调试功能都在所有 IDE 中提供。你最好的选择仍然是向聊天界面中的 Copilot 提出关于问题的具体 *为什么* 问题。
+
+
+Copilot 还包括帮助调试的工具，例如`/startDebugging`命令的快捷方式。你甚至可以让 Copilot 分析和调试截图。结合之前讨论的其他功能，这些工具可以帮助你更快地确定问题的原因。然而，需要注意的是，并非所有 Copilot 调试功能都在所有 IDE 中提供。你最好的选择仍然是向聊天界面中的 Copilot 提出关于问题的具体`为什么`问题。
 
 在掌握了 Copilot 的基本和高级用法这个坚实基础之后，我们可以继续探讨它可以帮助完成的一些特定任务，例如测试生成、文档编写和代码翻译。这些功能可能是最宝贵的，可以帮助您减少在常规任务上的时间投入，让您有更多精力专注于编写代码的有趣和愉快部分。我们将在接下来的几章中讨论如何利用 Copilot 来处理这些任务，从第五章开始，我们将探讨如何使用 Copilot 进行测试。第五章。

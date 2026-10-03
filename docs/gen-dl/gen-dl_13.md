@@ -1,8 +1,9 @@
+
 # 第九章：Transformer
 
 我们在第五章中看到，我们可以使用循环神经网络（RNNs）（如 LSTM 和 GRU）在文本数据上构建生成模型。这些自回归模型一次处理一个令牌的顺序数据，不断更新一个捕获输入当前潜在表示的隐藏向量。可以设计 RNN 以通过在隐藏向量上应用密集层和 softmax 激活来预测序列中的下一个单词。直到 2017 年，这被认为是生成文本的最复杂方式，当一篇论文永久改变了文本生成的格局。
 
-# 介绍
+## 介绍
 
 谷歌 Brain 的论文，自信地命名为“注意力就是一切”¹，因推广*注意力*的概念而闻名，这个概念现在驱动着大多数最先进的文本生成模型。
 
@@ -10,7 +11,7 @@
 
 在本章中，我们将深入探讨现代文本生成模型如何利用 Transformer 架构在文本生成挑战中达到最先进的性能。特别是，我们将探索一种称为*生成式预训练 Transformer*（GPT）的自回归模型，它驱动着 OpenAI 的 GPT-4 模型，被广泛认为是当前文本生成领域的最先进技术。
 
-# GPT
+## GPT
 
 OpenAI 于 2018 年 6 月推出了 GPT，在论文“通过生成式预训练改进语言理解”中²，几乎与原始 Transformer 论文出现一年后完全一致。
 
@@ -24,17 +25,17 @@ GPT 的预训练过程涉及在名为 BookCorpus 的大型文本语料库上训�
 
 在本章中，我们将构建我们自己的变体 GPT 模型，该模型在较少数据上进行训练，但仍利用相同的组件和基本原则。
 
-# 运行此示例的代码
+### 运行此示例的代码
 
 此示例的代码可以在位于书籍存储库中的 Jupyter 笔记本中找到，位置为*notebooks/09_transformer/01_gpt/gpt.ipynb*。
 
 该代码改编自由 Apoorv Nandan 创建的优秀[GPT 教程](https://oreil.ly/J86pg)，该教程可在 Keras 网站上找到。
 
-## 葡萄酒评论数据集
+#### 葡萄酒评论数据集
 
 我们将使用通过 Kaggle 提供的[Wine Reviews 数据集](https://oreil.ly/DC9EG)。这是一个包含超过 130,000 条葡萄酒评论的数据集，附带元数据，如描述和价格。
 
-您可以通过在书库中运行 Kaggle 数据集下载脚本来下载数据集，如示例 9-1 所示。这将把葡萄酒评论和相关元数据保存在本地的*/data*文件夹中。
+您可以通过在书库中运行 Kaggle 数据集下载脚本来下载数据集，如示例 9-1 所示。这将把葡萄酒评论和相关元数据保存在本地的`/data`文件夹中。
 
 ##### 示例 9-1\. 下载葡萄酒评论数据集
 
@@ -42,19 +43,18 @@ GPT 的预训练过程涉及在名为 BookCorpus 的大型文本语料库上训�
 bash scripts/download_kaggle_data.sh zynicide wine-reviews
 ```
 
-`数据准备步骤与第五章中用于准备输入到 LSTM 的数据的步骤是相同的，因此我们不会在这里详细重复它们。如图 9-1 所示，步骤如下：
+数据准备步骤与第五章中用于准备输入到 LSTM 的数据的步骤是相同的，因此我们不会在这里详细重复它们。如图 9-1 所示，步骤如下：
 
-1.  加载数据并创建每种葡萄酒的文本字符串描述列表。
-
-1.  用空格填充标点符号，以便每个标点符号被视为一个单独的单词。
-
-1.  通过`TextVectorization`层将字符串传递，对数据进行标记化，并将每个字符串填充/裁剪到固定长度。
-
-1.  创建一个训练集，其中输入是标记化的文本字符串，输出是预测的相同字符串向后移动一个标记。
+1. 加载数据并创建每种葡萄酒的文本字符串描述列表。
+2. 用空格填充标点符号，以便每个标点符号被视为一个单独的单词。
+3. 通过`TextVectorization`层将字符串传递，对数据进行标记化，并将每个字符串填充/裁剪到固定长度。
+4. 创建一个训练集，其中输入是标记化的文本字符串，输出是预测的相同字符串向后移动一个标记。
 
 ![](img/gdl2_0901.png)
 
-###### 图 9-1\. Transformer 的数据处理`  `## 注意力
+###### 图 9-1\. Transformer 的数据处理
+
+### 注意力
 
 了解 GPT 如何工作的第一步是了解*注意力机制*的工作原理。这个机制是使 Transformer 架构与循环方法在语言建模方面独特和不同的地方。当我们对注意力有了扎实的理解后，我们将看到它如何在 GPT 等 Transformer 架构中使用。
 
@@ -76,7 +76,7 @@ Transformer 中的注意力机制（也称为*注意力头*）旨在做到这一
 
 相比之下，循环层试图建立一个捕捉每个时间步输入的整体表示的通用隐藏状态。这种方法的一个弱点是，已经合并到隐藏向量中的许多单词对当前任务（例如，预测下一个单词）并不直接相关，正如我们刚刚看到的。注意力头不会遇到这个问题，因为它们可以选择如何从附近的单词中组合信息，具体取决于上下文。
 
-## 查询、键和值
+#### 查询、键和值
 
 那么，注意力头如何决定在哪里查找信息呢？在深入细节之前，让我们以高层次的方式探讨它是如何工作的，使用我们的*粉色大象*示例。
 
@@ -90,27 +90,29 @@ Transformer 中的注意力机制（也称为*注意力头*）旨在做到这一
 
 ###### 图 9-2。注意力头的机制
 
-*查询*（<math alttext="upper Q"><mi>Q</mi></math>）可以被视为当前任务的表示（例如，“后面跟着什么词？”）。在这个例子中，它是从单词*too*的嵌入中导出的，通过将其通过权重矩阵<math alttext="upper W Subscript upper Q"><msub><mi>W</mi> <mi>Q</mi></msub></math>传递来将向量的维度从<math alttext="d Subscript e"><msub><mi>d</mi> <mi>e</mi></msub></math>更改为<math alttext="d Subscript k"><msub><mi>d</mi> <mi>k</mi></msub></math>。
+*查询*（`Q`）可以被视为当前任务的表示（例如，“后面跟着什么词？”）。在这个例子中，它是从单词*too*的嵌入中导出的，通过将其通过权重矩阵`W_Q`传递来将向量的维度从`d_e`更改为`d_k`。
 
-*键*向量（<math alttext="upper K"><mi>K</mi></math>）是句子中每个单词的表示——您可以将这些视为每个单词可以帮助的预测任务的描述。它们以类似的方式导出查询，通过将每个嵌入通过权重矩阵<math alttext="upper W Subscript upper K"><msub><mi>W</mi> <mi>K</mi></msub></math>传递来将每个向量的维度从<math alttext="d Subscript e"><msub><mi>d</mi> <mi>e</mi></msub></math>更改为<math alttext="d Subscript k"><msub><mi>d</mi> <mi>k</mi></msub></math>。请注意，键和查询具有相同的长度（<math alttext="d Subscript k"><msub><mi>d</mi> <mi>k</mi></msub></math>）。
+*键*向量（`K`）是句子中每个单词的表示——您可以将这些视为每个单词可以帮助的预测任务的描述。它们以类似的方式导出查询，通过将每个嵌入通过权重矩阵`W_K`传递来将每个向量的维度从`d_e`更改为`d_k`。请注意，键和查询具有相同的长度（`d_k`）。
 
-在注意力头内部，每个键与查询之间的向量对之间使用点积进行比较（<math alttext="upper Q upper K Superscript upper T"><mrow><mi>Q</mi> <msup><mi>K</mi> <mi>T</mi></msup></mrow></math>）。这就是为什么键和查询必须具有相同的长度。对于特定的键/查询对，这个数字越高，键与查询的共鸣就越强，因此它可以更多地对注意力头的输出做出贡献。结果向量被缩放为<math alttext="StartRoot d Subscript k Baseline EndRoot"><msqrt><msub><mi>d</mi> <mi>k</mi></msub></msqrt></math>，以保持向量和的方差稳定（大约等于 1），并且应用 softmax 以确保贡献总和为 1。这是一个*注意力权重*向量。
+在注意力头内部，每个键与查询之间的向量对之间使用点积进行比较（`QK^T`）。这就是为什么键和查询必须具有相同的长度。对于特定的键/查询对，这个数字越高，键与查询的共鸣就越强，因此它可以更多地对注意力头的输出做出贡献。结果向量被缩放为`√d_k`，以保持向量和的方差稳定（大约等于 1），并且应用 softmax 以确保贡献总和为 1。这是一个*注意力权重*向量。
 
-*值*向量（<math alttext="upper V"><mi>V</mi></math>）也是句子中单词的表示——您可以将这些视为每个单词的未加权贡献。它们通过将每个嵌入通过权重矩阵<math alttext="upper W Subscript upper V"><msub><mi>W</mi> <mi>V</mi></msub></math>传递来导出，以将每个向量的维度从<math alttext="d Subscript e"><msub><mi>d</mi> <mi>e</mi></msub></math>更改为<math alttext="d Subscript v"><msub><mi>d</mi> <mi>v</mi></msub></math>。请注意，值向量不一定要与键和查询具有相同的长度（但通常为了简单起见）。
+*值*向量（`V`）也是句子中单词的表示——您可以将这些视为每个单词的未加权贡献。它们通过将每个嵌入通过权重矩阵`W_V`传递来导出，以将每个向量的维度从`d_e`更改为`d_v`。请注意，值向量不一定要与键和查询具有相同的长度（但通常为了简单起见）。
 
-值向量乘以注意力权重，给出给定<math alttext="upper Q"><mi>Q</mi></math>，<math alttext="upper K"><mi>K</mi></math>和<math alttext="upper V"><mi>V</mi></math>的*注意力*，如方程 9-1 所示。
+值向量乘以注意力权重，给出给定`Q`，`K`和`V`的*注意力*，如方程 9-1 所示。
 
 ##### 方程 9-1。注意力方程
 
-<math alttext="StartLayout 1st Row  upper A t t e n t i o n left-parenthesis upper Q comma upper K comma upper V right-parenthesis equals s o f t m a x left-parenthesis StartFraction upper Q upper K Superscript upper T Baseline Over StartRoot d Subscript k Baseline EndRoot EndFraction right-parenthesis upper V EndLayout" display="block"><mtable displaystyle="true"><mtr><mtd columnalign="right"><mrow><mi>A</mi> <mi>t</mi> <mi>t</mi> <mi>e</mi> <mi>n</mi> <mi>t</mi> <mi>i</mi> <mi>o</mi> <mi>n</mi> <mrow><mo>(</mo> <mi>Q</mi> <mo>,</mo> <mi>K</mi> <mo>,</mo> <mi>V</mi> <mo>)</mo></mrow> <mo>=</mo> <mi>s</mi> <mi>o</mi> <mi>f</mi> <mi>t</mi> <mi>m</mi> <mi>a</mi> <mi>x</mi> <mrow><mo>(</mo> <mfrac><mrow><mi>Q</mi><msup><mi>K</mi> <mi>T</mi></msup></mrow> <msqrt><msub><mi>d</mi> <mi>k</mi></msub></msqrt></mfrac> <mo>)</mo></mrow> <mi>V</mi></mrow></mtd></mtr></mtable></math>
+```
+Attention(Q, K, V) = softmax(QK^T / √d_k) V
+```
 
-从注意力头中获取最终输出向量，将注意力求和得到长度为<math alttext="d Subscript v"><msub><mi>d</mi> <mi>v</mi></msub></math>的向量。这个*上下文向量*捕捉了句子中单词对于预测接下来的单词是什么的任务的混合意见。
+从注意力头中获取最终输出向量，将注意力求和得到长度为`d_v`的向量。这个*上下文向量*捕捉了句子中单词对于预测接下来的单词是什么的任务的混合意见。
 
-## 多头注意力
+#### 多头注意力
 
 没有理由只停留在一个注意力头上！在 Keras 中，我们可以构建一个`MultiHeadAttention`层，将多个注意力头的输出连接起来，使每个头学习不同的注意力机制，从而使整个层能够学习更复杂的关系。
 
-连接的输出通过一个最终的权重矩阵<math alttext="upper W Subscript upper O"><msub><mi>W</mi> <mi>O</mi></msub></math>传递，将向量投影到所需的输出维度，这在我们的情况下与查询的输入维度相同（<math alttext="d Subscript e"><msub><mi>d</mi> <mi>e</mi></msub></math>），以便层可以顺序堆叠在一起。
+连接的输出通过一个最终的权重矩阵`W_O`传递，将向量投影到所需的输出维度，这在我们的情况下与查询的输入维度相同（`d_e`），以便层可以顺序堆叠在一起。
 
 图 9-3 展示了一个`MultiHeadAttention`层的输出是如何构建的。在 Keras 中，我们可以简单地写下示例 9-2 中显示的代码来创建这样一个层。
 
@@ -125,27 +127,19 @@ layers.MultiHeadAttention(
     )
 ```
 
-①
+① 这个多头注意力层有四个头。
 
-这个多头注意力层有四个头。
+② 键（和查询）是长度为 128 的向量。
 
-②
+③ 值（因此也是每个头的输出）是长度为 64 的向量。
 
-键（和查询）是长度为 128 的向量。
-
-③
-
-值（因此也是每个头的输出）是长度为 64 的向量。
-
-④
-
-输出向量的长度为 256。
+④ 输出向量的长度为 256。
 
 ![](img/gdl2_0903.png)
 
 ###### 图 9-3。一个具有四个头的多头注意力层
 
-## 因果掩码
+#### 因果掩码
 
 到目前为止，我们假设我们的注意力头的查询输入是一个单一的向量。然而，在训练期间为了效率，我们理想情况下希望注意力层能够一次操作输入中的每个单词，为每个单词预测接下来的单词。换句话说，我们希望我们的 GPT 模型能够并行处理一组查询向量（即一个矩阵）。
 
@@ -184,9 +178,11 @@ np.transpose(causal_attention_mask(1, 10, 10, dtype = tf.int32)[0])
 
 其他类型的 Transformer（例如*编码器 Transformer*）不需要因果掩码，因为它们不是训练来预测下一个标记。例如，Google 的 BERT 预测给定句子中的掩码单词，因此它可以使用单词之前和之后的上下文。³
 
+
+
 我们将在本章末尾更详细地探讨不同类型的 Transformer。
 
-这结束了我们对存在于所有 Transformer 中的多头注意力机制的解释。令人惊讶的是，这样一个有影响力的层的可学习参数仅由每个注意力头的三个密集连接权重矩阵（<math alttext="upper W Subscript upper Q"><msub><mi>W</mi> <mi>Q</mi></msub></math>，<math alttext="upper W Subscript upper K"><msub><mi>W</mi> <mi>K</mi></msub></math>，<math alttext="upper W Subscript upper V"><msub><mi>W</mi> <mi>V</mi></msub></math>）和一个进一步的权重矩阵来重塑输出（<math alttext="upper W Subscript upper O"><msub><mi>W</mi> <mi>O</mi></msub></math>）。在多头注意力层中完全没有卷积或循环机制！
+这结束了我们对存在于所有 Transformer 中的多头注意力机制的解释。令人惊讶的是，这样一个有影响力的层的可学习参数仅由每个注意力头的三个密集连接权重矩阵（`W_Q`，`W_K`，`W_V`）和一个进一步的权重矩阵来重塑输出（`W_O`）。在多头注意力层中完全没有卷积或循环机制！
 
 接下来，我们将退一步，看看多头注意力层如何形成更大组件的一部分，这个组件被称为*Transformer 块*。
 
@@ -437,7 +433,9 @@ gpt.fit(train_ds, epochs=5)
 
 最终的序列展示了我们的 GPT 模型如何基于信息的组合选择适当的形容词的例子。这里的注意力再次集中在葡萄（*雷司令*）上，但也集中在它含有*残留糖*的事实上。由于雷司令通常是一种甜酒，而且已经提到了糖，因此将其描述为*略带甜味*而不是*略带泥土味*是有道理的。
 
-以这种方式询问网络非常有启发性，可以准确了解它从哪里提取信息，以便对每个后续单词做出准确的决策。我强烈建议尝试玩弄输入提示，看看是否可以让模型关注句子中非常遥远的单词，以说服自己关注模型的注意力模型比传统的递归模型更具有力量！`  `# 其他 Transformer
+以这种方式询问网络非常有启发性，可以准确了解它从哪里提取信息，以便对每个后续单词做出准确的决策。我强烈建议尝试玩弄输入提示，看看是否可以让模型关注句子中非常遥远的单词，以说服自己关注模型的注意力模型比传统的递归模型更具有力量！
+
+# 其他 Transformer
 
 我们的 GPT 模型是一个*解码器 Transformer*——它一次生成一个标记的文本字符串，并使用因果屏蔽只关注输入字符串中的先前单词。还有*编码器 Transformer*，它不使用因果屏蔽——相反，它关注整个输入字符串以提取输入的有意义的上下文表示。对于其他任务，比如语言翻译，还有*编码器-解码器 Transformer*，可以将一个文本字符串翻译成另一个；这种模型包含编码器 Transformer 块和解码器 Transformer 块。
 
@@ -446,12 +444,20 @@ gpt.fit(train_ds, epochs=5)
 表 9-1。三种 Transformer 架构
 
 | 类型 | 示例 | 用例 |
+
 | --- | --- | --- |
+
 | 编码器 | BERT（谷歌） | 句子分类、命名实体识别、抽取式问答 |
+
 | 编码器-解码器 | T5（谷歌） | 摘要、翻译、问答 |
+
 | 解码器 | GPT-3（OpenAI） | 文本生成 |
 
 一个众所周知的编码器 Transformer 的例子是谷歌开发的*双向编码器表示来自 Transformer*（BERT）模型，它可以根据缺失单词的上下文预测句子中的缺失单词（Devlin 等，2018）。
+
+# 编码器 Transformer
+
+
 
 # 编码器 Transformer
 
@@ -529,10 +535,8 @@ GPT-3 也可以[根据您自己的训练数据进行微调](https://oreil.ly/B-K
 ChatGPT 的训练过程如下：
 
 1.  *监督微调*：收集人类编写的对话输入（提示）和期望输出的演示数据集。这用于使用监督学习微调基础语言模型（GPT-3.5）。
-
-1.  *奖励建模*：向人类标记者展示提示的示例和几个抽样的模型输出，并要求他们将输出从最好到最差进行排名。训练一个奖励模型，预测给定对话历史的每个输出的得分。
-
-1.  *强化学习*：将对话视为一个强化学习环境，其中*策略*是基础语言模型，初始化为从步骤 1 中微调的模型。给定当前的*状态*（对话历史），策略输出一个*动作*（一系列标记），由在步骤 2 中训练的奖励模型评分。然后可以训练一个强化学习算法——近端策略优化（PPO），通过调整语言模型的权重来最大化奖励。
+2.  *奖励建模*：向人类标记者展示提示的示例和几个抽样的模型输出，并要求他们将输出从最好到最差进行排名。训练一个奖励模型，预测给定对话历史的每个输出的得分。
+3.  *强化学习*：将对话视为一个强化学习环境，其中*策略*是基础语言模型，初始化为从步骤 1 中微调的模型。给定当前的*状态*（对话历史），策略输出一个*动作*（一系列标记），由在步骤 2 中训练的奖励模型评分。然后可以训练一个强化学习算法——近端策略优化（PPO），通过调整语言模型的权重来最大化奖励。
 
 # 强化学习
 

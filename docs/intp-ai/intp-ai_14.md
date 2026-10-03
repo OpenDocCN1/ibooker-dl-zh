@@ -1,8 +1,9 @@
+
 # 附录 A. 准备工作
 
 ## A.1 Python
 
-在本书中，所有代码都是用 Python 编写的。您可以从 Python 语言网站（[`www.python.org/downloads/`](https://www.python.org/downloads/））下载并安装适用于您操作系统的最新版本。本书使用的 Python 版本是 Python 3.7，但任何更高版本都应该同样适用。本书还使用了各种开源 Python 包来构建机器学习模型，并对它们进行解释和可视化。现在，让我们下载本书中使用的所有代码并安装所有相关 Python 包。
+在本书中，所有代码都是用 Python 编写的。您可以从 Python 语言网站（[`www.python.org/downloads/`](https://www.python.org/downloads/)）下载并安装适用于您操作系统的最新版本。本书使用的 Python 版本是 Python 3.7，但任何更高版本都应该同样适用。本书还使用了各种开源 Python 包来构建机器学习模型，并对它们进行解释和可视化。现在，让我们下载本书中使用的所有代码并安装所有相关 Python 包。
 
 ## A.2 Git 代码仓库
 
@@ -40,7 +41,7 @@ $> conda activate interpretable-ai
 $> jupyter notebook
 ```
 
-您可以通过浏览器在 http://<HOSTNAME>:8888 访问 Jupyter Web 应用程序。将<HOSTNAME>替换为您运行机器的主机名或 IP 地址。
+您可以通过浏览器在 http://<HOSTNAME>:8888 访问 Jupyter Web 应用程序。将`<HOSTNAME>`替换为您运行机器的主机名或 IP 地址。
 
 ## A.5 Docker
 
@@ -62,4 +63,4 @@ $> docker images
 $> docker run -p 8888:8888 interpretable-ai:latest
 ```
 
-此命令应启动 Jupyter 笔记本应用程序，您应该可以通过从浏览器访问 http://<HOSTNAME>:8888 来运行本书中的所有代码。将<HOSTNAME>替换为您运行机器的主机名或 IP 地址。
+此命令应启动 Jupyter 笔记本应用程序，您应该可以通过从浏览器访问 http://<HOSTNAME>:8888 来运行本书中的所有代码。将`<HOSTNAME>`替换为您运行机器的主机名或 IP 地址。

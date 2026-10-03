@@ -1,3 +1,4 @@
+
 # 前言
 
 ## 序言
@@ -62,10 +63,10 @@
 
 本书中的所有代码示例都可以从 Manning 网站 [`www.manning.com/books/deep-learning-with-python-second-edition`](https://www.manning.com/books/deep-learning-with-python-second-edition) 获取，并且作为 Jupyter notebooks 在 GitHub [`github.com/fchollet/deep-learning-with-python-notebooks`](https://github.com/fchollet/deep-learning-with-python-notebooks) 上提供。您可以直接在浏览器中通过 Google Colaboratory 运行它们，这是一个免费使用的托管 Jupyter notebook 环境。您只需要互联网连接和桌面网络浏览器即可开始深度学习。
 
-
 ## 关于作者
 
 | ![](img/Chollet.png) | 弗朗瓦·肖莱是 Keras 的创始人，这是最广泛使用的深度学习框架之一。他目前是 Google 的软件工程师，负责领导 Keras 团队。此外，他还在研究抽象、推理以及如何在人工智能中实现更大的普适性。 |
+
 | --- | --- |
 
 ## 关于封面插图

@@ -1,14 +1,16 @@
+
+
 # 第七章：实用工具、技巧和窍门
 
 本章包含我们作为作者在专业工作中以及在撰写本书过程中遇到的材料，主要是在实验过程中。这里涵盖的材料不一定适用于任何单独的章节；相反，这些材料是深度学习从业者在日常工作中可能会发现有用的，涵盖了各种任务的实用指南，包括设置环境、训练、模型互操作性、数据收集和标记、代码质量、管理实验、团队协作实践、隐私以及进一步探索主题。
 
-由于人工智能领域变化迅速，本章是书籍 Github 存储库（请参见[*http://PracticalDeepLearning.ai*](http://PracticalDeepLearning.ai)）中的“活动”文档的一个小子集，该文档位于*code/chapter-9*，正在不断发展。如果您有更多问题，或者更好的答案可以帮助其他读者，请随时在 Twitter 上发送推文[@PracticalDLBook](https://www.twitter.com/PracticalDLBook)或提交拉取请求。
+由于人工智能领域变化迅速，本章是书籍 Github 存储库（请参见[*http://PracticalDeepLearning.ai*](http://PracticalDeepLearning.ai)）中的“活动”文档的一个小子集，该文档位于`code/chapter-9`，正在不断发展。如果您有更多问题，或者更好的答案可以帮助其他读者，请随时在 Twitter 上发送推文[@PracticalDLBook](https://www.twitter.com/PracticalDLBook)或提交拉取请求。
 
-# 安装
+## 安装
 
 **Q:** *我在 GitHub 上发现了一个有趣且有用的 Jupyter Notebook。要使代码运行，需要克隆存储库、安装软件包、设置环境等多个步骤。有没有一种即时的方法可以交互式运行它？*
 
-只需将 Git 存储库 URL 输入到 Binder（*[mybinder.org](http://mybinder.org)*），它将把它转换为一组交互式笔记本。在幕后，它会搜索存储库根目录中的*requirements.txt*或*environment.yml*等依赖文件。这将用于构建一个 Docker 镜像，以帮助在浏览器中交互式运行笔记本。
+只需将 Git 存储库 URL 输入到 Binder（*[mybinder.org](http://mybinder.org)*），它将把它转换为一组交互式笔记本。在幕后，它会搜索存储库根目录中的`requirements.txt`或`environment.yml`等依赖文件。这将用于构建一个 Docker 镜像，以帮助在浏览器中交互式运行笔记本。
 
 **Q:** *在新的 Ubuntu 机器上使用 NVIDIA GPU，快速搭建深度学习环境的最快方法是什么？*
 
@@ -30,11 +32,9 @@ https://lambdalabs.com/static/misc/lambda-stack-repo.deb \
 
 **Q:** *在 Windows PC 上安装 TensorFlow 的最快方法是什么？*
 
-1.  安装 Anaconda Python 3.7。
-
-1.  在命令行上运行`conda install tensorflow-gpu`。
-
-1.  如果您没有 GPU，运行`conda install tensorflow`。
+1. 安装 Anaconda Python 3.7。
+2. 在命令行上运行`conda install tensorflow-gpu`。
+3. 如果您没有 GPU，运行`conda install tensorflow`。
 
 基于 CPU 的 Conda 安装的一个额外好处是它安装了经过优化的 Intel MKL TensorFlow，比使用`pip install tensorflow`得到的版本运行更快。
 
@@ -42,17 +42,15 @@ https://lambdalabs.com/static/misc/lambda-stack-repo.deb \
 
 尽管大多数深度学习领域使用 NVIDIA GPU，但有越来越多的人群在 AMD 硬件上运行，并借助 ROCm 堆栈。使用命令行进行安装很简单：
 
-1.  `sudo apt install rocm-libs miopen-hip cxlactivitylogger`
-
-1.  `sudo apt install wget python3-pip`
-
-1.  `pip3 install --user tensorflow-rocm`
+1. `sudo apt install rocm-libs miopen-hip cxlactivitylogger`
+2. `sudo apt install wget python3-pip`
+3. `pip3 install --user tensorflow-rocm`
 
 **Q:** *忘记安装，我在哪里可以获得预安装的深度学习容器？*
 
 Docker 与设置环境是同义词。Docker 帮助运行与工具、库和配置文件捆绑在一起的隔离容器。在选择来自主要云提供商（如 AWS、Microsoft Azure、GCP、阿里巴巴等）的虚拟机（VM）时，有几个深度学习 Docker 容器可用于立即开始工作。NVIDIA 还免费提供 NVIDIA GPU 云容器，这些容器与用于在 MLPerf 基准测试中打破训练速度记录的高性能容器相同。您甚至可以在桌面机器上运行这些容器。
 
-# 训练
+## 训练
 
 **Q:** *我不喜欢不断盯着屏幕检查我的训练是否已完成。我能否在手机上收到通知警报？*
 
@@ -76,7 +74,7 @@ tf.test.is_gpu_available()
 
 **Q:** *我的机器上有多个 GPU。我不希望我的训练脚本占用所有 GPU。如何限制我的脚本仅在特定 GPU 上运行？*
 
-*使用* `CUDA_VISIBLE_DEVICES=GPU_ID`。只需在训练脚本命令前加上以下前缀：
+使用`CUDA_VISIBLE_DEVICES=GPU_ID`。只需在训练脚本命令前加上以下前缀：
 
 ```py
 $ CUDA_VISIBLE_DEVICES=GPU_ID python train.py
@@ -101,9 +99,9 @@ os.environ["CUDA_VISIBLE_DEVICES"]="GPU_ID"
 
 **Q:** *如何调试我的 TensorFlow 脚本？*
 
-答案就在问题中：TensorFlow 调试器（`tfdbg）。
+答案就在问题中：TensorFlow 调试器（`tfdbg`）。
 
-# 模型
+## 模型
 
 **Q:** *我想快速了解我的模型的输入和输出层，而不必编写代码。我该如何实现？*
 
@@ -119,7 +117,7 @@ os.environ["CUDA_VISIBLE_DEVICES"]="GPU_ID"
 
 **Q:** 我已经训练好了我的模型。如何让其他人可以使用它？
 
-你可以开始让模型可以从 GitHub 下载。然后将其列在前面答案中提到的模型动物园中。为了更广泛地采用，将其上传到 TensorFlow Hub（tfhub.dev）。
+你可以开始让模型可以从 GitHub 下载。然后将其列在前面答案中提到的模型动物园中。为了更广泛地采用，将其上传到 TensorFlow Hub（`tfhub.dev`）。
 
 除了模型之外，您应该发布一个“模型卡片”，它本质上就像模型的简历。这是一个详细介绍作者信息、准确度指标和基准数据集的简短报告。此外，它提供了关于潜在偏见和超出范围用途的指导。
 
@@ -127,13 +125,13 @@ os.environ["CUDA_VISIBLE_DEVICES"]="GPU_ID"
 
 不需要。你只需要 ONNX 的力量。对于不在 TensorFlow 生态系统中的模型，大多数主要的深度学习库都支持将它们保存为 ONNX 格式，然后可以将其转换为 TensorFlow 格式。微软的 MMdnn 可以帮助进行这种转换。
 
-# 数据
+## 数据
 
 **Q:** 我能在几分钟内收集关于一个主题的数百张图像吗？
 
 是的，你可以使用一个名为 Fatkun Batch Download Image 的 Chrome 扩展，在三分钟或更短的时间内收集数百张图像。只需在你喜欢的图像搜索引擎中搜索一个关键词，按正确的使用权限（例如，公共领域）过滤图像，然后按下 Fatkun 扩展下载所有图像。参见第十二章，在那里我们使用它构建了一个 Not Hotdog 应用程序。
 
-额外提示：要从单个网站下载，请搜索一个关键词，后面跟着 site:网站地址。例如，“马 site:flickr.com”。
+额外提示：要从单个网站下载，请搜索一个关键词，后面跟着`site:网站地址`。例如，“马 site:flickr.com”。
 
 **Q:** 忘掉浏览器。如何使用命令行从 Google 爬取图像？
 
@@ -164,7 +162,7 @@ $ googleimagesdownload -k=horse -l=50 -r=labeled-for-reuse
 
 [Scrapy.org](http://Scrapy.org)
 
-对于更可编程的爬取控制，这是最著名的爬虫之一。与构建自己的天真爬虫来探索网站相比，它提供了按域名、代理和 IP 进行节流速率的功能；可以处理 robots.txt；提供了在向 Web 服务器显示的浏览器标头方面的灵活性；并处理了几种可能的边缘情况。
+对于更可编程的爬取控制，这是最著名的爬虫之一。与构建自己的天真爬虫来探索网站相比，它提供了按域名、代理和 IP 进行节流速率的功能；可以处理`robots.txt`；提供了在向 Web 服务器显示的浏览器标头方面的灵活性；并处理了几种可能的边缘情况。
 
 InstaLooter
 
@@ -188,13 +186,10 @@ TensorFlow 数据集是一个不断增长的数据集集合，可以与 TensorFl
 
 **Q：** *有哪些可用于训练的最大数据集？*
 
-+   腾讯 ML 图片：1,770 万张图片，带有 11,000 个类别标签
-
-+   Open Images V4（来自 Google）：19.7 K 类别中的 9 百万张图片
-
-+   BDD100K（来自加州大学伯克利分校）：来自 100,000 个驾驶视频的图像，超过 1,100 小时
-
-+   YFCC100M（来自雅虎）：99.2 百万张图片
++ 腾讯 ML 图片：1,770 万张图片，带有 11,000 个类别标签
++ Open Images V4（来自 Google）：19.7 K 类别中的 9 百万张图片
++ BDD100K（来自加州大学伯克利分校）：来自 100,000 个驾驶视频的图像，超过 1,100 小时
++ YFCC100M（来自雅虎）：99.2 百万张图片
 
 **Q：** *有哪些现成的大型视频数据集可以使用？*
 
@@ -208,9 +203,8 @@ TensorFlow 数据集是一个不断增长的数据集集合，可以与 TensorFl
 
 没有！像 Facebook 和 Google 这样的公司会精心策划自己的私人数据集，这些数据集比我们可以使用的公共数据集要大得多：
 
-+   Facebook：35 亿张带有嘈杂标签的 Instagram 图片（首次报道于 2018 年）
-
-+   谷歌 - JFT-300M：30 亿张带有嘈杂标签的图片（首次报道于 2017 年）
++ Facebook：35 亿张带有嘈杂标签的 Instagram 图片（首次报道于 2018 年）
++ 谷歌 - JFT-300M：30 亿张带有嘈杂标签的图片（首次报道于 2017 年）
 
 遗憾的是，除非你是这些公司的员工，否则你实际上无法访问这些数据集。我们必须说，这是一个不错的招聘策略。
 
@@ -226,7 +220,7 @@ Qri 和 Quilt 可以帮助版本控制我们的数据集，有助于实验的可
 
 尝试为训练开发一个合成数据集！例如，找到感兴趣对象的逼真 3D 模型，并使用 Unity 等 3D 框架将其放置在逼真的环境中。调整光照和相机位置、缩放和旋转，从多个角度拍摄这个对象的快照，生成无限的训练数据。此外，像 AI.Reverie、CVEDIA、Neuromation、Cognata、Mostly.ai 和 DataGen Tech 这样的公司提供了用于训练需求的逼真模拟。合成训练数据的一个重要好处是标记过程内置于合成过程中。毕竟，您会知道自己在创造什么。与手动标记相比，这种自动标记可以节省大量金钱和精力。
 
-# 隐私
+## 隐私
 
 **Q:** *如何开发一个更注重隐私的模型而不深入研究密码学？*
 
@@ -236,19 +230,26 @@ TensorFlow Encrypted 可能是您正在寻找的解决方案。它可以使用�
 
 嗯，除非你在云端，权重是可见的并且可以被反向工程。在智能手机上部署时，使用 Fritz 库来保护您模型的知识产权。
 
-# 教育和探索
+## 教育和探索
 
 **Q:** *我想成为人工智能专家。除了这本书，我应该在哪里投入更多时间学习？*
 
 在互联网上有几个资源可以深入学习深度学习。我们强烈推荐这些来自一些最好的老师的视频讲座，涵盖了从计算机视觉到自然语言处理等各种应用领域。
 
-+   Fast.ai（由 Jeremy Howard 和 Rachel Thomas 创建）提供了一个免费的 14 集视频讲座系列，采用更多的 PyTorch 实践学习方法。除了课程，还有一整套工具和一个活跃的社区，已经导致了许多研究论文和可直接使用的代码的突破（比如使用 fast.ai 库训练最先进网络只需三行代码）。
 
-+   Deeplearning.ai（由 Andrew Ng 创建）提供了一个包含五门课程的“深度学习专项课程”。它是免费的（尽管您可以支付一小笔费用以获得证书），将进一步巩固您的理论基础。Ng 博士在 Coursera 上的第一门机器学习课程已经教授了超过两百万名学生，这个系列延续了深受初学者和专家喜爱的高度易懂的内容传统。
 
-+   如果我们没有在这个列表中鼓励您注意[O'Reilly 的在线学习](http://oreilly.com)平台，我们将感到遗憾。这个平台帮助超过两百万用户提升他们的职业，包含数百本书籍、视频、在线培训和由 O'Reilly 的人工智能和数据会议上的领先思想家和实践者发表的主题演讲。
 
-**Q:** *我在哪里可以找到有趣的笔记本进行学习？*
+# 学习资源推荐
+
++   [Fast.ai](http://fast.ai)（由 Jeremy Howard 和 Rachel Thomas 创建）提供了一个免费的 14 集视频讲座系列，采用更多的 PyTorch 实践学习方法。除了课程，还有一整套工具和一个活跃的社区，已经导致了许多研究论文和可直接使用的代码的突破（比如使用 `fast.ai` 库训练最先进网络只需三行代码）。
+
++   [Deeplearning.ai](http://deeplearning.ai)（由 Andrew Ng 创建）提供了一个包含五门课程的“深度学习专项课程”。它是免费的（尽管您可以支付一小笔费用以获得证书），将进一步巩固您的理论基础。Ng 博士在 Coursera 上的第一门机器学习课程已经教授了超过两百万名学生，这个系列延续了深受初学者和专家喜爱的高度易懂的内容传统。
+
++   如果我们没有在这个列表中鼓励您注意 [O'Reilly 的在线学习](http://oreilly.com) 平台，我们将感到遗憾。这个平台帮助超过两百万用户提升他们的职业，包含数百本书籍、视频、在线培训和由 O'Reilly 的人工智能和数据会议上的领先思想家和实践者发表的主题演讲。
+
+# 常见问题解答
+
+## 我在哪里可以找到有趣的笔记本进行学习？
 
 Google Seedbank 是一个互动机器学习示例集合。基于 Google Colaboratory 构建，这些 Jupyter 笔记本可以立即运行，无需任何安装。一些有趣的示例包括：
 
@@ -260,28 +261,28 @@ Google Seedbank 是一个互动机器学习示例集合。基于 Google Colabora
 
 +   音频风格转移
 
-**Q:** *我在哪里可以了解特定主题的最新技术？*
+## 我在哪里可以了解特定主题的最新技术？
 
-考虑到人工智能领域技术更新迅速，SOTAWHAT 是一个方便的命令行工具，可以搜索最新模型、数据集、任务等研究论文。例如，要查找 ImageNet 的最新结果，请在命令行上使用`sotawhat imagenet`。此外，[*paperswithcode.com/sota*](http://paperswithcode.com/sota)还提供了论文、源代码和发布模型的存储库，以及一个交互式的基准时间轴。
+考虑到人工智能领域技术更新迅速，SOTAWHAT 是一个方便的命令行工具，可以搜索最新模型、数据集、任务等研究论文。例如，要查找 ImageNet 的最新结果，请在命令行上使用 `sotawhat imagenet`。此外，[paperswithcode.com/sota](http://paperswithcode.com/sota) 还提供了论文、源代码和发布模型的存储库，以及一个交互式的基准时间轴。
 
-**Q:** *我正在阅读一篇 Arxiv 上的论文，我非常喜欢。我需要从头开始编写代码吗？*
+## 我正在阅读一篇 Arxiv 上的论文，我非常喜欢。我需要从头开始编写代码吗？
 
-一点也不！ResearchCode Chrome 扩展程序使得在浏览*[arxiv.org](http://arxiv.org)*或 Google Scholar 时轻松找到代码。只需按一下扩展按钮即可。您也可以在*[ResearchCode.com](http://ResearchCode.com)*网站上查找代码而无需安装扩展程序。
+一点也不！ResearchCode Chrome 扩展程序使得在浏览 [arxiv.org](http://arxiv.org) 或 Google Scholar 时轻松找到代码。只需按一下扩展按钮即可。您也可以在 [ResearchCode.com](http://ResearchCode.com) 网站上查找代码而无需安装扩展程序。
 
-**Q:** *我不想写任何代码，但我仍然想使用我的摄像头进行交互式实验模型。我该怎么做？
+## 我不想写任何代码，但我仍然想使用我的摄像头进行交互式实验模型。我该怎么做？
 
-[Runway ML](https://runwayml.com)是一个易于使用但功能强大的 GUI 工具，允许您下载模型（来自互联网或您自己的模型）并使用网络摄像头或其他输入，如视频文件，以交互方式查看输出。这使得进一步组合和混合模型的输出以创建新作品成为可能。所有这些只需点击几下鼠标就能完成；因此，它吸引了大量的艺术家社区！
+[Runway ML](https://runwayml.com) 是一个易于使用但功能强大的 GUI 工具，允许您下载模型（来自互联网或您自己的模型）并使用网络摄像头或其他输入，如视频文件，以交互方式查看输出。这使得进一步组合和混合模型的输出以创建新作品成为可能。所有这些只需点击几下鼠标就能完成；因此，它吸引了大量的艺术家社区！
 
-**Q:** *如果我可以在没有代码的情况下进行测试，那么我也可以在没有代码的情况下进行训练吗？*
+## 如果我可以在没有代码的情况下进行测试，那么我也可以在没有代码的情况下进行训练吗？
 
-我们在第八章（基于网络）和第十二章（基于桌面）中详细讨论了这个问题。简而言之，诸如微软的[CustomVision.ai](http://CustomVision.ai)、谷歌的 Cloud AutoML Vision、Clarifai、百度 EZDL 和苹果的 Create ML 等工具提供了拖放式训练功能。其中一些工具只需几秒钟就能完成训练。
+我们在第八章（基于网络）和第十二章（基于桌面）中详细讨论了这个问题。简而言之，诸如微软的 [CustomVision.ai](http://CustomVision.ai)、谷歌的 Cloud AutoML Vision、Clarifai、百度 EZDL 和苹果的 Create ML 等工具提供了拖放式训练功能。其中一些工具只需几秒钟就能完成训练。
 
 # 最后一个问题
 
-**Q:** *告诉我一个伟大的深度学习恶作剧？*
+## 告诉我一个伟大的深度学习恶作剧？
 
-打印并挂在[*keras4kindergartners.com*](http://keras4kindergartners.com)上显示的海报，靠近饮水机，看着人们的反应。
+打印并挂在 [keras4kindergartners.com](http://keras4kindergartners.com) 上显示的海报，靠近饮水机，看着人们的反应。
 
 ![来自 keras4kindergartners.com 的关于 AI 状态的讽刺海报](img/00056.jpeg)
 
-###### 图 7-1\. 来自[keras4kindergartners.com](http://keras4kindergartners.com)的关于 AI 状态的讽刺海报
+###### 图 7-1\. 来自 [keras4kindergartners.com](http://keras4kindergartners.com) 的关于 AI 状态的讽刺海报

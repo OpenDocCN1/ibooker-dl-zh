@@ -1,14 +1,12 @@
+
 # 第十一章：部署和提供 NLP 应用程序
 
 本章涵盖
 
-+   选择适合您的 NLP 应用程序的正确架构
-
-+   版本控制您的代码、数据和模型
-
-+   部署和提供您的 NLP 模型
-
-+   使用 LIT（Language Interpretability Tool）解释和分析模型预测
++ 选择适合您的 NLP 应用程序的正确架构
++ 版本控制您的代码、数据和模型
++ 部署和提供您的 NLP 模型
++ 使用 LIT（Language Interpretability Tool）解释和分析模型预测
 
 本书的第 1 至 10 章是关于构建 NLP 模型的，而本章涵盖的是*不在* NLP 模型之外发生的一切。为什么这很重要？难道 NLP 不都是关于构建高质量的 ML 模型吗？如果您没有太多生产 NLP 系统的经验，这可能会让您感到惊讶，但典型现实世界的 ML 系统的很大一部分与 NLP 几乎没有关系。如图 11.1 所示，典型实际 ML 系统的只有一小部分是 ML 代码，但“ML 代码”部分由提供各种功能的许多组件支持，包括数据收集、特征提取和服务。让我们用核电站作为类比。在操作核电站时，只有一小部分涉及核反应。其他一切都是支持安全有效地生成和传输材料和电力的庞大而复杂的基础设施——如何利用生成的热量转动涡轮发电，如何安全冷却和循环水，如何高效传输电力等等。所有这些支持基础设施与核物理几乎无关。
 
@@ -28,7 +26,7 @@
 
 我明白这是一本关于 NLP 和 ML 的书，但在您开始着手处理您的 NLP 应用程序之前，您应该认真考虑您是否真的需要 ML 来解决您的产品问题。构建一个 ML 系统并不容易——需要花费大量的时间和金钱来收集数据、训练模型和提供预测。如果您可以通过编写一些规则来解决问题，那就这样做吧。作为一个经验法则，如果深度学习模型可以达到 80% 的准确率，那么一个更简单的基于规则的模型至少可以将您带到一半的路上。
 
-此外，如果有现成的解决方案，您应该考虑使用。许多开源的 NLP 库（包括我们在整本书中广泛使用的 AllenNLP 和 Transformers 两个库）都提供了各种预训练模型。云服务提供商（如 AWS AI 服务 ([`aws.amazon.com/machine-learning/ai-services/`](https://aws.amazon.com/machine-learning/ai-services/))、Google Cloud AutoML ([`cloud.google.com/automl`](https://cloud.google.com/automl)) 和 Microsoft Azure Cognitive Services ([`azure.microsoft.com/en-us/services/cognitive-services/`](https://azure.microsoft.com/en-us/services/cognitive-services/))）为许多领域提供了广泛的与 ML 相关的 API，包括 NLP。如果您的任务可以通过它们提供的解决方案进行零或少量修改来解决，那通常是构建 NLP 应用的一种成本效益较高的方式。毕竟，任何 NLP 应用程序中最昂贵的组件通常是高技能人才（即您的工资），在您全力投入并构建内部 NLP 解决方案之前，您应该三思而后行。
+此外，如果有现成的解决方案，您应该考虑使用。许多开源的 NLP 库（包括我们在整本书中广泛使用的 `AllenNLP` 和 `Transformers` 两个库）都提供了各种预训练模型。云服务提供商（如 AWS AI 服务 ([`https://aws.amazon.com/machine-learning/ai-services/`](https://aws.amazon.com/machine-learning/ai-services/))、Google Cloud AutoML ([`https://cloud.google.com/automl`](https://cloud.google.com/automl)) 和 Microsoft Azure Cognitive Services ([`https://azure.microsoft.com/en-us/services/cognitive-services/`](https://azure.microsoft.com/en-us/services/cognitive-services/))）为许多领域提供了广泛的与 ML 相关的 API，包括 NLP。如果您的任务可以通过它们提供的解决方案进行零或少量修改来解决，那通常是构建 NLP 应用的一种成本效益较高的方式。毕竟，任何 NLP 应用程序中最昂贵的组件通常是高技能人才（即您的工资），在您全力投入并构建内部 NLP 解决方案之前，您应该三思而后行。
 
 此外，您不应排除“传统”的机器学习方法。在本书中，我们很少关注传统的 ML 模型，但在深度 NLP 方法出现之前，您可以找到丰富的统计 NLP 模型的文献。使用统计特征（例如 n-gram）和 ML 模型（例如 SVM）快速构建原型通常是一个很好的开始。非深度学习算法，例如 *梯度提升决策树*（GBDT），通常以比深度学习方法更低的成本几乎同样有效，如果不是更好。
 
@@ -42,7 +40,7 @@ NLP 应用可以采取多种形式。令人惊讶的是，许多 NLP 组件可�
 
 许多其他 NLP 组件可以被构造成批量运行预测的（微）服务，这是我推荐的许多场景的架构。例如，垃圾邮件过滤器并不需要在每封邮件到达时立即对其进行分类 - 系统可以将到达系统的一定数量的邮件排队，并将批处理的邮件传递给分类器服务。NLP 应用程序通常通过某种中介（例如 RESTful API 或排队系统）与系统的其余部分进行通信。这种配置非常适合需要对其预测保持一定新鲜度的应用程序（毕竟，用户不希望等待几个小时直到他们的电子邮件到达收件箱），但要求并不那么严格。
 
-最后，NLP 组件也可以设计成为提供实时预测的方式。例如，当观众需要演讲的实时字幕时，这是必要的。另一个例子是当系统想要根据用户的实时行为显示广告时。对于这些情况，NLP 服务需要接收一系列输入数据（如音频或用户事件），并生成另一系列数据（如转录文本或广告点击概率）。诸如 Apache Flink ([`flink.apache.org/`](https://flink.apache.org/)) 这样的*实时流处理框架*经常用于处理此类流数据。另外，如果您的应用程序基于服务器-客户端架构，例如典型的移动和 Web 应用程序，并且您想向用户显示一些实时预测，您可以选择在客户端上运行 ML/NLP 模型，例如 Web 浏览器或智能手机。诸如 TensorFlow.js ([`www.tensorflow.org/js`](https://www.tensorflow.org/js))、Core ML ([`developer.apple.com/documentation/coreml`](https://developer.apple.com/documentation/coreml)) 和 ML Kit ([`developers.google.com/ml-kit`](https://developers.google.com/ml-kit)) 这样的客户端 ML 框架可用于此类目的。
+最后，NLP 组件也可以设计成为提供实时预测的方式。例如，当观众需要演讲的实时字幕时，这是必要的。另一个例子是当系统想要根据用户的实时行为显示广告时。对于这些情况，NLP 服务需要接收一系列输入数据（如音频或用户事件），并生成另一系列数据（如转录文本或广告点击概率）。诸如 Apache Flink ([`https://flink.apache.org/`](https://flink.apache.org/)) 这样的*实时流处理框架*经常用于处理此类流数据。另外，如果您的应用程序基于服务器-客户端架构，例如典型的移动和 Web 应用程序，并且您想向用户显示一些实时预测，您可以选择在客户端上运行 ML/NLP 模型，例如 Web 浏览器或智能手机。诸如 TensorFlow.js ([`https://www.tensorflow.org/js`](https://www.tensorflow.org/js))、Core ML ([`https://developer.apple.com/documentation/coreml`](https://developer.apple.com/documentation/coreml)) 和 ML Kit ([`https://developers.google.com/ml-kit`](https://developers.google.com/ml-kit)) 这样的客户端 ML 框架可用于此类目的。
 
 ### 11.1.3 项目结构
 
@@ -50,13 +48,13 @@ NLP 应用可以采取多种形式。令人惊讶的是，许多 NLP 组件可�
 
 因为典型的 NLP 应用程序有许多共同的组件和目录，所以如果您在启动新项目时只是遵循最佳实践作为默认选择，那将是有用的。以下是我为组织您的 NLP 项目提出的建议：
 
-+   *数据管理*—创建一个名为 data 的目录，并将所有数据放入其中。将其进一步细分为原始、中间和结果目录可能也会有所帮助。原始目录包含您外部获取的未经处理的数据集文件（例如我们在本书中一直在使用的斯坦福情感树库）或内部构建的文件。非常重要的一点是*不要手动修改此原始目录中的任何文件*。如果需要进行更改，请编写一个运行一些处理以针对原始文件运行的脚本，然后将结果写入中间目录的脚本，该目录用作中间结果的存储位置。或者创建一个管理您对原始文件进行的“差异”的补丁文件，并将补丁文件进行版本控制。最终的结果，例如预测和指标，应存储在结果目录中。
++ *数据管理*—创建一个名为 `data` 的目录，并将所有数据放入其中。将其进一步细分为原始、中间和结果目录可能也会有所帮助。原始目录包含您外部获取的未经处理的数据集文件（例如我们在本书中一直在使用的斯坦福情感树库）或内部构建的文件。非常重要的一点是*不要手动修改此原始目录中的任何文件*。如果需要进行更改，请编写一个运行一些处理以针对原始文件运行的脚本，然后将结果写入中间目录的脚本，该目录用作中间结果的存储位置。或者创建一个管理您对原始文件进行的“差异”的补丁文件，并将补丁文件进行版本控制。最终的结果，例如预测和指标，应存储在结果目录中。
 
-+   *虚拟环境*—强烈建议您在虚拟环境中工作，以便您的依赖项分开且可重现。您可以使用诸如 Conda ([`docs.conda.io/en/latest/`](https://docs.conda.io/en/latest/))（我推荐的）和 venv ([`docs.python.org/3/library/venv.html`](https://docs.python.org/3/library/venv.html)) 等工具为您的项目设置一个单独的环境，并使用 pip 安装单个软件包。Conda 可以将环境配置导出到一个 environment.yml 文件中，您可以使用该文件来恢复确切的 Conda 环境。您还可以将项目的 pip 包跟踪在一个 requirements.txt 文件中。更好的是，您可以使用 Docker 容器来管理和打包整个 ML 环境。这极大地减少了与依赖项相关的问题，并简化了部署和服务化。
++ *虚拟环境*—强烈建议您在虚拟环境中工作，以便您的依赖项分开且可重现。您可以使用诸如 Conda ([`https://docs.conda.io/en/latest/`](https://docs.conda.io/en/latest/))（我推荐的）和 venv ([`https://docs.python.org/3/library/venv.html`](https://docs.python.org/3/library/venv.html)) 等工具为您的项目设置一个单独的环境，并使用 pip 安装单个软件包。Conda 可以将环境配置导出到一个 `environment.yml` 文件中，您可以使用该文件来恢复确切的 Conda 环境。您还可以将项目的 pip 包跟踪在一个 `requirements.txt` 文件中。更好的是，您可以使用 Docker 容器来管理和打包整个 ML 环境。这极大地减少了与依赖项相关的问题，并简化了部署和服务化。
 
-+   *实验管理*—NLP 应用程序的训练和推理管道通常包括多个步骤，例如预处理和连接数据，将其转换为特征，训练和运行模型，以及将结果转换回人类可读格式。如果试图手动记住管理这些步骤，很容易失控。一个好的做法是在一个 shell 脚本文件中跟踪管道的步骤，以便只需一个命令即可重现实验，或者使用依赖管理软件，如 GNU Make、Luigi ([`github.com/spotify/luigi`](https://github.com/spotify/luigi)) 和 Apache Airflow ([`airflow.apache.org/`](https://airflow.apache.org/))。
++ *实验管理*—NLP 应用程序的训练和推理管道通常包括多个步骤，例如预处理和连接数据，将其转换为特征，训练和运行模型，以及将结果转换回人类可读格式。如果试图手动记住管理这些步骤，很容易失控。一个好的做法是在一个 shell 脚本文件中跟踪管道的步骤，以便只需一个命令即可重现实验，或者使用依赖管理软件，如 GNU Make、Luigi ([`https://github.com/spotify/luigi`](https://github.com/spotify/luigi)) 和 Apache Airflow ([`https://airflow.apache.org/`](https://airflow.apache.org/))。
 
-+   *源代码*—Python 源代码通常放在与项目同名的目录中，该目录进一步细分为诸如 data（用于数据处理代码）、model（用于模型代码）和 scripts（用于放置用于训练和其他一次性任务的脚本）等目录。
++ *源代码*—Python 源代码通常放在与项目同名的目录中，该目录进一步细分为诸如 `data`（用于数据处理代码）、`model`（用于模型代码）和 `scripts`（用于放置用于训练和其他一次性任务的脚本）等目录。
 
 ### 11.1.4 版本控制
 
@@ -64,7 +62,7 @@ NLP 应用可以采取多种形式。令人惊讶的是，许多 NLP 组件可�
 
 除了对源代码进行版本控制外，对*数据和模型进行版本控制*也很重要。这意味着您应该分别对训练数据、源代码和模型进行版本控制，如图 11.2 中虚线框所示。这是常规软件项目和机器学习应用之间的主要区别之一。机器学习是通过数据改进计算机算法的过程。根据定义，任何机器学习系统的行为都取决于其所接收的数据。这可能会导致即使您使用相同的代码，系统的行为也会有所不同的情况。
 
-工具如 Git Large File Storage ([`git-lfs.github.com/`](https://git-lfs.github.com/))和 DVC ([`dvc.org`](https://dvc.org))可以以无缝的方式对数据和模型进行版本控制。即使您不使用这些工具，您也应该至少将不同版本作为清晰命名的单独文件进行管理。
+工具如 Git Large File Storage ([`https://git-lfs.github.com/`](https://git-lfs.github.com/))和 DVC ([`https://dvc.org`](https://dvc.org))可以以无缝的方式对数据和模型进行版本控制。即使您不使用这些工具，您也应该至少将不同版本作为清晰命名的单独文件进行管理。
 
 ![CH11_F02_Hagiwara](img/CH11_F02_Hagiwara.png)
 
@@ -72,13 +70,11 @@ NLP 应用可以采取多种形式。令人惊讶的是，许多 NLP 组件可�
 
 在一个更大更复杂的机器学习项目中，您可能希望将模型和特征管道的版本控制分开，因为机器学习模型的行为可能会因为您对输入进行预处理的方式不同而不同，即使是相同的模型和输入数据。这也将减轻我们稍后将在 11.3.2 节讨论的训练服务偏差问题。
 
-最后，当您在机器学习应用上工作时，您将尝试许多不同的设置——不同的训练数据集、特征管道、模型和超参数的组合——这可能会很难控制。我建议您使用一些实验管理系统来跟踪训练设置，例如 Weights & Biases ([`wandb.ai/`](https://wandb.ai/))，但您也可以使用像手动输入实验信息的电子表格这样简单的东西。在跟踪实验时，请务必记录每个实验的以下信息：
+最后，当您在机器学习应用上工作时，您将尝试许多不同的设置——不同的训练数据集、特征管道、模型和超参数的组合——这可能会很难控制。我建议您使用一些实验管理系统来跟踪训练设置，例如 Weights & Biases ([`https://wandb.ai/`](https://wandb.ai/))，但您也可以使用像手动输入实验信息的电子表格这样简单的东西。在跟踪实验时，请务必记录每个实验的以下信息：
 
-+   使用的模型代码版本、特征管道和训练数据的版本
-
-+   用于训练模型的超参数
-
-+   训练数据和验证数据的评估指标
++ 使用的模型代码版本、特征管道和训练数据的版本
++ 用于训练模型的超参数
++ 训练数据和验证数据的评估指标
 
 像 AllenNLP 这样的平台默认支持实验配置，这使得前两项变得容易。工具如 TensorBoard，它们默认由 AllenNLP 和 Hugging Face 支持，使得跟踪各种指标变得轻而易举。
 
@@ -94,15 +90,11 @@ NLP 应用可以采取多种形式。令人惊讶的是，许多 NLP 组件可�
 
 一个推荐的测试 NLP/ML 模型的技术是对模型输出进行 sanity checks。你可以从一个小而简单的模型开始，只使用几个带有明显标签的玩具实例。例如，如果你正在测试情感分析模型，可以按照以下步骤进行：
 
-+   为调试创建一个小而简单的模型，比如一个简单的玩具编码器，它只是将输入的单词嵌入平均化，并在顶部使用一个 softmax 层。
-
-+   准备一些玩具实例，比如“最棒的电影！”（积极）和“这是一部糟糕的电影！”（消极）。
-
-+   将这些实例提供给模型，并训练直到收敛。由于我们使用的是一个非常小的数据集，没有验证集，所以模型会严重过拟合到这些实例上，这完全可以接受。检查训练损失是否如预期下降。
-
-+   将相同的实例提供给训练好的模型，检查预测的标签是否与预期的标签匹配。
-
-+   使用更多玩具实例和更大的模型尝试上述步骤。
++ 为调试创建一个小而简单的模型，比如一个简单的玩具编码器，它只是将输入的单词嵌入平均化，并在顶部使用一个 softmax 层。
++ 准备一些玩具实例，比如“最棒的电影！”（积极）和“这是一部糟糕的电影！”（消极）。
++ 将这些实例提供给模型，并训练直到收敛。由于我们使用的是一个非常小的数据集，没有验证集，所以模型会严重过拟合到这些实例上，这完全可以接受。检查训练损失是否如预期下降。
++ 将相同的实例提供给训练好的模型，检查预测的标签是否与预期的标签匹配。
++ 使用更多玩具实例和更大的模型尝试上述步骤。
 
 作为一种相关技术，我总是建议您从较小的数据集开始，特别是如果原始数据集很大。因为训练自然语言处理/机器学习模型需要很长时间（几小时甚至几天），您经常会发现只有在训练完成后才能发现代码中的一些错误。您可以对训练数据进行子采样，例如，只需取出每 10 个实例中的一个，以便整个训练过程能够迅速完成。一旦您确信您的模型按预期工作，您可以逐渐增加用于训练的数据量。这种技术也非常适合快速迭代和尝试许多不同的架构和超参数设置。当您刚开始构建模型时，您通常不清楚最适合您任务的最佳模型。有了较小的数据集，您可以快速验证许多不同的选项（RNN 与 Transformers，不同的分词器等），并缩小最适合的候选模型集。这种方法的一个警告是，最佳模型架构和超参数可能取决于训练数据的大小。因此，请不要忘记针对完整数据集运行验证。
 
@@ -112,17 +104,19 @@ NLP 应用可以采取多种形式。令人惊讶的是，许多 NLP 组件可�
 
 机器学习应用中常见的错误来源之一被称为*训练-服务偏差*，即在训练和推理时实例处理方式存在差异的情况。这可能发生在各种情况下，但让我们讨论一个具体的例子。假设您正在使用 AllenNLP 构建一个情感分析系统，并希望将文本转换为实例。您通常首先编写一个数据加载器，它读取数据集并生成实例。然后您编写一个 Python 脚本或配置文件，告诉 AllenNLP 模型应该如何训练。您对模型进行训练和验证。到目前为止，一切顺利。然而，当使用模型进行预测时，情况略有不同。您需要编写一个预测器，它会将输入文本转换为实例，并将其传递给模型的前向方法。请注意，现在您有两个独立的流程来预处理输入——一个用于数据集读取器中的训练，另一个用于预测器中的推理。
 
+
+
 如果你想修改输入文本处理的方式会发生什么？例如，假设你发现了你想改进的分词过程中的某些内容，并且你在数据加载器中修改了输入文本的分词方式。你更新了数据加载器代码，重新训练了模型，并部署了模型。然而，你忘记了在预测器中更新相应的分词代码，实际上在训练和服务之间创建了一个输入分词方式不一致的差异。这在图 11.3 中有所说明。
 
 ![CH11_F03_Hagiwara](img/CH11_F03_Hagiwara.png)
 
 图 11.3 训练-服务偏差是由于训练和服务之间输入处理方式的差异而引起的。
 
-修复这个问题的最佳方法——甚至更好的是，第一次就预防它发生——是在训练和服务基础设施之间尽可能共享特征管道。在 AllenNLP 中的一种常见做法是在数据集读取器中实现一个名为 _text_to_instance()的方法，它接受一个输入并返回一个实例。通过确保数据集读取器和预测器都引用同一个方法，你可以尽量减少管道之间的差异。
+修复这个问题的最佳方法——甚至更好的是，第一次就预防它发生——是在训练和服务基础设施之间尽可能共享特征管道。在 AllenNLP 中的一种常见做法是在数据集读取器中实现一个名为`_text_to_instance()`的方法，它接受一个输入并返回一个实例。通过确保数据集读取器和预测器都引用同一个方法，你可以尽量减少管道之间的差异。
 
 在 NLP 中，输入文本被分词并转换为数字值的事实使得调试模型变得更加困难。例如，一个在分词中明显的错误，你可以用肉眼轻松发现，但如果一切都是数字值，那么很难识别。一个好的做法是将一些中间结果记录到一个日志文件中，以便稍后检查。
 
-最后，请注意，神经网络在训练和服务之间的一些行为是不同的。一个显著的例子是**dropout**，一个我们在第 10.3.1 节中简要介绍过的正则化方法。简而言之，dropout 通过在神经网络中随机屏蔽激活值来对模型进行正则化。这在训练中是有道理的，因为通过去除激活，模型学会根据可用值做出稳健的预测。但是，请记住在服务时关闭它，因为你不希望你的模型随机丢弃神经元。PyTorch 模型实现了 train()和 eval()等方法，可以在训练和预测模式之间切换，从而影响像 dropout 这样的层的行为。如果你手动实现了训练循环，请记住调用 model.eval()来禁用 dropout。好消息是，诸如 AllenNLP 之类的框架可以自动处理这个问题，只要你使用它们的默认训练器。
+最后，请注意，神经网络在训练和服务之间的一些行为是不同的。一个显著的例子是`dropout`，一个我们在第 10.3.1 节中简要介绍过的正则化方法。简而言之，`dropout`通过在神经网络中随机屏蔽激活值来对模型进行正则化。这在训练中是有道理的，因为通过去除激活，模型学会根据可用值做出稳健的预测。但是，请记住在服务时关闭它，因为你不希望你的模型随机丢弃神经元。PyTorch 模型实现了`train()`和`eval()`等方法，可以在训练和预测模式之间切换，从而影响像`dropout`这样的层的行为。如果你手动实现了训练循环，请记住调用`model.eval()`来禁用`dropout`。好消息是，诸如 AllenNLP 之类的框架可以自动处理这个问题，只要你使用它们的默认训练器。
 
 ### 11.2.3 监控
 
@@ -138,7 +132,7 @@ NLP 应用可以采取多种形式。令人惊讶的是，许多 NLP 组件可�
 
 图 11.4 Google Colab 允许您选择硬件加速器的类型。
 
-选择 GPU 作为硬件加速器的类型，并在代码块中输入 !nvidia-smi 并执行它。将显示一些关于您的 GPU 的详细信息，如下所示：
+选择 GPU 作为硬件加速器的类型，并在代码块中输入`!nvidia-smi`并执行它。将显示一些关于您的 GPU 的详细信息，如下所示：
 
 ```py
 +-----------------------------------------------------------------------------+
@@ -163,13 +157,13 @@ NLP 应用可以采取多种形式。令人惊讶的是，许多 NLP 组件可�
 
 ```
 
-nvidia-smi 命令（简称 Nvidia 系统管理接口）是一个方便的工具，用于检查机器上 Nvidia GPU 的信息。从上面的代码片段中，您可以看到驱动程序和 CUDA（一种用于与 GPU 交互的 API 和库）的版本、GPU 类型（Tesla T4）、可用和已使用的内存（15109 MiB 和 3 MiB），以及当前使用 GPU 的进程列表（没有）。这个命令的最典型用法是检查当前进程使用了多少内存，因为在 GPU 编程中，如果您的程序使用的内存超过了可用内存，很容易出现内存不足的错误。
+`nvidia-smi`命令（简称 Nvidia 系统管理接口）是一个方便的工具，用于检查机器上 Nvidia GPU 的信息。从上面的代码片段中，您可以看到驱动程序和 CUDA（一种用于与 GPU 交互的 API 和库）的版本、GPU 类型（Tesla T4）、可用和已使用的内存（15109 MiB 和 3 MiB），以及当前使用 GPU 的进程列表（没有）。这个命令的最典型用法是检查当前进程使用了多少内存，因为在 GPU 编程中，如果您的程序使用的内存超过了可用内存，很容易出现内存不足的错误。
 
 如果你使用云基础设施，比如 AWS（Amazon Web Services）和 GCP（Google Cloud Platform），你会发现有很多虚拟机模板，可以用来快速创建支持 GPU 的云实例。例如，GCP 提供了 Nvidia 官方的 GPU 优化图像，可以用作模板来启动 GPU 实例。AWS 提供了深度学习 AMIs（Amazon Machine Images），预先安装了基本的 GPU 库，如 CUDA，以及深度学习库，如 PyTorch。使用这些模板时，你不需要手动安装必要的驱动程序和库——你可以直接开始构建你的 ML 应用程序。请注意，尽管这些模板是免费的，但你需要为基础设施付费。支持 GPU 的虚拟机的价格通常比 CPU 机器高得多。在长时间运行之前，请确保检查它们的价格。
 
 如果你要从头开始设置 GPU 实例，你可以找到详细的说明 ¹ 来设置必要的驱动程序和库。要使用本书中介绍的库（即，AllenNLP 和 Transformers）构建 NLP 应用程序，你需要安装 CUDA 驱动程序和工具包，以及支持 GPU 的 PyTorch 版本。
 
-如果你的机器有 GPU，你可以通过在 AllenNLP 配置文件中指定 cuda_device 来启用 GPU 加速，如下所示：
+如果你的机器有 GPU，你可以通过在 AllenNLP 配置文件中指定`cuda_device`来启用 GPU 加速，如下所示：
 
 ```py
     "trainer": {
@@ -185,7 +179,7 @@ nvidia-smi 命令（简称 Nvidia 系统管理接口）是一个方便的工具�
 
 这告诉训练器使用第一个 GPU 训练和验证 AllenNLP 模型。
 
-如果你要从头开始编写 PyTorch 代码，你需要手动将模型和张量转移到 GPU 上。用比喻来说，这就像是你的材料被运往海外工厂的集装箱船上。首先，你可以指定要使用的设备（GPU ID），并调用张量和模型的 to（）方法在设备之间移动它们。例如，你可以使用以下代码片段在使用 Hugging Face Transformers 的 GPU 上运行文本生成：
+如果你要从头开始编写 PyTorch 代码，你需要手动将模型和张量转移到 GPU 上。用比喻来说，这就像是你的材料被运往海外工厂的集装箱船上。首先，你可以指定要使用的设备（GPU ID），并调用张量和模型的`to()`方法在设备之间移动它们。例如，你可以使用以下代码片段在使用 Hugging Face Transformers 的 GPU 上运行文本生成：
 
 ```py
 device = torch.device('cuda:0')
@@ -226,11 +220,19 @@ git lfs install
 git clone https://huggingface.co/distilgpt2
 ```
 
-这将创建一个名为 distilgpt2 的子目录，其中包含 config.json 和 pytorch_model.bin 等文件。
+这将创建一个名为`distilgpt2`的子目录，其中包含`config.json`和`pytorch_model.bin`等文件。
 
 接下来，您需要为 TorchServe 编写一个处理程序，这是一个轻量级的包装类，指定了如何初始化您的模型、预处理和后处理输入以及对输入进行推断。清单 11.1 显示了用于服务 DistilGPT2 模型的处理程序代码。实际上，处理程序中的任何内容都不特定于我们使用的特定模型（DistilGPT2）。只要使用 Transformers 库，您就可以将相同的代码用于其他类似 GPT-2 的模型，包括原始的 GPT-2 模型。
 
 清单 11.1 TorchServe 的处理程序
+
+
+
+# 使用 TorchServe 部署 GPT-2 模型
+
+## 11.3.1 编写 TorchServe 处理程序
+
+以下代码展示了一个完整的 TorchServe 处理程序，用于加载和运行 GPT-2 语言模型：
 
 ```py
 from abc import ABC
@@ -328,18 +330,14 @@ def handle(data, context):                        ❺
 ```
 
 ❶ 初始化模型
-
 ❷ 对传入数据进行预处理和标记化
-
 ❸ 对数据进行推断
-
 ❹ 对预测进行后处理
-
 ❺ TorchServe 调用的处理程序方法
 
-您的处理程序需要继承自 BaseHandler 并重写一些方法，包括 initialize() 和 inference()。您的处理程序脚本还包括 handle()，一个顶层方法，其中初始化和调用处理程序。
+您的处理程序需要继承自 `BaseHandler` 并重写一些方法，包括 `initialize()` 和 `inference()`。您的处理程序脚本还包括 `handle()`，一个顶层方法，其中初始化和调用处理程序。
 
-接下来要做的是运行 torch-model-archiver，这是一个命令行工具，用于打包您的模型和处理程序，具体操作如下：
+接下来要做的是运行 `torch-model-archiver`，这是一个命令行工具，用于打包您的模型和处理程序，具体操作如下：
 
 ```py
 torch-model-archiver \
@@ -350,9 +348,9 @@ torch-model-archiver \
     --handler ./torchserve_handler.py
 ```
 
-前两个选项指定了模型的名称和版本。下一个选项 serialized-file 指定了您要打包的 PyTorch 模型的主要权重文件（通常以 .bin 或 .pt 结尾）。您还可以添加任何额外文件（由 extra-files 指定），这些文件是模型运行所需的。最后，您需要将刚编写的处理程序文件传递给 handler 选项。
+前两个选项指定了模型的名称和版本。下一个选项 `serialized-file` 指定了您要打包的 PyTorch 模型的主要权重文件（通常以 `.bin` 或 `.pt` 结尾）。您还可以添加任何额外文件（由 `extra-files` 指定），这些文件是模型运行所需的。最后，您需要将刚编写的处理程序文件传递给 `handler` 选项。
 
-完成后，这将在相同目录中创建一个名为 distilgpt2.mar（.mar 代表“模型归档”）的文件。让我们创建一个名为 model_store 的新目录，并将 .mar 文件移动到那里，如下所示。该目录用作模型存储库，所有模型文件都存储在其中并从中提供服务：
+完成后，这将在相同目录中创建一个名为 `distilgpt2.mar`（`.mar` 代表“模型归档”）的文件。让我们创建一个名为 `model_store` 的新目录，并将 `.mar` 文件移动到那里，如下所示。该目录用作模型存储库，所有模型文件都存储在其中并从中提供服务：
 
 ```py
 mkdir model_store
@@ -365,7 +363,7 @@ mv distilgpt2.mar model_store
 torchserve --start --model-store model_store --models distilgpt2=distilgpt2.mar
 ```
 
-当服务器完全启动后，您可以开始向服务器发出 HTTP 请求。它公开了几个端点，但如果您只想运行推断，您需要像下面这样调用 http://127.0.0.1:8080/predictions/ 并带上模型名称：
+当服务器完全启动后，您可以开始向服务器发出 HTTP 请求。它公开了几个端点，但如果您只想运行推断，您需要像下面这样调用 `http://127.0.0.1:8080/predictions/` 并带上模型名称：
 
 ```py
 curl -d "data=In a shocking finding, scientist discovered a herd of unicorns living in a remote, previously unexplored valley, in the Andes Mountains. Even more surprising to the researchers was the fact that the unicorns spoke perfect English." -X POST http://127.0.0.1:8080/predictions/distilgpt2
@@ -389,17 +387,14 @@ curl -d "data=In a shocking finding, scientist discovered a herd of unicorns liv
 torchserve --stop
 ```
 
-### 11.3.2 使用 SageMaker 部署模型
+## 11.3.2 使用 SageMaker 部署模型
 
 Amazon SageMaker 是一个用于训练和部署机器学习模型的托管平台。它使您能够启动一个 GPU 服务器，在其中运行一个 Jupyter 笔记本，在那里构建和训练 ML 模型，并直接将它们部署在托管环境中。我们的下一步是将机器学习模型部署为云 SageMaker 端点，以便生产系统可以向其发出请求。使用 SageMaker 部署 ML 模型的具体步骤包括以下内容：
 
-1.  将您的模型上传到 S3。
-
-1.  注册并将推理代码上传到 Amazon Elastic Container Registry（ECR）。
-
-1.  创建一个 SageMaker 模型和一个端点。
-
-1.  向端点发出请求。
+1. 将您的模型上传到 S3。
+2. 注册并将推理代码上传到 Amazon Elastic Container Registry（ECR）。
+3. 创建一个 SageMaker 模型和一个端点。
+4. 向端点发出请求。
 
 我们将按照官方教程（[`mng.bz/p9qK`](http://mng.bz/p9qK)）稍作修改。首先，让我们转到 SageMaker 控制台（[`console.aws.amazon.com/sagemaker/home`](https://console.aws.amazon.com/sagemaker/home)）并启动一个笔记本实例。当您打开笔记本时，请运行以下代码以安装必要的软件包并启动 SageMaker 会话：
 
@@ -423,9 +418,9 @@ sagemaker_session = sagemaker.Session(boto_session=sess)
 bucket_name = sagemaker_session.default_bucket()
 ```
 
-变量 bucket_name 包含一个类似于 sagemaker-xxx-yyy 的字符串，其中 xxx 是地区名称（如 us-east-1）。记下这个名称——您需要它来在下一步中将您的模型上传到 S3。
+变量 `bucket_name` 包含一个类似于 `sagemaker-xxx-yyy` 的字符串，其中 `xxx` 是地区名称（如 `us-east-1`）。记下这个名称——您需要它来在下一步中将您的模型上传到 S3。
 
-接下来，您需要通过从刚刚创建 .mar 文件的机器（而不是从 SageMaker 笔记本实例）运行以下命令来将您的模型上传到 S3 存储桶。在上传之前，您首先需要将您的 .mar 文件压缩成一个 tar.gz 文件，这是 SageMaker 支持的一种格式。记得用 bucket_name 指定的实际存储桶名称替换 sagemaker-xxx-yyy：
+接下来，您需要通过从刚刚创建 `.mar` 文件的机器（而不是从 SageMaker 笔记本实例）运行以下命令来将您的模型上传到 S3 存储桶。在上传之前，您首先需要将您的 `.mar` 文件压缩成一个 `tar.gz` 文件，这是 SageMaker 支持的一种格式。记得用 `bucket_name` 指定的实际存储桶名称替换 `sagemaker-xxx-yyy`：
 
 ```py
 cd model_store
@@ -433,7 +428,7 @@ tar cvfz distilgpt2.tar.gz distilgpt2.mar
 aws s3 cp distilgpt2.tar.gz s3://sagemaker-xxx-yyy/torchserve/models/
 ```
 
-下一步是注册并将 TorchServe 推断代码推送到 ECR。在开始之前，在您的 SageMaker 笔记本实例中，打开 torchserve-examples/Dockerfile 并修改以下行（添加 —no-cache-dir transformers）。
+下一步是注册并将 TorchServe 推断代码推送到 ECR。在开始之前，在您的 SageMaker 笔记本实例中，打开 `torchserve-examples/Dockerfile` 并修改以下行（添加 `--no-cache-dir transformers`）：
 
 ```py
 RUN pip install --no-cache-dir psutil \
@@ -483,6 +478,8 @@ predictor = torchserve_model.deploy(instance_type='ml.m4.xlarge',
 
 预测器对象是可以直接调用以运行推断的，如下所示：
 
+
+
 ```py
 response = predictor.predict(data="In a shocking finding, scientist discovered a herd of unicorns living in a remote, previously unexplored valley, in the Andes Mountains. Even more surprising to the researchers was the fact that the unicorns spoke perfect English.")
 ```
@@ -517,7 +514,7 @@ LIT 是由 Google 开发的开源工具包，提供了一个基于浏览器的�
 pip install lit-nlp
 ```
 
-接下来，您需要使用 LIT 定义的抽象类包装您的数据集和模型。让我们创建一个名为 run_lit.py 的新脚本，并导入必要的模块和类，如下所示：
+接下来，您需要使用 LIT 定义的抽象类包装您的数据集和模型。让我们创建一个名为 `run_lit.py` 的新脚本，并导入必要的模块和类，如下所示：
 
 ```py
 import numpy as np
@@ -534,7 +531,7 @@ from examples.sentiment.sst_classifier import LstmClassifier
 from examples.sentiment.sst_reader import StanfordSentimentTreeBankDatasetReaderWithTokenizer
 ```
 
-下面的代码展示了如何为 LIT 定义一个数据集。在这里，我们创建了一个仅包含四个硬编码示例的玩具数据集，但在实践中，您可能想要读取要探索的真实数据集。记得定义返回数据集类型规范的 spec() 方法：
+下面的代码展示了如何为 LIT 定义一个数据集。在这里，我们创建了一个仅包含四个硬编码示例的玩具数据集，但在实践中，您可能想要读取要探索的真实数据集。记得定义返回数据集类型规范的 `spec()` 方法：
 
 ```py
 class SSTData(lit_dataset.Dataset):
@@ -604,11 +601,11 @@ class SentimentClassifierModel(lit_model.Model):
 
 ❷ 提取并设置预测器
 
-❸ 运行预测器的 predict 方法
+❸ 运行预测器的 `predict` 方法
 
-在构造函数（__init__）中，我们正在从存档文件中加载一个 AllenNLP 模型，并从中创建一个预测器。我们假设您的模型放在 model/model.tar.gz 下，并且硬编码了其路径，但根据您的模型位置随意修改此路径。
+在构造函数（`__init__`）中，我们正在从存档文件中加载一个 AllenNLP 模型，并从中创建一个预测器。我们假设您的模型放在 `model/model.tar.gz` 下，并且硬编码了其路径，但根据您的模型位置随意修改此路径。
 
-模型预测是在 predict_minibatch() 中计算的。给定输入（简单地是数据集实例的数组），它通过预测器运行模型并返回结果。请注意，预测是逐个实例进行的，尽管在实践中，您应考虑批量进行预测，因为这会提高对较大输入数据的吞吐量。该方法还返回用于可视化嵌入的预测类别的嵌入（作为 cls_emb），这将用于可视化嵌入（图 11.5）。
+模型预测是在 `predict_minibatch()` 中计算的。给定输入（简单地是数据集实例的数组），它通过预测器运行模型并返回结果。请注意，预测是逐个实例进行的，尽管在实践中，您应考虑批量进行预测，因为这会提高对较大输入数据的吞吐量。该方法还返回用于可视化嵌入的预测类别的嵌入（作为 `cls_emb`），这将用于可视化嵌入（图 11.5）。
 
 ![CH11_F05_Hagiwara](img/CH11_F05_Hagiwara.png)
 
@@ -625,7 +622,7 @@ lit_demo = dev_server.Server(models, datasets, **server_flags.get_flags())
 lit_demo.serve()
 ```
 
-运行上面的脚本后，转到 http:/./localhost:5432/ 在你的浏览器上。你应该会看到一个类似于图 11.5 的屏幕。你可以看到一系列面板，对应于有关数据和预测的各种信息，包括嵌入、数据集表和编辑器、分类结果以及显著性图（显示通过一种名为 *LIME* 的自动方法计算的标记贡献）³。
+运行上面的脚本后，转到 `http:/./localhost:5432/` 在你的浏览器上。你应该会看到一个类似于图 11.5 的屏幕。你可以看到一系列面板，对应于有关数据和预测的各种信息，包括嵌入、数据集表和编辑器、分类结果以及显著性图（显示通过一种名为 *LIME* 的自动方法计算的标记贡献）³。
 
 可视化和与模型预测进行交互是了解模型工作原理以及如何改进的好方法。
 

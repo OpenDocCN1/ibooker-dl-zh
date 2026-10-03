@@ -1,3 +1,4 @@
+
 # 第九章：参考文献
 
 阿奇亚姆, J. 等; OpenAI. (2024). GPT-4 技术报告. [`arxiv.org/abs/2303.08774`](https://arxiv.org/abs/2303.08774).
@@ -34,15 +35,15 @@ openCypher 实施者小组. (n.d.). Retrieved August 30, 2023, [`opencypher.org/
 
 # 索引
 
-符号
+## 符号
 
-<$nopage>代理式 RAG (检索增强生成)
+`<$nopage>` 代理式 RAG (检索增强生成)
 
-<i>另见</i> RAG (检索增强生成)
+*另见* RAG (检索增强生成)
 
-<i>《奥德赛》 (荷马)
+*《奥德赛》* (荷马)
 
-A
+## A
 
 APOC (Cypher 上的精彩过程) 插件, 2nd
 
@@ -58,7 +59,7 @@ APOC (Cypher 上的精彩过程) 插件, 2nd
 
 代理 RAG（检索增强生成），第 2 次
 
-C
+## C
 
 上下文回忆，第 2 次
 
@@ -72,7 +73,7 @@ CUAD（合同理解阿提库斯数据集）
 
 块节点类型
 
-chunk_text 函数
+`chunk_text` 函数
 
 使用 LLMs 进行构建，从文本中提取结构化数据
 
@@ -82,7 +83,7 @@ CUAD 数据集，第 2 次
 
 结构化输出模型定义，第 2 次
 
-D
+## D
 
 文档嵌入策略
 
@@ -94,13 +95,13 @@ D
 
 描述值
 
-E
+## E
 
 嵌入模型，第 2 次
 
 嵌入属性
 
-F
+## F
 
 忠实度，第 2 次
 
@@ -108,7 +109,7 @@ F
 
 文本嵌入模型
 
-G
+## G
 
 GQL（图查询语言）
 
@@ -124,9 +125,9 @@ GQL（图查询语言）
 
 实体和关系摘要，第 2 次
 
-global_retriever 函数
+`global_retriever` 函数
 
-H
+## H
 
 假设性问题策略
 
@@ -134,11 +135,11 @@ H
 
 参考文献
 
-I
+## I
 
 使用少量示例进行上下文学习，第 2 次
 
-K
+## K
 
 知识截止问题，第 2 次
 
@@ -148,7 +149,7 @@ K
 
 使用 LLMs 进行构建，第 2 次
 
-L
+## L
 
 LLMs（大型语言模型）
 
@@ -164,7 +165,7 @@ LLMs（大型语言模型）
 
 LLM-ready 数据库模式, 第 2 次
 
-M
+## M
 
 映射步骤
 
@@ -178,7 +179,7 @@ MS GraphRAG（微软的 GraphRAG）
 
 MS GraphRAG（微软的 GraphRAG）
 
-N
+## N
 
 从字符串中获取 token 数量函数
 
@@ -192,27 +193,27 @@ Neo4j 安装
 
 自然语言问题
 
-O
+## O
 
 可选类型
 
-P
+## P
 
 父文档-嵌入策略
 
-PdfChunkFulltext 索引
+`PdfChunkFulltext` 索引
 
-pdf 向量索引
+`pdf` 向量索引
 
-parent_retrieval 函数
+`parent_retrieval` 函数
 
 PDF 节点
 
-Q
+## Q
 
 查询重写
 
-R
+## R
 
 检索器
 
@@ -224,7 +225,7 @@ R
 
 向量相似度搜索函数, 第 2 次
 
-rag_pipeline 函数
+`rag_pipeline` 函数
 
 RAG（检索增强生成）, 第 2 次, 第 3 次
 
@@ -248,17 +249,17 @@ RAG（检索增强生成）, 第 2 次, 第 3 次
 
 局部搜索, 第 2 次
 
-S
+## S
 
 监督微调，第 2 次
 
-split_text_by_titles 函数
+`split_text_by_titles` 函数
 
 结构化数据
 
 从文本中提取
 
-T
+## T
 
 文本属性，第 2 次
 
@@ -268,11 +269,11 @@ T
 
 文本分块
 
-topChunks
+`topChunks`
 
-tiktoken 包
+`tiktoken` 包
 
-text2cypher
+`text2cypher`
 
 用于
 
@@ -284,11 +285,11 @@ text2cypher
 
 总结，第 2 次
 
-U
+## U
 
 非结构化数据
 
-V
+## V
 
 向量相似度搜索
 

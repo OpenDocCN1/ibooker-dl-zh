@@ -1,3 +1,5 @@
+
+
 # 第十七章：图像生成
 
 > [`deeplearningwithpython.io/chapters/chapter17_image-generation`](https://deeplearningwithpython.io/chapters/chapter17_image-generation)
@@ -26,12 +28,10 @@
 
 当然，仍然存在需要克服的挑战。与所有深度学习模型一样，潜在空间并没有编码一个一致的物理世界模型，所以你可能会偶尔看到多指的手、不连贯的照明或混乱的物体。生成的图像的连贯性仍然是一个活跃的研究领域。在图 17.2 的情况下，尽管已经看到了成千上万张人们骑自行车的图片，但模型并没有以人类的方式理解骑自行车的含义——比如踩踏、转向或保持直立平衡等概念。这就是为什么你的骑自行车的马不太可能以可信的方式描绘出用后腿踩踏，就像人类艺术家会画的那样。
 
-学习图像表示的潜在空间有多种不同的策略，每种策略都有其自身的特点。最常见的图像生成模型类型包括
+学习图像表示的潜在空间有多种不同的策略，每种策略都有其自身的特点。最常见的图像生成模型类型包括：
 
 +   扩散模型
-
 +   变分自编码器 (VAEs)
-
 +   生成对抗网络 (GANs)
 
 虽然此书的先前版本涵盖了生成对抗网络（GANs），但近年来它们已经逐渐过时，几乎被扩散模型所取代。在本版中，我们将涵盖 VAEs 和扩散模型，并跳过 GANs。在我们自己构建的模型中，我们将专注于无条件的图像生成——从潜在空间中采样图像而不需要文本条件。然而，你还将学习如何使用预训练的文本到图像模型以及如何探索其潜在空间。
@@ -60,9 +60,9 @@ VAEs 已经存在十多年了，但它们至今仍然相关，并继续在最近
 
 1.  编码器模块将输入样本`input_img`转换到表示的潜在空间中的两个参数，`z_mean`和`z_log_variance`。
 
-1.  您从假设生成输入图像的潜在正态分布中随机采样一个点`z`，通过`z = z_mean + exp(z_log_variance) * epsilon`，其中`epsilon`是一个包含小值的随机张量。
+2.  您从假设生成输入图像的潜在正态分布中随机采样一个点`z`，通过`z = z_mean + exp(z_log_variance) * epsilon`，其中`epsilon`是一个包含小值的随机张量。
 
-1.  解码器模块将潜在空间中的这个点映射回原始输入图像。
+3.  解码器模块将潜在空间中的这个点映射回原始输入图像。
 
 因为`epsilon`是随机的，这个过程确保了每个接近你编码`input_img`（`z-mean`）的潜在位置的点都可以解码成类似于`input_img`的东西，从而迫使潜在空间具有连续的有意义性。潜在空间中任何两个接近的点都会解码成高度相似的画面。连续性，加上潜在空间低维度的特性，迫使潜在空间中的每个方向都编码了数据的有意义变化轴，使得潜在空间非常结构化，因此非常适合通过概念向量进行操作。
 
@@ -173,7 +173,12 @@ class Sampler(keras.Layer):
 
 列表 17.2：潜在空间采样层
 
-以下列表展示了解码器的实现。我们将向量 `z` 调整为图像的维度，然后使用几个卷积层来获得最终图像输出，其维度与原始 `input_img` 相同。
+以下列表展示了解码器的实现。我们将向量`z`调整为图像的维度，然后使用几个卷积层来获得最终图像输出，其维度与原始`input_img`相同。
+
+
+
+
+# VAE 解码器网络
 
 ```py
 # Input where we'll feed z
@@ -224,17 +229,19 @@ Model: "decoder"
  Non-trainable params: 0 (0.00 B)
 ```
 
-现在，让我们创建 VAE 模型本身。这是您第一个不是进行监督学习的模型示例（自编码器是 *自监督* 学习的一个例子，因为它使用其输入作为目标）。每当您偏离经典监督学习时，通常都会子类化 `Model` 类并实现自定义的 `train_step()` 来指定新的训练逻辑，这是您在第七章中学到的。我们在这里可以轻松做到这一点，但这种方法的一个缺点是 `train_step()` 的内容必须是后端特定的——您会使用 TensorFlow 的 `GradientTape`，您会使用 PyTorch 的 `loss.backward()`，等等。自定义训练逻辑的一个更简单的方法是仅实现 `compute_loss()` 方法，并保留默认的 `train_step()`。`compute_loss()` 是内置 `train_step()` 调用的关键可微分逻辑。由于它不涉及直接操作梯度，因此很容易保持其与后端无关。
+# 自定义训练逻辑
+
+现在，让我们创建 VAE 模型本身。这是您第一个不是进行监督学习的模型示例（自编码器是 *自监督* 学习的一个例子，因为它使用其输入作为目标）。每当您偏离经典监督学习时，通常都会子类化`Model`类并实现自定义的`train_step()`来指定新的训练逻辑，这是您在第七章中学到的。我们在这里可以轻松做到这一点，但这种方法的一个缺点是`train_step()`的内容必须是后端特定的——您会使用 TensorFlow 的`GradientTape`，您会使用 PyTorch 的`loss.backward()`，等等。自定义训练逻辑的一个更简单的方法是仅实现`compute_loss()`方法，并保留默认的`train_step()`。`compute_loss()`是内置`train_step()`调用的关键可微分逻辑。由于它不涉及直接操作梯度，因此很容易保持其与后端无关。
 
 其签名如下：
 
 `compute_loss(x, y, y_pred, sample_weight=None, training=True)`
 
-其中 `x` 是模型的输入；`y` 是模型的输出（在我们的案例中，它是 `None`，因为我们使用的数据集只有输入，没有目标）；而 `y_pred` 是 `call()` 的输出——即模型的预测。在任何监督训练流程中，您都会基于 `y` 和 `y_pred` 计算损失。在我们的案例中，由于 `y` 是 `None` 且 `y_pred` 包含潜在参数，我们将使用 `x`（原始输入）和从 `y_pred` 导出的 `reconstruction` 来计算损失。
+其中`x`是模型的输入；`y`是模型的输出（在我们的案例中，它是`None`，因为我们使用的数据集只有输入，没有目标）；而`y_pred`是`call()`的输出——即模型的预测。在任何监督训练流程中，您都会基于`y`和`y_pred`计算损失。在我们的案例中，由于`y`是`None`且`y_pred`包含潜在参数，我们将使用`x`（原始输入）和从`y_pred`导出的`reconstruction`来计算损失。
 
-该方法必须返回一个标量，即要最小化的损失值。您还可以使用 `compute_loss()` 来更新您的指标状态，这是我们在这个案例中想要做的。
+该方法必须返回一个标量，即要最小化的损失值。您还可以使用`compute_loss()`来更新您的指标状态，这是我们在这个案例中想要做的。
 
-现在，让我们用自定义的 `compute_loss()` 方法来编写我们的 VAE。它适用于所有后端，无需更改代码！
+现在，让我们用自定义的`compute_loss()`方法来编写我们的 VAE。它适用于所有后端，无需更改代码！
 
 ```py
 class VAE(keras.Model):
@@ -280,9 +287,11 @@ class VAE(keras.Model):
         return total_loss 
 ```
 
-列表 17.4：具有自定义 `compute_loss()` 方法的 VAE 模型
+列表 17.4：具有自定义`compute_loss()`方法的 VAE 模型
 
-最后，您已经准备好实例化模型并在 MNIST 数字上对其进行训练。因为 `compute_loss()` 已经处理了损失，所以在编译时不需要指定外部损失（`loss=None`），这反过来意味着您在训练期间不会传递目标数据（如您所见，在 `fit` 中您只向模型传递 `x_train`）。
+# 训练 VAE
+
+最后，您已经准备好实例化模型并在 MNIST 数字上对其进行训练。因为`compute_loss()`已经处理了损失，所以在编译时不需要指定外部损失（`loss=None`），这反过来意味着您在训练期间不会传递目标数据（如您所见，在`fit`中您只向模型传递`x_train`）。
 
 ```py
 import numpy as np
@@ -304,7 +313,9 @@ vae.fit(mnist_digits, epochs=30, batch_size=128)
 
 列表 17.5：训练 VAE
 
-一旦模型训练完成，您就可以使用 `decoder` 网络将任意的潜在空间向量转换为图像。
+# 从潜在空间采样
+
+一旦模型训练完成，您就可以使用`decoder`网络将任意的潜在空间向量转换为图像。
 
 ```py
 import matplotlib.pyplot as plt
@@ -354,7 +365,7 @@ plt.imshow(figure, cmap="Greys_r")
 
 在下一节中，我们将详细介绍生成图像的另一项主要工具：扩散模型，这是今天几乎所有商业图像生成服务背后的架构。
 
-## 扩散模型
+# 扩散模型
 
 自动编码器的一个长期应用是*去噪*：将包含少量噪声的输入（例如，低质量的 JPEG 图像）输入到模型中，并得到相同输入的清理版本。这是自动编码器擅长的一项任务。在 2010 年代后期，这个想法催生了非常成功的*图像超分辨率*模型，能够接受低分辨率、可能包含噪声的图像，并输出高质量、高分辨率的版本（见图 17.6）。这些模型在过去几年中已成为每个主要智能手机相机应用的一部分。
 
@@ -372,13 +383,15 @@ plt.imshow(figure, cmap="Greys_r")
 
 图 17.7：反向扩散：通过重复去噪将纯噪声转换为图像
 
+
+
 扩散模型本质上是一个循环中的去噪自动编码器，能够将纯噪声转换为清晰、逼真的图像。你可能知道米开朗基罗的这句诗意名言：“每一块石头里都有一尊雕像，雕塑家的任务就是发现它”——同样，每一块白色噪声中都有一个图像，扩散模型的任务就是发现它。
 
 现在，让我们用 Keras 构建一个模型。
 
-### 牛津花卉数据集
+## 牛津花卉数据集
 
-我们将要使用的数据集是牛津花卉数据集（[`www.robots.ox.ac.uk/~vgg/data/flowers/102/`](https://www.robots.ox.ac.uk/~vgg/data/flowers/102/))，这是一个包含 102 个不同物种的 8,189 张花卉图片的集合。
+我们将要使用的数据集是牛津花卉数据集（[`www.robots.ox.ac.uk/~vgg/data/flowers/102/`](https://www.robots.ox.ac.uk/~vgg/data/flowers/102/)），这是一个包含 102 个不同物种的 8,189 张花卉图片的集合。
 
 让我们获取数据集存档并提取它：
 
@@ -430,7 +443,7 @@ plt.imshow(img.astype("uint8"))
 
 图 17.8：牛津花卉数据集的一个示例图像
 
-### 一个 U-Net 去噪自动编码器
+## 一个 U-Net 去噪自动编码器
 
 相同的去噪模型在扩散去噪过程的每次迭代中都会被重复使用，每次消除一点噪声。为了使模型的工作更容易，我们告诉它对于给定的输入图像应该提取多少噪声——这就是`noise_rates`输入。我们让模型输出一个预测的噪声掩码，我们可以从输入中减去它来实现去噪。
 
@@ -442,11 +455,9 @@ plt.imshow(img.astype("uint8"))
 
 这个架构有三个阶段：
 
-1.  一个*下采样阶段*，由几个卷积层块组成，其中输入从原始的 128 × 128 大小下采样到一个更小的尺寸（在我们的例子中，是 16 × 16）。
-
-1.  一个*中间阶段*，其中特征图具有恒定的尺寸。
-
-1.  一个*上采样阶段*，其中特征图被上采样回 128 × 128。
+1. 一个*下采样阶段*，由几个卷积层块组成，其中输入从原始的 128 × 128 大小下采样到一个更小的尺寸（在我们的例子中，是 16 × 16）。
+2. 一个*中间阶段*，其中特征图具有恒定的尺寸。
+3. 一个*上采样阶段*，其中特征图被上采样回 128 × 128。
 
 下采样阶段和上采样阶段的块之间存在 1:1 的映射：每个上采样块是下采样块的逆。重要的是，该模型具有从每个下采样块到相应上采样块的连接性，这些连接性有助于避免在连续的下采样和上采样操作中丢失图像细节信息。
 
@@ -503,13 +514,13 @@ def get_model(image_size, widths, block_depth):
     return keras.Model([noisy_images, noise_rates], pred_noise_masks) 
 ```
 
-你可以用类似 `get_model(image_size=128, widths=[32, 64, 96, 128], block_depth=2)` 的方式实例化模型。`widths` 参数是一个列表，包含每个连续下采样或上采样阶段的 `Conv2D` 层大小。我们通常希望随着输入的下采样（从 32 到 128 个单位）而层的大小增加，然后在上采样时减小（从 128 回到 32 个单位）。
+你可以用类似`get_model(image_size=128, widths=[32, 64, 96, 128], block_depth=2)`的方式实例化模型。`widths`参数是一个列表，包含每个连续下采样或上采样阶段的`Conv2D`层大小。我们通常希望随着输入的下采样（从 32 到 128 个单位）而层的大小增加，然后在上采样时减小（从 128 回到 32 个单位）。
 
-### 扩散时间和扩散计划的概念
+## 扩散时间和扩散计划的概念
 
-扩散过程是一系列步骤，其中我们将我们的去噪自动编码器应用于从图像中消除少量噪声，从纯噪声图像开始，以纯信号图像结束。循环中当前步骤的索引称为 *扩散时间*（见图 17.7）。在我们的情况下，我们将使用介于 1 和 0 之间的连续值作为此索引的值——1 表示过程的开始，此时噪声量最大，信号量最小，而 0 表示过程的结束，此时图像几乎全部是信号而没有噪声。
+扩散过程是一系列步骤，其中我们将我们的去噪自动编码器应用于从图像中消除少量噪声，从纯噪声图像开始，以纯信号图像结束。循环中当前步骤的索引称为*扩散时间*（见图 17.7）。在我们的情况下，我们将使用介于 1 和 0 之间的连续值作为此索引的值——1 表示过程的开始，此时噪声量最大，信号量最小，而 0 表示过程的结束，此时图像几乎全部是信号而没有噪声。
 
-当前扩散时间与图像中存在的噪声和信号量之间的关系称为 *扩散计划*。在我们的实验中，我们将使用余弦计划来平滑地从扩散过程开始的高信号率（低噪声）过渡到结束时的低信号率（高噪声）。
+当前扩散时间与图像中存在的噪声和信号量之间的关系称为*扩散计划*。在我们的实验中，我们将使用余弦计划来平滑地从扩散过程开始的高信号率（低噪声）过渡到结束时的低信号率（高噪声）。
 
 ```py
 def diffusion_schedule(
@@ -527,7 +538,7 @@ def diffusion_schedule(
 
 列表 17.7：扩散计划
 
-这个 `diffusion_schedule()` 函数接受一个 `diffusion_times` 张量作为输入，它表示扩散过程的进展，并返回相应的 `noise_rates` 和 `signal_rates` 张量。这些比率将被用来指导去噪过程。使用余弦计划的逻辑是保持关系 `noise_rates ** 2 + signal_rates ** 2 == 1`（见图 17.10）。
+这个`diffusion_schedule()`函数接受一个`diffusion_times`张量作为输入，它表示扩散过程的进展，并返回相应的`noise_rates`和`signal_rates`张量。这些比率将被用来指导去噪过程。使用余弦计划的逻辑是保持关系`noise_rates ** 2 + signal_rates ** 2 == 1`（见图 17.10）。
 
 ![图片](img/a696630163a531e9ca732856013c0290.png)
 
@@ -556,13 +567,12 @@ plt.legend()
 
 图 17.11：我们的余弦扩散计划
 
-### 训练过程
+## 训练过程
 
-让我们创建一个 `DiffusionModel` 类来实现训练过程。它将包含我们的去噪自动编码器作为其属性之一。我们还需要一些其他的东西：
+让我们创建一个`DiffusionModel`类来实现训练过程。它将包含我们的去噪自动编码器作为其属性之一。我们还需要一些其他的东西：
 
-+   *损失函数* — 我们将使用平均绝对误差作为我们的损失，也就是说 `mean(abs(real_noise_mask - predicted_noise_mask))`。
-
-+   *图像归一化层* — 我们将添加到图像中的噪声将具有单位方差和零均值，因此我们希望我们的图像也以这种方式归一化，以便噪声的值范围与图像的值范围相匹配。
++ *损失函数* — 我们将使用平均绝对误差作为我们的损失，也就是说`mean(abs(real_noise_mask - predicted_noise_mask))`。
++ *图像归一化层* — 我们将添加到图像中的噪声将具有单位方差和零均值，因此我们希望我们的图像也以这种方式归一化，以便噪声的值范围与图像的值范围相匹配。
 
 让我们先编写模型构造函数：
 
@@ -596,53 +606,51 @@ class DiffusionModel(keras.Model):
 
 由于`compute_loss()`接收`call()`的输出作为输入，我们将去噪前向传递放在`call()`中。我们的`call()`接受一批干净的输入图像，并执行以下步骤：
 
-1.  对图像进行归一化
-
-1.  样本随机的扩散时间（去噪模型需要在扩散时间的全谱上训练）
-
-1.  计算相应的噪声率和信号率（使用扩散计划）
-
-1.  在干净的图像上添加随机噪声（基于计算出的噪声率和信号率）
-
-1.  对图像进行去噪
+1. 对图像进行归一化
+2. 样本随机的扩散时间（去噪模型需要在扩散时间的全谱上训练）
+3. 计算相应的噪声率和信号率（使用扩散计划）
+4. 在干净的图像上添加随机噪声（基于计算出的噪声率和信号率）
+5. 对图像进行去噪
 
 它返回
 
-+   预测的去噪图像
-
-+   预测的噪声掩码
-
-+   实际应用的噪声掩码
++ 预测的去噪图像
++ 预测的噪声掩码
++ 实际应用的噪声掩码
 
 这两个量随后在`compute_loss()`中使用，以计算模型在噪声掩码预测任务上的损失：
 
-```py
- def call(self, images):
-        images = self.normalizer(images)
-        # Samples random noise masks
-        noise_masks = keras.random.normal(
-            (batch_size, self.image_size, self.image_size, 3),
-            seed=self.seed_generator,
-        )
-        # Samples random diffusion times
-        diffusion_times = keras.random.uniform(
-            (batch_size, 1, 1, 1),
-            minval=0.0,
-            maxval=1.0,
-            seed=self.seed_generator,
-        )
-        noise_rates, signal_rates = diffusion_schedule(diffusion_times)
-        # Adds noise to the images
-        noisy_images = signal_rates * images + noise_rates * noise_masks
-        # Denoises them
-        pred_images, pred_noise_masks = self.denoise(
-            noisy_images, noise_rates, signal_rates
-        )
-        return pred_images, pred_noise_masks, noise_masks
 
-    def compute_loss(self, x, y, y_pred, sample_weight=None, training=True):
-        _, pred_noise_masks, noise_masks = y_pred
-        return self.loss(noise_masks, pred_noise_masks) 
+
+### 扩散模型实现
+
+```py
+def call(self, images):
+    images = self.normalizer(images)
+    # Samples random noise masks
+    noise_masks = keras.random.normal(
+        (batch_size, self.image_size, self.image_size, 3),
+        seed=self.seed_generator,
+    )
+    # Samples random diffusion times
+    diffusion_times = keras.random.uniform(
+        (batch_size, 1, 1, 1),
+        minval=0.0,
+        maxval=1.0,
+        seed=self.seed_generator,
+    )
+    noise_rates, signal_rates = diffusion_schedule(diffusion_times)
+    # Adds noise to the images
+    noisy_images = signal_rates * images + noise_rates * noise_masks
+    # Denoises them
+    pred_images, pred_noise_masks = self.denoise(
+        noisy_images, noise_rates, signal_rates
+    )
+    return pred_images, pred_noise_masks, noise_masks
+
+def compute_loss(self, x, y, y_pred, sample_weight=None, training=True):
+    _, pred_noise_masks, noise_masks = y_pred
+    return self.loss(noise_masks, pred_noise_masks)
 ```
 
 ### 生成过程
@@ -650,34 +658,34 @@ class DiffusionModel(keras.Model):
 最后，让我们实现图像生成过程。我们从纯随机噪声开始，并反复应用`denoise()`方法，直到我们得到高信号、低噪声的图像。
 
 ```py
- def generate(self, num_images, diffusion_steps):
-        noisy_images = keras.random.normal(
-            # Starts from pure noise
-            (num_images, self.image_size, self.image_size, 3),
-            seed=self.seed_generator,
+def generate(self, num_images, diffusion_steps):
+    noisy_images = keras.random.normal(
+        # Starts from pure noise
+        (num_images, self.image_size, self.image_size, 3),
+        seed=self.seed_generator,
+    )
+    step_size = 1.0 / diffusion_steps
+    for step in range(diffusion_steps):
+        # Computes appropriate noise rates and signal rates
+        diffusion_times = ops.ones((num_images, 1, 1, 1)) - step * step_size
+        noise_rates, signal_rates = diffusion_schedule(diffusion_times)
+        # Calls denoising model
+        pred_images, pred_noises = self.denoise(
+            noisy_images, noise_rates, signal_rates
         )
-        step_size = 1.0 / diffusion_steps
-        for step in range(diffusion_steps):
-            # Computes appropriate noise rates and signal rates
-            diffusion_times = ops.ones((num_images, 1, 1, 1)) - step * step_size
-            noise_rates, signal_rates = diffusion_schedule(diffusion_times)
-            # Calls denoising model
-            pred_images, pred_noises = self.denoise(
-                noisy_images, noise_rates, signal_rates
-            )
-            # Prepares noisy images for the next iteration
-            next_diffusion_times = diffusion_times - step_size
-            next_noise_rates, next_signal_rates = diffusion_schedule(
-                next_diffusion_times
-            )
-            noisy_images = (
-                next_signal_rates * pred_images + next_noise_rates * pred_noises
-            )
-        # Denormalizes images so their values fit between 0 and 255
-        images = (
-            self.normalizer.mean + pred_images * self.normalizer.variance**0.5
+        # Prepares noisy images for the next iteration
+        next_diffusion_times = diffusion_times - step_size
+        next_noise_rates, next_signal_rates = diffusion_schedule(
+            next_diffusion_times
         )
-        return ops.clip(images, 0.0, 255.0) 
+        noisy_images = (
+            next_signal_rates * pred_images + next_noise_rates * pred_noises
+        )
+    # Denormalizes images so their values fit between 0 and 255
+    images = (
+        self.normalizer.mean + pred_images * self.normalizer.variance**0.5
+    )
+    return ops.clip(images, 0.0, 255.0)
 ```
 
 ### 使用自定义回调可视化结果
@@ -707,7 +715,7 @@ class VisualizationCallback(keras.callbacks.Callback):
                 plt.axis("off")
         plt.tight_layout()
         plt.show()
-        plt.close() 
+        plt.close()
 ```
 
 ### 是时候开始了！
@@ -718,7 +726,7 @@ class VisualizationCallback(keras.callbacks.Callback):
 model = DiffusionModel(image_size, widths=[32, 64, 96, 128], block_depth=2)
 # Computes the mean and variance necessary to perform normalization —
 # don't forget it!
-model.normalizer.adapt(dataset) 
+model.normalizer.adapt(dataset)
 ```
 
 我们将使用`AdamW`作为我们的优化器，并启用一些实用的选项来帮助稳定训练并提高生成图像的质量：
@@ -727,7 +735,7 @@ model.normalizer.adapt(dataset)
 
 +   *模型权重的指数移动平均*——也称为 Polyak 平均。这种技术在整个训练过程中维护模型权重的运行平均值。每 100 个批次，我们用这个平均权重量覆模型的权重。这有助于在损失景观嘈杂的情况下稳定模型的表示。
 
-代码如下
+代码如下：
 
 ```py
 model.compile(
@@ -744,7 +752,7 @@ model.compile(
         # their exponential moving average
         ema_overwrite_frequency=100,
     ),
-) 
+)
 ```
 
 让我们拟合模型。我们将使用`VisualizationCallback`回调在每个 epoch 后绘制生成图像的示例，并使用`ModelCheckpoint`回调保存模型的权重：
@@ -761,7 +769,7 @@ model.fit(
             save_best_only=True,
         ),
     ],
-) 
+)
 ```
 
 如果你正在 Colab 上运行，你可能会遇到错误：“缓冲数据在达到输出大小限制后截断。” 这是因为`fit()`的日志包括图像，它们占用了大量空间，而单个笔记本单元允许的输出是有限的。为了解决这个问题，你可以在五个连续的单元中简单地链式调用五个`model.fit(..., epochs=20)`，这相当于一个单独的`fit(..., epochs=100)`调用。
@@ -797,7 +805,7 @@ task = keras_hub.models.TextToImage.from_preset(
     dtype="float16",
 )
 prompt = "A NASA astraunaut riding an origami elephant in New York City"
-task.generate(prompt) 
+task.generate(prompt)
 ```
 
 列表 17.8：创建一个稳定扩散文本到图像模型
@@ -806,7 +814,7 @@ task.generate(prompt)
 
 图 17.13：我们的稳定扩散模型的一个示例输出
 
-与我们在上一章中介绍的 `CausalLM` 任务类似，`TextToImage` 任务是一个高级类，用于根据文本输入进行图像生成。它将标记化和扩散过程封装成一个高级的生成调用。
+与我们在上一章中介绍的`CausalLM`任务类似，`TextToImage`任务是一个高级类，用于根据文本输入进行图像生成。它将标记化和扩散过程封装成一个高级的生成调用。
 
 稳定扩散模型实际上为其模型添加了一个第二个“负提示”，可以用来将扩散过程引导远离某些文本输入。这里没有什么魔法。要添加一个负提示，你可以简单地训练一个三元组模型：`(image, positive_prompt, negative_prompt)`，其中正提示是对图像的描述，而负提示是一系列不描述图像的词语。通过将正负文本嵌入输入到去噪器中，去噪器将学习引导噪声向与正提示匹配的图像，并远离与负提示匹配的图像（图 17.14）。让我们尝试从我们的输入中移除颜色蓝色：
 
@@ -816,14 +824,14 @@ task.generate(
         "prompts": prompt,
         "negative_prompts": "blue color",
     }
-) 
+)
 ```
 
 ![](img/fbd61fbad1abb2a0e1862fae44563a25.png)
 
 图 17.14：使用负提示将模型引导远离蓝色
 
-与我们在上一章中使用的文本模型的 `generate()` 方法类似，我们有一些额外的参数可以传递给模型以控制生成过程。让我们尝试向我们的模型传递一个可变的扩散步骤数，以查看去噪过程（图 17.15）的实际操作：
+与我们在上一章中使用的文本模型的`generate()`方法类似，我们有一些额外的参数可以传递给模型以控制生成过程。让我们尝试向我们的模型传递一个可变的扩散步骤数，以查看去噪过程（图 17.15）的实际操作：
 
 ```py
 import numpy as np
@@ -832,7 +840,7 @@ from PIL import Image
 def display(images):
     return Image.fromarray(np.concatenate(images, axis=1))
 
-display([task.generate(prompt, num_steps=x) for x in [5, 10, 15, 20, 25]]) 
+display([task.generate(prompt, num_steps=x) for x in [5, 10, 15, 20, 25]])
 ```
 
 ![](img/aba6739b002e9fa379c845107a1d25a8.png)
@@ -845,49 +853,17 @@ display([task.generate(prompt, num_steps=x) for x in [5, 10, 15, 20, 25]])
 
 在我们能够做到这一点之前，我们需要将我们的高级`generate()`函数分解成其组成部分。让我们试试看。
 
-```py
-from keras import random
 
-def get_text_embeddings(prompt):
-    token_ids = task.preprocessor.generate_preprocess([prompt])
-    # We don't care about negative prompts here, but the model expects
-    # them.
-    negative_token_ids = task.preprocessor.generate_preprocess([""])
-    return task.backbone.encode_text_step(token_ids, negative_token_ids)
 
-def denoise_with_text_embeddings(embeddings, num_steps=28, guidance_scale=7.0):
-    # Creates pure noise to denoise into an image
-    latents = random.normal((1, height // 8, width // 8, 16))
-    for step in range(num_steps):
-        latents = task.backbone.denoise_step(
-            latents,
-            embeddings,
-            step,
-            num_steps,
-            guidance_scale,
-        )
-    return task.backbone.decode_step(latents)[0]
-
-# Rescales our images back to [0, 255]
-def scale_output(x):
-    x = ops.convert_to_numpy(x)
-    x = np.clip((x + 1.0) / 2.0, 0.0, 1.0)
-    return np.round(x * 255.0).astype("uint8")
-
-embeddings = get_text_embeddings(prompt)
-image = denoise_with_text_embeddings(embeddings)
-scale_output(image) 
-```
+## 分解`generate()`函数
 
 列表 17.9：分解`generate()`函数
 
 我们生成过程有三个不同的步骤：
 
-1.  首先，我们获取提示，对它们进行分词，并使用我们的文本编码器将它们嵌入。
-
-1.  第二步，我们获取文本嵌入和纯噪声，并逐步将噪声“去噪”成图像。这与我们刚刚构建的花朵模型相同。
-
-1.  最后，我们将模型输出从`[-1, 1]`映射回`[0, 255]`，这样我们就可以渲染图像。
+1. 首先，我们获取提示，对它们进行分词，并使用我们的文本编码器将它们嵌入。
+2. 第二步，我们获取文本嵌入和纯噪声，并逐步将噪声“去噪”成图像。这与我们刚刚构建的花朵模型相同。
+3. 最后，我们将模型输出从`[-1, 1]`映射回`[0, 255]`，这样我们就可以渲染图像。
 
 这里有一点需要注意，我们的文本嵌入实际上包含四个不同的张量：
 
@@ -898,13 +874,10 @@ scale_output(image)
 
 与仅将最终的嵌入文本向量传递给去噪模型不同，Stable Diffusion 的作者选择传递最终的输出向量和文本编码器学习到的整个标记序列的最后表示。这实际上为我们去噪模型提供了更多的工作信息。作者对正向和负向提示都这样做，所以我们这里总共有四个张量：
 
-+   正向提示的编码序列
-
-+   负向提示的编码序列
-
-+   正向提示的编码向量
-
-+   负向提示的编码向量
++ 正向提示的编码序列
++ 负向提示的编码序列
++ 正向提示的编码向量
++ 负向提示的编码向量
 
 将我们的`generate()`函数分解后，我们现在可以尝试在两个文本提示之间的潜在空间中行走。为了做到这一点，让我们构建一个在模型输出的文本嵌入之间进行插值的函数。
 
@@ -937,7 +910,7 @@ def interpolate_text_embeddings(e1, e2, start=0, stop=1, num=10):
                 e1[3],
             )
         )
-    return embeddings 
+    return embeddings
 ```
 
 列表 17.10：一个用于插值文本嵌入的函数
@@ -950,7 +923,7 @@ def interpolate_text_embeddings(e1, e2, start=0, stop=1, num=10):
 
 图 17.16：球面插值使我们接近流形的表面。
 
-当然，我们文本嵌入模型学习到的流形实际上并不是球形的。但它是一个具有相同粗糙大小的数字的平滑表面——它是*球形的*，如果我们假设我们处于一个球体上，那么通过球面插值比如果我们假设我们处于一条线上进行插值要更好。
+当然，我们文本嵌入模型学习到的流形实际上并不是球形的。但它是一个具有相同粗糙大小数字的平滑表面——它是*球形的*，如果我们假设我们处于一个球体上，那么通过球面插值比如果我们假设我们处于一条线上进行插值要更好。
 
 定义了我们的插值后，让我们尝试在两个提示之间的文本嵌入之间行走，并在每个插值输出处生成一个图像。我们将从 0.5 运行到 0.6（在 0 到 1 之间），以便在“形态”在视觉上变得明显时放大插值的中间部分（图 17.17）：
 
@@ -965,7 +938,7 @@ images = []
 for et in interpolate_text_embeddings(e1, e2, start=0.5, stop=0.6, num=9):
     image = denoise_with_text_embeddings(et)
     images.append(scale_output(image))
-display(images) 
+display(images)
 ```
 
 ![](img/91328f66e3e42c215b75d6b46066b2ec.png)
@@ -976,18 +949,13 @@ display(images)
 
 ## 摘要
 
-+   使用深度学习进行图像生成是通过学习捕获图像数据集统计信息的潜在空间来完成的。通过从潜在空间中采样和解码点，你可以生成从未见过的图像。为此有三个主要工具：VAEs、扩散模型和 GANs。
-
-+   VAEs 导致高度结构化的、连续的潜在表示。因此，它们非常适合在潜在空间中进行各种图像编辑：人脸交换、将皱眉的脸变成微笑的脸等等。它们也适合进行基于潜在空间的动画，例如在潜在空间的横截面上进行行走动画，显示起始图像以连续的方式缓慢地变成不同的图像。
-
-+   扩散模型产生非常逼真的输出，并且是目前图像生成的主要方法。它们通过从纯噪声开始反复去噪图像来工作。它们可以很容易地根据文本标题进行条件化，以创建文本到图像模型。
-
-+   Stable Diffusion 3 是一个最先进的预训练文本到图像模型，你可以用它来创建你自己的高度逼真的图像。
-
-+   这种文本到图像扩散模型学习的视觉潜在空间本质上是插值的。你可以通过在用于扩散过程的文本嵌入之间进行插值，并实现输出图像之间的平滑插值来看到这一点。
++ 使用深度学习进行图像生成是通过学习捕获图像数据集统计信息的潜在空间来完成的。通过从潜在空间中采样和解码点，你可以生成从未见过的图像。为此有三个主要工具：VAEs、扩散模型和 GANs。
++ VAEs 导致高度结构化的、连续的潜在表示。因此，它们非常适合在潜在空间中进行各种图像编辑：人脸交换、将皱眉的脸变成微笑的脸等等。它们也适合进行基于潜在空间的动画，例如在潜在空间的横截面上进行行走动画，显示起始图像以连续的方式缓慢地变成不同的图像。
++ 扩散模型产生非常逼真的输出，并且是目前图像生成的主要方法。它们通过从纯噪声开始反复去噪图像来工作。它们可以很容易地根据文本标题进行条件化，以创建文本到图像模型。
++ Stable Diffusion 3 是一个最先进的预训练文本到图像模型，你可以用它来创建你自己的高度逼真的图像。
++ 这种文本到图像扩散模型学习的视觉潜在空间本质上是插值的。你可以通过在用于扩散过程的文本嵌入之间进行插值，并实现输出图像之间的平滑插值来看到这一点。
 
 ### 脚注
 
-1.  Diederik P. Kingma 和 Max Welling, “Auto-Encoding Variational Bayes,” arXiv (2013), [`arxiv.org/abs/1312.6114`](https://arxiv.org/abs/1312.6114). [[↩]](#footnote-link-1)
-
-1.  Danilo Jimenez Rezende, Shakir Mohamed, 和 Daan Wierstra, “Stochastic Backpropagation and Approximate Inference in Deep Generative Models,” arXiv (2014), [`arxiv.org/abs/1401.4082`](https://arxiv.org/abs/1401.4082). [[↩]](#footnote-link-2)
+1. Diederik P. Kingma 和 Max Welling, “Auto-Encoding Variational Bayes,” arXiv (2013), [`arxiv.org/abs/1312.6114`](https://arxiv.org/abs/1312.6114). [[↩]](#footnote-link-1)
+2. Danilo Jimenez Rezende, Shakir Mohamed, 和 Daan Wierstra, “Stochastic Backpropagation and Approximate Inference in Deep Generative Models,” arXiv (2014), [`arxiv.org/abs/1401.4082`](https://arxiv.org/abs/1401.4082). [[↩]](#footnote-link-2)

@@ -1,10 +1,11 @@
+
 # 附录 C 其他图表类型
 
 本附录描述了第六章未涵盖的一些最流行的图表。如果您想尝试新的图表，请将其作为参考。图表的代码在本书的 GitHub 仓库中描述，位于 06 目录下，此外还有其他不太流行的图表。让我们分别研究每种图表类型，从烹饪图表系列开始。
 
 ## C.1 环形图
 
-环形图是一种圆形数据可视化类型，以环形形状显示数据。它与饼图类似，但中心有一个洞，创建了一个不同类别的比例或百分比的视觉表示。
+环形图是一种圆形数据可视化类型，以环形形状显示数据。它与饼图类似，但中心有一个洞，创建了不同类别的比例或百分比的视觉表示。
 
 将饼图转换为环形图，只需将 `innerRadius` 和 `outerRadius` 属性添加到 `mark_arc()` 方法中，如下面的列表所示。
 
@@ -33,7 +34,7 @@ chart = alt.Chart(df).mark_arc(
 )**
 ```
 
-****注意  在 Altair 中生成饼图的代码。使用 `innerRadius` 和 `outerRadius` 将饼图转换为环形图。
+**注意** 在 Altair 中生成饼图的代码。使用 `innerRadius` 和 `outerRadius` 将饼图转换为环形图。
 
 如果您的环形图比较两个值，并且只想关注其中一个值，请将此值添加到环形图的中心，如图 C.1 所示。
 
@@ -52,7 +53,7 @@ chart = alt.Chart(df).mark_arc(
 # - Use the `color` column for color
 ```
 
-注意  为 Copilot 生成环形图内标签的指令顺序。
+**注意** 为 Copilot 生成环形图内标签的指令顺序。
 
 下面的列表显示了生成的代码。
 
@@ -73,7 +74,7 @@ text = alt.Chart(df.head(1)).mark_text(
 )
 ```
 
-注意  更改 `fontSize` 属性以增加或减少标签大小。
+**注意** 更改 `fontSize` 属性以增加或减少标签大小。
 
 从数据故事讲述的角度来看，您可以连接多个环形图，如图 C.2 所示，以显示多个百分比值，例如，关于餐厅顾客喜欢哪些餐点的问卷调查结果。总百分比大于 100%，因为顾客可能喜欢多种餐点。
 
@@ -110,7 +111,7 @@ chart = alt.Chart(df).mark_bar(
 chart.save('column-chart.xhtml')
 ```
 
-备注：反转`x`和`y`通道。同时，更改`sort`属性值。
+**备注**：反转 `x` 和 `y` 通道。同时，更改 `sort` 属性值。
 
 图 C.3 表示生成的柱状图。
 
@@ -118,15 +119,15 @@ chart.save('column-chart.xhtml')
 
 ##### 图 C.3 柱状图
 
-柱状图的 x 轴显示旋转的标签。此外，x 轴标题是不必要的。让我们开始清理。首先，在 Visual Studio Code 编辑器中格式化代码，然后写上注释`#` `Rotate`，如图 C.4 所示。Copilot 将建议如何完成句子。按 Tab 键，将 45 度改为 0 度，然后按 Enter 键，然后 Copilot 将在你的注释下方的一行添加所需的代码（`axis=alt.Axis(labelAngle=0),`）。
+柱状图的 x 轴显示旋转的标签。此外，x 轴标题是不必要的。让我们开始清理。首先，在 Visual Studio Code 编辑器中格式化代码，然后写上注释 `# Rotate`，如图 C.4 所示。Copilot 将建议如何完成句子。按 Tab 键，将 45 度改为 0 度，然后按 Enter 键，然后 Copilot 将在你的注释下方的一行添加所需的代码（`axis=alt.Axis(labelAngle=0),`）。
 
 ![图](img/C-4.png)
 
 ##### 图 C.4 如何在代码中添加注释。Copilot 将建议下一步。
 
-接下来，在`labelAngle=0`后添加一个逗号，并开始写单词`title`。Copilot 会建议`=None`。按 Tab 键确认。这个 Copilot 属性很棒！你可以在代码的任何位置添加注释，并请求 Copilot 为你生成新的代码！由于 Copilot 是一个生成式 AI 工具，可能在你的情况下，建议的提示可能不同。无论如何，你可以轻松地调整 Copilot 建议的代码以满足你的需求。
+接下来，在 `labelAngle=0` 后添加一个逗号，并开始写单词 `title`。Copilot 会建议 `=None`。按 Tab 键确认。这个 Copilot 属性很棒！你可以在代码的任何位置添加注释，并请求 Copilot 为你生成新的代码！由于 Copilot 是一个生成式 AI 工具，可能在你的情况下，建议的提示可能不同。无论如何，你可以轻松地调整 Copilot 建议的代码以满足你的需求。
 
-现在，让我们清理 y 轴。通过将`y='Number' 'of' 'Likes'`通道更改为`y=alt.Y('Number' 'of' 'Likes',axis=alt.Axis(grid=False))`来移除 y 轴。然后，在每根柱子的顶部添加点赞数。让我们使用 Copilot 来完成这项工作。开始写下以下文本：`#` `Add` `a` `text` `mark` `to` `the` `chart` `with` `the` `following` `options:.` Copilot 将建议下一步。通过按 Tab 键和 Enter 键确认。在某个时候，Copilot 将停止建议。按 Enter 键，Copilot 将为你生成代码。测试生成的代码。如果不满足你的要求，请手动更改它，或者再次使用 Copilot。在我的情况下，我不得不稍微改变 Copilot 的注释，以便生成所需的代码。以下列表显示了 Copilot 的指令。
+现在，让我们清理 y 轴。通过将 `y='Number of Likes'` 通道更改为 `y=alt.Y('Number of Likes', axis=alt.Axis(grid=False))` 来移除 y 轴。然后，在每根柱子的顶部添加点赞数。让我们使用 Copilot 来完成这项工作。开始写下以下文本：`# Add a text mark to the chart with the following options:.` Copilot 将建议下一步。通过按 Tab 键和 Enter 键确认。在某个时候，Copilot 将停止建议。按 Enter 键，Copilot 将为你生成代码。测试生成的代码。如果不满足你的要求，请手动更改它，或者再次使用 Copilot。在我的情况下，我不得不稍微改变 Copilot 的注释，以便生成所需的代码。以下列表显示了 Copilot 的指令。
 
 ##### 列表 C.5 Copilot 生成的提示并稍作修改
 
@@ -143,7 +144,7 @@ chart.save('column-chart.xhtml')
 # - Set the y offset to 10
 ```
 
-备注：请求 Copilot 生成在每根柱子顶部绘制标签的代码。
+**备注**：请求 Copilot 生成在每根柱子顶部绘制标签的代码。
 
 以下列表描述了生成的代码。
 
@@ -167,7 +168,7 @@ text = alt.Chart(df).mark_text(
 )
 ```
 
-备注：使用`mark_text()`方法在每根柱子顶部添加标签。设置文本属性，包括颜色、字体大小、粗细等。
+**备注**：使用 `mark_text()` 方法在每根柱子顶部添加标签。设置文本属性，包括颜色、字体大小、粗细等。
 
 最后，合并这两个图表。
 
@@ -184,7 +185,7 @@ chart = chart.configure_view(
 chart.save('column-chart.xhtml')
 ```
 
-备注：编写提示 Copilot 生成合并图表的代码。
+**备注**：编写提示 Copilot 生成合并图表的代码。
 
 图 C.5 显示了最终的图表。
 
@@ -202,16 +203,16 @@ chart.save('column-chart.xhtml')
 
 | **餐食类型** | **2022 年点赞数** | **2023 年点赞数** |
 | --- | --- | --- |
-| **披萨**  | 120  | 145  |
-| **汉堡**  | 95  | 88  |
-| **意大利面**  | 80  | 97  |
-| **寿司**  | 60  | 67  |
-| **Salad**  | 50  | 52  |
-| **牛排**  | 70  | 66  |
-| **Tacos**  | 90  | 78  |
-| **冰淇淋**  | 110  | 134  |
-| **Curry**  | 40  | 43  |
-| **Sandwich**  | 75  | 59  |
+| **披萨** | 120 | 145 |
+| **汉堡** | 95 | 88 |
+| **意大利面** | 80 | 97 |
+| **寿司** | 60 | 67 |
+| **Salad** | 50 | 52 |
+| **牛排** | 70 | 66 |
+| **Tacos** | 90 | 78 |
+| **冰淇淋** | 110 | 134 |
+| **Curry** | 40 | 43 |
+| **Sandwich** | 75 | 59 |
 
 下面的列表描述了构建多系列柱状图的代码。
 
@@ -248,9 +249,9 @@ chart = alt.Chart(df).mark_bar(
 chart.save('multiple-column-chart.xhtml')
 ```
 
-#1 将数据文件 data/meals.csv 载入 pandas DataFrame。
+#1 将数据文件 `data/meals.csv` 载入 pandas DataFrame。
 
-注意：使用 `column` 通道将多个系列添加到您的图表中。默认情况下，柱状图将柱标签添加到图表顶部。要将它们移动到底部，请在 `alt.Column()` 通道中设置 `header` 属性。
+**注意**：使用 `column` 通道将多个系列添加到您的图表中。默认情况下，柱状图将柱标签添加到图表顶部。要将它们移动到底部，请在 `alt.Column()` 通道中设置 `header` 属性。
 
 图 C.6 显示了生成的图表。现在您已经学会了如何实现具有多个系列的柱状图，让我们继续下一个图表：金字塔图。
 
@@ -266,18 +267,18 @@ chart.save('multiple-column-chart.xhtml')
 
 | **月份** | **披萨** | **意大利面** |
 | --- | --- | --- |
-| 一月 | 200  | 18  |
-| 二月 | 220  | 19  |
-| 三月 | 240  | 10  |
-| 四月 | 230  | 20  |
-| 五月 | 250  | 20  |
-| 六月 | 280  | 40  |
-| 七月 | 300  | 60  |
-| 八月 | 320  | 80  |
-| 九月 | 310  | 70  |
-| 十月 | 290  | 50  |
-| 十一月 | 270  | 30  |
-| 十二月 | 240  | 20  |
+| 一月 | 200 | 18 |
+| 二月 | 220 | 19 |
+| 三月 | 240 | 10 |
+| 四月 | 230 | 20 |
+| 五月 | 250 | 20 |
+| 六月 | 280 | 40 |
+| 七月 | 300 | 60 |
+| 八月 | 320 | 80 |
+| 九月 | 310 | 70 |
+| 十月 | 290 | 50 |
+| 十一月 | 270 | 30 |
+| 十二月 | 240 | 20 |
 
 折线图由三个主要元素组成：左侧部分、中间部分和右侧部分。左侧和右侧部分是条形图，左侧部分是颠倒的。中间部分则包含两个条形图的标签。我们不会为 Copilot 生成代码编写提示。相反，我们将使用它提出的建议，并直接展示生成的代码，而不提供 Copilot 建议的截图。我建议您尝试编写代码以实验 Copilot 的功能。
 
@@ -322,11 +323,13 @@ left_text = left_base.encode(
 )
 ```
 
-注意：构建基础图表（`left_chart`），然后使用它来构建柱状图和标签。将 `x` 通道中的 `sort` 属性设置为 `descending` 以将柱状图锚定在右侧。此外，在 `mark_text()` 方法中将 `align` 属性设置为 `right`。
+**注意**：构建基础图表（`left_chart`），然后使用它来构建柱状图和标签。将 `x` 通道中的 `sort` 属性设置为 `descending` 以将柱状图锚定在右侧。此外，在 `mark_text()` 方法中将 `align` 属性设置为 `right`。
 
 现在，让我们构建金字塔图的中间部分。这部分包含标签。以下列表显示了代码。
 
 ##### 列表 C.10 如何创建金字塔图的中间部分
+
+
 
 ```py
 middle = alt.Chart(df
@@ -342,9 +345,9 @@ middle = alt.Chart(df
 )
 ```
 
-注意：使用 `mark_text()` 设置标签。同时设置 `y` 和 `text` 通道。
+注意：使用`mark_text()`设置标签。同时设置`y`和`text`通道。
 
-最后，让我们绘制金字塔图的右侧部分。使用与左侧图表相同的策略，不排序 `x` 通道。此外，将所有图表组合起来构建最终的图表。以下列表显示了代码。
+最后，让我们绘制金字塔图的右侧部分。使用与左侧图表相同的策略，不排序`x`通道。此外，将所有图表组合起来构建最终的图表。以下列表显示了代码。
 
 ##### 列表 C.11 如何创建金字塔图的右侧部分
 
@@ -382,7 +385,7 @@ chart = chart.configure_view(
 chart.save('pyramid-chart.xhtml')
 ```
 
-注意：使用 `+` 运算符将每个单独的部分组合起来，使用 `|` 运算符将部分组合在一起。
+注意：使用`+`运算符将每个单独的部分组合起来，使用`|`运算符将部分组合在一起。
 
 图 C.7 显示了生成的图表。现在你已经学会了如何构建金字塔图，让我们继续学习下一个图表，即堆叠柱状图。
 
@@ -392,7 +395,7 @@ chart.save('pyramid-chart.xhtml')
 
 ### C.2.4 堆叠柱状图
 
-*堆叠柱状图* 与传统的柱状图类似，但它们显示了每个数据系列对总值的贡献。使用堆叠柱状图来显示不同因素如何随时间对总值的贡献，或者比较不同数据系列的相对重要性。
+*堆叠柱状图*与传统的柱状图类似，但它们显示了每个数据系列对总值的贡献。使用堆叠柱状图来显示不同因素如何随时间对总值的贡献，或者比较不同数据系列的相对重要性。
 
 让我们使用 Copilot 来绘制一个堆叠柱状图。当然，你已经注意到，当你编写代码时，Copilot 会越来越多地建议与你编程风格相近的代码。因此，当使用 Copilot 时，我们可以尝试一种新的策略：编写通用指令。这种策略假设我们已经使用 Copilot 编写了很多代码。如果我们一开始使用 Copilot 时就使用了通用指令，我们肯定会得到令人失望的结果。以下列表显示了 Copilot 的通用指令。
 
@@ -451,7 +454,7 @@ chart.save('stacked-column-chart.xhtml')
 
 #1 使用此注释告诉 Copilot 构建列表。
 
-注意：在绘制图表之前，使用 `melt()` 方法转换 DataFrame。
+注意：在绘制图表之前，使用`melt()`方法转换 DataFrame。
 
 图 C.8 显示了生成的图表。现在你已经学会了如何在 Altair 和 Copilot 中构建堆叠柱状图，让我们看看如何将堆叠柱状图转换为 100% 堆叠柱状图。
 
@@ -461,7 +464,7 @@ chart.save('stacked-column-chart.xhtml')
 
 ### C.2.5 100% 堆叠柱状图
 
-一个 *100% 堆积柱状图* 是一个堆积柱状图，其中每个柱子堆叠到 100% 的高度以显示每个类别的比例组成。它用于比较多个数据系列中每个柱子内不同类别的贡献。要将堆积柱状图转换为 100% 堆积柱状图，请在列表 6.4 的 `y` 通道中设置 `normalize=True`：`y=alt.Y('Number of Orders', stack='normalize')`。图 C.9 显示了生成的图表。
+一个*100% 堆积柱状图*是一个堆积柱状图，其中每个柱子堆叠到 100% 的高度以显示每个类别的比例组成。它用于比较多个数据系列中每个柱子内不同类别的贡献。要将堆积柱状图转换为 100% 堆积柱状图，请在列表 6.4 的`y`通道中设置`normalize=True`：`y=alt.Y('Number of Orders', stack='normalize')`。图 C.9 显示了生成的图表。
 
 ![图](img/C-9.png)
 
@@ -471,7 +474,7 @@ chart.save('stacked-column-chart.xhtml')
 
 ### C.2.6 直方图
 
-一个 *直方图* 表示数值数据的分布，连续数据被分成称为箱子的区间，每个柱子的高度表示落在该箱子内的数据点的频率。使用直方图来可视化数据集的分布并识别模式或异常值。
+一个*直方图*表示数值数据的分布，连续数据被分成称为箱子的区间，每个柱子的高度表示落在该箱子内的数据点的频率。使用直方图来可视化数据集的分布并识别模式或异常值。
 
 考虑表 C.3 中描述的样本数据集，显示不同产品的平均评分（评分范围从 1 到 10）。表中只显示了部分产品的值；您可以在本书的 GitHub 仓库中阅读完整数据集，位于 06/bar-charts/data/product-ratings.csv。
 
@@ -521,11 +524,11 @@ chart = alt.Chart(df).mark_bar(
 )
 ```
 
-#1 将 `bin` 属性添加到 Copilot 生成的原始代码中。
+#1 将`bin`属性添加到 Copilot 生成的原始代码中。
 
-注意：使用 `bin` 属性来指定箱子的数量（`maxbins`）及其范围。
+注意：使用`bin`属性来指定箱子的数量（`maxbins`）及其范围。
 
-为了进行比较，我们可以使用 Altair 提供的 `transform_density()` 方法在我们的数据图表上添加一维核密度估计。
+为了进行比较，我们可以使用 Altair 提供的`transform_density()`方法在我们的数据图表上添加一维核密度估计。
 
 ##### 列表 C.16 一维核密度估计
 
@@ -553,7 +556,7 @@ chart = chart.resolve_scale(y='independent'
 chart.save('histogram.xhtml')
 ```
 
-注意：使用 `transform_density()` 方法创建核密度估计。此方法接受用于计算的 DataFrame 的 `column` 以及生成的列名（`as_` 属性）。此外，将生成的线与之前的图表结合起来。
+注意：使用`transform_density()`方法创建核密度估计。此方法接受用于计算的 DataFrame 的`column`以及生成的列名（`as_`属性）。此外，将生成的线与之前的图表结合起来。
 
 图 C.10 显示了生成的图表。
 
@@ -636,6 +639,8 @@ chart.save('area-chart.xhtml')
 
 ##### 列表 C.18 斜率图
 
+
+
 ```py
 import pandas as pd
 import altair as alt
@@ -697,7 +702,7 @@ chart.save('slope-chart.xhtml')
 
 ### C.3.3 哑铃图
 
-*哑铃图*，或*浮动条形图*，由两个数据点通过一条线连接而成，一个在开始处，一个在结束处。哑铃图类似于斜率图，但通常我们使用哑铃图来比较两个数据点之间的差异。相比之下，我们使用斜率图来比较数据随时间的变化或不同组之间的变化。
+哑铃图，或浮动条形图，由两个数据点通过一条线连接而成，一个在开始处，一个在结束处。哑铃图类似于斜率图，但通常我们使用哑铃图来比较两个数据点之间的差异。相比之下，我们使用斜率图来比较数据随时间的变化或不同组之间的变化。
 
 图 C.13 显示了哑铃图的示例。你可以在本书的 GitHub 仓库中找到相关的代码。
 
@@ -709,7 +714,7 @@ chart.save('slope-chart.xhtml')
 
 注意：折线图最早由苏格兰工程师威廉·普莱费尔在 18 世纪末使用。除了发明折线图外，普莱费尔还引入了其他流行的数据可视化，如柱状图和饼图。他对图形表示的创新使用彻底改变了我们今天展示数据的方式，使他成为数据可视化领域的先驱。
 
-符号
+## 符号
 
 \
 
@@ -717,11 +722,11 @@ chart.save('slope-chart.xhtml')
 
 100%堆叠柱状图
 
-+运算符, 第二部分
+`+`运算符, 第二部分
 
-A
+## A
 
-add_params() 方法, 第 2 次
+`add_params()`方法, 第 2 次
 
 受众
 
@@ -757,21 +762,21 @@ Abela, Stephen
 
 AI (人工智能): 生成式 AI 工具: ChatGPT, 提示结构: 适应受众
 
-alt.condition() 方法
+`alt.condition()`方法
 
-alt.Color() 通道
+`alt.Color()`通道
 
 主动交互
 
-alt.X() 对象
+`alt.X()`对象
 
 算法偏差
 
-B
+## B
 
-binding_range() 方法, 第 2 次
+`binding_range()`方法, 第 2 次
 
-base.mark_line() 方法
+`base.mark_line()`方法
 
 带类型
 
@@ -781,13 +786,13 @@ Baer, Michael
 
 大数据分析
 
-binding_select() 方法, 第 2 次
+`binding_select()`方法, 第 2 次
 
-C
+## C
 
 柱状图
 
-configure_axisY() 方法
+`configure_axisY()`方法
 
 颜色属性
 
@@ -805,7 +810,7 @@ Comet
 
 利弊
 
-slider.xhtml 文件
+`slider.xhtml`文件
 
 条件, 第 2 次
 
@@ -833,15 +838,15 @@ slider.xhtml 文件
 
 复杂的数据探索分析
 
-configure_axis()方法, 第 2 次, 第 3 次, 第 4 次
+`configure_axis()`方法, 第 2 次, 第 3 次, 第 4 次
 
 烹饪图表系列
 
-chat.completions.create()方法
+`chat.completions.create()`方法
 
 图表注释
 
-configure_view()方法
+`configure_view()`方法
 
 上下文
 
@@ -851,15 +856,15 @@ configure_view()方法
 
 视觉上下文, 第 2 次
 
-configure_*()方法
+`configure_*()`方法
 
-changeColor 参数
+`changeColor`参数
 
 分类, 第 2 次
 
-configure_axisX()方法
+`configure_axisX()`方法
 
-configure_title()方法
+`configure_title()`方法
 
 案例研究
 
@@ -881,13 +886,13 @@ ChatGPT（生成式预训练变换器）
 
 在标题或副标题下
 
-ChatOpenAI()函数
+`ChatOpenAI()`函数
 
 类别列
 
- choropleth 地图
+choropleth 地图
 
-D
+## D
 
 德克，本
 
@@ -919,9 +924,9 @@ DIKW（数据、信息、知识、智慧）金字塔, 第 2 次, 第 3 次, 第 
 
 将信息转化为知识
 
-div
+`div`
 
-dt 变量, 第 2 次
+`dt`变量, 第 2 次
 
 数据部分, 2nd
 
@@ -965,7 +970,7 @@ Vega-Lite
 
 数据偏差
 
-E
+## E
 
 练习, 2nd
 
@@ -999,9 +1004,9 @@ Vega-Lite
 
 编码部分
 
-encode() 方法
+`encode()`方法
 
-F
+## F
 
 字段变量, 2nd
 
@@ -1013,15 +1018,15 @@ F
 
 手动构建
 
-feedparser 库
+`feedparser`库
 
-G
+## G
 
-groupby() 方法
+`groupby()`方法
 
 地理地图
 
-group_by() 函数
+`group_by()`函数
 
 等级列
 
@@ -1075,7 +1080,7 @@ GitHub 仓库, 第 2 次
 
 克隆仓库, 第 2 次
 
-H
+## H
 
 直方图
 
@@ -1087,13 +1092,13 @@ H
 
 人机交互验证
 
-HYPERLINK \l , 第 2 次, 第 3 次, 第 4 次, 第 5 次, 第 6 次, 第 7 次, 第 8 次
+`HYPERLINK \l`, 第 2 次, 第 3 次, 第 4 次, 第 5 次, 第 6 次, 第 7 次, 第 8 次
 
 标题属性
 
 水平连接
 
-href 通道
+`href`通道
 
 无家可归的故事, 第 2 次, 第 3 次
 
@@ -1107,11 +1112,11 @@ href 通道
 
 隐藏层
 
-I
+## I
 
 交互式图表
 
-innerRadius 属性, 第 2 次
+`innerRadius`属性, 第 2 次
 
 信息
 
@@ -1137,17 +1142,17 @@ Vega-Lite
 
 设置
 
-isnull() 方法
+`isnull()`方法
 
-interactive() 方法
+`interactive()`方法
 
-Image.create_edit() 方法
+`Image.create_edit()`方法
 
-J
+## J
 
 JavaScript 代码
 
-K
+## K
 
 知识
 
@@ -1159,7 +1164,7 @@ Knaflic, Cole Nussbaumer
 
 Klein, Gary
 
-L
+## L
 
 低能量情绪
 
@@ -1185,41 +1190,41 @@ LLMs (大型语言模型)
 
 标签列
 
-M
+## M
 
-mark_bar() 方法, 第 2 次
+`mark_bar()`方法, 第 2 次
 
-mark_text() 属性
+`mark_text()`属性
 
 Matplotlib，与 Altair 比较
 
-mark_arc() 函数
+`mark_arc()`函数
 
-mark_arc() 方法
+`mark_arc()`方法
 
 Milligan, Donald
 
-mark_image() 函数, 第 2 次
+`mark_image()`函数, 第 2 次
 
-mark_rule() 方法
+`mark_rule()`方法
 
-mark_text() 方法, 第 2 次, 第 3 次, 第 4 次, 第 5 次, 第 6 次
+`mark_text()`方法, 第 2 次, 第 3 次, 第 4 次, 第 5 次, 第 6 次
 
-messages 关键字
+`messages`关键字
 
 多系列柱状图
 
-mark_line() 函数, 第 2 次, 第 3 次
+`mark_line()`函数, 第 2 次, 第 3 次
 
 标记部分, 第 2 次
 
-mark_bar() 函数
+`mark_bar()`函数
 
 墨卡托投影地图
 
-melt() 方法
+`melt()`方法
 
-mark_line() 方法, 第 2 次, 第 3 次, 第 4 次
+`mark_line()`方法, 第 2 次, 第 3 次, 第 4 次
 
 标记, 第 2 次
 
@@ -1227,23 +1232,23 @@ Vega
 
 在 Altair 中
 
-mark_rule() 函数
+`mark_rule()`函数
 
 标记，Vega-Lite
 
-mark_line() 属性，第 2 次
+`mark_line()`属性，第 2 次
 
-mark_hex() 方法
+`mark_hex()`方法
 
-mark_text() 函数，第 2 次，第 3 次，第 4 次，第 5 次，第 6 次
+`mark_text()`函数，第 2 次，第 3 次，第 4 次，第 5 次，第 6 次
 
 测量偏差
 
-mark_geoshape() 标记
+`mark_geoshape()`标记
 
-melt() 函数
+`melt()`函数
 
-N
+## N
 
 消极情绪
 
@@ -1267,23 +1272,23 @@ N-1 行
 
 NLP (自然语言处理)
 
-O
+## O
 
-openai.File.create() 方法
+`openai.File.create()`方法
 
-OPENAI_API_KEY 环境变量
+`OPENAI_API_KEY`环境变量
 
-openai.ChatCompletion.create() 方法
+`openai.ChatCompletion.create()`方法
 
 安装 OpenAI API
 
-OpenAIEmbeddings() 对象
+`OpenAIEmbeddings()`对象
 
 输出层
 
-P
+## P
 
-pip install <package_name 命令
+`pip install <package_name>`命令
 
 Python Altair，使用的好处，第 2 次
 
@@ -1297,21 +1302,21 @@ Python Altair，使用的好处，第 2 次
 
 产品类别列
 
-pwd 模块
+`pwd`模块
 
 提示模板
 
-PANDAS MELT() 函数
+`PANDAS MELT()`函数
 
 金字塔图
 
 比例符号地图
 
-properties() 方法，第 2 次，第 3 次
+`properties()`方法，第 2 次，第 3 次
 
-params，第 2 次
+`params`，第 2 次
 
-pandas DataFrame
+`pandas DataFrame`
 
 从 CSV 文件构建
 
@@ -1321,11 +1326,11 @@ pandas DataFrame
 
 产品评分列
 
-ppi (每英寸像素)
+`ppi` (每英寸像素)
 
-params 关键字
+`params`关键字
 
-PromptTemplate() 对象
+`PromptTemplate()`对象
 
 发布数据故事
 
@@ -1333,23 +1338,23 @@ Power BI，第 2 次
 
 导出故事
 
-PDFMinerLoader() 函数
+`PDFMinerLoader()`函数
 
 Python
 
 安装包
 
-pandas DataFrame, 2nd, 3rd
+`pandas DataFrame`, 2nd, 3rd
 
 积极情绪
 
 先决条件
 
-Product_id 列
+`Product_id`列
 
 呈现数据故事
 
-Q
+## Q
 
 定量数据
 
@@ -1357,7 +1362,7 @@ Q
 
 定性颜色调色板
 
-R
+## R
 
 参考文献, 2nd, 3rd
 
@@ -1367,7 +1372,7 @@ R
 
 工具和库
 
-RecursiveCharacterTextSplitter() 对象
+`RecursiveCharacterTextSplitter()`对象
 
 RAG (检索增强生成)
 
@@ -1377,25 +1382,25 @@ RAG (检索增强生成)
 
 重复图表
 
-repeat() 函数
+`repeat()`函数
 
-rect 类型
+`rect`类型
 
-reset_index() 方法
+`reset_index()`方法
 
-reset_index() 函数
+`reset_index()`函数
 
 回归
 
 返回列
 
-resolve_scale() 方法
+`resolve_scale()`方法
 
 报告，在 Comet 中
 
 范围参数
 
-S
+## S
 
 鲑鱼养殖案例研究, 2nd, 3rd
 
@@ -1425,11 +1430,11 @@ Streamlit
 
 顺序颜色调色板
 
-strokeWidth 通道
+`strokeWidth`通道
 
 体育学科案例研究
 
-st.Title() 函数
+`st.Title()`函数
 
 信号关键词
 
@@ -1443,9 +1448,9 @@ st.Title() 函数
 
 通过幻灯片讲述故事
 
-st.slider() 函数
+`st.slider()`函数
 
-selection_point() 方法, 2nd
+`selection_point()`方法, 2nd
 
 斜率图
 
@@ -1457,9 +1462,9 @@ selection_point() 方法, 2nd
 
 突出显示前两个
 
-T
+## T
 
-transform_filter()方法, 第 2 次, 第 3 次, 第 4 次
+`transform_filter()`方法, 第 2 次, 第 3 次, 第 4 次
 
 文本上下文
 
@@ -1487,9 +1492,9 @@ top P 参数
 
 文本到图像工具
 
-TitleParams()函数
+`TitleParams()`函数
 
-transform_density()方法, 第 2 次
+`transform_density()`方法, 第 2 次
 
 配置标题
 
@@ -1505,7 +1510,7 @@ transform_density()方法, 第 2 次
 
 安装 LangChain
 
-to_file()方法
+`to_file()`方法
 
 三幕结构
 
@@ -1515,23 +1520,23 @@ to_file()方法
 
 标题，下一步
 
-transformers 引用
+`transformers`引用
 
-U
+## U
 
 无监督学习
 
 更新属性
 
-UnstructuredHTMLLoader()对象
+`UnstructuredHTMLLoader()`对象
 
 功利主义
 
 更新块
 
-unique()方法
+`unique()`方法
 
-V
+## V
 
 视觉上下文
 
@@ -1563,7 +1568,7 @@ Vega
 
 垂直连接
 
-W
+## W
 
 撰写报告，使用数据讲故事
 
@@ -1581,6 +1586,6 @@ W
 
 WCAG (Web 内容可访问性指南)
 
-X
+## X
 
-x 通道, 第 2 版
+`x`通道, 第 2 版

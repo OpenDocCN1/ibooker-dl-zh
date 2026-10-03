@@ -1,16 +1,14 @@
+
 # 第六章：测试与提示工程
 
-### 本章涵盖
+## 本章涵盖
 
-+   在第三章中，我们首先开始看到测试 Copilot 生成的代码的重要性。对于任何编写软件的人来说，测试是一项基本技能，因为它能让你对代码的正常运行有信心。在本章中，我们将学习如何彻底测试我们的代码，以及如何通过修改我们的提示来帮助 Copilot 修复不工作的代码。
+- 在第三章中，我们首先开始看到测试 Copilot 生成的代码的重要性。对于任何编写软件的人来说，测试是一项基本技能，因为它能让你对代码的正常运行有信心。在本章中，我们将学习如何彻底测试我们的代码，以及如何通过修改我们的提示来帮助 Copilot 修复不工作的代码。
+- 使用封闭盒与开放盒测试
+- 通过修改提示来解决 Copilot 的错误
+- 通过测试 Copilot 生成的代码的示例
 
-+   使用封闭盒与开放盒测试
-
-+   通过修改提示来解决 Copilot 的错误
-
-+   通过测试 Copilot 生成的代码的示例
-
-理解测试 Copilot 代码的重要性
+## 理解测试 Copilot 代码的重要性
 
 测试是一项你需要学会如何独立做好的基本技能，这样你才能检查代码是否正确运行。Copilot 可以生成测试，并且它在生成的测试质量上一直在改进，但我们鼓励你暂时不要使用 Copilot 来生成测试，因为你需要学会自己足够好地做这件事，以便能够验证 Copilot 生成的测试是否合理。这一点在接下来的几章中也将是真实的——问题分解、测试和调试都是在你请求 Copilot 的帮助之前必须学会的技能，因为你需要知道如何自己完成这些任务，才能知道 Copilot 是否在合理地做事。
 
@@ -34,9 +32,9 @@
 
 | 封闭盒测试 | 开箱测试 |
 | --- | --- |
-| 测试需要理解功能规范。测试需要同时理解功能规范和实现该功能的代码。 |
-| 测试不需要理解代码的功能。测试应根据代码的编写方式定制。 |
-| 测试人员不需要对所测试的代码有技术专长。测试人员需要足够理解代码，以确定哪些测试可能更重要。 |
+| 测试需要理解功能规范。 | 测试需要同时理解功能规范和实现该功能的代码。 |
+| 测试不需要理解代码的功能。 | 测试应根据代码的编写方式定制。 |
+| 测试人员不需要对所测试的代码有技术专长。 | 测试人员需要足够理解代码，以确定哪些测试可能更重要。 |
 | 通过改变输入并检查预期结果来测试函数 | 可以像封闭盒测试一样测试函数，但也可以在函数内部进行更细粒度的测试 |
 
 ### 6.2.1 封闭盒测试
@@ -62,11 +60,10 @@ def longest_word(words):
 
 对于我们通常考虑编写测试用例的两个类别：
 
-+   *常见用例—*这些情况包括一些标准输入，你可以想象函数会接收这些输入并得到相应的结果。
+- *常见用例*—这些情况包括一些标准输入，你可以想象函数会接收这些输入并得到相应的结果。
+- ***边缘情况*—这些情况是不常见但可能破坏代码的情况。这些输入可能更深入地测试函数的一些规则或包含意外的输入（例如，所有字符串都为空的列表）。**
 
-+   ***边缘情况—*这些情况是不常见但可能破坏代码的情况。这些输入可能更深入地测试函数的一些规则或包含意外的输入（例如，所有字符串都为空的列表）。**
-
-**回顾一下前一个例子中的`longest_word`函数签名，让我们考虑一些可能用来测试它的测试用例。在本章的后面部分，我们将看到如何实际运行这些测试用例以确定我们的代码是否正确工作。让我们从*常见用例*开始。我们可能希望包括一个只有几个单词的测试，其中一个单词比其他单词长：
+回顾一下前一个例子中的`longest_word`函数签名，让我们考虑一些可能用来测试它的测试用例。在本章的后面部分，我们将看到如何实际运行这些测试用例以确定我们的代码是否正确工作。让我们从*常见用例*开始。我们可能希望包括一个只有几个单词的测试，其中一个单词比其他单词长：
 
 ```py
 >>> longest_word(['cat', 'dog', 'bird']) 
@@ -200,27 +197,27 @@ def longest_word(words):
  such word 
 
  >>> longest_word(['cat', 'dog', 'bird']) #1
- **'bird'** #1
+ 'bird' #1
  #1
- **>>> longest_word(['happy', 'birthday', 'my', 'cat'])** #1
- **'birthday'** #1
+ >>> longest_word(['happy', 'birthday', 'my', 'cat']) #1
+ 'birthday' #1
 
- **>>> longest_word(['happy'])** #1
- **'happy'** #1
+ >>> longest_word(['happy']) #1
+ 'happy' #1
  #1
- **>>> longest_word(['cat', 'dog', 'me'])** #1
- **'cat'** #1
+ >>> longest_word(['cat', 'dog', 'me']) #1
+ 'cat' #1
  #1
- **>>> longest_word(['', ''])** #1
- **''** #1
- **'''** #1
+ >>> longest_word(['', '']) #1
+ '' #1
+ ''' #1
     longest = ''                             #2
     for i in range(0,len(words)):            #2
         if len(words[i]) > len(longest):     #2
             longest = words[i]               #2
     return longest                           #2
-**import doctest                  ** #3
-**doctest.testmod(verbose=True)   ** #3
+import doctest                               #3
+doctest.testmod(verbose=True)                #3
 ```
 
 #1 显示 doctest 的测试用例
@@ -232,6 +229,8 @@ def longest_word(words):
 在这段代码中，我们看到文档字符串中提供了我们的测试用例作为 Copilot 的提示。Copilot 生成了正确的代码来实现这个函数。然后我们手动编写了代码的最后两行来执行测试。运行后，我们得到以下列表中的输出。
 
 ##### 列表 6.3 列出 6.2 中程序运行时的 doctest 输出
+
+
 
 ```py
 Trying:
@@ -291,7 +290,7 @@ import doctest
 doctest.testmod(verbose=True)
 ```
 
-在第一行，我们导入了 doctest 模块。这个模块帮助我们通过在运行程序时自动执行测试用例来测试我们的代码。在第二行，我们调用 doctest 模块中的`testmod`函数。这个函数调用告诉 doctest 执行所有测试；参数`verbose=True`告诉 doctest 为我们提供所有测试的结果，无论它们是否通过。如果我们切换到`verbose=False`，它只有在测试用例失败时才会给出输出（`verbose=False`实际上是默认值，所以你可以不带参数调用函数，它将默认不提供输出，除非一个或多个测试失败）。这可以是一个很好的特性，因为我们可以在 doctest 运行时保持其运行，并且只有在测试失败时才看到输出。
+在第一行，我们导入了`doctest`模块。这个模块帮助我们通过在运行程序时自动执行测试用例来测试我们的代码。在第二行，我们调用`doctest`模块中的`testmod`函数。这个函数调用告诉`doctest`执行所有测试；参数`verbose=True`告诉`doctest`为我们提供所有测试的结果，无论它们是否通过。如果我们切换到`verbose=False`，它只有在测试用例失败时才会给出输出（`verbose=False`实际上是默认值，所以你可以不带参数调用函数，它将默认不提供输出，除非一个或多个测试失败）。这可以是一个很好的特性，因为我们可以在`doctest`运行时保持其运行，并且只有在测试失败时才看到输出。
 
 在这种情况下，我们的代码通过了所有测试用例。但让我们体验一下当我们的代码没有通过时会发生什么。
 
@@ -333,13 +332,13 @@ Got:
 ***Test Failed*** 1 failures.
 ```
 
-Doctest 方便地告诉我们哪个测试被执行了，预期的输出是什么，以及函数实际产生了什么。这将捕获错误并允许我们返回去修复错误。
+`Doctest`方便地告诉我们哪个测试被执行了，预期的输出是什么，以及函数实际产生了什么。这将捕获错误并允许我们返回去修复错误。
 
-##### Copilot 不会自动运行测试用例
+## Copilot 不会自动运行测试用例
 
 我们经常听到以下问题：为什么 Copilot 在生成代码时不直接包含测试用例？例如，如果我们添加测试用例，如果 Copilot 能够尝试生成函数并且只提供通过那些测试用例的代码，那会很好。不幸的是，在这方面存在一些技术挑战，并且截至写作时，这个功能尚未包含。所以，如果你添加测试用例，它只是改善了 Copilot 的提示，但不能保证 Copilot 的代码建议通过那些测试。
 
-到目前为止，我们已经看到了如何使用 Python 提示符和 doctest 运行我们的测试。现在我们知道如何测试我们的代码了，让我们考虑一下这如何修改我们的代码设计周期。
+到目前为止，我们已经看到了如何使用 Python 提示符和`doctest`运行我们的测试。现在我们知道如何测试我们的代码了，让我们考虑一下这如何修改我们的代码设计周期。
 
 ## 6.4 重新审视使用 Copilot 设计函数的周期
 
@@ -347,15 +346,15 @@ Doctest 方便地告诉我们哪个测试被执行了，预期的输出是什么
 
 ![figure](img/6-1.png)
 
-##### 图 6.1 使用 Copilot 的函数设计周期，增加了更多关于测试的内容
+## 图 6.1 使用 Copilot 的函数设计周期，增加了更多关于测试的内容
 
 这个图比之前复杂一些，但如果我们仔细观察，我们可以看到保留了大部分原始过程。增加或改变的内容包括以下：
 
-+   当我们编写提示时，我们可能将 doctests 作为初始提示的一部分来帮助 Copilot 生成代码。
++ 当我们编写提示时，我们可能将`doctests`作为初始提示的一部分来帮助 Copilot 生成代码。
 
-+   经过第四章和第五章的学习，我们现在可以阅读代码来检查其行为是否正常，因此我们现在有一个额外的步骤来处理 Copilot 的初始代码看起来不正确的情况。如果发生这种情况，我们将使用 Ctrl-Enter 来探索 Copilot 的建议，希望能找到解决方案。如果我们能找到这样的解决方案，我们将选择它并继续前进。如果我们找不到，我们需要修改我们的提示来帮助 Copilot 生成改进的建议。
++ 经过第四章和第五章的学习，我们现在可以阅读代码来检查其行为是否正常，因此我们现在有一个额外的步骤来处理 Copilot 的初始代码看起来不正确的情况。如果发生这种情况，我们将使用 Ctrl-Enter 来探索 Copilot 的建议，希望能找到解决方案。如果我们能找到这样的解决方案，我们将选择它并继续前进。如果我们找不到，我们需要修改我们的提示来帮助 Copilot 生成改进的建议。
 
-+   在找到看起来可能正确的代码后，我们将运行 doctest 来查看代码是否通过了我们在提示中包含的 doctests（如果没有包含任何，它将自动通过）。如果 doctest 通过，那么我们可以继续添加测试并检查它们，直到我们满意代码正常工作。如果 doctest 失败，我们需要找出如何修改提示来解决失败的测试。一旦修改了提示，它可能会帮助 Copilot 生成新的代码，可能能够通过我们提供的测试。
++ 在找到看起来可能正确的代码后，我们将运行`doctest`来查看代码是否通过了我们在提示中包含的`doctests`（如果没有包含任何，它将自动通过）。如果`doctest`通过，那么我们可以继续添加测试并检查它们，直到我们满意代码正常工作。如果`doctest`失败，我们需要找出如何修改提示来解决失败的测试。一旦修改了提示，它可能会帮助 Copilot 生成新的代码，可能能够通过我们提供的测试。
 
 使用这个新的工作流程，我们不仅能够确定我们的代码是否正常工作，而且在代码尚未正常工作时也能修复代码。在接下来的章节中，我们将提供更多的工具来帮助我们在代码不正常工作时进行操作，但到目前为止，让我们通过解决一个新的问题并使用这里描述的工作流程测试 Copilot 的解决方案来将这些内容综合起来。
 
@@ -363,13 +362,13 @@ Doctest 方便地告诉我们哪个测试被执行了，预期的输出是什么
 
 让我们尝试一个可能需要解决的问题，以帮助学生决定在面对面课程中坐在哪里。虽然我们谈论的是在教室中寻找空座位，但这个问题与尝试在音乐厅、剧院、电影院或办公室布局中找到空座位是相同的。
 
-假设我们有一个教室布局，它是一个二维列表，包含座位行。每个座位要么包含一个空格(`'` `'`)，要么包含一个学生(`'S'`)，分别表示空座位或占用座位。我们将要求 Copilot 创建一个函数来确定我们可以添加最多学生的行，在这个过程中，我们将设计检查代码是否正常工作的测试。
+假设我们有一个教室布局，它是一个二维列表，包含座位行。每个座位要么包含一个空格(`' '`)，要么包含一个学生(`'S'`)，分别表示空座位或占用座位。我们将要求 Copilot 创建一个函数来确定我们可以添加最多学生的行，在这个过程中，我们将设计检查代码是否正常工作的测试。
 
 ### 6.5.1 寻找我们可以添加到一行中的最多学生数
 
 我们想找出我们可以在教室的单行中添加的最大新学生数。（等价地，我们正在寻找任何一行中的最大空座位数。）为此，让我们从一个有些含糊的提示开始，看看 Copilot 的表现如何。
 
-##### 列表 6.4 我们可以添加到一行中的最大学生数
+## 列表 6.4 我们可以添加到一行中的最大学生数
 
 ```py
 def most_students(classroom):
@@ -396,17 +395,17 @@ def most_students(classroom):
 
 为了这个例子，我们的提示不是很清楚。“一行中可以坐多少新学生？”对于一个人类来说是一个合理的起点，但它不是很具体，很容易想象 Copilot 在解释我们的意思时会感到困惑。Copilot 可能会弄不清楚我们是计算每行的学生数还是空座位数，或者它可能会返回教室中可用的总座位数而不是一行的座位数。结果证明，我们的提示让 Copilot 感到困惑，代码并不正确，但在我们深入代码之前，让我们考虑我们应该运行哪些测试。我们已经想出了一套测试案例：
 
-+   一个教室中有一些连续的空座位和一些非连续的空座位，以确保它不仅仅是在计算连续的空座位数量
++ 一个教室中有一些连续的空座位和一些非连续的空座位，以确保它不仅仅是在计算连续的空座位数量
 
-+   一个没有空座位的教室，以确保在这种情况下返回 0
++ 一个没有空座位的教室，以确保在这种情况下返回 0
 
-+   一个行满空座的教室，以确保所有座位都被计算在内，包括第一和最后一个座位（边缘情况）
++ 一个行满空座的教室，以确保所有座位都被计算在内，包括第一和最后一个座位（边缘情况）
 
-+   一个有多行且每行空座位数相同的教室，以确保它只返回这些值中的一个（而不是，也许，所有这些行中空座位的总和）
++ 一个有多行且每行空座位数相同的教室，以确保它只返回这些值中的一个（而不是，也许，所有这些行中空座位的总和）
 
-让我们先添加第一个测试案例，并添加 doctest 代码来运行测试，如下所示。
+让我们先添加第一个测试案例，并添加`doctest`代码来运行测试，如下所示。
 
-##### 列表 6.5 我们可以添加到一行中的最大学生数
+## 列表 6.5 我们可以添加到一行中的最大学生数
 
 ```py
 def most_students(classroom):
@@ -438,7 +437,7 @@ def most_students(classroom):
 **doctest.testmod(verbose=False)**
 ```
 
-#1 常见情况的 Doctest。在 docstring 测试案例中，如果需要换行，\是必要的。
+#1 常见情况的`Doctest`。在`docstring`测试案例中，如果需要换行，`\`是必要的。
 
 当我们运行这段代码时，我们得到以下输出（我们手动清理了教室列表的格式，以帮助提高答案的可读性）：
 
@@ -471,7 +470,7 @@ Got:
 
 因此，现在第二行有五个学生。当我们再次运行代码时，测试再次失败，代码给出的答案是五。看起来代码不仅仅是在告诉我们每行的座位数。它一定是在做与学生们坐的位置有关的事情。我们的下一步是改进提示，确定我们是否能从 Copilot 那里得到更好的代码，但为了完整性，让我们首先在以下列表中解释代码实际上做了什么。
 
-##### 列表 6.6 对 Copilot 错误代码的遍历
+## 列表 6.6 对 Copilot 错误代码的遍历
 
 ```py
  max_students = 0    #1
@@ -487,7 +486,7 @@ Got:
     return max_students
 ```
 
-#1 从 max_students 初始化为 0 开始
+#1 从`max_students`初始化为 0 开始
 
 #2 对于教室中的每一行
 
@@ -501,68 +500,71 @@ Got:
 
 #7 检查学生计数器是否比之前看到的更大，如果是，则将其作为新的最大值
 
-你可以从代码描述中看到每行的操作，但从高层次来看，这段代码是在计算每行连续学生的数量。它是通过为每行初始化一个计数器为 0 来做到这一点的，只要它看到座位上有学生，就会增加这个计数器。一旦它看到空座位，它就会重置计数器。内循环末尾的 `if` 语句是跟踪之前看到的东西的最大值的一种相当标准的方式，在这种情况下，它是在跟踪之前看到的连续学生数量的最大值。这根本不是我们想要的，我们糟糕的提示部分要为此负责。然而，关键的部分是，我们的测试让我们知道代码是错误的。（如果你在阅读代码时发现了错误，那也很好！）
+你可以从代码描述中看到每行的操作，但从高层次来看，这段代码是在计算每行连续学生的数量。它是通过为每行初始化一个计数器为 0 来做到这一点的，只要它看到座位上有学生，就会增加这个计数器。一旦它看到空座位，它就会重置计数器。内循环末尾的`if`语句是跟踪之前看到的东西的最大值的一种相当标准的方式，在这种情况下，它是在跟踪之前看到的连续学生数量的最大值。这根本不是我们想要的，我们糟糕的提示部分要为此负责。然而，关键的部分是，我们的测试让我们知道代码是错误的。（如果你在阅读代码时发现了错误，那也很好！）
 
 ### 6.5.2 改进提示以找到更好的解决方案
 
 让我们重写提示，保留测试用例，看看我们是否能在以下列表中做得更好。
 
-##### 列表 6.7 再次尝试找到最大的学生数
+## 列表 6.7 再次尝试找到最大的学生数
+
+
+
+# 6.5.2 改进提示
 
 ```py
 def most_students(classroom):
- '''
- classroom is a list of lists #1
- Each ' ' is an empty seat #1
- Each 'S' is a student #1
- #1
- Return the maximum total number of ' ' characters #1
- **In a given row.** 
+    '''
+    classroom is a list of lists
+    Each ' ' is an empty seat
+    Each 'S' is a student
 
- **>>> most_students([['S', ' ', 'S', 'S', 'S', 'S'], \**
- **[' ', 'S', 'S', 'S', 'S', 'S'], \**
- **[' ', 'S', ' ', 'S', ' ', ' ']])**
- **4**
- **'''**
+    Return the maximum total number of ' ' characters in a given row.
+
+    >>> most_students([['S', ' ', 'S', 'S', 'S', 'S'], \
+                       [' ', 'S', 'S', 'S', 'S', 'S'], \
+                       [' ', 'S', ' ', 'S', ' ', ' ']])
+    4
+    '''
     max_seats = 0
     for row in classroom:
-        seats = row.count(' ')      #2
-        if seats > max_seats:     #3
-            max_seats = seats              #3
+        seats = row.count(' ')
+        if seats > max_seats:
+            max_seats = seats
     return max_seats
 
-**import doctest**
-**doctest.testmod(verbose=False)**
+import doctest
+doctest.testmod(verbose=False)
 ```
 
-#1 改进的提示明确表示我们想要任何给定行中 ' ' 字符的最大数量。
+`#1` 改进的提示明确表示我们想要任何给定行中 `' '` 字符的最大数量。
 
-#2 count 是一个列表函数，它返回参数在列表中的数量。
+`#2` `count` 是一个列表函数，它返回参数在列表中的数量。
 
-#3 代码用于跟踪最大座位数
+`#3` 代码用于跟踪最大座位数。
 
-为了得到这个解决方案，我们必须使用 Ctrl-Enter 遍历可能的 Copilot 解决方案。其中一些解决方案现在计算了 `'` `'` 的连续出现次数，而其他一些，如列表 6.7 中的，通过了 doctest。奇怪的是，我们第一次尝试改进提示时，建议的解决方案是正确的。这再次提醒我们为什么 Copilot 输出的非确定性使得测试如此重要。
+为了得到这个解决方案，我们必须使用 `Ctrl-Enter` 遍历可能的 Copilot 解决方案。其中一些解决方案现在计算了 `' '` 的连续出现次数，而其他一些，如列表 6.7 中的，通过了 doctest。奇怪的是，我们第一次尝试改进提示时，建议的解决方案是正确的。这再次提醒我们为什么 Copilot 输出的非确定性使得测试如此重要。
 
-让我们花一分钟看看是什么让第二个提示比第一个提示更好。这两个提示都有
+让我们花一分钟看看是什么让第二个提示比第一个提示更好。这两个提示都有：
 
 ```py
 def most_students(classroom):
- '''
- classroom is a list of lists
- Each ' ' is an empty seat
- Each 'S' is a student
+    '''
+    classroom is a list of lists
+    Each ' ' is an empty seat
+    Each 'S' is a student
 ```
 
-导致我们得到错误答案的提示部分是
+导致我们得到错误答案的提示部分是：
 
 ```py
 How many new students can sit in a row?
 ```
 
-得到正确答案的提示部分是
+得到正确答案的提示部分是：
 
 ```py
-Return the maximum total number of ' ' characters in a given row. 
+Return the maximum total number of ' ' characters in a given row.
 ```
 
 你永远无法真正了解像 Copilot 这样的大型语言模型（LLM）为什么会给出这样的答案，但让我们记住，它是被训练去仅根据它所接收到的单词以及训练数据中的单词（即 GitHub 上的大量代码）来预测下一个单词。
@@ -573,35 +575,35 @@ Return the maximum total number of ' ' characters in a given row.
 
 现在，让我们来谈谈为什么，针对我们模糊的第一个提示，Copilot 决定计算给定行中的连续学生人数。也许在 Copilot 的训练数据中，连续学生人数是一个更常见的模式。也许是因为“坐在一行”可以被解释为“连续地坐”。或者也许是因为当我们编写这个示例时，我们一直在处理另一个要求连续空座位的版本的问题，Copilot 记得那次对话。我们不知道为什么 Copilot 给出了这个答案，但我们知道我们的提示太模糊了。
 
-相比之下，我们的第二个提示在几个方面更为具体。首先，它明确要求最大值。其次，它要求一行中的空位或空座位的数量。这消除了 Copilot 推断空座位意味着新生座位的需求。我们还使用了“总数”和“给定行”来试图让 Copilot 摆脱其当前连续值计数的方法，但这并没有完全奏效。因此，我们最终不得不筛选 Copilot 的答案（使用 Ctrl-Enter），这些答案有时在寻找连续空座位，有时又找到了空座位的数量。
+相比之下，我们的第二个提示在几个方面更为具体。首先，它明确要求最大值。其次，它要求一行中的空位或空座位的数量。这消除了 Copilot 推断空座位意味着新生座位的需求。我们还使用了“总数”和“给定行”来试图让 Copilot 摆脱其当前连续值计数的方法，但这并没有完全奏效。因此，我们最终不得不筛选 Copilot 的答案（使用 `Ctrl-Enter`），这些答案有时在寻找连续空座位，有时又找到了空座位的数量。
 
-### 6.5.3 测试新解决方案
+## 6.5.3 测试新解决方案
 
 返回到我们的示例，因为新的代码通过了当前的测试，让我们给它更多的测试以确保它表现正确。在下一个测试中，我们将检查代码在没有任何行有空座位时是否正确返回 0：
 
 ```py
-    >>> most_students([['S', 'S', 'S'], \
-                       ['S', 'S', 'S'], \
-                       ['S', 'S', 'S']])
-    0
+>>> most_students([['S', 'S', 'S'], \
+                   ['S', 'S', 'S'], \
+                   ['S', 'S', 'S']])
+0
 ```
 
-下一个测试将确保代码正确地计算单行（这里指第二行）中的所有三个空座位，以避免出现边缘案例问题（例如，未能计算第一个或最后一个元素）。诚然，查看代码，我们可以看到正在使用`count`函数，并且因为这个函数是 Python 内置的，所以我们应该相当有信心这个测试会通过。然而，为了确保安全，测试它仍然是更安全的做法：
+下一个测试将确保代码正确地计算单行（这里指第二行）中的所有三个空座位，以避免出现边缘案例问题（例如，未能计算第一个或最后一个元素）。诚然，查看代码，我们可以看到正在使用 `count` 函数，并且因为这个函数是 Python 内置的，所以我们应该相当有信心这个测试会通过。然而，为了确保安全，测试它仍然是更安全的做法：
 
 ```py
-    >>> most_students([['S', 'S', 'S'], \
-                       [' ', ' ', ' '], \
-                       ['S', 'S', 'S']])
-    3
+>>> most_students([['S', 'S', 'S'], \
+                   [' ', ' ', ' '], \
+                   ['S', 'S', 'S']])
+3
 ```
 
 最后的测试是为了检查 Copilot 是否正确处理了两行具有相同空座位的案例：
 
 ```py
-    >>> most_students([[' ', ' ', 'S'], \
-                       ['S', ' ', ' '], \
-                       ['S', 'S', 'S']])
-    2
+>>> most_students([[' ', ' ', 'S'], \
+                   ['S', ' ', ' '], \
+                   ['S', 'S', 'S']])
+2
 ```
 
 在添加了这些测试案例之后，我们再次运行了完整的程序，如下所示列表，所有测试案例都通过了。
@@ -610,31 +612,30 @@ Return the maximum total number of ' ' characters in a given row.
 
 ```py
 def most_students(classroom):
- '''
- classroom is a list of lists
- Each ' ' is an empty seat
- Each 'S' is a student
+    '''
+    classroom is a list of lists
+    Each ' ' is an empty seat
+    Each 'S' is a student
 
- Return the maximum total number of ' ' characters in a 
- given row. 
+    Return the maximum total number of ' ' characters in a given row.
 
- >>> most_students([['S', ' ', 'S’, 'S', 'S', 'S'], \
- [' ', 'S', 'S', 'S', 'S', 'S'], \
- [' ', 'S', ' ', 'S', ' ', ' ']])
- 4
- >>> most_students([['S', 'S', 'S'], \
- ['S', 'S', 'S'], \
- ['S', 'S', 'S']])
- 0
- >>> most_students([['S', 'S', 'S'], \
- [' ', ' ', ' '], \
- ['S', 'S', 'S']])
- 3
- >>> most_students([[' ', ' ', 'S'], \
- ['S', ' ', ' '], \
- ['S', 'S', 'S']])
- 2
- '''
+    >>> most_students([['S', ' ', 'S', 'S', 'S', 'S'], \
+                       [' ', 'S', 'S', 'S', 'S', 'S'], \
+                       [' ', 'S', ' ', 'S', ' ', ' ']])
+    4
+    >>> most_students([['S', 'S', 'S'], \
+                       ['S', 'S', 'S'], \
+                       ['S', 'S', 'S']])
+    0
+    >>> most_students([['S', 'S', 'S'], \
+                       [' ', ' ', ' '], \
+                       ['S', 'S', 'S']])
+    3
+    >>> most_students([[' ', ' ', 'S'], \
+                       ['S', ' ', ' '], \
+                       ['S', 'S', 'S']])
+    2
+    '''
     max_seats = 0
     for row in classroom:
         seats = row.count(' ')
@@ -660,17 +661,17 @@ doctest.testmod(verbose=False)
 
 | game_id | player_id | position | player | team | pass_cmp | pass_att | pass_yds | pass_td |
 | --- | --- | --- | --- | --- | --- | --- | --- | --- |
-| 201909050chi  | RodgAa00  | QB  | Aaron Rodgers  | GNB  | 18  | 30  | 203  | 1  |
-| 201909050chi  | JoneAa00  | RB  | Aaron Jones  | GNB  | 0  | 0  | 0  | 0  |
-| 201909050chi  | ValdMa00  | WR  | Marquez Valdes-Scantling  | GNB  | 0  | 0  | 0  | 0  |
+| 201909050chi | RodgAa00 | QB | Aaron Rodgers | GNB | 18 | 30 | 203 | 1 |
+| 201909050chi | JoneAa00 | RB | Aaron Jones | GNB | 0 | 0 | 0 | 0 |
+| 201909050chi | ValdMa00 | WR | Marquez Valdes-Scantling | GNB | 0 | 0 | 0 | 0 |
 
 在本例的剩余部分，我们将假设数据集的每一行只有这九个列，但我们希望想象如何处理整个数据集不会太困难（你只需在每个情况下添加所有额外的列即可）。
 
 假设我们想要创建一个函数，该函数接受数据集的文件名和玩家名称作为输入，然后输出该玩家在数据集中取得的传球总码数。我们假设用户将提供的数据格式与第二章和表 6.2 中描述的 NFL 进攻统计数据文件格式相同。在我们编写提示或函数之前，我们应该如何测试这个？嗯，我们有一些选择：
 
-+   *在更大的数据集中查找测试用例—*一个解决方案是将完整的数据集和多个玩家名称作为输入传递给函数。挑战在于确定我们是否正确。我们可以使用像 Google Sheets 或 Microsoft Excel 这样的软件打开文件，并使用电子表格功能来确定每个玩家的答案。例如，我们可以将文件作为 Excel 中的一个工作表打开，按玩家排序，找到玩家，并使用 Excel 中的求和函数来计算该玩家的所有传球码数。这并不是一个坏解决方案，但它也需要相当多的工作，而且如果你花足够的时间来找到测试答案，你可能已经满足了你的需求，不再需要 Python 代码！换句话说，确定测试用例的答案可能只是给你最初想要的答案，使得代码的价值降低。另一个问题是寻找你可能想要测试的所有边缘情况：你的数据集是否包含你想要测试的所有边缘情况，以便编写可以在以后的数据集上运行的程序？这种方法的另一个缺点是确定当函数执行比在多行中求和值复杂得多的操作时你应该做什么。在那里，确定一些真实测试值的答案可能是一项大量工作。
++   *在更大的数据集中查找测试用例* — 一个解决方案是将完整的数据集和多个玩家名称作为输入传递给函数。挑战在于确定我们是否正确。我们可以使用像 Google Sheets 或 Microsoft Excel 这样的软件打开文件，并使用电子表格功能来确定每个玩家的答案。例如，我们可以将文件作为 Excel 中的一个工作表打开，按玩家排序，找到玩家，并使用 Excel 中的求和函数来计算该玩家的所有传球码数。这并不是一个坏解决方案，但它也需要相当多的工作，而且如果你花足够的时间来找到测试答案，你可能已经满足了你的需求，不再需要 Python 代码！换句话说，确定测试用例的答案可能只是给你最初想要的答案，使得代码的价值降低。另一个问题是寻找你可能想要测试的所有边缘情况：你的数据集是否包含你想要测试的所有边缘情况，以便编写可以在以后的数据集上运行的程序？这种方法的另一个缺点是确定当函数执行比在多行中求和值复杂得多的操作时你应该做什么。在那里，确定一些真实测试值的答案可能是一项大量工作。
 
-+   *创建用于测试的人工数据集—*另一个解决方案是创建已知多个可能查询答案的人工数据集。因为数据集是人工的，你可以添加边缘情况来查看代码在这些情况下的表现，而无需在真实数据集中找到这样的罕见示例。（有时真实数据集可能不包括这些边缘情况，但你仍然想要测试它们，以便代码在获取更新或新数据集时表现正确。）
++   *创建用于测试的人工数据集* — 另一个解决方案是创建已知多个可能查询答案的人工数据集。因为数据集是人工的，你可以添加边缘情况来查看代码在这些情况下的表现，而无需在真实数据集中找到这样的罕见示例。（有时真实数据集可能不包括这些边缘情况，但你仍然想要测试它们，以便代码在获取更新或新数据集时表现正确。）
 
 考虑到在人工数据集中创建测试用例的优势，我们将继续采用这种方法。
 
@@ -690,39 +691,41 @@ doctest.testmod(verbose=False)
 
 对于边缘情况，我们还想测试一些其他的事情：
 
-+   *球员不在数据集中。* 这实际上很有趣：在这种情况下，我们希望代码做什么？一个合理的回答是返回他们传球码数为 0。如果我们询问数据集中 2019 年至 2022 年勒布朗·詹姆斯（篮球运动员，不是足球运动员）在 NFL 的传球码数，0 是正确的答案。然而，这可能不是生产代码中最优雅的解决方案。例如，如果我们询问阿隆·罗杰斯（拼写错误为 Aron Rodgers）的传球码数，我们更希望代码告诉我们他不在数据集中，而不是他传球了 0 码数，这可能会在他在这个时间段内两次获得联盟最有价值球员时真正让我们困惑。为了表示名称缺失，我们可能返回一个很大的负值（例如，-9999），或者我们可能使用称为异常的东西，但这些超出了本书的范围。
++   *球员不在数据集中。* 这实际上很有趣：在这种情况下，我们希望代码做什么？一个合理的回答是返回他们传球码数为 0。如果我们询问数据集中 2019 年至 2022 年勒布朗·詹姆斯（篮球运动员，不是足球运动员）在 NFL 的传球码数，0 是正确的答案。然而，这可能不是生产代码中最优雅的解决方案。例如，如果我们询问阿隆·罗杰斯（拼写错误为 `Aron Rodgers`）的传球码数，我们更希望代码告诉我们他不在数据集中，而不是他传球了 0 码数，这可能会在他在这个时间段内两次获得联盟最有价值球员时真正让我们困惑。为了表示名称缺失，我们可能返回一个很大的负值（例如，`-9999`），或者我们可能使用称为异常的东西，但这些超出了本书的范围。
 
 +   *一个球员在所有比赛中总码数是负数，或者一个球员在单场比赛中码数是负数，以确保代码正确处理负值。* 如果你不懂美式足球，这种情况可能发生，如果球员接球后被对方球员在起点（进攻线）后方擒抱。四分卫在整个比赛中传球码数是负数的情况不太可能发生，但如果他们传球一次导致码数减少（负码数）并且同时受伤，导致他们无法参加剩余的比赛，这种情况是有可能发生的。
 
-现在我们已经有了想要测试的内容，让我们构建一个人工文件来捕捉这些测试用例。我们本可以将这些测试分散到多个文件中，这同样是一个合理的做法，但将它们全部放在一个文件中的优势在于我们可以将所有测试用例集中在一起。表 6.3 是我们构建并保存为 test_file.csv 的文件。
+现在我们已经有了想要测试的内容，让我们构建一个人工文件来捕捉这些测试用例。我们本可以将这些测试分散到多个文件中，这同样是一个合理的做法，但将它们全部放在一个文件中的优势在于我们可以将所有测试用例集中在一起。表 6.3 是我们构建并保存为 `test_file.csv` 的文件。
 
 ##### 表 6.3 我们用于测试 NFL 传球码数函数的文件
 
 | game_id | player_id | 位置 | 球员 | 球队 | 传球完成数 | 传球尝试数 | 传球码数 | 传球达阵数 |
 | --- | --- | --- | --- | --- | --- | --- | --- | --- |
-| 201909050chi  | RodgAa00  | QB  | Aaron Rodgers  | GNB  | 20  | 30  | 200  | 1  |
-| 201909080crd  | JohnKe06  | RB  | Kerryon Johnson  | DET  | 1  | 1  | 5  | 0  |
-| 201909080crd  | PortLe00  | QB  | Leo Porter  | UCSD  | 0  | 1  | 0  | 0  |
-| 201909080car  | GoffJa00  | QB  | Jared Goff  | LAR  | 20  | 25  | 200  | 1  |
-| 201909050chi  | RodgAa00  | QB  | Aaron Rodgers  | GNB  | 10  | 15  | 150  | 1  |
-| 201909050chi  | RodgAa00  | QB  | Aaron Rodgers  | GNB  | 25  | 35  | 300  | 1  |
-| 201909080car  | GoffJa00  | QB  | Jared Goff  | LAR  | 1  | 1  | –10  | 0  |
-| 201909080crd  | ZingDa00  | QB  | Dan Zingaro  | UT  | 1  | 1  | –10  | 0  |
-| 201909050chi  | RodgAa00  | QB  | Aaron Rodgers  | GNB  | 15  | 25  | 150  | 0  |
+| 201909050chi | RodgAa00 | QB | Aaron Rodgers | GNB | 20 | 30 | 200 | 1 |
+| 201909080crd | JohnKe06 | RB | Kerryon Johnson | DET | 1 | 1 | 5 | 0 |
+| 201909080crd | PortLe00 | QB | Leo Porter | UCSD | 0 | 1 | 0 | 0 |
+| 201909080car | GoffJa00 | QB | Jared Goff | LAR | 20 | 25 | 200 | 1 |
+| 201909050chi | RodgAa00 | QB | Aaron Rodgers | GNB | 10 | 15 | 150 | 1 |
+| 201909050chi | RodgAa00 | QB | Aaron Rodgers | GNB | 25 | 35 | 300 | 1 |
+| 201909080car | GoffJa00 | QB | Jared Goff | LAR | 1 | 1 | –10 | 0 |
+| 201909080crd | ZingDa00 | QB | Dan Zingaro | UT | 1 | 1 | –10 | 0 |
+| 201909050chi | RodgAa00 | QB | Aaron Rodgers | GNB | 15 | 25 | 150 | 0 |
 
-注意这里的数据完全是虚构的。（这些不是任何球员的真实统计数据，正如你可以从丹和利奥现在神奇地成为 NFL 四分卫这一事实中看出。）我们仍然保留了某些真实球员的名字以及原始数据集中的真实`game_id`和`player_id`。通常，使你的虚构数据尽可能接近真实数据是一个好主意，这样测试才是真实的，并且更有可能代表真实数据可能发生的情况。
+注意这里的数据完全是虚构的。（这些不是任何球员的真实统计数据，正如你可以从丹和利奥现在神奇地成为 NFL 四分卫这一事实中看出。）我们仍然保留了某些真实球员的名字以及原始数据集中的真实 `game_id` 和 `player_id`。通常，使你的虚构数据尽可能接近真实数据是一个好主意，这样测试才是真实的，并且更有可能代表真实数据可能发生的情况。
 
-让我们看看我们是如何将所有测试用例纳入这个测试文件（表 6.3）的。Aaron Rodgers 在文件中多次出现，既有连续的也有非连续的，并且作为最后一条记录。Jared Goff 也多次出现，我们在一场比赛中给他虚构了-10 码（作为一个精英 NFL 四分卫，我希望他能够接受我们给他虚构的糟糕单场比赛）。我们保留了从真实数据集中来的 Kerryon Johnson 作为跑卫（RB），并给他 5 码传球码数以确保解决方案不会仅过滤四分卫。Kerryon Johnson 在数据中只有一条记录。我们还添加了 Leo Porter 到数据集中，并给他 0 码传球码数（他肯定愿意做任何事情来避免被 NFL 球员擒抱）。我们还添加了 Dan Zingaro，并给他一个完成的传球，但传球码数为-10 码，覆盖了单个球员总码数为负的情况。表 6.4 显示了当我们为每位球员运行查询时，每个球员应该返回的内容。
+
+
+让我们看看我们是如何将所有测试用例纳入这个测试文件（表 6.3）的。`Aaron Rodgers` 在文件中多次出现，既有连续的也有非连续的，并且作为最后一条记录。`Jared Goff` 也多次出现，我们在一场比赛中给他虚构了 -10 码（作为一个精英 NFL 四分卫，我希望他能够接受我们给他虚构的糟糕单场比赛）。我们保留了从真实数据集中来的 `Kerryon Johnson` 作为跑卫（RB），并给他 5 码传球码数以确保解决方案不会仅过滤四分卫。`Kerryon Johnson` 在数据中只有一条记录。我们还添加了 `Leo Porter` 到数据集中，并给他 0 码传球码数（他肯定愿意做任何事情来避免被 NFL 球员擒抱）。我们还添加了 `Dan Zingaro`，并给他一个完成的传球，但传球码数为 -10 码，覆盖了单个球员总码数为负的情况。表 6.4 显示了当我们为每位球员运行查询时，每个球员应该返回的内容。
 
 ##### 表 6.4 测试用例中每位球员的传球码数
 
 | 球员 | 测试用例中的传球码数 |
 | --- | --- |
-| Aaron Rodgers  | 800  |
-| Kerryon Johnson  | 5  |
-| Leo Porter  | 0  |
-| Jared Goff  | 190  |
-| Dan Zingaro  | –10  |
+| Aaron Rodgers | 800 |
+| Kerryon Johnson | 5 |
+| Leo Porter | 0 |
+| Jared Goff | 190 |
+| Dan Zingaro | –10 |
 
 ### 6.6.2 创建函数
 
@@ -732,16 +735,16 @@ doctest.testmod(verbose=False)
 
 ```py
 def tot_pass_yds_player(input_file, player):     #1
- **"""**
- **input_file is a string that is the name of a file**
- **player is the name of a player**
+    """
+    input_file is a string that is the name of a file
+    player is the name of a player
 
- **The file is a csv file with a header row**
- **Column 4 is the player's name and column**
- **8 is the number of passing yards for that player**
+    The file is a csv file with a header row
+    Column 4 is the player's name and column
+    8 is the number of passing yards for that player
 
- **return the total number of passing yards for the player**
- **"""**
+    return the total number of passing yards for the player
+    """
     import csv
     with open(input_file, 'r') as csvfile:
         reader = csv.reader(csvfile)
@@ -767,28 +770,28 @@ def tot_pass_yds_player(input_file, player):     #1
 
 ```py
 def tot_pass_yds_player(input_file, player):
- """
- input_file is a string that is the name of a file
- player is the name of a player
+    """
+    input_file is a string that is the name of a file
+    player is the name of a player
 
- The file is a csv file with a header row
- Column 4 is the player's name and column
- 8 is the number of passing yards for that player
+    The file is a csv file with a header row
+    Column 4 is the player's name and column
+    8 is the number of passing yards for that player
 
- return the total number of passing yards for the player
+    return the total number of passing yards for the player
 
- >>> tot_pass_yds_player('test_file.csv’, 'Aaron Rodgers')
- 800
- >>> tot_pass_yds_player('test_file.csv', 'Kerryon Johnson')
- 5
- >>> tot_pass_yds_player('test_file.csv', 'Leo Porter')
- 0
- >>> tot_pass_yds_player('test_file.csv', 'Jared Goff')
- 190
- >>> tot_pass_yds_player('test_file.csv', 'Dan Zingaro')
- -10
- >>> tot_pass_yds_player('test_file.csv', 'Tom Brady')
- 0 #1
+    >>> tot_pass_yds_player('test_file.csv', 'Aaron Rodgers')
+    800
+    >>> tot_pass_yds_player('test_file.csv', 'Kerryon Johnson')
+    5
+    >>> tot_pass_yds_player('test_file.csv', 'Leo Porter')
+    0
+    >>> tot_pass_yds_player('test_file.csv', 'Jared Goff')
+    190
+    >>> tot_pass_yds_player('test_file.csv', 'Dan Zingaro')
+    -10
+    >>> tot_pass_yds_player('test_file.csv', 'Tom Brady')
+    0 #1
     """
     import csv
     with open(input_file, 'r') as csvfile:
@@ -816,27 +819,27 @@ doctest.testmod(verbose=False)
 
 ```py
 def tot_pass_yds_player(input_file, player):
- """
- input_file is a string that is the name of a file
- player is the name of a player
- The file is a csv file with a header row
- The 4th Column is the player's name and the 8th column
- is the number of passing yards for that player
+    """
+    input_file is a string that is the name of a file
+    player is the name of a player
+    The file is a csv file with a header row
+    The 4th Column is the player's name and the 8th column
+    is the number of passing yards for that player
 
- return the total number of passing yards for the player
+    return the total number of passing yards for the player
 
- >>> tot_pass_yds_player('test_file.csv', 'Aaron Rodgers')
- 800 #1
- **>>> tot_pass_yds_player('test_file.csv', 'Kerryon Johnson')**
- **5**
- **>>> tot_pass_yds_player('test_file.csv', 'Leo Porter')**
- **0**
- **>>> tot_pass_yds_player('test_file.csv', 'Jared Goff')**
- **190**
- **>>> tot_pass_yds_player('test_file.csv', 'Dan Zingaro')**
- **-10**
- **>>> tot_pass_yds_player('test_file.csv', 'Tom Brady')**
- **0** 
+    >>> tot_pass_yds_player('test_file.csv', 'Aaron Rodgers')
+    800 #1
+    >>> tot_pass_yds_player('test_file.csv', 'Kerryon Johnson')
+    5
+    >>> tot_pass_yds_player('test_file.csv', 'Leo Porter')
+    0
+    >>> tot_pass_yds_player('test_file.csv', 'Jared Goff')
+    190
+    >>> tot_pass_yds_player('test_file.csv', 'Dan Zingaro')
+    -10
+    >>> tot_pass_yds_player('test_file.csv', 'Tom Brady')
+    0
     """
     import csv
     with open(input_file, 'r') as csvfile:
@@ -873,13 +876,13 @@ Got:
 
 ## 6.7 练习
 
-1.  给定以下场景，确定是封闭盒测试还是开放盒测试更合适，并解释原因：
+1. 给定以下场景，确定是封闭盒测试还是开放盒测试更合适，并解释原因：
 
-    1.  测试员被给出一个函数规范，需要确保该函数在没有查看实现的情况下表现正确。
+   1. 测试员被给出一个函数规范，需要确保该函数在没有查看实现的情况下表现正确。
 
-    1.  测试员需要通过编写针对由理解代码实现揭示的边缘情况的测试来调试函数。
+   2. 测试员需要通过编写针对由理解代码实现揭示的边缘情况的测试来调试函数。
 
-1.  这是一个带有一些测试用例的函数。确定以下哪些是常见用例，哪些是边缘情况：
+2. 这是一个带有一些测试用例的函数。确定以下哪些是常见用例，哪些是边缘情况：
 
 ```py
 def calculate_average(numbers):
@@ -897,40 +900,44 @@ calculate_average([1, 2, "a", 4])
 calculate_average([0])
 ```
 
-1.  3. 我们正在构建一个分析网站流量的程序。网站流量以字典列表的形式表示。每个字典有两个键：`"weekday"`（表示一周中某天的字符串）和`"visitors"`（表示该天访问者的整数）。同一周中的某天可以出现在多个字典中。我们的目标是找到访问者数量最多的一天。
+3. 我们正在构建一个分析网站流量的程序。网站流量以字典列表的形式表示。每个字典有两个键：`"weekday"`（表示一周中某天的字符串）和`"visitors"`（表示该天访问者的整数）。同一周中的某天可以出现在多个字典中。我们的目标是找到访问者数量最多的一天。
 
 这是我们在 AI 代码生成工具中给出的初始提示：
 
-def busiest_day(traffic_data): # traffic_data 是一个字典列表。# 找到最繁忙的一天。
+```py
+def busiest_day(traffic_data):
+    # traffic_data 是一个字典列表。
+    # 找到最繁忙的一天。
+```
 
 工具生成了以下代码，但它似乎并不完全正确。
 
 ```py
 def busiest_day(traffic_data):
-  most_visitors = 0
-  busiest_day = None
-  for day in traffic_data:
-    if day["visitors"] > most_visitors:
-      most_visitors = day["visitors"]
-      busiest_day = day["weekday"]
-  return busiest_day
+    most_visitors = 0
+    busiest_day = None
+    for day in traffic_data:
+        if day["visitors"] > most_visitors:
+            most_visitors = day["visitors"]
+            busiest_day = day["weekday"]
+    return busiest_day
 ```
 
 你能解释为什么以及如何改进提示以获得所需的功能吗？
 
-1.  4. 假设你有一个函数（`find_highest_grossing_book(filename)`），该函数分析图书销售数据并返回关于总收入最高的图书的信息。销售数据存储在一个 CSV 文件中，其中每行代表一次销售。CSV 文件中的列如下：
+4. 假设你有一个函数（`find_highest_grossing_book(filename)`），该函数分析图书销售数据并返回关于总收入最高的图书的信息。销售数据存储在一个 CSV 文件中，其中每行代表一次销售。CSV 文件中的列如下：
 
-    1.  `title`—售出图书的标题（字符串）
+   1. `title` — 售出图书的标题（字符串）
 
-    1.  `author`—图书的作者（字符串）
+   2. `author` — 图书的作者（字符串）
 
-    1.  `price`—图书的价格（浮点数）
+   3. `price` — 图书的价格（浮点数）
 
-    1.  `quantity`—特定销售中售出的副本数量（整数）
+   4. `quantity` — 特定销售中售出的副本数量（整数）
 
 创建一个包含`find_highest_grossing_book`函数（实现未在此提供）的 Python 脚本。包括一个文档字符串来解释函数的目的，并使用 doctest 模块添加测试用例。
 
-1.  5. 审查提供的`is_palindrome`函数的测试用例。确定哪些测试用例是不正确的，并解释原因。提供正确的测试用例版本。
+5. 审查提供的`is_palindrome`函数的测试用例。确定哪些测试用例是不正确的，并解释原因。提供正确的测试用例版本。
 
 ```py
 def is_palindrome(s):
@@ -953,7 +960,7 @@ def is_palindrome(s):
     return cleaned == cleaned[::-1]
 ```
 
-1.  6. 分析 `find_max` 函数的测试覆盖率。是否存在现有测试用例未覆盖的场景？如有必要，建议添加额外的测试用例。
+6. 分析 `find_max` 函数的测试覆盖率。是否存在现有测试用例未覆盖的场景？如有必要，建议添加额外的测试用例。
 
 ```py
 def find_max(numbers):
@@ -979,12 +986,12 @@ def find_max(numbers):
 
 ## 摘要
 
-+   在使用 Copilot 编写软件时，测试是一项关键技能。
++ 在使用 Copilot 编写软件时，测试是一项关键技能。
 
-+   封闭盒测试和开放盒测试是确保代码正确性的不同方法。在封闭盒测试中，我们根据对问题的了解来制定测试用例；在开放盒测试中，我们还会检查代码本身。
++ 封闭盒测试和开放盒测试是确保代码正确性的不同方法。在封闭盒测试中，我们根据对问题的了解来制定测试用例；在开放盒测试中，我们还会检查代码本身。
 
-+   Doctest 是 Python 内置的一个模块，它帮助我们测试代码。
++ Doctest 是 Python 内置的一个模块，它帮助我们测试代码。
 
-+   要使用 doctest，我们需要将测试用例添加到函数的文档字符串描述中。
++ 要使用 doctest，我们需要将测试用例添加到函数的文档字符串描述中。
 
-+   创建人工文件是测试使用文件功能的代码的有效方法。**
++ 创建人工文件是测试使用文件功能的代码的有效方法。

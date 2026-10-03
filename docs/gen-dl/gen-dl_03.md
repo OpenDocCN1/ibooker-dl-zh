@@ -1,3 +1,4 @@
+
 # 第一章：生成建模
 
 本章是对生成建模领域的一般介绍。
@@ -44,7 +45,7 @@
 
 # 条件生成模型
 
-请注意，我们也可以构建一个生成模型来建模条件概率<math alttext="p left-parenthesis bold x vertical-bar y right-parenthesis"><mrow><mi>p</mi> <mo>(</mo> <mi>𝐱</mi> <mo>|</mo> <mi>y</mi> <mo>)</mo></mrow></math>——观察到具有特定标签<math alttext="y"><mi>y</mi></math>的观察<math alttext="bold x"><mi>𝐱</mi></math>的概率。
+请注意，我们也可以构建一个生成模型来建模条件概率`p(𝐱|y)`——观察到具有特定标签`y`的观察`𝐱`的概率。
 
 例如，如果我们的数据集包含不同类型的水果，我们可以告诉我们的生成模型专门生成一个苹果的图像。
 
@@ -80,19 +81,19 @@
 
 ## 你好，世界！
 
-让我们从在只有两个维度中玩一个生成建模游戏开始。我选择了一个用于生成点集<math alttext="bold upper X"><mi>𝐗</mi></math>的规则，如图 1-4 所示。让我们称这个规则为<math alttext="p Subscript d a t a"><msub><mi>p</mi> <mrow><mi>d</mi><mi>a</mi><mi>t</mi><mi>a</mi></mrow></msub></math>。你的挑战是选择一个不同的点<math alttext="bold x equals left-parenthesis x 1 comma x 2 right-parenthesis"><mrow><mi>𝐱</mi> <mo>=</mo> <mo>(</mo> <msub><mi>x</mi> <mn>1</mn></msub> <mo>,</mo> <msub><mi>x</mi> <mn>2</mn></msub> <mo>)</mo></mrow></math>，看起来像是由相同规则生成的。
+让我们从在只有两个维度中玩一个生成建模游戏开始。我选择了一个用于生成点集`𝐗`的规则，如图 1-4 所示。让我们称这个规则为`p_data`。你的挑战是选择一个不同的点`𝐱 = (x1, x2)`，看起来像是由相同规则生成的。
 
 ![二维空间中的两个点集](img/gdl2_0104.png)
 
-###### 图 1-4。由未知规则生成的二维空间中的点集<math alttext="p Subscript d a t a"><msub><mi>p</mi> <mrow><mi>d</mi><mi>a</mi><mi>t</mi><mi>a</mi></mrow></msub></math>
+###### 图 1-4。由未知规则生成的二维空间中的点集`p_data`
 
-你是如何选择的？你可能利用现有数据点的知识构建了一个心理模型<math alttext="p Subscript m o d e l"><msub><mi>p</mi> <mrow><mi>m</mi><mi>o</mi><mi>d</mi><mi>e</mi><mi>l</mi></mrow></msub></math>，来估计点更有可能出现的位置。在这方面，<math alttext="p Subscript m o d e l"><msub><mi>p</mi> <mrow><mi>m</mi><mi>o</mi><mi>d</mi><mi>e</mi><mi>l</mi></mrow></msub></math>是<math alttext="p Subscript d a t a"><msub><mi>p</mi> <mrow><mi>d</mi><mi>a</mi><mi>t</mi><mi>a</mi></mrow></msub></math>的*估计*。也许你决定<math alttext="p Subscript m o d e l"><msub><mi>p</mi> <mrow><mi>m</mi><mi>o</mi><mi>d</mi><mi>e</mi><mi>l</mi></mrow></msub></math>应该看起来像图 1-5——一个矩形框，点可能出现在其中，框外则不可能找到任何点。
+你是如何选择的？你可能利用现有数据点的知识构建了一个心理模型`p_model`，来估计点更有可能出现的位置。在这方面，`p_model`是`p_data`的*估计*。也许你决定`p_model`应该看起来像图 1-5——一个矩形框，点可能出现在其中，框外则不可能找到任何点。
 
 ![](img/gdl2_0105.png)
 
-###### 图 1-5。橙色框，<math alttext="p Subscript m o d e l"><msub><mi>p</mi> <mrow><mi>m</mi><mi>o</mi><mi>d</mi><mi>e</mi><mi>l</mi></mrow></msub></math>，是真实数据生成分布<math alttext="p Subscript d a t a"><msub><mi>p</mi> <mrow><mi>d</mi><mi>a</mi><mi>t</mi><mi>a</mi></mrow></msub></math>的估计
+###### 图 1-5。橙色框，`p_model`，是真实数据生成分布`p_data`的估计
 
-要生成一个新的观察结果，您可以简单地在框内随机选择一个点，或者更正式地，从分布<math alttext="p Subscript m o d e l"><msub><mi>p</mi> <mrow><mi>m</mi><mi>o</mi><mi>d</mi><mi>e</mi><mi>l</mi></mrow></msub></math>中*采样*。恭喜，您刚刚构建了您的第一个生成模型！您已经使用训练数据（黑点）构建了一个模型（橙色区域），您可以轻松地从中进行采样以生成其他似乎属于训练集的点。
+要生成一个新的观察结果，您可以简单地在框内随机选择一个点，或者更正式地，从分布`p_model`中*采样*。恭喜，您刚刚构建了您的第一个生成模型！您已经使用训练数据（黑点）构建了一个模型（橙色区域），您可以轻松地从中进行采样以生成其他似乎属于训练集的点。
 
 现在让我们将这种思维形式化为一个框架，可以帮助我们理解生成建模试图实现的目标。
 
@@ -100,19 +101,19 @@
 
 我们可以在以下框架中捕捉建立生成模型的动机和目标。
 
-现在让我们揭示真实的数据生成分布<math alttext="p Subscript d a t a"><msub><mi>p</mi> <mrow><mi>d</mi><mi>a</mi><mi>t</mi><mi>a</mi></mrow></msub></math>，看看这个框架如何适用于这个例子。正如我们从图 1-6 中看到的，数据生成规则只是世界陆地的均匀分布，没有机会在海洋中找到一个点。
+现在让我们揭示真实的数据生成分布`p_data`，看看这个框架如何适用于这个例子。正如我们从图 1-6 中看到的，数据生成规则只是世界陆地的均匀分布，没有机会在海洋中找到一个点。
 
 ![](img/gdl2_0106.png)
 
-###### 图 1-6。橙色框<math alttext="p Subscript m o d e l"><msub><mi>p</mi> <mrow><mi>m</mi><mi>o</mi><mi>d</mi><mi>e</mi><mi>l</mi></mrow></msub></math>是真实数据生成分布<math alttext="p Subscript d a t a"><msub><mi>p</mi> <mrow><mi>d</mi><mi>a</mi><mi>t</mi><mi>a</mi></mrow></msub></math>的估计（灰色区域）
+###### 图 1-6。橙色框`p_model`是真实数据生成分布`p_data`的估计（灰色区域）
 
-显然，我们的模型<math alttext="p Subscript m o d e l"><msub><mi>p</mi> <mrow><mi>m</mi><mi>o</mi><mi>d</mi><mi>e</mi><mi>l</mi></mrow></msub></math>是对<math alttext="p Subscript d a t a"><msub><mi>p</mi> <mrow><mi>d</mi><mi>a</mi><mi>t</mi><mi>a</mi></mrow></msub></math>的过度简化。我们可以检查点 A、B 和 C，以了解我们的模型在多大程度上准确模拟了<math alttext="p Subscript d a t a"><msub><mi>p</mi> <mrow><mi>d</mi><mi>a</mi><mi>t</mi><mi>a</mi></mrow></msub></math>的成功和失败：
+显然，我们的模型`p_model`是对`p_data`的过度简化。我们可以检查点 A、B 和 C，以了解我们的模型在多大程度上准确模拟了`p_data`的成功和失败：
 
-+   点 A 是由我们的模型生成的观察结果，但似乎并不是由<math alttext="p Subscript d a t a"><msub><mi>p</mi> <mrow><mi>d</mi><mi>a</mi><mi>t</mi><mi>a</mi></mrow></msub></math>生成的，因为它位于海洋中间。
++   点 A 是由我们的模型生成的观察结果，但似乎并不是由`p_data`生成的，因为它位于海洋中间。
 
-+   点 B 永远不可能由<math alttext="p Subscript m o d e l"><msub><mi>p</mi> <mrow><mi>m</mi><mi>o</mi><mi>d</mi><mi>e</mi><mi>l</mi></mrow></msub></math>生成，因为它位于橙色框外。因此，我们的模型在产生观察结果的整个潜在可能性范围内存在一些缺陷。
++   点 B 永远不可能由`p_model`生成，因为它位于橙色框外。因此，我们的模型在产生观察结果的整个潜在可能性范围内存在一些缺陷。
 
-+   点 C 是一个观察结果，可以由<math alttext="p Subscript m o d e l"><msub><mi>p</mi> <mrow><mi>m</mi><mi>o</mi><mi>d</mi><mi>e</mi><mi>l</mi></mrow></msub></math>和<math alttext="p Subscript d a t a"><msub><mi>p</mi> <mrow><mi>d</mi><mi>a</mi><mi>t</mi><mi>a</mi></mrow></msub></math>生成。
++   点 C 是一个观察结果，可以由`p_model`和`p_data`生成。
 
 尽管模型存在缺陷，但由于它只是一个橙色框内的均匀分布，因此很容易从中进行采样。我们可以轻松地随机选择框内的一个点，以便从中进行采样。
 
@@ -128,19 +129,21 @@
 
 这就是*表示学习*的核心思想。我们不是直接对高维样本空间建模，而是使用一些较低维度的*潜在空间*来描述训练集中的每个观察，并学习一个能够将潜在空间中的点映射到原始域中的点的映射函数。换句话说，潜在空间中的每个点都是某个高维观察的*表示*。
 
-这在实践中意味着什么？假设我们有一个由饼干罐的灰度图像组成的训练集(图 1-7)。
+
+
+这在实践中意味着什么？假设我们有一个由饼干罐的灰度图像组成的训练集（图 1-7）。
 
 ![](img/gdl2_0107.png)
 
 ###### 图 1-7。饼干罐数据集
 
-对我们来说，很明显有两个特征可以唯一代表这些罐子：罐子的高度和宽度。也就是说，我们可以将每个罐子的图像转换为一个仅有两个维度的潜在空间中的点，即使训练集中提供的图像是在高维像素空间中的。值得注意的是，这意味着我们也可以通过将适当的映射函数<math alttext="f"><mi>f</mi></math>应用于潜在空间中的新点，生成训练集中不存在的罐子的图像，如图 1-8 所示。
+对我们来说，很明显有两个特征可以唯一代表这些罐子：罐子的高度和宽度。也就是说，我们可以将每个罐子的图像转换为一个仅有两个维度的潜在空间中的点，即使训练集中提供的图像是在高维像素空间中的。值得注意的是，这意味着我们也可以通过将适当的映射函数`f`应用于潜在空间中的新点，生成训练集中不存在的罐子的图像，如图 1-8 所示。
 
-意识到原始数据集可以用更简单的潜在空间来描述对于机器来说并不容易——它首先需要确定高度和宽度是最能描述这个数据集的两个潜在空间维度，然后学习能够将这个空间中的点映射到灰度饼干罐图像的映射函数<math alttext="f"><mi>f</mi></math>。机器学习（特别是深度学习）赋予我们训练机器能够找到这些复杂关系的能力，而无需人类的指导。
+意识到原始数据集可以用更简单的潜在空间来描述对于机器来说并不容易——它首先需要确定高度和宽度是最能描述这个数据集的两个潜在空间维度，然后学习能够将这个空间中的点映射到灰度饼干罐图像的映射函数`f`。机器学习（特别是深度学习）赋予我们训练机器能够找到这些复杂关系的能力，而无需人类的指导。
 
 ![](img/gdl2_0108.png)
 
-###### 图 1-8。饼干罐的 2D 潜在空间和将潜在空间中的点映射回原始图像域的函数<math alttext="f"><mi>f</mi></math>
+###### 图 1-8。饼干罐的 2D 潜在空间和将潜在空间中的点映射回原始图像域的函数`f`
 
 利用潜在空间训练模型的一个好处是，我们可以通过在更易管理的潜在空间内操作其表示向量，影响图像的高级属性。例如，要调整每个像素的阴影以使饼干罐的图像*更高*并不明显。然而，在潜在空间中，只需增加*高度*潜在维度，然后应用映射函数返回到图像域。我们将在下一章中看到一个明确的例子，不是应用于饼干罐而是应用于人脸。
 
@@ -148,7 +151,7 @@
 
 ![](img/gdl2_0109.png)
 
-###### 图 1-9\. 在高维像素空间中的*狗*流形被映射到一个更简单的潜在空间，可以从中进行采样
+###### 图 1-9。在高维像素空间中的*狗*流形被映射到一个更简单的潜在空间，可以从中进行采样
 
 # 核心概率理论
 
@@ -158,115 +161,115 @@
 
 作为第一步，我们将定义五个关键术语，将每个术语与我们之前在二维世界地图中建模的生成模型的例子联系起来：
 
-样本空间
+## 样本空间
 
-*样本空间*是观察值 <math alttext="bold x"><mi>𝐱</mi></math> 可以取的所有值的完整集合。
+*样本空间*是观察值`𝐱`可以取的所有值的完整集合。
 
-###### 注意
+> **注意**
+> 在我们之前的例子中，样本空间包括世界地图上所有的纬度和经度点`𝐱 = (x1, x2)`。例如，`𝐱` = (40.7306, –73.9352) 是样本空间（纽约市）中属于真实数据生成分布的点。`𝐱` = (11.3493, 142.1996) 是样本空间中不属于真实数据生成分布的点（在海里）。
 
-在我们之前的例子中，样本空间包括世界地图上所有的纬度和经度点 <math alttext="bold x equals left-parenthesis x 1 comma x 2 right-parenthesis"><mrow><mi>𝐱</mi> <mo>=</mo> <mo>(</mo> <msub><mi>x</mi> <mn>1</mn></msub> <mo>,</mo> <msub><mi>x</mi> <mn>2</mn></msub> <mo>)</mo></mrow></math>。例如，<math alttext="bold x"><mi>𝐱</mi></math> = (40.7306, –73.9352) 是样本空间（纽约市）中属于真实数据生成分布的点。<math alttext="bold x"><mi>𝐱</mi></math> = (11.3493, 142.1996) 是样本空间中不属于真实数据生成分布的点（在海里）。
+## 概率密度函数
 
-概率密度函数
+*概率密度函数*（或简称*密度函数*）是一个将样本空间中的点`𝐱`映射到 0 到 1 之间的数字的函数`p(𝐱)`。密度函数在样本空间中所有点上的积分必须等于 1，以便它是一个明确定义的概率分布。
 
-*概率密度函数*（或简称*密度函数*）是一个将样本空间中的点 <math alttext="bold x"><mi>𝐱</mi></math> 映射到 0 到 1 之间的数字的函数 <math alttext="p left-parenthesis bold x right-parenthesis"><mrow><mi>p</mi> <mo>(</mo> <mi>𝐱</mi> <mo>)</mo></mrow></math>。密度函数在样本空间中所有点上的积分必须等于 1，以便它是一个明确定义的概率分布。
+> **注意**
+> 在世界地图的例子中，我们生成模型的密度函数在橙色框之外为 0，在框内为常数，使得密度函数在整个样本空间上的积分等于 1。
 
-###### 注意
+虽然只有一个真实的密度函数`p_data(𝐱)`被假定为生成可观测数据集，但有无限多个密度函数`p_model(𝐱)`可以用来估计`p_data(𝐱)`。
 
-在世界地图的例子中，我们生成模型的密度函数在橙色框之外为 0，在框内为常数，使得密度函数在整个样本空间上的积分等于 1。
+## 参数建模
 
-虽然只有一个真实的密度函数<math alttext="p Subscript d a t a Baseline left-parenthesis bold x right-parenthesis"><mrow><msub><mi>p</mi> <mrow><mi>d</mi><mi>a</mi><mi>t</mi><mi>a</mi></mrow></msub> <mrow><mo>(</mo> <mi>𝐱</mi> <mo>)</mo></mrow></mrow></math>被假定为生成可观测数据集，但有无限多个密度函数<math alttext="p Subscript m o d e l Baseline left-parenthesis bold x right-parenthesis"><mrow><msub><mi>p</mi> <mrow><mi>m</mi><mi>o</mi><mi>d</mi><mi>e</mi><mi>l</mi></mrow></msub> <mrow><mo>(</mo> <mi>𝐱</mi> <mo>)</mo></mrow></mrow></math>可以用来估计<math alttext="p Subscript d a t a Baseline left-parenthesis bold x right-parenthesis"><mrow><msub><mi>p</mi> <mrow><mi>d</mi><mi>a</mi><mi>t</mi><mi>a</mi></mrow></msub> <mrow><mo>(</mo> <mi>𝐱</mi> <mo>)</mo></mrow></mrow></math>。
+*参数建模*是一种技术，我们可以用来构建我们寻找适当`p_model(𝐱)`的方法。*参数模型*是一组密度函数`p_θ(𝐱)`，可以用有限数量的参数`θ`来描述。
 
-参数建模
+> **注意**
+> 如果我们假设均匀分布作为我们的模型族，那么我们可以在图 1-5 上绘制的所有可能框的集合是参数模型的一个示例。在这种情况下，有四个参数：框的左下角坐标`(θ1, θ2)`和右上角`(θ3, θ4)`的坐标。
 
-*参数建模*是一种技术，我们可以用来构建我们寻找适当<math alttext="p Subscript m o d e l Baseline left-parenthesis bold x right-parenthesis"><mrow><msub><mi>p</mi> <mrow><mi>m</mi><mi>o</mi><mi>d</mi><mi>e</mi><mi>l</mi></mrow></msub> <mrow><mo>(</mo> <mi>𝐱</mi> <mo>)</mo></mrow></mrow></math>的方法。*参数模型*是一组密度函数<math alttext="p Subscript theta Baseline left-parenthesis bold x right-parenthesis"><mrow><msub><mi>p</mi> <mi>θ</mi></msub> <mrow><mo>(</mo> <mi>𝐱</mi> <mo>)</mo></mrow></mrow></math>，可以用有限数量的参数<math alttext="theta"><mi>θ</mi></math>来描述。
+因此，这个参数模型中的每个密度函数`p_θ(𝐱)`（即每个框）可以用四个数字`θ = (θ1, θ2, θ3, θ4)`唯一表示。
 
-###### 注意
+## 可能性
 
-如果我们假设均匀分布作为我们的模型族，那么我们可以在图 1-5 上绘制的所有可能框的集合是参数模型的一个示例。在这种情况下，有四个参数：框的左下角坐标<math alttext="left-parenthesis theta 1 comma theta 2 right-parenthesis"><mrow><mo>(</mo> <msub><mi>θ</mi> <mn>1</mn></msub> <mo>,</mo> <msub><mi>θ</mi> <mn>2</mn></msub> <mo>)</mo></mrow></math>和右上角<math alttext="left-parenthesis theta 3 comma theta 4 right-parenthesis"><mrow><mo>(</mo> <msub><mi>θ</mi> <mn>3</mn></msub> <mo>,</mo> <msub><mi>θ</mi> <mn>4</mn></msub> <mo>)</mo></mrow></math>的坐标。
+参数集`θ`的*可能性*`ℒ(θ|𝐱)`是一个函数，用于衡量给定一些观察点`𝐱`的`θ`的合理性。它的定义如下：
 
-因此，这个参数模型中的每个密度函数<math alttext="p Subscript theta Baseline left-parenthesis bold x right-parenthesis"><mrow><msub><mi>p</mi> <mi>θ</mi></msub> <mrow><mo>(</mo> <mi>𝐱</mi> <mo>)</mo></mrow></mrow></math>（即每个框）可以用四个数字<math alttext="theta equals left-parenthesis theta 1 comma theta 2 comma theta 3 comma theta 4 right-parenthesis"><mrow><mi>θ</mi> <mo>=</mo> <mo>(</mo> <msub><mi>θ</mi> <mn>1</mn></msub> <mo>,</mo> <msub><mi>θ</mi> <mn>2</mn></msub> <mo>,</mo> <msub><mi>θ</mi> <mn>3</mn></msub> <mo>,</mo> <msub><mi>θ</mi> <mn>4</mn></msub> <mo>)</mo></mrow></math>唯一表示。
+```
+ℒ(θ|𝐱) = p_θ(𝐱)
+```
 
-可能性
+也就是说，给定一些观察点`𝐱`的`θ`的可能性被定义为由`θ`参数化的密度函数在点`𝐱`处的值。如果我们有一个完整的独立观测数据集`𝐗`，那么我们可以写成：
 
-参数集θ的*可能性*<math alttext="script upper L left-parenthesis theta vertical-bar bold x right-parenthesis"><mrow><mi>ℒ</mi> <mo>(</mo> <mi>θ</mi> <mo>|</mo> <mi>𝐱</mi> <mo>)</mo></mrow></math>是一个函数，用于衡量给定一些观察点<math alttext="bold x"><mi>𝐱</mi></math>的θ的合理性。它的定义如下：
+```
+ℒ(θ|𝐗) = ∏_{𝐱∈𝐗} p_θ(𝐱)
+```
 
-<math alttext="script upper L left-parenthesis theta vertical-bar bold x right-parenthesis equals p Subscript theta Baseline left-parenthesis bold x right-parenthesis" display="block"><mrow><mi>ℒ</mi> <mrow><mo>(</mo> <mi>θ</mi> <mo>|</mo> <mi>𝐱</mi> <mo>)</mo></mrow> <mo>=</mo> <msub><mi>p</mi> <mi>θ</mi></msub> <mrow><mo>(</mo> <mi>𝐱</mi> <mo>)</mo></mrow></mrow></math>
+> **注意**
+> 在世界地图示例中，一个只覆盖地图左半部分的橙色框的似然为 0——它不可能生成数据集，因为我们观察到地图右半部分的点。在图 1-5 中的橙色框具有正的似然，因为在该模型下所有数据点的密度函数都为正。
 
-也就是说，给定一些观察点<math alttext="bold x"><mi>𝐱</mi></math>的θ的可能性被定义为由<math alttext="theta"><mi>θ</mi></math>参数化的密度函数在点<math alttext="bold x"><mi>𝐱</mi></math>处的值。如果我们有一个完整的独立观测数据集<math alttext="bold upper X"><mi>𝐗</mi></math>，那么我们可以写成：
+由于 0 到 1 之间大量项的乘积可能会导致计算上的困难，我们通常使用*log-likelihood* `ℓ`代替：
 
-<math alttext="script upper L left-parenthesis theta vertical-bar bold upper X right-parenthesis equals product Underscript bold x element-of bold upper X Endscripts p Subscript theta Baseline left-parenthesis bold x right-parenthesis" display="block"><mrow><mi>ℒ</mi> <mrow><mo>(</mo> <mi>θ</mi> <mo>|</mo> <mi>𝐗</mi> <mo>)</mo></mrow> <mo>=</mo> <munder><mo>∏</mo> <mrow><mi>𝐱</mi><mo>∈</mo><mi>𝐗</mi></mrow></munder> <msub><mi>p</mi> <mi>θ</mi></msub> <mrow><mo>(</mo> <mi>𝐱</mi> <mo>)</mo></mrow></mrow></math>
+```
+ℓ(θ|𝐗) = ∑_{𝐱∈𝐗} log p_θ(𝐱)
+```
 
-###### 注意
+有统计原因解释为什么似然以这种方式定义，但我们也可以看到这种定义在直觉上是有道理的。一组参数`θ`的似然被定义为如果真实的数据生成分布是由`θ`参数化的模型，则看到数据的概率。
 
-在世界地图示例中，一个只覆盖地图左半部分的橙色框的似然为 0—它不可能生成数据集，因为我们观察到地图右半部分的点。在图 1-5 中的橙色框具有正的似然，因为在该模型下所有数据点的密度函数都为正。
+> **警告**
+> 请注意，似然是*参数*的函数，而不是数据。它不应该被解释为给定参数集正确的概率——换句话说，它不是参数空间上的概率分布（即，它不会对参数求和/积分为 1）。
 
-由于 0 到 1 之间大量项的乘积可能会导致计算上的困难，我们通常使用*log-likelihood* ℓ代替：
+参数化建模的重点应该是找到最大化观察到的数据集`𝐗`的可能性的参数集的最优值`θ̂`。
 
-<math alttext="script l left-parenthesis theta vertical-bar bold upper X right-parenthesis equals sigma-summation Underscript bold x element-of bold upper X Endscripts log p Subscript theta Baseline left-parenthesis bold x right-parenthesis" display="block"><mrow><mi>ℓ</mi> <mrow><mo>(</mo> <mi>θ</mi> <mo>|</mo> <mi>𝐗</mi> <mo>)</mo></mrow> <mo>=</mo> <munder><mo>∑</mo> <mrow><mi>𝐱</mi><mo>∈</mo><mi>𝐗</mi></mrow></munder> <mo form="prefix">log</mo> <msub><mi>p</mi> <mi>θ</mi></msub> <mrow><mo>(</mo> <mi>𝐱</mi> <mo>)</mo></mrow></mrow></math>
+## 最大似然估计
 
-有统计原因解释为什么似然以这种方式定义，但我们也可以看到这种定义在直觉上是有道理的。一组参数θ的似然被定义为如果真实的数据生成分布是由θ参数化的模型，则看到数据的概率。
+*最大似然估计*是一种技术，它允许我们估计`θ̂`——密度函数`p_θ(𝐱)`的参数集`θ`最有可能解释一些观察到的数据`𝐗`。更正式地说：
 
-###### 警告
+```
+θ̂ = arg max_𝐱 ℓ(θ|𝐗)
+```
 
-请注意，似然是*参数*的函数，而不是数据。它不应该被解释为给定参数集正确的概率—换句话说，它不是参数空间上的概率分布（即，它不会对参数求和/积分为 1）。
+`θ̂`也被称为*最大似然估计*（MLE）。
 
-参数化建模的重点应该是找到最大化观察到的数据集𝐗的可能性的参数集的最优值^θ。
-
-最大似然估计
-
-*最大似然估计*是一种技术，它允许我们估计^θ——密度函数 pθ（𝐱）的参数集θ最有可能解释一些观察到的数据𝐗。更正式地说：
-
-<math alttext="ModifyingAbove theta With caret equals arg max Underscript bold x Endscripts script l left-parenthesis theta vertical-bar bold upper X right-parenthesis" display="block"><mrow><mover accent="true"><mi>θ</mi> <mo>^</mo></mover> <mo>=</mo> <munder><mrow><mo form="prefix">arg</mo><mo movablelimits="true" form="prefix">max</mo></mrow> <mi>𝐱</mi></munder> <mi>ℓ</mi> <mrow><mo>(</mo> <mi>θ</mi> <mo>|</mo> <mi>𝐗</mi> <mo>)</mo></mrow></mrow></math>
-
-^θ也被称为*最大似然估计*（MLE）。
-
-###### 注意
-
-在世界地图示例中，MLE 是仍然包含训练集中所有点的最小矩形。
+> **注意**
+> 在世界地图示例中，MLE 是仍然包含训练集中所有点的最小矩形。
 
 神经网络通常*最小化*损失函数，因此我们可以等效地讨论找到*最小化负对数似然*的参数集：
 
-<math alttext="ModifyingAbove theta With caret equals arg min Underscript theta Endscripts left-parenthesis minus script l left-parenthesis theta vertical-bar bold upper X right-parenthesis right-parenthesis equals arg min Underscript theta Endscripts left-parenthesis minus log p Subscript theta Baseline left-parenthesis bold upper X right-parenthesis right-parenthesis" display="block"><mrow><mover accent="true"><mi>θ</mi> <mo>^</mo></mover> <mo>=</mo> <munder><mrow><mo form="prefix">arg</mo><mo movablelimits="true" form="prefix">min</mo></mrow> <mi>θ</mi></munder> <mfenced separators="" open="(" close=")"><mo>-</mo> <mi>ℓ</mi> <mo>(</mo> <mi>θ</mi> <mo>|</mo> <mi>𝐗</mi> <mo>)</mo></mfenced> <mo>=</mo> <munder><mrow><mo form="prefix">arg</mo><mo movablelimits="true" form="prefix">min</mo></mrow> <mi>θ</mi></munder> <mfenced separators="" open="(" close=")"><mo>-</mo> <mo form="prefix">log</mo> <msub><mi>p</mi> <mi>θ</mi></msub> <mrow><mo>(</mo> <mi>𝐗</mi> <mo>)</mo></mrow></mfenced></mrow></math>
 
-生成建模可以被看作是一种最大似然估计的形式，其中参数θ是模型中包含的神经网络的权重。我们试图找到这些参数的值，以最大化观察到的给定数据的可能性（或等效地，最小化负对数似然）。
 
-然而，对于高维问题，通常不可能直接计算 pθ（𝐱）—它是*难以计算*的。正如我们将在下一节中看到的，不同类型的生成模型采取不同的方法来解决这个问题。
+`θ̂ = arg min_θ (−ℓ(θ|𝐗)) = arg min_θ (−log p_θ(𝐗))`
 
-# 生成模型分类
+生成建模可以被看作是一种最大似然估计的形式，其中参数`θ`是模型中包含的神经网络的权重。我们试图找到这些参数的值，以最大化观察到的给定数据的可能性（或等效地，最小化负对数似然）。
 
-虽然所有类型的生成模型最终都旨在解决相同的任务，但它们在对密度函数 pθ（𝐱）建模时采取了略有不同的方法。广义上说，有三种可能的方法：
+然而，对于高维问题，通常不可能直接计算`p_θ(𝐱)`——它是*难以计算*的。正如我们将在下一节中看到的，不同类型的生成模型采取不同的方法来解决这个问题。
 
-1.  显式地对密度函数建模，但以某种方式限制模型，使得密度函数是可计算的。
+## 生成模型分类
 
-1.  显式地建模密度函数的可处理近似。
+虽然所有类型的生成模型最终都旨在解决相同的任务，但它们在对密度函数`p_θ(𝐱)`建模时采取了略有不同的方法。广义上说，有三种可能的方法：
 
-1.  通过直接生成数据的随机过程隐式建模密度函数。
+1. 显式地对密度函数建模，但以某种方式限制模型，使得密度函数是可计算的。
+2. 显式地建模密度函数的可处理近似。
+3. 通过直接生成数据的随机过程隐式建模密度函数。
 
-这些在图 1-10 中显示为分类法，与本书第 II 部分中将探索的六种生成模型家族并列。请注意，这些家族并不是相互排斥的—有许多模型是两种不同方法的混合体。您应该将这些家族视为生成建模的不同一般方法，而不是显式模型架构。
+这些在图 1-10 中显示为分类法，与本书第 II 部分中将探索的六种生成模型家族并列。请注意，这些家族并不是相互排斥的——有许多模型是两种不同方法的混合体。您应该将这些家族视为生成建模的不同一般方法，而不是显式模型架构。
 
 ![](img/gdl2_0110.png)
 
-###### 图 1-10\. 生成建模方法的分类法
+**图 1-10.** 生成建模方法的分类法
 
-我们可以进行的第一个分割是在概率密度函数 <math alttext="p left-parenthesis bold x right-parenthesis"><mrow><mi>p</mi> <mo>(</mo> <mi>𝐱</mi> <mo>)</mo></mrow></math> 被*显式*建模和被*隐式*建模的模型之间。
+我们可以进行的第一个分割是在概率密度函数`p(𝐱)`被*显式*建模和被*隐式*建模的模型之间。
 
 *隐式密度模型*并不旨在估计概率密度，而是专注于产生直接生成数据的随机过程。隐式生成模型的最著名例子是*生成对抗网络*。我们可以进一步将*显式密度模型*分为直接优化密度函数（可处理模型）和仅优化其近似值的模型。
 
-*可处理模型*对模型架构施加约束，使得密度函数具有易于计算的形式。例如，*自回归模型*对输入特征进行排序，以便可以按顺序生成输出—例如，逐字或逐像素。*归一化流模型*将一系列可处理、可逆函数应用于简单分布，以生成更复杂的分布。
+*可处理模型*对模型架构施加约束，使得密度函数具有易于计算的形式。例如，*自回归模型*对输入特征进行排序，以便可以按顺序生成输出——例如，逐字或逐像素。*归一化流模型*将一系列可处理、可逆函数应用于简单分布，以生成更复杂的分布。
 
 *近似密度模型*包括*变分自动编码器*，引入潜变量并优化联合密度函数的近似值。*基于能量的模型*也利用近似方法，但是通过马尔可夫链采样，而不是变分方法。*扩散模型*通过训练模型逐渐去噪给定的先前损坏的图像来近似密度函数。
 
 贯穿所有生成模型家族类型的共同主题是*深度学习*。几乎所有复杂的生成模型都以深度神经网络为核心，因为它们可以从头开始训练，学习控制数据结构的复杂关系，而不必事先硬编码信息。我们将在第二章中探讨深度学习，提供实际示例，帮助您开始构建自己的深度神经网络。
 
-# 生成式深度学习代码库
+## 生成式深度学习代码库
 
 本章的最后一节将帮助您开始构建生成式深度学习模型，介绍伴随本书的代码库。
 
-###### 提示
+**提示**：本书中的许多示例都改编自[Keras 网站](https://oreil.ly/1UTwa)上提供的优秀开源实现。我强烈建议您查看这个资源，因为不断添加新模型和示例。
 
-本书中的许多示例都改编自[Keras 网站](https://oreil.ly/1UTwa)上提供的优秀开源实现。我强烈建议您查看这个资源，因为不断添加新模型和示例。
-
-## 克隆存储库
+### 克隆存储库
 
 要开始，您首先需要克隆 Git 存储库。*Git*是一个开源版本控制系统，可以让您将代码本地复制，以便在自己的计算机上或在基于云的环境中运行笔记本。您可能已经安装了这个，但如果没有，请按照与您操作系统相关的[说明](https://oreil.ly/tFOdN)进行操作。
 
@@ -276,13 +279,15 @@
 git clone https://github.com/davidADSP/Generative_Deep_Learning_2nd_Edition.git
 ```
 
-`您现在应该能够在计算机上的文件夹中看到文件。`  `## 使用 Docker
+您现在应该能够在计算机上的文件夹中看到文件。
+
+### 使用 Docker
 
 如果您没有自己的 GPU，也没有问题！本书中的所有示例都将在 CPU 上训练，尽管这将比在启用 GPU 的机器上使用时间更长。*README*中还有关于设置 Google Cloud 环境的部分，该环境可以让您按需使用 GPU。
 
-## 在 GPU 上运行
+### 在 GPU 上运行
 
-# 总结
+## 总结
 
 本章介绍了生成建模领域，这是机器学习的一个重要分支，它补充了更广泛研究的判别建模。我们讨论了生成建模目前是人工智能研究中最活跃和令人兴奋的领域之一，近年来在理论和应用方面取得了许多进展。
 

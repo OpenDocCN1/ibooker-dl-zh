@@ -1,28 +1,26 @@
+
+
 # 十五、部署到生产环境
 
-本章涵盖内容
+## 本章涵盖内容
 
-+   部署 PyTorch 模型的选项
-
-+   使用 PyTorch JIT
-
-+   部署模型服务器和导出模型
-
-+   在 C++中运行导出和本地实现的模型
-
-+   在移动设备上运行模型
++ 部署 PyTorch 模型的选项
++ 使用 PyTorch JIT
++ 部署模型服务器和导出模型
++ 在 C++ 中运行导出和本地实现的模型
++ 在移动设备上运行模型
 
 在本书的第一部分，我们学到了很多关于模型的知识；第二部分为我们提供了创建特定问题的好模型的详细路径。现在我们有了这些优秀的模型，我们需要将它们带到可以发挥作用的地方。在规模化执行深度学习模型推理的基础设施维护方面，从架构和成本的角度来看都具有影响力。虽然 PyTorch 最初是一个专注于研究的框架，但从 1.0 版本开始，添加了一组面向生产的功能，使 PyTorch 成为从研究到大规模生产的理想端到端平台。
 
 部署到生产环境意味着会根据用例而有所不同：
 
-+   我们在第二部分开发的模型可能最自然的部署方式是建立一个网络服务，提供对我们模型的访问。我们将使用轻量级的 Python Web 框架来实现这一点：Flask ([` flask.pocoo.org`](http://flask.pocoo.org)) 和 Sanic ([`sanicframework.org`](https://sanicframework.org))。前者可以说是这些框架中最受欢迎的之一，后者在精神上类似，但利用了 Python 的新的异步操作支持 async/await 来提高效率。
++ 我们在第二部分开发的模型可能最自然的部署方式是建立一个网络服务，提供对我们模型的访问。我们将使用轻量级的 Python Web 框架来实现这一点：Flask（[`flask.pocoo.org`](http://flask.pocoo.org)）和 Sanic（[`sanicframework.org`](https://sanicframework.org)）。前者可以说是这些框架中最受欢迎的之一，后者在精神上类似，但利用了 Python 的新的异步操作支持 `async/await` 来提高效率。
 
-+   我们可以将我们的模型导出为一个标准化的格式，允许我们使用优化的模型处理器、专门的硬件或云服务进行部署。对于 PyTorch 模型，Open Neural Network Exchange (ONNX)格式起到了这样的作用。
++ 我们可以将我们的模型导出为一个标准化的格式，允许我们使用优化的模型处理器、专门的硬件或云服务进行部署。对于 PyTorch 模型，Open Neural Network Exchange（ONNX）格式起到了这样的作用。
 
-+   我们可能希望将我们的模型集成到更大的应用程序中。为此，如果我们不受 Python 的限制将会很方便。因此，我们将探讨使用 PyTorch 模型从 C++中使用的想法，这也是通往任何语言的一个过渡。
++ 我们可能希望将我们的模型集成到更大的应用程序中。为此，如果我们不受 Python 的限制将会很方便。因此，我们将探讨使用 PyTorch 模型从 C++ 中使用的想法，这也是通往任何语言的一个过渡。
 
-+   最后，对于一些像我们在第二章中看到的图像斑马化这样的事情，可能很好地在移动设备上运行我们的模型。虽然你不太可能在手机上有一个 CT 模块，但其他医疗应用程序如自助皮肤检查可能更自然，用户可能更喜欢在设备上运行而不是将他们的皮肤发送到云服务。幸运的是，PyTorch 最近增加了移动支持，我们将探索这一点。
++ 最后，对于一些像我们在第二章中看到的图像斑马化这样的事情，可能很好地在移动设备上运行我们的模型。虽然你不太可能在手机上有一个 CT 模块，但其他医疗应用程序如自助皮肤检查可能更自然，用户可能更喜欢在设备上运行而不是将他们的皮肤发送到云服务。幸运的是，PyTorch 最近增加了移动支持，我们将探索这一点。
 
 当我们学习如何实现这些用例时，我们将以第十四章的分类器作为我们提供服务的第一个示例，然后切换到斑马化模型处理其他部署的内容。
 
@@ -32,7 +30,7 @@
 
 ### 15.1.1 我们的模型在 Flask 服务器后面
 
-Flask 是最广泛使用的 Python 模块之一。可以使用`pip`进行安装：²
+Flask 是最广泛使用的 Python 模块之一。可以使用 `pip` 进行安装：²
 
 ```py
 pip install Flask
@@ -40,7 +38,7 @@ pip install Flask
 
 API 可以通过装饰函数创建。
 
-列表 15.1 flask_hello_world.py:1
+**列表 15.1 flask_hello_world.py:1**
 
 ```py
 from flask import Flask
@@ -54,17 +52,17 @@ if __name__ == '__main__':
   app.run(host='0.0.0.0', port=8000)
 ```
 
-应用程序启动后将在端口 8000 上运行，并公开一个路由`/hello`，返回“Hello World”字符串。此时，我们可以通过加载先前保存的模型并通过`POST`路由公开它来增强我们的 Flask 服务器。我们将以第十四章的模块分类器为例。
+应用程序启动后将在端口 8000 上运行，并公开一个路由 `/hello`，返回“Hello World”字符串。此时，我们可以通过加载先前保存的模型并通过 `POST` 路由公开它来增强我们的 Flask 服务器。我们将以第十四章的模块分类器为例。
 
-我们将使用 Flask 的（有点奇怪地导入的）`request`来获取我们的数据。更准确地说，request.files 包含一个按字段名称索引的文件对象字典。我们将使用 JSON 来解析输入，并使用 flask 的`jsonify`助手返回一个 JSON 字符串。
+我们将使用 Flask 的（有点奇怪地导入的）`request` 来获取我们的数据。更准确地说，`request.files` 包含一个按字段名称索引的文件对象字典。我们将使用 JSON 来解析输入，并使用 flask 的 `jsonify` 助手返回一个 JSON 字符串。
 
-现在，我们将暴露一个/predict 路由，该路由接受一个二进制块（系列的像素内容）和相关的元数据（包含一个以`shape`为键的字典的 JSON 对象）作为`POST`请求提供的输入文件，并返回一个 JSON 响应，其中包含预测的诊断。更确切地说，我们的服务器接受一个样本（而不是一批），并返回它是恶性的概率。
+现在，我们将暴露一个 `/predict` 路由，该路由接受一个二进制块（系列的像素内容）和相关的元数据（包含一个以 `shape` 为键的字典的 JSON 对象）作为 `POST` 请求提供的输入文件，并返回一个 JSON 响应，其中包含预测的诊断。更确切地说，我们的服务器接受一个样本（而不是一批），并返回它是恶性的概率。
 
-为了获取数据，我们首先需要将 JSON 解码为二进制，然后使用`numpy.frombuffer`将其解码为一维数组。我们将使用`torch.from_numpy`将其转换为张量，并查看其实际形状。
+为了获取数据，我们首先需要将 JSON 解码为二进制，然后使用 `numpy.frombuffer` 将其解码为一维数组。我们将使用 `torch.from_numpy` 将其转换为张量，并查看其实际形状。
 
-模型的实际处理方式就像第十四章中一样：我们将从第十四章实例化`LunaModel`，加载我们从训练中得到的权重，并将模型置于`eval`模式。由于我们不进行训练任何东西，我们会在`with torch.no_grad()`块中告诉 PyTorch 在运行模型时不需要梯度。
+模型的实际处理方式就像第十四章中一样：我们将从第十四章实例化 `LunaModel`，加载我们从训练中得到的权重，并将模型置于 `eval` 模式。由于我们不进行训练任何东西，我们会在 `with torch.no_grad()` 块中告诉 PyTorch 在运行模型时不需要梯度。
 
-列表 15.2 flask_server.py:1
+**列表 15.2 flask_server.py:1**
 
 ```py
 import numpy as np
@@ -110,7 +108,7 @@ if __name__ == '__main__':
 
 ❷ 对我们来说没有自动求导。
 
-❸ 我们期望在“/predict”端点进行表单提交（HTTP POST）。
+❸ 我们期望在 `/predict` 端点进行表单提交（HTTP POST）。
 
 ❹ 我们的请求将有一个名为 meta 的文件。
 
@@ -124,7 +122,7 @@ if __name__ == '__main__':
 python3 -m p3ch15.flask_server data/part2/models/cls_2019-10-19_15.48.24_final_cls.best.state
 ```
 
-我们在 cls_client.py 中准备了一个简单的客户端，发送一个示例。从代码目录中，您可以运行它如下：
+我们在 `cls_client.py` 中准备了一个简单的客户端，发送一个示例。从代码目录中，您可以运行它如下：
 
 ```py
 python3 p3ch15/cls_client.py
@@ -134,13 +132,13 @@ python3 p3ch15/cls_client.py
 
 ### 15.1.2 部署的期望
 
-让我们收集一些为提供模型服务而期望的事情。首先，我们希望支持*现代协议及其特性*。老式的 HTTP 是深度串行的，这意味着当客户端想要在同一连接中发送多个请求时，下一个请求只会在前一个请求得到回答后才会发送。如果您想发送一批东西，这并不是很有效。我们在这里部分交付--我们升级到 Sanic 肯定会使我们转向一个有雄心成为非常高效的框架。
+让我们收集一些为提供模型服务而期望的事情。首先，我们希望支持*现代协议及其特性*。老式的 HTTP 是深度串行的，这意味着当客户端想要在同一连接中发送多个请求时，下一个请求只会在前一个请求得到回答后才会发送。如果您想发送一批东西，这并不是很有效。我们在这里部分交付——我们升级到 Sanic 肯定会使我们转向一个有雄心成为非常高效的框架。
 
 在使用 GPU 时，批量请求通常比逐个处理或并行处理更有效。因此，接下来，我们的任务是从几个连接收集请求，将它们组装成一个批次在 GPU 上运行，然后将结果返回给各自的请求者。这听起来很复杂，（再次，当我们编写这篇文章时）似乎在简单的教程中并不经常做。这足以让我们在这里正确地做。但请注意，直到由模型运行持续时间引起的延迟成为问题（在等待我们自己的运行时是可以的；但在请求到达时等待正在运行的批次完成，然后等待我们的运行给出结果是禁止的），在给定时间内在一个 GPU 上运行多个批次没有太多理由。增加最大批量大小通常更有效。
 
-我们希望*并行*提供几件事情。即使使用异步提供服务，我们也需要我们的模型在第二个线程上高效运行--这意味着我们希望通过我们的模型摆脱（臭名昭著的）Python 全局解释器锁（GIL）。
+我们希望*并行*提供几件事情。即使使用异步提供服务，我们也需要我们的模型在第二个线程上高效运行——这意味着我们希望通过我们的模型摆脱（臭名昭著的）Python 全局解释器锁（GIL）。
 
-我们还希望尽量减少*复制*。无论从内存消耗还是时间的角度来看，反复复制东西都是不好的。许多 HTTP 事物都是以 Base64 编码（一种将二进制编码为更多或更少字母数字字符串的格式，每字节限制为 6 位）的形式编码的，比如，对于图像，将其解码为二进制，然后再转换为张量，然后再转换为批处理显然是相对昂贵的。我们将部分实现这一点——我们将使用流式`PUT`请求来避免分配 Base64 字符串，并避免通过逐渐追加到字符串来增长字符串（对于字符串和张量来说，这对性能非常糟糕）。我们说我们没有完全实现，因为我们并没有真正最小化复制。
+我们还希望尽量减少*复制*。无论从内存消耗还是时间的角度来看，反复复制东西都是不好的。许多 HTTP 事物都是以 Base64 编码（一种将二进制编码为更多或更少字母数字字符串的格式，每字节限制为 6 位）的形式编码的，比如，对于图像，将其解码为二进制，然后再转换为张量，然后再转换为批处理显然是相对昂贵的。我们将部分实现这一点——我们将使用流式 `PUT` 请求来避免分配 Base64 字符串，并避免通过逐渐追加到字符串来增长字符串（对于字符串和张量来说，这对性能非常糟糕）。我们说我们没有完全实现，因为我们并没有真正最小化复制。
 
 为了提供服务，最后一个理想的事情是*安全性*。理想情况下，我们希望有安全的解码。我们希望防止溢出和资源耗尽。一旦我们有了固定大小的输入张量，我们应该大部分都没问题，因为从固定大小的输入开始很难使 PyTorch 崩溃。为了达到这个目标，解码图像等工作可能更令人头疼，我们不做任何保证。互联网安全是一个足够庞大的领域，我们将完全不涉及它。我们应该注意到神经网络容易受到输入操纵以生成期望但错误或意想不到的输出（称为*对抗性示例*），但这与我们的应用并不是非常相关，所以我们会在这里跳过它。
 
@@ -152,7 +150,7 @@ python3 p3ch15/cls_client.py
 
 ![](img/CH15_F01_Stevens2_GS.png)
 
-图 15.1 请求批处理的数据流
+**图 15.1 请求批处理的数据流**
 
 异步编程听起来可能很可怕，并且通常伴随着大量术语。但我们在这里所做的只是允许函数非阻塞地等待计算或事件的结果。
 
@@ -168,13 +166,13 @@ python3 p3ch15/cls_client.py
 
 ![](img/CH15_F02_Stevens2_GS.png)
 
-图 15.2 我们的异步服务器由三个模块组成：请求处理器、模型运行器和模型执行。这些模块有点像函数，但前两个在中间会让出事件循环。
+**图 15.2 我们的异步服务器由三个模块组成：请求处理器、模型运行器和模型执行。这些模块有点像函数，但前两个在中间会让出事件循环。**
 
 相对于这个图片，一个轻微的复杂性是我们有两个需要处理事件的场合：如果我们积累了一个完整的批次，我们立即开始；当最老的请求达到最大等待时间时，我们也想运行。我们通过为后者设置一个定时器来解决这个问题。⁵
 
-所有我们感兴趣的代码都在一个`ModelRunner`类中，如下列表所示。
+所有我们感兴趣的代码都在一个 `ModelRunner` 类中，如下列表所示。
 
-列表 15.3 request_batching_server.py:32, `ModelRunner`
+**列表 15.3 request_batching_server.py:32, `ModelRunner`**
 
 ```py
 class ModelRunner:
@@ -196,25 +194,28 @@ class ModelRunner:
 
 ❷ 这将成为我们的锁。
 
-❸ 加载并实例化模型。这是我们将需要更改以切换到 JIT 的（唯一）事情。目前，我们从 p3ch15/cyclegan.py 导入 CycleGAN（稍微修改为标准化为 0..1 的输入和输出）。
+❸ 加载并实例化模型。这是我们将需要更改以切换到 JIT 的（唯一）事情。目前，我们从 `p3ch15/cyclegan.py` 导入 CycleGAN（稍微修改为标准化为 0..1 的输入和输出）。
 
 ❹ 我们运行模型的信号
 
 ❺ 最后，定时器
 
-`ModelRunner` 首先加载我们的模型并处理一些管理事务。除了模型，我们还需要一些其他要素。我们将请求输入到一个`queue`中。这只是一个 Python 列表，我们在后面添加工作项，然后在前面删除它们。
+`ModelRunner` 首先加载我们的模型并处理一些管理事务。除了模型，我们还需要一些其他要素。我们将请求输入到一个 `queue` 中。这只是一个 Python 列表，我们在后面添加工作项，然后在前面删除它们。
 
-当我们修改`queue`时，我们希望防止其他任务在我们下面更改队列。为此，我们引入了一个`queue_lock`，它将是由`asyncio`模块提供的`asyncio.Lock`。由于我们在这里使用的所有`asyncio`对象都需要知道事件循环，而事件循环只有在我们初始化应用程序后才可用，因此我们在实例化时将其临时设置为`None`。尽管像这样锁定可能并不是绝对必要的，因为我们的方法在持有锁时不会返回事件循环，并且由于 GIL 的原因，对队列的操作是原子的，但它确实明确地编码了我们的基本假设。如果我们有多个工作进程，我们需要考虑加锁。一个警告：Python 的异步锁不是线程安全的。（叹气。）
+当我们修改 `queue` 时，我们希望防止其他任务在我们下面更改队列。为此，我们引入了一个 `queue_lock`，它将是由 `asyncio` 模块提供的 `asyncio.Lock`。由于我们在这里使用的所有 `asyncio` 对象都需要知道事件循环，而事件循环只有在我们初始化应用程序后才可用，因此我们在实例化时将其临时设置为 `None`。尽管像这样锁定可能并不是绝对必要的，因为我们的方法在持有锁时不会返回事件循环，并且由于 GIL 的原因，对队列的操作是原子的，但它确实明确地编码了我们的基本假设。如果我们有多个工作进程，我们需要考虑加锁。一个警告：Python 的异步锁不是线程安全的。（叹气。）
 
-`ModelRunner` 在没有任务时等待。我们需要从`RequestProcessor`向其发出信号，告诉它停止偷懒，开始工作。这通过名为`needs_processing`的`asyncio.Event`完成。`ModelRunner`使用`wait()`方法等待`needs_processing`事件。然后，`RequestProcessor`使用`set()`来发出信号，`ModelRunner`会被唤醒并清除事件。
+`ModelRunner` 在没有任务时等待。我们需要从 `RequestProcessor` 向其发出信号，告诉它停止偷懒，开始工作。这通过名为 `needs_processing` 的 `asyncio.Event` 完成。`ModelRunner` 使用 `wait()` 方法等待 `needs_processing` 事件。然后，`RequestProcessor` 使用 `set()` 来发出信号，`ModelRunner` 会被唤醒并清除事件。
 
-最后，我们需要一个定时器来保证最大等待时间。当我们需要时，通过使用`app.loop.call_at`来创建此定时器。它设置`needs_processing`事件；我们现在只是保留一个插槽。因此，实际上，有时事件将直接被设置，因为一个批次已经完成，或者当定时器到期时。当我们在定时器到期之前处理一个批次时，我们将清除它，以便不做太多的工作。
+最后，我们需要一个定时器来保证最大等待时间。当我们需要时，通过使用 `app.loop.call_at` 来创建此定时器。它设置 `needs_processing` 事件；我们现在只是保留一个插槽。因此，实际上，有时事件将直接被设置，因为一个批次已经完成，或者当定时器到期时。当我们在定时器到期之前处理一个批次时，我们将清除它，以便不做太多的工作。
 
 #### 从请求到队列
 
-接下来，我们需要能够将请求加入队列，这是图 15.2 中`RequestProcessor`的第一部分的核心（不包括解码和重新编码）。我们在我们的第一个`async`方法`process_input`中完成这个操作。
+接下来，我们需要能够将请求加入队列，这是图 15.2 中 `RequestProcessor` 的第一部分的核心（不包括解码和重新编码）。我们在我们的第一个 `async` 方法 `process_input` 中完成这个操作。
 
-列表 15.4 request_batching_server.py:54
+**列表 15.4 request_batching_server.py:54**
+
+
+
 
 ```py
 async def process_input(self, input):
@@ -237,7 +238,7 @@ async def process_input(self, input):
 
 ❸ ...安排处理。处理将设置`needs_processing`，如果我们有一个完整的批次。如果我们没有，并且没有设置定时器，它将在最大等待时间到达时设置一个定时器。
 
-❹ 等待（并使用 await 将控制权交还给循环）处理完成。
+❹ 等待（并使用`await`将控制权交还给循环）处理完成。
 
 我们设置一个小的 Python 字典来保存我们任务的信息：当然是`input`，任务被排队的`time`，以及在任务被处理后将被设置的`done_event`。处理会添加一个`output`。
 
@@ -302,7 +303,7 @@ async def model_runner(self):
 python3 -m p3ch15.request_batching_server data/p1ch2/horse2zebra_0.4.0.pth
 ```
 
-现在我们可以通过上传图像数据/p1ch2/horse.jpg 进行测试并保存结果：
+现在我们可以通过上传图像`data/p1ch2/horse.jpg`进行测试并保存结果：
 
 ```py
 curl -T data/p1ch2/horse.jpg http://localhost:8000/image --output /tmp/res.jpg
@@ -426,6 +427,8 @@ python3 p3ch15/cyclegan.py data/p1ch2/horse2zebra_0.4.0.pth data/p3ch15/traced_z
 
 经常有人说 Python 缺乏速度。虽然这有一定道理，但我们在 PyTorch 中使用的张量操作通常本身足够大，以至于它们之间的 Python 速度慢并不是一个大问题。对于像智能手机这样的小设备，Python 带来的内存开销可能更重要。因此，请记住，通常通过将 Python 排除在计算之外来加快速度的提升是 10% 或更少。
 
+
+
 另一个不在 Python 中运行模型的即时加速仅在多线程环境中出现，但这时它可能是显著的：因为中间结果不是 Python 对象，计算不受所有 Python 并行化的威胁，即 GIL。这是我们之前考虑到的，并且当我们在服务器上使用跟踪模型时实现了这一点。
 
 从经典的 PyTorch 执行一项操作后再查看下一项的方式转变过来，确实让 PyTorch 能够全面考虑计算：也就是说，它可以将计算作为一个整体来考虑。这为关键的优化和更高级别的转换打开了大门。其中一些主要适用于推断，而其他一些也可以在训练中提供显著的加速。
@@ -442,7 +445,7 @@ python3 p3ch15/cyclegan.py data/p1ch2/horse2zebra_0.4.0.pth data/p3ch15/traced_z
 
 ### 15.3.2 PyTorch 作为接口和后端的双重性质
 
-要理解如何摆脱 Python 的工作原理，有益的是在头脑中将 PyTorch 分为几个部分。我们在第 1.4 节中初步看到了这一点。我们的 PyTorch `torch.nn` 模块--我们在第六章首次看到它们，自那以后一直是我们建模的主要工具--保存网络的参数，并使用功能接口实现：接受和返回张量的函数。这些被实现为 C++ 扩展，交给了 C++ 级别的自动求导启用层。 （然后将实际计算交给一个名为 ATen 的内部库，执行计算或依赖后端来执行，但这不重要。）
+要理解如何摆脱 Python 的工作原理，有益的是在头脑中将 PyTorch 分为几个部分。我们在第 1.4 节中初步看到了这一点。我们的 PyTorch `torch.nn` 模块--我们在第六章第一次看到它们，自那以后一直是我们建模的主要工具--保存网络的参数，并使用功能接口实现：接受和返回张量的函数。这些被实现为 C++ 扩展，交给了 C++ 级别的自动求导启用层。 （然后将实际计算交给一个名为 ATen 的内部库，执行计算或依赖后端来执行，但这不重要。）
 
 鉴于 C++ 函数已经存在，PyTorch 开发人员将它们制作成了官方 API。这就是 LibTorch 的核心，它允许我们编写几乎与其 Python 对应物相似的 C++ 张量操作。由于`torch.nn`模块本质上只能在 Python 中使用，C++ API 在一个名为`torch::nn`的命名空间中镜像它们，设计上看起来很像 Python 部分，但是独立的。
 
@@ -646,6 +649,8 @@ class UNetUpBlock(nn.Module):
 
 我们已经看到了各种导出模型的方式，但到目前为止，我们使用了 Python。现在我们将看看如何放弃 Python 直接使用 C++。
 
+
+
 让我们回到从马到斑马的 CycleGAN 示例。我们现在将从第 15.2.3 节中获取 JITed 模型，并在 C++ 程序中运行它。
 
 ### 15.4.1 从 C++ 运行 JITed 模型
@@ -678,7 +683,7 @@ int main(int argc, char **argv) {
 
 ❸ 调整为较小的尺寸
 
-❹ 方法 data_ptr<float>() 给我们一个指向张量存储的指针。有了它和形状信息，我们可以构建输出图像。
+❹ 方法 `data_ptr<float>()` 给我们一个指向张量存储的指针。有了它和形状信息，我们可以构建输出图像。
 
 ❺ 保存图像
 
@@ -711,9 +716,9 @@ auto input_ = torch::tensor(
 
 ❸ 从文件加载 JITed 模型或函数
 
-❹ 将输入打包成一个（单元素）IValues 向量
+❹ 将输入打包成一个（单元素）`IValues` 向量
 
-❺ 调用模块并提取结果张量。为了效率，所有权被移动，所以如果我们保留了 IValue，之后它将为空。
+❺ 调用模块并提取结果张量。为了效率，所有权被移动，所以如果我们保留了 `IValue`，之后它将为空。
 
 ❻ 确保我们的结果是连续的
 
@@ -737,7 +742,7 @@ auto input_ = torch::tensor(
 
 所以让我们编译这个！在 Debian 或 Ubuntu 上，你需要安装 `cimg-dev`、`libjpeg-dev` 和 `libx11-dev` 来使用 `CImg`。
 
-你可以从 PyTorch 页面下载一个 PyTorch 的 C++ 库。但考虑到我们已经安装了 PyTorch，¹⁰我们可能会选择使用它；它已经包含了我们在 C++ 中所需的一切。我们需要知道我们的 PyTorch 安装位置在哪里，所以打开 Python 并检查 `torch.__file__`，它可能会显示 /usr/local/lib/python3.7/dist-packages/ torch/__init__.py。这意味着我们需要的 CMake 文件在 /usr/local/lib/python3.7/dist-packages/torch/share/cmake/ 中。
+你可以从 PyTorch 页面下载一个 PyTorch 的 C++ 库。但考虑到我们已经安装了 PyTorch，¹⁰我们可能会选择使用它；它已经包含了我们在 C++ 中所需的一切。我们需要知道我们的 PyTorch 安装位置在哪里，所以打开 Python 并检查 `torch.__file__`，它可能会显示 `/usr/local/lib/python3.7/dist-packages/ torch/__init__.py`。这意味着我们需要的 CMake 文件在 `/usr/local/lib/python3.7/dist-packages/torch/share/cmake/` 中。
 
 尽管对于一个单个源文件项目来说使用 CMake 似乎有点大材小用，但链接到 PyTorch 有点复杂；因此我们只需使用以下内容作为一个样板 CMake 文件。¹¹
 
@@ -760,7 +765,7 @@ set_property(TARGET cyclegan-jit PROPERTY CXX_STANDARD 14)
 
 ❷ 我们需要 Torch。
 
-❸ 我们想要从 cyclegan_jit.cpp 源文件编译一个名为 cyclegan-jit 的可执行文件。
+❸ 我们想要从 `cyclegan_jit.cpp` 源文件编译一个名为 `cyclegan-jit` 的可执行文件。
 
 ❹ 链接到 CImg 所需的部分。CImg 本身是全包含的，所以这里不会出现。
 
@@ -770,7 +775,7 @@ set_property(TARGET cyclegan-jit PROPERTY CXX_STANDARD 14)
 ./cyclegan-jit ../traced_zebra_model.pt  ../../data/p1ch2/horse.jpg /tmp/z.jpg
 ```
 
-我们刚刚在没有 Python 的情况下运行了我们的 PyTorch 模型。太棒了！如果你想发布你的应用程序，你可能想将 /usr/local/lib/python3.7/dist-packages/torch/lib 中的库复制到可执行文件所在的位置，这样它们就会始终被找到。
+我们刚刚在没有 Python 的情况下运行了我们的 PyTorch 模型。太棒了！如果你想发布你的应用程序，你可能想将 `/usr/local/lib/python3.7/dist-packages/torch/lib` 中的库复制到可执行文件所在的位置，这样它们就会始终被找到。
 
 ### 15.4.2 从头开始的 C++：C++ API
 
@@ -787,7 +792,7 @@ C++ 模块化 API 旨在感觉很像 Python 的 API。为了体验一下，我�
 using torch::Tensor;       # ❷
 ```
 
-❶ 导入一站式 torch/torch.h 头文件和 CImg
+❶ 导入一站式 `torch/torch.h` 头文件和 CImg
 
 ❷ 拼写`torch::Tensor`可能很繁琐，因此我们将名称导入主命名空间。
 
@@ -820,7 +825,7 @@ struct ResNetBlock : torch::nn::Module {
 };.
 ```
 
-❶ 初始化 Sequential，包括其子模块
+❶ 初始化 `Sequential`，包括其子模块
 
 ❷ 始终记得注册您分配的模块，否则会发生糟糕的事情！
 
@@ -842,107 +847,23 @@ struct ResNetBlock : torch::nn::Module {
 
 列表 15.15 cyclegan_cpp_api.cpp 中的 `ResNetGenerator`
 
-```py
-struct ResNetGeneratorImpl : torch::nn::Module {
-  torch::nn::Sequential model;
-  ResNetGeneratorImpl(int64_t input_nc = 3, int64_t output_nc = 3,
-                      int64_t ngf = 64, int64_t n_blocks = 9) {
-    TORCH_CHECK(n_blocks >= 0);
-    model->push_back(torch::nn::ReflectionPad2d(3));    # ❶
-    ...                                                 # ❷
-      model->push_back(torch::nn::Conv2d(
-          torch::nn::Conv2dOptions(ngf * mult, ngf * mult * 2, 3)
-              .stride(2)
-              .padding(1)));                            # ❸
-    ...
-    register_module("model", model);
-  }
-  Tensor forward(const Tensor &inp) { return model->forward(inp); }
-};
 
-TORCH_MODULE(ResNetGenerator);                          # ❹
-```
 
-❶ 在构造函数中向 Sequential 容器添加模块。这使我们能够在 for 循环中添加可变数量的模块。
-
-❷ 使我们免于重复一些繁琐的事情
-
-❸ Options 的一个示例
-
-❹ 在我们的 ResNetGeneratorImpl 类周围创建一个包装器 ResNetGenerator。尽管看起来有些过时，但匹配的名称在这里很重要。
-
-就是这样--我们定义了 Python `ResNetGenerator` 模型的完美 C++ 对应物。现在我们只需要一个 `main` 函数来加载参数并运行我们的模型。加载图像使用 CImg 并将图像转换为张量，再将张量转换回图像与上一节中相同。为了增加一些变化，我们将显示图像而不是将其写入磁盘。
-
-列表 15.16 cyclegan_cpp_api.cpp `main`
-
-```py
-ResNetGenerator model;                                                    # ❶
-  ...
-  torch::load(model, argv[1]);                                            # ❷
-  ...
-  cimg_library::CImg<float> image(argv[2]);
-  image.resize(400, 400);
-  auto input_ =
-      torch::tensor(torch::ArrayRef<float>(image.data(), image.size()));
-  auto input = input_.reshape({1, 3, image.height(), image.width()});
-  torch::NoGradGuard no_grad;                                             # ❸
-
-  model->eval();                                                          # ❹
-
-  auto output = model->forward(input);                                    # ❺
-  ...
-  cimg_library::CImg<float> out_img(output.data_ptr<float>(),
-                    output.size(3), output.size(2),
-                    1, output.size(1));
-  cimg_library::CImgDisplay disp(out_img, "See a C++ API zebra!");        # ❻
-  while (!disp.is_closed()) {
-    disp.wait();
-  }
-```
-
-❶ 实例化我们的模型
-
-❷ 加载参数
-
-❸ 声明一个守卫变量相当于 torch.no_grad() 上下文。如果需要限制关闭梯度的时间，可以将其放在 { ... } 块中。
-
-❹ 就像在 Python 中一样，打开 eval 模式（对于我们的模型来说可能并不严格相关）。
-
-❺ 再次调用 forward 而不是 model。
-
-❻ 显示图像时，我们需要等待按键而不是立即退出程序。
-
-有趣的变化在于我们如何创建和运行模型。正如预期的那样，我们通过声明模型类型的变量来实例化模型。我们使用 `torch::load` 加载模型（这里重要的是我们包装了模型）。虽然这看起来对于 PyTorch 从业者来说非常熟悉，但请注意它将在 JIT 保存的文件上工作，而不是 Python 序列化的状态字典。
-
-运行模型时，我们需要相当于 `with torch.no_grad():` 的功能。这是通过实例化一个类型为 `NoGradGuard` 的变量并在我们不希望梯度时保持其范围来实现的。就像在 Python 中一样，我们调用 `model->eval()` 将模型设置为评估模式。这一次，我们调用 `model->forward` 传入我们的输入张量并得到一个张量作为结果--不涉及 JIT，因此我们不需要 `IValue` 的打包和解包。
-
-哎呀。对于我们这些 Python 粉丝来说，在 C++ 中编写这个是很费力的。我们很高兴我们只承诺在这里进行推理，但当然 LibTorch 也提供了优化器、数据加载器等等。使用 API 的主要原因当然是当你想要创建模型而 JIT 和 Python 都不合适时。
-
-为了您的方便，CMakeLists.txt 中还包含了构建 `cyclegan-cpp-api` 的说明，因此构建就像在上一节中一样简单。
-
-我们可以运行程序如下
-
-```py
-./cyclegan_cpp_api ../traced_zebra_model.pt ../../data/p1ch2/horse.jpg
-```
-
-但我们知道模型会做什么，不是吗？
-
-## 15.5 走向移动
+# 15.5 走向移动
 
 作为部署模型的最后一个变体，我们将考虑部署到移动设备。当我们想要将我们的模型带到移动设备时，通常会考虑 Android 和/或 iOS。在这里，我们将专注于 Android。
 
-PyTorch 的 C++ 部分--LibTorch--可以编译为 Android，并且我们可以通过使用 Android Java Native Interface (JNI) 编写的应用程序从 Java 中访问它。但实际上我们只需要从 PyTorch 中使用少量函数--加载 JIT 模型，将输入转换为张量和 `IValue`，通过模型运行它们，并将结果返回。为了避免使用 JNI 的麻烦，PyTorch 开发人员将这些函数封装到一个名为 PyTorch Mobile 的小型库中。
+PyTorch 的 C++ 部分——LibTorch——可以编译为 Android，并且我们可以通过使用 Android Java Native Interface (JNI) 编写的应用程序从 Java 中访问它。但实际上我们只需要从 PyTorch 中使用少量函数——加载 JIT 模型，将输入转换为张量和 `IValue`，通过模型运行它们，并将结果返回。为了避免使用 JNI 的麻烦，PyTorch 开发人员将这些函数封装到一个名为 PyTorch Mobile 的小型库中。
 
-在 Android 中开发应用程序的标准方式是使用 Android Studio IDE，我们也将使用它。但这意味着有几十个管理文件--这些文件也会随着 Android 版本的更改而改变。因此，我们专注于将 Android Studio 模板（具有空活动的 Java 应用程序）转换为一个拍照、通过我们的斑马 CycleGAN 运行图片并显示结果的应用程序的部分。遵循本书的主题，我们将在示例应用程序中高效处理 Android 部分（与编写 PyTorch 代码相比可能会更痛苦）。
+在 Android 中开发应用程序的标准方式是使用 Android Studio IDE，我们也将使用它。但这意味着有几十个管理文件——这些文件也会随着 Android 版本的更改而改变。因此，我们专注于将 Android Studio 模板（具有空活动的 Java 应用程序）转换为一个拍照、通过我们的斑马 CycleGAN 运行图片并显示结果的应用程序的部分。遵循本书的主题，我们将在示例应用程序中高效处理 Android 部分（与编写 PyTorch 代码相比可能会更痛苦）。
 
-要使模板生动起来，我们需要做三件事。首先，我们需要定义一个用户界面。为了尽可能简单，我们有两个元素：一个名为`headline`的`TextView`，我们可以点击以拍摄和转换图片；以及一个用于显示我们图片的`ImageView`，我们称之为`image_view`。我们将把拍照留给相机应用程序（在应用程序中可能会避免这样做以获得更流畅的用户体验），因为直接处理相机会模糊我们专注于部署 PyTorch 模型的焦点。
+要使模板生动起来，我们需要做三件事。首先，我们需要定义一个用户界面。为了尽可能简单，我们有两个元素：一个名为 `headline` 的 `TextView`，我们可以点击以拍摄和转换图片；以及一个用于显示我们图片的 `ImageView`，我们称之为 `image_view`。我们将把拍照留给相机应用程序（在应用程序中可能会避免这样做以获得更流畅的用户体验），因为直接处理相机会模糊我们专注于部署 PyTorch 模型的焦点。
 
-然后，我们需要将 PyTorch 作为依赖项包含进来。这是通过编辑我们应用程序的 build.gradle 文件并添加`pytorch_android`和`pytorch_android_torchvision`来完成的。
+然后，我们需要将 PyTorch 作为依赖项包含进来。这是通过编辑我们应用程序的 `build.gradle` 文件并添加 `pytorch_android` 和 `pytorch_android_torchvision` 来完成的。
 
-15.17 build.gradle 的添加部分
+**15.17 `build.gradle` 的添加部分**
 
-```py
+```
 dependencies {                                                     # ❶
   ...
   implementation 'org.pytorch:pytorch_android:1.4.0'               # ❷
@@ -953,17 +874,17 @@ dependencies {                                                     # ❶
 
 ❶ 依赖部分很可能已经存在。如果没有，请在底部添加。
 
-❷ pytorch_android 库获取了文本中提到的核心内容。
+❷ `pytorch_android` 库获取了文本中提到的核心内容。
 
-❸ 辅助库 pytorch_android_torchvision--与其更大的 TorchVision 兄弟相比可能有点自负地命名--包含一些将位图对象转换为张量的实用程序，但在撰写本文时没有更多内容。
+❸ 辅助库 `pytorch_android_torchvision`——与其更大的 TorchVision 兄弟相比可能有点自负地命名——包含一些将位图对象转换为张量的实用程序，但在撰写本文时没有更多内容。
 
 我们需要将我们的跟踪模型添加为资产。
 
 最后，我们可以进入我们闪亮应用的核心部分：从活动派生的 Java 类，其中包含我们的主要代码。我们这里只讨论一个摘录。它以导入和模型设置开始。
 
-15.18 MainActivity.java 第 1 部分
+**15.18 `MainActivity.java` 第 1 部分**
 
-```py
+```
 ...
 import org.pytorch.IValue;                                                 # ❶
 import org.pytorch.Module;
@@ -996,15 +917,15 @@ public class MainActivity extends AppCompatActivity {
 
 ❹ 从文件加载模块
 
-我们需要从`org.pytorch`命名空间导入一些内容。在 Java 的典型风格中，我们导入`IValue`、`Module`和`Tensor`，它们的功能符合我们的预期；以及`org.pytorch.torchvision.TensorImageUtils`类，其中包含在张量和图像之间转换的实用函数。
+我们需要从 `org.pytorch` 命名空间导入一些内容。在 Java 的典型风格中，我们导入 `IValue`、`Module` 和 `Tensor`，它们的功能符合我们的预期；以及 `org.pytorch.torchvision.TensorImageUtils` 类，其中包含在张量和图像之间转换的实用函数。
 
-首先，当然，我们需要声明一个变量来保存我们的模型。然后，在我们的应用启动时--在我们的活动的`onCreate`中--我们将使用`Model.load`方法从给定的位置加载模块。然而，有一个小复杂之处：应用程序的数据是由供应商提供的*资产*，这些资产不容易从文件系统中访问。因此，一个名为`assetFilePath`的实用方法（取自 PyTorch Android 示例）将资产复制到文件系统中的一个位置。最后，在 Java 中，我们需要捕获代码抛出的异常，除非我们想要（并且能够）依次声明我们编写的方法抛出异常。
+首先，当然，我们需要声明一个变量来保存我们的模型。然后，在我们的应用启动时——在我们的活动的 `onCreate` 中——我们将使用 `Model.load` 方法从给定的位置加载模块。然而，有一个小复杂之处：应用程序的数据是由供应商提供的*资产*，这些资产不容易从文件系统中访问。因此，一个名为 `assetFilePath` 的实用方法（取自 PyTorch Android 示例）将资产复制到文件系统中的一个位置。最后，在 Java 中，我们需要捕获代码抛出的异常，除非我们想要（并且能够）依次声明我们编写的方法抛出异常。
 
-当我们使用 Android 的`Intent`机制从相机应用程序获取图像时，我们需要运行它通过我们的模型并显示它。这发生在`onActivityResult`事件处理程序中。
+当我们使用 Android 的 `Intent` 机制从相机应用程序获取图像时，我们需要运行它通过我们的模型并显示它。这发生在 `onActivityResult` 事件处理程序中。
 
-15.19 MainActivity.java，第 2 部分
+**15.19 `MainActivity.java`，第 2 部分**
 
-```py
+```
 @Override
 protected void onActivityResult(int requestCode, int resultCode,
                                 Intent data) {
@@ -1031,77 +952,105 @@ protected void onActivityResult(int requestCode, int resultCode,
 
 ❷ 执行归一化，但默认情况下图像范围为 0...1，因此我们不需要转换：即具有 0 偏移和 1 的缩放除数。
 
-❸ 从位图获取张量，结合 TorchVision 的 ToTensor 步骤（将其转换为介于 0 和 1 之间的浮点张量）和 Normalize
+❸ 从位图获取张量，结合 TorchVision 的 `ToTensor` 步骤（将其转换为介于 0 和 1 之间的浮点张量）和 `Normalize`
 
-❹ 这看起来几乎和我们在 C++中做的一样。
+❹ 这看起来几乎和我们在 C++ 中做的一样。
 
-❺ tensorToBitmap 是我们自己的创造。
+❺ `tensorToBitmap` 是我们自己的创造。
 
-将从 Android 获取的位图转换为张量由`TensorImageUtils.bitmapToFloat32Tensor`函数（静态方法）处理，该函数除了`bitmap`之外还需要两个浮点数组`means`和`stds`。在这里，我们指定输入数据（集）的均值和标准差，然后将其映射为具有零均值和单位标准差的数据，就像 TorchVision 的`Normalize`变换一样。Android 已经将图像给我们提供在 0..1 范围内，我们需要将其馈送到我们的模型中，因此我们指定均值为 0，标准差为 1，以防止归一化改变我们的图像。
+将从 Android 获取的位图转换为张量由 `TensorImageUtils.bitmapToFloat32Tensor` 函数（静态方法）处理，该函数除了 `bitmap` 之外还需要两个浮点数组 `means` 和 `stds`。在这里，我们指定输入数据（集）的均值和标准差，然后将其映射为具有零均值和单位标准差的数据，就像 TorchVision 的 `Normalize` 变换一样。Android 已经将图像给我们提供在 0..1 范围内，我们需要将其馈送到我们的模型中，因此我们指定均值为 0，标准差为 1，以防止归一化改变我们的图像。
 
-在实际调用`model.forward`时，我们执行与在 C++中使用 JIT 时相同的`IValue`包装和解包操作，只是我们的`forward`接受一个`IValue`而不是一个向量。最后，我们需要回到位图。在这里，PyTorch 不会帮助我们，因此我们需要定义自己的`tensorToBitmap`（并向 PyTorch 提交拉取请求）。我们在这里不详细介绍，因为这些细节很繁琐且充满复制（从张量到`float[]`数组到包含 ARGB 值的`int[]`数组到位图），但事实就是如此。它被设计为`bitmapToFloat32Tensor`的逆过程。
+在实际调用 `model.forward` 时，我们执行与在 C++ 中使用 JIT 时相同的 `IValue` 包装和解包操作，只是我们的 `forward` 接受一个 `IValue` 而不是一个向量。最后，我们需要回到位图。在这里，PyTorch 不会帮助我们，因此我们需要定义自己的 `tensorToBitmap`（并向 PyTorch 提交拉取请求）。我们在这里不详细介绍，因为这些细节很繁琐且充满复制（从张量到 `float[]` 数组到包含 ARGB 值的 `int[]` 数组到位图），但事实就是如此。它被设计为 `bitmapToFloat32Tensor` 的逆过程。
 
 ![](img/CH15_F05_Stevens2_GS.png)
 
-图 15.5 我们的 CycleGAN 斑马应用
+**图 15.5** 我们的 CycleGAN 斑马应用
 
-这就是我们需要做的一切，就可以将 PyTorch 引入 Android。使用我们在这里留下的最小代码补充来请求一张图片，我们就有了一个看起来像图 15.5 中所见的`Zebraify` Android 应用程序。干得好！¹⁶
+这就是我们需要做的一切，就可以将 PyTorch 引入 Android。使用我们在这里留下的最小代码补充来请求一张图片，我们就有了一个看起来像图 15.5 中所见的 `Zebraify` Android 应用程序。干得好！¹⁶
 
-我们应该注意到，我们在 Android 上使用了 PyTorch 的完整版本，其中包含所有操作。一般来说，这也会包括您在特定任务中不需要的操作，这就引出了一个问题，即我们是否可以通过将它们排除在外来节省一些空间。事实证明，从 PyTorch 1.4 开始，您可以构建一个定制版本的 PyTorch 库，其中只包括您需要的操作（参见[`pytorch.org/mobile/android/#custom-build`](https://pytorch.org/mobile/android/#custom-build)）。
+我们应该注意到，我们在 Android 上使用了 PyTorch 的完整版本，其中包含所有操作。一般来说，这也会包括您在特定任务中不需要的操作，这就引出了一个问题，即我们是否可以通过将它们排除在外来节省一些空间。事实证明，从 PyTorch 1.4 开始，您可以构建一个定制版本的 PyTorch 库，其中只包括您需要的操作（参见 [`pytorch.org/mobile/android/#custom-build`](https://pytorch.org/mobile/android/#custom-build)）。
 
 ### 15.5.1 提高效率：模型设计和量化
 
-如果我们想更详细地探索移动端，我们的下一步是尝试使我们的模型更快。当我们希望减少模型的内存和计算占用空间时，首先要看的是简化模型本身：也就是说，使用更少的参数和操作计算相同或非常相似的输入到输出的映射。这通常被称为*蒸馏*。蒸馏的细节各不相同--有时我们尝试通过消除小或无关的权重来缩小每个权重；在其他示例中，我们将网络的几层合并为一层（DistilBERT），甚至训练一个完全不同、更简单的模型来复制较大模型的输出（OpenNMT 的原始 CTranslate）。我们提到这一点是因为这些修改很可能是使模型运行更快的第一步。
+在上一节中，我们看到了一个完整的 C++ 实现，它使用 LibTorch 加载并运行一个 JIT 模型。让我们回顾一下其中的关键部分，并确保我们理解了代码的细节。
+
+首先，我们定义了一个 `ResNetGeneratorImpl` 结构体，它继承自 `torch::nn::Module`。在构造函数中，我们使用 `torch::nn::Sequential` 容器来构建模型，并通过 `model->push_back` 添加各种层。这里使用了 `torch::nn::ReflectionPad2d` 和 `torch::nn::Conv2d` 等模块。`TORCH_CHECK` 用于确保 `n_blocks` 非负。最后，我们通过 `register_module("model", model)` 注册了模型。
+
+然后，我们使用 `TORCH_MODULE(ResNetGenerator)` 宏创建了一个包装器类 `ResNetGenerator`。这个包装器使得我们可以像使用 Python 中的类一样方便地使用 C++ 中的模型。
+
+在 `main` 函数中，我们实例化了 `ResNetGenerator` 模型，并使用 `torch::load` 加载了参数。接着，我们读取输入图像，将其转换为张量，并通过模型进行前向传播。最后，我们将输出张量转换回图像并显示。
+
+这里有几个关键点需要注意：
+
+- 我们使用了 `torch::NoGradGuard` 来禁用梯度计算，这相当于 Python 中的 `with torch.no_grad():`。
+- 我们调用了 `model->eval()` 来将模型设置为评估模式。
+- 我们直接调用了 `model->forward(input)` 而不是使用 JIT 的 `IValue` 包装。
+
+虽然这个 C++ 实现看起来有些繁琐，但它展示了如何使用 LibTorch 在 C++ 中部署 PyTorch 模型。对于需要高性能或嵌入式部署的场景，这种方法非常有用。
+
+现在，让我们回到移动设备部署的主题。在 Android 上，我们使用了 PyTorch Mobile 库，它封装了 JNI 的复杂性，使得我们可以用更少的代码实现相同的功能。我们只需要加载模型、将图像转换为张量、运行模型并将结果转换回图像即可。
+
+在 `MainActivity` 中，我们首先在 `onCreate` 中加载模型，然后在 `onActivityResult` 中处理相机返回的图像。我们使用 `TensorImageUtils.bitmapToFloat32Tensor` 将位图转换为张量，并通过 `model.forward` 运行模型，最后使用自定义的 `tensorToBitmap` 将输出张量转换回位图。
+
+需要注意的是，在 Android 上，我们使用了 PyTorch 的完整版本，这可能会包含许多我们不需要的操作。为了减小应用的大小，我们可以构建一个定制版本的 PyTorch 库，只包含我们需要的操作。这可以通过 PyTorch 的移动端定制构建功能来实现。
+
+最后，我们提到了模型设计和量化作为提高效率的方法。量化可以减少模型的大小和推理时间，但可能会牺牲一些精度。在部署到移动设备时，这些考虑尤为重要。
+
+至此，我们已经完成了对 PyTorch 模型部署的全面介绍，从 Python 到 C++，再到移动设备。希望这些内容能帮助你在实际项目中更好地部署你的模型。
+
+
+
+如果我们想更详细地探索移动端，我们的下一步是尝试使我们的模型更快。当我们希望减少模型的内存和计算占用空间时，首先要看的是简化模型本身：也就是说，使用更少的参数和操作计算相同或非常相似的输入到输出的映射。这通常被称为*蒸馏*。蒸馏的细节各不相同——有时我们尝试通过消除小或无关的权重来缩小每个权重；在其他示例中，我们将网络的几层合并为一层（`DistilBERT`），甚至训练一个完全不同、更简单的模型来复制较大模型的输出（`OpenNMT` 的原始 `CTranslate`）。我们提到这一点是因为这些修改很可能是使模型运行更快的第一步。
 
 另一种方法是减少每个参数和操作的占用空间：我们将模型转换为使用整数（典型选择是 8 位）而不是以浮点数的形式花费通常的 32 位每个参数。这就是*量化*。¹⁸
 
-PyTorch 确实为此目的提供了量化张量。它们被公开为一组类似于`torch.float`、`torch.double`和`torch.long`的标量类型（请参阅第 3.5 节）。最常见的量化张量标量类型是`torch.quint8`和`torch.qint8`，分别表示无符号和有符号的 8 位整数。PyTorch 在这里使用单独的标量类型，以便使用我们在第 3.11 节简要介绍的分派机制。
+`PyTorch` 确实为此目的提供了量化张量。它们被公开为一组类似于`torch.float`、`torch.double`和`torch.long`的标量类型（请参阅第 3.5 节）。最常见的量化张量标量类型是`torch.quint8`和`torch.qint8`，分别表示无符号和有符号的 8 位整数。`PyTorch` 在这里使用单独的标量类型，以便使用我们在第 3.11 节简要介绍的分派机制。
 
-使用 8 位整数而不是 32 位浮点数似乎能够正常工作可能会让人感到惊讶；通常结果会有轻微的降级，但不会太多。有两个因素似乎起到作用：如果我们将舍入误差视为基本上是随机的，并且将卷积和线性层视为加权平均，我们可能期望舍入误差通常会抵消。¹⁹ 这允许将相对精度从 32 位浮点数的 20 多位减少到有符号整数提供的 7 位。量化的另一件事（与使用 16 位浮点数进行训练相反）是从浮点数转换为固定精度（每个张量或通道）。这意味着最大值被解析为 7 位精度，而是最大值的八分之一的值仅为 7 - 3 = 4 位。但如果像 L1 正则化（在第八章中简要提到）这样的事情起作用，我们可能希望类似的效果使我们在量化时能够为权重中的较小值提供更少的精度。在许多情况下，确实如此。
+使用 8 位整数而不是 32 位浮点数似乎能够正常工作可能会让人感到惊讶；通常结果会有轻微的降级，但不会太多。有两个因素似乎起到作用：如果我们将舍入误差视为基本上是随机的，并且将卷积和线性层视为加权平均，我们可能期望舍入误差通常会抵消。¹⁹ 这允许将相对精度从 32 位浮点数的 20 多位减少到有符号整数提供的 7 位。量化的另一件事（与使用 16 位浮点数进行训练相反）是从浮点数转换为固定精度（每个张量或通道）。这意味着最大值被解析为 7 位精度，而是最大值的八分之一的值仅为 7 - 3 = 4 位。但如果像 `L1` 正则化（在第八章中简要提到）这样的事情起作用，我们可能希望类似的效果使我们在量化时能够为权重中的较小值提供更少的精度。在许多情况下，确实如此。
 
-量化功能于 PyTorch 1.3 首次亮相，但在 PyTorch 1.4 中在支持的操作方面仍有些粗糙。不过，它正在迅速成熟，我们建议如果您真的关心计算效率的部署，不妨试试看。
+量化功能于 `PyTorch 1.3` 首次亮相，但在 `PyTorch 1.4` 中在支持的操作方面仍有些粗糙。不过，它正在迅速成熟，我们建议如果您真的关心计算效率的部署，不妨试试看。
 
 ## 15.6 新兴技术：企业 PyTorch 模型服务
 
 我们可能会问自己，迄今为止讨论的所有部署方面是否都需要像它们现在这样涉及大量编码。当然，有人编写所有这些代码是很常见的。截至 2020 年初，当我们忙于为这本书做最后的润色时，我们对不久的将来寄予厚望；但与此同时，我们感觉到部署领域将在夏季发生重大变化。
 
-目前，RedisAI（[`github.com/RedisAI/redisai-py`](https://github.com/RedisAI/redisai-py)）中的一位作者正在等待将 Redis 的优势应用到我们的模型中。PyTorch 刚刚实验性发布了 TorchServe（在这本书完成后，请查看[`pytorch.org/ blog/pytorch-library-updates-new-model-serving-library/#torchserve-experimental`](https://pytorch.org/blog/pytorch-library-updates-new-model-serving-library/#torchserve-experimental)）。
+目前，`RedisAI`（[`github.com/RedisAI/redisai-py`](https://github.com/RedisAI/redisai-py)）中的一位作者正在等待将 `Redis` 的优势应用到我们的模型中。`PyTorch` 刚刚实验性发布了 `TorchServe`（在这本书完成后，请查看[`pytorch.org/blog/pytorch-library-updates-new-model-serving-library/#torchserve-experimental`](https://pytorch.org/blog/pytorch-library-updates-new-model-serving-library/#torchserve-experimental)）。
 
-同样，MLflow（[`mlflow.org`](https://mlflow.org)）正在不断扩展更多支持，而 Cortex（[`cortex.dev`](https://cortex.dev)）希望我们使用它来部署模型。对于更具体的信息检索任务，还有 EuclidesDB（[`euclidesdb.readthedocs.io/ en/latest`](https://euclidesdb.readthedocs.io/en/latest)）来执行基于 AI 的特征数据库。
+同样，`MLflow`（[`mlflow.org`](https://mlflow.org)）正在不断扩展更多支持，而 `Cortex`（[`cortex.dev`](https://cortex.dev)）希望我们使用它来部署模型。对于更具体的信息检索任务，还有 `EuclidesDB`（[`euclidesdb.readthedocs.io/en/latest`](https://euclidesdb.readthedocs.io/en/latest)）来执行基于 AI 的特征数据库。
 
 令人兴奋的时刻，但不幸的是，它们与我们的写作计划不同步。我们希望在第二版（或第二本书）中有更多内容可以告诉您！
 
 ## 15.7 结论
 
-这结束了我们如何将我们的模型部署到我们想要应用它们的地方的简短介绍。虽然现成的 Torch 服务在我们撰写本文时还不够完善，但当它到来时，您可能会希望通过 JIT 导出您的模型--所以您会很高兴我们在这里经历了这一过程。与此同时，您现在知道如何将您的模型部署到网络服务、C++ 应用程序或移动设备上。我们期待看到您将会构建什么！
+这结束了我们如何将我们的模型部署到我们想要应用它们的地方的简短介绍。虽然现成的 `Torch` 服务在我们撰写本文时还不够完善，但当它到来时，您可能会希望通过 `JIT` 导出您的模型——所以您会很高兴我们在这里经历了这一过程。与此同时，您现在知道如何将您的模型部署到网络服务、`C++` 应用程序或移动设备上。我们期待看到您将会构建什么！
 
-希望我们也实现了这本书的承诺：对深度学习基础知识有所了解，并对 PyTorch 库感到舒适。我们希望您阅读的过程和我们写作的过程一样愉快。²⁰
+希望我们也实现了这本书的承诺：对深度学习基础知识有所了解，并对 `PyTorch` 库感到舒适。我们希望您阅读的过程和我们写作的过程一样愉快。²⁰
 
 ## 15.8 练习
 
 当我们结束 *使用 PyTorch 进行深度学习* 时，我们为您准备了最后一个练习：
 
-1.  选择一个让您感到兴奋的项目。Kaggle 是一个很好的开始地方。开始吧。
+1.  选择一个让您感到兴奋的项目。`Kaggle` 是一个很好的开始地方。开始吧。
 
 您已经掌握了成功所需的技能并学会了必要的工具。我们迫不及待想知道接下来您会做什么；在书的论坛上给我们留言，让我们知道！
 
 ## 15.9 总结
 
-+   我们可以通过将 PyTorch 模型包装在 Python Web 服务器框架（如 Flask）中来提供 PyTorch 模型的服务。
++   我们可以通过将 `PyTorch` 模型包装在 `Python` Web 服务器框架（如 `Flask`）中来提供 `PyTorch` 模型的服务。
 
-+   通过使用 JIT 模型，我们可以避免即使从 Python 调用它们时也避免 GIL，这对于服务是一个好主意。
++   通过使用 `JIT` 模型，我们可以避免即使从 `Python` 调用它们时也避免 `GIL`，这对于服务是一个好主意。
 
-+   请求批处理和异步处理有助于有效利用资源，特别是在 GPU 上进行推理时。
++   请求批处理和异步处理有助于有效利用资源，特别是在 `GPU` 上进行推理时。
 
-+   要将模型导出到 PyTorch 之外，ONNX 是一个很好的格式。ONNX Runtime 为许多目的提供后端支持，包括树莓派。
++   要将模型导出到 `PyTorch` 之外，`ONNX` 是一个很好的格式。`ONNX Runtime` 为许多目的提供后端支持，包括树莓派。
 
-+   JIT 允许您轻松导出和运行任意 PyTorch 代码在 C++中或在移动设备上。
++   `JIT` 允许您轻松导出和运行任意 `PyTorch` 代码在 `C++` 中或在移动设备上。
 
-+   追踪是获得 JIT 模型的最简单方法；对于一些特别动态的部分，您可能需要使用脚本。
++   追踪是获得 `JIT` 模型的最简单方法；对于一些特别动态的部分，您可能需要使用脚本。
 
-+   对于运行 JIT 和本地模型，C++（以及越来越多的其他语言）也有很好的支持。
++   对于运行 `JIT` 和本地模型，`C++`（以及越来越多的其他语言）也有很好的支持。
 
-+   PyTorch Mobile 让我们可以轻松地将 JIT 模型集成到 Android 或 iOS 应用程序中。
++   `PyTorch Mobile` 让我们可以轻松地将 `JIT` 模型集成到 `Android` 或 `iOS` 应用程序中。
 
 +   对于移动部署，我们希望简化模型架构并在可能的情况下对模型进行量化。
 
@@ -1111,40 +1060,40 @@ PyTorch 确实为此目的提供了量化张量。它们被公开为一组类似
 
 ¹ 为了安全起见，请勿在不受信任的网络上执行此操作。
 
-² 或者对于 Python3 使用`pip3`。您可能还希望从 Python 虚拟环境中运行它。
+² 或者对于 `Python3` 使用`pip3`。您可能还希望从 `Python` 虚拟环境中运行它。
 
-³ 早期公开讨论 Flask 为 PyTorch 模型提供服务的不足之处之一是 Christian Perone 的“PyTorch under the Hood”，[`mng.bz/xWdW`](http://mng.bz/xWdW)。
+³ 早期公开讨论 `Flask` 为 `PyTorch` 模型提供服务的不足之处之一是 `Christian Perone` 的“`PyTorch under the Hood`”，[`mng.bz/xWdW`](http://mng.bz/xWdW)。
 
-⁴ 高级人士将这些异步函数称为*生成器*，有时更宽松地称为*协程*：[` en.wikipedia.org/wiki/Coroutine`](https://en.wikipedia.org/wiki/Coroutine)。
+⁴ 高级人士将这些异步函数称为*生成器*，有时更宽松地称为*协程*：[`en.wikipedia.org/wiki/Coroutine`](https://en.wikipedia.org/wiki/Coroutine)。
 
 ⁵ 另一种选择可能是放弃计时器，只有在队列不为空时才运行。这可能会运行较小的“第一”批次，但对于大多数应用程序来说，整体性能影响可能不会太大。
 
-⁶ 代码位于[`github.com/microsoft/onnxruntime`](https://github.com/microsoft/onnxruntime)，但请务必阅读隐私声明！目前，自行构建 ONNX Runtime 将为您提供一个不会向母公司发送信息的软件包。
+⁶ 代码位于[`github.com/microsoft/onnxruntime`](https://github.com/microsoft/onnxruntime)，但请务必阅读隐私声明！目前，自行构建 `ONNX Runtime` 将为您提供一个不会向母公司发送信息的软件包。
 
-⁷ 严格来说，这将模型追踪为一个函数。最近，PyTorch 获得了使用`torch.jit.trace_module`保留更多模块结构的能力，但对我们来说，简单的追踪就足够了。
+⁷ 严格来说，这将模型追踪为一个函数。最近，`PyTorch` 获得了使用`torch.jit.trace_module`保留更多模块结构的能力，但对我们来说，简单的追踪就足够了。
 
-⁸ 但 TorchVision 可能会开发一个方便的函数来加载图像。
+⁸ 但 `TorchVision` 可能会开发一个方便的函数来加载图像。
 
-⁹ 该代码适用于 PyTorch 1.4 及以上版本。在 PyTorch 1.3 之前的版本中，您需要使用`data`代替`data_ptr`。
+⁹ 该代码适用于 `PyTorch 1.4` 及以上版本。在 `PyTorch 1.3` 之前的版本中，您需要使用`data`代替`data_ptr`。
 
 ¹⁰ 我们希望您一直在尝试阅读的内容。
 
-¹¹ 代码目录有一个稍长版本，以解决 Windows 问题。
+¹¹ 代码目录有一个稍长版本，以解决 `Windows` 问题。
 
-¹² 您可能需要将路径替换为您的 PyTorch 或 LibTorch 安装位置。请注意，与 Python 相比，C++库在兼容性方面可能更挑剔：如果您使用的是支持 CUDA 的库，则需要安装匹配的 CUDA 头文件。如果您收到关于“Caffe2 使用 CUDA”的神秘错误消息，则需要安装一个仅支持 CPU 的库版本，但 CMake 找到了一个支持 CUDA 的库。
+¹² 您可能需要将路径替换为您的 `PyTorch` 或 `LibTorch` 安装位置。请注意，与 `Python` 相比，`C++` 库在兼容性方面可能更挑剔：如果您使用的是支持 `CUDA` 的库，则需要安装匹配的 `CUDA` 头文件。如果您收到关于“`Caffe2` 使用 `CUDA`”的神秘错误消息，则需要安装一个仅支持 `CPU` 的库版本，但 `CMake` 找到了一个支持 `CUDA` 的库。
 
-¹³ 这是对 PyTorch 1.3 的巨大改进，我们需要为 ReLU、`ÌnstanceNorm2d`和其他模块实现自定义模块。
+¹³ 这是对 `PyTorch 1.3` 的巨大改进，我们需要为 `ReLU`、`InstanceNorm2d` 和其他模块实现自定义模块。
 
 ¹⁴ 这有点模糊，因为你可以创建一个与输入共享内存并就地修改的新张量，但最好尽量避免这样做。
 
 ¹⁵ 我们对这个主题隐喻感到非常自豪。
 
-¹⁶ 撰写时，PyTorch Mobile 仍然相对年轻，您可能会遇到一些问题。在 Pytorch 1.3 上，实际的 32 位 ARM 手机在模拟器中工作时颜色不正确。原因很可能是 ARM 上仅在使用的计算后端函数中存在错误。使用 PyTorch 1.4 和更新的手机（64 位 ARM）似乎效果更好。
+¹⁶ 撰写时，`PyTorch Mobile` 仍然相对年轻，您可能会遇到一些问题。在 `Pytorch 1.3` 上，实际的 32 位 `ARM` 手机在模拟器中工作时颜色不正确。原因很可能是 `ARM` 上仅在使用的计算后端函数中存在错误。使用 `PyTorch 1.4` 和更新的手机（64 位 `ARM`）似乎效果更好。
 
-¹⁷ 示例包括彩票假设和 WaveRNN。
+¹⁷ 示例包括彩票假设和 `WaveRNN`。
 
 ¹⁸ 与量化相比，（部分）转向 16 位浮点数进行训练通常被称为*减少*或（如果某些位保持 32 位）*混合精度*训练。
 
-¹⁹ 时髦的人们可能会在这里提到中心极限定理。确实，我们必须注意保持舍入误差的独立性（在统计意义上）。例如，我们通常希望零（ReLU 的一个显著输出）能够被精确表示。否则，所有的零将会在舍入中被完全相同的数量改变，导致误差累积而不是抵消。
+¹⁹ 时髦的人们可能会在这里提到中心极限定理。确实，我们必须注意保持舍入误差的独立性（在统计意义上）。例如，我们通常希望零（`ReLU` 的一个显著输出）能够被精确表示。否则，所有的零将会在舍入中被完全相同的数量改变，导致误差累积而不是抵消。
 
 ²⁰ 实际上更多；写书真的很难！

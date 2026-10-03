@@ -1,3 +1,4 @@
+
 # 附录 E：使用 LoRA 进行参数高效的微调
 
 *低秩适应*（LoRA）是参数高效微调中最广泛使用的技术之一。以下讨论基于第六章中给出的垃圾邮件分类微调示例。然而，LoRA 微调也适用于第七章中讨论的监督*指令微调*。
@@ -6,19 +7,19 @@
 
 LoRA 是一种技术，通过仅调整模型权重参数的小子集，将预训练模型调整以更好地适应特定（通常是较小的）数据集。其中“低秩”方面指的是将模型调整限制在总权重参数空间的一个较小维度的子空间中的数学概念。这有效地捕捉了训练过程中权重参数变化的最有影响力的方向。LoRA 方法因其能够使大型模型在特定任务数据上高效微调而有用且受欢迎，显著降低了微调通常所需的计算成本和资源。
 
-假设一个大的权重矩阵*W*与一个特定的层相关联。LoRA 可以应用于 LLM 中的所有线性层。然而，为了说明目的，我们专注于单个层。
+假设一个大的权重矩阵`W`与一个特定的层相关联。LoRA 可以应用于 LLM 中的所有线性层。然而，为了说明目的，我们专注于单个层。
 
-在训练深度神经网络时，在反向传播过程中，我们学习一个 D*W*矩阵，它包含了我们在训练过程中希望更新原始权重参数以最小化损失函数的信息。此后，我使用“权重”一词作为模型权重参数的简称。
+在训练深度神经网络时，在反向传播过程中，我们学习一个`D*W*`矩阵，它包含了我们在训练过程中希望更新原始权重参数以最小化损失函数的信息。此后，我使用“权重”一词作为模型权重参数的简称。
 
 在常规训练和微调中，权重更新定义为如下：
 
 ![figure](img/Equation-eqs-E-1.png)
 
-由胡等人提出的 LoRA 方法([`arxiv.org/abs/2106.09685`](https://arxiv.org/abs/2106.09685))，为计算权重更新 D*W*提供了一个更高效的替代方案，通过学习其近似值：
+由胡等人提出的 LoRA 方法([`arxiv.org/abs/2106.09685`](https://arxiv.org/abs/2106.09685))，为计算权重更新`D*W*`提供了一个更高效的替代方案，通过学习其近似值：
 
 ![figure](img/Equation-eqs-E-2.png)
 
-其中*A*和*B*是两个比*W*小得多的矩阵，*AB*表示*A*和*B*之间的矩阵乘积。
+其中`A`和`B`是两个比`W`小得多的矩阵，`AB`表示`A`和`B`之间的矩阵乘积。
 
 使用 LoRA，我们可以重新表述我们之前定义的权重更新：
 
@@ -28,9 +29,9 @@ LoRA 是一种技术，通过仅调整模型权重参数的小子集，将预训
 
 ![figure](img/E-1.png)
 
-##### 图 E.1 比较了权重更新方法：常规微调和 LoRA。常规微调直接使用 DW 更新预训练权重矩阵 W（左）。LoRA 使用两个较小的矩阵 A 和 B 来近似 DW，其中 AB 的乘积被加到 W 上，r 表示内维，一个可调的超参数（右）。
+##### 图 E.1 比较了权重更新方法：常规微调和 LoRA。常规微调直接使用`DW`更新预训练权重矩阵`W`（左）。LoRA 使用两个较小的矩阵`A`和`B`来近似`DW`，其中`AB`的乘积被加到`W`上，`r`表示内维，一个可调的超参数（右）。
 
-如果你仔细观察，你可能会注意到图 E.1 中全微调和 LoRA 的视觉表示与之前展示的公式略有不同。这种变化归因于矩阵乘法的分配律，它允许我们分离原始和更新的权重而不是将它们组合。例如，在以 *x* 作为输入数据的常规微调情况下，我们可以将计算表示为
+如果你仔细观察，你可能会注意到图 E.1 中全微调和 LoRA 的视觉表示与之前展示的公式略有不同。这种变化归因于矩阵乘法的分配律，它允许我们分离原始和更新的权重而不是将它们组合。例如，在以`x`作为输入数据的常规微调情况下，我们可以将计算表示为
 
 ![图](img/Equation-eqs-E-4.png)
 
@@ -81,7 +82,7 @@ validation_df.to_csv("validation.csv", index=None)
 test_df.to_csv("test.csv", index=None)
 ```
 
-接下来，我们创建 `SpamDataset` 实例。
+接下来，我们创建`SpamDataset`实例。
 
 ##### 列表 E.2 实例化 PyTorch 数据集
 
@@ -175,7 +176,7 @@ print(f"{len(test_loader)} test batches")
 
 ## E.3 初始化模型
 
-我们重复第六章的代码来加载和准备预训练的 GPT 模型。我们首先下载模型权重并将它们加载到 `GPTModel` 类中。
+我们重复第六章的代码来加载和准备预训练的 GPT 模型。我们首先下载模型权重并将它们加载到`GPTModel`类中。
 
 ##### 列表 E.4 加载预训练的 GPT 模型
 
@@ -287,11 +288,11 @@ Test accuracy: 48.75%
 
 ## E.4 使用 LoRA 进行参数高效的微调
 
-接下来，我们使用 LoRA 修改和微调 LLM。我们首先初始化一个 LoRALayer，它创建矩阵*A*和*B*，以及`alpha`缩放因子和`rank`（*r*）设置。这个层可以接受输入并计算相应的输出，如图 E.2 所示。
+接下来，我们使用 LoRA 修改和微调 LLM。我们首先初始化一个`LoRALayer`，它创建矩阵`A`和`B`，以及`alpha`缩放因子和`rank`（`r`）设置。这个层可以接受输入并计算相应的输出，如图 E.2 所示。
 
 ![figure](img/E-2.png)
 
-##### 图 E.2 LoRA 矩阵 A 和 B 应用于层输入，并参与计算模型输出。这些矩阵的内维 r 作为一个设置，通过改变 A 和 B 的大小来调整可训练参数的数量。
+##### 图 E.2 LoRA 矩阵`A`和`B`应用于层输入，并参与计算模型输出。这些矩阵的内维`r`作为一个设置，通过改变`A`和`B`的大小来调整可训练参数的数量。
 
 在代码中，这个 LoRA 层可以如下实现。
 
@@ -315,7 +316,7 @@ class LoRALayer(torch.nn.Module):
 
 #1 与 PyTorch 中线性层的相同初始化
 
-`rank`控制矩阵*A*和*B*的内维。本质上，这个设置决定了 LoRA 引入的额外参数数量，通过参数数量来平衡模型的适应性和效率。
+`rank`控制矩阵`A`和`B`的内维。本质上，这个设置决定了 LoRA 引入的额外参数数量，通过参数数量来平衡模型的适应性和效率。
 
 另一个重要的设置，`alpha`，作为低秩适应输出的缩放因子。它主要决定了适应层输出对原始层输出的影响程度。这可以看作是一种调节低秩适应对层输出影响的方法。我们迄今为止实现的`LoRALayer`类使我们能够转换层的输入。
 
@@ -323,11 +324,13 @@ class LoRALayer(torch.nn.Module):
 
 ![figure](img/E-3.png)
 
-##### 图 E.3 LoRA 集成到模型层中。层的原始预训练权重（W）与 LoRA 矩阵（A 和 B）的输出相结合，这些输出近似权重更新矩阵（DW）。最终输出是通过将适应层（使用 LoRA 权重）的输出与原始输出相加来计算的。
+##### 图 E.3 LoRA 集成到模型层中。层的原始预训练权重（`W`）与 LoRA 矩阵（`A`和`B`）的输出相结合，这些输出近似权重更新矩阵（`DW`）。最终输出是通过将适应层（使用 LoRA 权重）的输出与原始输出相加来计算的。
+
+
 
 为了整合原始的`线性`层权重，我们现在创建一个`LinearWithLoRA`层。这个层利用之前实现的`LoRALayer`，并设计用来替换神经网络中的现有`线性`层，例如`GPTModel`中的自注意力模块或前馈模块。
 
-##### 列表 E.6 使用`LinearWithLora`层替换`线性`层
+### 列表 E.6 使用`LinearWithLora`层替换`线性`层
 
 ```py
 class LinearWithLoRA(torch.nn.Module):
@@ -357,7 +360,7 @@ def replace_linear_with_lora(model, rank, alpha):
             replace_linear_with_lora(module, rank, alpha)
 ```
 
-#1 将线性层替换为 LinearWithLoRA
+#1 将线性层替换为`LinearWithLoRA`
 
 #2 递归地应用于子模块
 
@@ -365,7 +368,7 @@ def replace_linear_with_lora(model, rank, alpha):
 
 ![figure](img/E-4.png)
 
-##### 图 E.4 GPT 模型的架构。它突出了模型中`Linear`层升级为`LinearWithLoRA`层以进行参数高效微调的部分。
+### 图 E.4 GPT 模型的架构。它突出了模型中`Linear`层升级为`LinearWithLoRA`层以进行参数高效微调的部分。
 
 在应用`LinearWithLoRA`层升级之前，我们首先冻结原始模型参数：
 
@@ -499,7 +502,7 @@ Test accuracy: 48.75%
 
 现在，让我们继续到令人兴奋的部分——使用第六章中的训练函数微调模型。在 M3 MacBook Air 笔记本电脑上训练大约需要 15 分钟，在 V100 或 A100 GPU 上不到半分钟。
 
-##### 列表 E.7 使用 LoRA 层微调模型
+### 列表 E.7 使用 LoRA 层微调模型
 
 ```py
 import time
@@ -567,7 +570,7 @@ plot_values(
 
 ![图像](img/E-5.png)
 
-##### 图 E.5 展示了机器学习模型在六个 epoch 上的训练和验证损失曲线。最初，训练和验证损失急剧下降，然后趋于平稳，表明模型正在收敛，这意味着它不会因为进一步的训练而有明显改进。
+### 图 E.5 展示了机器学习模型在六个 epoch 上的训练和验证损失曲线。最初，训练和验证损失急剧下降，然后趋于平稳，表明模型正在收敛，这意味着它不会因为进一步的训练而有明显改进。
 
 除了根据损失曲线评估模型外，我们还可以计算整个训练、验证和测试集上的准确率（在训练过程中，我们通过`eval_iter=5`设置从五个批次中近似训练和验证集准确率）：
 
@@ -599,61 +602,63 @@ Test accuracy: 98.00%
 
 [\[EOS\] (序列结束)标记](../Text/chapter-2.html#p126)
 
-reshape 方法, 第 2 次
+`reshape`方法, 第 2 次
 
-.to()方法, 第 2 次
 
-.weight 属性
 
-.eval()模式
+`.to()`方法, 第 2 次
 
-__getitem__ 方法
+`.weight` 属性
 
-[\[PAD\] (填充)标记](../Text/chapter-2.html#p127)
+`.eval()`模式
 
-.T 方法
+`__getitem__` 方法
 
-.backward()方法, 第 2 次
+`[\[PAD\] (填充)标记](../Text/chapter-2.html#p127)`
 
-%timeit 命令
+`.T` 方法
 
-.matmul 方法
+`.backward()`方法, 第 2 次
 
-04_preference-tuning-with-dpo 文件夹
+`%timeit` 命令
 
-355M 参数
+`.matmul` 方法
 
-[\[BOS\] (序列开始)标记](../Text/chapter-2.html#p125)
+`04_preference-tuning-with-dpo` 文件夹
 
-\</unk\>标记, 第 2 次, 第 3 次, 第 4 次, 第 5 次
+`355M` 参数
 
-.view 方法, 第 2 次
+`[\[BOS\] (序列开始)标记](../Text/chapter-2.html#p125)`
 
-__init__ 构造函数, 第 2 次, 第 3 次
+`\</unk\>`标记, 第 2 次, 第 3 次, 第 4 次, 第 5 次
 
-.shape 属性
+`.view` 方法, 第 2 次
 
-@ 操作符
+`__init__` 构造函数, 第 2 次, 第 3 次
 
-__len__ 方法
+`.shape` 属性
 
-\<|endoftext|> 标记
+`@` 操作符
 
-.pth 扩展名
+`__len__` 方法
 
-<i>多尔玛</i>
+`\<|endoftext|>` 标记
+
+`.pth` 扩展名
+
+`<i>多尔玛</i>`
 
 《用于 LLM 预训练研究的三十万亿词开放语料库》（Soldaini 等人）
 
-== 比较运算符
+`==` 比较运算符
 
-A
+`A`
 
-arXiv
+`arXiv`
 
-Alpaca 数据集, 第 2 次
+`Alpaca` 数据集, 第 2 次
 
-argmax 函数, 第 2 次, 第 3 次, 第 4 次, 第 5 次, 第 6 次
+`argmax` 函数, 第 2 次, 第 3 次, 第 4 次, 第 5 次, 第 6 次
 
 注意力机制
 
@@ -665,25 +670,25 @@ argmax 函数, 第 2 次, 第 3 次, 第 4 次, 第 5 次, 第 6 次
 
 AI（人工智能）
 
-autograd 引擎
+`autograd` 引擎
 
-alpha 缩放因子
+`alpha` 缩放因子
 
 自回归模型
 
 注意力权重，逐步计算, 第 2 次
 
-attn_scores
+`attn_scores`
 
-Axolotl
+`Axolotl`
 
-allowed_max_length
+`allowed_max_length`
 
-AdamW 优化器, 第 2 次
+`AdamW` 优化器, 第 2 次
 
-B
+`B`
 
-Bahdanau 注意力机制
+`Bahdanau` 注意力机制
 
 反向传播
 
@@ -691,73 +696,73 @@ BERT（双向编码器表示从转换器）
 
 BPE（字节对编码）
 
-batch_size
+`batch_size`
 
-C
+`C`
 
-compute_accuracy 函数, 第 2 次
+`compute_accuracy` 函数, 第 2 次
 
 因果注意力掩码
 
-clip_grad_norm_ 函数
+`clip_grad_norm_` 函数
 
-calc_loss_loader 函数
+`calc_loss_loader` 函数
 
 交叉熵函数, 第 2 次, 第 3 次
 
 对话表现
 
-custom_collate_draft_1
+`custom_collate_draft_1`
 
-custom_collate_draft_2
+`custom_collate_draft_2`
 
-calc_accuracy_loader 函数
+`calc_accuracy_loader` 函数
 
-calc_loss_batch 函数, 第 2 次, 第 3 次
+`calc_loss_batch` 函数, 第 2 次, 第 3 次
 
 分类
 
 任务
 
-custom_collate_fn 函数, 第 2 次
+`custom_collate_fn` 函数, 第 2 次
 
-classify_review 函数
+`classify_review` 函数
 
-context_length
+`context_length`
 
-cfg 字典
+`cfg` 字典
 
 计算梯度
 
 上下文向量, 第 2 次, 第 3 次
 
-CausalAttention 类, 第 2 次
+`CausalAttention` 类, 第 2 次
 
-D
+`D`
 
-DistributedSampler
+`DistributedSampler`
 
-dim 参数, 第 2 次
+`dim` 参数, 第 2 次
 
-Dataset 类, 第 2 次, 第 3 次, 第 4 次, 第 5 次, 第 6 次, 第 7 次
+`Dataset` 类, 第 2 次, 第 3 次, 第 4 次, 第 5 次, 第 6 次, 第 7 次
 
-DataLoader 类, 第 2 次
+`DataLoader` 类, 第 2 次
 
 数据集
 
 下载
 
-download_and_load_gpt2 函数, 第 2 次, 第 3 次
+`download_and_load_gpt2` 函数, 第 2 次, 第 3 次
 
-DummyGPTClass
+`DummyGPTClass`
 
-DistributedDataParallel 类
+`DistributedDataParallel` 类
 
-DummyLayerNorm, 第 2 次
+`DummyLayerNorm`, 第 2 次
 
 占位符
 
-DummyGPTModel, 第 2 次, 第 3 次, 第 4 次
+`DummyGPTModel`, 第 2 次, 第 3 次, 第 4 次
 
 深度学习
 
@@ -767,35 +772,35 @@ DDP (DistributedDataParallel)策略
 
 设备变量
 
-decode 方法, 第 2 次
+`decode` 方法, 第 2 次
 
 数据加载器, 第 2 次
 
 代码示例
 
-dropout
+`dropout`
 
 定义
 
-drop_rate
+`drop_rate`
 
-drop_last 参数
+`drop_last` 参数
 
-DummyTransformerBlock
+`DummyTransformerBlock`
 
 数据列表
 
-ddp_setup 函数
+`ddp_setup` 函数
 
-d_out 参数, 第 2 次
+`d_out` 参数, 第 2 次
 
-DataFrame
+`DataFrame`
 
-E
+`E`
 
-eps 变量
+`eps` 变量
 
-evaluate_model 函数, 第 2 次, 第 3 次, 第 4 次
+`evaluate_model` 函数, 第 2 次, 第 3 次, 第 4 次
 
 嵌入大小
 
@@ -803,21 +808,21 @@ evaluate_model 函数, 第 2 次, 第 3 次, 第 4 次
 
 编码器
 
-encode 方法, 第 2 次, 第 3 次
+`encode` 方法, 第 2 次, 第 3 次
 
-emb_dim
+`emb_dim`
 
-eval_iter 值
+`eval_iter` 值
 
-F
+`F`
 
-find_highest_gradient 函数
+`find_highest_gradient` 函数
 
-first_batch 变量
+`first_batch` 变量
 
-FeedForward 模块, 第 2 次, 第 3 次, 第 4 次
+`FeedForward` 模块, 第 2 次, 第 3 次, 第 4 次
 
-format_input 函数, 第 2 次, 第 3 次, 第 4 次, 第 5 次, 第 6 次
+`format_input` 函数, 第 2 次, 第 3 次, 第 4 次, 第 5 次, 第 6 次
 
 微调
 
@@ -829,15 +834,15 @@ LLMs，遵循指令
 
 前向方法, 第 2 次
 
-G
+`G`
 
-generate_and_print_sample 函数
+`generate_and_print_sample` 函数
 
 GELU (高斯误差线性单元)
 
 激活函数, 第 2 次
 
-GPTModel, 第 2 次, 第 3 次, 第 4 次, 第 5 次, 第 6 次
+`GPTModel`, 第 2 次, 第 3 次, 第 4 次, 第 5 次, 第 6 次
 
 类, 第 2 次
 
@@ -853,21 +858,21 @@ GPT (生成预训练变换器)
 
 从头开始实现生成文本
 
-grad_fn 值
+`grad_fn` 值
 
-gpt_download.py Python 模块
+`gpt_download.py` Python 模块
 
-GPT_CONFIG_124M 字典, 第 2 次, 第 3 次, 第 4 次, 第 5 次, 第 6 次
+`GPT_CONFIG_124M` 字典, 第 2 次, 第 3 次, 第 4 次, 第 5 次, 第 6 次
 
 生成文本模型，评估
 
 GenAI (生成式 AI)
 
-gpt2-medium355M-sft.pth 文件
+`gpt2-medium355M-sft.pth` 文件
 
-GPTDatasetV1 类, 第 2 次, 第 3 次
+`GPTDatasetV1` 类, 第 2 次, 第 3 次
 
-generate_text_simple 函数, 第 2 次, 第 3 次, 第 4 次, 第 5 次, 第 6 次
+`generate_text_simple` 函数, 第 2 次, 第 3 次, 第 4 次, 第 5 次, 第 6 次
 
 GPT-4
 
@@ -879,15 +884,15 @@ GPT-2
 
 GPT-3
 
-generate_model_scores 函数, 第 2 次
+`generate_model_scores` 函数, 第 2 次
 
 Google Colab
 
-generate 函数, 第 2 次, 第 3 次, 第 4 次, 第 5 次, 第 6 次, 第 7 次
+`generate` 函数, 第 2 次, 第 3 次, 第 4 次, 第 5 次, 第 6 次, 第 7 次
 
-I
+`I`
 
-init_process_group 函数
+`init_process_group` 函数
 
 指令数据集
 
@@ -895,7 +900,7 @@ init_process_group 函数
 
 输入嵌入
 
-InstructionDataset 类, 第 2 次
+`InstructionDataset` 类, 第 2 次
 
 指令微调
 
@@ -905,17 +910,17 @@ InstructionDataset 类, 第 2 次
 
 ‘指令’对象
 
-K
+`K`
 
-keepdim 参数
+`keepdim` 参数
 
-L
+`L`
 
-logits 张量
+`logits` 张量
 
 带有 LoRA 层的线性层, 第 2 次
 
-LoRALayer 类, 第 2 次
+`LoRALayer` 类, 第 2 次
 
 损失度量
 
@@ -941,7 +946,7 @@ LLMs（大型语言模型）, 第 2 次
 
 线性层, 第 2 次
 
-LayerNorm, 第 2 次, 第 3 次
+`LayerNorm`, 第 2 次, 第 3 次
 
 LIMA 数据集
 
@@ -951,7 +956,7 @@ LIMA 数据集
 
 将权重加载到 gpt 函数, 第 2 次, 第 3 次, 第 4 次
 
-loss.backward()函数
+`loss.backward()`函数
 
 线性层权重
 
@@ -963,19 +968,19 @@ LoRA（低秩自适应）, 第 2 次, 第 3 次
 
 参数高效的微调, 第 2 次
 
-M
+`M`
 
 主函数
 
 最大长度, 第 2 次, 第 3 次
 
-model.eval() 函数
+`model.eval()` 函数
 
-MultiHeadAttention 类，第 2 次，第 3 次，第 4 次，第 5 次，第 6 次
+`MultiHeadAttention` 类，第 2 次，第 3 次，第 4 次，第 5 次，第 6 次
 
-model.train() 设置
+`model.train()` 设置
 
-MultiHeadAttentionWrapper 类，第 2 次，第 3 次，第 4 次，第 5 次，第 6 次，第 7 次
+`MultiHeadAttentionWrapper` 类，第 2 次，第 3 次，第 4 次，第 5 次，第 6 次，第 7 次
 
 机器学习
 
@@ -993,45 +998,45 @@ macOS
 
 模型响应
 
-minbpe 仓库
+`minbpe` 仓库
 
 模型配置表
 
-mps 设备
+`mps` 设备
 
-N
+`N`
 
-NEW_CONFIG 字典
+`NEW_CONFIG` 字典
 
 神经网络
 
 使用 GELU 激活实现前馈网络，第 2 次
 
-nn.Linear 层
+`nn.Linear` 层
 
-n_heads
+`n_heads`
 
-numel() 方法
+`numel()` 方法
 
-num_heads 维度
+`num_heads` 维度
 
-O
+`O`
 
 输出层节点
 
-运行 llama3 命令，第 2 次，第 3 次
+运行 `llama3` 命令，第 2 次，第 3 次
 
-ollama serve 命令，第 2 次，第 3 次，第 4 次
+`ollama serve` 命令，第 2 次，第 3 次，第 4 次
 
-optimizer.zero_grad() 方法
+`optimizer.zero_grad()` 方法
 
 Ollama 应用，第 2 次
 
 Ollama Llama 3 方法
 
-ollama run 命令
+`ollama run` 命令
 
-P
+`P`
 
 PyTorch
 
@@ -1059,13 +1064,13 @@ PyTorch
 
 具有类似 NumPy 的 API
 
-pip 安装程序
+`pip` 安装程序
 
 Phi-3 模型
 
-print_gradients 函数，第 2 次
+`print_gradients` 函数，第 2 次
 
-plot_values 函数
+`plot_values` 函数
 
 参数
 
@@ -1077,7 +1082,7 @@ plot_values 函数
 
 打印语句
 
-plot_losses 函数
+`plot_losses` 函数
 
 Python 版本
 
@@ -1093,33 +1098,33 @@ Prometheus 模型
 
 训练 LLMs，第 2 次
 
-print_sampled_tokens 函数，第 2 次
+`print_sampled_tokens` 函数，第 2 次
 
-pos_embeddings，第 2 次
+`pos_embeddings`，第 2 次
 
 偏好微调
 
-Q
+`Q`
 
-qkv_bias
+`qkv_bias`
 
-query_llama 函数
+`query_llama` 函数
 
-query_model 函数
+`query_model` 函数
 
-R
+`R`
 
 提取和保存响应，第 2 次
 
-re 库
+`re` 库
 
-RMSNorm
+`RMSNorm`
 
 ReLU (修正线性单元)，第 2 次
 
-re.split 命令
+`re.split` 命令
 
-replace_linear_with_lora 函数
+`replace_linear_with_lora` 函数
 
 原始文本
 
@@ -1127,51 +1132,51 @@ replace_linear_with_lora 函数
 
 RNNs (循环神经网络)
 
-random_split 函数
+`random_split` 函数
 
-S
+`S`
 
 捷径连接，第 2 次
 
 保存和加载模型
 
-SimpleTokenizerV1 类，第 2 次
+`SimpleTokenizerV1` 类，第 2 次
 
-spawn 函数
+`spawn` 函数
 
-Sequential 类
+`Sequential` 类
 
-SelfAttention_v2 类，第 2 次，第 3 次
+`SelfAttention_v2` 类，第 2 次，第 3 次
 
-softmax_naive 函数，第 2 次
+`softmax_naive` 函数，第 2 次
 
-sci_mode 参数
+`sci_mode` 参数
 
-set_printoptions 方法
+`set_printoptions` 方法
 
 SGD (随机梯度下降)
 
-SelfAttention_v1 类，第 2 次
+`SelfAttention_v1` 类，第 2 次
 
-softmax 函数，第 2 次，第 3 次
+`softmax` 函数，第 2 次，第 3 次
 
-self.register_buffer() 调用
+`self.register_buffer()` 调用
 
-state_dict，第 2 次
+`state_dict`，第 2 次
 
-SpamDataset 类, 2nd, 3rd
+`SpamDataset` 类, 2nd, 3rd
 
 特殊上下文标记
 
 步长设置
 
-self.out_proj 层
+`self.out_proj` 层
 
 监督学习
 
 在监督数据上微调模型
 
-strip()函数
+`strip()`函数
 
 监督指令微调
 
@@ -1189,13 +1194,13 @@ strip()函数
 
 单头注意力，堆叠多层
 
-SimpleTokenizerV2 类, 2nd
+`SimpleTokenizerV2` 类, 2nd
 
-T
+`T`
 
 修改文本生成函数
 
-train_ratio
+`train_ratio`
 
 文本数据
 
@@ -1207,21 +1212,21 @@ train_ratio
 
 分词，字节对编码, 2nd
 
-torch.save 函数
+`torch.save` 函数
 
 标记 ID, 2nd
 
 张量库
 
-TransformerBlock 类
+`TransformerBlock` 类
 
 标记嵌入层, 2nd
 
 标记嵌入, 2nd
 
-train_simple_function
+`train_simple_function`
 
-ToyDataset 类, 2nd
+`ToyDataset` 类, 2nd
 
 训练函数
 
@@ -1229,9 +1234,9 @@ ToyDataset 类, 2nd
 
 修改, 2nd
 
-train_data 子集
+`train_data` 子集
 
-tril 函数
+`tril` 函数
 
 文本分词, 2nd
 
@@ -1245,11 +1250,11 @@ PyTorch 在 GPU 设备上的计算
 
 使用多个 GPU 进行训练
 
-test_loader
+`test_loader`
 
-train_loader
+`train_loader`
 
-torch.sum 方法
+`torch.sum` 方法
 
 训练循环，第 2 次
 
@@ -1259,7 +1264,7 @@ torch.sum 方法
 
 学习率预热
 
-train_classifier_simple 函数，第 2 次
+`train_classifier_simple` 函数，第 2 次
 
 训练批次，组织数据，第 2 次
 
@@ -1275,13 +1280,13 @@ transformer 架构，第 2 次，第 3 次，第 4 次
 
 温度缩放，第 2 次
 
-train_model_simple 函数，第 2 次，第 3 次，第 4 次，第 5 次，第 6 次
+`train_model_simple` 函数，第 2 次，第 3 次，第 4 次，第 5 次，第 6 次
 
-tensor2d
+`tensor2d`
 
-tensor3d
+`tensor3d`
 
-torch.no_grad()上下文管理器
+`torch.no_grad()`上下文管理器
 
 测试集字典，第 2 次
 
@@ -1291,7 +1296,7 @@ torch.no_grad()上下文管理器
 
 张量数据类型
 
-torch.nn.Linear 层
+`torch.nn.Linear` 层
 
 transformer 块，第 2 次
 
@@ -1299,27 +1304,27 @@ transformer 块，第 2 次
 
 文本生成损失
 
-torchvision 库
+`torchvision` 库
 
-U
+`U`
 
 无偏参数
 
 未标记数据，解码策略以控制随机性
 
-V
+`V`
 
 变长输入
 
-vocab_size
+`vocab_size`
 
-v 向量
+`v` 向量
 
 向量，第 2 次
 
-W
+`W`
 
-W<.Subscript>q</>矩阵
+`W<.Subscript>q</>`矩阵
 
 权重参数，第 2 次
 
@@ -1327,7 +1332,7 @@ W<.Subscript>q</>矩阵
 
 权重衰减参数
 
-Word2Vec
+`Word2Vec`
 
 权重
 
@@ -1339,6 +1344,6 @@ Word2Vec
 
 权重拆分
 
-X
+`X`
 
-X 训练示例
+`X` 训练示例

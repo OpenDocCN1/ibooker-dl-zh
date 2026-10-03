@@ -1,3 +1,4 @@
+
 # 第十章：深度模型的解释
 
 到目前为止，我们已经看到了许多训练深度模型解决问题的例子。在每种情况下，我们收集一些数据，构建一个模型，并训练它，直到它在我们的训练和测试数据上产生正确的输出。然后我们为自己鼓掌，宣布问题已经解决，然后继续下一个问题。毕竟，我们有一个为输入数据产生正确预测的模型。我们还能想要什么？
@@ -8,7 +9,7 @@
 
 为了做到这一点，我们将重新审视之前章节中的例子。当我们之前看到它们时，我们只是训练模型进行预测，验证其准确性，然后认为我们的工作完成了。现在我们将深入研究，看看我们还能学到什么。
 
-# 解释预测
+## 解释预测
 
 假设您已经训练了一个模型来识别不同种类车辆的照片。您在测试集上运行它，并发现它准确区分了汽车、船只、火车和飞机。这是否意味着它已经准备投入生产？您可以信任它在未来继续产生准确的结果吗？
 
@@ -35,7 +36,6 @@ from data import load_images_DR
 train, valid, test = load_images_DR(split='random', seed=123)
 model = DRModel(n_init_kernel=32, augment=False, model_dir='test_model')
 model.restore()
-
 ```
 
 现在我们可以使用模型对样本进行预测。例如，让我们检查前 10 个测试样本的预测：
@@ -44,9 +44,8 @@ model.restore()
 X = test.X
 y = test.y
 for i in range(10):
- prediction = np.argmax(model.predict_on_batch([X[i]]))
- print('True class: %d, Predicted class: %d' % (y[i], prediction))
-
+    prediction = np.argmax(model.predict_on_batch([X[i]]))
+    print('True class: %d, Predicted class: %d' % (y[i], prediction))
 ```
 
 这是输出：
@@ -62,21 +61,18 @@ True class: 0, Predicted class: 0
 True class: 0, Predicted class: 0
 True class: 0, Predicted class: 0
 True class: 2, Predicted class: 2
-
 ```
 
 它对前 10 个样本中的 9 个做出了正确的预测，这还不错。但是在做出预测时它在看什么呢？显著性映射可以给我们一个答案。DeepChem 使这变得容易：
 
 ```py
 saliency = model.compute_saliency(X[0])
-
 ```
 
 `compute_saliency()`接受特定样本的输入数组，并返回每个输出相对于每个输入的导数。我们可以通过查看结果的形状来更好地理解这意味着什么：
 
 ```py
 print(saliency.shape)
-
 ```
 
 这报告它是一个形状为`(5, 512, 512, 3)`的数组。`X[0]`是第 0 个输入图像，它是一个形状为`(512, 512, 3)`的数组，最后一个维度是三个颜色分量。此外，模型有五个输出，即样本属于五个类别中的每一个的概率。`saliency`包含每个五个输出相对于每个 512×512×3 个输入的导数。
@@ -87,7 +83,6 @@ print(saliency.shape)
 sal_map = np.sum(np.abs(saliency), axis=(0,3))
 sal_map -= np.min(sal_map)
 sal_map /= np.max(sal_map)
-
 ```
 
 让我们看看它是什么样子。图 10-1 展示了一个模型正确识别为严重糖尿病视网膜病变的样本。左侧是输入图像，右侧突出显示了最显著的区域为白色。
@@ -98,7 +93,7 @@ sal_map /= np.max(sal_map)
 
 我们注意到的第一件事是显著性广泛分布在整个视网膜上，而不仅仅是在几个点上。然而，它并不是均匀的。显著性集中在血管沿线，特别是在血管分叉点。事实上，医生用来诊断糖尿病性视网膜病变的一些指标包括异常的血管、出血和新血管的生长。模型似乎将注意力集中在图像的正确部分，这些部分与医生最密切关注的部分相同。
 
-# 优化输入
+## 优化输入
 
 显著性映射和类似技术告诉您模型在进行预测时关注的信息。但它究竟是如何解释这些信息的呢？糖尿病性视网膜病变模型关注血管，但是它是通过什么来区分健康和患病的血管的呢？同样，当模型识别一张船的照片时，了解它是基于构成船的像素，而不是构成背景的像素进行识别是很重要的。但是是什么像素导致它得出看到一艘船的结论呢？是基于颜色吗？形状？小细节的组合？模型是否会同样自信地（但错误地）识别出无关的图片为一艘船？模型究竟认为一艘船是什么样子呢？
 
@@ -132,25 +127,22 @@ sal_map /= np.max(sal_map)
 
 ```py
 best_sequence = np.random.randint(4, size=101)
-best_score = 
-    float(model.predict_on_batch([dc.metrics.to_one_hot(best_sequence, 4)]))
-
+best_score = float(model.predict_on_batch([dc.metrics.to_one_hot(best_sequence, 4)]))
 ```
 
 现在来优化它。我们随机选择序列内的一个位置和一个新的碱基来设置它。如果这个改变导致输出增加，我们就保留它。否则，我们放弃这个改变并尝试其他方法：
 
 ```py
 for step in range(1000):
-  index = np.random.randint(101)
-  base = np.random.randint(4)
-  if best_sequence[index] != base:
-    sequence = best_sequence.copy()
-    sequence[index] = base
-    score = float(model.predict_on_batch([dc.metrics.to_one_hot(sequence, 4)]))
-    if score > best_score:
-      best_sequence = sequence
-      best_score = score
-
+    index = np.random.randint(101)
+    base = np.random.randint(4)
+    if best_sequence[index] != base:
+        sequence = best_sequence.copy()
+        sequence[index] = base
+        score = float(model.predict_on_batch([dc.metrics.to_one_hot(sequence, 4)]))
+        if score > best_score:
+            best_sequence = sequence
+            best_score = score
 ```
 
 这很快导致了最大化预测概率的序列。在 1,000 步内，我们通常发现输出已经饱和并等于 1.0。
@@ -161,7 +153,7 @@ for step in range(1000):
 
 ###### 图 10-5。已经优化以最大化模型输出的示例序列。
 
-# 预测不确定性
+## 预测不确定性
 
 即使你已经确信一个模型能够产生准确的预测，这仍然留下一个重要的问题：它们究竟有多准确？在科学中，我们很少满足于仅仅一个数字；我们希望每个数字都有一个不确定性。如果模型输出 1.352，我们应该将其解释为真实值在 1.351 和 1.353 之间吗？还是在 0 和 3 之间？
 
@@ -172,7 +164,6 @@ tasks, datasets, transformers = dc.molnet.load_delaney(featurizer='GraphConv')
 train_dataset, valid_dataset, test_dataset = datasets
 model = GraphConvModel(n_tasks=1, mode='regression', dropout=0.2)
 model.fit(train_dataset, nb_epoch=100)
-
 ```
 
 当我们首次检查这个模型时，我们评估了它在测试集上的准确性，并表示满意。现在让我们试着更好地量化它的准确性。
@@ -182,7 +173,6 @@ model.fit(train_dataset, nb_epoch=100)
 ```py
 y_pred = model.predict(test_dataset)
 print(np.sqrt(np.mean((test_dataset.y-y_pred)**2)))
-
 ```
 
 这报告了一个 RMS 误差为 0.396。因此，我们是否应该将其用作模型进行的所有预测的预期不确定性？*如果*测试集代表模型将用于的所有输入，并且*如果*所有错误都遊一个分布，那可能是一个合理的做法。不幸的是，这两者都不是安全的假设！一些预测可能比其他预测具有更大的误差，并且根据恰好在测试集中的特定分子，它们的平均误差可能比您在实践中遇到的要高或低。
@@ -209,6 +199,8 @@ print(np.sqrt(np.mean((test_dataset.y-y_pred)**2)))
 
 一个更快的替代方法是使用 dropout 训练单个模型，然后使用不同的 dropout 掩码多次预测每个输出。通常，dropout 只在训练时执行。如果在每个训练步骤中有 50%的输出被随机设置为 0，那么在测试时，您将改为将*每个*输出乘以 0.5。但我们不这样做。我们随机将一半的输出设置为 0，然后使用许多不同的随机掩码重复该过程，以获得一系列不同的预测。预测值之间的变化给出了对认知不确定性的相当好的估计。
 
+
+
 注意，您的建模选择涉及这两种不确定性之间的权衡。如果使用具有许多参数的大型模型，您可以使其非常紧密地拟合训练数据。然而，该模型可能是欠定的，因此许多参数值的组合将同样适合训练数据。如果相反，您使用具有少量参数的小型模型，则更有可能存在一组唯一的最佳参数值，但它可能也不会像大型模型那样很好地拟合训练集。在任何情况下，在估计模型预测的准确性时，必须包括这两种类型的不确定性。
 
 听起来很复杂。我们如何在实践中做到这一点？幸运的是，DeepChem 使这变得非常容易。只需在模型的构造函数中包含一个额外的参数：
@@ -216,19 +208,17 @@ print(np.sqrt(np.mean((test_dataset.y-y_pred)**2)))
 ```py
 model = GraphConvModel(n_tasks=1, mode='regression',
                        dropout=0.2, uncertainty=True)
-
 ```
 
 通过包括选项`uncertainty=True`，我们告诉模型添加额外的不确定性输出，并对损失函数进行必要的更改。现在我们可以进行预测，如下所示：
 
 ```py
 y_pred, y_std = model.predict_uncertainty(test_dataset)
-
 ```
 
 这将多次使用不同的 dropout 掩码计算模型的输出，然后返回每个输出元素的平均值，以及每个输出元素的标准偏差的估计。
 
-图 10-8 展示了在测试集上的工作原理。对于每个样本，我们绘制了预测中的实际误差与模型的不确定性估计。数据显示了一个明显的趋势：具有较大预测不确定性的样本往往比具有较小预测不确定性的样本具有更大的误差。虚线对应于<math><mrow><mi>y</mi><mo>=</mo><mn>2</mn><mi>x</mi></mrow></math>。在这条线下的点具有预测的溶解度在真实值的两个（预测的）标准偏差内。大约 90%的样本位于这个区域内。
+图 10-8 展示了在测试集上的工作原理。对于每个样本，我们绘制了预测中的实际误差与模型的不确定性估计。数据显示了一个明显的趋势：具有较大预测不确定性的样本往往比具有较小预测不确定性的样本具有更大的误差。虚线对应于`y = 2x`。在这条线下的点具有预测的溶解度在真实值的两个（预测的）标准偏差内。大约 90%的样本位于这个区域内。
 
 ![模型预测中的误差](img/dlls_1008.png)
 

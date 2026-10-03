@@ -1,16 +1,13 @@
+
 # 2 构建无服务器图像识别系统，第一部分
 
 本章节涵盖
 
-+   构建简单的 AI as a Service 系统
-
-+   设置云环境
-
-+   设置本地开发环境
-
-+   实现简单的异步服务
-
-+   部署到云端
++ 构建简单的 AI as a Service 系统
++ 设置云环境
++ 设置本地开发环境
++ 实现简单的异步服务
++ 部署到云端
 
 在本章和第三章中，我们将专注于构建我们的第一个具有 AI 功能的无服务器系统。到结束时，你将配置并部署到云端一个能够从网页读取和识别图像并显示结果以供审查的小型系统。这听起来可能是一个章节中要做的大量工作，确实如此，在无服务器和现成 AI 出现之前，我们将在本章取得的成绩需要一个小团队工程师数月的工作量来完成。正如艾萨克·牛顿所说，我们站在巨人的肩膀上！在本章中，我们将站在无数软件工程师和 AI 专家的肩膀上，快速组装我们的“hello world”系统。
 
@@ -38,13 +35,10 @@
 
 系统架构显示了系统的层级：
 
-+   从前端开始，由 S3（简单存储服务）提供，通过 API 网关调用 API。
-
-+   异步 Lambda 函数由 SQS（简单队列服务）消息触发。
-
-+   同步 Lambda 函数由来自 API 网关的事件触发。
-
-+   AWS Rekognition 是一个完全管理的 AI 图像分析服务。
++ 从前端开始，由 S3（简单存储服务）提供，通过 API 网关调用 API。
++ 异步 Lambda 函数由 SQS（简单队列服务）消息触发。
++ 同步 Lambda 函数由来自 API 网关的事件触发。
++ AWS Rekognition 是一个完全管理的 AI 图像分析服务。
 
 ### 2.2.1 网络应用程序
 
@@ -66,11 +60,9 @@
 
 这些服务作为通过 API 网关访问的 RESTful 端点提供：
 
-+   `POST /url/analyze`--此端点接收一个包含 URL 的请求体，并将其提交到 SQS 队列以进行分析。
-
-+   `GET /url/list`--由前端使用，以获取系统已处理的 URL 列表。
-
-+   `GET /image/list`--返回给定 URL 已处理的图像和分析结果集。
++ `POST /url/analyze`——此端点接收一个包含 URL 的请求体，并将其提交到 SQS 队列以进行分析。
++ `GET /url/list`——由前端使用，以获取系统已处理的 URL 列表。
++ `GET /image/list`——返回给定 URL 已处理的图像和分析结果集。
 
 要触发分析，我们的系统用户在 UI 顶部的输入字段中输入一个 URL，然后点击分析按钮。这将向`/url/analyze`发送一个 POST 请求，这将导致一个 JSON 消息被发送到一个形式为 SQS 队列的消息：
 
@@ -116,19 +108,16 @@
 
 消息传递技术
 
-消息传递系统、队列和相关技术是一个大主题，我们不会在本书中详细讨论。然而，如果你还没有意识到这些概念，你应该了解它们。简而言之，消息传递系统通常支持两种模型之一--点对点或发布/订阅：
+消息传递系统、队列和相关技术是一个大主题，我们不会在本书中详细讨论。然而，如果你还没有意识到这些概念，你应该了解它们。简而言之，消息传递系统通常支持两种模型之一——点对点或发布/订阅：
 
-+   点对点--在这个模型下，放入队列的消息仅被发送给一个消费者，仅此一个消费者。
-
-+   发布/订阅--在这个模型下，所有已注册对某种消息类型感兴趣的所有消费者都将接收到该消息。
++ 点对点——在这个模型下，放入队列的消息仅被发送给一个消费者，仅此一个消费者。
++ 发布/订阅——在这个模型下，所有已注册对某种消息类型感兴趣的所有消费者都将接收到该消息。
 
 队列系统在通知消费者新消息的方式上也存在差异。总的来说，这可以通过以下三种方式之一发生：
 
-+   推送--队列系统将消息推送到消费者（们）。
-
-+   轮询--消费者将轮询队列以获取消息。
-
-+   长轮询--消费者将进行一段较长时间的轮询。
++ 推送——队列系统将消息推送到消费者（们）。
++ 轮询——消费者将轮询队列以获取消息。
++ 长轮询——消费者将进行一段较长时间的轮询。
 
 在本章中，SQS 将将消息推送到我们的消费 Lambda 函数。
 
@@ -217,27 +206,17 @@ Serverless Framework
 
 在我们继续编写代码之前，请查看此清单以确保一切就绪：
 
-+   附录 A
-
-    +   AWS 账户已创建
-
-    +   AWS 命令行已安装
-
-    +   AWS 访问密钥已创建
-
-    +   开发外壳配置了访问密钥并已验证
-
-+   附录 D
-
-    +   Route 53 域已注册
-
-    +   SSL/TLS 证书已创建
-
-+   本章
-
-    +   Node.js 已安装
-
-    +   Serverless Framework 已安装
++ 附录 A
+  + AWS 账户已创建
+  + AWS 命令行已安装
+  + AWS 访问密钥已创建
+  + 开发外壳配置了访问密钥并已验证
++ 附录 D
+  + Route 53 域已注册
+  + SSL/TLS 证书已创建
++ 本章
+  + Node.js 已安装
+  + Serverless Framework 已安装
 
 如果所有这些都已经就绪，我们就可以开始了！
 
@@ -268,6 +247,10 @@ $ git clone https://github.com/fourTheorem/ai-as-a-service.git
 除了我们的服务文件夹外，我们还有一个名为*resources*的顶级目录。我们的系统依赖于许多云资源，在我们能够部署任何服务元素之前，我们需要这些资源已经就绪。对于我们的简单系统，我们需要一个 SQS 队列用于异步通信和一个 S3 存储桶来存储下载的图像。我们将使用专门的 Serverless Framework 配置文件来部署这些资源。让我们看看这是如何完成的。进入`chapter2-3/resources`资源目录，查看下一个列表中的`serverless.yml`文件。
 
 列表 2.2 资源的服务器无配置
+
+
+
+# 服务配置
 
 ```
 service: resources                                             ❶
@@ -362,7 +345,7 @@ $ serverless deploy
 
 无服务器将自动部署我们的资源，你应该会看到类似以下列表的输出。
 
-列表 2.3 无服务器部署输出
+**列表 2.3 无服务器部署输出**
 
 ```
 Serverless: Packaging service...
@@ -402,7 +385,7 @@ functions:
 
 ![图片](img/CH02_F08_Elger.png)
 
-图 2.8 爬虫服务
+**图 2.8 爬虫服务**
 
 当消息被放置在`crawler`队列中时，会调用`crawler-service`。消息包含服务要爬取的目标 URL。一旦被调用，爬虫会抓取指定 URL 的 HTML 页面，并解析出图像标签。然后，对于每个图像依次，它会将图像下载到 S3 文件夹中。最后，一旦所有图像都下载完毕，它会向`analysis`队列发送一个`analyze`消息，包括分析 URL 的域名以进行进一步处理。
 
@@ -417,7 +400,7 @@ serverless.yml
 
 为了了解此服务使用的资源及其整体结构，我们首先应该查看文件`serverless.yml`，其中包含下一列表中显示的配置。
 
-列表 2.4 爬虫服务的`serverless.yml`
+**列表 2.4 爬虫服务的`serverless.yml`**
 
 ```
 service: crawler-service
@@ -502,7 +485,7 @@ functions:
 
 让我们现在看看爬虫的主要实现文件`handler.js`。在文件顶部，我们包含了一些模块，如下所示。
 
-列表 2.5 爬虫 handler.js 所需模块
+**列表 2.5 爬虫 handler.js 所需模块**
 
 ```
 const request = require('request') 1((CO3-1))          ❶
@@ -523,7 +506,7 @@ const images = require('./images')()                   ❹
 
 进入此服务的主要入口点是`crawlImages`。此函数接受三个参数：`event`、`context`和`cb`。下面的代码展示了这一部分。
 
-列表 2.6 爬虫服务入口点
+**列表 2.6 爬虫服务入口点**
 
 ```
 module.exports.crawlImages = function (event, context, cb) {
@@ -570,13 +553,19 @@ module.exports.crawlImages = function (event, context, cb) {
 
 回调和异步 I/O
 
+
+
+# 回调函数与异步编程
+
 回调函数是 JavaScript 的一个基本组成部分，允许代码异步执行并通过执行传入的回调参数返回结果。回调对于异步 I/O（与同步 I/O 相比）是一个自然的语法匹配，这也是 Node.js 平台成功的原因之一。如果你需要复习 JavaScript 函数和回调，我们可以推荐 Node School 的“Javascripting”教程，该教程可在 [`nodeschool.io/`](https://nodeschool.io/) 找到。
+
+## 捕获服务的 `package.json` 文件
 
 最后，对于捕获服务，让我们简要看看下一个列表中所示的 `package.json` 文件。此文件提供了一组 Node 模块依赖项。
 
-列表 2.7 捕获服务 `package.json`
+**列表 2.7 捕获服务 `package.json`**
 
-```
+```json
 {
   "name": "crawler-service",
   "version": "1.0.0",              ❶
@@ -595,24 +584,24 @@ module.exports.crawlImages = function (event, context, cb) {
     "shortid": "².2.15",
     "uuid": "³.3.2"
   }
-} 
+}
 ```
 
 ❶ 设置模块版本号
 
-❷ 设置 aws-sdk 模块版本
-
-package.json
+❷ 设置 `aws-sdk` 模块版本
 
 虽然 `package.json` 文件的格式相对简单，但也有一些细微差别，例如语义版本支持脚本。在这里描述全部细节超出了本书的范围。关于这个主题的深入覆盖可以在 NPM 的 [`docs.npmjs.com/files/package.json`](https://docs.npmjs.com/files/package.json) 找到。
+
+## 入口函数与 `crawl` 函数
 
 这个入口函数相当简单。它只是调用 `crawl` 函数从事件对象中提供的 URL 下载图像，一旦捕获完成，它将一条消息排队到 SQS，表明下载的图像已准备好进行分析。
 
 主 `crawl` 函数在下面的列表中展示。
 
-列表 2.8 `crawl` 函数
+**列表 2.8 `crawl` 函数**
 
-```
+```javascript
 function crawl (url, context) {
   const domain = urlParser.parse(url).hostname                         ❶
 
@@ -626,7 +615,7 @@ function crawl (url, context) {
           writeStatus(url, domain, results).then(result => {           ❺
             resolve({statusCode: 200, body: JSON.stringify(result)})
           })
-        })
+        )
       })
     })
   })
@@ -635,7 +624,7 @@ function crawl (url, context) {
 
 ❶ 从请求的 URL 中提取域名部分。
 
-❷ 使用请求模块获取给定 URL 的 HTML。
+❷ 使用 `request` 模块获取给定 URL 的 HTML。
 
 ❸ 解析的 HTML 内容被传递给 `parseImageUrls` 函数，该函数返回一个用于下载的图像列表。
 
@@ -643,22 +632,24 @@ function crawl (url, context) {
 
 ❺ 最后，该函数将状态文件写入存储桶，以便下游服务在解析承诺之前消费。
 
-Promises 和箭头函数
+### Promises 和箭头函数
 
 如果你稍微有些 JavaScript 实践不足，你可能想知道构造 `.then(result => `{...` 的含义。箭头函数操作符是 `function` 关键字的替代（略有变化）。出于实用目的，你可以将以下内容视为等价：
 
-```
+```javascript
 result => { console.log(result) }
 function (result) { console.log(result) }
 ```
 
 `.then` 构造定义了一个在承诺解析时被调用的处理函数。承诺为异步 I/O 提供了替代回调的机制。许多人更喜欢使用承诺而不是回调，因为它有助于使代码更干净，并避免俗称的“回调地狱”。如果你不熟悉承诺，可以在 [`www.promisejs.org/`](https://www.promisejs.org/) 找到全部细节。
 
-下一个列表中显示的`queueAnalysis`函数使用 AWS SQS 接口向分析队列发送消息，该消息稍后将被分析服务获取。
+## `queueAnalysis` 函数
 
-列表 2.9 `queueAnalysis`函数
+下一个列表中显示的 `queueAnalysis` 函数使用 AWS SQS 接口向分析队列发送消息，该消息稍后将被分析服务获取。
 
-```
+**列表 2.9 `queueAnalysis` 函数**
+
+```javascript
 function queueAnalysis (url, context) {
   let domain = urlParser.parse(url).hostname
   let accountId = process.env.ACCOUNTID
@@ -688,15 +679,17 @@ function queueAnalysis (url, context) {
 
 ❸ 将消息发布到 SQS。
 
-现在我们已经理解了爬虫的代码，让我们部署这个服务。首先我们需要安装支持节点模块。为此，`cd`到`crawler-service`目录并运行
+## 部署爬虫服务
 
-```
+现在我们已经理解了爬虫的代码，让我们部署这个服务。首先我们需要安装支持节点模块。为此，`cd` 到 `crawler-service` 目录并运行：
+
+```bash
 $ npm install
 ```
 
-我们现在可以通过运行 Serverless Framework 的`deploy`命令来部署我们的服务：
+我们现在可以通过运行 Serverless Framework 的 `deploy` 命令来部署我们的服务：
 
-```
+```bash
 $ serverless deploy
 ```
 
@@ -704,17 +697,19 @@ $ serverless deploy
 
 ![图片](img/CH02_F09_Elger.png)
 
-图 2.9 爬虫服务 Lambda
+**图 2.9 爬虫服务 Lambda**
 
-在我们继续分析函数之前，让我们通过向 SQS 发送消息来测试爬虫。打开 AWS 控制台，转到 SQS 服务页面，并在相应区域中选择`Chap2CrawlerQueue`。然后从队列操作下拉菜单中选择发送消息。
+## 测试爬虫服务
+
+在我们继续分析函数之前，让我们通过向 SQS 发送消息来测试爬虫。打开 AWS 控制台，转到 SQS 服务页面，并在相应区域中选择 `Chap2CrawlerQueue`。然后从队列操作下拉菜单中选择发送消息。
 
 ![图片](img/CH02_F10_Elger.png)
 
-图 2.10 发送 SQS 消息
+**图 2.10 发送 SQS 消息**
 
 将此处显示的 JSON 粘贴到消息窗口中，然后点击发送消息：
 
-```
+```json
 {
   "action": "download",
   "msg": {
@@ -723,32 +718,28 @@ $ serverless deploy
 }
 ```
 
-*注意* 我们为了测试目的创建了一个简单的静态网站，使用 S3，并在测试消息中的 URL 上放置了一些示例图片，但如果你更喜欢，可以使用不同的 URL--例如，谷歌图片搜索的结果。
+**注意** 我们为了测试目的创建了一个简单的静态网站，使用 S3，并在测试消息中的 URL 上放置了一些示例图片，但如果你更喜欢，可以使用不同的 URL——例如，谷歌图片搜索的结果。
 
-消息将被附加到 SQS 队列，并由爬虫服务获取。我们可以查看爬虫日志以确认这一点。打开 AWS 控制台，然后打开 CloudWatch。点击左侧的日志菜单项，然后选择爬虫服务，列出的为`crawler-service -dev-crawlimages`，以检查日志。你应该会看到类似于图 2.11 的输出。
+消息将被附加到 SQS 队列，并由爬虫服务获取。我们可以查看爬虫日志以确认这一点。打开 AWS 控制台，然后打开 CloudWatch。点击左侧的日志菜单项，然后选择爬虫服务，列出的为 `crawler-service -dev-crawlimages`，以检查日志。你应该会看到类似于图 2.11 的输出。
 
 ![图片](img/CH02_F11_Elger.png)
 
-图 2.11 爬虫的 CloudWatch 日志
+**图 2.11 爬虫的 CloudWatch 日志**
 
-最后让我们检查我们的图片是否正确下载。打开 AWS 控制台，转到 S3 服务。选择您的存储桶。您应该看到一个名为`ai-as-a-service.s3-website-eu-west-1.amazonaws.com`的文件夹。点击进入以查看下载的图片，如图 2.12 所示。
+最后让我们检查我们的图片是否正确下载。打开 AWS 控制台，转到 S3 服务。选择您的存储桶。您应该看到一个名为 `ai-as-a-service.s3-website-eu-west-1.amazonaws.com` 的文件夹。点击进入以查看下载的图片，如图 2.12 所示。
 
 ![图片](img/CH02_F12_Elger.png)
 
-图 2.12 下载的图片
+**图 2.12 下载的图片**
 
 在下一章中，我们将把注意力转向分析服务，并完成异步服务的部署，然后再部署系统的其余部分。现在，好好休息一下，并祝贺自己到目前为止的辛勤工作！
 
 ## 摘要
 
 +   AWS 提供了一系列不断增长的云原生服务，我们可以利用。在本章中，我们使用了 S3、Route53、Lambda 和 SQS。
-
-+   AWS 提供了一个基于 Web 的控制台，我们可以使用它来设置账户并配置 API 访问密钥
-
-+   无服务器框架用于部署云基础设施，包括 S3 存储桶、SQS 队列和 Route53 DNS 记录。一个`serverless.yml`文件允许我们以可预测和逻辑的方式定义和部署我们的基础设施。
-
++   AWS 提供了一个基于 Web 的控制台，我们可以使用它来设置账户并配置 API 访问密钥。
++   无服务器框架用于部署云基础设施，包括 S3 存储桶、SQS 队列和 Route53 DNS 记录。一个 `serverless.yml` 文件允许我们以可预测和逻辑的方式定义和部署我们的基础设施。
 +   一个 SQS 队列连接到一个爬虫 Lambda 函数。
-
 +   爬虫服务是一个 Lambda 函数，它下载图片并将它们放置在 S3 存储桶中。
 
-*警告* 第三章将继续构建这个系统，并在第三章末尾提供如何删除已部署资源的说明。如果你在一段时间内不打算处理第三章，请确保你完全删除本章中部署的所有云资源，以避免额外费用！
+**警告** 第三章将继续构建这个系统，并在第三章末尾提供如何删除已部署资源的说明。如果你在一段时间内不打算处理第三章，请确保你完全删除本章中部署的所有云资源，以避免额外费用！

@@ -1,8 +1,9 @@
+
 # 第八章：队列、线程和读取数据
 
 在本章中，我们介绍了在 TensorFlow 中使用队列和线程的方法，主要目的是简化读取输入数据的过程。我们展示了如何编写和读取 TFRecords，这是高效的 TensorFlow 文件格式。然后我们演示了队列、线程和相关功能，并在一个完整的工作示例中连接所有要点，展示了一个包括预处理、批处理和训练的图像数据的多线程输入管道。
 
-# 输入管道
+## 输入管道
 
 当处理可以存储在内存中的小数据集时，比如 MNIST 图像，将所有数据加载到内存中，然后使用 feeding 将数据推送到 TensorFlow 图中是合理的。然而，对于更大的数据集，这可能变得难以管理。处理这种情况的一个自然范式是将数据保留在磁盘上，并根据需要加载其中的块（比如用于训练的小批量），这样唯一的限制就是硬盘的大小。
 
@@ -18,58 +19,56 @@
 
 我们将逐一讨论这些关键组件，探索它们的工作原理，并构建一个端到端的多线程输入管道。我们首先介绍 TFRecords，这是 TensorFlow 推荐的文件格式，以后会派上用场。
 
-# TFRecords
+## TFRecords
 
 数据集当然可以采用许多格式，有时甚至是混合的（比如图像和音频文件）。将输入文件转换为一个统一的格式，无论其原始格式如何，通常是方便和有用的。TensorFlow 的默认标准数据格式是 TFRecord。TFRecord 文件只是一个包含序列化输入数据的二进制文件。序列化基于协议缓冲区（protobufs），简单地说，它通过使用描述数据结构的模式将数据转换为存储，独立于所使用的平台或语言（就像 XML 一样）。
 
 在我们的设置中，使用 TFRecords（以及 protobufs/二进制文件）相比仅使用原始数据文件有许多优势。这种统一格式允许整洁地组织输入数据，所有相关属性都保持在一起，避免了许多目录和子目录的需求。TFRecord 文件实现了非常快速的处理。所有数据都保存在一个内存块中，而不是分别存储每个输入文件，从而减少了从内存读取数据所需的时间。还值得注意的是，TensorFlow 自带了许多针对 TFRecords 进行优化的实现和工具，使其非常适合作为多线程输入管道的一部分使用。
 
-## 使用 TFRecordWriter 进行写入
+### 使用 TFRecordWriter 进行写入
 
 我们首先将输入文件写入 TFRecord 格式，以便我们可以处理它们（在其他情况下，我们可能已经将数据存储在这种格式中）。在这个例子中，我们将 MNIST 图像转换为这种格式，但是相同的思想也适用于其他类型的数据。
 
-首先，我们将 MNIST 数据下载到 `save_dir`，使用来自 `tensorflow.contrib.learn` 的实用函数：
+首先，我们将 MNIST 数据下载到`save_dir`，使用来自`tensorflow.contrib.learn`的实用函数：
 
 ```py
-from__future__importprint_functionimportosimporttensorflowastffromtensorflow.contrib.learn.python.learn.datasetsimportmnistsave_dir="*`path/to/mnist`*"# Download data to save_dirdata_sets=mnist.read_data_sets(save_dir,dtype=tf.uint8,reshape=False,validation_size=1000)
+from __future__ import print_function
+import os
+import tensorflow as tf
+from tensorflow.contrib.learn.python.learn.datasets import mnist
+
+save_dir = "/path/to/mnist"
+
+# Download data to save_dir
+data_sets = mnist.read_data_sets(save_dir, dtype=tf.uint8, reshape=False, validation_size=1000)
 ```
 
-我们下载的数据包括训练、测试和验证图像，每个都在一个单独的 *拆分* 中。我们遍历每个拆分，将示例放入适当的格式，并使用 `TFRecordWriter()` 写入磁盘：
+我们下载的数据包括训练、测试和验证图像，每个都在一个单独的*拆分*中。我们遍历每个拆分，将示例放入适当的格式，并使用`TFRecordWriter()`写入磁盘：
 
 ```py
-data_splits = ["train","test","validation"]
+data_splits = ["train", "test", "validation"]
 for d in range(len(data_splits)):
- print("saving " + data_splits[d])
- data_set = data_sets[d]
+    print("saving " + data_splits[d])
+    data_set = data_sets[d]
 
- filename = os.path.join(save_dir, data_splits[d] + '.tfrecords')
- writer = tf.python_io.TFRecordWriter(filename)
- for index in range(data_set.images.shape[0]):
-  image = data_set.images[index].tostring()
-  example = tf.train.Example(features=tf.train.Features(feature={
-  'height': tf.train.Feature(int64_list=
-                 tf.train.Int64List(value=
-                 [data_set.images.shape[1]])),
-  'width': tf.train.Feature(int64_list=
-                 tf.train.Int64List(value =
-                 [data_set.images.shape[2]])),
-  'depth': tf.train.Feature(int64_list=
-                 tf.train.Int64List(value =
-                 [data_set.images.shape[3]])),
-  'label': tf.train.Feature(int64_list=
-                 tf.train.Int64List(value =
-                 [int(data_set.labels[index])])),
-  'image_raw': tf.train.Feature(bytes_list=
-                 tf.train.BytesList(value =
-                          [image]))}))
-  writer.write(example.SerializeToString())
- writer.close()
-
+    filename = os.path.join(save_dir, data_splits[d] + '.tfrecords')
+    writer = tf.python_io.TFRecordWriter(filename)
+    for index in range(data_set.images.shape[0]):
+        image = data_set.images[index].tostring()
+        example = tf.train.Example(features=tf.train.Features(feature={
+            'height': tf.train.Feature(int64_list=tf.train.Int64List(value=[data_set.images.shape[1]])),
+            'width': tf.train.Feature(int64_list=tf.train.Int64List(value=[data_set.images.shape[2]])),
+            'depth': tf.train.Feature(int64_list=tf.train.Int64List(value=[data_set.images.shape[3]])),
+            'label': tf.train.Feature(int64_list=tf.train.Int64List(value=[int(data_set.labels[index])])),
+            'image_raw': tf.train.Feature(bytes_list=tf.train.BytesList(value=[image]))
+        }))
+        writer.write(example.SerializeToString())
+    writer.close()
 ```
 
 让我们分解这段代码，以理解不同的组件。
 
-我们首先实例化一个 `TFRecordWriter` 对象，给它一个对应数据拆分的路径：
+我们首先实例化一个`TFRecordWriter`对象，给它一个对应数据拆分的路径：
 
 ```py
 filename = os.path.join(save_dir, data_splits[d] + '.tfrecords')
@@ -82,28 +81,27 @@ writer = tf.python_io.TFRecordWriter(filename)
 image = data_set.images[index].tostring()
 ```
 
-接下来，我们将图像转换为它们的 protobuf 格式。`tf.train.Example` 是用于存储我们的数据的结构。`Example` 对象包含一个 `Features` 对象，它又包含一个从属性名称到 `Feature` 的映射。`Feature` 可以包含一个 `Int64List`、一个 `BytesList` 或一个 `FloatList`（这里没有使用）。例如，在这里我们对图像的标签进行编码：
+接下来，我们将图像转换为它们的 protobuf 格式。`tf.train.Example`是用于存储我们的数据的结构。`Example`对象包含一个`Features`对象，它又包含一个从属性名称到`Feature`的映射。`Feature`可以包含一个`Int64List`、一个`BytesList`或一个`FloatList`（这里没有使用）。例如，在这里我们对图像的标签进行编码：
 
 ```py
-tf.train.Feature(int64_list=tf.train.Int64List(value =
-                 [int(data_set.labels[index])]))
+tf.train.Feature(int64_list=tf.train.Int64List(value=[int(data_set.labels[index])]))
 ```
 
 这里是实际原始图像的编码：
 
 ```py
-tf.train.Feature(bytes_list=tf.train.BytesList(value =[image]))
+tf.train.Feature(bytes_list=tf.train.BytesList(value=[image]))
 ```
 
-让我们看看我们保存的数据是什么样子。我们使用 `tf.python_io.tf_record_iterator` 来实现这一点，这是一个从 TFRecords 文件中读取记录的迭代器：
+让我们看看我们保存的数据是什么样子。我们使用`tf.python_io.tf_record_iterator`来实现这一点，这是一个从 TFRecords 文件中读取记录的迭代器：
 
 ```py
 filename = os.path.join(save_dir, 'train.tfrecords')
 record_iterator = tf.python_io.tf_record_iterator(filename)
-seralized_img_example= next(record_iterator)
+seralized_img_example = next(record_iterator)
 ```
 
-`serialized_img` 是一个字节字符串。为了恢复保存图像到 TFRecord 时使用的结构，我们解析这个字节字符串，使我们能够访问我们之前存储的所有属性：
+`serialized_img`是一个字节字符串。为了恢复保存图像到 TFRecord 时使用的结构，我们解析这个字节字符串，使我们能够访问我们之前存储的所有属性：
 
 ```py
 example = tf.train.Example()
@@ -123,20 +121,19 @@ img_reshaped = img_flat.reshape((height, width, -1))
 
 这个基本示例应该让您了解 TFRecords 以及如何写入和读取它们。在实践中，我们通常希望将 TFRecords 读入一个预取数据队列作为多线程过程的一部分。在下一节中，我们首先介绍 TensorFlow 队列，然后展示如何将它们与 TFRecords 一起使用。
 
-# 队列
+## 队列
 
 TensorFlow 队列类似于普通队列，允许我们入队新项目，出队现有项目等。与普通队列的重要区别在于，就像 TensorFlow 中的任何其他内容一样，队列是计算图的一部分。它的操作像往常一样是符号化的，图中的其他节点可以改变其状态（就像变量一样）。这一点一开始可能会有点困惑，所以让我们通过一些示例来了解基本队列功能。
 
-## 入队和出队
+### 入队和出队
 
-在这里，我们创建一个字符串的 *先进先出*（FIFO）队列，最多可以存储 10 个元素。由于队列是计算图的一部分，它们在会话中运行。在这个例子中，我们使用了一个 `tf.InteractiveSession()`：
+在这里，我们创建一个字符串的*先进先出*（FIFO）队列，最多可以存储 10 个元素。由于队列是计算图的一部分，它们在会话中运行。在这个例子中，我们使用了一个`tf.InteractiveSession()`：
 
 ```py
 import tensorflow as tf
 
-sess= tf.InteractiveSession()
-queue1 = tf.FIFOQueue(capacity=10,dtypes=[tf.string])
-
+sess = tf.InteractiveSession()
+queue1 = tf.FIFOQueue(capacity=10, dtypes=[tf.string])
 ```
 
 在幕后，TensorFlow 为存储这 10 个项目创建了一个内存缓冲区。
@@ -145,7 +142,6 @@ queue1 = tf.FIFOQueue(capacity=10,dtypes=[tf.string])
 
 ```py
 enque_op = queue1.enqueue(["F"])
-
 ```
 
 由于您现在已经熟悉了 TensorFlow 中计算图的概念，因此定义`enque_op`并不会向队列中添加任何内容——我们需要运行该操作。因此，如果我们在运行操作之前查看`queue1`的大小，我们会得到这个结果：
@@ -155,7 +151,6 @@ sess.run(queue1.size())
 
 Out:
 0
-
 ```
 
 运行操作后，我们的队列现在有一个项目在其中：
@@ -163,6 +158,7 @@ Out:
 ```py
 enque_op.run()
 sess.run(queue1.size())
+
 Out:
 1
 ```
@@ -179,9 +175,8 @@ enque_op.run()
 
 sess.run(queue1.size())
 
-Out: 
+Out:
 4
-
 ```
 
 接下来，我们出队项目。出队也是一个操作，其输出评估为对应于出队项目的张量：
@@ -200,7 +195,6 @@ Out: b'F'
 x.eval()
 
 Out: b'O'
-
 ```
 
 请注意，如果我们再次对空队列运行`x.eval()`，我们的主线程将永远挂起。正如我们将在本章后面看到的，实际上我们使用的代码知道何时停止出队并避免挂起。
@@ -208,8 +202,7 @@ Out: b'O'
 另一种出队的方法是一次检索多个项目，使用`dequeue_many()`操作。此操作要求我们提前指定项目的形状：
 
 ```py
-queue1 = tf.FIFOQueue(capacity=10,dtypes=[tf.string],shapes=[()])
-
+queue1 = tf.FIFOQueue(capacity=10, dtypes=[tf.string], shapes=[()])
 ```
 
 在这里，我们像以前一样填充队列，然后一次出队四个项目：
@@ -218,14 +211,11 @@ queue1 = tf.FIFOQueue(capacity=10,dtypes=[tf.string],shapes=[()])
 inputs = queue1.dequeue_many(4)
 inputs.eval()
 
-```
-
-```py
-Out: 
+Out:
 array([b'F', b'I', b'F', b'O'], dtype=object)
 ```
 
-## 多线程
+### 多线程
 
 TensorFlow 会话是多线程的——多个线程可以使用同一个会话并行运行操作。单个操作具有并行实现，默认情况下使用多个 CPU 核心或 GPU 线程。然而，如果单个对`sess.run()`的调用没有充分利用可用资源，可以通过进行多个并行调用来提高吞吐量。例如，在典型情况下，我们可能有多个线程对图像进行预处理并将其推送到队列中，而另一个线程则从队列中拉取预处理后的图像进行训练（在下一章中，我们将讨论分布式训练，这在概念上是相关的，但有重要的区别）。
 
@@ -239,12 +229,12 @@ import threading
 import time
 
 gen_random_normal = tf.random_normal(shape=())
-queue = tf.FIFOQueue(capacity=100,dtypes=[tf.float32],shapes=())
+queue = tf.FIFOQueue(capacity=100, dtypes=[tf.float32], shapes=())
 enque = queue.enqueue(gen_random_normal)
 
 def add():
-  for i in range(10):
-    sess.run(enque)
+    for i in range(10):
+        sess.run(enque)
 ```
 
 再次注意，`enque`操作实际上并没有将随机数添加到队列中（它们尚未生成）在图执行之前。项目将使用我们创建的`add()`函数进行入队，该函数通过多次调用`sess.run()`向队列中添加 10 个项目。
@@ -255,6 +245,7 @@ def add():
 threads = [threading.Thread(target=add, args=()) for i in range(10)]
 
 threads
+
 Out:
 [<Thread(Thread-77, initial)>,
 <Thread(Thread-78, initial)>,
@@ -266,14 +257,13 @@ Out:
 <Thread(Thread-84, initial)>,
 <Thread(Thread-85, initial)>,
 <Thread(Thread-86, initial)>]
-
 ```
 
 我们已经创建了一个线程列表，现在我们执行它们，以短间隔打印队列的大小，从 0 增长到 100：
 
 ```py
 for t in threads:
-  t.start()
+    t.start()
 
 print(sess.run(queue.size()))
 time.sleep(0.01)
@@ -281,14 +271,13 @@ print(sess.run(queue.size()))
 time.sleep(0.01)
 print(sess.run(queue.size()))
 
-```
-
-```py
 Out:
 10
 84
 100
 ```
+
+
 
 最后，我们使用`dequeue_many()`一次出队 10 个项目，并检查结果：
 
@@ -296,7 +285,6 @@ Out:
 x = queue.dequeue_many(10)
 print(x.eval())
 sess.run(queue.size())
-
 ```
 
 ```py
@@ -304,7 +292,6 @@ Out:
 [ 0.05863889 0.61680967 1.05087686 -0.29185265 -0.44238046 0.53796548
 -0.24784896 0.40672767 -0.88107938 0.24592835]
 90
-
 ```
 
 ## 协调器和 QueueRunner
@@ -342,11 +329,12 @@ time.sleep(0.01)
 print(sess.run(queue.size()))
 time.sleep(0.01)
 print(sess.run(queue.size()))
+```
 
+```py
 10
 100
 100
-
 ```
 
 任何线程都可以调用`coord.request_stop()`来让所有其他线程停止。线程通常运行循环来检查是否停止，使用`coord.should_stop()`。在这里，我们将线程索引`i`传递给`add()`，并使用一个永远不满足的条件（`i==11`）来请求停止。因此，我们的线程完成了它们的工作，将全部 100 个项目添加到队列中。但是，如果我们将`add()`修改如下：
@@ -367,7 +355,6 @@ time.sleep(0.01)
 print(sess.run(queue.size()))
 time.sleep(0.01)
 print(sess.run(queue.size()))
-
 ```
 
 ```py
@@ -394,7 +381,6 @@ coord = tf.train.Coordinator()
 enqueue_threads = qr.create_threads(sess, coord=coord, start=True)
 coord.request_stop()
 coord.join(enqueue_threads)
-
 ```
 
 请注意，`qr.create_threads()`将我们的会话作为参数，以及我们的协调器。
@@ -419,7 +405,6 @@ from__future__importprint_functionimportosimporttensorflowastffromtensorflow.con
 filename = os.path.join(save_dir ,"train.tfrecords")
 filename_queue = tf.train.string_input_producer(
   [filename], num_epochs=10)
-
 ```
 
 `num_epochs`参数告诉`string_input_producer()`将每个文件名字符串生成`num_epochs`次。
@@ -435,7 +420,6 @@ features = tf.parse_single_example(
     'image_raw': tf.FixedLenFeature([], tf.string),
     'label': tf.FixedLenFeature([], tf.int64),
   })
-
 ```
 
 ## tf.train.shuffle_batch()
@@ -452,7 +436,6 @@ images_batch, labels_batch = tf.train.shuffle_batch(
   [image, label], batch_size=128,
   capacity=2000,
   min_after_dequeue=1000)
-
 ```
 
 `capacity`和`min_after_dequeue`参数的使用方式与之前讨论的相同。由`shuffle_batch()`返回的小批次是在内部创建的`RandomShuffleQueue`上调用`dequeue_many()`的结果。
@@ -476,7 +459,6 @@ init = tf.global_variables_initializer()
 sess.run(init)
 init = tf.local_variables_initializer()
 sess.run(init)
-
 ```
 
 最后，我们通过调用`tf.train.start_queue_runners()`创建线程将数据入队到队列中。与其他调用不同，这个调用不是符号化的，实际上创建了线程（因此需要在初始化之后完成）：
@@ -484,25 +466,26 @@ sess.run(init)
 ```py
 from __future__ import print_function
 
-# Coordinator 
+# Coordinator 
 coord = tf.train.Coordinator()
 threads = tf.train.start_queue_runners(sess=sess,coord=coord)
-
 ```
 
 让我们看一下创建的线程列表：
 
 ```py
 threads
+```
 
-Out: 
+```py
+Out: 
 [<Thread(Thread-483, stopped daemon 13696)>,
- <Thread(Thread-484, started daemon 16376)>,
- <Thread(Thread-485, started daemon 4320)>,
- <Thread(Thread-486, started daemon 13052)>,
- <Thread(Thread-487, started daemon 7216)>,
- <Thread(Thread-488, started daemon 4332)>,
- <Thread(Thread-489, started daemon 16820)>]
+ <Thread(Thread-484, started daemon 16376)>,
+ <Thread(Thread-485, started daemon 4320)>,
+ <Thread(Thread-486, started daemon 13052)>,
+ <Thread(Thread-487, started daemon 7216)>,
+ <Thread(Thread-488, started daemon 4332)>,
+ <Thread(Thread-489, started daemon 16820)>]
 ```
 
 一切就绪后，我们现在准备运行多线程过程，从读取和预处理批次到将其放入队列再到训练模型。重要的是要注意，我们不再使用熟悉的`feed_dict`参数——这样可以避免数据复制并提供加速，正如本章前面讨论的那样：
@@ -526,7 +509,6 @@ finally:
 # Wait for threads to finish
 coord.join(threads)
 sess.close()
-
 ```
 
 直到抛出`tf.errors.OutOfRangeError`错误，表示队列为空，我们已经完成训练：
@@ -534,7 +516,6 @@ sess.close()
 ```py
 Out:
 Done training for 10 epochs, 2299500 steps.
-
 ```
 
 # 未来的输入管道

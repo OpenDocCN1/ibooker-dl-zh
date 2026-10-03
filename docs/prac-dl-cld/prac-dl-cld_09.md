@@ -1,3 +1,4 @@
+
 # 第九章：使用 TensorFlow Serving 和 KubeFlow 在云上进行可扩展推断服务
 
 想象一下：你刚刚建立了一个一流的分类器。你的目标，正如硅谷的座右铭所说，“*让世界变得更美好*”，你将通过一个出色的狗/猫分类器来实现这一目标。你有一个扎实的商业计划，迫不及待地想要在下周向风险投资公司推销你的神奇分类器。你知道投资者会问及你的云策略，你需要在他们考虑给你钱之前展示一个扎实的演示。你会怎么做？创建模型只是战斗的一半，提供服务是下一个挑战，通常是更大的挑战。事实上，很长一段时间以来，训练模型只需要几周的时间，但是试图将其提供给更多人使用是一个长达数月的战斗，通常涉及后端工程师和 DevOps 团队。
@@ -5,17 +6,11 @@
 在本章中，我们回答了一些关于托管和提供定制模型的常见问题。
 
 +   我如何在我的个人服务器上托管我的模型，以便我的同事可以使用它？
-
 +   我不是后端/基础设施工程师，但我想让我的模型可用，以便为成千上万（甚至数百万）的用户提供服务。如何在合理的价格下做到这一点，而不必担心可扩展性和可靠性问题？
-
 +   有一些原因（如成本、法规、隐私等）使我无法将我的模型托管在云上，而只能在内部网络（我的工作网络）上托管。在这种情况下，我能够以规模和可靠性提供预测吗？
-
 +   我可以在 GPU 上进行推断吗？
-
 +   我可以期待每个选项的费用是多少？
-
 +   我能否跨多个云提供商扩展我的训练和服务？
-
 +   要使这些运行需要多少时间和技术知识？
 
 让我们从高层次概述可用工具开始我们的旅程。
@@ -34,58 +29,10 @@
 
 | **类别和示例** | **预期的首次预测时间** | **优缺点** |
 | --- | --- | --- |
-
-| HTTP 服务器
-
-+   Flask
-
-+   Django
-
-+   Apache OpenWhisk
-
-+   Python `http.server`
-
-| <5 分钟 | + 运行简单+ 通常运行当前 Python 代码– 较慢– 未经 AI 优化 |
-| --- | --- |
-
-| **托管和管理的云堆栈**
-
-+   Google Cloud ML
-
-+   Azure ML
-
-+   亚马逊 Sage Maker
-
-+   Algorithmia
-
-| <15 分钟 | + 更容易的 GUI/命令行界面+ 高度可扩展+ 完全托管，减少了对 DevOps 团队的需求– 通常仅限于基于 CPU 的推断，对于大型模型可能较慢– 预热查询时间可能较慢 |
-| --- | --- |
-
-| **手动管理的服务库**
-
-+   TensorFlow Serving
-
-+   英伟达 TensorRT
-
-+   DeepDetect
-
-+   MXNet 模型服务
-
-+   Skymind Intelligence Layer with DeepLearning4J
-
-+   Seldon
-
-+   DeepStack AI 服务器
-
-| <15 分钟 | + 高性能+ 允许手动控制优化、批处理等+ 可以在 GPU 上运行– 设置更复杂– 要在多个节点上扩展通常需要额外的工作 |
-| --- | --- |
-
-| **云 AI 编排框架**
-
-+   KubeFlow
-
-| ~1 小时 | + 使扩展训练和推理易于管理+ 在云提供商之间可移植+ 开发和生产环境一致+ 对于数据科学家，与熟悉的工具（如 Jupyter Notebooks）集成，用于将模型发送到生产环境+ 可以组合条件管道以自动化测试、级联模型+ 使用现有的手动管理的服务库– 仍在发展中– 对于初学者，托管和管理的云堆栈提供了更简单的学习曲线 |
-| --- | --- |
+| **HTTP 服务器**<br>+ Flask<br>+ Django<br>+ Apache OpenWhisk<br>+ Python `http.server` | <5 分钟 | + 运行简单<br>+ 通常运行当前 Python 代码<br>– 较慢<br>– 未经 AI 优化 |
+| **托管和管理的云堆栈**<br>+ Google Cloud ML<br>+ Azure ML<br>+ 亚马逊 Sage Maker<br>+ Algorithmia | <15 分钟 | + 更容易的 GUI/命令行界面<br>+ 高度可扩展<br>+ 完全托管，减少了对 DevOps 团队的需求<br>– 通常仅限于基于 CPU 的推断，对于大型模型可能较慢<br>– 预热查询时间可能较慢 |
+| **手动管理的服务库**<br>+ TensorFlow Serving<br>+ 英伟达 TensorRT<br>+ DeepDetect<br>+ MXNet 模型服务<br>+ Skymind Intelligence Layer with DeepLearning4J<br>+ Seldon<br>+ DeepStack AI 服务器 | <15 分钟 | + 高性能<br>+ 允许手动控制优化、批处理等<br>+ 可以在 GPU 上运行<br>– 设置更复杂<br>– 要在多个节点上扩展通常需要额外的工作 |
+| **云 AI 编排框架**<br>+ KubeFlow | ~1 小时 | + 使扩展训练和推理易于管理<br>+ 在云提供商之间可移植<br>+ 开发和生产环境一致<br>+ 对于数据科学家，与熟悉的工具（如 Jupyter Notebooks）集成，用于将模型发送到生产环境<br>+ 可以组合条件管道以自动化测试、级联模型<br>+ 使用现有的手动管理的服务库<br>– 仍在发展中<br>– 对于初学者，托管和管理的云堆栈提供了更简单的学习曲线 |
 
 在本章中，我们探讨了一系列工具和场景。其中一些选项易于使用，但功能有限。其他选项提供更精细的控制和更高的性能，但设置更复杂。我们将看一个每个类别的例子，并深入研究，以便了解何时使用其中之一是有意义的。然后，我们将对不同解决方案进行成本分析，并详细介绍一些解决方案在实践中的工作方式。
 
@@ -141,7 +88,7 @@ from tf.keras.models import load_model
 model = load_model("dogcat.h5")
 ```
 
-现在，我们创建路由*/infer*，以支持对我们的图像进行推理。自然地，我们将支持`POST`请求以接受图像：
+现在，我们创建路由`/infer`，以支持对我们的图像进行推理。自然地，我们将支持`POST`请求以接受图像：
 
 ```py
 @app.route('/infer', methods=[POST])
@@ -180,11 +127,8 @@ app.run(host="0.0.0.0")
 Flask 提供了一些优势，包括：
 
 +   快速设置和原型设计
-
 +   快速开发周期
-
 +   资源占用轻
-
 +   在 Python 社区中具有广泛吸引力
 
 ## 使用 Flask 的缺点
@@ -192,9 +136,7 @@ Flask 提供了一些优势，包括：
 同时，出于以下原因，Flask 可能不是您的最佳选择：
 
 +   无法扩展；默认情况下，它不适用于生产负载。Flask 一次只能处理一个请求
-
 +   开箱即用不支持模型版本控制
-
 +   不支持批量请求处理
 
 # 生产级服务系统中的理想特质
@@ -282,85 +224,85 @@ Flask 提供了一些优势，包括：
 
 +   易于部署到生产环境中，具有基于 Web 的 GUI
 
-+   功能强大，易于扩展到数百万用户
 
-+   提供深入的模型使用洞察
 
-+   能够对模型进行版本控制
+# 使用 Cloud ML Engine 的优点
+
++ 功能强大，易于扩展到数百万用户
++ 提供深入的模型使用洞察
++ 能够对模型进行版本控制
 
 ## 使用 Cloud ML Engine 的缺点
 
-+   高延迟，仅提供 CPU 进行推断（截至 2019 年 8 月）
-
-+   不适用于涉及法律和数据隐私问题的场景，其中数据不能离开网络
-
-+   对复杂应用程序的架构设计施加限制
++ 高延迟，仅提供 CPU 进行推断（截至 2019 年 8 月）
++ 不适用于涉及法律和数据隐私问题的场景，其中数据不能离开网络
++ 对复杂应用程序的架构设计施加限制
 
 ## 构建分类 API
 
 以下逐步指南展示了如何在 Google Cloud ML Engine 上上传和托管我们的 Dog/Cat 分类器模型：
 
-1.  在[*https://console.cloud.google.com/mlengine/models*](https://console.cloud.google.com/mlengine/models)上在 Google Cloud ML Engine 仪表板上创建一个模型。因为这是我们第一次使用仪表板，我们需要单击“启用 API”，如图 9-3 所示。
+1. 在 [https://console.cloud.google.com/mlengine/models](https://console.cloud.google.com/mlengine/models) 上在 Google Cloud ML Engine 仪表板上创建一个模型。因为这是我们第一次使用仪表板，我们需要单击“启用 API”，如图 9-3 所示。
 
-    ![Google Cloud ML Engine 仪表板上机器学习模型的列表页面](img/00005.jpeg)
+   ![Google Cloud ML Engine 仪表板上机器学习模型的列表页面](img/00005.jpeg)
 
-    ###### 图 9-3\. Google Cloud ML Engine 仪表板上机器学习模型的列表页面
+   **图 9-3.** Google Cloud ML Engine 仪表板上机器学习模型的列表页面
 
-1.  为模型命名并添加描述（图 9-4）。
+2. 为模型命名并添加描述（图 9-4）。
 
-    ![Google Cloud ML Engine 上的模型创建页面](img/00047.jpeg)
+   ![Google Cloud ML Engine 上的模型创建页面](img/00047.jpeg)
 
-    ###### 图 9-4\. Google Cloud ML Engine 上的模型创建页面
+   **图 9-4.** Google Cloud ML Engine 上的模型创建页面
 
-1.  模型创建完成后，我们可以在列表页面上访问模型（图 9-5）。
+3. 模型创建完成后，我们可以在列表页面上访问模型（图 9-5）。
 
-    ![Google Cloud ML Engine 上的模型列表页面](img/00295.jpeg)
+   ![Google Cloud ML Engine 上的模型列表页面](img/00295.jpeg)
 
-    ###### 图 9-5\. Google Cloud ML Engine 上的模型列表页面
+   **图 9-5.** Google Cloud ML Engine 上的模型列表页面
 
-1.  单击模型以转到模型详细信息页面（图 9-6）并添加新版本。
+4. 单击模型以转到模型详细信息页面（图 9-6）并添加新版本。
 
-    ![刚创建的 DogCat 分类器的详细页面](img/00298.jpeg)
+   ![刚创建的 DogCat 分类器的详细页面](img/00298.jpeg)
 
-    ###### 图 9-6\. 刚创建的 Dog/Cat 分类器的详细页面
+   **图 9-6.** 刚创建的 Dog/Cat 分类器的详细页面
 
-1.  填写必要信息以创建新版本。底部的最后一个字段要求您在使用之前将模型上传到 Google Cloud Storage。单击“浏览”按钮以创建用于存储模型的新存储桶（图 9-7）。
+5. 填写必要信息以创建新版本。底部的最后一个字段要求您在使用之前将模型上传到 Google Cloud Storage。单击“浏览”按钮以创建用于存储模型的新存储桶（图 9-7）。
 
-    ![为机器学习模型创建新版本](img/00255.jpeg)
+   ![为机器学习模型创建新版本](img/00255.jpeg)
 
-    ###### 图 9-7\. 为机器学习模型创建一个新版本
+   **图 9-7.** 为机器学习模型创建一个新版本
 
-1.  创建一个具有唯一名称、存储类和区域的新存储桶。创建此存储桶后，转到[*https://console.cloud.google.com/storage/browser*](https://console.cloud.google.com/storage/browser)（在保持当前标签页打开的同时在新标签页中打开）找到这个新创建的存储桶并将模型上传到那里（图 9-8）。
+6. 创建一个具有唯一名称、存储类和区域的新存储桶。创建此存储桶后，转到 [https://console.cloud.google.com/storage/browser](https://console.cloud.google.com/storage/browser)（在保持当前标签页打开的同时在新标签页中打开）找到这个新创建的存储桶并将模型上传到那里（图 9-8）。
 
-    ![在 ML 模型版本创建页面内创建一个新的 Google Cloud Storage 存储桶](img/00216.jpeg)
+   ![在 ML 模型版本创建页面内创建一个新的 Google Cloud Storage 存储桶](img/00216.jpeg)
 
-    ###### 图 9-8\. 在 ML 模型版本创建页面内创建一个新的 Google Cloud Storage 存储桶
+   **图 9-8.** 在 ML 模型版本创建页面内创建一个新的 Google Cloud Storage 存储桶
 
-1.  我们的 Dog/Cat 分类器模型是一个*.h5*文件。但是，Google Cloud 期望一个 SavedModel 文件。您可以在本书的 GitHub 存储库（请参阅[`PracticalDeepLearning.ai`](http://PracticalDeepLearning.ai)）的*code/chapter-9/scripts/h5_to_tf.ipynb*中找到将*.h5*文件转换为 SavedModel 的脚本。只需加载模型并执行笔记本的其余部分。
+7. 我们的 Dog/Cat 分类器模型是一个 `.h5` 文件。但是，Google Cloud 期望一个 SavedModel 文件。您可以在本书的 GitHub 存储库（请参阅 [PracticalDeepLearning.ai](http://PracticalDeepLearning.ai)）的 `code/chapter-9/scripts/h5_to_tf.ipynb` 中找到将 `.h5` 文件转换为 SavedModel 的脚本。只需加载模型并执行笔记本的其余部分。
 
-1.  在 Google Cloud Storage 浏览器中，将新转换的模型（图 9-9）上传到您在第 6 步中创建的存储桶中。
+8. 在 Google Cloud Storage 浏览器中，将新转换的模型（图 9-9）上传到您在第 6 步中创建的存储桶中。
 
-    ![Google Cloud Storage 浏览器页面显示以 TensorFlow 格式上传的 DogCat 分类器模型](img/00149.jpeg)
+   ![Google Cloud Storage 浏览器页面显示以 TensorFlow 格式上传的 DogCat 分类器模型](img/00149.jpeg)
 
-    ###### 图 9-9\. Google Cloud Storage 浏览器页面显示以 TensorFlow 格式上传的 Dog/Cat 分类器模型
+   **图 9-9.** Google Cloud Storage 浏览器页面显示以 TensorFlow 格式上传的 Dog/Cat 分类器模型
 
-1.  在模型版本创建页面上指定您刚上传的模型的 URI（图 9-10）。
+9. 在模型版本创建页面上指定您刚上传的模型的 URI（图 9-10）。
 
-    ![将上传到 Google Cloud Storage 的模型的 URI 添加到其中](img/00139.jpeg)
+   ![将上传到 Google Cloud Storage 的模型的 URI 添加到其中](img/00139.jpeg)
 
-    ###### 图 9-10\. 将上传到 Google Cloud Storage 的模型的 URI 添加到其中
+   **图 9-10.** 将上传到 Google Cloud Storage 的模型的 URI 添加到其中
 
-1.  点击保存按钮，等待模型版本创建。一旦模型版本创建完成，您就可以开始针对它进行预测。
+10. 点击保存按钮，等待模型版本创建。一旦模型版本创建完成，您就可以开始针对它进行预测。
 
-1.  如果您的机器上还没有安装，您可以从安装网站[*https://cloud.google.com/sdk/install*](https://cloud.google.com/sdk/install)下载并安装 Google Cloud SDK。
+11. 如果您的机器上还没有安装，您可以从安装网站 [https://cloud.google.com/sdk/install](https://cloud.google.com/sdk/install) 下载并安装 Google Cloud SDK。
 
-1.  您可以使用 Cloud ML Engine REST API 进行请求。但是，为了简洁起见，请使用 Cloud SDK 中的命令行工具。您首先需要使用位于*code/chapter-9*的*image-to-json.py*脚本将图像转换为*request.json*文件：
+12. 您可以使用 Cloud ML Engine REST API 进行请求。但是，为了简洁起见，请使用 Cloud SDK 中的命令行工具。您首先需要使用位于 `code/chapter-9` 的 `image-to-json.py` 脚本将图像转换为 `request.json` 文件：
 
     ```py
     $ python image-to-json.py --input dog.jpg --output request.json
     ```
 
-1.  接下来，使用在上一步中创建的*request.json*文件来执行针对我们模型的请求：
+13. 接下来，使用在上一步中创建的 `request.json` 文件来执行针对我们模型的请求：
 
     ```py
     $ time cloud ai-platform predict --model DogCat --version v1 
@@ -377,9 +319,9 @@ Flask 提供了一些优势，包括：
 
 从输出中可以看到，我们得到了与我们的 Flask 服务器相似的结果；即“狗”的预测，置信度为 85%。
 
-###### 注意
+**注意**
 
-如果这是您第一次使用**`gcloud`**，您需要运行以下命令将命令行工具与您的 Google 账户绑定：
+如果这是您第一次使用 `gcloud`，您需要运行以下命令将命令行工具与您的 Google 账户绑定：
 
 ```py
 $ gcloud auth login
@@ -397,23 +339,21 @@ $ gcloud config set project {project_name}
 
 相比之下，有些情况下托管解决方案可能不是最佳选择。原因可能包括定价模型、数据隐私问题、法律问题、技术问题、信任问题或合同义务。在这种情况下，一个在本地托管和管理的解决方案将更可取。
 
-###### 提示
+**提示**
 
-为了一次处理大量图像，您可以修改*image-to-json.py*以创建包含多个输入数组的*request.json*文件。
+为了一次处理大量图像，您可以修改 `image-to-json.py` 以创建包含多个输入数组的 `request.json` 文件。
 
 # TensorFlow Serving
 
-TensorFlow Serving 是 TensorFlow 生态系统中用于快速提供机器学习模型的开源库。与 Flask 不同，它专为性能而构建，具有低开销，并设计用于生产环境中使用。大公司广泛使用 TensorFlow Serving 来为他们的预测服务提供模型。它是 TensorFlow Extended (TFX)的一个重要组件，TFX 是 TensorFlow 生态系统中的端到端深度学习管道之一。
+TensorFlow Serving 是 TensorFlow 生态系统中用于快速提供机器学习模型的开源库。与 Flask 不同，它专为性能而构建，具有低开销，并设计用于生产环境中使用。大公司广泛使用 TensorFlow Serving 来为他们的预测服务提供模型。它是 TensorFlow Extended (TFX) 的一个重要组件，TFX 是 TensorFlow 生态系统中的端到端深度学习管道之一。
 
 正如我们在查看生产系统所需的特性时看到的，TensorFlow Serving 提供低延迟、故障处理、高吞吐量和模型版本控制。另一个好处是能够在同一服务上同时提供多个模型。它实现了几种技术来加速服务：
 
-+   在服务器启动期间，它启动了一批线程以快速加载模型。
++ 在服务器启动期间，它启动了一批线程以快速加载模型。
++ 它为加载模型和提供推理使用单独的线程池，同时给予推理池中的线程更高的优先级。这对降低请求延迟至关重要。
++ 它在短时间内构建传入异步请求的小批量。正如我们所见，在训练期间在 GPU 上批处理数据的强大功能，它旨在在异步请求中带来类似的效率。例如，等待 500 毫秒来将几个推理请求分组。在最坏的情况下，这会为批处理中的第一个请求增加 500 毫秒的惩罚，但它会减少请求的平均延迟，并最大化硬件利用率。
 
-+   它为加载模型和提供推理使用单独的线程池，同时给予推理池中的线程更高的优先级。这对降低请求延迟至关重要。
-
-+   它在短时间内构建传入异步请求的小批量。正如我们所见，在训练期间在 GPU 上批处理数据的强大功能，它旨在在异步请求中带来类似的效率。例如，等待 500 毫秒来将几个推理请求分组。在最坏的情况下，这会为批处理中的第一个请求增加 500 毫秒的惩罚，但它会减少请求的平均延迟，并最大化硬件利用率。
-
-###### 注意
+**注意**
 
 TensorFlow Serving 让你完全控制模型发布过程。你可以在同一个进程中为不同的模型或同一种模型的不同版本提供服务。你只需要确保你知道要删除或投入生产的版本的名称和位置。
 
@@ -421,11 +361,9 @@ TensorFlow Serving 让你完全控制模型发布过程。你可以在同一个�
 
 有几种不同的设置 TensorFlow Serving 的方法：
 
-+   从源代码构建
-
-+   使用 APT 下载和安装
-
-+   部署 Docker 镜像
++ 从源代码构建
++ 使用 APT 下载和安装
++ 部署 Docker 镜像
 
 如果你感到冒险，从源代码构建可能是你寻求的危险。但如果你只是想快速启动并运行，我们建议使用 Docker，因为它需要最少的步骤来启动系统。你可能会问，什么是 Docker？Docker 为在其中运行的应用程序提供了 Linux 环境的虚拟化。它提供了资源隔离，基本上作为一个干净的板凳来设置一个应用程序可以运行的环境。通常，一个应用程序及其所有依赖项被打包到一个单独的 Docker 容器中，然后根据需要重复部署。因为应用程序是在一个干净的环境中设置的，它减少了配置和部署错误的可能性。这使得 Docker 非常适合在生产中运行应用程序。
 
@@ -449,7 +387,7 @@ $ docker run -p 8501:8501 --runtime=nvidia \
 
 无论哪种情况，如果一切顺利，你应该在本地端口 8501 上运行一个 REST API，为我们的狗/猫分类器提供服务。
 
-###### 注意
+**注意**
 
 在任何推理请求中，端到端延迟是沿着过程中多个步骤所花费的时间的总和。这包括往返网络时间，序列化/反序列化请求和响应对象的时间，当然还有执行实际推理的时间。增加开销的另一个组件是服务框架；也就是 TensorFlow Serving。谷歌声称 TensorFlow Serving 贡献的开销很小。在实验中，它观察到 TensorFlow Serving 单独能够在 16 核 Intel Xeon E5 2.6 GHz 机器上每个核心处理大约 100,000 个 QPS。因为它正在测量开销，这不包括远程过程调用（RPC）时间和 TensorFlow 推理处理时间。
 
@@ -461,17 +399,17 @@ $ docker run -p 8501:8501 --runtime=nvidia \
 
 正如我们在前一节中看到的，Docker 通过提供可移植的容器，省去了我们管理依赖关系的麻烦。它帮助我们轻松地在各个平台上提供 TensorFlow Serving，而无需从源代码构建或手动安装依赖项。太好了！但它仍然没有回答许多其他挑战。我们如何扩展容器以匹配需求的增长？我们如何有效地在容器之间分发流量？我们如何确保容器彼此可见并能够通信？
 
-这些问题是由*Kubernetes*回答的。Kubernetes 是一个自动部署、扩展和管理容器（如 Docker）的编排框架。由于它利用了 Docker 提供的可移植性，我们可以使用 Kubernetes 在开发人员笔记本电脑和几千台机器集群上几乎相同的方式部署。这有助于在不同环境中保持一致性，并具有可访问的可扩展性。值得注意的是，Kubernetes 不是机器学习的专用解决方案（Docker 也不是）；相反，它是解决软件开发中许多问题的通用解决方案，我们在深度学习的背景下使用它。
+这些问题是由 *Kubernetes* 回答的。Kubernetes 是一个自动部署、扩展和管理容器（如 Docker）的编排框架。由于它利用了 Docker 提供的可移植性，我们可以使用 Kubernetes 在开发人员笔记本电脑和几千台机器集群上几乎相同的方式部署。这有助于在不同环境中保持一致性，并具有可访问的可扩展性。值得注意的是，Kubernetes 不是机器学习的专用解决方案（Docker 也不是）；相反，它是解决软件开发中许多问题的通用解决方案，我们在深度学习的背景下使用它。
 
 但让我们不要过于急躁。毕竟，如果 Kubernetes 是一切的解决方案，它就会出现在章节标题中！使用 Kubernetes 的机器学习从业者仍然需要组装所有适当的容器集合（用于训练、部署、监控、API 管理等），然后需要将它们协调在一起，以构建一个完全运作的端到端流水线。不幸的是，许多数据科学家正在尝试在他们自己的孤立环境中做这件事，重新发明轮子，构建临时的机器学习特定流水线。我们能不能省去所有人的麻烦，为机器学习场景制定一个基于 Kubernetes 的解决方案呢？
 
-*KubeFlow*登场了，它承诺自动化大部分这些工程挑战，并隐藏了运行分布式、可扩展、端到端深度学习系统的复杂性背后的一个基于 Web GUI 的工具和一个强大的命令行工具。这不仅仅是一个推理服务。把它看作一个大型工具生态系统，可以无缝地互操作，更重要的是，可以随需求扩展。KubeFlow 是为云构建的。虽然不只是一个云——它建立在与所有主要云提供商兼容的基础上。这对成本有重大影响。因为我们不受限于特定的云提供商，如果竞争云提供商降低价格，我们可以随时自由地转移所有操作。毕竟，竞争有利于消费者。
+*KubeFlow* 登场了，它承诺自动化大部分这些工程挑战，并隐藏了运行分布式、可扩展、端到端深度学习系统的复杂性背后的一个基于 Web GUI 的工具和一个强大的命令行工具。这不仅仅是一个推理服务。把它看作一个大型工具生态系统，可以无缝地互操作，更重要的是，可以随需求扩展。KubeFlow 是为云构建的。虽然不只是一个云——它建立在与所有主要云提供商兼容的基础上。这对成本有重大影响。因为我们不受限于特定的云提供商，如果竞争云提供商降低价格，我们可以随时自由地转移所有操作。毕竟，竞争有利于消费者。
 
 KubeFlow 支持各种硬件基础设施，从开发人员的笔记本电脑和本地数据中心，一直到公共云服务。由于它是建立在 Docker 和 Kubernetes 之上的，我们可以放心，无论是在开发人员的笔记本电脑上部署还是在数据中心的大型集群上部署，环境都是相同的。开发人员设置与生产环境不同的任何方式都可能导致故障，因此在各种环境中保持一致性非常有价值。
 
 表 9-4 展示了 KubeFlow 生态系统中现成可用的工具的简要列表。
 
-表 9-4\. KubeFlow 上可用的工具
+**表 9-4.** KubeFlow 上可用的工具
 
 | **工具** | **功能** |
 | --- | --- |
@@ -491,7 +429,7 @@ KubeFlow 支持各种硬件基础设施，从开发人员的笔记本电脑和�
 
 社区中有一个笑话，有这么多预打包技术，KubeFlow 最终使我们的简历符合流行词（和招聘人员）的要求。
 
-###### 注
+**注**
 
 许多人认为 KubeFlow 是 Kubernetes 和 TensorFlow 的组合，但正如您所见，事实并非如此。它是那样，而且更多。
 
@@ -503,11 +441,13 @@ KubeFlow 的两个重要部分使其独特：管道和公平。
 
 ![在 KubeFlow 中展示的端到端管道](img/00094.jpeg)
 
-###### 图 9-11\. 在 KubeFlow 中展示的端到端管道
+**图 9-11.** 在 KubeFlow 中展示的端到端管道
 
 ## 公平
 
 公平允许我们通过 Jupyter Notebooks 直接管理整个构建、训练和部署生命周期。图 9-12 展示了如何启动一个新的笔记本服务器，在那里我们可以托管所有的 Jupyter 笔记本，在上面运行训练，并使用几行代码将我们的模型部署到谷歌云，同时还可以在非常熟悉的 Jupyter 环境中进行操作：
+
+
 
 ```py
 from fairing.deployers.gcp.gcpserving import GCPServingDeployer

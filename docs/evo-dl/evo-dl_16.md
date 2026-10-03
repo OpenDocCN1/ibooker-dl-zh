@@ -1,24 +1,25 @@
-# 附录。
+
+# 附录
 
 ## A.1 访问源代码
 
 书籍的源代码位于[`github.com/cxbxmxcx/EvolutionaryDeepLearning`](https://github.com/cxbxmxcx/EvolutionaryDeepLearning)。您不需要将任何代码下载到本地机器上；所有代码都将运行在 Google Colaboratory 上，或简称 Colab。要打开您的第一个笔记本，请按照以下步骤操作：
 
-1.  访问[`github.com/cxbxmxcx/EvolutionaryDeepLearning`](https://github.com/cxbxmxcx/EvolutionaryDeepLearning)，并点击图 A.1 中显示的链接打开其中一个样本笔记本。
+1. 访问[`github.com/cxbxmxcx/EvolutionaryDeepLearning`](https://github.com/cxbxmxcx/EvolutionaryDeepLearning)，并点击图 A.1 中显示的链接打开其中一个样本笔记本。
 
-    ![APPA_F01_Lanham.png](img/APPA_F01_Lanham.png)
+   ![APPA_F01_Lanham.png](img/APPA_F01_Lanham.png)
 
-    图 A.1 在代码库视图中点击笔记本链接
+   图 A.1 在代码库视图中点击笔记本链接
 
-1.  这将打开笔记本的视图。顶部将有一个 Colab 徽章（图 A.2）。点击徽章以在 Colab 中打开笔记本。
+2. 这将打开笔记本的视图。顶部将有一个 Colab 徽章（图 A.2）。点击徽章以在 Colab 中打开笔记本。
 
-    ![APPA_F02_Lanham.png](img/APPA_F02_Lanham.png)
+   ![APPA_F02_Lanham.png](img/APPA_F02_Lanham.png)
 
-    图 A.2 样本笔记本的视图
+   图 A.2 样本笔记本的视图
 
-1.  一旦打开笔记本，您就可以跟随书中的其他练习。
+3. 一旦打开笔记本，您就可以跟随书中的其他练习。
 
-Google Colab Pro
+### Google Colab Pro
 
 多年来，Colab 已经从最初的一个优秀的免费 Python 计算平台，转变为一个更具商业驱动力的平台。尽管它仍然是一个优秀的平台，但对于免费用户来说，现在对 GPU 资源的访问已经受限。因此，如果你发现自己大量使用 Colab，购买 Colab Pro 许可证可能是有益的。
 

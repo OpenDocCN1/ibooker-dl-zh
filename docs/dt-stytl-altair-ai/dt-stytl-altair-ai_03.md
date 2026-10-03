@@ -1,12 +1,11 @@
-# 第三章：. 审查 Altair 的基本概念
 
-### 本章涵盖
+# 第三章：审查 Altair 的基本概念
 
-+   Vega 和 Vega-Lite
+## 本章涵盖
 
-+   Altair 图表的基本组件
-
-+   一个相关的案例研究
++ Vega 和 Vega-Lite
++ Altair 图表的基本组件
++ 一个相关的案例研究
 
 初看之下，似乎在介绍 Altair（第二章）如何运行数据故事之前，先讲解 Altair 的基础知识（第三章）是不合常理的。原因在于，现在你对 Altair 的工作原理有了基本的了解，你就可以开始深入了解所有细节了。如果你一开始就读了这一章，你可能会感到无聊并跳过它。相反，现在，你已经准备好平静地阅读它了。在本章中，我们将回顾 Vega 和 Vega-Lite 的基本概念，这些是 Altair 所构建的可视化语法的基础。然后，我们将重点关注 Altair 的主要组件：编码、标记、条件、复合图表和交互性。在章节的最后部分，我们将实现一个实际案例。
 
@@ -20,7 +19,7 @@ Vega 和 Vega-Lite 提供了创建交互式可视化的声明性语言。在学�
 
 *Vega*是一种通过在 JSON 格式中编写代码来定义图表的视觉方面和交互功能的可视化语法。Vega 建立在 D3.js（[`d3js.org/`](https://d3js.org/)）之上，这是一个非常流行的 JavaScript 库，用于数据可视化。使用 Vega，你可以生成基于 Web 的视图，利用 HTML5 Canvas 或 SVG 来显示生成的图表。HTML5 Canvas 是一种基于位图的绘图技术，它使你能够在 Web 上渲染动态图形和动画。SVG 是一种基于矢量的图形格式，用于构建可缩放和分辨率无关的图形。
 
-Vega JSON 文件包含图表视觉外观和交互行为的规范。列表 3.1 展示了 JSON 规范的基本结构。为了测试，您可以使用 Vega 编辑器（[`vega.github.io/editor/#/`](https://vega.github.io/editor/#/)) 来渲染 Vega 生成的图表。在本节中，我们将逐步生成一个基本的 Vega 线形图表。
+Vega JSON 文件包含图表视觉外观和交互行为的规范。列表 3.1 展示了 JSON 规范的基本结构。为了测试，您可以使用 Vega 编辑器（[`vega.github.io/editor/#/`](https://vega.github.io/editor/#/)）来渲染 Vega 生成的图表。在本节中，我们将逐步生成一个基本的 Vega 线形图表。
 
 ##### 列表 3.1 Vega JSON 文件的基本结构
 
@@ -41,7 +40,7 @@ Vega JSON 文件包含图表视觉外观和交互行为的规范。列表 3.1 �
 
 注意：首先，定义模式版本（`$schema`）、`description`、图表的 `width` 和 `height`。然后，指定主要部分（`signals`、`data` 等）。列表 3.1 仅显示 Vega JSON 文件的结构，如果粘贴到 Vega 编辑器中，则不会生成任何图表。
 
-Vega JSON 文件的主要部分包括 `data`、`scales`、`axes`、`marks` 和 `signals`。在本节的剩余部分，我们将描述 Vega 规范的主要部分的概述。有关更多详细信息，请参阅 Vega 官方文档。([`vega.github.io/vega/docs/`](https://vega.github.io/vega/docs/))。
+Vega JSON 文件的主要部分包括 `data`、`scales`、`axes`、`marks` 和 `signals`。在本节的剩余部分，我们将描述 Vega 规范的主要部分的概述。有关更多详细信息，请参阅 Vega 官方文档（[`vega.github.io/vega/docs/`](https://vega.github.io/vega/docs/)）。
 
 #### 数据
 
@@ -166,9 +165,9 @@ Vega JSON 文件的主要部分包括 `data`、`scales`、`axes`、`marks` 和 `
       }],
 ```
 
-注意：在 `marks` 部分下，指定与信号关联的处理程序。当与信号关联的指定事件（如鼠标悬停）发生时，将触发此处理程序。在 `marks` 部分的 `update` 属性中定义了一个处理程序。此处理程序检查信号是否对应于鼠标悬停事件（例如，`changeColor` `===` `datum`）。如果条件满足（即鼠标位于线上），则处理程序执行操作，例如相应地更改线条颜色。有关更多详细信息，请参阅 Vega 文档（[`vega.github.io/vega/docs/signals/`](https://vega.github.io/vega/docs/signals/))。
+注意：在 `marks` 部分下，指定与信号关联的处理程序。当与信号关联的指定事件（如鼠标悬停）发生时，将触发此处理程序。在 `marks` 部分的 `update` 属性中定义了一个处理程序。此处理程序检查信号是否对应于鼠标悬停事件（例如，`changeColor` `===` `datum`）。如果条件满足（即鼠标位于线上），则处理程序执行操作，例如相应地更改线条颜色。有关更多详细信息，请参阅 Vega 文档（[`vega.github.io/vega/docs/signals/`](https://vega.github.io/vega/docs/signals/)）。
 
-图 3.1 展示了生成的折线图。您可以在书籍的 GitHub 仓库 03/vega/json/line-chart.json 下找到完整的示例。
+图 3.1 展示了生成的折线图。您可以在书籍的 GitHub 仓库 `03/vega/json/line-chart.json` 下找到完整的示例。
 
 ![图](img/3-1.png)
 
@@ -178,25 +177,21 @@ Vega JSON 文件的主要部分包括 `data`、`scales`、`axes`、`marks` 和 `
 
 按照以下方式在 Vega 中绘制折线图：
 
-1.  从以下 URL 加载数据：[`mng.bz/ZEyZ`](https://mng.bz/ZEyZ)。
+1. 从以下 URL 加载数据：[`mng.bz/ZEyZ`](https://mng.bz/ZEyZ)。
+2. 在线上添加点。为此，添加一个新的标记（除了线之外），使用 `symbol` 作为类型。
 
-1.  在线上添加点。为此，添加一个新的标记（除了线之外），使用 `symbol` 作为类型。
-
-您可以在书籍的 GitHub 仓库中找到这个练习的解决方案，位于 03/vega/json/spec.json。
+您可以在书籍的 GitHub 仓库中找到这个练习的解决方案，位于 `03/vega/json/spec.json`。
 
 #### 练习 2
 
 按照以下方式在 Vega 中绘制柱状图：
 
-1.  从以下 URL 加载数据：[`mng.bz/Ad6W`](https://mng.bz/Ad6W)。
+1. 从以下 URL 加载数据：[`mng.bz/Ad6W`](https://mng.bz/Ad6W)。
+2. 将 `band` 作为 `X` 尺度的类型。
+3. 使用 `rect` 作为 `mark` 类型。
+4. 可选地，设置一个在鼠标悬停时改变条形图颜色的信号。
 
-1.  将 `band` 作为 `X` 尺度的类型。
-
-1.  使用 `rect` 作为 `mark` 类型。
-
-1.  可选地，设置一个在鼠标悬停时改变条形图颜色的信号。
-
-您可以在书籍的 GitHub 仓库中找到这个练习的解决方案，位于 03/vega/json/spec2.json。现在您已经了解了 Vega 的基本概念，让我们继续下一步：Vega-Lite。
+您可以在书籍的 GitHub 仓库中找到这个练习的解决方案，位于 `03/vega/json/spec2.json`。现在您已经了解了 Vega 的基本概念，让我们继续下一步：Vega-Lite。
 
 ### 3.1.2 Vega-Lite
 
@@ -285,9 +280,11 @@ Vega-Lite 通过使用 `params` 简化了管理信号的方式。你不需要定
 
 注意：使用 `params` 关键字指定每个信号的名字。对于每个 `param`，指定名字和如何触发它。类型可以设置为 `point`，以在图表或区间中选择一个单独的点。
 
-在定义了 `params` 之后，你可以在标记中使用它们，如以下列表中指定。你可以在本书的 GitHub 仓库 03/vega-lite/json/line-chart.json 下找到完整的示例。
+在定义了 `params` 之后，你可以在标记中使用它们，如以下列表中指定。你可以在本书的 GitHub 仓库 `03/vega-lite/json/line-chart.json` 下找到完整的示例。
 
 ##### 列表 3.13 在 Vega-Lite 中如何使用 `params` 在 `mark` 中
+
+
 
 ```py
 "stroke": {
@@ -311,7 +308,7 @@ Vega-Lite 通过使用 `params` 简化了管理信号的方式。你不需要定
 
 #### 练习 3
 
-将练习 1 的结果转换为 Vega-Lite。该练习的解决方案在本书的 GitHub 仓库的 03/vega-lite/json/spec.json 下提供。
+将练习 1 的结果转换为 Vega-Lite。该练习的解决方案在本书的 GitHub 仓库的 `03/vega-lite/json/spec.json` 下提供。
 
 现在你已经了解了 Vega 和 Vega-Lite 的基本概念，让我们看看如何使用 HTML 和 JavaScript 渲染 Vega/Vega-Lite 可视化。如果你不熟悉 HTML 和 JavaScript，你可以跳过下一节，直接进入 3.2 节。
 
@@ -322,9 +319,7 @@ Vega 和 Vega-Lite 都是 JSON 对象，需要渲染器才能显示，例如外�
 要渲染 Vega 或 Vega-Lite JSON，请将以下 JavaScript 库导入到你的 HTML 文件中：
 
 +   [`cdn.jsdelivr.net/npm/vega@5.22.1`](https://cdn.jsdelivr.net/npm/vega@5.22.1)
-
 +   [`cdn.jsdelivr.net/npm/vega-lite@5.6.0`](https://cdn.jsdelivr.net/npm/vega-lite@5.6.0)
-
 +   [`cdn.jsdelivr.net/npm/vega-embed@6.21.0`](https://cdn.jsdelivr.net/npm/vega-embed@6.21.0)
 
 库的版本可能不同。在我们的例子中，我们导入 Vega 的 5.22.1 版本，Vega-Lite 的 5.6.0 版本，以及 Vega-Embed 的 6.21.0 版本，就像我们通常导入 JavaScript 库一样。然后，你可以将列表 3.11 中描述的代码包装起来，以渲染你的 Vega/Vega-Lite JSON 文件。
@@ -364,7 +359,7 @@ Vega 和 Vega-Lite 都是 JSON 对象，需要渲染器才能显示，例如外�
 
 注意：首先，在头部部分导入 Vega 和 Vega-Lite 库。然后，创建一个将包含图表的 `div`。最后，构建图表。使用外部 JSON 文件来定义图表规范。在 `script` 主体中，指定导入您的 Vega JSON 文件的 JavaScript 代码。打开一个新的 `XMLHttpRequest()` 来加载 JSON 文件，然后使用 `vegaEmbed()` 函数来渲染 JSON。请注意，您必须向请求对象提供一个有效的外部 URL。您不能使用本地 JSON 文件。
 
-您可以在本书 GitHub 仓库的 03/vega ([`mng.bz/x2NB`](https://mng.bz/x2NB)) 和 03/vega-lite ([`mng.bz/Vxj5`](https://mng.bz/Vxj5)) 部分找到完整的示例和其他示例。现在您已经了解了 Vega 和 Vega-Lite 的基本概念，让我们转向下一个主题：Altair 图表的基本组件。
+您可以在本书 GitHub 仓库的 `03/vega` ([`mng.bz/x2NB`](https://mng.bz/x2NB)) 和 `03/vega-lite` ([`mng.bz/Vxj5`](https://mng.bz/Vxj5)) 部分找到完整的示例和其他示例。现在您已经了解了 Vega 和 Vega-Lite 的基本概念，让我们转向下一个主题：Altair 图表的基本组件。
 
 ## 3.2 Altair 图表的基本组件
 
@@ -373,27 +368,20 @@ Vega 和 Vega-Lite 都是 JSON 对象，需要渲染器才能显示，例如外�
 基本的 Altair 组件包括以下内容：
 
 +   *编码* — 这些定义了数据如何映射到视觉属性，例如颜色、形状和大小。
-
 +   *标记* — 这些指的是代表数据的视觉元素，例如条形、点和线条。
-
 +   *条件* — 这些使我们能够通过指定何时使用某些编码或标记的规则来创建更复杂的可视化。
-
 +   *复合图表* — 这些将多个视觉元素组合起来，创建更复杂且信息丰富的可视化。
-
 +   *交互性* — 这使我们能够与可视化交互并探索数据。
-
 +   *配置* — 这些定义了复合图表的一般属性。
 
-让我们分别分析每个组件，从第一个开始：编码。您可以在本书 GitHub 仓库的 03/altair 目录中找到一些示例代码（[`mng.bz/rVXX`](https://mng.bz/rVXX)）。
+让我们分别分析每个组件，从第一个开始：编码。您可以在本书 GitHub 仓库的 `03/altair` 目录中找到一些示例代码（[`mng.bz/rVXX`](https://mng.bz/rVXX)）。
 
 ### 3.2.1 编码
 
 Altair 使用 *编码* 来指示数据在哪里显示。编码定义了数据集中某一列与编码通道之间的映射。每个编码通道对应于 DataFrame 的一个特定列，可以映射到图表的视觉特征。编码过程确定根据所选通道类型在哪里显示数据。Altair 识别了以下几种关键类型的通道，包括以下内容：
 
 +   *位置* — 这指定了图表中数据的位置。
-
 +   *标记属性* — 这决定了图表的外观，如颜色、大小和形状。
-
 +   *文本和工具提示* — 这些为图形提供补充注释。
 
 表 3.1 提供了主要编码的简要描述。更多详细信息，请参阅 Altair 文档 ([`mng.bz/d6RQ`](https://mng.bz/d6RQ)).
@@ -420,19 +408,14 @@ Altair 使用 *编码* 来指示数据在哪里显示。编码定义了数据集
 数据集中的每一列都与一个数据类型相关联，这定义了变量可以存储的数据类型。数据类型包括原始类型，如整数和字符，以及复杂类型，如数组和对象。Altair 支持以下数据类型：
 
 +   *名义* — 可以分为不同类别，但没有特定顺序的数据，例如数据集中不同水果的名称
-
 +   *有序* — 可以分为具有内在顺序的不同类别，例如一周中的日子，其中日子的顺序至关重要
-
 +   *定量* — 数值和连续数据，例如产品销售数量
-
 +   *时间* — 带有时间（即日期或时间）成分的数据，例如销售发生的日期
-
 +   *Geojson* — 带有地理成分的数据，例如经纬度坐标
 
 当我们在 Altair 中创建图表时，必须将图表中涉及的每一列与数据类型关联起来。Altair 定义了两种指定数据类型的方式：
 
-+   通道的类型属性，例如 `x=alt.X('category', `type= 'quantitative')`，其中 `category` 是列名
-
++   通道的类型属性，例如 `x=alt.X('category', type= 'quantitative')`，其中 `category` 是列名
 +   在列名之后，冒号 `:` 符号后面的缩写代码，`x=alt.X ('category:Q')`
 
 现在您已经学习了编码的概念，让我们继续学习下一个概念，标记。
@@ -463,12 +446,10 @@ Altair 使用 *编码* 来指示数据在哪里显示。编码定义了数据集
 Altair 提供了多种在可视化中创建 *条件* 的方式，这使您可以根据特定标准自定义和控制图表的外观。在 Altair 中创建条件的一种常见方法是在图表的编码通道中使用 *if-else* *语句*。要在 Altair 中定义一个条件，请使用 `alt.condition()` 方法，该方法接受三个参数：
 
 +   条件
-
 +   当条件为真时使用的值
-
 +   当条件为假时使用的值
 
-例如，如果我们想根据特定条件改变条形图的颜色，请编写以下列表中的代码和书中 03/altair/condition.py 的 GitHub 仓库。最终的图表在 03/altair/condition.xhtml 中渲染。
+例如，如果我们想根据特定条件改变条形图的颜色，请编写以下列表中的代码和书中 `03/altair/condition.py` 的 GitHub 仓库。最终的图表在 `03/altair/condition.xhtml` 中渲染。
 
 ##### 列表 3.15 使用 `alt.condition()` 方法
 
@@ -498,13 +479,13 @@ chart.save('chart.xhtml')
 
 #2 条件为假时使用的颜色
 
-注意：示例中的条件检查区域是否为欧洲。如果条件为真，条形图将变为红色，如果条件为假，条形图将变为蓝色。使用 datum 变量可以直接在条件中访问 DataFrame 列名。
+注意：示例中的条件检查区域是否为欧洲。如果条件为真，条形图将变为红色，如果条件为假，条形图将变为蓝色。使用 `datum` 变量可以直接在条件中访问 DataFrame 列名。
 
 除了使用 `alt.condition()` 方法中的 if-else 语句和类型检查函数外，Altair 还提供了两种在可视化中创建条件的方法：*转换* 和 *选择*。您将在第五章中看到转换，在第六章中看到选择。您可以使用转换和选择来构建相互关联的图表，这些图表可以同步更新。
 
 ### 3.2.4 复合图表
 
-*复合图表* 允许您在单个图表中组合可视化。Altair 支持以下类型的复合图表：分层、水平连接、垂直连接和重复图表。为了解释每种类型的复合图表如何工作，请考虑以下列表和 03/altair/layering.py 中描述的两个图表。
+*复合图表* 允许您在单个图表中组合可视化。Altair 支持以下类型的复合图表：分层、水平连接、垂直连接和重复图表。为了解释每种类型的复合图表如何工作，请考虑以下列表和 `03/altair/layering.py` 中描述的两个图表。
 
 ##### 列表 3.16 在 Altair 中构建两个图表
 
@@ -542,7 +523,7 @@ chart2 = base.mark_line(
 
 #### 水平连接
 
-*水平连接* 允许您水平连接图表，如图 3.3 所示。在 Altair 中，使用 `alt.hconcat(chart1,chart2)` 函数分层两个图表，或者使用 `|` 操作符。请参阅 03/altair/hconcat.py 以获取完整示例。
+*水平连接* 允许您水平连接图表，如图 3.3 所示。在 Altair 中，使用 `alt.hconcat(chart1,chart2)` 函数分层两个图表，或者使用 `|` 操作符。请参阅 `03/altair/hconcat.py` 以获取完整示例。
 
 ![figure](img/3-3.png)
 
@@ -550,7 +531,7 @@ chart2 = base.mark_line(
 
 #### 垂直连接
 
-*垂直连接* 允许您垂直连接图表，如图 3.4 所示。在 Altair 中，使用 `alt.vconcat(chart1,chart2)` 函数分层两个图表，或者使用 `&` 操作符。请参阅 03/altair/vconcat.py 以获取完整示例。
+*垂直连接* 允许您垂直连接图表，如图 3.4 所示。在 Altair 中，使用 `alt.vconcat(chart1,chart2)` 函数分层两个图表，或者使用 `&` 操作符。请参阅 `03/altair/vconcat.py` 以获取完整示例。
 
 ![figure](img/3-4.png)
 
@@ -560,9 +541,11 @@ chart2 = base.mark_line(
 
 *重复图表* 在单个可视化中显示类似的数据视图。使用重复图表，您可以通过重复使用不同的数据子集或更改视觉编码来创建一组图表，每个图表显示数据的一个子集。
 
-使用 `repeat()` 函数在 Altair 中创建重复的图表。此函数接受重复的字段列表，如以下列表和 03/altair/repeat.py 中所示。
+使用 `repeat()` 函数在 Altair 中创建重复的图表。此函数接受重复的字段列表，如以下列表和 `03/altair/repeat.py` 中所示。
 
 ##### 列表 3.17 在 Altair 中构建重复图表
+
+
 
 ```py
 import pandas as pd
@@ -594,9 +577,9 @@ chart = alt.Chart(df).mark_circle(color='#80C11E').encode(
 chart.save('repeat.xhtml')
 ```
 
-注意：首先，创建 pandas DataFrame。然后，提取要重复的字段列表并将它们存储在 `fields` 变量中。接下来，定义 `repeat()` 方法，指定要重复的行和列。最后，使用刚刚定义的 `row` 和 `column` 变量作为图表编码的变量。
+注意：首先，创建 `pandas` `DataFrame`。然后，提取要重复的字段列表并将它们存储在`fields`变量中。接下来，定义`repeat()`方法，指定要重复的行和列。最后，使用刚刚定义的`row`和`column`变量作为图表编码的变量。
 
-图 3.5 显示了列表 3.17 的输出。Altair 已构建了 25 个图表，每个图表对应于 `fields` 变量中指定的 DataFrame 列的每个组合。
+图 3.5 显示了列表 3.17 的输出。`Altair`已构建了 25 个图表，每个图表对应于`fields`变量中指定的`DataFrame`列的每个组合。
 
 ![图](img/3-5.png)
 
@@ -604,7 +587,7 @@ chart.save('repeat.xhtml')
 
 ### 3.2.5 交互性
 
-*交互性* 指的是通过用户输入（如悬停在数据点上、点击图例或拖动滑块）来操作可视化的能力。在 Altair 中，使用 `interactive()` 方法来启用缩放、平移和数据点悬停以显示工具提示的功能。列表 3.18 展示了如何使图表交互的示例，图 3.6 显示了生成的图表。您也可以在 03/altair/interactive.py 下找到完整的示例。
+*交互性*指的是通过用户输入（如悬停在数据点上、点击图例或拖动滑块）来操作可视化的能力。在`Altair`中，使用`interactive()`方法来启用缩放、平移和数据点悬停以显示工具提示的功能。列表 3.18 展示了如何使图表交互的示例，图 3.6 显示了生成的图表。您也可以在`03/altair/interactive.py`下找到完整的示例。
 
 ##### 列表 3.18 在 Altair 中构建交互式图表
 
@@ -629,7 +612,7 @@ chart = alt.Chart(df).mark_bar(color='#636466').encode(
 chart.save('interactive.xhtml')
 ```
 
-注意：首先，创建 pandas DataFrame。然后，构建 Altair 图表，在末尾附加 `interactive()` 方法。另外，添加一个工具提示，它接收要显示的 DataFrame 列的列表。
+注意：首先，创建`pandas` `DataFrame`。然后，构建`Altair`图表，在末尾附加`interactive()`方法。另外，添加一个工具提示，它接收要显示的`DataFrame`列的列表。
 
 ![图](img/3-6.png)
 
@@ -637,7 +620,7 @@ chart.save('interactive.xhtml')
 
 ### 3.2.6 配置
 
-要配置单个图表的基本属性，请使用 `properties()` 方法。对于更复杂的属性和配置复合图表，您必须使用 *全局配置*。Altair 支持许多全局配置。在本节中，我们将描述轴、标题和视图。我们将等到书中稍后需要它们时再描述其他配置。
+要配置单个图表的基本属性，请使用`properties()`方法。对于更复杂的属性和配置复合图表，您必须使用*全局配置*。`Altair`支持许多全局配置。在本节中，我们将描述轴、标题和视图。我们将等到书中稍后需要它们时再描述其他配置。
 
 为了展示配置如何工作，我们将从图 3.7 中描述的图表开始，并通过以下列表中的代码生成。
 
@@ -668,7 +651,7 @@ chart.save('chart.xhtml')
 
 #### 配置轴
 
-要在全局级别配置轴，Altair 支持三种方法：
+要在全局级别配置轴，`Altair`支持三种方法：
 
 +   `configure_axis()`—配置两个轴。
 
@@ -676,7 +659,7 @@ chart.save('chart.xhtml')
 
 +   `configure_axisY()`—配置 y 轴。
 
-配置轴允许您自定义多个属性，例如标签、刻度和比例。以下列表显示了一个示例，您也可以在 03/altair/configure-axis.py 下找到。
+配置轴允许您自定义多个属性，例如标签、刻度和比例。以下列表显示了一个示例，您也可以在`03/altair/configure-axis.py`下找到。
 
 ##### 列表 3.20 配置轴
 
@@ -696,19 +679,19 @@ chart.save('configure-axis.xhtml')
 
 #3 设置轴标签的字体大小
 
-注意：使用 `configure_axis()` 来配置轴的标签和标题。作为替代，使用 `configure_axisX()` 来配置 x 轴，而 `configure_axisY()` 来配置 y 轴。
+注意：使用`configure_axis()`来配置轴的标签和标题。作为替代，使用`configure_axisX()`来配置 x 轴，而`configure_axisY()`来配置 y 轴。
 
-图 3.8 显示了使用 `configure_axis()`（在左侧）和不使用 `configure_axis()`（在右侧）时的布局差异。
+图 3.8 显示了使用`configure_axis()`（在左侧）和不使用`configure_axis()`（在右侧）时的布局差异。
 
 ![figure](img/3-8.png)
 
-##### 图 3.8 使用 `configure_axis()` 和不使用 `configure_axis()` 的布局之间的差异
+##### 图 3.8 使用`configure_axis()`和不使用`configure_axis()`的布局之间的差异
 
 #### 配置标题
 
-使用 `configure_title()` 方法自定义图表的标题属性，如颜色、字体大小和字体族。以下列表显示了如何使用 `configure_title()` 方法的示例，你还可以在 03/altair/configure-title.py 下找到。
+使用`configure_title()`方法自定义图表的标题属性，如颜色、字体大小和字体族。以下列表显示了如何使用`configure_title()`方法的示例，你还可以在`03/altair/configure-title.py`下找到。
 
-##### 列表 3.21 配置 `title`
+##### 列表 3.21 配置`title`
 
 ```py
 chart = chart.configure_title(
@@ -729,19 +712,19 @@ chart.save('configure-title.xhtml')
 
 #4 设置标题锚点位置
 
-注意：使用 `configure_title()` 配置标题属性。锚点必须是 `None`、`start`、`middle` 或 `end`。
+注意：使用`configure_title()`配置标题属性。锚点必须是`None`、`start`、`middle`或`end`。
 
-图 3.9 显示了使用 `configure_title()`（左侧）和不使用 `configure_title()`（右侧）的布局之间的差异。
+图 3.9 显示了使用`configure_title()`（左侧）和不使用`configure_title()`（右侧）的布局之间的差异。
 
 ![figure](img/3-9.png)
 
-##### 图 3.9 使用 `configure_title()` 和不使用 `configure_title()` 的布局之间的差异
+##### 图 3.9 使用`configure_title()`和不使用`configure_title()`的布局之间的差异
 
 #### 配置视图
 
-使用 `configure_view()` 方法自定义图表的一般视图。以下列表显示了 `configure_view()` 方法的使用示例，你还可以在 03/altair/configure-view.py 下找到。
+使用`configure_view()`方法自定义图表的一般视图。以下列表显示了`configure_view()`方法的使用示例，你还可以在`03/altair/configure-view.py`下找到。
 
-##### 列表 3.22 配置 `view`
+##### 列表 3.22 配置`view`
 
 ```py
 chart = chart.configure_view(
@@ -759,26 +742,30 @@ chart.save('configure-view.xhtml')
 
 #3 设置背景颜色
 
-注意：使用 `configure_view()` 配置图表的一般视图。
+注意：使用`configure_view()`配置图表的一般视图。
 
-图 3.10 显示了使用 `configure_view()`（左侧）和不使用 `configure_view()`（右侧）的布局之间的差异。
+图 3.10 显示了使用`configure_view()`（左侧）和不使用`configure_view()`（右侧）的布局之间的差异。
 
 ![figure](img/3-10.png)
 
-##### 图 3.10 使用 `configure_view()` 和不使用 `configure_view()` 的布局之间的差异
+##### 图 3.10 使用`configure_view()`和不使用`configure_view()`的布局之间的差异
 
-现在你已经学习了 Altair 图表的基本组件，让我们继续下一步：实现一个案例研究。
+现在你已经学习了`Altair`图表的基本组件，让我们继续下一步：实现一个案例研究。
 
 ## 3.3 案例研究
 
-让我们假设你在全球人口分析中心（GDAC）工作，该中心希望研究北美的人口增长。为此研究，你将使用世界银行的 _population_ 数据集（在 CC BY-4.0 许可下发布，[`data.worldbank.org/indicator/SP.POP.TOTL`](https://data.worldbank.org/indicator/SP.POP.TOTL)）；你可以在本书的 GitHub 仓库的 CaseStudies/population/source/population.csv 中找到数据集的清洗版本。该数据集包含从 1960 年到 2021 年所有国家的数据，如表 3.3 所示。国家名称列还包含大洲。你可以在本书的 GitHub 仓库的 CaseStudies/population/population.ipynb 下找到此案例研究的完整代码。在这种情况下，只需执行包含图表变量的单元格即可可视化 Altair 图表。
+让我们假设你在全球人口分析中心（GDAC）工作，该中心希望研究北美的人口增长。为此研究，你将使用世界银行的`population`数据集（在 CC BY-4.0 许可下发布，[`data.worldbank.org/indicator/SP.POP.TOTL`](https://data.worldbank.org/indicator/SP.POP.TOTL)）；你可以在本书的 GitHub 仓库的`CaseStudies/population/source/population.csv`中找到数据集的清洗版本。该数据集包含从 1960 年到 2021 年所有国家的数据，如表 3.3 所示。国家名称列还包含大洲。你可以在本书的 GitHub 仓库的`CaseStudies/population/population.ipynb`下找到此案例研究的完整代码。在这种情况下，只需执行包含图表变量的单元格即可可视化`Altair`图表。
 
 ##### 表 3.3 人口数据集
 
 | 国家名称 | 1960 | … | 2021 |
+
 | --- | --- | --- | --- |
+
 | 阿鲁巴 | 54,608 |  | 106,537 |
+
 | … |  |  |  |
+
 | 津巴布韦 | 3,806,310 |  | 15,993,524 |
 
 你首先在以下列表中绘制一个原始图表，显示从 1960 年到 2021 年所有国家和大陆的趋势线。国家名称列很脏，所以生成的图表非常混乱，如图 3.11 所示。
@@ -805,13 +792,13 @@ chart = alt.Chart(df).mark_line().encode(
 chart
 ```
 
-#1 使用此 Altair 函数处理超过 5,000 行的数据集
+#1 使用此`Altair`函数处理超过 5,000 行的数据集
 
 #2 将数据集展开成非透视表形式
 
 #3 绘制图表
 
-注意：使用 `mark_line()` 绘制图表。要绘制不同的国家，使用 `color` 通道。
+注意：使用`mark_line()`绘制图表。要绘制不同的国家，使用`color`通道。
 
 ![图表](img/3-11.png)
 
@@ -821,7 +808,7 @@ chart
 
 ### 3.3.1 从数据到信息
 
-将数据转化为信息涉及从数据中提取洞察力。从图表的角度来看，这意味着使图表可读且易于理解。首先按大陆分组国家。数据集已经包含大陆的值。使用 pandas DataFrame 提供的 `unique()` 方法列出国家。有关 `unique()` 方法的更多详细信息，请参阅附录 B。请注意，国家列表中也包含大陆，因此我们可以构建一个大陆列表并基于该列表过滤 DataFrame。然后，绘制生成的图表。
+将数据转化为信息涉及从数据中提取洞察力。从图表的角度来看，这意味着使图表可读且易于理解。首先按大陆分组国家。数据集已经包含大陆的值。使用`pandas` `DataFrame`提供的`unique()`方法列出国家。有关`unique()`方法的更多详细信息，请参阅附录 B。请注意，国家列表中也包含大陆，因此我们可以构建一个大陆列表并基于该列表过滤`DataFrame`。然后，绘制生成的图表。
 
 ##### 列表 3.24 清理图表
 
@@ -849,7 +836,7 @@ chart
 
 #1 定义大陆列表
 
-#2 根据列表过滤 DataFrame
+#2 根据列表过滤`DataFrame`
 
 #3 绘制图表
 
@@ -882,13 +869,15 @@ df_melt = df_grouped.melt(id_vars='Year', var_name='Continent', value_name='Popu
 
 #2 计算掩码外大陆的平均值
 
-#3 创建一个新的包含北美和其他大陆平均值的 DataFrame
+#3 创建一个新的包含北美和其他大陆平均值的`DataFrame`
 
 注意：专注于北美，并计算其他大陆的平均值。
 
 然后，绘制图表。
 
 ##### 列表 3.26 绘制图表
+
+
 
 ```py
 colors=['#80C11E', 'grey']
@@ -932,7 +921,7 @@ chart
 
 #5 禁用网格
 
-注意：为了格式化 x 轴标签，使用 `format` 参数。使用 `.0f` 来仅显示整数部分。同时，使用 `tickMinStep` 参数来设置两个标签之间的距离。示例中将值设置为 `10`，因此标记了十年。为了格式化 y 轴标签，将格式参数设置为 `.2s`，使用两位有效数字的科学记数法。
+注意：为了格式化 x 轴标签，使用`format`参数。使用`.0f`来仅显示整数部分。同时，使用`tickMinStep`参数来设置两个标签之间的距离。示例中将值设置为`10`，因此标记了十年。为了格式化 y 轴标签，将格式参数设置为`.2s`，使用两位有效数字的科学记数法。
 
 图 3.13 显示了结果图表。我们目前省略了图例，稍后会添加。图表更清晰；然而，观众需要做一些计算才能理解两条线之间的差异。
 
@@ -956,7 +945,7 @@ for continent in continents:
 
 注意：计算 1960 年的基线值，然后对每个大陆，计算每年与基线之间的差异。
 
-计算完差异后，绘制图表。代码与列表 3.23 中的类似。只需更改 y 轴列到 `Diff`。图 3.14 显示了结果图表。
+计算完差异后，绘制图表。代码与列表 3.23 中的类似。只需更改 y 轴列到`Diff`。图 3.14 显示了结果图表。
 
 ![图表](img/3-14.png)
 
@@ -987,7 +976,7 @@ text = alt.Chart(df_text).mark_text(fontSize=14, align='left').encode(
 
 #2 设置 y 位置
 
-注意：使用 `mark_text()` 来设置线条标签。我们通过在每个线条旁边放置文本注释来标记线条。我们本来可以使用图例来标记线条，但正如 Cole Nussbaumer Knaflic 在她的书《用数据讲故事：商业专业人士的数据可视化指南》（John Wiley & Sons, 2015）中所说，使用文本注释可以使内容更清晰。要设置 y 文本位置，使用每条线条最后一个点的坐标。对于 x 轴，相反，稍微增加每条线条最后一个点的坐标（例如，示例中的 2023，而最后一个点是 2021）。
+注意：使用`mark_text()`来设置线条标签。我们通过在每个线条旁边放置文本注释来标记线条。我们本来可以使用图例来标记线条，但正如 Cole Nussbaumer Knaflic 在她的书《用数据讲故事：商业专业人士的数据可视化指南》（John Wiley & Sons, 2015）中所说，使用文本注释可以使内容更清晰。要设置 y 文本位置，使用每条线条最后一个点的坐标。对于 x 轴，相反，稍微增加每条线条最后一个点的坐标（例如，示例中的 2023，而最后一个点是 2021）。
 
 现在，将文本标记和原始图表结合起来。
 
@@ -1008,7 +997,7 @@ total = (chart + text).configure_axis(
 total
 ```
 
-注意：使用 `+` 来合并两层。然后，使用 `configure_axis()`、`configure_title()` 和 `configure_view()` 来设置全局图表配置。
+注意：使用`+`来合并两层。然后，使用`configure_axis()`、`configure_title()`和`configure_view()`来设置全局图表配置。
 
 图 3.15 展示了信息步骤结束时的结果图表。
 
@@ -1231,12 +1220,14 @@ total.show()
 
 +   Kats, P. 和 Katz, D. (2019). *通过构建数据科学应用学习 Python*. Packt Publications.
 
-+   Meeks, E. 和 Dufour, A.M. (2024). *D3.js 实战*. Manning Publications.
 
-+   *Vega：可视化语法*. (n.d.). [`vega.github.io/vega/`](https://vega.github.io/vega/).
 
-+   *Vega-Lite：交互式图形语法*. (n.d.). [`vega.github.io/vega-lite/`](https://vega.github.io/vega-lite/).
++ Meeks, E. 和 Dufour, A.M. (2024). *D3.js 实战*. Manning Publications.
+
++ *Vega：可视化语法*. (n.d.). [`vega.github.io/vega/`](https://vega.github.io/vega/).
+
++ *Vega-Lite：交互式图形语法*. (n.d.). [`vega.github.io/vega-lite/`](https://vega.github.io/vega-lite/).
 
 ### 其他
 
-+   Knaflic, C. N. (2015). 数据讲故事：商业专业人士的数据可视化指南. 约翰·威利与儿子公司。
++ Knaflic, C. N. (2015). 数据讲故事：商业专业人士的数据可视化指南. 约翰·威利与儿子公司。

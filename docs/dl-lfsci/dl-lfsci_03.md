@@ -1,8 +1,9 @@
-# 第三章：使用 DeepChem 进行机器学习
+
+### 第三章：使用 DeepChem 进行机器学习
 
 本章简要介绍了使用 DeepChem 进行机器学习的内容，DeepChem 是建立在 TensorFlow 平台之上的库，旨在促进在生命科学领域中使用深度学习。DeepChem 提供了大量适用于生命科学应用的模型、算法和数据集。在本书的其余部分，我们将使用 DeepChem 来进行案例研究。
 
-# 为什么不直接使用 Keras、TensorFlow 或 PyTorch？
+#### 为什么不直接使用 Keras、TensorFlow 或 PyTorch？
 
 这是一个常见问题。简短的答案是，这些软件包的开发人员专注于支持对他们的核心用户有用的某些类型的用例。例如，对于图像处理、文本处理和语音分析有广泛的支持。但是在这些库中通常没有类似的支持来处理分子、基因数据集或显微镜数据集。DeepChem 的目标是为这些应用程序提供一流的支持。这意味着添加自定义的深度学习原语、支持所需的文件类型，以及为这些用例提供广泛的教程和文档。
 
@@ -10,13 +11,13 @@ DeepChem 还设计为与 TensorFlow 生态系统很好地集成，因此您应�
 
 在本章的其余部分，我们将假设您已经在您的计算机上安装了 DeepChem，并且准备运行示例。如果您尚未安装 DeepChem，不要担心。只需访问[DeepChem 网站](https://deepchem.io/)，并按照您系统的安装说明进行操作。
 
-# DeepChem 对 Windows 的支持
+#### DeepChem 对 Windows 的支持
 
 目前，DeepChem 不支持在 Windows 上安装。如果可能的话，我们建议您使用 Mac 或 Linux 工作站来完成本书中的示例。我们从用户那里得知，DeepChem 可以在更现代的 Windows 发行版中的 Windows 子系统 Linux（WSL）上运行。
 
 如果您无法获得 Mac 或 Linux 机器的访问权限，或者无法使用 WSL，我们很乐意帮助您获得 DeepChem 在 Windows 上的支持。请联系作者，告诉我们您遇到的具体问题，我们将尽力解决。我们希望在未来版本的书中取消这一限制，并为未来的读者提供对 Windows 的支持。
 
-# DeepChem 数据集
+#### DeepChem 数据集
 
 DeepChem 使用`Dataset`对象的基本抽象来封装用于机器学习的数据。`Dataset`包含有关一组样本的信息：输入向量`x`、目标输出向量`y`，以及可能包括每个样本表示的描述等其他信息。有不同方式存储数据的`Dataset`的子类。特别是，`NumpyDataset`对象作为 NumPy 数组的便捷包装器，并将被广泛使用。在本节中，我们将演示如何使用`NumpyDataset`进行一个简单的代码案例研究。所有这些代码都可以在交互式 Python 解释器中输入；在适当的情况下，输出将显示出来。
 
@@ -25,7 +26,6 @@ DeepChem 使用`Dataset`对象的基本抽象来封装用于机器学习的数�
 ```py
 import deepchem as dc
 import numpy as np
-
 ```
 
 让我们现在构建一些简单的 NumPy 数组：
@@ -33,7 +33,6 @@ import numpy as np
 ```py
 x = np.random.random((4, 5))
 y = np.random.random((4, 1))
-
 ```
 
 这个数据集将有四个样本。数组`x`对于每个样本有五个元素（“特征”），而`y`对于每个样本有一个元素。让我们快速查看我们抽样的实际数组（请注意，当您在本地运行此代码时，您应该期望看到不同的数字，因为您的随机种子将是不同的）：
@@ -52,14 +51,12 @@ array([[0.00631553],
    [0.69677301],
    [0.16545319],
    [0.04906014]])
-
 ```
 
 让我们现在将这些数组封装在一个`NumpyDataset`对象中：
 
 ```py
 dataset = dc.data.NumpyDataset(x, y)
-
 ```
 
 我们可以解开`dataset`对象，以获取我们存储在其中的原始数组：
@@ -76,7 +73,6 @@ In : print(dataset.y)
 [0.69677301]
 [0.16545319]
 [0.04906014]]
-
 ```
 
 请注意，这些数组与原始数组`x`和`y`相同：
@@ -87,21 +83,19 @@ Out : True
 
 In : np.array_equal(y, dataset.y)
 Out : True
-
 ```
 
-# 其他类型的数据集
+#### 其他类型的数据集
 
 DeepChem 支持其他类型的`Dataset`对象，如前所述。当处理无法完全存储在计算机内存中的大型数据集时，这些类型主要变得有用。DeepChem 还集成了使用 TensorFlow 的`tf.data`数据集加载工具的功能。我们将在需要时涉及这些更高级的库功能。
 
-# 训练一个模型来预测分子的毒性
+#### 训练一个模型来预测分子的毒性
 
 在这一部分，我们将演示如何使用 DeepChem 来训练一个模型来预测分子的毒性。在后面的章节中，我们将更深入地解释分子毒性预测的工作原理，但在这一部分，我们将把它作为一个黑盒示例，展示 DeepChem 模型如何用于解决机器学习挑战。让我们从一对必要的导入开始：
 
 ```py
 import numpy as np
 import deepchem as dc
-
 ```
 
 接下来是加载用于训练机器学习模型的相关毒性数据集。DeepChem 维护一个名为`dc.molnet`（MoleculeNet 的缩写）的模块，其中包含一些用于机器学习实验的预处理数据集。特别是，我们将使用`dc.molnet.load_tox21()`函数，它将为我们加载和处理 Tox21 毒性数据集。当您第一次运行这些命令时，DeepChem 将在您的计算机上本地处理数据集。您应该期望看到如下的处理说明：
@@ -131,7 +125,6 @@ TIMING: dataset construction took 0.779 s
 Loading dataset from disk.
 TIMING: dataset construction took 0.726 s
 Loading dataset from disk.
-
 ```
 
 *特征化*的过程是将包含有关分子信息的数据集转换为矩阵和向量，以便在机器学习分析中使用。我们将在后续章节中更深入地探讨这个过程。不过，让我们从这里开始，快速查看我们处理过的数据。
@@ -156,12 +149,11 @@ Out:
 
 In : len(tox21_tasks)
 Out: 12
-
 ```
 
 这里的 12 个任务中的每一个对应于一个特定的生物实验。在这种情况下，这些任务中的每一个都是针对*酶活性测定*的，该测定衡量了 Tox21 数据集中的分子是否与所讨论的*生物靶标*结合。诸如`NR-AR`等术语对应于这些靶标。在这种情况下，这些靶标中的每一个都是一种被认为与潜在治疗分子的毒性反应相关联的特定酶。
 
-# 我需要了解多少生物学知识？
+##### 我需要了解多少生物学知识？
 
 对于进入生命科学领域的计算机科学家和工程师来说，生物学术语的范围可能令人眼花缭乱。然而，并不需要深入了解生物学就能开始在生命科学领域产生影响。如果您的主要背景是计算机科学，尝试以计算机科学的类比方式理解生物系统可能会有所帮助。想象细胞或动物是您无法控制的复杂遗留代码库。作为工程师，您有一些关于这些系统（测定）的实验性测量数据，可以用来对底层机制有一些了解。机器学习是理解生物系统的一种非常强大的工具，因为学习算法能够以大多数自动的方式提取有用的相关性。这使得即使是生物学初学者有时也能发现深刻的生物洞察。
 
@@ -175,14 +167,12 @@ Out:
 (<deepchem.data.datasets.DiskDataset at 0x7f9804d6c390>,
 <deepchem.data.datasets.DiskDataset at 0x7f9804d6c780>,
 <deepchem.data.datasets.DiskDataset at 0x7f9804c5a518>)
-
 ```
 
 在这种情况下，这些数据集对应于您在上一章中了解的训练、验证和测试集。您可能注意到这些是`DiskDataset`对象；`dc.molnet`模块会将这些数据集缓存在您的磁盘上，这样您就不需要反复对 Tox21 数据集进行特征化。让我们正确地拆分这些数据集：
 
 ```py
 train_dataset, valid_dataset, test_dataset = tox21_datasets
-
 ```
 
 处理新数据集时，首先查看它们的形状非常有用。要这样做，请检查`shape`属性：
@@ -196,7 +186,6 @@ Out: (783, 1024)
 
 In : test_dataset.X.shape
 Out: (784, 1024)
-
 ```
 
 `train_dataset`包含总共 6,264 个样本，每个样本都有一个长度为 1,024 的相关特征向量。同样，`valid_dataset`和`test_dataset`分别包含 783 和 784 个样本。现在让我们快速查看这些数据集的`y`向量：
@@ -210,7 +199,6 @@ Out: (783, 12)
 
 In : np.shape(test_dataset.y)
 Out: (784, 12)
-
 ```
 
 每个样本有 12 个数据点，也称为*标签*。这些对应于我们之前讨论的 12 个任务。在这个特定的数据集中，样本对应于分子，任务对应于生化测定，每个标签是特定分子上特定测定的结果。这些是我们想要训练模型来预测的内容。
@@ -228,12 +216,11 @@ Out: 62166
 
 In : np.count_nonzero(train_dataset.w == 0)
 Out: 13002
-
 ```
 
 在标签数组中的 6,264×12 = 75,168 个元素中，只有 62,166 个实际测量过。其他 13,002 个对应于缺失的测量值，应该被忽略。您可能会问，为什么我们仍然保留这样的条目。答案主要是为了方便；不规则形状的数组比带有一组权重的常规矩阵更难在代码中进行推理和处理。
 
-# 处理数据集具有挑战性
+##### 处理数据集具有挑战性
 
 在这里需要注意的是，为了在生命科学中使用，清理和处理数据集可能非常具有挑战性。许多原始数据集将包含系统性的错误类别。如果所讨论的数据集是由外部组织（合同研究机构或 CRO）进行的实验构建的，那么该数据集很可能是系统性错误的。因此，许多生命科学组织都会保留内部的科学家，他们的工作是验证和清理这些数据集。
 
@@ -244,7 +231,6 @@ Out: 13002
 ```py
 In : transformers
 Out: [<deepchem.trans.transformers.BalancingTransformer at 0x7f99dd73c6d8>]
-
 ```
 
 这里的数据已经通过 `BalancingTransformer` 进行了转换。这个类用于纠正不平衡的数据。在 Tox21 的情况下，大多数分子不与大多数目标结合。事实上，超过 90% 的标签是 0。这意味着一个模型可以轻松地通过始终预测 0 来获得超过 90% 的准确率，无论输入是什么。不幸的是，那个模型将是完全无用的！在分类任务中，不平衡的数据，即某些类别的训练样本比其他类别多得多，是一个常见问题。
@@ -259,25 +245,24 @@ Out: [<deepchem.trans.transformers.BalancingTransformer at 0x7f99dd73c6d8>]
 model = dc.models.MultitaskClassifier(n_tasks=12,
 n_features=1024,
 layer_sizes=[1000])
-
 ```
 
 这里有各种不同的选项。让我们简要回顾一下。`n_tasks` 是任务的数量，`n_features` 是每个样本的输入特征数量。正如我们之前看到的，Tox21 数据集有 12 个任务和每个样本 1,024 个特征。`layer_sizes` 是一个设置网络中完全连接隐藏层数量和每个隐藏层宽度的列表。在这种情况下，我们指定有一个宽度为 1,000 的单隐藏层。
 
-现在我们已经构建了模型，我们如何在 Tox21 数据集上训练它呢？每个 `Model` 对象都有一个 `fit()` 方法，用于将模型拟合到包含在 `Dataset` 对象中的数据中。然后，对我们的 `MultitaskClassifier` 对象进行拟合是一个简单的调用：
 
-```py
-model.fit(train_dataset, nb_epoch=10)
+
+现在我们已经构建了模型，我们如何在 Tox21 数据集上训练它呢？每个`Model`对象都有一个`fit()`方法，用于将模型拟合到包含在`Dataset`对象中的数据中。然后，对我们的`MultitaskClassifier`对象进行拟合是一个简单的调用：
 
 ```
+model.fit(train_dataset, nb_epoch=10)
+```
 
-请注意，我们在这里添加了一个标志。`nb_epoch=10` 表示将进行 10 个梯度下降训练周期。一个 *epoch* 指的是对数据集中所有样本进行一次完整遍历。为了训练模型，您将训练集分成批次，并对每个批次进行一步梯度下降。在理想情况下，您会在数据用尽之前达到一个良好优化的模型。实际上，通常没有足够的训练数据，所以在模型完全训练之前就用尽了数据。然后您需要开始重复使用数据，对数据集进行额外的遍历。这样可以使用更少的数据训练模型，但使用的 epoch 越多，最终得到过拟合模型的可能性就越大。
+请注意，我们在这里添加了一个标志。`nb_epoch=10`表示将进行 10 个梯度下降训练周期。一个*epoch*指的是对数据集中所有样本进行一次完整遍历。为了训练模型，您将训练集分成批次，并对每个批次进行一步梯度下降。在理想情况下，您会在数据用尽之前达到一个良好优化的模型。实际上，通常没有足够的训练数据，所以在模型完全训练之前就用尽了数据。然后您需要开始重复使用数据，对数据集进行额外的遍历。这样可以使用更少的数据训练模型，但使用的 epoch 越多，最终得到过拟合模型的可能性就越大。
 
 现在让我们评估训练模型的性能。为了评估模型的工作效果，有必要指定一个度量标准。DeepChem 类`dc.metrics.Metric`提供了一种为模型指定度量标准的通用方法。对于 Tox21 数据集，ROC AUC 分数是一个有用的度量标准，所以让我们使用它进行分析。然而，请注意这里的一个细微之处：有多个 Tox21 任务。我们应该在哪一个上计算 ROC AUC？一个好的策略是计算所有任务的平均 ROC AUC 分数。幸运的是，这很容易做到：
 
-```py
+```
 metric = dc.metrics.Metric(dc.metrics.roc_auc_score, np.mean)
-
 ```
 
 由于我们指定了`np.mean`，所有任务的 ROC AUC 分数的平均值将被报告。DeepChem 模型支持评估函数`model.evaluate()`，该函数评估模型在给定数据集和度量标准上的性能。
@@ -290,21 +275,19 @@ metric = dc.metrics.Metric(dc.metrics.roc_auc_score, np.mean)
 
 ROC AUC 是 ROC 曲线下的总面积。曲线下的面积（AUC）提供了模型区分不同类别的能力的指示。如果存在任何阈值值，每个样本都被正确分类，ROC AUC 分数为 1。在另一个极端，如果模型输出与真实类别无关的完全随机值，ROC AUC 分数为 0.5。这使得它成为一个用于总结分类器工作效果的有用数字。这只是一个启发式方法，但是它是一个流行的方法。
 
-```py
+```
 train_scores = model.evaluate(train_dataset, [metric], transformers)
 test_scores = model.evaluate(test_dataset, [metric], transformers)
-
 ```
 
 现在我们已经计算了分数，让我们来看看！
 
-```py
-In : `print``(``train_scores``)`
-...: `print``(``test_scores``)`
+```
+In : `print`(`train_scores`)
+...: `print`(`test_scores`)
 Out
 {'mean-roc_auc_score': 0.9659541853946179}
 {'mean-roc_auc_score': 0.7915464001982299}
-
 ```
 
 请注意，我们在训练集上的得分（0.96）比测试集上的得分（0.79）要好得多。这表明模型已经过拟合。我们真正关心的是测试集得分。这些数字在这个数据集上并不是最好的可能值 - 在撰写本文时，Tox21 数据集的最先进 ROC AUC 分数略低于 0.9 - 但对于一个开箱即用的系统来说，它们并不算差。其中一个 12 个任务的完整 ROC 曲线显示在图 3-1 中。
@@ -345,7 +328,7 @@ DeepChem 使用`TensorGraph`类来构建非标准的深度学习架构。在本�
 
 首先，执行以下命令下载原始的 MNIST 数据文件并将其存储在本地：
 
-```py
+```
 mkdir MNIST_data
 cd MNIST_data
 wget http://yann.lecun.com/exdb/mnist/train-images-idx3-ubyte.gz
@@ -353,59 +336,52 @@ wget http://yann.lecun.com/exdb/mnist/train-labels-idx1-ubyte.gz
 wget http://yann.lecun.com/exdb/mnist/t10k-images-idx3-ubyte.gz
 wget http://yann.lecun.com/exdb/mnist/t10k-labels-idx1-ubyte.gz
 cd ..
-
 ```
 
 现在让我们加载这些数据集：
 
-```py
+```
 from tensorflow.examples.tutorials.mnist import input_data
 mnist = input_data.read_data_sets("MNIST_data/", one_hot=True)
-
 ```
 
 我们将处理这些原始数据，使其适合 DeepChem 进行分析。让我们从必要的导入开始：
 
-```py
+```
 import deepchem as dc
 import tensorflow as tf
 import deepchem.models.tensorgraph.layers as layers
-
 ```
 
 子模块`deepchem.models.tensorgraph.layers`包含一系列“层”。这些层作为深度架构的构建模块，可以组合起来构建新的深度学习架构。我们将很快展示层对象是如何使用的。接下来，我们构建`NumpyDataset`对象，用来包装 MNIST 的训练和测试数据集：
 
-```py
+```
 train_dataset = dc.data.NumpyDataset(mnist.train.images, mnist.train.labels)
 test_dataset = dc.data.NumpyDataset(mnist.test.images, mnist.test.labels)
-
 ```
 
 请注意，尽管最初没有定义测试数据集，但 TensorFlow 的`input_data()`函数会负责分离出一个适当的测试数据集供我们使用。有了训练和测试数据集，我们现在可以转向定义 MNIST 卷积网络的架构。
 
 这是基于的关键概念是可以组合层对象来构建新模型。正如我们在上一章中讨论的，每个层从前面的层接收输入并计算一个输出，该输出可以传递给后续层。在最开始，有接收特征和标签的输入层。在另一端是返回执行计算结果的输出层。在这个例子中，我们将组合一系列层以构建一个图像处理卷积网络。我们首先定义一个新的`TensorGraph`对象：
 
-```py
+```
 model = dc.models.TensorGraph(model_dir='mnist')
-
 ```
 
 `model_dir`选项指定应保存模型参数的目录。您可以省略这一点，就像我们在之前的例子中所做的那样，但是那样模型就不会被保存。一旦 Python 解释器退出，您辛苦训练模型的所有工作都将被抛弃！指定一个目录允许您稍后重新加载模型并进行新的预测。
 
 注意，由于`TensorGraph`继承自`Model`，因此该对象是`dc.models.Model`的一个实例，并支持我们之前看到的相同的`fit()`和`evaluate()`函数：
 
-```py
+```
 In : isinstance(model, dc.models.Model)
 Out: True
-
 ```
 
 我们还没有向`model`中添加任何内容，因此我们的模型可能不太有趣。让我们通过使用`Feature`和`Label`类为特征和标签添加一些输入：
 
-```py
+```
 feature = layers.Feature(shape=(None, 784))
 label = layers.Label(shape=(None, 10))
-
 ```
 
 MNIST 包含大小为 28×28 的图像。当展平时，这些形成长度为 784 的特征向量。标签具有第二维度为 10，因为有 10 个可能的数字值，并且该向量是独热编码的。请注意，`None`被用作输入维度。在构建在 TensorFlow 上的系统中，值`None`通常表示给定层能够接受该维度上任何大小的输入。换句话说，我们的对象`feature`能够接受形状为`(20, 784)`和`(97, 784)`的输入。在这种情况下，第一个维度对应于批量大小，因此我们的模型将能够接受任意数量样本的批次。
@@ -416,38 +392,34 @@ MNIST 数据集是分类的。也就是说，对象属于有限列表中的一�
 
 为了将卷积层应用于我们的输入，我们需要将我们的平面特征向量转换为形状为`(28, 28)`的矩阵。为此，我们将使用一个`Reshape`层：
 
-```py
+```
 make_image = layers.Reshape(shape=(None, 28, 28), in_layers=feature)
-
 ```
 
 这里再次值`None`表示可以处理任意批量大小。请注意我们有一个关键字参数`in_layers=feature`。这表示`Reshape`层以我们先前的`Feature`层`feature`作为输入。现在我们已成功地重塑了输入，我们可以将其传递给卷积层：
 
-```py
+```
 conv2d_1 = layers.Conv2D(num_outputs=32, activation_fn=tf.nn.relu,
                                          in_layers=make_image)
 conv2d_2 = layers.Conv2D(num_outputs=64, activation_fn=tf.nn.relu,
                                          in_layers=conv2d_1)
-
 ```
 
 在这里，`Conv2D`类对其输入的每个样本应用 2D 卷积，然后通过修正线性单元（ReLU）激活函数传递。请注意如何使用`in_layers`将先前的层传递给后续层作为输入。我们希望最后应用`Dense`（全连接）层到卷积层的输出。但是，`Conv2D`层的输出是 2D 的，因此我们首先需要应用一个`Flatten`层将我们的输入展平为一维（更准确地说，`Conv2D`层为每个样本产生一个 2D 输出，因此其输出具有三个维度；`Flatten`层将其折叠为每个样本的单个维度，或者总共两个维度）：
 
-```py
+```
 flatten = layers.Flatten(in_layers=conv2d_2)
 dense1 = layers.Dense(out_channels=1024, activation_fn=tf.nn.relu, 
 					 in_layers=flatten)
 dense2 = layers.Dense(out_channels=10, activation_fn=None, in_layers=dense1)
-
 ```
 
 `Dense`层中的`out_channels`参数指定了层的宽度。第一层每个样本输出 1,024 个值，但第二层输出 10 个值，对应于我们的 10 个可能的数字值。现在我们希望将此输出连接到损失函数，以便我们可以训练输出以准确预测类别。我们将使用`SoftMaxCrossEntropy`损失来执行这种形式的训练：
 
-```py
+```
 smce = layers.SoftMaxCrossEntropy(in_layers=[label, dense2])
 loss = layers.ReduceMean(in_layers=smce)
 model.set_loss(loss)
-
 ```
 
 请注意，`SoftMaxCrossEntropy`层接受最后一个`Dense`层的标签和输出作为输入。它计算每个样本的损失函数的值，因此我们需要对所有样本进行平均以获得最终损失。这是通过调用`model.set_loss()`将`ReduceMean`层设置为我们模型的损失函数来完成的。
@@ -456,43 +428,41 @@ model.set_loss(loss)
 
 通常希望模型输出概率分布。对于 MNIST，我们希望输出给定样本代表每个数字的概率。每个输出必须为正，并且它们必须总和为 1。实现这一点的一种简单方法是让模型计算任意数字，然后通过令人困惑地命名为*softmax*函数传递它们：
 
-指数在分子中确保所有值为正，并且分母中的总和确保它们加起来为 1。如果<math><mi>x</mi></math>的一个元素远远大于其他元素，则相应的输出元素非常接近 1，而所有其他输出则非常接近 0。
+指数在分子中确保所有值为正，并且分母中的总和确保它们加起来为 1。如果`x`的一个元素远远大于其他元素，则相应的输出元素非常接近 1，而所有其他输出则非常接近 0。
 
 `SoftMaxCrossEntropy`首先使用 softmax 函数将输出转换为概率，然后计算这些概率与标签的交叉熵。请记住，标签是独热编码的：正确类别为 1，其他所有类别为 0。您可以将其视为概率分布！当正确类别的预测概率尽可能接近 1 时，损失最小。这两个操作（softmax 后跟交叉熵）经常一起出现，将它们作为单个步骤进行计算比分开执行更稳定。
 
 为了数值稳定性，像`SoftMaxCrossEntropy`这样的层会计算对数概率。我们需要使用`SoftMax`层来转换输出以获得每个类别的输出概率。我们将使用`model.add_output()`将此输出添加到`model`中：
 
-```py
+```
 output = layers.SoftMax(in_layers=dense2)
 model.add_output(output)
-
 ```
 
 现在我们可以使用与上一节中调用的相同的`fit()`函数来训练模型：
 
-```py
+```
 model.fit(train_dataset, nb_epoch=10)
-
 ```
 
 请注意，这个方法调用可能需要一些时间在标准笔记本电脑上执行！如果函数执行速度不够快，请尝试使用`nb_epoch=1`。结果会更糟，但您将能够更快地完成本章的其余部分。
 
 这次我们将定义我们的度量为准确率，即正确预测的标签比例：
 
-```py
+```
 metric = dc.metrics.Metric(dc.metrics.accuracy_score)
-
 ```
 
 然后我们可以使用与之前相同的计算来计算准确率：
 
-```py
+```
 train_scores = model.evaluate(train_dataset, [metric])
 test_scores = model.evaluate(test_dataset, [metric])
-
 ```
 
-这会产生出色的性能：训练集的准确率为 0.999，测试集的准确率为 0.991。我们的模型正确识别了超过 99%的测试集样本。
+
+
+这会产生出色的性能：训练集的准确率为`0.999`，测试集的准确率为`0.991`。我们的模型正确识别了超过`99%`的测试集样本。
 
 # 尝试获取 GPU 访问权限
 
@@ -504,6 +474,6 @@ test_scores = model.evaluate(test_dataset, [metric])
 
 # 结论
 
-在这一章中，您已经学会了如何使用 DeepChem 库来实现一些简单的机器学习系统。在本书的其余部分中，我们将继续使用 DeepChem 作为我们的首选库，所以如果您还没有对该库的基本知识有很好的掌握，不要担心。将会有更多的例子出现。
+在这一章中，您已经学会了如何使用 `DeepChem` 库来实现一些简单的机器学习系统。在本书的其余部分中，我们将继续使用 `DeepChem` 作为我们的首选库，所以如果您还没有对该库的基本知识有很好的掌握，不要担心。将会有更多的例子出现。
 
 在接下来的章节中，我们将开始介绍在生命科学数据集上进行有效机器学习所需的基本概念。在下一章中，我们将向您介绍分子上的机器学习。

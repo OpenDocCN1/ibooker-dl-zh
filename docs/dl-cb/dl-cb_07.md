@@ -1,3 +1,5 @@
+
+
 # 第七章：建议表情符号
 
 在本章中，我们将构建一个模型，根据一小段文本建议表情符号。我们将首先基于一组带有各种情感标签的推文开发一个简单的情感分类器，如快乐、爱、惊讶等。我们首先尝试一个贝叶斯分类器，以了解基线性能，并查看这个分类器可以学到什么。然后我们将切换到卷积网络，并查看各种调整这个分类器的方法。
@@ -16,13 +18,13 @@
 07.3 Tweet Embeddings
 ```
 
-# 7.1 构建一个简单的情感分类器
+## 7.1 构建一个简单的情感分类器
 
-## 问题
+### 问题
 
 如何确定文本中表达的情感？
 
-## 解决方案
+### 解决方案
 
 找到一个由标记了情感的句子组成的数据集，并对其运行一个简单的分类器。
 
@@ -109,7 +111,7 @@ svm 0.218636363636
 sgd 0.325454545455
 ```
 
-## 讨论
+### 讨论
 
 尝试“可能起作用的最简单的事情”有助于我们快速入门，并让我们了解数据是否具有足够的信号来完成我们想要做的工作。
 
@@ -119,13 +121,13 @@ sgd 0.325454545455
 
 贝叶斯模型通常比我们天真地期望的要好。关于这一点已经有一些有趣的研究。在机器学习之前，它们帮助破译了恩尼格玛密码，也帮助驱动了第一个电子邮件垃圾邮件检测器。
 
-# 7.2 检查一个简单分类器
+## 7.2 检查一个简单分类器
 
-## 问题
+### 问题
 
 如何查看一个简单分类器学到了什么？
 
-## 解决方案
+### 解决方案
 
 查看使分类器输出结果的贡献因素。
 
@@ -172,21 +174,21 @@ sadness : sad sadly cry cried miss
 neutral : www painting souljaboytellem link frenchieb
 ```
 
-## 讨论
+### 讨论
 
 在深入研究更复杂的内容之前检查一个简单模型学到了什么是一个有用的练习。尽管深度学习模型非常强大，但事实是很难真正了解它们在做什么。我们可以大致了解它们的工作原理，但要真正理解训练结果中的数百万个权重几乎是不可能的。
 
 我们的贝叶斯模型的结果符合我们的预期。单词“sad”是“sadness”类的指示，“wow”是惊讶的指示。令人感动的是，单词“mothers”是爱的强烈指示。
 
-我们看到了一堆奇怪的单词，比如“kimbermuffin”和“makinitrite”。检查后发现这些是 Twitter 用户名。 “foolproofdiva”只是一个非常热情的人。根据目标，我们可能会考虑将这些过滤掉。
+我们看到了一堆奇怪的单词，比如“kimbermuffin”和“makinitrite”。检查后发现这些是 Twitter 用户名。“foolproofdiva”只是一个非常热情的人。根据目标，我们可能会考虑将这些过滤掉。
 
-# 7.3 使用卷积网络进行情感分析
+## 7.3 使用卷积网络进行情感分析
 
-## 问题
+### 问题
 
 您想尝试使用深度网络来确定文本中表达的情感。
 
-## 解决方案
+### 解决方案
 
 使用卷积网络。
 
@@ -248,7 +250,7 @@ char_cnn_model.evaluate(test_char_vectors, test_labels)
 
 经过 20 个时代，训练准确率达到 0.39，但测试准确率只有 0.31。这种差异可以通过过拟合来解释；模型不仅学习了数据的一般方面，这些方面也适用于测试集，而且开始记忆部分训练数据。这类似于学生学习哪些答案与哪些问题匹配，而不理解为什么。
 
-## 讨论
+### 讨论
 
 卷积网络在我们希望网络学习独立于发生位置的情况下效果很好。对于图像识别，我们不希望网络为每个像素单独学习；我们希望它学会独立于图像中发生位置的特征。
 
@@ -258,13 +260,13 @@ char_cnn_model.evaluate(test_char_vectors, test_labels)
 
 在我们的模型中，我们有两个卷积/最大池化层，它将输入从 167×100 的大小更改为 3×256。我们可以将这些看作是增加抽象级别的步骤。在输入级别，我们只知道在 167 个位置中的每一个位置上出现了 100 个不同字符中的哪一个。在最后一个卷积之后，我们有 3 个 256 个向量，它们分别编码了推文开头、中间和结尾发生的情况。
 
-# 7.4 收集 Twitter 数据
+## 7.4 收集 Twitter 数据
 
-## 问题
+### 问题
 
 如何自动收集大量用于训练目的的 Twitter 数据？
 
-## 解决方案
+### 解决方案
 
 使用 Twitter API。
 
@@ -289,6 +291,9 @@ auth=twitter.OAuth(
     token_secret=ACCESS_SECRET,
 )
 ```
+
+
+
 
 Twitter API 有两部分。REST API 使得可以调用各种函数来搜索推文、获取用户的状态，甚至发布到 Twitter。在这个示例中，我们将使用流 API。
 
@@ -347,7 +352,7 @@ Twitter 可以是一个非常有用的训练数据来源。每条推文都有大
 
 重新利用来自 Recipe 7.3 的情感分类器。
 
-如果在上一步中收集了大量推文，可以使用这些。如果没有，可以在*data/emojis.txt*中找到一个好的样本。让我们将这些读入 Pandas 的`DataFrame`。我们将过滤掉出现次数少于 1000 次的任何表情符号：
+如果在上一步中收集了大量推文，可以使用这些。如果没有，可以在`data/emojis.txt`中找到一个好的样本。让我们将这些读入 Pandas 的`DataFrame`。我们将过滤掉出现次数少于 1000 次的任何表情符号：
 
 ```py
 all_tweets = pd.read_csv('data/emojis.txt',
@@ -538,6 +543,10 @@ def load_w2v(tokenizer=None):
 
 `gensim`包不仅让我们可以使用预训练的嵌入模型，还可以训练新的嵌入。它需要的唯一东西是一个生成器，产生令牌序列。它将使用这个生成器来建立词汇表，然后通过多次遍历生成器来训练模型。以下对象将遍历一系列推文，清理它们，并对其进行标记化：
 
+
+
+# 训练自定义词嵌入
+
 ```py
 class TokensYielder(object):
     def __init__(self, tweet_count, stream):
@@ -717,6 +726,11 @@ eval_df[['content', 'true', 'char_cnn', 'cnn', 'lstm']].head(25)
 | 16 | @theseoulstory: 九月回归：2PM，SHINee，INFINITE，BTS，Red Velvet，Gain，Song Jieun，Kanto... | ![](img/fire.png) | ![](img/fire.png) | ![](img/fire.png) | ![](img/fire.png) |
 | 17 | @VixenMusicLabel - 和平与爱 | ![](img/victory-hand.png) | ![](img/red-heart.png) | ![](img/face-throwing-a-kiss.png) | ![](img/red-heart.png) |
 | 18 | @iDrinkGallons 抱歉 | ![](img/slightly-frowning-face.png) | ![](img/face-with-tears-of-joy.png) | ![](img/face-with-tears-of-joy.png) | ![](img/face-with-tears-of-joy.png) |
+
+
+
+# 表情符号预测结果分析
+
 | 19 | @StarYouFollow: 19- Frisson | ![](img/face-with-rolling-eyes.png) | ![](img/ok-hand-sign.png) | ![](img/smiling-face-with-heart-shaped-eyes.png) | ![](img/sparkles.png) |
 | 20 | @RapsDaiIy: 别错过 Ugly God | ![](img/fire.png) | ![](img/fire.png) | ![](img/fire.png) | ![](img/fire.png) |
 | 21 | 怎么我的所有班次都这么快被接走了？！什么鬼 | ![](img/loudly-crying-face.png) | ![](img/weary-face.png) | ![](img/face-with-tears-of-joy.png) | ![](img/weary-face.png) |

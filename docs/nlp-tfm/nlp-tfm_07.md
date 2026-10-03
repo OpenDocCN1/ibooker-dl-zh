@@ -1,3 +1,4 @@
+
 # 第六章：摘要
 
 你可能在某个时候需要总结一篇文档，无论是研究文章、财务收益报告还是一系列电子邮件。如果你仔细想想，这需要一系列能力，比如理解长篇文章、推理内容，并产生流畅的文本，其中包含原始文档的主要主题。此外，准确总结新闻文章与总结法律合同大不相同，因此能够做到这一点需要一定程度的领域泛化。出于这些原因，文本摘要对于神经语言模型，包括 Transformer 来说，是一项困难的任务。尽管存在这些挑战，文本摘要为领域专家提供了显著加快工作流程的可能性，并被企业用于压缩内部知识、总结合同、自动生成社交媒体发布的内容等。
@@ -6,9 +7,9 @@
 
 在本章中，我们将构建自己的编码器-解码器模型，将几个人之间的对话压缩成简洁的摘要。但在开始之前，让我们先来看看摘要的经典数据集之一：CNN/DailyMail 语料库。
 
-# CNN/DailyMail 数据集
+## CNN/DailyMail 数据集
 
-CNN/DailyMail 数据集包括约 30 万对新闻文章及其相应摘要，由 CNN 和 DailyMail 附加到其文章的要点组成。数据集的一个重要方面是摘要是*抽象*的，而不是*提取*的，这意味着它们由新句子组成，而不是简单的摘录。数据集可在[Hub](https://oreil.ly/jcRmb)上找到；我们将使用 3.0.0 版本，这是为摘要设置的非匿名版本。我们可以像在第四章中看到的那样，使用`version`关键字选择版本。所以让我们深入研究一下：
+CNN/DailyMail 数据集包括约 30 万对新闻文章及其相应摘要，由 CNN 和 DailyMail 附加到其文章的要点组成。数据集的一个重要方面是摘要是*抽象*的，而不是*提取*的，这意味着它们由新句子组成，而不是简单的摘录。数据集可在 [Hub](https://oreil.ly/jcRmb) 上找到；我们将使用 3.0.0 版本，这是为摘要设置的非匿名版本。我们可以像在第四章中看到的那样，使用 `version` 关键字选择版本。所以让我们深入研究一下：
 
 ```py
 from datasets import load_dataset
@@ -21,7 +22,7 @@ print(f"Features: {dataset['train'].column_names}")
 Features: ['article', 'highlights', 'id']
 ```
 
-数据集有三列：`文章`，其中包含新闻文章，`摘要`，其中包含摘要，以及`id`，用于唯一标识每篇文章。让我们来看一段文章摘录：
+数据集有三列：`article`（包含新闻文章）、`highlights`（包含摘要）以及 `id`（用于唯一标识每篇文章）。让我们来看一段文章摘录：
 
 ```py
 sample = dataset["train"][1]
@@ -31,7 +32,9 @@ Article (excerpt of 500 characters, total length: {len(sample["article"])}):
 print(sample["article"][:500])
 print(f'\nSummary (length: {len(sample["highlights"])}):')
 print(sample["highlights"])
+```
 
+```py
 Article (excerpt of 500 characters, total length: 3192):
 
 (CNN) -- Usain Bolt rounded off the world championships Sunday by claiming his
@@ -51,7 +54,7 @@ Jamaica double up in women's 4x100m relay .
 
 我们看到，与目标摘要相比，文章可能非常长；在这种特殊情况下，差异是 17 倍。长篇文章对大多数 Transformer 模型构成挑战，因为上下文大小通常限制在 1,000 个标记左右，相当于几段文字。对于摘要，处理这个问题的标准但粗糙的方法是简单地截断超出模型上下文大小的文本。显然，文本末尾可能有重要信息供摘要使用，但目前我们需要接受模型架构的这种限制。
 
-# 文本摘要管道
+## 文本摘要管道
 
 让我们首先定性地查看前面示例的输出，看看一些最受欢迎的摘要 Transformer 模型的表现如何。尽管我们将要探索的模型架构具有不同的最大输入大小，但让我们将输入文本限制为 2,000 个字符，以便所有模型都具有相同的输入，从而使输出更具可比性：
 
@@ -81,9 +84,9 @@ sent_tokenize(string)
 
 ###### 警告
 
-在接下来的几节中，我们将加载几个大型模型。如果内存不足，可以用较小的检查点（例如“gpt”，“t5-small”）替换大型模型，或者跳过本节，转到“在 CNN/DailyMail 数据集上评估 PEGASUS”。
+在接下来的几节中，我们将加载几个大型模型。如果内存不足，可以用较小的检查点（例如 `gpt`、`t5-small`）替换大型模型，或者跳过本节，转到“在 CNN/DailyMail 数据集上评估 PEGASUS”。
 
-## 摘要基线
+### 摘要基线
 
 摘要新闻文章的一个常见基线是简单地取文章的前三句。使用 NLTK 的句子分词器，我们可以很容易地实现这样一个基线：
 
@@ -96,9 +99,9 @@ def three_sentence_summary(text):
 summaries["baseline"] = three_sentence_summary(sample_text)
 ```
 
-## GPT-2
+### GPT-2
 
-我们已经在第五章中看到了 GPT-2 如何根据一些提示生成文本。该模型令人惊讶的一个特点是，我们还可以使用它来生成摘要，只需在输入文本末尾添加“TL;DR”。表达“TL;DR”（太长了；没看）经常在 Reddit 等平台上使用，表示长篇帖子的简短版本。我们将通过使用来自 Transformers 的`pipeline()`函数重新创建原始论文的程序开始我们的摘要实验。我们创建一个文本生成管道并加载大型 GPT-2 模型：
+我们已经在第五章中看到了 GPT-2 如何根据一些提示生成文本。该模型令人惊讶的一个特点是，我们还可以使用它来生成摘要，只需在输入文本末尾添加“TL;DR”。表达“TL;DR”（太长了；没看）经常在 Reddit 等平台上使用，表示长篇帖子的简短版本。我们将通过使用来自 Transformers 的 `pipeline()` 函数重新创建原始论文的程序开始我们的摘要实验。我们创建一个文本生成管道并加载大型 GPT-2 模型：
 
 ```py
 from transformers import pipeline, set_seed
@@ -113,11 +116,11 @@ summaries["gpt2"] = "\n".join(
 
 在这里，我们只需存储通过切割输入查询生成的摘要，并将结果保存在 Python 字典中以供以后比较。
 
-## T5
+### T5
 
-接下来让我们尝试 T5 Transformer。正如我们在第三章中看到的，该模型的开发人员对 NLP 中的迁移学习进行了全面研究，并发现他们可以通过将所有任务制定为文本-文本任务来创建通用 Transformer 架构。T5 检查点经过混合无监督数据（用于重建掩码单词）和监督数据的训练，包括摘要等多个任务。因此，这些检查点可以直接用于执行摘要，而无需使用预训练期间使用的相同提示进行微调。在该框架中，模型摘要文档的输入格式为`"summarize: <ARTICLE>"`，翻译的格式看起来像`"translate English to German: <TEXT>"`。如图 6-1 所示，这使得 T5 非常灵活，可以使用单个模型解决许多任务。
+接下来让我们尝试 T5 Transformer。正如我们在第三章中看到的，该模型的开发人员对 NLP 中的迁移学习进行了全面研究，并发现他们可以通过将所有任务制定为文本-文本任务来创建通用 Transformer 架构。T5 检查点经过混合无监督数据（用于重建掩码单词）和监督数据的训练，包括摘要等多个任务。因此，这些检查点可以直接用于执行摘要，而无需使用预训练期间使用的相同提示进行微调。在该框架中，模型摘要文档的输入格式为 `"summarize: <ARTICLE>"`，翻译的格式看起来像 `"translate English to German: <TEXT>"`。如图 6-1 所示，这使得 T5 非常灵活，可以使用单个模型解决许多任务。
 
-我们可以直接使用`pipeline()`函数加载 T5 进行摘要，该函数还负责以文本-文本格式格式化输入，因此我们不需要在其前面加上`"summarize"`：
+我们可以直接使用 `pipeline()` 函数加载 T5 进行摘要，该函数还负责以文本-文本格式格式化输入，因此我们不需要在其前面加上 `"summarize"`：
 
 ```py
 pipe = pipeline("summarization", model="t5-large")
@@ -129,9 +132,9 @@ summaries["t5"] = "\n".join(sent_tokenize(pipe_out[0]["summary_text"]))
 
 ###### 图 6-1。T5 的文本-文本框架图（由 Colin Raffel 提供）；除了翻译和摘要之外，还显示了 CoLA（语言可接受性）和 STSB（语义相似性）任务
 
-## 巴特
+### BART
 
-BART 还使用了编码器-解码器架构，并且经过训练以重建损坏的输入。它结合了 BERT 和 GPT-2 的预训练方案。我们将使用`facebook/bart-large-ccn`检查点，该检查点已经在 CNN/DailyMail 数据集上进行了特定的微调：
+BART 还使用了编码器-解码器架构，并且经过训练以重建损坏的输入。它结合了 BERT 和 GPT-2 的预训练方案。我们将使用 `facebook/bart-large-cnn` 检查点，该检查点已经在 CNN/DailyMail 数据集上进行了特定的微调：
 
 ```py
 pipe = pipeline("summarization", model="facebook/bart-large-cnn")
@@ -139,7 +142,7 @@ pipe_out = pipe(sample_text)
 summaries["bart"] = "\n".join(sent_tokenize(pipe_out[0]["summary_text"]))
 ```
 
-## 飞马座
+### PEGASUS
 
 像 BART 一样，PEGASUS 是一种编码器-解码器 Transformer。如图 6-2 所示，它的预训练目标是预测多句文本中的掩码句子。作者认为，预训练目标与下游任务越接近，效果就越好。为了找到一个比通用语言建模更接近摘要的预训练目标，他们在一个非常大的语料库中自动识别了包含其周围段落大部分内容的句子（使用摘要评估指标作为内容重叠的启发式），并预训练 PEGASUS 模型以重建这些句子，从而获得了用于文本摘要的最先进模型。
 
@@ -147,7 +150,7 @@ summaries["bart"] = "\n".join(sent_tokenize(pipe_out[0]["summary_text"]))
 
 ###### 图 6-2。PEGASUS 架构图（由 Jingqing Zhang 等人提供）
 
-该模型具有用于换行的特殊标记，这就是为什么我们不需要`sent_tokenize()`函数的原因：
+该模型具有用于换行的特殊标记，这就是为什么我们不需要 `sent_tokenize()` 函数的原因：
 
 ```py
 pipe = pipeline("summarization", model="google/pegasus-cnn_dailymail")
@@ -155,7 +158,7 @@ pipe_out = pipe(sample_text)
 summaries["pegasus"] = pipe_out[0]["summary_text"].replace(" .<n>", ".\n")
 ```
 
-# 比较不同的摘要
+## 比较不同的摘要
 
 现在我们已经用四种不同的模型生成了摘要，让我们比较一下结果。请记住，其中一个模型根本没有在数据集上进行训练（GPT-2），一个模型在这项任务以及其他任务上进行了微调（T5），而另外两个模型则专门在这项任务上进行了微调（BART 和 PEGASUS）。让我们看看这些模型生成的摘要：
 
@@ -222,49 +225,62 @@ Jamaica also win women's 4x100m relay .
 
 在接下来的部分，我们将看一些用于衡量生成文本质量的常见指标。
 
-# 衡量生成文本的质量
+## 衡量生成文本的质量
 
 好的评估指标很重要，因为我们用它们来衡量模型的性能，不仅在训练时使用，而且在生产中也会用到。如果我们的指标不好，我们可能会对模型的退化视而不见，如果它们与业务目标不一致，我们可能无法创造任何价值。
 
+
+
 在文本生成任务上衡量性能并不像标准分类任务（如情感分析或命名实体识别）那样容易。以翻译为例；给定一个句子“我爱狗！”的英文翻译成西班牙语可能有多种有效的可能性，比如“¡Me encantan los perros!”或“¡Me gustan los perros!”简单地检查是否与参考翻译完全匹配并不是最佳选择；即使是人类在这样的指标上表现也不佳，因为我们每个人写的文本都略有不同（甚至在一天或一年的不同时间也不同！）。幸运的是，还有其他选择。
 
-用于评估生成文本的最常见的两个指标是 BLEU 和 ROUGE。让我们看看它们是如何定义的。
+用于评估生成文本的最常见的两个指标是`BLEU`和`ROUGE`。让我们看看它们是如何定义的。
 
 ## BLEU
 
-BLEU 的思想很简单：⁴，我们不是看生成文本中有多少标记与参考文本标记完全对齐，而是看单词或*n*-grams。BLEU 是一种基于精度的指标，这意味着当我们比较两个文本时，我们计算生成文本中与参考文本中出现的单词数，并将其除以参考文本的长度。
+`BLEU`的思想很简单：⁴，我们不是看生成文本中有多少标记与参考文本标记完全对齐，而是看单词或*n*-grams。`BLEU`是一种基于精度的指标，这意味着当我们比较两个文本时，我们计算生成文本中与参考文本中出现的单词数，并将其除以参考文本的长度。
 
-然而，这种基础精度存在一个问题。假设生成的文本只是一遍又一遍地重复相同的单词，并且这个单词也出现在参考文本中。如果它重复的次数正好等于参考文本的长度，那么我们就得到了完美的精度！因此，BLEU 论文的作者引入了一个轻微的修改：一个单词只计算它在参考文本中出现的次数。为了说明这一点，假设我们有参考文本“猫在垫子上”，生成文本“猫猫猫猫猫猫”。
+然而，这种基础精度存在一个问题。假设生成的文本只是一遍又一遍地重复相同的单词，并且这个单词也出现在参考文本中。如果它重复的次数正好等于参考文本的长度，那么我们就得到了完美的精度！因此，`BLEU`论文的作者引入了一个轻微的修改：一个单词只计算它在参考文本中出现的次数。为了说明这一点，假设我们有参考文本“猫在垫子上”，生成文本“猫猫猫猫猫猫”。
 
 从这个简单的例子中，我们可以计算出精度值如下：
 
-<math alttext="p 下标 vanilla 基线等于六分之六" 显示="块"> <mrow> <msub> <mi> p </mi> <mrow> <mi> v </mi> <mi> a </mi> <mi> n </mi> <mi> i </mi> <mi> l </mi> <mi> l </mi> <mi> a </mi> </mrow> </msub> <mo> = </mo> <mfrac> <mn> 6 </mn> <mn> 6 </mn> </mfrac> </mrow> </math> <math alttext="p 下标 mod 基线等于二分之六" 显示="块"> <mrow> <msub> <mi> p </mi> <mrow> <mi> m </mi> <mi> o </mi> <mi> d </mi> </mrow> </msub> <mo> = </mo> <mfrac> <mn> 2 </mn> <mn> 6 </mn> </mfrac> </mrow> </math>
+```
+p_vanilla = 6/6
+p_mod = 2/6
+```
 
-我们可以看到，简单的修正产生了一个更合理的值。现在让我们通过不仅查看单词，而且还查看*n*-克拉姆来扩展这一点。假设我们有一个生成的句子，<math alttext="snt"> <mrow> <mi> s </mi> <mi> n </mi> <mi> t </mi> </mrow> </math>，我们想将其与一个参考句子<math alttext="snt prime"> <mrow> <mi> s </mi> <mi> n </mi> <msup> <mi> t </mi> <mo> ' </mo> </msup> </mrow> </math>进行比较。我们提取所有可能的*n*-克拉姆，并进行计算，得到精度<math alttext="p 下标 n"> <msub> <mi> p </mi> <mi> n </mi> </msub> </math>：
+我们可以看到，简单的修正产生了一个更合理的值。现在让我们通过不仅查看单词，而且还查看*n*-克拉姆来扩展这一点。假设我们有一个生成的句子，`snt`，我们想将其与一个参考句子`snt'`进行比较。我们提取所有可能的*n*-克拉姆，并进行计算，得到精度`p_n`：
 
-数学标记="p 下标 n 基线等于开始分数 sigma-总和下标 n-克拉姆元素属于 snt 上标计数下标 clip 基线左括号 n-克拉姆右括号除以 sigma-总和下标 n-克拉姆元素属于 snt 上标计数左括号 n-克拉姆右括号结束分数" 显示="块"> <mrow> <msub> <mi> p </mi> <mi> n </mi> </msub> <mo> = </mo> <mfrac> <mrow> <msub> <mo> ∑ </mo> <mrow> <mi> n </mi> <mtext> - </mtext> <mi> g </mi> <mi> r </mi> <mi> a </mi> <mi> m </mi> <mo> ∈ </mo> <mi> s </mi> <mi> n </mi> <mi> t </mi> </mrow> </msub> <mi> C </mi> <mi> o </mi> <mi> u </mi> <mi> n </mi> <msub> <mi> t </mi> <mrow> <mi> c </mi> <mi> l </mi> <mi> i </mi> <mi> p </mi> </mrow> </msub> <mrow> <mo> ( </mo> <mi> n </mi> <mtext> - </mtext> <mi> g </mi> <mi> r </mi> <mi> a </mi> <mi> m </mi> <mo> ) </mo> </mrow> </mrow> <mrow> <msub> <mo> ∑ </mo> <mrow> <mi> n </mi> <mtext> - </mtext> <mi> g </mi> <mi> r </mi> <mi> a </mi> <mi> m </mi> <mo> ∈ </mo> <mi> s </mi> <mi> n </mi> <msup> <mi> t </mi> <mo> ' </mo> </msup> </mrow> </msub> <mi> C </mi> <mi> o </mi> <mi> u </mi> <mi> n </mi> <mi> t </mi> <mrow> <mo> ( </mo> <mi> n </mi> <mtext> - </mtext> <mi> g </mi> <mi> r </mi> <mi> a </mi> <mi> m </mi> <mo> ) </mo> </mrow> </mrow> </mfrac> </mrow> </math>
+```
+p_n = (∑_{n-gram ∈ snt} Count_clip(n-gram)) / (∑_{n-gram ∈ snt'} Count(n-gram))
+```
 
 为了避免奖励重复生成，分子中的计数被剪切。这意味着*n*-克拉姆的出现次数被限制为它在参考句子中出现的次数。还要注意，这个方程中对句子的定义并不是非常严格的，如果你有一个生成的跨越多个句子的文本，你会将它视为一个句子。
 
 通常情况下，我们在测试集中有多个样本要评估，因此我们需要稍微扩展方程，对语料库*C*中的所有样本进行求和：
 
-数学标记="p 下标 n 基线等于开始分数 sigma-求和下标 snt 属于上 C 结束 sigma-求和下标 n-hyphen-gram 属于 snt 上 C 计数 clip 下标基线左括号 n-hyphen-gram 右括号除以 sigma-求和下标 snt prime 属于上 C 结束 sigma-求和下标 n-hyphen-gram 属于 snt prime 计数左括号 n-hyphen-gram 右括号结束分数" 显示="块"> <mrow> <msub> <mi> p </mi> <mi> n </mi> </msub> <mo> = </mo> <mfrac> <mrow> <msub> <mo> ∑ </mo> <mrow> <mi> s </mi> <mi> n </mi> <mi> t </mi> <mo> ∈ </mo> <mi> C </mi> </mrow> </msub> <msub> <mo> ∑ </mo> <mrow> <mi> n </mi> <mtext> - </mtext> <mi> g </mi> <mi> r </mi> <mi> a </mi> <mi> m </mi> <mo> ∈ </mo> <mi> s </mi> <mi> n </mi> <mi> t </mi> </mrow> </msub> <mi> C </mi> <mi> o </mi> <mi> u </mi> <mi> n </mi> <msub> <mi> t </mi> <mrow> <mi> c </mi> <mi> l </mi> <mi> i </mi> <mi> p </mi> </mrow> </msub> <mrow> <mo> ( </mo> <mi> n </mi> <mtext> - </mtext> <mi> g </mi> <mi> r </mi> <mi> a </mi> <mi> m </mi> <mo> ) </mo> </mrow> <mrow> <msub> <mo> ∑ </mo> <mrow> <mi> s </mi> <mi> n </mi> <mi> t </mi> <mi>â</mi> <mo> ∈ </mo> <mi> C </mi> </mrow> </msub> <msub> <mo> ∑ </mo> <mrow> <mi> n </mi> <mtext> - </mtext> <mi> g </mi> <mi> r </mi> <mi> a </mi> <mi> m </mi> <mo> ∈ </mo> <mi> s </mi> <mi> n </mi> <msup> <mi> t </mi> <mo> ' </mo> </msup> </mrow> </msub> <mi> C </mi> <mi> o </mi> <mi> u </mi> <mi> n </mi> <mi> t </mi> <mrow> <mo> ( </mo> <mi> n </mi> <mtext> - </mtext> <mi> g </mi> <mi> r </mi> <mi> a </mi> <mi> m </mi> <mo> ) </mo> </mrow> </mfrac> </mrow> </math>
+```
+p_n = (∑_{snt ∈ C} ∑_{n-gram ∈ snt} Count_clip(n-gram)) / (∑_{snt' ∈ C} ∑_{n-gram ∈ snt'} Count(n-gram))
+```
 
-我们快要到了。由于我们不关注召回率，所有生成的序列如果短而准确，都比长句子有益。因此，精确度得分偏爱短生成物。为了补偿这一点，BLEU 的作者引入了一个额外的术语，*简洁惩罚*：
+我们快要到了。由于我们不关注召回率，所有生成的序列如果短而准确，都比长句子有益。因此，精确度得分偏爱短生成物。为了补偿这一点，`BLEU`的作者引入了一个额外的术语，*简洁惩罚*：
 
-<math alttext="上 B 上 R 等于 min 左括号 1，e 上标 1 减脚本 l Super Subscript r e f Superscript slash 脚本 l Super Subscript g e n Superscript Baseline 右括号" 显示="块"> <mrow> <mi> B </mi> <mi> R </mi> <mo> = </mo> <mo>可移动限制="真"形式="前缀"> min </mo> <mfenced 分隔符=""打开="("关闭=")"> <mn> 1 </mn> <mo>，</mo> <msup> <mi> e </mi> <mrow> <mn> 1 </mn> <mo> - </mo> <msub> <mi> ℓ </mi> <mrow> <mi> r </mi> <mi> e </mi> <mi> f </mi> </mrow> </msub> <mo> / </mo> <msub> <mi> ℓ </mi> <mrow> <mi> g </mi> <mi> e </mi> <mi> n </mi> </mrow> </msub> </mrow> </msup> </mfenced> </mrow> </math>
+```
+BR = min(1, e^(1 - ℓ_ref / ℓ_gen))
+```
 
-通过取最小值，我们确保这个惩罚永远不会超过 1，当生成文本的长度<math alttext="l Subscript g e n"><msub><mi>l</mi> <mrow><mi>g</mi><mi>e</mi><mi>n</mi></mrow></msub></math>小于参考文本<math alttext="l Subscript r e f"><msub><mi>l</mi> <mrow><mi>r</mi><mi>e</mi><mi>f</mi></mrow></msub></math>时，指数项变得指数级小。此时，你可能会问，为什么我们不使用类似*F*[1]-分数来考虑召回率呢？答案是，通常在翻译数据集中，有多个参考句子而不只是一个，因此，如果我们也测量召回率，我们会鼓励使用所有参考句子中的所有单词的翻译。因此，最好是寻求翻译中的高精度，并确保翻译和参考具有类似的长度。
+通过取最小值，我们确保这个惩罚永远不会超过 1，当生成文本的长度`ℓ_gen`小于参考文本`ℓ_ref`时，指数项变得指数级小。此时，你可能会问，为什么我们不使用类似*F*[1]-分数来考虑召回率呢？答案是，通常在翻译数据集中，有多个参考句子而不只是一个，因此，如果我们也测量召回率，我们会鼓励使用所有参考句子中的所有单词的翻译。因此，最好是寻求翻译中的高精度，并确保翻译和参考具有类似的长度。
 
-最后，我们可以把所有东西放在一起，得到 BLEU 分数的方程：
+最后，我们可以把所有东西放在一起，得到`BLEU`分数的方程：
 
-<math alttext="" 显示="块"> <mrow> <mtext> BLEU- </mtext> <mi mathvariant="italic"> N </mi> <mo> = </mo> <mi> B </mi> <mi> R </mi> <mo> × </mo> <msup> <mfenced 分隔符=""打开="("关闭=")"> <munderover> <mo> ∏ </mo> <mrow> <mi> n </mi> <mo> = </mo> <mn> 1 </mn> </mrow> <mi> N </mi> </munderover> <msub> <mi> p </mi> <mi> n </mi> </msub> </mfenced> <mrow> <mn> 1 </mn> <mo> / </mo> <mi> N </mi> </mrow> </msup> </mrow> </math>
+```
+BLEU-N = BR × (∏_{n=1}^{N} p_n)^(1/N)
+```
 
-最后一个术语是修改后的精度直到*n*-gram *N*的几何平均值。在实践中，通常报告 BLEU-4 分数。然而，您可能已经看到这个指标有许多局限性；例如，它不考虑同义词，并且推导过程中的许多步骤似乎是临时的和相当脆弱的启发式。您可以在 Rachel Tatman 的博客文章[“Evaluating Text Output in NLP: BLEU at Your Own Risk”](https://oreil.ly/nMXRh)中找到对 BLEU 缺陷的精彩阐述。
+最后一个术语是修改后的精度直到*n*-gram *N*的几何平均值。在实践中，通常报告`BLEU-4`分数。然而，您可能已经看到这个指标有许多局限性；例如，它不考虑同义词，并且推导过程中的许多步骤似乎是临时的和相当脆弱的启发式。您可以在 Rachel Tatman 的博客文章[“Evaluating Text Output in NLP: BLEU at Your Own Risk”](https://oreil.ly/nMXRh)中找到对`BLEU`缺陷的精彩阐述。
 
-总的来说，文本生成领域仍在寻找更好的评估指标，克服 BLEU 等指标的局限性是一个活跃的研究领域。BLEU 指标的另一个弱点是它期望文本已经被标记化。如果没有使用完全相同的文本标记化方法，这可能会导致不同的结果。SacreBLEU 指标通过内部化标记化步骤来解决这个问题；因此，它是用于基准测试的首选指标。
+总的来说，文本生成领域仍在寻找更好的评估指标，克服`BLEU`等指标的局限性是一个活跃的研究领域。`BLEU`指标的另一个弱点是它期望文本已经被标记化。如果没有使用完全相同的文本标记化方法，这可能会导致不同的结果。`SacreBLEU`指标通过内部化标记化步骤来解决这个问题；因此，它是用于基准测试的首选指标。
 
-我们现在已经通过了一些理论，但我们真正想做的是计算一些生成文本的分数。这是否意味着我们需要在 Python 中实现所有这些逻辑？不用担心，![nlpt_pin01](img/nlpt_pin01.png) Datasets 还提供了指标！加载指标的方式与加载数据集的方式相同：
+我们现在已经通过了一些理论，但我们真正想做的是计算一些生成文本的分数。这是否意味着我们需要在`Python`中实现所有这些逻辑？不用担心，![nlpt_pin01](img/nlpt_pin01.png) `Datasets`还提供了指标！加载指标的方式与加载数据集的方式相同：
 
 ```py
 from datasets import load_metric
@@ -272,7 +288,7 @@ from datasets import load_metric
 bleu_metric = load_metric("sacrebleu")
 ```
 
-`bleu_metric`对象是`Metric`类的一个实例，它像聚合器一样工作：您可以使用`add()`添加单个实例，也可以通过`add_batch()`添加整个批次。一旦添加了需要评估的所有样本，然后调用`compute()`，指标就会被计算。这将返回一个包含多个值的字典，例如每个*n*-gram 的精度，长度惩罚，以及最终的 BLEU 分数。让我们看一下之前的例子：
+`bleu_metric`对象是`Metric`类的一个实例，它像聚合器一样工作：您可以使用`add()`添加单个实例，也可以通过`add_batch()`添加整个批次。一旦添加了需要评估的所有样本，然后调用`compute()`，指标就会被计算。这将返回一个包含多个值的字典，例如每个*n*-gram 的精度，长度惩罚，以及最终的`BLEU`分数。让我们看一下之前的例子：
 
 ```py
 import pandas as pd
@@ -297,9 +313,9 @@ pd.DataFrame.from_dict(results, orient="index", columns=["Value"])
 
 ###### 注
 
-如果有多个参考翻译，BLEU 分数也适用。这就是为什么`reference`作为列表传递的原因。为了使*n*-gram 中的零计数的指标更加平滑，BLEU 集成了修改精度计算的方法。一种方法是向分子添加一个常数。这样，缺少的*n*-gram 不会导致分数自动变为零。为了解释这些值，我们通过设置`smooth_value=0`将其关闭。
+如果有多个参考翻译，`BLEU`分数也适用。这就是为什么`reference`作为列表传递的原因。为了使*n*-gram 中的零计数的指标更加平滑，`BLEU`集成了修改精度计算的方法。一种方法是向分子添加一个常数。这样，缺少的*n*-gram 不会导致分数自动变为零。为了解释这些值，我们通过设置`smooth_value=0`将其关闭。
 
-我们可以看到 1-gram 的精度确实是 2/6，而 2/3/4-gram 的精度都是 0。 （有关个别指标的更多信息，如计数和 bp，请参阅[SacreBLEU 存储库](https://oreil.ly/kiZPl)。）这意味着几何平均值为零，因此 BLEU 分数也为零。让我们看另一个几乎正确的预测示例：
+我们可以看到 1-gram 的精度确实是 2/6，而 2/3/4-gram 的精度都是 0。（有关个别指标的更多信息，如计数和 bp，请参阅[SacreBLEU 存储库](https://oreil.ly/kiZPl)。）这意味着几何平均值为零，因此`BLEU`分数也为零。让我们看另一个几乎正确的预测示例：
 
 ```py
 bleu_metric.add(
@@ -321,23 +337,25 @@ pd.DataFrame.from_dict(results, orient="index", columns=["Value"])
 
 我们观察到精度分数要好得多。预测中的 1-gram 都匹配，只有在精度分数中我们才看到有些不对劲。对于 4-gram，只有两个候选项，`["the", "cat", "is", "on"]`和`["cat", "is", "on", "mat"]`，后者不匹配，因此精度为 0.5。
 
-BLEU 分数被广泛用于评估文本，特别是在机器翻译中，因为通常更青睐精确的翻译，而不是包含所有可能和适当单词的翻译。
+`BLEU`分数被广泛用于评估文本，特别是在机器翻译中，因为通常更青睐精确的翻译，而不是包含所有可能和适当单词的翻译。
 
-还有其他应用，比如摘要，情况就不同了。在那里，我们希望生成的文本中包含所有重要信息，因此我们更青睐高召回率。这就是 ROUGE 分数通常被使用的地方。
 
-## ROUGE
 
-ROUGE 分数专门为像摘要这样的应用程序开发，其中高召回率比精确度更重要。这种方法与 BLEU 分数非常相似，我们观察不同的*n*-gram，并比较它们在生成文本和参考文本中的出现次数。不同之处在于，对于 ROUGE，我们检查参考文本中有多少*n*-gram 也出现在生成文本中。对于 BLEU，我们看生成文本中有多少*n*-gram 出现在参考文本中，因此我们可以重新使用精确度公式，只是在分子中计算生成文本中参考*n*-gram 的（未修剪的）出现次数。
+还有其他应用，比如摘要，情况就不同了。在那里，我们希望生成的文本中包含所有重要信息，因此我们更青睐高召回率。这就是`ROUGE`分数通常被使用的地方。
+
+## `ROUGE`
+
+`ROUGE`分数专门为像摘要这样的应用程序开发，其中高召回率比精确度更重要。这种方法与`BLEU`分数非常相似，我们观察不同的*n*-gram，并比较它们在生成文本和参考文本中的出现次数。不同之处在于，对于`ROUGE`，我们检查参考文本中有多少*n*-gram也出现在生成文本中。对于`BLEU`，我们看生成文本中有多少*n*-gram出现在参考文本中，因此我们可以重新使用精确度公式，只是在分子中计算生成文本中参考*n*-gram的（未修剪的）出现次数。
 
 <math alttext="" display="block"><mrow><mtext>ROUGE-</mtext><mi mathvariant="italic">N</mi> <mo>=</mo> <mfrac><mrow><msub><mo>∑</mo> <mrow><mi>snt’</mi><mi></mi><mi></mi><mo>∈</mo><mi>C</mi></mrow></msub> <msub><mo>∑</mo> <mrow><mi>n</mi><mtext>-</mtext><mi>g</mi><mi>r</mi><mi>a</mi><mi>m</mi><mo>∈</mo><mi>s</mi><mi>n</mi><msup><mi>t</mi> <mo>'</mo></msup></mrow></msub> <mi>C</mi><mi>o</mi><mi>u</mi><mi>n</mi><msub><mi>t</mi> <mrow><mi>m</mi><mi>a</mi><mi>t</mi><mi>c</mi><mi>h</mi></mrow></msub> <mrow><mo>(</mo><mi>n</mi><mtext>-</mtext><mi>g</mi><mi>r</mi><mi>a</mi><mi>m</mi><mo>)</mo></mrow></mrow> <mrow><msub><mo>∑</mo> <mrow><mi>snt’</mi><mi></mi><mi></mi><mo>∈</mo><mi>C</mi></mrow></msub> <msub><mo>∑</mo> <mrow><mi>n</mi><mtext>-</mtext><mi>g</mi><mi>r</mi><mi>a</mi><mi>m</mi><mo>∈</mo><mi>s</mi><mi>n</mi><msup><mi>t</mi> <mo>'</mo></msup></mrow></msub> <mi>C</mi><mi>o</mi><mi>u</mi><mi>n</mi><mi>t</mi><mrow><mo>(</mo><mi>n</mi><mtext>-</mtext><mi>g</mi><mi>r</mi><mi>a</mi><mi>m</mi><mo>)</mo></mrow></mrow></mfrac></mrow></math>
 
-这是 ROUGE 的原始提案。随后，研究人员发现完全移除精确度可能会产生强烈的负面影响。回到没有修剪计数的 BLEU 公式，我们可以衡量精确度，并且可以将精确度和召回的 ROUGE 分数结合起来，得到*F*[1]-score。这个分数是现在常用于 ROUGE 报告的度量标准。
+这是`ROUGE`的原始提案。随后，研究人员发现完全移除精确度可能会产生强烈的负面影响。回到没有修剪计数的`BLEU`公式，我们可以衡量精确度，并且可以将精确度和召回的`ROUGE`分数结合起来，得到*F*[1]-score。这个分数是现在常用于`ROUGE`报告的度量标准。
 
-ROUGE 中有一个单独的分数用于衡量最长公共子串（LCS），称为 ROUGE-L。LCS 可以计算任意一对字符串。例如，“abab”和“abc”的 LCS 将是“ab”，其长度为 2。如果我们想比较两个样本之间的这个值，我们需要以某种方式对其进行归一化，否则较长的文本将处于优势地位。为了实现这一点，ROUGE 的发明者提出了一种类似于<math alttext="upper F"><mi>F</mi></math> -score 的方案，其中 LCS 与参考文本和生成文本的长度进行了归一化，然后将两个归一化分数混合在一起：
+`ROUGE`中有一个单独的分数用于衡量最长公共子串（`LCS`），称为`ROUGE-L`。`LCS`可以计算任意一对字符串。例如，“abab”和“abc”的`LCS`将是“ab”，其长度为 2。如果我们想比较两个样本之间的这个值，我们需要以某种方式对其进行归一化，否则较长的文本将处于优势地位。为了实现这一点，`ROUGE`的发明者提出了一种类似于<math alttext="upper F"><mi>F</mi></math>-score 的方案，其中`LCS`与参考文本和生成文本的长度进行了归一化，然后将两个归一化分数混合在一起：
 
 <math alttext="upper R Subscript upper L upper C upper S Baseline equals StartFraction upper L upper C upper S left-parenthesis upper X comma upper Y right-parenthesis Over m EndFraction" display="block"><mrow><msub><mi>R</mi> <mrow><mi>L</mi><mi>C</mi><mi>S</mi></mrow></msub> <mo>=</mo> <mfrac><mrow><mi>L</mi><mi>C</mi><mi>S</mi><mo>(</mo><mi>X</mi><mo>,</mo><mi>Y</mi><mo>)</mo></mrow> <mi>m</mi></mfrac></mrow></math><math alttext="upper P Subscript upper L upper C upper S Baseline equals StartFraction upper L upper C upper S left-parenthesis upper X comma upper Y right-parenthesis Over n EndFraction" display="block"><mrow><msub><mi>P</mi> <mrow><mi>L</mi><mi>C</mi><mi>S</mi></mrow></msub> <mo>=</mo> <mfrac><mrow><mi>L</mi><mi>C</mi><mi>S</mi><mo>(</mo><mi>X</mi><mo>,</mo><mi>Y</mi><mo>)</mo></mrow> <mi>n</mi></mfrac></mrow></math><math alttext="upper F Subscript upper L upper C upper S Baseline equals StartFraction left-parenthesis 1 plus beta squared right-parenthesis upper R Subscript upper L upper C upper S Baseline upper P Subscript upper L upper C upper S Baseline Over upper R Subscript upper L upper C upper S Baseline plus beta upper P Subscript upper L upper C upper S Baseline EndFraction comma where beta equals upper P Subscript upper L upper C upper S Baseline slash upper R Subscript upper L upper C upper S Baseline" display="block"><mrow><msub><mi>F</mi> <mrow><mi>L</mi><mi>C</mi><mi>S</mi></mrow></msub> <mo>=</mo> <mfrac><mrow><mrow><mo>(</mo><mn>1</mn><mo>+</mo><msup><mi>β</mi> <mn>2</mn></msup> <mo>)</mo></mrow><msub><mi>R</mi> <mrow><mi>L</mi><mi>C</mi><mi>S</mi></mrow></msub> <msub><mi>P</mi> <mrow><mi>L</mi><mi>C</mi><mi>S</mi></mrow></mrow> <mrow><msub><mi>R</mi> <mrow><mi>L</mi><mi>C</mi><mi>S</mi></mrow></msub> <mo>+</mo><mi>β</mi><msub><mi>P</mi> <mrow><mi>L</mi><mi>C</mi><mi>S</mi></mrow></msub></mrow></mfrac> <mo>,</mo> <mtext>where</mtext> <mi>β</mi> <mo>=</mo> <msub><mi>P</mi> <mrow><mi>L</mi><mi>C</mi><mi>S</mi></mrow></msub> <mo>/</mo> <msub><mi>R</mi> <mrow><mi>L</mi><mi>C</mi><mi>S</mi></mrow></msub></mrow></math>
 
-这样，LCS 分数就可以得到适当的归一化，并可以在样本之间进行比较。在![nlpt_pin01](img/nlpt_pin01.png)数据集实现中，计算了两种 ROUGE 的变体：一种计算每个句子的得分并对摘要进行平均（ROUGE-L），另一种直接在整个摘要上计算（ROUGE-Lsum）。
+这样，`LCS`分数就可以得到适当的归一化，并可以在样本之间进行比较。在![nlpt_pin01](img/nlpt_pin01.png)数据集实现中，计算了两种`ROUGE`的变体：一种计算每个句子的得分并对摘要进行平均（`ROUGE-L`），另一种直接在整个摘要上计算（`ROUGE-Lsum`）。
 
 我们可以按以下方式加载度量标准：
 
@@ -345,7 +363,7 @@ ROUGE 中有一个单独的分数用于衡量最长公共子串（LCS），称�
 rouge_metric = load_metric("rouge")
 ```
 
-我们已经使用 GPT-2 和其他模型生成了一组摘要，现在我们有了一个系统比较摘要的度量标准。让我们将 ROUGE 分数应用于模型生成的所有摘要：
+我们已经使用`GPT-2`和其他模型生成了一组摘要，现在我们有了一个系统比较摘要的度量标准。让我们将`ROUGE`分数应用于模型生成的所有摘要：
 
 ```py
 reference = dataset["train"][1]["highlights"]
@@ -362,7 +380,6 @@ pd.DataFrame.from_records(records, index=summaries.keys())
 
 |  | rouge1 | rouge2 | rougeL | rougeLsum |
 | --- | --- | --- | --- | --- |
-| --- | --- | --- | --- | --- |
 | 基线 | 0.303571 | 0.090909 | 0.214286 | 0.232143 |
 | gpt2  | 0.187500 | 0.000000 | 0.125000 | 0.187500 |
 | t5  | 0.486486 | 0.222222 | 0.378378 | 0.486486 |
@@ -371,15 +388,15 @@ pd.DataFrame.from_records(records, index=summaries.keys())
 
 ###### 注意
 
-在![nlpt_pin01](img/nlpt_pin01.png)数据集库中，ROUGE 度量标准还计算置信区间（默认情况下为第 5 和第 95 百分位数）。平均值存储在属性`mid`中，区间可以通过`low`和`high`检索。
+在![nlpt_pin01](img/nlpt_pin01.png)数据集库中，`ROUGE`度量标准还计算置信区间（默认情况下为第 5 和第 95 百分位数）。平均值存储在属性`mid`中，区间可以通过`low`和`high`检索。
 
-显然，这些结果并不是非常可靠，因为我们只看了一个样本，但我们可以比较一下这一个例子的摘要质量。表格证实了我们的观察，即我们考虑的模型中，GPT-2 的表现最差。这并不奇怪，因为它是这个组中唯一没有明确训练用于摘要的模型。然而，令人惊讶的是，简单的前三句基线与拥有大约十亿参数的 Transformer 模型相比，表现并不太差！PEGASUS 和 BART 是整体上最好的模型（ROUGE 分数越高越好），但 T5 在 ROUGE-1 和 LCS 分数上略微更好。这些结果将 T5 和 PEGASUS 列为最佳模型，但再次需要谨慎对待这些结果，因为我们只在一个例子上评估了模型。从 PEGASUS 论文中的结果来看，我们预期 PEGASUS 在 CNN/DailyMail 数据集上的表现将优于 T5。
+显然，这些结果并不是非常可靠，因为我们只看了一个样本，但我们可以比较一下这一个例子的摘要质量。表格证实了我们的观察，即我们考虑的模型中，`GPT-2`的表现最差。这并不奇怪，因为它是这个组中唯一没有明确训练用于摘要的模型。然而，令人惊讶的是，简单的前三句基线与拥有大约十亿参数的 Transformer 模型相比，表现并不太差！`PEGASUS`和`BART`是整体上最好的模型（`ROUGE`分数越高越好），但`T5`在`ROUGE-1`和`LCS`分数上略微更好。这些结果将`T5`和`PEGASUS`列为最佳模型，但再次需要谨慎对待这些结果，因为我们只在一个例子上评估了模型。从`PEGASUS`论文中的结果来看，我们预期`PEGASUS`在`CNN/DailyMail`数据集上的表现将优于`T5`。
 
-让我们看看我们是否可以用 PEGASUS 复现这些结果。
+让我们看看我们是否可以用`PEGASUS`复现这些结果。
 
-# 评估 PEGASUS 在 CNN/DailyMail 数据集上
+# 评估`PEGASUS`在`CNN/DailyMail`数据集上
 
-我们现在已经准备好适当地评估模型了：我们有一个来自 CNN/DailyMail 的测试集的数据集，我们有一个 ROUGE 指标，我们有一个摘要模型。我们只需要把这些部分组合起来。让我们首先评估三句基线的性能：
+我们现在已经准备好适当地评估模型了：我们有一个来自`CNN/DailyMail`的测试集的数据集，我们有一个`ROUGE`指标，我们有一个摘要模型。我们只需要把这些部分组合起来。让我们首先评估三句基线的性能：
 
 ```py
 def evaluate_summaries_baseline(dataset, metric,
@@ -392,7 +409,7 @@ def evaluate_summaries_baseline(dataset, metric,
     return score
 ```
 
-现在我们将把这个函数应用到数据的一个子集上。由于 CNN/DailyMail 数据集的测试部分大约有 10,000 个样本，为所有这些文章生成摘要需要很长时间。回想一下第五章中提到的，每个生成的标记都需要通过模型进行前向传递；为每个样本生成 100 个标记将需要 100 万次前向传递，如果我们使用波束搜索，这个数字将乘以波束的数量。为了保持计算相对快速，我们将对测试集进行子采样，然后在 1,000 个样本上运行评估。这应该给我们一个更加稳定的分数估计，同时在单个 GPU 上不到一小时内完成 PEGASUS 模型的评估：
+现在我们将把这个函数应用到数据的一个子集上。由于`CNN/DailyMail`数据集的测试部分大约有 10,000 个样本，为所有这些文章生成摘要需要很长时间。回想第五章中提到的，每个生成的标记都需要通过模型进行前向传递；为每个样本生成 100 个标记将需要 100 万次前向传递，如果我们使用波束搜索，这个数字将乘以波束的数量。为了保持计算相对快速，我们将对测试集进行子采样，然后在 1,000 个样本上运行评估。这应该给我们一个更加稳定的分数估计，同时在单个 GPU 上不到一小时内完成`PEGASUS`模型的评估：
 
 ```py
 test_sampled = dataset["test"].shuffle(seed=42).select(range(1000))
@@ -406,7 +423,9 @@ pd.DataFrame.from_dict(rouge_dict, orient="index", columns=["baseline"]).T
 | --- | --- | --- | --- | --- |
 | 基线 | 0.396061 | 0.173995 | 0.245815 | 0.361158 |
 
-大多数分数比上一个例子差，但仍然比 GPT-2 取得的分数要好！现在让我们实现相同的评估函数来评估 PEGASUS 模型：
+大多数分数比上一个例子差，但仍然比`GPT-2`取得的分数要好！现在让我们实现相同的评估函数来评估`PEGASUS`模型：
+
+
 
 ```py
 from tqdm import tqdm
@@ -620,6 +639,12 @@ seq2seq_data_collator = DataCollatorForSeq2Seq(tokenizer, model=model)
 
 然后，像往常一样，我们为训练设置了`TrainingArguments`：
 
+
+
+# 使用 `Trainer` 微调 PEGASUS 模型
+
+首先，我们导入所需的库并设置训练参数：
+
 ```py
 from transformers import TrainingArguments, Trainer
 
@@ -674,9 +699,9 @@ trainer.push_to_hub("Training complete!")
 
 在下一节中，我们将使用模型为我们生成一些摘要。
 
-###### 提示
+## 提示
 
-您还可以在训练循环中评估生成的内容：使用名为`Seq2Seq​Trainin⁠g​Arguments`的`TrainingArguments`的扩展，并指定`predict_with_generate=True`。将其传递给专用的`Trainer`称为`Seq2SeqTrainer`，然后使用`generate()`函数而不是模型的前向传递来创建评估预测。试试看！
+您还可以在训练循环中评估生成的内容：使用名为`Seq2SeqTrainin⁠g​Arguments`的`TrainingArguments`的扩展，并指定`predict_with_generate=True`。将其传递给专用的`Trainer`称为`Seq2SeqTrainer`，然后使用`generate()`函数而不是模型的前向传递来创建评估预测。试试看！
 
 ## 生成对话摘要
 
@@ -721,7 +746,6 @@ Larry.
 Model Summary:
 Amanda can't find Betty's number. Larry called Betty last time they were at the
 park together. Hannah wants Amanda to text Larry instead of calling Betty.
-
 ```
 
 这看起来更像参考摘要。似乎模型已经学会将对话合成为摘要，而不仅仅是提取段落。现在，最终测试：模型在自定义输入上的表现如何？

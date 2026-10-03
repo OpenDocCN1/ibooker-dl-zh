@@ -1,42 +1,43 @@
+
 # 第七章：基于能量的模型
 
 基于能量的模型是一类广泛的生成模型，借鉴了建模物理系统的一个关键思想——即，事件的概率可以用玻尔兹曼分布来表示，这是一个特定函数，将实值能量函数归一化在 0 到 1 之间。这个分布最初是由路德维希·玻尔兹曼在 1868 年提出的，他用它来描述处于热平衡状态的气体。
 
-在本章中，我们将看到如何使用这个想法来训练一个生成模型，用于生成手写数字的图像。我们将探索几个新概念，包括用于训练 EBM 的对比散度和用于采样的朗之万动力学。
+在本章中，我们将看到如何使用这个想法来训练一个生成模型，用于生成手写数字的图像。我们将探索几个新概念，包括用于训练`EBM`的对比散度和用于采样的朗之万动力学。
 
-# 介绍
+## 介绍
 
 我们将从一个简短的故事开始，以说明基于能量的模型背后的关键概念。
 
-Diane Mixx 和 Long-au-Vin 跑步俱乐部的故事捕捉了基于能量建模的关键思想。现在让我们更详细地探讨理论，然后我们将使用 Keras 实现一个实际示例。
+Diane Mixx 和 Long-au-Vin 跑步俱乐部的故事捕捉了基于能量建模的关键思想。现在让我们更详细地探讨理论，然后我们将使用`Keras`实现一个实际示例。
 
-# 基于能量的模型
+## 基于能量的模型
 
-基于能量的模型试图使用*玻尔兹曼分布*（方程式 7-1）来建模真实的数据生成分布，其中 <math alttext="upper E left-parenthesis x right-parenthesis"><mrow><mi>E</mi> <mo>(</mo> <mi>x</mi> <mo>)</mo></mrow></math> 被称为观察结果 <math alttext="x"><mi>x</mi></math> 的*能量函数*（或*分数*）。
+基于能量的模型试图使用*玻尔兹曼分布*（方程式 7-1）来建模真实的数据生成分布，其中 `E(x)` 被称为观察结果 `x` 的*能量函数*（或*分数*）。
 
 ##### 方程式 7-1。玻尔兹曼分布
 
-<math alttext="p left-parenthesis bold x right-parenthesis equals StartFraction e Superscript minus upper E left-parenthesis bold x right-parenthesis Baseline Over integral Underscript ModifyingAbove bold x With bold caret element-of bold upper X Endscripts e Superscript minus upper E left-parenthesis ModifyingAbove bold x With bold caret right-parenthesis Baseline EndFraction" display="block"><mrow><mi>p</mi> <mrow><mo>(</mo> <mi>𝐱</mi> <mo>)</mo></mrow> <mo>=</mo> <mfrac><msup><mi>e</mi> <mrow><mo>-</mo><mi>E</mi><mo>(</mo><mi>𝐱</mi><mo>)</mo></mrow></msup> <mrow><msub><mo>∫</mo> <mrow><mover accent="true"><mi>𝐱</mi> <mo>^</mo></mover><mo>∈</mo><mi>𝐗</mi></mrow></msub> <msup><mi>e</mi> <mrow><mo>-</mo><mi>E</mi><mo>(</mo><mover accent="true"><mi>𝐱</mi> <mo>^</mo></mover><mo>)</mo></mrow></msup></mrow></mfrac></mrow></math>
+`p(𝐱) = e^(−E(𝐱)) / ∫_{𝐱̂∈𝐗} e^(−E(𝐱̂))`
 
-在实践中，这意味着训练一个神经网络 <math alttext="upper E left-parenthesis x right-parenthesis"><mrow><mi>E</mi> <mo>(</mo> <mi>x</mi> <mo>)</mo></mrow></math>，对可能的观察输出低分数（使得 <math alttext="p bold x"><mrow><mi>p</mi> <mi>𝐱</mi></mrow></math> 接近于 1），对不太可能的观察输出高分数（使得 <math alttext="p bold x"><mrow><mi>p</mi> <mi>𝐱</mi></mrow></math> 接近于 0）。
+在实践中，这意味着训练一个神经网络 `E(x)`，对可能的观察输出低分数（使得 `p𝐱` 接近于 1），对不太可能的观察输出高分数（使得 `p𝐱` 接近于 0）。
 
 用这种方式建模数据存在两个挑战。首先，我们不清楚如何使用我们的模型来采样新的观察结果——我们可以用它来生成给定观察结果的分数，但如何生成一个得分低的观察结果（即，一个可信的观察结果）？
 
-其次，方程式 7-1 的标准化分母包含一个对于除了最简单的问题外都难以计算的积分。如果我们无法计算这个积分，那么我们就无法使用最大似然估计来训练模型，因为这要求 <math alttext="p bold x"><mrow><mi>p</mi> <mi>𝐱</mi></mrow></math> 是一个有效的概率分布。
+其次，方程式 7-1 的标准化分母包含一个对于除了最简单的问题外都难以计算的积分。如果我们无法计算这个积分，那么我们就无法使用最大似然估计来训练模型，因为这要求 `p𝐱` 是一个有效的概率分布。
 
 基于能量的模型的关键思想是，我们可以使用近似技术来确保我们永远不需要计算难以计算的分母。这与标准化流形形成对比，标准化流形需要我们付出很大的努力，以确保我们对标准高斯分布应用的变换不会改变输出仍然是有效的概率分布的事实。
 
-我们通过使用一种称为对比散度（用于训练）和一种称为朗之万动力学（用于采样）的技术来避开棘手的难以计算的分母问题，这些技术遵循了杜和莫达奇在 2019 年的论文“基于能量的模型的隐式生成和建模”的思想。我们将在本章后面详细探讨这些技术，同时构建我们自己的 EBM。
+我们通过使用一种称为对比散度（用于训练）和一种称为朗之万动力学（用于采样）的技术来避开棘手的难以计算的分母问题，这些技术遵循了杜和莫达奇在 2019 年的论文“基于能量的模型的隐式生成和建模”的思想。我们将在本章后面详细探讨这些技术，同时构建我们自己的`EBM`。
 
-首先，让我们准备一个数据集并设计一个简单的神经网络，来表示我们的实值能量函数 <math alttext="upper E left-parenthesis x right-parenthesis"><mrow><mi>E</mi> <mo>(</mo> <mi>x</mi> <mo>)</mo></mrow></math>。
+首先，让我们准备一个数据集并设计一个简单的神经网络，来表示我们的实值能量函数 `E(x)`。
 
-# 运行此示例的代码
+## 运行此示例的代码
 
 此示例的代码可以在书籍存储库中的*notebooks/07_ebm/01_ebm/ebm.ipynb*中找到。
 
 这段代码是根据 Philip Lippe 的优秀教程“深度基于能量的生成模型”进行调整的。
 
-## MNIST 数据集
+### MNIST 数据集
 
 我们将使用标准的[MNIST 数据集](https://oreil.ly/mSvhc)，其中包含手写数字的灰度图像。数据集中的一些示例图像显示在图 7-2 中。
 
@@ -44,7 +45,7 @@ Diane Mixx 和 Long-au-Vin 跑步俱乐部的故事捕捉了基于能量建模�
 
 ###### 图 7-2。MNIST 数据集中的图像示例
 
-数据集已经预先打包到 TensorFlow 中，因此可以按照示例 7-1 中所示下载。
+数据集已经预先打包到`TensorFlow`中，因此可以按照示例 7-1 中所示下载。
 
 ##### 示例 7-1。加载 MNIST 数据集
 
@@ -53,7 +54,7 @@ from tensorflow.keras import datasets
 (x_train, _), (x_test, _) = datasets.mnist.load_data()
 ```
 
-像往常一样，我们将像素值缩放到范围[-1, 1]，并添加一些填充使图像大小为 32×32 像素。我们还将其转换为 TensorFlow 数据集，如示例 7-2 中所示。
+像往常一样，我们将像素值缩放到范围[-1, 1]，并添加一些填充使图像大小为 32×32 像素。我们还将其转换为`TensorFlow`数据集，如示例 7-2 中所示。
 
 ##### 示例 7-2。预处理 MNIST 数据集
 
@@ -70,15 +71,15 @@ x_train = tf.data.Dataset.from_tensor_slices(x_train).batch(128)
 x_test = tf.data.Dataset.from_tensor_slices(x_test).batch(128)
 ```
 
-现在我们有了数据集，我们可以构建代表我们能量函数<math alttext="上标 E 左括号 x 右括号"><mrow><mi>E</mi> <mo>(</mo> <mi>x</mi> <mo>)</mo></mrow></math>的神经网络。
+现在我们有了数据集，我们可以构建代表我们能量函数 `E(x)` 的神经网络。
 
-## 能量函数
+### 能量函数
 
-能量函数<math alttext="上标 E 下标θ左括号 x 右括号"><mrow><msub><mi>E</mi> <mi>θ</mi></msub> <mrow><mo>(</mo> <mi>x</mi> <mo>)</mo></mrow></mrow></math>是一个具有参数<math alttext="θ"><mi>θ</mi></math>的神经网络，可以将输入图像<math alttext="x"><mi>x</mi></math>转换为标量值。在整个网络中，我们使用了一个称为*swish*的激活函数，如下面的侧边栏所述。
+能量函数 `E_θ(x)` 是一个具有参数 `θ` 的神经网络，可以将输入图像 `x` 转换为标量值。在整个网络中，我们使用了一个称为*swish*的激活函数，如下面的侧边栏所述。
 
-网络是一组堆叠的`Conv2D`层，逐渐减小图像的尺寸同时增加通道数。最后一层是一个具有线性激活的单个完全连接单元，因此网络可以输出范围内的值（<math alttext="负无穷"><mrow><mo>-</mo> <mi>∞</mi></mrow></math>，<math alttext="正无穷"><mi>∞</mi></math>）。构建它的代码在示例 7-3 中给出。
+网络是一组堆叠的`Conv2D`层，逐渐减小图像的尺寸同时增加通道数。最后一层是一个具有线性激活的单个完全连接单元，因此网络可以输出范围内的值（`-∞`，`∞`）。构建它的代码在示例 7-3 中给出。
 
-##### 示例 7-3。构建能量函数<math alttext="上标 E 左括号 x 右括号"><mrow><mi>E</mi> <mo>(</mo> <mi>x</mi> <mo>)</mo></mrow></math>神经网络
+##### 示例 7-3。构建能量函数 `E(x)` 神经网络
 
 ```py
 ebm_input = layers.Input(shape=(32, 32, 1))
@@ -110,19 +111,19 @@ model = models.Model(ebm_input, ebm_output) # ③
 
 ③
 
-一个将输入图像转换为标量能量值的 Keras `Model`。
+一个将输入图像转换为标量能量值的`Keras` `Model`。
 
-## 使用 Langevin 动力学进行采样
+### 使用 Langevin 动力学进行采样
 
 能量函数只为给定输入输出一个分数——我们如何使用这个函数生成能量分数低的新样本？
 
 我们将使用一种称为*Langevin 动力学*的技术，利用了我们可以计算能量函数相对于其输入的梯度的事实。如果我们从样本空间中的一个随机点开始，并朝着计算出的梯度的相反方向迈出小步，我们将逐渐减小能量函数。如果我们的神经网络训练正确，那么随机噪声应该在我们眼前转变成类似于训练集中的观察结果的图像！
 
-# 随机梯度 Langevin 动力学
+#### 随机梯度 Langevin 动力学
 
 重要的是，当我们穿越样本空间时，我们还必须向输入添加少量随机噪声；否则，有可能陷入局部最小值。因此，该技术被称为随机梯度 Langevin 动力学。³
 
-我们可以将这种梯度下降可视化为 图 7-4 中所示，对于一个具有能量函数值的三维空间。路径是一个嘈杂的下降，沿着能量函数 <math alttext="upper E left-parenthesis x right-parenthesis"><mrow><mi>E</mi> <mo>(</mo> <mi>x</mi> <mo>)</mo></mrow></math> 的负梯度相对于输入 <math alttext="x"><mi>x</mi></math> 下降。在 MNIST 图像数据集中，我们有 1,024 个像素，因此在一个 1,024 维空间中导航，但是相同的原则适用！
+我们可以将这种梯度下降可视化为 图 7-4 中所示，对于一个具有能量函数值的三维空间。路径是一个嘈杂的下降，沿着能量函数 `E(x)` 的负梯度相对于输入 `x` 下降。在 MNIST 图像数据集中，我们有 1,024 个像素，因此在一个 1,024 维空间中导航，但是相同的原则适用！
 
 ![`www.math3d.org/C1sQPhizZ`](img/gdl2_0704.png)
 
@@ -138,13 +139,13 @@ model = models.Model(ebm_input, ebm_output) # ③
 
 形式上，朗之万动力学可以用以下方程描述：
 
-<math alttext="x Superscript k Baseline equals x Superscript k minus 1 Baseline minus eta normal nabla Subscript x Baseline upper E Subscript theta Baseline left-parenthesis x Superscript k minus 1 Baseline right-parenthesis plus omega" display="block"><mrow><msup><mi>x</mi> <mi>k</mi></msup> <mo>=</mo> <msup><mi>x</mi> <mrow><mi>k</mi><mo>-</mo><mn>1</mn></mrow></msup> <mo>-</mo> <mi>η</mi> <msub><mi>∇</mi> <mi>x</mi></msub> <msub><mi>E</mi> <mi>θ</mi></msub> <mrow><mo>(</mo> <msup><mi>x</mi> <mrow><mi>k</mi><mo>-</mo><mn>1</mn></mrow></msup> <mo>)</mo></mrow> <mo>+</mo> <mi>ω</mi></mrow></math>
+`x^k = x^(k−1) − η ∇_x E_θ(x^(k−1)) + ω`
 
-其中 <math alttext="omega tilde script upper N left-parenthesis 0 comma sigma right-parenthesis"><mrow><mi>ω</mi> <mo>∼</mo> <mi>𝒩</mi> <mo>(</mo> <mn>0</mn> <mo>,</mo> <mi>σ</mi> <mo>)</mo></mrow></math> 和 <math alttext="x Superscript 0 Baseline tilde script upper U"><mrow><msup><mi>x</mi> <mn>0</mn></msup> <mo>∼</mo> <mi>𝒰</mi></mrow></math>（-1,1）。<math alttext="eta"><mi>η</mi></math> 是必须调整的步长超参数——太大会导致步骤跳过最小值，太小则算法收敛速度太慢。
+其中 `ω ∼ 𝒩(0, σ)` 和 `x^0 ∼ 𝒰`（-1,1）。`η` 是必须调整的步长超参数——太大会导致步骤跳过最小值，太小则算法收敛速度太慢。
 
 ###### 提示
 
-<math alttext="x Superscript 0 Baseline tilde script upper U"><mrow><msup><mi>x</mi> <mn>0</mn></msup> <mo>∼</mo> <mi>𝒰</mi></mrow></math>（-1,1）是范围[-1,1]上的均匀分布。
+`x^0 ∼ 𝒰`（-1,1）是范围[-1,1]上的均匀分布。
 
 我们可以编写我们的朗之万采样函数，如 示例 7-4 所示。
 
@@ -186,11 +187,13 @@ def generate_samples(model, inp_imgs, steps, step_size, noise):
 
 向输入图像中添加少量梯度。
 
-## 使用对比散度进行训练
+### 使用对比散度进行训练
 
 现在我们知道如何从样本空间中采样一个新的低能量点，让我们将注意力转向训练模型。
 
 我们无法应用最大似然估计，因为能量函数不输出概率；它输出的是一个在样本空间中不积分为 1 的分数。相反，我们将应用 Geoffrey Hinton 在 2002 年首次提出的一种技术，称为*对比散度*，用于训练非归一化评分模型。⁴
+
+
 
 我们希望最小化的值（一如既往）是数据的负对数似然：
 
@@ -200,7 +203,7 @@ def generate_samples(model, inp_imgs, steps, step_size, noise):
 
 <math alttext="StartLayout 1st Row 1st Column normal nabla Subscript theta Baseline script upper L 2nd Column equals 3rd Column double-struck upper E Subscript x tilde normal d normal a normal t normal a Baseline left-bracket normal nabla Subscript theta Baseline upper E Subscript theta Baseline left-parenthesis bold x right-parenthesis right-bracket minus double-struck upper E Subscript x tilde normal m normal o normal d normal e normal l Baseline left-bracket normal nabla Subscript theta Baseline upper E Subscript theta Baseline left-parenthesis bold x right-parenthesis right-bracket EndLayout" display="block"><mtable displaystyle="true"><mtr><mtd columnalign="right"><mrow><msub><mi>∇</mi> <mi>θ</mi></msub> <mi>ℒ</mi></mrow></mtd> <mtd><mo>=</mo></mtd> <mtd columnalign="left"><mrow><msub><mi>𝔼</mi> <mrow><mi>x</mi><mo>∼</mo> <mi>data</mi></mrow></msub> <mfenced separators="" open="[" close="]"><msub><mi>∇</mi> <mi>θ</mi></msub> <msub><mi>E</mi> <mi>θ</mi></msub> <mrow><mo>(</mo> <mi>𝐱</mi> <mo>)</mo></mrow></mfenced> <mo>-</mo> <msub><mi>𝔼</mi> <mrow><mi>x</mi><mo>∼</mo> <mi>model</mi></mrow></msub> <mfenced separators="" open="[" close="]"><msub><mi>∇</mi> <mi>θ</mi></msub> <msub><mi>E</mi> <mi>θ</mi></msub> <mrow><mo>(</mo> <mi>𝐱</mi> <mo>)</mo></mrow></mfenced></mrow></mtd></mtr></mtable></math>
 
-这在直觉上是有很多意义的-我们希望训练模型输出真实观察的大负能量分数，并为生成的假观察输出大正能量分数，以便这两个极端之间的对比尽可能大。
+这在直觉上是有很多意义的——我们希望训练模型输出真实观察的大负能量分数，并为生成的假观察输出大正能量分数，以便这两个极端之间的对比尽可能大。
 
 换句话说，我们可以计算真实和假样本的能量分数之间的差异，并将其用作我们的损失函数。
 
@@ -263,7 +266,7 @@ class Buffer:
 
 ###### 图 7-5。对比散度的一步
 
-我们可以编写对比散度算法的训练步骤，如示例 7-6 所示，在自定义 Keras 模型中。 
+我们可以编写对比散度算法的训练步骤，如示例 7-6 所示，在自定义 Keras 模型中。
 
 ##### 示例 7-6。使用对比散度训练的 EBM
 
@@ -371,7 +374,7 @@ ebm.fit(x_train, epochs=60, validation_data = x_test,)
 
 ![](img/gdl2_0706.png)
 
-###### 图 7-6\. EBM 训练过程的损失曲线和指标
+###### 图 7-6。EBM 训练过程的损失曲线和指标
 
 首先，注意到在训练步骤中计算的损失在各个周期中大致保持不变且较小。虽然模型不断改进，但与训练集中的真实图像进行比较的缓冲区中生成的图像质量也在提高，因此我们不应该期望训练损失显著下降。
 
@@ -379,7 +382,7 @@ ebm.fit(x_train, epochs=60, validation_data = x_test,)
 
 从 EBM 生成新样本只需运行 Langevin 采样器进行大量步骤，从一个静止状态（随机噪声）开始，如 Example 7-7 中所示。观测被迫 *下坡*，沿着相对于输入的评分函数的梯度，以便在噪声中出现一个合理的观测。
 
-##### 示例 7-7\. 使用 EBM 生成新观测
+##### 示例 7-7。使用 EBM 生成新观测
 
 ```py
 start_imgs = np.random.uniform(size = (10, 32, 32, 1)) * 2 - 1
@@ -397,13 +400,15 @@ gen_img = generate_samples(
 
 ![](img/gdl2_0707.png)
 
-###### 图 7-7\. 使用 EBM 模型的 Langevin 采样器生成的示例以指导梯度下降
+
+
+###### 图 7-7. 使用 EBM 模型的 Langevin 采样器生成的示例以指导梯度下降
 
 我们甚至可以展示单个观测是如何通过在 Langevin 采样过程中拍摄当前观测的快照生成的——这在 Figure 7-8 中展示。
 
 ![](img/gdl2_0708.png)
 
-###### 图 7-8\. Langevin 采样过程中不同步骤的观测快照
+###### 图 7-8. Langevin 采样过程中不同步骤的观测快照
 
 ## 其他能量基模型
 
@@ -413,7 +418,7 @@ gen_img = generate_samples(
 
 <math alttext="upper E Subscript theta Baseline left-parenthesis v comma h right-parenthesis equals minus one-half left-parenthesis v Superscript upper T Baseline upper L v plus h Superscript upper T Baseline upper J h plus v Superscript upper T Baseline upper W h right-parenthesis" display="block"><mrow><msub><mi>E</mi> <mi>θ</mi></msub> <mrow><mo>(</mo> <mi>v</mi> <mo>,</mo> <mi>h</mi> <mo>)</mo></mrow> <mo>=</mo> <mo>-</mo> <mfrac><mn>1</mn> <mn>2</mn></mfrac> <mfenced separators="" open="(" close=")"><msup><mi>v</mi> <mi>T</mi></msup> <mi>L</mi> <mi>v</mi> <mo>+</mo> <msup><mi>h</mi> <mi>T</mi></msup> <mi>J</mi> <mi>h</mi> <mo>+</mo> <msup><mi>v</mi> <mi>T</mi></msup> <mi>W</mi> <mi>h</mi></mfenced></mrow></math>
 
-其中 <math alttext="upper W comma upper L comma upper J"><mrow><mi>W</mi> <mo>,</mo> <mi>L</mi> <mo>,</mo> <mi>J</mi></mrow></math> 是模型学习的权重矩阵。训练通过对比散度实现，但使用 Gibbs 采样在可见层和隐藏层之间交替，直到找到平衡。实际上，这是非常缓慢的，不适用于大量隐藏单元。
+其中 `W`, `L`, `J` 是模型学习的权重矩阵。训练通过对比散度实现，但使用 Gibbs 采样在可见层和隐藏层之间交替，直到找到平衡。实际上，这是非常缓慢的，不适用于大量隐藏单元。
 
 ###### 提示
 

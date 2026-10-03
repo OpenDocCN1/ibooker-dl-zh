@@ -1,10 +1,12 @@
+
+
 # 第七章：PyTorch
 
 在第六章和第五章中，您学习了如何通过从头开始实现卷积和循环神经网络来使它们工作。然而，了解它们如何工作是必要的，但仅凭这些知识无法使它们在真实世界的问题上工作；为此，您需要能够在高性能库中实现它们。我们可以致力于构建一个高性能神经网络库的整本书，但那将是一本非常不同（或者只是更长）的书，面向一个非常不同的受众。相反，我们将把这最后一章献给介绍 PyTorch，这是一个越来越受欢迎的基于自动微分的神经网络框架，我们在第六章的开头介绍过。
 
 与本书的其余部分一样，我们将以与神经网络工作方式相匹配的方式编写代码，编写`Layer`、`Trainer`等类。这样做的同时，我们不会按照常见的 PyTorch 实践编写代码，但我们将在[本书的 GitHub 存储库](https://oreil.ly/2N4H8jz)中包含链接，让您了解更多关于如何表达神经网络的信息，以 PyTorch 设计的方式来表达。在我们开始之前，让我们从学习 PyTorch 的核心数据类型开始，这种数据类型使其具有自动微分的能力，从而使其能够清晰地表达神经网络训练：`Tensor`。
 
-# PyTorch 张量
+## PyTorch 张量
 
 在上一章中，我们展示了一个简单的`NumberWithGrad`通过跟踪对其执行的操作来累积梯度。这意味着如果我们写：
 
@@ -29,9 +31,9 @@ a = torch.Tensor([[3., 3.,],
 
 这里注意几点：
 
-1.  我们可以通过简单地将其中包含的数据包装在`torch.Tensor`中来初始化一个`Tensor`，就像我们用`ndarray`做的那样。
+1. 我们可以通过简单地将其中包含的数据包装在`torch.Tensor`中来初始化一个`Tensor`，就像我们用`ndarray`做的那样。
 
-1.  当以这种方式初始化`Tensor`时，我们必须传入参数`requires_grad=True`，以告诉`Tensor`累积梯度。
+2. 当以这种方式初始化`Tensor`时，我们必须传入参数`requires_grad=True`，以告诉`Tensor`累积梯度。
 
 一旦我们这样做了，我们就可以像以前一样执行计算：
 
@@ -59,7 +61,7 @@ PyTorch 的这个特性使我们能够通过定义前向传播、计算损失并
 
 在接下来的几节中，我们将展示如何使用 PyTorch 的数据类型实现我们在本书中提出的训练框架。
 
-# 使用 PyTorch 进行深度学习
+## 使用 PyTorch 进行深度学习
 
 正如我们所看到的，深度学习模型有几个元素共同工作以产生一个经过训练的模型：
 
@@ -73,7 +75,7 @@ PyTorch 的这个特性使我们能够通过定义前向传播、计算损失并
 
 事实证明，使用 PyTorch，`Optimizer`和`Loss`都是一行代码，`Model`和`Layer`也很简单。让我们依次介绍这些元素。
 
-## PyTorch 元素：模型、层、优化器和损失
+### PyTorch 元素：模型、层、优化器和损失
 
 PyTorch 的一个关键特性是能够将模型和层定义为易于使用的对象，通过继承`torch.nn.Module`类处理梯度向后传播和自动存储参数。稍后在本章中您将看到这些部分如何结合在一起；现在只需知道`PyTorchLayer`可以这样编写：
 
@@ -105,7 +107,7 @@ class PyTorchModel(nn.Module):
 
 换句话说，`PyTorchLayer`或`PyTorchModel`的每个子类只需要实现`__init__`和`forward`方法，这将使我们能够以直观的方式使用它们。
 
-### 推断标志
+#### 推断标志
 
 正如我们在第四章中看到的，由于 dropout，我们需要根据我们是在训练模式还是推断模式下运行模型的能力来改变模型的行为。在 PyTorch 中，我们可以通过在模型或层（从`nn.Module`继承的任何对象）上运行`m.eval`将模型或层从训练模式（其默认行为）切换到推断模式。此外，PyTorch 有一种优雅的方式可以快速更改层的所有子类的行为，即使用`apply`函数。如果我们定义：
 
@@ -125,7 +127,7 @@ if inference:
 
 让我们看看这是如何结合在一起的。
 
-## 使用 PyTorch 实现神经网络构建块：DenseLayer
+### 使用 PyTorch 实现神经网络构建块：DenseLayer
 
 现在我们已经具备开始使用 PyTorch 操作实现之前看到的`Layer`的所有先决条件，一个`DenseLayer`层将被写成如下：
 
@@ -158,7 +160,7 @@ class DenseLayer(PyTorchLayer):
 
 在这里，通过`nn.Linear`，我们看到了 PyTorch 操作的第一个示例，它会自动处理反向传播。这个对象不仅在前向传播时处理权重乘法和偏置项的加法，还会导致`x`的梯度累积，以便在反向传播时计算出参数相对于损失的正确导数。还要注意，由于所有 PyTorch 操作都继承自`nn.Module`，我们可以像数学函数一样调用它们：在前面的情况下，例如，我们写`self.linear(x)`而不是`self.linear.forward(x)`。当我们在即将到来的模型中使用`DenseLayer`时，这也适用于`DenseLayer`本身。
 
-## 示例：PyTorch 中的波士顿房价模型
+### 示例：PyTorch 中的波士顿房价模型
 
 使用这个`Layer`作为构建块，我们可以实现在第二章和第三章中看到的熟悉的房价模型。回想一下，这个模型只有一个带有`sigmoid`激活函数的隐藏层；在第三章中，我们在面向对象的框架中实现了这一点，该框架具有`Layer`的类和一个模型，其`layers`属性是长度为 2 的列表。类似地，我们可以定义一个`HousePricesModel`类，它继承自`PyTorchModel`，如下所示：
 
@@ -216,7 +218,7 @@ class HousePricesModel(PyTorchModel):
 
 `Layer`和`Model`比`Optimizer`和`Loss`更复杂，我们将在下一节中介绍。
 
-## PyTorch 元素：优化器和损失
+### PyTorch 元素：优化器和损失
 
 `Optimizer`和`Loss`在 PyTorch 中实现为一行代码。例如，我们在第四章中介绍的`SGDMomentum`损失可以写成：
 
@@ -245,17 +247,17 @@ softmax_cross_entropy_loss = nn.CrossEntropyLoss()
 
 这些`Loss`也继承自`nn.Module`，就像之前的`Layer`一样，因此可以使用相同的方式调用，例如使用`loss(x)`而不是`loss.forward(x)`。
 
-## PyTorch 元素：Trainer
+### PyTorch 元素：Trainer
 
 `Trainer`将所有这些元素汇集在一起。让我们考虑`Trainer`的要求。我们知道它必须实现我们在本书中多次看到的训练神经网络的一般模式：
 
-1.  通过模型传递一批输入。
+1. 通过模型传递一批输入。
 
-1.  将输出和目标输入到损失函数中以计算损失值。
+2. 将输出和目标输入到损失函数中以计算损失值。
 
-1.  计算损失相对于所有参数的梯度。
+3. 计算损失相对于所有参数的梯度。
 
-1.  使用`Optimizer`根据某种规则更新参数。
+4. 使用`Optimizer`根据某种规则更新参数。
 
 使用 PyTorch，这一切都是一样的，只是有两个小的实现注意事项：
 
@@ -284,112 +286,17 @@ self.optim.step()
 
 这些是最重要的行；但是，这是`PyTorchTrainer`的其余代码，其中许多与我们在之前章节中看到的`Trainer`的代码相似：
 
-```py
-class PyTorchTrainer(object):
-    def __init__(self,
-                 model: PyTorchModel,
-                 optim: Optimizer,
-                 criterion: _Loss):
-        self.model = model
-        self.optim = optim
-        self.loss = criterion
-        self._check_optim_net_aligned()
 
-    def _check_optim_net_aligned(self):
-        assert self.optim.param_groups[0]['params']\
-        == list(self.model.parameters())
 
-    def _generate_batches(self,
-                          X: Tensor,
-                          y: Tensor,
-                          size: int = 32) -> Tuple[Tensor]:
-
-        N = X.shape[0]
-
-        for ii in range(0, N, size):
-            X_batch, y_batch = X[ii:ii+size], y[ii:ii+size]
-
-            yield X_batch, y_batch
-
-    def fit(self, X_train: Tensor, y_train: Tensor,
-            X_test: Tensor, y_test: Tensor,
-            epochs: int=100,
-            eval_every: int=10,
-            batch_size: int=32):
-
-        for e in range(epochs):
-            X_train, y_train = permute_data(X_train, y_train)
-
-            batch_generator = self._generate_batches(X_train, y_train,
-                                                     batch_size)
-
-            for ii, (X_batch, y_batch) in enumerate(batch_generator):
-
-                self.optim.zero_grad()
-                output = self.model(X_batch)
-                loss = self.loss(output, y_batch)
-                loss.backward()
-                self.optim.step()
-
-            output = self.model(X_test)
-            loss = self.loss(output, y_test)
-            print(e, loss)
-```
-
-###### 注意
-
-由于我们将`Model`，`Optimizer`和`Loss`传入`Trainer`，我们需要检查`Optimizer`引用的参数实际上是否与模型的参数相同；`_check_optim_net_aligned`会执行此操作。
-
-现在训练模型就像这样简单：
-
-```py
-net = HousePricesModel()
-optimizer = optim.SGD(net.parameters(), lr=0.001)
-criterion = nn.MSELoss()
-
-trainer = PyTorchTrainer(net, optimizer, criterion)
-
-trainer.fit(X_train, y_train, X_test, y_test,
-            epochs=10,
-            eval_every=1)
-```
-
-这段代码几乎与我们在前三章中使用的训练模型的代码完全相同。无论您使用 PyTorch、TensorFlow 还是 Theano 作为底层，训练深度学习模型的要素都是相同的！
-
-接下来，我们将通过展示如何实现我们在[第四章]中看到的改进训练的技巧来探索 PyTorch 的更多特性。
-
-## 在 PyTorch 中优化学习的技巧
-
-我们学到了四个加速学习的技巧[第四章]：
-
-+   动量
-
-+   Dropout
-
-+   权重初始化
-
-+   学习率衰减
-
-这些在 PyTorch 中都很容易实现。例如，要在我们的优化器中包含动量，我们可以简单地在`SGD`中包含一个`momentum`关键字，使得优化器变为：
-
-```py
-optim.SGD(model.parameters(), lr=0.01, momentum=0.9)
-```
-
-Dropout 同样很容易。就像 PyTorch 有一个内置的`Module` `nn.Linear(n_in, n_out)`来计算之前的`Dense`层的操作一样，`Module` `nn.Dropout(dropout_prob)`实现了`Dropout`操作，但传入的概率默认情况下是*丢弃*给定神经元的概率，而不是像之前我们的实现中那样保留它。
-
-我们根本不需要担心权重初始化：PyTorch 中大多数涉及参数的操作，包括`nn.Linear`，其权重会根据层的大小自动缩放。
-
-最后，PyTorch 有一个`lr_scheduler`类，可以用来在各个 epoch 中衰减学习率。你需要开始的关键导入是`from torch.optim import lr_scheduler`。现在你可以轻松地在任何未来的深度学习项目中使用我们从头开始介绍的这些技术！
 
 # PyTorch 中的卷积神经网络
+
+## 引言
 
 在第五章中，我们系统地介绍了卷积神经网络的工作原理，特别关注多通道卷积操作。我们看到该操作将输入图像的像素转换为组织成特征图的神经元层，其中每个神经元表示图像中该位置是否存在给定的视觉特征（由卷积滤波器定义）。多通道卷积操作对其两个输入和输出具有以下形状：
 
 +   数据输入形状`[batch_size, in_channels, image_height, image_width]`
-
 +   参数输入形状`[in_channels, out_channels, filter_size, filter_size]`
-
 +   输出形状`[batch_size, out_channels, image_height, image_width]`
 
 根据这种表示法，PyTorch 中的多通道卷积操作是：
@@ -444,9 +351,7 @@ class ConvLayer(PyTorchLayer):
 然后，我们只需在`__init__`函数中定义一个`PyTorchModel`及其操作，并在`forward`函数中定义操作序列，即可开始训练。下面是一个简单的架构，我们可以在第四章和第五章中看到的 MNIST 数据集上使用：
 
 +   一个将输入从 1 个“通道”转换为 16 个通道的卷积层
-
 +   另一个层，将这 16 个通道转换为 8 个（每个通道仍然包含 28×28 个神经元）
-
 +   两个全连接层
 
 几个卷积层后跟少量全连接层的模式对于卷积架构是常见的；在这里，我们只使用了两个：
@@ -494,7 +399,6 @@ trainer.fit(X_train, y_train,
 使用 PyTorch 的`nn.CrossEntropyLoss`类——其与我们之前的`SoftmaxCrossEntropyLoss`完全相同——我们不需要这样做。这个损失函数期望两个`Tensor`：
 
 +   一个大小为`[batch_size, num_classes]`的预测`Tensor`，就像我们的`SoftmaxCrossEntropyLoss`类之前所做的那样
-
 +   一个大小为`[batch_size]`的目标`Tensor`，具有`num_classes`个不同的值
 
 因此，在前面的示例中，`y_train`只是一个大小为`[60000]`的数组（MNIST 训练集中的观测数量），而`y_test`只是大小为`[10000]`的数组（测试集中的观测数量）。
@@ -543,9 +447,7 @@ img_transforms = transforms.Compose([
 `Normalize`实际上是从输入图像的每个通道中减去均值和标准差。因此，当处理具有三个输入通道的彩色图像时，通常会有一个`Normalize`转换，其中包含两个三个数字的元组，例如`transforms.Normalize((0.1, 0.3, 0.6), (0.4, 0.2, 0.5))`，这将告诉`DataLoader`：
 
 +   使用均值为 0.1 和标准差为 0.4 来规范化第一个通道
-
 +   使用均值为 0.3 和标准差为 0.2 来规范化第二个通道
-
 +   使用均值为 0.6 和标准差为 0.5 来规范化第三个通道
 
 其次，一旦应用了这些转换，我们将其应用于读入的批次的`dataset`：
@@ -559,6 +461,51 @@ dataset = MNIST("../mnist_data/", transform=img_transforms)
 ```py
 dataloader = DataLoader(dataset, batch_size=60, shuffle=True)
 ```
+
+## 优化学习的技巧
+
+我们学到了四个加速学习的技巧[第四章]：
+
++   动量
++   Dropout
++   权重初始化
++   学习率衰减
+
+这些在 PyTorch 中都很容易实现。例如，要在我们的优化器中包含动量，我们可以简单地在`SGD`中包含一个`momentum`关键字，使得优化器变为：
+
+```py
+optim.SGD(model.parameters(), lr=0.01, momentum=0.9)
+```
+
+Dropout 同样很容易。就像 PyTorch 有一个内置的`Module` `nn.Linear(n_in, n_out)`来计算之前的`Dense`层的操作一样，`Module` `nn.Dropout(dropout_prob)`实现了`Dropout`操作，但传入的概率默认情况下是*丢弃*给定神经元的概率，而不是像之前我们的实现中那样保留它。
+
+我们根本不需要担心权重初始化：PyTorch 中大多数涉及参数的操作，包括`nn.Linear`，其权重会根据层的大小自动缩放。
+
+最后，PyTorch 有一个`lr_scheduler`类，可以用来在各个 epoch 中衰减学习率。你需要开始的关键导入是`from torch.optim import lr_scheduler`。现在你可以轻松地在任何未来的深度学习项目中使用我们从头开始介绍的这些技术！
+
+## 训练模型
+
+由于我们将`Model`，`Optimizer`和`Loss`传入`Trainer`，我们需要检查`Optimizer`引用的参数实际上是否与模型的参数相同；`_check_optim_net_aligned`会执行此操作。
+
+现在训练模型就像这样简单：
+
+```py
+net = HousePricesModel()
+optimizer = optim.SGD(net.parameters(), lr=0.001)
+criterion = nn.MSELoss()
+
+trainer = PyTorchTrainer(net, optimizer, criterion)
+
+trainer.fit(X_train, y_train, X_test, y_test,
+            epochs=10,
+            eval_every=1)
+```
+
+这段代码几乎与我们在前三章中使用的训练模型的代码完全相同。无论您使用 PyTorch、TensorFlow 还是 Theano 作为底层，训练深度学习模型的要素都是相同的！
+
+接下来，我们将通过展示如何实现我们在[第四章]中看到的改进训练的技巧来探索 PyTorch 的更多特性。
+
+
 
 然后，我们可以修改`Trainer`以使用`dataloader`生成用于训练网络的批次，而不是将整个数据集加载到内存中，然后手动使用`batch_generator`函数生成它们，就像我们之前做的那样。在[书的网站](https://oreil.ly/2N4H8jz)上，我展示了使用这些`DataLoader`训练卷积神经网络的示例。`Trainer`中的主要变化只是改变了这一行：
 
@@ -800,6 +747,8 @@ class Autoencoder(PyTorchModel):
 ```
 
 `Autoencoder`的`forward`方法展示了 PyTorch 中的第二种常见做法：由于我们最终想要看到模型生成的隐藏表示，`forward`方法返回*两个*元素：这个“编码”，`encoding`，以及将用于训练网络的输出，`x`。
+
+
 
 当然，我们需要修改我们的`Trainer`类以适应这一点；具体来说，`PyTorchModel`目前只从其`forward`方法中输出单个`Tensor`。事实证明，将其修改为默认返回`Tensor`的`Tuple`，即使该`Tuple`只有长度为 1，将会非常有用——使我们能够轻松编写像`Autoencoder`这样的模型，并且不难。我们只需要做三件小事：首先，将我们的基本`PyTorchModel`类的`forward`方法的函数签名修改为：
 

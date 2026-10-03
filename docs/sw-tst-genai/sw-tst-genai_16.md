@@ -1,3 +1,4 @@
+
 # 附录 B. 设置和使用 GitHub Copilot
 
 ## B.1 设置 Copilot
@@ -6,7 +7,7 @@
 
 如图表所示，我们在 IDE 中安装一个插件，并授予其访问权限，以便插件可以监控我们输入的内容，将其发送到 Copilot，然后处理并显示 Copilot 的推荐。由于这种结构，Copilot 可以与各种 IDE 一起工作，包括 JetBrains 产品、Visual Studio、VS Code 等。在我们的例子中，我们将使用 IntelliJ Community Edition，但无论选择的 IDE 如何，设置 IDE 以用于 Copilot 的过程在很大程度上是相同的。
 
-寻找 GitHub 支持
+**寻找 GitHub 支持**
 
 如果您需要更多具体细节来在您的机器上设置 Copilot，更多信息可在 [`mng.bz/gAll`](https://mng.bz/gAll) 获取。
 
@@ -18,9 +19,8 @@
 
 第一步是设置一个 Copilot 账户。在撰写本章时，Copilot 提供了两种计划：
 
-+   个人用户每月 10 美元
-
-+   商业用户每月 19 美元
++ 个人用户每月 10 美元
++ 商业用户每月 19 美元
 
 虽然 Copilot 账户是付费的，但 GitHub 提供了 30 天的免费试用。需要提供付款详情，但可以通过账单页面 ([`github.com/settings/billing`](https://github.com/settings/billing)) 取消账户。
 
@@ -50,7 +50,7 @@ Copilot 也要求我们拥有一个 GitHub 账户，因此在设置 Copilot 之�
 
 图 B.4 这个对话框详细说明了如何通过我们的 IDE 登录 GitHub。
 
-要完成注册过程，我们取出设备代码并前往网页[`github.com/login/device`](https://github.com/login/device)。要从 IDE 中输入设备代码，我们可以在表单中键入或粘贴，然后提交。GitHub 随后会要求我们授予 Copilot 访问权限，一旦确认，就会完成登录过程。当我们返回到 IDE 并看到一个新弹出窗口通知我们已连接时，我们可以确认我们已经登录，如图 B.5 所示。
+要完成注册过程，我们取出设备代码并前往网页 [`github.com/login/device`](https://github.com/login/device)。要从 IDE 中输入设备代码，我们可以在表单中键入或粘贴，然后提交。GitHub 随后会要求我们授予 Copilot 访问权限，一旦确认，就会完成登录过程。当我们返回到 IDE 并看到一个新弹出窗口通知我们已连接时，我们可以确认我们已经登录，如图 B.5 所示。
 
 ![图片](img/APPB_F05_Winteringham2.png)
 
@@ -66,7 +66,7 @@ Copilot 也要求我们拥有一个 GitHub 账户，因此在设置 Copilot 之�
 
 ## B.2 与 Copilot 一起工作
 
-一旦设置好 Copilot，它就会在我们开始在 IDE 中编写代码时开始反应并提供建议。例如，我们可以创建一个名为`TaxCalculator`的空类，输入关键字`public`，几秒钟后就会收到如图 B.7 所示的类似建议。
+一旦设置好 Copilot，它就会在我们开始在 IDE 中编写代码时开始反应并提供建议。例如，我们可以创建一个名为 `TaxCalculator` 的空类，输入关键字 `public`，几秒钟后就会收到如图 B.7 所示的类似建议。
 
 ![图片](img/APPB_F07_Winteringham2.png)
 

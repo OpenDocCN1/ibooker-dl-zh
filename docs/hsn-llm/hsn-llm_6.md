@@ -1,4 +1,6 @@
-# 第七章： 创建文本嵌入模型
+
+
+# 第七章：创建文本嵌入模型
 
 文本嵌入模型是许多强大自然语言处理应用的基础。它们为赋能已经令人印象深刻的技术（如文本生成模型）奠定了基础。在本书中，我们已经在多种应用中使用了嵌入模型，如监督分类、无监督分类、语义搜索，甚至为像 ChatGPT 这样的文本生成模型提供记忆。
 
@@ -6,7 +8,7 @@
 
 让我们开始探索嵌入模型是什么以及它们通常如何工作。
 
-# 嵌入模型
+## 嵌入模型
 
 嵌入和嵌入模型已经在之前的多个章节中讨论过（章节 X、X 和 X），这证明了它们的实用性。在训练这样的模型之前，让我们回顾一下之前对嵌入模型的学习。
 
@@ -34,7 +36,7 @@
 
 我们可以训练、微调和引导嵌入模型的方式有很多，但最强大且广泛使用的技术之一称为对比学习。
 
-# 什么是对比学习？
+## 什么是对比学习？
 
 训练和微调文本嵌入模型的一项主要技术称为对比学习。对比学习是一种旨在训练嵌入模型的技术，使得相似文档在向量空间中更接近，而不同文档则更远离。我们在图 13-X 和图 13-X 中之前见过这个概念。
 
@@ -60,17 +62,17 @@
 
 我们可以应用对比学习创建文本嵌入模型的方式有很多，但最著名的技术和框架是[sentence-transformers](https://github.com/UKPLab/sentence-transformers)。
 
-# SBERT
+## SBERT
 
 尽管对比学习有很多形式，但在自然语言处理社区中流行化该技术的一个框架是 sentence-transformers。它的做法解决了创建句子嵌入的原始 BERT 实现的一个主要问题，即计算开销。在 sentence-transformers 之前，句子嵌入通常与 BERT 一起使用，采用一种称为交叉编码器的架构结构。
 
-交叉编码器允许同时将两个句子传递给变换器网络，以预测这两个句子的相似程度。它通过在原始架构中添加一个分类头来实现，能够输出相似度分数。然而，当你想在 10,000 个句子的集合中找到最高配对时，计算数量迅速增加。这将需要 n·(n−1)/2 = 49 995 000 次推理计算，从而产生显著的开销。此外，交叉编码器通常不生成嵌入，如图 7-6 所示。
+交叉编码器允许同时将两个句子传递给变换器网络，以预测这两个句子的相似程度。它通过在原始架构中添加一个分类头来实现，能够输出相似度分数。然而，当你想在 10,000 个句子的集合中找到最高配对时，计算数量迅速增加。这将需要 `n·(n−1)/2 = 49 995 000` 次推理计算，从而产生显著的开销。此外，交叉编码器通常不生成嵌入，如图 7-6 所示。
 
-解决这个开销的方法是通过平均其输出层或使用[CLS]标记从 BERT 模型生成嵌入。然而，这显示出其效果不如简单地平均词向量，例如 GloVe.³
+解决这个开销的方法是通过平均其输出层或使用 `[CLS]` 标记从 BERT 模型生成嵌入。然而，这显示出其效果不如简单地平均词向量，例如 GloVe.³
 
 ![交叉编码器的架构。两个句子被拼接，用 SEP 标记分隔，并同时输入模型。它输出的是输入句子之间的相似度分数，而不是嵌入。](img/creating_text_embedding_models_249519_06.png)
 
-###### 图 7-6\. 交叉编码器的架构。两个句子被拼接，用 <SEP> 标记分隔，并同时输入模型。它输出的是输入句子之间的相似度分数，而不是嵌入。
+###### 图 7-6\. 交叉编码器的架构。两个句子被拼接，用 `<SEP>` 标记分隔，并同时输入模型。它输出的是输入句子之间的相似度分数，而不是嵌入。
 
 相反，sentence-transformers 的作者以不同的方式处理这个问题，寻找一种快速且能够进行语义比较的嵌入方法。结果是对原始交叉编码器架构的一种优雅替代方案。在 sentence-transformers 中，与交叉编码器不同，分类头被省略，而是对最终输出层使用均值池化来生成嵌入。
 
@@ -88,13 +90,13 @@ Sentence-transformers 采用孪生架构进行训练。在这个架构中，如 
 
 为了进行对比学习，我们需要两个东西。首先，我们需要构成相似/不相似对的数据。其次，我们需要定义模型如何定义和优化相似性。
 
-# 创建嵌入模型
+## 创建嵌入模型
 
 创建嵌入模型的方法有很多，但通常我们倾向于对比学习。这是许多嵌入模型的重要方面，因为这个过程使其能够高效地学习语义表示。
 
 然而，这不是一个免费的过程。我们需要了解如何生成对比示例，如何训练模型，以及如何正确评估它。
 
-## 生成对比示例
+### 生成对比示例
 
 在预训练嵌入模型时，你通常会看到使用自然语言推理（NLI）数据中的数据。正如我们在第二章中描述的，NLI 是指调查给定前提是否蕴含假设（蕴含）、与之矛盾（矛盾）或两者皆不是（中立）的任务。
 
@@ -144,11 +146,11 @@ train_examples = [InputExample(texts=[row["premise"], row["hypothesis"]],
 train_dataloader = DataLoader(train_examples, shuffle=True, batch_size=32)
 ```
 
-## 训练模型
+### 训练模型
 
 现在我们有了包含训练示例的数据加载器，我们需要创建我们的嵌入模型。我们通常选择一个现有的 sentence-transformer 模型并进行微调，但在这个例子中，我们将从头开始训练一个嵌入模型。
 
-这意味着我们需要定义两个东西。首先，一个预训练的变换器模型，用于嵌入单个词。正如我们在第二章中看到的，`“bert-base-uncased”`模型通常用于教程。然而，还有许多其他模型也经过[句子变换器](https://www.sbert.net/docs/training/overview.html#best-transformer-model)评估。特别是，`“microsoft/mpnet-base”`通常在用作词嵌入模型时表现良好。其次，我们需要定义池化策略。对词嵌入进行平均通常是在大多数嵌入模型中使用。
+这意味着我们需要定义两个东西。首先，一个预训练的变换器模型，用于嵌入单个词。正如我们在第二章中看到的，`"bert-base-uncased"`模型通常用于教程。然而，还有许多其他模型也经过[句子变换器](https://www.sbert.net/docs/training/overview.html#best-transformer-model)评估。特别是，`"microsoft/mpnet-base"`通常在用作词嵌入模型时表现良好。其次，我们需要定义池化策略。对词嵌入进行平均通常是在大多数嵌入模型中使用。
 
 ```py
 from sentence_transformers import SentenceTransformer, models
@@ -187,9 +189,12 @@ model.fit(train_objectives=[(train_dataloader, train_loss)], epochs=1, warmup_st
 
 我们对模型进行单个周期的训练，大约需要一个小时左右，在 V100 GPU 上。就这样！我们现在从头开始训练了自己的嵌入模型。
 
-###### 注意
 
-sentence-transformers 框架允许多任务学习。`train_objectives`参数接受一个元组列表，这使得可以为其提供不同的数据集，每个数据集都有自己的优化目标。这意味着我们可以将整个 GLUE 基准提供给它进行训练。
+
+
+# 注意
+
+`sentence-transformers`框架允许多任务学习。`train_objectives`参数接受一个元组列表，这使得可以为其提供不同的数据集，每个数据集都有自己的优化目标。这意味着我们可以将整个 GLUE 基准提供给它进行训练。
 
 我们可以快速评估模型的性能。可以进行很多任务，稍后我们将深入讨论，但一个好的起点是语义文本相似性基准（STSB），它在 GLUE 数据集中，如之前所见。
 
@@ -270,7 +275,7 @@ results = evaluation.run(model)
 
 ## 损失函数
 
-我们使用 SoftMaxLoss 训练了[我们的模型](https://github.com/UKPLab/sentence-transformers/tree/master/examples/training/nli)，以说明如何训练第一个句子转换器模型之一。然而，虽然有很多损失函数可供选择，通常不建议使用 SoftMaxLoss，因为还有其他性能更优的损失。
+我们使用 `SoftMaxLoss` 训练了[我们的模型](https://github.com/UKPLab/sentence-transformers/tree/master/examples/training/nli)，以说明如何训练第一个句子转换器模型之一。然而，虽然有很多损失函数可供选择，通常不建议使用 `SoftMaxLoss`，因为还有其他性能更优的损失。
 
 不必逐一了解所有损失函数，通常有两个损失函数被广泛使用，并且表现良好，即：
 
@@ -278,9 +283,9 @@ results = evaluation.run(model)
 
 +   多重负样本排名损失
 
-###### 注意
+# 注意
 
-可供选择的损失函数远不止于此。例如，MarginMSE 损失在训练或微调交叉编码器时表现出色。在句子转换器框架中实现了许多有趣的[损失函数](https://www.sbert.net/docs/package_reference/losses.html)。
+可供选择的损失函数远不止于此。例如，`MarginMSE` 损失在训练或微调交叉编码器时表现出色。在句子转换器框架中实现了许多有趣的[损失函数](https://www.sbert.net/docs/package_reference/losses.html)。
 
 ### 余弦相似度
 
@@ -325,7 +330,7 @@ cosine_model.fit(train_objectives=[(train_dataloader, train_loss)], epochs=1, wa
 "Trained model + Cosine Similarity Loss: 0.848027994316"
 ```
 
-得分 0.848 相比于 SoftMaxLoss 示例有了很大改善。然而，由于我们的训练和评估都在与 SoftMaxLoss 示例相同的任务上，比较它们是不公平的。
+得分 0.848 相比于 `SoftMaxLoss` 示例有了很大改善。然而，由于我们的训练和评估都在与 `SoftMaxLoss` 示例相同的任务上，比较它们是不公平的。
 
 ### 多重负面排名损失
 
@@ -360,7 +365,7 @@ train_loss = losses.MultipleNegativesRankingLoss(model=mnr_model)
 mnr_model.fit(train_objectives=[(train_dataloader, train_loss)], epochs=1, warmup_steps=100, show_progress_bar=True)
 ```
 
-请注意，我们使用的数据与我们的 SoftMaxLoss 示例相同。让我们比较这个模型与我们之前训练的模型的性能：
+请注意，我们使用的数据与我们的 `SoftMaxLoss` 示例相同。让我们比较这个模型与我们之前训练的模型的性能：
 
 ```py
 >>> # Evaluate trained model with MNR loss
@@ -369,25 +374,25 @@ mnr_model.fit(train_objectives=[(train_dataloader, train_loss)], epochs=1, warmu
 "Trained model + MNR Loss: 0.8183052945831789"
 ```
 
-与我们之前使用 SoftMaxLoss（0.74）训练的模型相比，我们使用 MNR 损失（0.82）的模型似乎准确得多！
+与我们之前使用 `SoftMaxLoss`（0.74）训练的模型相比，我们使用 MNR 损失（0.82）的模型似乎准确得多！
 
-###### 提示
+# 提示
 
 较大的批量大小在 MNR 损失中通常效果更好，因为更大的批量使任务变得更加困难。原因在于模型需要从更大的一组潜在句子对中找到最佳匹配句子。您可以调整代码以尝试不同的批量大小，感受其效果。
 
 我们使用这种损失函数有一个缺点。由于负例是从其他问答对中抽样的，这些批内或“简单”负例可能与问题完全无关。因此，嵌入模型找到问题正确答案的任务变得相对简单。相反，我们希望有与问题非常相关但不是正确答案的负例。这些负例称为困难负例。由于这使得嵌入模型的任务更加困难，因为它必须学习更细致的表示，嵌入模型的性能通常会有显著提升。
 
-###### 注意
+# 注意
 
 在 MNR 损失中，通常使用余弦相似度，但也可以用点积来替代。使用点积的一个优点是它通常对较长文本效果更好，因为点积会增加。然而，缺点是它通常在聚类任务中表现较差。
 
-一个好的困难负例的例子如下。假设我们有这样一个问题：“阿姆斯特丹有多少人居住？”与这个问题相关的答案是：“阿姆斯特丹几乎有一百万人。”为了生成一个好的困难负例，我们理想上希望答案中包含一些关于阿姆斯特丹及其居住人数的信息。例如：“乌特勒支有超过一百万人居住，这比阿姆斯特丹还多。”这个答案与问题无关，但非常相似，因此这是一个好的困难负例。图 7-11 展示了简单负例和困难负例之间的区别。
+一个好的困难负例的例子如下。假设我们有这样一个问题：“阿姆斯特丹有多少人居住？”与这个问题相关的答案是：“阿姆斯特丹几乎有一百万人。”为了生成一个好的困难负例，我们理想上希望答案中包含一些关于阿姆斯特丹及其居住人数的信息。例如：“乌特勒支有超过一百万人居住，这比阿姆斯特丹还多。”这个答案与问题无关，但非常相似，因此这是一个好的困难负例。图 7-11 展示了简单负例和困难负例之间的区别。
 
 ![ negatives.png  简单负例通常与问题和答案都无关。半困难负例与问题和答案的主题有一些相似性，但在某种程度上是无关的。困难负例与问题非常相似，但通常是错误的答案。](img/creating_text_embedding_models_249519_11.png)
 
 ###### 图 7-11\. [negatives.png] 一个简单的负样本通常与问题和答案都没有关系。一个半困难的负样本与问题和答案的主题有些相似，但又稍微不相关。一个困难的负样本与问题非常相似，但通常是错误的答案。
 
-使用困难负样本与此损失函数是相当简单的， вместо передачи двух связанных текстов в `InputExample`，我们传递三个文本，其中两个是相关文本，最后一个是困难负样本。
+使用困难负样本与此损失函数是相当简单的，而不是传递两个相关的文本到`InputExample`，我们传递三个文本，其中两个是相关文本，最后一个是困难负样本。
 
 # 微调嵌入模型
 
@@ -399,9 +404,11 @@ mnr_model.fit(train_objectives=[(train_dataloader, train_loss)], epochs=1, warmu
 
 ## 有监督
 
-微调嵌入模型的最简单方法是重复之前训练模型的过程，但将 `'bert-base-uncased'` 替换为预训练的句子变换器模型。有许多可供选择，但通常 `'all-mpnet-base-v2'` ([`www.sbert.net/docs/pretrained_models.html`](https://www.sbert.net/docs/pretrained_models.html)) 在许多用例中表现良好（见 [`huggingface.co/spaces/mteb/leaderboard`](https://huggingface.co/spaces/mteb/leaderboard)）。
+微调嵌入模型的最简单方法是重复之前训练模型的过程，但将`'bert-base-uncased'`替换为预训练的句子变换器模型。有许多可供选择，但通常`'all-mpnet-base-v2'` ([`www.sbert.net/docs/pretrained_models.html`](https://www.sbert.net/docs/pretrained_models.html)) 在许多用例中表现良好（见 [`huggingface.co/spaces/mteb/leaderboard`](https://huggingface.co/spaces/mteb/leaderboard)）。
 
 实际上，我们只需运行以下命令即可微调我们的模型：
+
+
 
 ```py
 from sentence_transformers import SentenceTransformer
@@ -424,13 +431,13 @@ model.fit(train_objectives=[(train_dataloader, train_loss)], epochs=1, warmup_st
 
 在这里，我们使用与在多负样本排名损失示例中训练模型时相同的数据。由于句子变换器包构建得相当出色，因此微调模型的代码相对简单。
 
-###### 提示
+### 提示
 
-与其使用预训练的 BERT 模型，如 `'``bert``-base-uncased'` 或可能是领域外模型如 `'all-mpnet-base-v2'`，你还可以对预训练的 BERT 模型进行掩码语言建模，首先将其适应到你的领域。然后，可以使用这个微调后的 BERT 模型作为训练嵌入模型的基础。这是一种领域适应。关于掩码语言建模的更多信息，请参见第 X 章。
+与其使用预训练的 BERT 模型，如`'bert-base-uncased'`或可能是领域外模型如`'all-mpnet-base-v2'`，你还可以对预训练的 BERT 模型进行掩码语言建模，首先将其适应到你的领域。然后，可以使用这个微调后的 BERT 模型作为训练嵌入模型的基础。这是一种领域适应。关于掩码语言建模的更多信息，请参见第 X 章。
 
 微调/训练模型的主要困难在于找到合适的数据。对于这些模型，我们不仅希望拥有非常大的数据集，数据本身也需要高质量。开发正样本对通常比较简单，但添加困难负样本对则显著增加了创建高质量数据的难度。
 
-###### 注意
+### 注意
 
 如上所示，对数据进行训练有些多余，因为该模型已经在一个非常相似的 NLI 数据集上进行了训练。然而，对于特定领域的数据微调过程仍然是相同的。
 
@@ -444,13 +451,10 @@ model.fit(train_objectives=[(train_dataloader, train_loss)], epochs=1, warmup_st
 
 如图 7-12 所示，增强型 SBERT 涉及以下步骤：
 
-1.  使用小型标注数据集（黄金数据集）对交叉编码器（BERT）进行微调
-
-1.  创建新的句子对
-
-1.  用微调后的交叉编码器标注新的句子对（银色数据集）
-
-1.  在扩展数据集（黄金+银色数据集）上训练双编码器（SBERT）
+1. 使用小型标注数据集（黄金数据集）对交叉编码器（BERT）进行微调
+2. 创建新的句子对
+3. 用微调后的交叉编码器标注新的句子对（银色数据集）
+4. 在扩展数据集（黄金+银色数据集）上训练双编码器（SBERT）
 
 此处，黄金数据集是一个小型但完全标注的数据集，包含真实的基础真相。银色数据集也完全标注，但不一定是基础真相，因为它是通过交叉编码器的预测生成的。
 
@@ -495,7 +499,7 @@ for sentence in gold.sentence1:
 silver = silver.drop_duplicates()
 ```
 
-###### 提示
+### 提示
 
 我们可以使用预训练的句子转换器，而不是随机抽样银句子对。通过使用语义搜索从数据集中检索前 k 个句子，我们创建的银句子对往往更准确。虽然句子对仍然是基于近似选择的，但比随机抽样要好得多。
 
@@ -567,7 +571,7 @@ pooling_model = models.Pooling(word_embedding_model.get_word_embedding_dimension
 model = SentenceTransformer(modules=[word_embedding_model, pooling_model])
 ```
 
-###### 注意
+### 注意
 
 请注意，我们使用的是 CLS 池化而不是平均池化。作者发现二者之间几乎没有区别，并且由于平均池化会丢失位置信息，因此选择了 CLS 池化。
 
@@ -630,6 +634,8 @@ evaluator(model)
 
 首先，对于你在特定领域数据中拥有的每一条未标记文本，我们使用生成模型，如 T5，生成若干查询。这些查询通常是可以用输入文本的部分回答的问题。例如，当你的文本是“《可可夜总会》是由皮克斯制作的”时，模型可能会生成类似“谁制作了电影《可可夜总会》？”的查询。这些是我们生成的正例，如图 7-16 所示。
 
+
+
 ![在 GPL 管道的第一步中，针对每条未标记输入文本，使用生成模型（如 T5）生成查询。这些查询可以作为后续在 GPL 管道中标记的句子对。](img/creating_text_embedding_models_249519_16.png)
 
 ###### 图 7-16\. 在 GPL 管道的第一步中，使用生成模型（如 T5）为每个未标记的输入文本生成查询。这些查询可以用作后续 GPL 管道中的句子对进行标记。
@@ -665,7 +671,7 @@ with open('corpus.jsonl', 'w') as jsonl:
 
 我们再次使用 STSB 数据集，仅提取少量数据进行训练。这样做的原因是训练仍然可能相当昂贵。GPL 的作者在 V100 GPU 上训练了大约一天，因此建议在扩大规模之前先尝试较小的数据集。
 
-接下来，我们可以导入 GPL，只需运行 `train` 即可开始：
+接下来，我们可以导入 GPL，只需运行`train`即可开始：
 
 ```py
 import gpl
@@ -723,19 +729,19 @@ gpl.train(
 
 ¹ Alan Garfinkel. “解释的形式：重新思考社会理论中的问题。” (1981)。
 
-² Tim Miller. “对比解释：结构模型方法”。*知识工程评论* 36 (2021): e14。
+² Tim Miller. “对比解释：结构模型方法”。*知识工程评论* 36 (2021): e14。
 
-³ Jeffrey Pennington, Richard, Socher, 和 Christopher D, Manning. “Glove: 全局词向量表示。” 收录于 *2014 年自然语言处理实证方法会议论文集 (EMNLP)* (pp. 1532–1543). 2014。
+³ Jeffrey Pennington, Richard, Socher, 和 Christopher D, Manning. “Glove: 全局词向量表示。” 收录于 *2014 年自然语言处理实证方法会议论文集 (EMNLP)* (pp. 1532–1543). 2014。
 
-⁴ Muennighoff, Niklas, Nouamane, Tazi, Loïc, Magne, 和 Nils, Reimers. “MTEB: 大规模文本嵌入基准”。*arXiv 预印本 arXiv:2210.07316* (2022)。
+⁴ Muennighoff, Niklas, Nouamane, Tazi, Loïc, Magne, 和 Nils, Reimers. “MTEB: 大规模文本嵌入基准”。*arXiv 预印本 arXiv:2210.07316* (2022)。
 
-⁵ Matthew Henderson, Rami, Al-Rfou, Brian, Strope, Yun-Hsuan, Sung, László, Lukacs, Ruiqi, Guo, Sanjiv, Kumar, Balint, Miklos, 和 Ray, Kurzweil. “智能回复的高效自然语言响应建议。” *arXiv 预印本 arXiv:1705.00652* (2017)。
+⁵ Matthew Henderson, Rami, Al-Rfou, Brian, Strope, Yun-Hsuan, Sung, László, Lukacs, Ruiqi, Guo, Sanjiv, Kumar, Balint, Miklos, 和 Ray, Kurzweil. “智能回复的高效自然语言响应建议。” *arXiv 预印本 arXiv:1705.00652* (2017)。
 
-⁶ Oord, Aaron van den, Yazhe, Li, 和 Oriol, Vinyals. “使用对比预测编码的表示学习”。*arXiv 预印本 arXiv:1807.03748* (2018)。
+⁶ Oord, Aaron van den, Yazhe, Li, 和 Oriol, Vinyals. “使用对比预测编码的表示学习”。*arXiv 预印本 arXiv:1807.03748* (2018)。
 
-⁷ Ting Chn, Simon, Kornblith, Mohammad, Norouzi, 和 Geoffrey, Hinton. “用于对比学习视觉表示的简单框架。” 收录于 *国际机器学习会议* (pp. 1597–1607). 2020。
+⁷ Ting Chn, Simon, Kornblith, Mohammad, Norouzi, 和 Geoffrey, Hinton. “用于对比学习视觉表示的简单框架。” 收录于 *国际机器学习会议* (pp. 1597–1607). 2020。
 
-⁸ Thakur, Nandan, Nils, Reimers, Johannes, Daxenberger, 和 Iryna, Gurevych. “增强的 sbert: 提升双编码器用于成对句子评分任务的数据增强方法”。*arXiv 预印本 arXiv:2010.08240* (2020)。
+⁸ Thakur, Nandan, Nils, Reimers, Johannes, Daxenberger, 和 Iryna, Gurevych. “增强的 sbert: 提升双编码器用于成对句子评分任务的数据增强方法”。*arXiv 预印本 arXiv:2010.08240* (2020)。
 
 ⁹ Gao, Tianyu, Xingcheng Yao 和 Danqi Chen. “Simcse: 简单对比学习句子嵌入”。*arXiv 预印本 arXiv:2104.08821* (2021)。
 

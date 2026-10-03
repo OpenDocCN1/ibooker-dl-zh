@@ -1,3 +1,4 @@
+
 # 附录 B：安装 Python
 
 如果需要手动执行此操作，请参考在 Windows、macOS 和 Linux 机器上安装 Python 和 Pip 的指南。
@@ -57,12 +58,10 @@ brew install python
 以下是您需要执行的步骤：
 
 +   下载最新版本的 Python 3.x
-
 +   运行您下载的安装程序包，并按照安装说明操作
-
 +   验证安装
 
-安装完成后，您应该能够通过在终端中输入 python3 来访问 Python，并使用以下命令验证已安装的*版本*
+安装完成后，您应该能够通过在终端中输入`python3`来访问 Python，并使用以下命令验证已安装的版本：
 
 ```py
 python3 --version.
@@ -77,9 +76,7 @@ pip3 --version
 如果您看到版本信息，则已准备就绪。如果没有，请手动安装 pip：
 
 +   下载“get-pip.py”脚本。
-
-+   打开终端并使用 cd 命令导航到保存了“get-pip.py”的目录。例如：cd ~/Downloads
-
++   打开终端并使用`cd`命令导航到保存了“get-pip.py”的目录。例如：`cd ~/Downloads`
 +   运行以下命令：`sudo python3 get-pip.py`
 
 安装了 pip 后，您可以在终端中运行`pip3 --version`来检查其版本。
@@ -114,7 +111,7 @@ sudo dnf update
 
 要安装 Python 3，请使用包管理器。这意味着：`sudo apt install python3`或`sudo dnf install python3` - 取决于您的系统。包名称可能会根据您的发行版略有不同。
 
-安装完成后，您应该能够通过在终端中输入 python3 来访问 Python 3，使用：
+安装完成后，您应该能够通过在终端中输入`python3`来访问 Python 3，使用：
 
 ```py
 python3 --version.
@@ -128,4 +125,4 @@ pip3 --version
 
 如果您看到版本信息，那就万事俱备了。如果没有，则可以使用`sudo apt install python3-pip`或`sudo dnf install python3-pip`手动安装 pip。同样，这些命令中的`3`部分在某些系统上可能是默认设置，因此您可能需要省略`3`部分。
 
-安装了 pip 后，您可以通过在终端中运行`pip3 --version`来检查其版本。安装了 Python 和 pip 后，您可以开始使用 Python 并从 PyPI 安装软件包。要安装软件包，请使用`command pip3 install package-name`。
+安装了 pip 后，您可以通过在终端中运行`pip3 --version`来检查其版本。安装了 Python 和 pip 后，您可以开始使用 Python 并从 PyPI 安装软件包。要安装软件包，请使用命令`pip3 install package-name`。

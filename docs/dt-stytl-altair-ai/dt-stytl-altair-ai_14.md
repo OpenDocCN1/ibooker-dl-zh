@@ -1,3 +1,4 @@
+
 # 附录 A 技术要求
 
 本附录描述了如何安装本书中使用的软件。
@@ -6,45 +7,32 @@
 
 要在您的本地机器上克隆本书的 GitHub 仓库，您可以采用以下两种策略之一：
 
-+   使用终端
-
-+   使用 GitHub Desktop
++ 使用终端
++ 使用 GitHub Desktop
 
 ### A.1.1 使用终端
 
 要从命令行克隆本书的 GitHub 仓库，请按照以下步骤操作：
 
-1.  如果您还没有安装 Git 套件（[`git-scm.com/downloads`](https://git-scm.com/downloads)），请安装它。
-
-1.  打开您计算机上的终端。
-
-1.  导航到您想要克隆仓库的目录。
-
-1.  运行命令 `git clone https://github.com/alod83/Data-Storytelling-with-Altair-and-AI/tree/main`。
-
-1.  等待仓库被克隆到您的本地机器。
+1. 如果您还没有安装 Git 套件（[`git-scm.com/downloads`](https://git-scm.com/downloads)），请安装它。
+2. 打开您计算机上的终端。
+3. 导航到您想要克隆仓库的目录。
+4. 运行命令 `git clone https://github.com/alod83/Data-Storytelling-with-Altair-and-AI/tree/main`。
+5. 等待仓库被克隆到您的本地机器。
 
 ### A.1.2 使用 GitHub Desktop
 
 要从 GitHub Desktop 克隆本书的 GitHub 仓库，请按照以下步骤操作：
 
-1.  从他们的官方网站下载并安装 GitHub Desktop：[`desktop.github.com/`](https://desktop.github.com/)。
-
-1.  启动 GitHub Desktop。
-
-1.  登录您的 GitHub 账户，如果需要，请创建一个新账户。
-
-1.  点击“文件”菜单，选择“克隆仓库”。
-
-1.  在“克隆仓库”窗口中，选择“URL”选项卡。
-
-1.  在“仓库 URL”字段中输入仓库 URL（[`github.com/alod83/Data-Storytelling-with-Altair-and-AI/tree/main`](https://github.com/alod83/Data-Storytelling-with-Altair-and-AI/tree/main)）。
-
-1.  选择您想要克隆仓库的本地路径。
-
-1.  点击“克隆”按钮。
-
-1.  等待 GitHub Desktop 将仓库克隆到您的本地机器。
+1. 从他们的官方网站下载并安装 GitHub Desktop：[`desktop.github.com/`](https://desktop.github.com/)。
+2. 启动 GitHub Desktop。
+3. 登录您的 GitHub 账户，如果需要，请创建一个新账户。
+4. 点击“文件”菜单，选择“克隆仓库”。
+5. 在“克隆仓库”窗口中，选择“URL”选项卡。
+6. 在“仓库 URL”字段中输入仓库 URL（[`github.com/alod83/Data-Storytelling-with-Altair-and-AI/tree/main`](https://github.com/alod83/Data-Storytelling-with-Altair-and-AI/tree/main)）。
+7. 选择您想要克隆仓库的本地路径。
+8. 点击“克隆”按钮。
+9. 等待 GitHub Desktop 将仓库克隆到您的本地机器。
 
 ## A.2 安装 Python 包
 
@@ -52,31 +40,19 @@
 
 本书描述的示例使用以下 Python 包：
 
-+   langchain==0.1.12
-
-+   langchain-community==0.0.28
-
-+   langchain-core==0.1.32
-
-+   langchain-openai==0.0.8
-
-+   langchain-text-splitters==0.0.1
-
-+   altair==5.3.0
-
-+   chromadb==0.4.22
-
-+   jupyterlab==3.5.1
-
-+   ydata-profiling==4.6.0
-
-+   matplotlib==3.5.0
-
-+   numpy==1.24.4
-
-+   pandas==1.3.4
-
-+   unstructured==0.10.19
++ `langchain==0.1.12`
++ `langchain-community==0.0.28`
++ `langchain-core==0.1.32`
++ `langchain-openai==0.0.8`
++ `langchain-text-splitters==0.0.1`
++ `altair==5.3.0`
++ `chromadb==0.4.22`
++ `jupyterlab==3.5.1`
++ `ydata-profiling==4.6.0`
++ `matplotlib==3.5.0`
++ `numpy==1.24.4`
++ `pandas==1.3.4`
++ `unstructured==0.10.19`
 
 您可以通过运行命令 `pip install <package_name>` 简单地安装这些包的最新版本。然而，由于技术发展迅速，这些包在您阅读本书时可能已经更新。为确保您仍然可以按照本书中的代码运行，请在您的计算机上创建一个虚拟环境并安装本书中使用的特定包版本。要创建虚拟环境，请打开终端并使用 `pip install virtualenv` 安装 `virtualenv` 包。然后，运行以下列表中描述的命令。
 
@@ -87,7 +63,7 @@ python -m venv env
 source env/bin/activate
 ```
 
-要停用虚拟环境，只需运行 `deactivate` 命令。在虚拟环境中，通过运行 `pip install <package_name>==<version>` 命令为每个包安装前面的包。或者，使用位于 GitHub 仓库根目录下的 requirements.txt 文件，并运行以下命令：`pip install -r requirements.txt`。
+要停用虚拟环境，只需运行 `deactivate` 命令。在虚拟环境中，通过运行 `pip install <package_name>==<version>` 命令为每个包安装前面的包。或者，使用位于 GitHub 仓库根目录下的 `requirements.txt` 文件，并运行以下命令：`pip install -r requirements.txt`。
 
 ## A.3 安装 GitHub Copilot
 
@@ -113,17 +89,12 @@ ChatGPT 保留单个聊天会话中所有提示的历史记录。这意味着您
 
 接下来，您可以按照以下步骤配置 API 密钥：
 
-1.  点击仪表板右上角的“个人”按钮。
-
-1.  在下拉菜单中选择“查看 API 密钥”。
-
-1.  点击“创建新的密钥”。
-
-1.  插入密钥名称，创建一个密钥。
-
-1.  点击复制符号以复制密钥值，并将其粘贴在安全的地方。
-
-1.  点击“完成”。
+1. 点击仪表板右上角的“个人”按钮。
+2. 在下拉菜单中选择“查看 API 密钥”。
+3. 点击“创建新的密钥”。
+4. 插入密钥名称，创建一个密钥。
+5. 点击复制符号以复制密钥值，并将其粘贴在安全的地方。
+6. 点击“完成”。
 
 一旦创建了 API 密钥，您就可以在 Python 脚本中使用 Open AI API。
 
@@ -171,7 +142,7 @@ print(
 )
 ```
 
-Windows 用户在使用 LangChain 时可能会遇到 `"ModuleNotFoundError:` `No` `module` `named` `'pwd'"` 错误。这是因为 `pwd` 模块在 Windows 平台上不可用。解决这个问题的方法之一是在使用 LangChain 之前添加以下代码行。
+Windows 用户在使用 LangChain 时可能会遇到 `"ModuleNotFoundError: No module named 'pwd'"` 错误。这是因为 `pwd` 模块在 Windows 平台上不可用。解决这个问题的方法之一是在使用 LangChain 之前添加以下代码行。
 
 ##### 列表 A.4 在 Windows 上使用 `pwd`
 

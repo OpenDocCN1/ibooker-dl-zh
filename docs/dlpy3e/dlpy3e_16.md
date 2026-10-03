@@ -1,3 +1,4 @@
+
 # 第十六章：文本生成
 
 > 原文：[`deeplearningwithpython.io/chapters/chapter16_text-generation`](https://deeplearningwithpython.io/chapters/chapter16_text-generation)
@@ -195,6 +196,8 @@ train_ds = ds.skip(num_val_batches).repeat()
 这种方法的另一个后果是，即使对于输入序列，信息流也不再是双向的。给定一个输入，例如“法国的首都是哪里？”，单词“Where”在注意力层中无法关注到“capital”和“France”。这限制了模型的表达能力，但在预训练的简单性方面具有巨大的优势。我们不需要整理包含输入和输出对的集合；一切都可以是一个单独的序列。我们可以在互联网上找到的任何文本上进行大规模训练。
 
 让我们从第十五章复制`TransformerDecoder`，但移除交叉注意力层，这使得解码器能够关注编码器序列。我们还将进行一个小的修改，在注意力和前馈块之后添加 dropout。在第十五章中，我们在编码器和解码器中只使用了一个 Transformer 层，因此我们可以在整个模型的末尾只使用一个 dropout 层。对于我们的 GPT 模型，我们将堆叠相当多的层，因此在每个解码器层中添加 dropout 对于防止过拟合非常重要。
+
+
 
 ```py
 from keras import layers
@@ -431,6 +434,8 @@ def compiled_generate(prompt, max_length=64):
 
 在每个生成步骤使用最可能的输出被称为*贪婪搜索*。这是使用模型预测的最直接方法，但它绝不是唯一的方法。如果我们向过程中添加一些随机性，我们可以更广泛地探索模型学习到的概率分布。这可以防止我们陷入高概率标记序列的循环中。
 
+
+
 让我们尝试一下。我们可以通过重构我们的生成函数，使其能够传递一个将模型的预测映射到下一个标记选择的函数。我们将称之为我们的*采样策略*：
 
 ```py
@@ -604,204 +609,21 @@ Model: "gemma3_causal_lm"
 
 我们不必亲自实现生成流程，可以通过使用`CausalLM`类中提供的`generate()`函数来简化我们的生活。这个`generate()`函数可以与不同的采样策略一起编译，正如我们在上一节中探讨的那样：
 
-```py
->>> gemma_lm.compile(sampler="greedy")
->>> gemma_lm.generate("A piece of advice", max_length=40)
-A piece of advice from a former student of mine:
 
-<blockquote>"I'm not sure if you've heard of it, but I've been told that the
-best way to learn
->>> gemma_lm.generate("How can I make brownies?", max_length=40)
-How can I make brownies?
 
-[User 0001]
+进入`/path/to/xxx`目录，找到`xxx.json`。
 
-I'm trying to make brownies for my son's birthday party. I've never made
-brownies before.
+在表达式`cvar = avar + bvar`中，加法运算符（`+`）将`avar`与`bvar`相加，得到它们的和`cvar`
+
+在`List.of(arg0, arg1, arg2)`中，`List`接口的工厂方法`of()`接受一系列的元素，返回包含它们的只读列表。
+
+之后我们这样调用`cmd`命令：`cmd arg0 arg1 arg2`。
+
+```
+if (condVar > someVal) {console.log("xxx")}
 ```
 
-我们可以立即注意到几点。首先，输出比我们的迷你 GPT 模型要连贯得多。很难将这段文本与 C4 数据集中的大量训练数据区分开来。其次，输出仍然不太有用。模型将生成模糊合理的文本，但你可以用它做什么并不清楚。
 
-正如我们在迷你 GPT 示例中看到的那样，这与其说是一个错误，不如说是我们预训练目标的结果。Gemma 模型是用与我们为迷你 GPT 使用的相同“猜测下一个单词”的目标进行训练的，这意味着它实际上是一个互联网上的高级自动完成功能。它将不断地连续发出最可能的单词，就像你的提示是网络上随机文档中的一段文本一样。
-
-改变我们输出的一个方法是通过提供一个更长的输入来提示模型，使其明显表明我们正在寻找哪种类型的输出。例如，如果我们用布朗尼食谱的前两句话提示 Gemma 模型，我们会得到更有帮助的输出：
-
-```py
->>> gemma_lm.generate(
->>>     "The following brownie recipe is easy to make in just a few "
->>>     "steps.\n\nYou can start by",
->>>     max_length=40,
->>> )
-The following brownie recipe is easy to make in just a few steps.
-
-You can start by melting the butter and sugar in a saucepan over medium heat.
-
-Then add the eggs and vanilla extract
-```
-
-当与能够“交谈”的模型一起工作时，想象它以某种人类对话的方式解释我们的提示是很诱人的，但这里并没有发生这样的事情。我们只是构建了一个提示，其中实际布朗尼食谱的延续性比模仿在论坛上寻求烘焙帮助的人的帖子更有可能。
-
-在构建提示方面，你可以走得更远。你可能会用一些自然语言指令提示模型它应该扮演的角色，例如，“你是一个大型语言模型，为人们提供简短、有用的答案。”或者你可能给模型提供一个包含长列表的有害主题的提示，这些主题不应包含在任何生成的响应中。
-
-如果这一切听起来有些模糊不清且难以控制，这是一个很好的评估。尝试通过提示来访问模型分布的不同部分通常是有用的，但预测模型对给定提示的反应是非常困难的。
-
-LLMs 面临的一个另一个广泛记录的问题是幻觉。模型总是会说出一些话——对于给定的序列，总有一个最可能的下一个标记。在我们的 LLM 分布中找到没有实际事实依据的位置是很容易的：
-
-```py
->>> gemma_lm.generate(
->>>     "Tell me about the 542nd president of the United States.",
->>>     max_length=40,
->>> )
-Tell me about the 542nd president of the United States.
-
-The 542nd president of the United States was James A. Garfield.
-```
-
-当然，这完全是胡说八道，但模型找不到更可能的方式来完成这个提示。
-
-幻觉和不可控的输出是语言模型的基本问题。如果有一个银弹，我们还没有找到。然而，一种非常有帮助的方法是使用你希望生成的特定类型的生成输出示例进一步微调模型。
-
-在想要构建一个能够遵循指令的聊天机器人的具体情况下，这种训练被称为*指令微调*。让我们尝试使用 Gemma 进行一些指令微调，使其作为一个对话伙伴变得更加有用。
-
-### 指令微调
-
-指令微调涉及向模型提供输入/输出对——一个用户指令后面跟着一个模型响应。我们将这些组合成一个单一的序列，成为模型的新训练数据。为了在训练过程中清楚地标记指令或响应的结束，我们可以直接将特殊标记如`"[instruction]"`和`"[response]"`添加到组合序列中。只要保持一致，精确的标记并不重要。
-
-我们可以将组合序列作为常规训练数据使用，使用与我们在预训练 LLM 时使用的相同的“猜测下一个单词”损失。通过使用包含所需响应的示例进行进一步训练，我们实际上是在我们想要的方向上弯曲模型的输出。我们在这里不会学习语言的一个潜在空间；这已经在数十亿个预训练的标记上完成了。我们只是在稍微推动学习到的表示，以控制输出的语气和内容。
-
-首先，我们需要一个指令-响应对的数据集。训练聊天机器人是一个热门话题，因此有许多专门为此目的制作的数据集。我们将使用由 Databricks 公司公开的数据集。员工们贡献了一个包含 15,000 条指令和手写响应的数据集。让我们下载它并将数据合并成一个单一的序列。
-
-```py
-import json
-
-PROMPT_TEMPLATE = """"[instruction]\n{}[end]\n[response]\n"""
-RESPONSE_TEMPLATE = """{}[end]"""
-
-dataset_path = keras.utils.get_file(
-    origin=(
-        "https://hf.co/datasets/databricks/databricks-dolly-15k/"
-        "resolve/main/databricks-dolly-15k.jsonl"
-    ),
-)
-data = {"prompts": [], "responses": []}
-with open(dataset_path) as file:
-    for line in file:
-        features = json.loads(line)
-        if features["context"]:
-            continue
-        data["prompts"].append(PROMPT_TEMPLATE.format(features["instruction"]))
-        data["responses"].append(RESPONSE_TEMPLATE.format(features["response"])) 
-```
-
-列表 16.12：加载指令微调数据集
-
-注意，一些示例有额外的上下文——与指令相关的文本信息。为了保持简单，我们现在将丢弃这些示例。
-
-让我们看看我们数据集中单个元素：
-
-```py
->>> data["prompts"][0]
-[instruction]
-Which is a species of fish? Tope or Rope[end]
-[response] 
->>> data["responses"][0]
-Tope[end]
-```
-
-我们的提示模板为我们提供的示例提供了一个可预测的结构。尽管 Gemma 不是一个像我们的英语到西班牙语翻译器那样的序列到序列模型，但我们可以通过在类似这样的提示上进行训练，并在`"[response]"`标记之后才生成输出，来在序列到序列设置中使用它。
-
-让我们创建一个`tf.data.Dataset`并分割一些验证数据：
-
-```py
-ds = tf.data.Dataset.from_tensor_slices(data).shuffle(2000).batch(2)
-val_ds = ds.take(100)
-train_ds = ds.skip(100) 
-```
-
-我们从 KerasHub 库加载的`CausalLM`是一个用于端到端因果语言模型的高级对象。它封装了两个对象：一个`preprocessor`层，用于预处理文本输入，以及一个`backbone`模型，它包含模型前向传递的数值。
-
-预处理默认包含在高级 Keras 函数如`fit()`和`predict()`中。但让我们在一个单独的批次上运行我们的预处理，这样我们可以更好地看到它在做什么：
-
-```py
->>> preprocessor = gemma_lm.preprocessor
->>> preprocessor.sequence_length = 512
->>> batch = next(iter(train_ds))
->>> x, y, sample_weight = preprocessor(batch)
->>> x["token_ids"].shape
-(2, 512)
->>> x["padding_mask"].shape
-(2, 512)
->>> y.shape
-(2, 512)
->>> sample_weight.shape
-(2, 512)
-```
-
-预处理层将所有输入填充到固定长度，并计算一个填充掩码来跟踪哪些标记 ID 输入只是填充的零。`sample_weight`张量使我们能够只为我们的响应标记计算损失值。我们并不关心用户提示的损失；它是固定的，我们肯定不希望计算我们刚刚添加的零填充的损失。
-
-如果我们打印出我们的标记 ID 和标签的片段，我们可以看到这是一个常规语言模型设置，其中每个标签是下一个标记值：
-
-```py
->>> x["token_ids"][0, :5], y[0, :5]
-(Array([     2,  77074,  22768, 236842,    107], dtype=int32),
- Array([ 77074,  22768, 236842,    107,  24249], dtype=int32))
-```
-
-### 低秩自适应（LoRA）
-
-如果我们现在在一个具有 16 GB 设备内存的 Colab GPU 上运行`fit()`，我们很快就会触发内存不足错误。但我们已经加载了模型并运行了生成，那么为什么现在会内存不足呢？
-
-我们的 10 亿参数模型大约占用 3.7 GB 的内存。您可以在我们之前的模型摘要中看到这一点。我们一直在使用的`Adam`优化器需要为每个参数跟踪三个额外的浮点数——实际的梯度、一个速度值和一个动量值。总的来说，仅权重和优化器状态就需要 15 GB。我们还需要几 GB 的内存来跟踪模型前向传递中的中间值，但我们已经没有多余的内存了。运行`fit()`会在第一次训练步骤时崩溃。这是训练 LLM 时常见的问题。因为这些模型具有大量的参数数量，所以 GPU 和 CPU 的吞吐量在加速器内存上拟合模型时是次要的。
-
-我们在本书中之前已经看到，我们如何在微调过程中冻结模型的一部分。我们没有提到的是，这将节省大量的内存！我们不需要跟踪任何冻结参数的优化器变量——它们永远不会更新。这使我们能够在加速器上节省大量的空间。
-
-研究人员已经广泛地实验了在微调期间冻结 Transformer 模型中的不同参数，结果发现，也许直观地，最重要的未冻结权重是在注意力机制中。但我们的注意力层仍然有数亿个参数。我们能否做得更好？
-
-在 2021 年，微软的研究人员提出了一种名为 LoRA 的技术，即*大型语言模型的低秩自适应*，专门用来解决这个内存问题^([[4]](#footnote-4))。为了解释它，让我们想象一个简单的线性投影层：
-
-```py
-class Linear(keras.Layer):
-    def __init__(self, input_dim, output_dim):
-        super().__init__()
-        self.kernel = self.add_weight(shape=(input_dim, output_dim))
-
-    def call(self, inputs):
-        return ops.matmul(inputs, self.kernel) 
-```
-
-LoRA 论文建议冻结`kernel`矩阵，并添加一个新的“低秩”核投影分解。这个分解有两个新的投影矩阵，`alpha`和`beta`，它们将投影到和从内部`rank`。
-
-```py
-class LoraLinear(keras.Layer):
-    def __init__(self, input_dim, output_dim, rank):
-        super().__init__()
-        self.kernel = self.add_weight(
-            shape=(input_dim, output_dim), trainable=False
-        )
-        self.alpha = self.add_weight(shape=(input_dim, rank))
-        self.beta = self.add_weight(shape=(rank, output_dim))
-
-    def call(self, inputs):
-        frozen = ops.matmul(inputs, self.kernel)
-        update = ops.matmul(ops.matmul(inputs, self.alpha), self.beta)
-        return frozen + update 
-```
-
-如果我们的`kernel`形状是 2048 × 2048，那么就是 4,194,304 个冻结参数。但如果我们将`rank`保持得较低，比如说 8，那么低秩分解将只有 32,768 个参数。这次更新将不具有原始核相同的表达能力；在狭窄的中间点，整个更新必须表示为八个浮点数。但在 LLM 微调期间，你不再需要像预训练期间那样的表达能力（图 16.4）。
-
-![](img/87c87a4dbb8282b1485ee08bc057c02d.png)
-
-图 16.4：低秩核分解包含的参数远少于核本身。
-
-LoRA 的作者建议冻结整个 Transformer，并将 LoRA 权重仅添加到注意力层的查询和键投影中。让我们试试这个方法。KerasHub 模型内置了 LoRA 训练的方法。
-
-```py
-gemma_lm.backbone.enable_lora(rank=8) 
-```
-
-代码列表 16.13：为 KerasHub 模型启用 LoRA 训练
-
-让我们再次查看我们的模型摘要：
 
 ```py
 >>> gemma_lm.summary()
@@ -1001,6 +823,8 @@ You're playing with a very large number!<end_of_turn>
 
 一个明显的聊天机器人扩展是处理新的输入模态的能力。一个能够响应音频输入并处理图像的助手，将比只能处理文本的助手更有用。
 
+
+
 将 Transformer 扩展到不同的模态可以通过一种概念上简单的方式进行。Transformer 不是一个特定于文本的模型；它是一个在序列数据中学习模式的高效模型。如果我们能想出如何将其他数据类型强制转换为序列表示，我们就可以将这个序列输入到 Transformer 中，并用它进行训练。
 
 实际上，我们刚刚加载的 Gemma 模型正是如此。该模型附带一个独立的 4.2 亿参数图像编码器，它将输入图像切割成 256 个补丁，并将每个补丁编码为与 Gemma 的隐藏 Transformer 维度相同的向量。每个图像将被嵌入为一个`(256, 2560)`序列。因为 2560 是 Gemma Transformer 模型的隐藏维度，所以这种图像表示可以简单地拼接到我们的文本序列的令牌嵌入层之后。你可以将其想象为 256 个代表图像的特殊令牌，其中每个`(1, 2560)`向量有时被称为“软令牌”（图 16.6）。与我们的正常“硬令牌”不同，每个令牌 ID 在我们的令牌嵌入矩阵中只能取固定数量的可能向量，这些图像软令牌可以取视觉编码器输出的任何向量值。
@@ -1073,7 +897,7 @@ head.<end_of_turn>
 
 我们可以简单地将图像数据添加到 LLM 中，这似乎几乎像魔法一样，但当我们考虑到我们正在使用的序列模型的力量时，这实际上是一个非常预期的结果。我们使用了一个 Transformer，将我们的图像输入重新表示为序列数据，并进行了大量的额外训练。该模型可以在学习在 Transformer 的潜在空间中嵌入图像的同时，保留原始语言模型摄取和产生文本的能力。
 
-#### 基础模型
+## 基础模型
 
 随着 LLM 探索不同的模态，"大型语言模型"这个名称可能有点误导。它们*确实*建模语言，但也包括图像、音频，甚至可能是结构化数据。在下一章中，我们将看到一种独特的架构，称为*扩散模型*，它在底层结构方面有所不同，但感觉相似——它们也是在“互联网规模”的大量数据上通过自监督损失进行训练。
 
@@ -1083,7 +907,7 @@ head.<end_of_turn>
 
 这是在机器学习漫长历史中最近发生的一个重要且引人注目的转变。与其从头开始在自己的数据集上训练模型，你通常会更好地使用基础模型来获取输入（无论是图像、文本还是其他内容）的丰富表示，然后针对最终下游任务对该模型进行微调。当然，这伴随着需要运行具有数十亿参数的大型模型的缺点，因此它几乎不适合所有机器学习的实际应用。
 
-### 检索增强生成（RAG）
+## 检索增强生成（RAG）
 
 在提示中添加额外信息不仅有助于处理图像数据；这可以是一种扩展 LLM 能力的一般方法。一个显著的例子是当使用 LLM 进行搜索时。如果我们天真地将 LLM 与搜索引擎进行比较，它有几个致命的缺陷：
 
@@ -1112,7 +936,7 @@ Answer:
 
 +   它可以帮助模型在事实上站稳脚跟。没有银弹可以完全阻止幻觉，但如果在提示中提供了关于主题的正确背景信息，LLM 在某个主题上编造事实的可能性就会大大降低。
 
-### “推理”模型
+## “推理”模型
 
 自从第一个大型语言模型（LLM）出现以来，研究人员一直苦于这样一个众所周知的事实：这些模型在数学问题和逻辑谜题上表现糟糕。一个模型可能直接在其训练数据中对一个问题给出完美的回答，但如果你在提示中替换几个名字或数字，就会很明显地看出模型对它试图解决的问题毫无头绪。对于自然语言处理中的许多问题，LLM 提供了一种简单的进步方法：增加训练数据量，提高某些基准分数。然而，小学数学问题却挑战了进步。
 
@@ -1211,44 +1035,51 @@ ANSWER: 72<end_of_turn>
 
     +   Transformer 架构
 
-    +   语言建模任务（根据过去标记预测下一个标记）
 
-    +   大量的未标记文本数据
 
-+   一个 LLM 学习一个概率分布来预测单个标记。这可以与采样策略结合，生成一长串文本。有许多流行的文本采样方法：
+# 语言建模与大型语言模型（LLM）
 
-    +   *贪婪搜索*在每个生成步骤中采取最可能的预测标记。
+## 核心概念
 
-    +   *随机采样*直接从所有标记上的预测分类分布中进行采样。
+- **语言建模任务**：根据过去标记预测下一个标记。
+- **训练数据**：大量的未标记文本数据。
 
-    +   *Top-k 采样*将分类分布限制在 K 个候选者的顶部集合。
+一个 LLM 学习一个概率分布来预测单个标记。这可以与采样策略结合，生成一长串文本。有许多流行的文本采样方法：
 
-+   LLMs 使用数十亿个参数，并在万亿个单词的文本上训练。
+- **贪婪搜索**：在每个生成步骤中采取最可能的预测标记。
+- **随机采样**：直接从所有标记上的预测分类分布中进行采样。
+- **Top-k 采样**：将分类分布限制在 K 个候选者的顶部集合。
 
-+   LLM 的输出不可靠，所有 LLMs 偶尔都会产生事实错误的信息。
+## 关键特性与限制
 
-+   LLMs 可以被微调以遵循聊天对话中的指令。这种微调类型被称为*指令微调*：
+- LLMs 使用数十亿个参数，并在万亿个单词的文本上训练。
+- LLM 的输出不可靠，所有 LLMs 偶尔都会产生事实错误的信息。
 
-    +   最简单的指令微调形式涉及直接在指令和响应对上训练模型。
+## 微调与指令微调
 
-    +   更高级的指令微调形式涉及强化学习。
+LLMs 可以被微调以遵循聊天对话中的指令。这种微调类型被称为*指令微调*：
 
-+   在使用 LLMs 时，最常见的资源瓶颈是加速器内存。
+- 最简单的指令微调形式涉及直接在指令和响应对上训练模型。
+- 更高级的指令微调形式涉及强化学习。
 
-+   LoRA 是一种技术，通过冻结大多数 Transformer 参数，仅更新注意力投影权重的低秩分解来减少内存使用。
+## 资源与优化
 
-+   LLMs 可以输入或输出来自不同模态的数据，如果你能想出如何将这些输入或输出作为序列预测问题中的序列来构建。
+- 在使用 LLMs 时，最常见的资源瓶颈是加速器内存。
+- `LoRA` 是一种技术，通过冻结大多数 `Transformer` 参数，仅更新注意力投影权重的低秩分解来减少内存使用。
 
-+   *基础模型*是一个通用术语，用于任何模态的训练模型，这些模型使用自监督在广泛的下游任务上进行训练。
+## 多模态与基础模型
 
-### 脚注
+- LLMs 可以输入或输出来自不同模态的数据，如果你能想出如何将这些输入或输出作为序列预测问题中的序列来构建。
+- *基础模型*是一个通用术语，用于任何模态的训练模型，这些模型使用自监督在广泛的下游任务上进行训练。
 
-1.  在 2022 年，Jason Allen 使用图像生成软件 Midjourney 赢得了数字艺术家的奖项，而在 2024 年，Rie Kudan 凭借一部大量借助生成软件创作的小说赢得了日本最负盛名的文学奖项之一。[[↩]](#footnote-link-1)
+## 脚注
 
-1.  Iannis Xenakis，“Musiques formelles: nouveaux principes formels de composition musicale，”*La Revue musicale*特刊，第 253-254 期（1963 年）。[[↩]](#footnote-link-2)
+1. 在 2022 年，Jason Allen 使用图像生成软件 `Midjourney` 赢得了数字艺术家的奖项，而在 2024 年，Rie Kudan 凭借一部大量借助生成软件创作的小说赢得了日本最负盛名的文学奖项之一。[[↩]](#footnote-link-1)
 
-1.  Alec Radford, Karthik Narasimhan, Tim Salimans 和 Ilya Sutskever，“通过生成预训练改进语言理解”，（2018 年），[`mng.bz/GweD`](https://mng.bz/GweD). [[↩]](#footnote-link-3)
+2. Iannis Xenakis，“Musiques formelles: nouveaux principes formels de composition musicale，”*La Revue musicale*特刊，第 253-254 期（1963 年）。[[↩]](#footnote-link-2)
 
-1.  J. Edward Hu 等人，“LoRA：大型语言模型的低秩自适应”，arXiv（2021 年），[`arxiv.org/abs/2106.09685`](https://arxiv.org/abs/2106.09685). [[↩]](#footnote-link-4)
+3. Alec Radford, Karthik Narasimhan, Tim Salimans 和 Ilya Sutskever，“通过生成预训练改进语言理解”，（2018 年），[`mng.bz/GweD`](https://mng.bz/GweD). [[↩]](#footnote-link-3)
 
-1.  Ouyang 等人，“通过人类反馈训练语言模型遵循指令”，第 36 届国际神经网络信息处理系统会议论文集（2022 年），[`arxiv.org/abs/2203.02155`](https://arxiv.org/abs/2203.02155). [[↩]](#footnote-link-5)
+4. J. Edward Hu 等人，“LoRA：大型语言模型的低秩自适应”，arXiv（2021 年），[`arxiv.org/abs/2106.09685`](https://arxiv.org/abs/2106.09685). [[↩]](#footnote-link-4)
+
+5. Ouyang 等人，“通过人类反馈训练语言模型遵循指令”，第 36 届国际神经网络信息处理系统会议论文集（2022 年），[`arxiv.org/abs/2203.02155`](https://arxiv.org/abs/2203.02155). [[↩]](#footnote-link-5)

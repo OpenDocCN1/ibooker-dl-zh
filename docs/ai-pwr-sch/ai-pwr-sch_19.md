@@ -1,3 +1,4 @@
+
 # 附录 A 运行代码示例
 
 在您的“基于 AI 的搜索”之旅中，我们将通过大量代码和运行软件示例来展示本书中的技术。本附录向您展示如何轻松设置和运行附带的源代码，以便您可以在处理材料时实验实时运行的示例。我们将介绍如何打包本书的源代码，拉取和构建源代码，以及如何使用 Jupyter 笔记本和 Docker 来运行示例。
@@ -22,17 +23,17 @@ Docker 允许创建和运行微小的容器——这些是完全功能的虚拟�
 git clone https://github.com/treygrainger/ai-powered-search.git
 ```
 
-您现在应该在当前目录中有一个名为 ai-powered-search/的新文件夹，其中包含本书的所有源代码。
+您现在应该在当前目录中有一个名为 `ai-powered-search/` 的新文件夹，其中包含本书的所有源代码。
 
 如果您没有安装 Git 或无法通过前面的命令拉取代码，网站上也提供了一个选项，可以通过您的网络浏览器下载源代码的 zip 文件，然后您只需将其解压缩到您的开发文件夹中。
 
-如果您愿意，可以重命名或移动 ai-powered-search/文件夹；在本书的其余部分，我们将简单地使用变量`$AIPS_HOME`来指代此目录。
+如果您愿意，可以重命名或移动 `ai-powered-search/` 文件夹；在本书的其余部分，我们将简单地使用变量 `$AIPS_HOME` 来指代此目录。
 
 ## A.3 构建和运行代码
 
-如前所述，Docker 是您必须在系统上安装的一个关键依赖项，以构建和运行*AI-Powered Search*代码示例。我们不会在这里介绍此安装过程，因为它依赖于系统，并且会不时发生变化。请访问[`docker.com`](https://docker.com)以获取下载和安装说明。我们还应该注意，除了 Docker 之外，还可以使用其他容器管理工具，如 Podman，但我们将不会在这里介绍这些工具。
+如前所述，Docker 是您必须在系统上安装的一个关键依赖项，以构建和运行 *AI-Powered Search* 代码示例。我们不会在这里介绍此安装过程，因为它依赖于系统，并且会不时发生变化。请访问 [`docker.com`](https://docker.com) 以获取下载和安装说明。我们还应该注意，除了 Docker 之外，还可以使用其他容器管理工具，如 Podman，但我们将不会在这里介绍这些工具。
 
-一旦您安装了 Docker，请确保在您的命令行界面中将目录更改为`$AIPS_HOME`目录（`cd` `$AIPS_HOME`）。要构建和运行代码库，您只需运行以下命令：
+一旦您安装了 Docker，请确保在您的命令行界面中将目录更改为 `$AIPS_HOME` 目录（`cd $AIPS_HOME`）。要构建和运行代码库，您只需运行以下命令：
 
 ```py
 docker compose up
@@ -40,11 +41,11 @@ docker compose up
 
 注意，此命令等同于运行 `docker compose up solr`。本书的代码库支持多个搜索引擎和向量数据库，并且最后一个（可选）参数允许您指定您想要使用的引擎（默认为 Apache Solr）。例如，如果您想使用 OpenSearch，您将运行 `docker compose up opensearch`。有关其他支持搜索引擎的更多信息，请参阅附录 B。
 
-提示：`docker compose up`命令在您的控制台前台运行，这允许您实时查看所有日志流，但这也意味着如果关闭控制台，所有容器都将停止。如果您想在不关闭或继续使用控制台的情况下在后台运行容器，可以传递`-d`或`--detach`参数（`docker compose up -d`）。如果您这样启动它，请确保在完成后明确运行`docker compose --profile all down`，以停止容器在后台无限期运行，消耗资源。
+提示：`docker compose up` 命令在您的控制台前台运行，这允许您实时查看所有日志流，但这也意味着如果关闭控制台，所有容器都将停止。如果您想在不关闭或继续使用控制台的情况下在后台运行容器，可以传递 `-d` 或 `--detach` 参数（`docker compose up -d`）。如果您这样启动它，请确保在完成后明确运行 `docker compose --profile all down`，以停止容器在后台无限期运行，消耗资源。
 
 此命令第一次运行需要一段时间，因为它会拉取构建和运行本书所附软件所需的所有代码、操作系统和依赖项。然而，一旦命令完成，您将拥有所有必要的服务（Jupyter、Spark、ZooKeeper、Solr 等）在单独的 Docker 容器中运行。
 
-现在，要开始，只需打开您的网络浏览器并访问 http://localhost:8888。这将重定向到欢迎屏幕，列出本书的所有章节及其对应的 Jupyter 笔记本（图 A.1）。您现在可以点击任何章节以启动其代码示例。
+现在，要开始，只需打开您的网络浏览器并访问 `http://localhost:8888`。这将重定向到欢迎屏幕，列出本书的所有章节及其对应的 Jupyter 笔记本（图 A.1）。您现在可以点击任何章节以启动其代码示例。
 
 ![图](img/APPA_F01_Grainger.png)
 
@@ -52,7 +53,7 @@ docker compose up
 
 默认情况下，Jupyter 笔记本被加载到 Jupyter Labs 环境中，这是一个用于处理、调试和导航笔记本的开发环境。它允许你同时打开和编辑多个笔记本（在单独的标签页中），并在你探索时在屏幕左侧导航和修改目录结构。
 
-如果你只想在更简单的环境中跟随书籍，你可以选择访问 http://localhost:8888/notebooks 并导航目录表，逐个笔记本地跟随，随着你在书中前进。我们将在下一节中使用这个更简单的界面，尽管默认的 Jupyter Labs 环境在 http://localhost:8888\ 中提供了相同的功能（以及更多）。
+如果你只想在更简单的环境中跟随书籍，你可以选择访问 `http://localhost:8888/notebooks` 并导航目录表，逐个笔记本地跟随，随着你在书中前进。我们将在下一节中使用这个更简单的界面，尽管默认的 Jupyter Labs 环境在 `http://localhost:8888` 中提供了相同的功能（以及更多）。
 
 ## A.4 使用 Jupyter
 
@@ -88,7 +89,7 @@ docker compose up
 docker compose --profile all down && docker compose up
 ```
 
-请记住，如果你对笔记本或代码进行了任何更改，当你运行 `docker` `compose` `--profile` `all` `down` 时，你已完成的工作将会丢失。一般来说，示例被设计为短暂的。如果你想跨容器重建保留你的工作，你可以修改 docker-compose.yaml 文件以将文件夹挂载到本地驱动器，或者使用标记为 `external` 的 Docker 数据卷，这将保持持久性。如果你计划在 Docker 文档中进行更改，请参考 Docker 文档，因为机制和 API 可能会不时更改。
+请记住，如果你对笔记本或代码进行了任何更改，当你运行 `docker compose --profile all down` 时，你已完成的工作将会丢失。一般来说，示例被设计为短暂的。如果你想跨容器重建保留你的工作，你可以修改 `docker-compose.yaml` 文件以将文件夹挂载到本地驱动器，或者使用标记为 `external` 的 Docker 数据卷，这将保持持久性。如果你计划在 Docker 文档中进行更改，请参考 Docker 文档，因为机制和 API 可能会不时更改。
 
 如果你修改了代码示例或你的配置，你可能还需要重新构建你的 Docker 镜像。当你第一次运行 `docker compose up` 时，它将拉取或构建你的镜像并启动它们，但它不会在第一次构建后重建。为了在重新启动 Docker 容器之前重建一切，你可以运行以下命令：
 
@@ -96,6 +97,6 @@ docker compose --profile all down && docker compose up
 docker compose up --build
 ```
 
-如果你只想暂时停止正在运行的 Docker 容器并在以后恢复，你也可以运行 `docker` `compose` `--profile` `all` `stop` 来停止，然后在稍后运行 `docker compose start` 来恢复。如果你想在下次启动时保留所做的任何更改而不重置到笔记本的干净版本，这将非常有用。
+如果你只想暂时停止正在运行的 Docker 容器并在以后恢复，你也可以运行 `docker compose --profile all stop` 来停止，然后在稍后运行 `docker compose start` 来恢复。如果你想在下次启动时保留所做的任何更改而不重置到笔记本的干净版本，这将非常有用。
 
 这应该会给你运行所有 *AI-Powered Search* 中的笔记本和代码所需的一切。

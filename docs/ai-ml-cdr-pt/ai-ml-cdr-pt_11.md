@@ -1,3 +1,5 @@
+
+
 # 第十章\. 创建用于预测序列的机器学习模型
 
 第九章介绍了序列数据和时间序列的属性，包括季节性、趋势、自相关和噪声。你创建了一个用于预测的合成序列，并探讨了如何进行基本的统计预测。
@@ -6,7 +8,7 @@
 
 为了理解为什么你需要这样做，考虑你在第九章中创建的时间序列。你可以在图 10-1 中看到它的一个图。
 
-如果在任何时候你想预测时间*t*的值，你将希望将其作为时间*t*之前值的函数进行预测。例如，假设你想将时间序列在第 1,200 步的值作为其前 30 个值的函数进行预测。在这种情况下，时间步 1,170 到 1,199 的值将决定时间步 1,200 的值（参见图 10-2）。
+如果在任何时候你想预测时间`t`的值，你将希望将其作为时间`t`之前值的函数进行预测。例如，假设你想将时间序列在第 1,200 步的值作为其前 30 个值的函数进行预测。在这种情况下，时间步 1,170 到 1,199 的值将决定时间步 1,200 的值（参见图 10-2）。
 
 ![图片](img/aiml_1001.png)
 
@@ -20,7 +22,7 @@
 
 在对第九章中的时间序列数据集进行此操作之前，让我们创建一个非常简单的数据集，它具有所有相同的属性，但数据量要小得多。
 
-# 创建窗口数据集
+## 创建窗口数据集
 
 PyTorch 有很多用于操作数据的 API。例如，你可以使用`torch.arange(10)`来创建一个包含数字 0-9 的基本数据集，从而模拟一个时间序列。然后你可以将这个数据集转换为窗口数据集的开始。以下是代码：
 
@@ -34,7 +36,7 @@ def create_sliding_windows(data, window_size, shift=1):
 
     # Calculate number of valid windows
     n = len(data)
-    num_windows = max(0, (n – window_size) // shift + 1)
+    num_windows = max(0, (n - window_size) // shift + 1)
 
     # Create strided view of data
     windows = data.unfold(0, window_size, shift)
@@ -48,10 +50,9 @@ windows = create_sliding_windows(data, window_size=5, shift=1)
 # Print each window
 for window in windows:
     print(window.numpy())
-
 ```
 
-首先，它通过使用范围来创建数据集，这仅仅使数据集包含从 0 到*n* - 1 的值，其中*n*在这个例子中是 10。
+首先，它通过使用范围来创建数据集，这仅仅使数据集包含从 0 到`n - 1`的值，其中`n`在这个例子中是 10。
 
 接下来，调用`create_sliding_windows`并传递参数`5`指定网络应将数据集分割成五个项目的窗口。指定`shift=1`会导致每个窗口相对于前一个窗口移动一个位置：第一个窗口将包含从 0 开始的五个项目，下一个窗口将包含从 1 开始的五个项目，等等。
 
@@ -64,28 +65,19 @@ for window in windows:
 [3 4 5 6 7]
 [4 5 6 7 8]
 [5 6 7 8 9]
-
 ```
 
-之前，您看到我们想要将此数据转换为训练数据，其中*n*个值定义了一个特征，并且有一个随后的值给出标签。您可以通过一些简单的 Python 列表切片来实现这一点，将每个窗口分成两部分：最后一个值之前的所有内容以及最后一个值本身。
+之前，您看到我们想要将此数据转换为训练数据，其中`n`个值定义了一个特征，并且有一个随后的值给出标签。您可以通过一些简单的 Python 列表切片来实现这一点，将每个窗口分成两部分：最后一个值之前的所有内容以及最后一个值本身。
 
 这在张量数据上使用`unfold`技术，它创建了一个滑动窗口，将数据转换为之前概述的集合。
 
 它还包含三个参数：
 
-维度（在这种情况下为 0）
+- **维度**（在这种情况下为 0）：这是展开的维度。
+- **window_size**：这是每个滑动窗口的大小。
+- **shift**：这是窗口之间的步长/步长大小。
 
-这是展开的维度。
-
-window_size
-
-这是每个滑动窗口的大小。
-
-shift
-
-这是窗口之间的步长/步长大小。
-
-这个过程给我们一个`*x*`和`*y*`数据集，如下所示：
+这个过程给我们一个`x`和`y`数据集，如下所示：
 
 ```py
 import torch
@@ -99,8 +91,8 @@ def create_sliding_windows_with_target(data, window_size, shift=1):
     windows = data.unfold(0, window_size, shift)
 
     # Split each window into features
-    features = windows[:, :–1]  # All elements except the last
-    targets = windows[:, –1:]   # Just the last element
+    features = windows[:, :-1]  # All elements except the last
+    targets = windows[:, -1:]   # Just the last element
 
     return features, targets
 
@@ -112,7 +104,6 @@ features, targets = create_sliding_windows_with_target(data, window_size=5,
 # Print each window's features and target
 for x, y in zip(features, targets):
     print(f"Features: {x.numpy()}, Target: {y.numpy()}")
-
 ```
 
 现在的结果与您预期的相符。窗口中的前四个值可以被视为特征，随后的值是标签：
@@ -126,7 +117,7 @@ for x, y in zip(features, targets):
 [5 6 7 8] [9]
 ```
 
-现在，使用 PyTorch 的 TensorDataset 类型，您可以将其转换为数据集，并执行诸如洗牌和批处理等原生操作。
+现在，使用 PyTorch 的`TensorDataset`类型，您可以将其转换为数据集，并执行诸如洗牌和批处理等原生操作。
 
 注意，在洗牌数据时，确保首先将验证集和测试集分开是一个好的做法。在时间序列数据中，在分割之前洗牌可能会导致训练集的信息泄露到测试集中，这会损害评估过程。
 
@@ -152,10 +143,9 @@ for batch_features, batch_targets in dataloader:
     print(f"Batch features shape: {batch_features.shape}")
     print(f"Features:\n{batch_features}")
     print(f"Targets:\n{batch_targets}\n")
-
 ```
 
-结果显示，第一个批次有两个`*x*`集合（分别从 5 和 0 开始）及其标签，第二个批次有两个`*x*`集合（分别从 1 和 3 开始）及其标签，依此类推：
+结果显示，第一个批次有两个`x`集合（分别从 5 和 0 开始）及其标签，第二个批次有两个`x`集合（分别从 1 和 3 开始）及其标签，依此类推：
 
 ```py
 tensor([[5, 6, 7, 8],
@@ -177,12 +167,11 @@ tensor([[4, 5, 6, 7],
 Targets:
 tensor([[8],
         [6]])
-
 ```
 
 使用这种技术，您现在可以将任何时间序列数据集转换为神经网络的一组训练数据。在下一节中，您将探索如何从第九章中的合成数据创建训练集。从那里，您将转向创建一个简单的 DNN，该 DNN 在数据上训练，并可用于预测未来值。
 
-## 创建时间序列数据集的窗口版本
+### 创建时间序列数据集的窗口版本
 
 回顾一下，这是我们之前章节中用来创建合成时间序列数据集的代码：
 
@@ -214,7 +203,6 @@ noise_level = 5
 series = baseline + trend(time, slope)
 series += seasonality(time, period=365, amplitude=amplitude)
 series += noise(time, noise_level, seed=42)
-
 ```
 
 这将创建一个看起来像图 10-3 中的时间序列。如果您想修改它，请随意调整各种常数的值。
@@ -294,7 +282,10 @@ Target (next day): 39.27
 
 要使用这些数据训练模型，您将把序列分成训练集和验证集。在这种情况下，我们将通过分割列表并将其转换为`train_dataset`和`val_dataset`子集来训练 1,000 条记录。这使用了`torch.utils.data`中的`Subset`类。
 
-然后，你可以使用`DataLoader`加载这些数据，就像我们在第三章中看到的那样：
+然后，你可以使用`DataLoader`加载这些数据，就像我们在第三章中看到的那样。
+
+
+
 
 ```py
 train_size = 1000 
@@ -322,7 +313,6 @@ print("First window:")
 print(f"Features shape: {features.shape}")
 print(f"Features: {features.numpy()}")
 print(f"Target: {target.item()}\n")
-
 ```
 
 在这里，`batch_size`设置为`1`，只是为了使结果更易于阅读。因此，你最终会得到这样的输出，其中单个数据集在批次中：
@@ -336,7 +326,6 @@ Features: [32.48357  29.395714 33.40659  37.858486 29.14184  29.20528  38.32948
  29.468477 30.900469 23.39905  27.755371 30.980967 24.615065 32.186863
  27.23822 ]
 Target: 28.71073341369629
-
 ```
 
 第一批数字是特征。我们将窗口大小设置为 30，因此它是一个 1 × 30 的张量。第二个数字是标签（在这个例子中是 28.710），模型将尝试将特征拟合到这个标签。你将在下一节中看到它是如何工作的。
@@ -361,7 +350,6 @@ class TimeSeriesModel(nn.Module):
 
     def forward(self, x):
         return self.network(x)
-
 ```
 
 这是一个超级简单的模型，包含三个线性层，第一个层接受`window_size`的输入形状，然后是一个包含 10 个神经元的隐藏层，最后是一个包含预测值的输出层。
@@ -487,7 +475,6 @@ val_targets_tensor = torch.tensor(val_targets)
 mae_torch = torch.mean(torch.abs(
                        val_predictions_tensor – val_targets_tensor))
 print(f"Validation MAE (PyTorch): {mae_torch:.4f}")
-
 ```
 
 数据中已经引入了随机性，所以你的结果可能会有所不同，但当我尝试时，我得到了 4.57 作为 MAE 的值。

@@ -1,3 +1,4 @@
+
 # 前言
 
 多年来，我沉浸在人工智能（AI）的世界中。我撰写了关于这个主题的几本书，并指导公司利用其变革潜力。在那段时间里，当我与人交谈时，一个问题成为了一个反复出现的主题：我如何提高我的 AI 技能？
@@ -63,19 +64,12 @@
 请将有关本书的评论和问题寄给出版社：
 
 +   O’Reilly Media, Inc.
-
 +   1005 Gravenstein Highway North
-
 +   Sebastopol, CA 95472
-
 +   800-889-8969（美国或加拿大）
-
 +   707-827-7019（国际或本地）
-
 +   707-829-0104（传真）
-
 +   *support@oreilly.com*
-
 +   [*https://oreilly.com/about/contact.html*](https://oreilly.com/about/contact.html)
 
 我们为这本书有一个网页，其中列出了勘误表、示例和任何其他附加信息。您可以通过[*https://oreil.ly/azure-AI-fundamentals-AI-900-study-guide-1e*](https://oreil.ly/azure-AI-fundamentals-AI-900-study-guide-1e)访问此页面。

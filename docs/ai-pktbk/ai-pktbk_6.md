@@ -1,4 +1,5 @@
-# 附录 A  生成式 AI 工具目录
+
+# 附录 A 生成式 AI 工具目录
 
 本附录列出了在撰写时许多流行的生成式 AI 工具。我预计 AI 市场的某些部分将组织成寡头垄断，这意味着将只有少数几个关键玩家而不是众多玩家。这尤其适用于构建基础模型的公司，因为模型训练涉及高昂的一次性成本，很少有公司能够承担得起。因此，基础模型市场将类似于云计算市场，该市场由三个主要竞争对手主导。
 
@@ -12,45 +13,33 @@
 
 ### 面向客户的 APP
 
-+   *ChatGPT*——由 OpenAI 开发的人工智能助手。它基于免费增值模式（免费访问某些功能，以及每月订阅以访问额外功能）。它可以在[`ChatGPT.com`](https://ChatGPT.com)访问。
-
-+   *Claude*——由前 OpenAI 员工创立的 AI 公司 Anthropic 开发的人工智能助手。它基于免费增值模式，可以在[`claude.ai`](https://claude.ai)访问。
-
-+   *Gemin*——由谷歌的子公司 Google DeepMind 开发的人工智能助手。它基于免费增值模式，可以在[`gemini.google.com`](https://gemini.google.com)访问。
-
-+   *Microsoft Copilot*——由微软开发的人工智能助手。它基于免费增值模式，可以通过各种微软应用程序访问，例如 Word 和 Excel，以及直接通过浏览器在[`copilot.microsoft.com`](https://copilot.microsoft.com)访问。您还可以直接从 Windows 11 任务栏访问 Copilot，并且一些电脑已经在键盘上配备了专门的 Copilot 键。
-
-+   *Perplexity AI*——一个免费增值 AI 聊天机器人，旨在用作搜索引擎。它依赖于各种基础模型，包括一些由其他公司（如 OpenAI 和 Anthropic）制造的基础模型。它可以在[`perplexity.ai`](https://perplexity.ai)使用。
++   `ChatGPT`——由 OpenAI 开发的人工智能助手。它基于免费增值模式（免费访问某些功能，以及每月订阅以访问额外功能）。它可以在[`ChatGPT.com`](https://ChatGPT.com)访问。
++   `Claude`——由前 OpenAI 员工创立的 AI 公司 Anthropic 开发的人工智能助手。它基于免费增值模式，可以在[`claude.ai`](https://claude.ai)访问。
++   `Gemin`——由谷歌的子公司 Google DeepMind 开发的人工智能助手。它基于免费增值模式，可以在[`gemini.google.com`](https://gemini.google.com)访问。
++   `Microsoft Copilot`——由微软开发的人工智能助手。它基于免费增值模式，可以通过各种微软应用程序访问，例如 Word 和 Excel，以及直接通过浏览器在[`copilot.microsoft.com`](https://copilot.microsoft.com)访问。您还可以直接从 Windows 11 任务栏访问 Copilot，并且一些电脑已经在键盘上配备了专门的 Copilot 键。
++   `Perplexity AI`——一个免费增值 AI 聊天机器人，旨在用作搜索引擎。它依赖于各种基础模型，包括一些由其他公司（如 OpenAI 和 Anthropic）制造的基础模型。它可以在[`perplexity.ai`](https://perplexity.ai)使用。
 
 ### 基础模型（专有）
 
-+   *GPT*——由 OpenAI 开发的一系列通用、多模态模型，包括 GPT-4 和 GPT-4o。它们可以通过 OpenAI API 访问。其中一些模型为面向客户的 ChatGPT 提供动力。
-
-+   *Gemin**i*—由 Google 开发的一系列通用、多模态模型，包括 Gemini 1.5 Flash 和 Gemini 1.5 Pro，前者比其 Pro 版本更快但功能较弱。Gemini 模型为 Google 的客户界面 Gemini 提供动力。
-
-+   *Claud**e*—由 Anthropic 开发的一系列通用、多模态模型，包括 Claude Haiku、Claude Sonnet 和 Claude Opus（按复杂性递增）。它们可以通过 Anthropic API 访问。其中一些模型为面向客户的 Claude 提供动力。
++   `GPT`——由 OpenAI 开发的一系列通用、多模态模型，包括 GPT-4 和 GPT-4o。它们可以通过 OpenAI API 访问。其中一些模型为面向客户的 ChatGPT 提供动力。
++   `Gemini`——由 Google 开发的一系列通用、多模态模型，包括 Gemini 1.5 Flash 和 Gemini 1.5 Pro，前者比其 Pro 版本更快但功能较弱。Gemini 模型为 Google 的客户界面 Gemini 提供动力。
++   `Claude`——由 Anthropic 开发的一系列通用、多模态模型，包括 Claude Haiku、Claude Sonnet 和 Claude Opus（按复杂性递增）。它们可以通过 Anthropic API 访问。其中一些模型为面向客户的 Claude 提供动力。
 
 ### 基础模型（开源）
 
-+   *Llama*—由 Meta 开发的一系列通用、多模态模型。模型架构及其参数是公开的，但训练数据尚未公开。这些模型在称为 Meta Llama Community License 的特殊用途许可证下发布，该许可证施加了一些使用限制。
-
-+   *DeepSeek*—由中国的 AI 公司 DeepSeek 开发的一系列模型。其最突出的模型 DeepSeek-V3 因其性能出色且训练成本远低于竞争对手而成为头条新闻，导致英伟达的股价下跌。运行该模型的代码是公开的，但训练代码和训练数据尚未公开。其许可证是许可性的，但施加了一些使用限制。
-
-+   *Mistral*—由法国公司 Mistral AI 开发的一系列模型，该公司成立是为了成为 OpenAI 的欧洲竞争对手。公司发布仅包含文本的模型（例如，Mistral Large 2）和具有视觉能力的模型（例如，Pixtral 12B）。它们在高度许可的 Apache 2.0 许可证下发布，但训练数据尚未公开。
-
-+   *Gemma*—由 Google 开发的一系列通用模型，作为其专有 Gemini 模型的开源替代品。一些模型仅处理文本（例如，Gemma 2），而其他模型可以处理输入图像（例如，PaliGemma）。这些模型在许可性 Apache 2.0 许可证下发布，但训练数据尚未公开。
-
-+   *Phi*—由 Microsoft 开发的一系列轻量级通用语言模型，包括 Phi-3 Mini 和 Phi-3 Medium。它们在许可性 MIT 许可证下发布，但训练数据尚未公开。
++   `Llama`——由 Meta 开发的一系列通用、多模态模型。模型架构及其参数是公开的，但训练数据尚未公开。这些模型在称为 Meta Llama Community License 的特殊用途许可证下发布，该许可证施加了一些使用限制。
++   `DeepSeek`——由中国的 AI 公司 DeepSeek 开发的一系列模型。其最突出的模型 DeepSeek-V3 因其性能出色且训练成本远低于竞争对手而成为头条新闻，导致英伟达的股价下跌。运行该模型的代码是公开的，但训练代码和训练数据尚未公开。其许可证是许可性的，但施加了一些使用限制。
++   `Mistral`——由法国公司 Mistral AI 开发的一系列模型，该公司成立是为了成为 OpenAI 的欧洲竞争对手。公司发布仅包含文本的模型（例如，Mistral Large 2）和具有视觉能力的模型（例如，Pixtral 12B）。它们在高度许可的 Apache 2.0 许可证下发布，但训练数据尚未公开。
++   `Gemma`——由 Google 开发的一系列通用模型，作为其专有 Gemini 模型的开源替代品。一些模型仅处理文本（例如，Gemma 2），而其他模型可以处理输入图像（例如，PaliGemma）。这些模型在许可性 Apache 2.0 许可证下发布，但训练数据尚未公开。
++   `Phi`——由 Microsoft 开发的一系列轻量级通用语言模型，包括 Phi-3 Mini 和 Phi-3 Medium。它们在许可性 MIT 许可证下发布，但训练数据尚未公开。
 
 ## 编码助手
 
 以下是一些帮助软件工程师编写代码的流行工具：
 
-+   *GitHub Copilot*—一个可以安装为多个流行 IDE 插件的 AI 编码助手。它可以通过两种不同的方式使用。一种方式是在聊天窗口中输入以与聊天机器人交互并询问有关代码的问题或要求它执行任务。另一种方式是助手在您输入代码时自动完成您的代码——您可以通过按键盘上的 Tab 键接受建议。您必须支付月度订阅费才能使用它，但提供免费试用。
-
-+   *Curso**r*—一个独立的、基于 AI 的 IDE，建立在 Visual Studio 之上。您可以与 AI 助手聊天或通过按 Tab 键接受代码自动完成。有一个免费版本，带有有限的完成次数，以及付费订阅，提供更多次数或无限次数的完成。
-
-+   *JetBrains AI Pr**o*—PyCharm 和 IntelliJ 等流行 IDE 背后的公司提供附加订阅服务以访问 AI 助手。您可以与助手聊天关于代码，也可以通过按 Tab 键接受自动完成。这些自动完成由其基于云的 LLM 提供支持，但未订阅 AI 附加组件的用户仍然可以从本地运行的简单自动完成中受益。用户必须支付月度许可证才能将 AI 助手添加到其 IDE 中。
++   `GitHub Copilot`——一个可以安装为多个流行 IDE 插件的 AI 编码助手。它可以通过两种不同的方式使用。一种方式是在聊天窗口中输入以与聊天机器人交互并询问有关代码的问题或要求它执行任务。另一种方式是助手在您输入代码时自动完成您的代码——您可以通过按键盘上的 Tab 键接受建议。您必须支付月度订阅费才能使用它，但提供免费试用。
++   `Cursor`——一个独立的、基于 AI 的 IDE，建立在 Visual Studio 之上。您可以与 AI 助手聊天或通过按 Tab 键接受代码自动完成。有一个免费版本，带有有限的完成次数，以及付费订阅，提供更多次数或无限次数的完成。
++   `JetBrains AI Pro`——PyCharm 和 IntelliJ 等流行 IDE 背后的公司提供附加订阅服务以访问 AI 助手。您可以与助手聊天关于代码，也可以通过按 Tab 键接受自动完成。这些自动完成由其基于云的 LLM 提供支持，但未订阅 AI 附加组件的用户仍然可以从本地运行的简单自动完成中受益。用户必须支付月度许可证才能将 AI 助手添加到其 IDE 中。
 
 ## 图像生成
 
@@ -58,31 +47,26 @@
 
 ### 面向客户的 APP
 
-+   *Midjourne**y*—一种从文本描述生成图像的工具（可选地参考图像以影响输出）。该 APP 直接在 Midjourney 的网站上使用（[`midjourney.com`](https://midjourney.com)）或通过 Discord 聊天。该 APP 最初生成四个不同尺寸为 1024 × 1024 的图像变体。然后您可以挑选您最喜欢的一个，对其进行细化，并增加其大小（或进行超分辨率）。您必须支付月费才能访问 Midjourney，不同的计划有不同的使用限制。
-
-+   *Dall-**E*—OpenAI 的旗舰文本到图像 APP。它现在已经集成到 ChatGPT 中，因此可以直接通过要求 ChatGPT 生成图像来使用（尽管 OpenAI 仍然在[`chatpgt.com`](https://chatpgt.com)上提供专门的 DALL-E 界面）。只有付费的 OpenAI 订阅者才能访问它。
++   `Midjourney`——一种从文本描述生成图像的工具（可选地参考图像以影响输出）。该 APP 直接在 Midjourney 的网站上使用（[`midjourney.com`](https://midjourney.com)）或通过 Discord 聊天。该 APP 最初生成四个不同尺寸为 1024 × 1024 的图像变体。然后您可以挑选您最喜欢的一个，对其进行细化，并增加其大小（或进行超分辨率）。您必须支付月费才能访问 Midjourney，不同的计划有不同的使用限制。
++   `DALL-E`——OpenAI 的旗舰文本到图像 APP。它现在已经集成到 ChatGPT 中，因此可以直接通过要求 ChatGPT 生成图像来使用（尽管 OpenAI 仍然在[`chatpgt.com`](https://chatpgt.com)上提供专门的 DALL-E 界面）。只有付费的 OpenAI 订阅者才能访问它。
 
 ### 基础模型（专有）
 
-+   *Dall-**E*—OpenAI 为其图像生成模型提供 API 访问权限。用户按生成的图像付费，价格根据模型版本和图像大小而变化。
-
-+   *Flux.1 Pr**o*—由 Black Forest Labs 开发的一种文本到图像模型，因其逼真度而受到赞誉。它可以通过与 Black Forest Labs 合作的各种 API 提供商访问，包括 Replicate 和 Together AI。
++   `DALL-E`——OpenAI 为其图像生成模型提供 API 访问权限。用户按生成的图像付费，价格根据模型版本和图像大小而变化。
++   `Flux.1 Pro`——由 Black Forest Labs 开发的一种文本到图像模型，因其逼真度而受到赞誉。它可以通过与 Black Forest Labs 合作的各种 API 提供商访问，包括 Replicate 和 Together AI。
 
 ### 基础模型（开源）
 
-+   *Stable Diffusio**n*—Stability AI 开发的一系列文本到图像模型，采用扩散方法构建（见第一章）。除了使模型公开可用外，该公司还发布了用于训练其模型的数据以及用于过滤和精选数据的算法。Stable Diffusion 在开源许可下发布，但有使用限制。特别是，用户不允许“生成或传播可验证的虚假信息”、“伤害未成年人”或“提供医疗建议”，以及其他限制（[`mng.bz/YDpe`](https://mng.bz/YDpe)）。
-
-+   *Flux.1 Schnell* 和 *Flux.1 Dev*—这些模型是从专有的 Flux.1 Pro 衍生出来的，由 Black Forest Labs 开源。Flux.1 Schnell 在 Apache 2.0 许可下发布。更强大但速度较慢的 Flux.1 Dev 在禁止商业使用的许可下发布。训练数据尚未公开。
++   `Stable Diffusion`——Stability AI 开发的一系列文本到图像模型，采用扩散方法构建（见第一章）。除了使模型公开可用外，该公司还发布了用于训练其模型的数据以及用于过滤和精选数据的算法。Stable Diffusion 在开源许可下发布，但有使用限制。特别是，用户不允许“生成或传播可验证的虚假信息”、“伤害未成年人”或“提供医疗建议”，以及其他限制（[`mng.bz/YDpe`](https://mng.bz/YDpe)）。
++   `Flux.1 Schnell` 和 `Flux.1 Dev`——这些模型是从专有的 Flux.1 Pro 衍生出来的，由 Black Forest Labs 开源。Flux.1 Schnell 在 Apache 2.0 许可下发布。更强大但速度较慢的 Flux.1 Dev 在禁止商业使用的许可下发布。训练数据尚未公开。
 
 ## DIY
 
 我们以一些常用的工具和库结束，这些工具和库可以用于微调或创建您自己的 AI 模型：
 
-+   *Hugging Face*—这家公司托管了 AI 模型的实际仓库。开源模型通常在那里发布。公司还维护了一系列库，包括*Transformers*，这有助于使用预训练模型。公司还维护了帮助轻松微调模型的库。
-
-+   *PyTorch*—一个流行的 Python 库，用于创建和训练机器学习模型。历史上，PyTorch 受到学术界的青睐，他们使用这个库快速原型设计和分析模型，尽管它在其他地方似乎越来越受欢迎。Hugging Face 的 Transformers 库建立在 PyTorch 之上。
-
-+   *TensorFlow*—PyTorch 的一个流行替代品。它通常受到在生产中部署高性能 ML 模型的人的青睐，尽管它似乎正在失去对 PyTorch 的流行度。OpenAI 公开了 GPT-2 模型的代码，该模型使用 TensorFlow ([`github.com/openai/gpt-2/`](https://github.com/openai/gpt-2/))。从那时起，OpenAI 将其首选库切换为 PyTorch ([`openai.com/index/openai-pytorch/`](https://openai.com/index/openai-pytorch/))).
++   `Hugging Face`——这家公司托管了 AI 模型的实际仓库。开源模型通常在那里发布。公司还维护了一系列库，包括`Transformers`，这有助于使用预训练模型。公司还维护了帮助轻松微调模型的库。
++   `PyTorch`——一个流行的 Python 库，用于创建和训练机器学习模型。历史上，PyTorch 受到学术界的青睐，他们使用这个库快速原型设计和分析模型，尽管它在其他地方似乎越来越受欢迎。Hugging Face 的 Transformers 库建立在 PyTorch 之上。
++   `TensorFlow`——PyTorch 的一个流行替代品。它通常受到在生产中部署高性能 ML 模型的人的青睐，尽管它似乎正在失去对 PyTorch 的流行度。OpenAI 公开了 GPT-2 模型的代码，该模型使用 TensorFlow ([`github.com/openai/gpt-2/`](https://github.com/openai/gpt-2/))。从那时起，OpenAI 将其首选库切换为 PyTorch ([`openai.com/index/openai-pytorch/`](https://openai.com/index/openai-pytorch/)).
 
 # 索引
 

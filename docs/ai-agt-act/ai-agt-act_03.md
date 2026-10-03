@@ -1,16 +1,13 @@
+
 # 第四章：探索多智能体系统
 
-### 本章涵盖
+## 本章涵盖
 
-+   使用 AutoGen Studio 构建多智能体系统
-
-+   构建一个简单的多智能体系统
-
-+   创建能够在群聊中协同工作的智能代理
-
-+   使用 CrewAI 构建智能代理团队和多智能体系统
-
-+   使用 CrewAI 扩展智能代理数量并探索处理模式
++ 使用 AutoGen Studio 构建多智能体系统
++ 构建一个简单的多智能体系统
++ 创建能够在群聊中协同工作的智能代理
++ 使用 CrewAI 构建智能代理团队和多智能体系统
++ 使用 CrewAI 扩展智能代理数量并探索处理模式
 
 现在，让我们从 AutoGen 到 CrewAI 进行一次旅行，这两个都是成熟的智能代理平台。我们将从 AutoGen 开始，这是一个支持多个智能代理并为他们提供工作室的微软项目。我们将探索一个名为 AutoGen 的微软项目，它支持多个智能代理，同时也提供了一个工作室来简化与智能代理一起工作的过程。从那里，我们将进行更多关于 AutoGen 智能代理的编码实践，以使用对话和群聊协作来解决任务。
 
@@ -50,10 +47,10 @@ AutoGen Studio 是由 AutoGen 团队开发的一个工具，它为可对话代�
 
 ```py
 # set environment variable on Bash (Git Bash)
-export OPENAI_API_KEY=”<your API key>”          #1
+export OPENAI_API_KEY="<your API key>"          #1
 
 # sent environment variable with PowerShell
-$env:VAR_NAME =”<your API key>"                #1
+$env:VAR_NAME ="<your API key>"                #1
 
 autogenstudio ui --port 8081     #2
 ```
@@ -266,19 +263,21 @@ from autogen import ConversableAgent, UserProxyAgent, config_list_from_json
 ↪ for fizz buzz in one line?")     #5
 ```
 
-#1 从 JSON 文件 OAI_CONFIG_LIST 加载您的 LLM 配置。
 
-#2 此代理直接与 LLM（大型语言模型）进行交流。
 
-#3 此代理代理用户与助手之间的对话。
+# 从 JSON 文件 `OAI_CONFIG_LIST` 加载您的 LLM 配置
 
-#4 设置终止消息允许代理迭代。
+此代理直接与 LLM（大型语言模型）进行交流。
 
-#5 通过 user_proxy 与助手发起聊天以完成任务。
+此代理代理用户与助手之间的对话。
+
+设置终止消息允许代理迭代。
+
+通过 `user_proxy` 与助手发起聊天以完成任务。
 
 通过在 VS Code 的调试器中运行文件（F5）来运行代码。列表 4.6 中的代码使用一个简单的任务来演示代码编写。列表 4.7 展示了几个可供选择示例。这些编码任务也是作者评估 LLM 在编码能力上的常规基准之一。
 
-##### 列表 4.7 简单编码任务示例
+## 列表 4.7 简单编码任务示例
 
 ```py
 write a Python function to check if a number is prime
@@ -296,11 +295,11 @@ code a classic asteroids game in Python using Pygame  #1
 
 无论哪种方式，在代理生成和运行代码后，列表 4.6 中之前设置的 `working_dir` 文件夹现在应该有一个包含代码的 Python 文件。这将允许你随意运行代码，进行更改，甚至要求改进，正如我们将看到的。在下节中，我们将探讨如何提高编码代理的能力。
 
-### 4.2.2 使用代理评论家增强代码输出
+### 使用代理评论家增强代码输出
 
 多代理系统的一个强大优势是，在完成任务时可以自动分配多个角色/角色。生成或帮助编写代码可以是任何开发者的一个极好的优势，但如果该代码也被审查和测试呢？在下一个练习中，我们将向我们的代理系统添加另一个代理评论家来帮助编码任务。打开 `autogen_coding_critic.py`，如下列所示。
 
-##### 列表 4.8 `autogen_coding_critic.py`
+#### 列表 4.8 `autogen_coding_critic.py`
 
 ```py
 from autogen import AssistantAgent, UserProxyAgent, config_list_from_json
@@ -389,7 +388,7 @@ res = user_proxy.initiate_chat(
 
 嵌套聊天对于支持和控制代理交互效果很好，但我们在下节中会看到一个更好的方法。在此之前，我们将在下一节中回顾 AutoGen 缓存的重要性。
 
-### 4.2.3 理解 AutoGen 缓存
+### 理解 AutoGen 缓存
 
 作为可对话的多代理平台，AutoGen 在聊天迭代中可能会消耗许多令牌。如果你要求 AutoGen 通过复杂或新颖的问题，你甚至可能会在 LLM 上遇到令牌限制；因此，AutoGen 支持几种减少令牌使用的方法。
 
@@ -397,11 +396,11 @@ AutoGen 使用缓存来存储进度并减少令牌使用。缓存默认启用，
 
 ![figure](img/4-8.png)
 
-##### 图 4.8 AutoGen 缓存和工作文件夹
+#### 图 4.8 AutoGen 缓存和工作文件夹
 
 在代码中，你可以控制代理运行的缓存文件夹，如图 4.9 所示。通过将 `initiate_chat` 调用用 `with` 语句包装，你可以控制缓存的位置和种子。这将允许你通过仅设置前一个缓存的 `cache_seed` 来保存并返回未来的长时间运行的 AutoGen 任务。
 
-##### 列表 4.9 设置缓存文件夹
+#### 列表 4.9 设置缓存文件夹
 
 ```py
 with Cache.disk(cache_seed=42) as cache:     #1
@@ -414,13 +413,13 @@ with Cache.disk(cache_seed=42) as cache:     #1
     )
 ```
 
-#1 设置 seed_cache 表示单个位置。
+#1 设置 `seed_cache` 表示单个位置。
 
 #2 将缓存作为参数设置
 
 这种缓存能力允许你从之前的缓存位置继续操作并捕获之前的运行。这也可以是一种展示和检查代理对话如何生成结果的好方法。在下一节中，我们将探讨另一种 AutoGen 支持的群聊对话模式。
 
-## 4.3 与代理和 AutoGen 的群聊
+## 与代理和 AutoGen 的群聊
 
 聊天委托和嵌套聊天或对话的一个问题是信息的传达。如果你曾经玩过电话游戏，你亲自见证了这一点，并体验到了信息在迭代中如何迅速变化。对于代理来说，这当然也不例外，通过嵌套或顺序对话聊天可以改变任务甚至期望的结果。
 
@@ -434,11 +433,11 @@ with Cache.disk(cache_seed=42) as cache:     #1
 
 ![图](img/4-9.png)
 
-##### 图 4.9 可对话代理的嵌套群聊与群聊之间的差异
+#### 图 4.9 可对话代理的嵌套群聊与群聊之间的差异
 
 打开`autogen_coding_group.py`，查看列表 4.10 中的相关部分。代码与之前的练习类似，但现在引入了`GroupChat`和`GroupChatManager`。代理和消息都存储在群聊中，类似于 Slack 或 Discord 等应用中的消息频道。聊天管理器协调消息响应以减少对话重叠。
 
-##### 列表 4.10 `autoget_coding_group.py`（相关部分）
+#### 列表 4.10 `autoget_coding_group.py`（相关部分）
 
 ```py
 user_proxy = UserProxyAgent(
@@ -489,7 +488,7 @@ with Cache.disk(cache_seed=43) as cache:
 
 AutoGen 是一个强大的多代理平台，可以通过网页界面或代码体验。无论你的偏好如何，这个代理协作工具是构建代码或其他复杂任务的优秀平台。当然，它并不是唯一的平台，正如你将在下一节中看到的，我们将探索一个新来者，即 CrewAI。
 
-## 4.4 使用 CrewAI 构建代理团队
+## 使用 CrewAI 构建代理团队
 
 CrewAI 在多代理系统领域相对较新。AutoGen 最初是从研究中发展起来的，然后进行了扩展，而 CrewAI 是以企业系统为前提构建的。因此，该平台在某种程度上更健壮，但在某些方面不太容易扩展。
 
@@ -499,17 +498,19 @@ CrewAI 在多代理系统领域相对较新。AutoGen 最初是从研究中发�
 
 ![figure](img/4-10.png)
 
-##### 图 4.10 CrewAI 系统的组成
+#### 图 4.10 CrewAI 系统的组成
 
 CrewAI 支持两种主要的处理形式：顺序和分层。图 4.10 通过迭代给定的代理及其相关任务来展示顺序处理过程。在下一节中，我们将深入研究一些代码来设置团队并使用它来完成目标并创造一个有趣的笑话。
 
-### 4.4.1 创建一个由 CrewAI 代理组成的玩笑者团队
+### 创建一个由 CrewAI 代理组成的玩笑者团队
 
 与 AutoGen 相比，CrewAI 需要更多的设置，但这也允许更多的控制和额外的指南，这些指南提供了更具体的上下文来指导代理完成给定的任务。这并非没有问题，但它确实提供了比 AutoGen 更多的控制。
 
 在 VS Code 中打开 `crewai_introduction.py` 并查看列表 4.11 所示的顶部部分。配置代理需要许多设置，包括角色、目标、冗长性、记忆、前传、委派，甚至工具（未显示）。在这个例子中，我们使用了两个代理：一个高级玩笑研究人员和一个玩笑作家。
 
-##### 列表 4.11 `crewai_introduction.py`（代理部分）
+#### 列表 4.11 `crewai_introduction.py`（代理部分）
+
+
 
 ```py
 from crewai import Agent, Crew, Process, Task
@@ -547,17 +548,17 @@ joke_writer = Agent(     #6
 
 #1 创建代理并为他们提供一个目标
 
-#2 verbose 允许代理向终端输出输出。
+#2 `verbose` 允许代理向终端输出输出。
 
 #3 支持代理使用内存
 
 #4 前传是代理的背景——其角色。
 
-#5 代理可以被委派或允许委派；True 表示它们可以委派。
+#5 代理可以被委派或允许委派；`True` 表示它们可以委派。
 
 #6 创建代理并为他们提供一个目标
 
-#7 verbose 允许代理向终端输出。
+#7 `verbose` 允许代理向终端输出。
 
 #8 支持代理使用内存
 
@@ -795,6 +796,8 @@ chief_qa_engineer_agent = Agent(
 在文件中向下滚动将显示代理任务，如图 4.18 列表所示。任务描述和预期输出应该很容易理解。同样，每个代理都有一个特定的任务，以便在工作时提供更好的上下文。
 
 ##### 列表 4.18 `crewai_coding_crew.py` (任务部分)
+
+
 
 ```py
 code_task = Task(

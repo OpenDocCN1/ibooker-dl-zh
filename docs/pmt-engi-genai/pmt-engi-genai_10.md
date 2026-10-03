@@ -1,8 +1,10 @@
+
+
 # 第十章\. 构建 AI 驱动应用程序
 
 在本章中，你将应用提示的五个原则到内容写作的端到端 AI 工作流程中。该服务将根据用户对访谈问题的回答，以用户的写作风格撰写博客文章。这个系统最初在[Saxifrage 博客](https://oreil.ly/saxifrage)上进行了记录。
 
-# AI 博客写作
+## AI 博客写作
 
 使用 AI 创建博客写作服务的天真方法是将`Write a blog post on {blogPostTopic}`提示给 ChatGPT。生成的内容质量可能合理，但不太可能包含关于该主题的有价值意见或独特经验。内容也可能很短且通用，因此不太可能排在谷歌搜索结果的前列。
 
@@ -24,23 +26,23 @@ words and add it to the end of the blog post.
 
 这个更长、更复杂的提示可能会产生更好的内容质量。然而，让我们通过提示的五个原则作为清单来运行一下：
 
-方向
+### 方向
 
 提供了一些指令，例如语气、使用过渡词和主动语态。然而，内容仍然可能听起来像 AI，而不是用户的声音。
 
-格式
+### 格式
 
 虽然有一些关于结构的提及，包括指示九个两段的内容，但这些指令很可能会被忽略。ChatGPT 在数学方面表现不佳，通常无法遵循指示多个部分或单词的数量。
 
-示例
+### 示例
 
 没有提供如何执行任务的示例，这可能会损害在多个主题或甚至在同一主题上多次运行此提示的可靠性。即使提供一个示例（一次性提示）也可能极大地帮助提高质量。
 
-评估
+### 评估
 
 这是一个*盲目提示*（在不测试的情况下将指令添加到提示中）的例子。[without testing them](https://oreil.ly/r7sXi)。这些指令中的一些可能对质量没有影响（不必要地消耗令牌），甚至可能降低质量。
 
-分解
+### 分解
 
 整个任务仅用一个提示尝试完成，这可能会损害性能。如果不将任务分解为子任务，就很难理解哪个部分的过程是成功的或失败的。
 
@@ -48,33 +50,16 @@ words and add it to the end of the blog post.
 
 首先准备好你的工作空间，配备必要的工具至关重要。因此，让我们将重点转向主题研究，并开始设置你的编程环境。
 
-# 主题研究
+## 主题研究
 
 您需要安装几个 Python 包才能有效地使用 LangChain 的文档加载器，包括以下包：
 
-google-searchresults
-
-这是一个用于抓取和处理 Google 搜索结果的 Python 库。
-
-pandas
-
-这提供了操作数值表和时间序列数据的数据结构和操作。
-
-html2text
-
-此工具将文件或网页中的 HTML 转换为 markdown (*.md*) 文件或文本。
-
-pytest-playwright
-
-此包使您可以使用 Playwright 进行端到端测试。
-
-chromadb
-
-ChromaDB 是一个开源向量数据库。
-
-nest_asyncio
-
-这扩展了 Python 标准的`asyncio`，使其与 Jupyter Notebooks 兼容。
+- `google-searchresults`：这是一个用于抓取和处理 Google 搜索结果的 Python 库。
+- `pandas`：这提供了操作数值表和时间序列数据的数据结构和操作。
+- `html2text`：此工具将文件或网页中的 HTML 转换为 markdown (*.md*) 文件或文本。
+- `pytest-playwright`：此包使您可以使用 Playwright 进行端到端测试。
+- `chromadb`：ChromaDB 是一个开源向量数据库。
+- `nest_asyncio`：这扩展了 Python 标准的`asyncio`，使其与 Jupyter Notebooks 兼容。
 
 使用此命令可以轻松安装这些包：
 
@@ -85,7 +70,7 @@ nest_asyncio --quiet
 
 此外，您还将使用需要 Playwright 的 LangChain 文档加载器。
 
-在您的终端上输入此命令：**playwright install**。
+在您的终端上输入此命令：`playwright install`。
 
 此外，您还需要选择一个`TOPIC`并为`SERPAPI_API_KEY`和`STABILITY_API_KEY`设置环境变量。如果您在没有 Jupyter Notebook 的情况下运行脚本，那么您不需要使用任何`nest_asyncio`代码：
 
@@ -176,7 +161,7 @@ async def create_all_summaries(
 
 通过子类化`ChromiumLoader`，您可以轻松创建一个自定义实现，使用 Chrome 浏览器从多个 URL 异步*抓取内容*。`get_html_content_from_urls`从 URL 列表中获取 HTML 内容，确保没有重复并处理潜在的错误。
 
-# 专家访谈
+## 专家访谈
 
 现在，您已经成功从 Google 提取了前三条结果摘要，您将进行一次与 LLM 的访谈，生成相关问题，以确保您的文章使用`InterviewChain`类具有独特的视角：
 
@@ -192,25 +177,25 @@ for question in interview_questions.questions:
     question.answer = answer
 ```
 
-InterviewChain 实例化
+### InterviewChain 实例化
 
 拥有您的话题和获得的摘要后，创建一个`InterviewChain`实例，根据您数据独特的上下文进行定制。
 
-生成问题
+### 生成问题
 
 通过简单地调用`interview_chain`，您就可以启动从您的摘要中生成一系列探究性问题的过程。
 
-互动问答环节
+### 互动问答环节
 
 进入一个引人入胜的循环，其中每个派生问题都会打印出来，并使用`input()`提示你回答。然后你的回答会被保存回 Pydantic 对象。
 
-# 给出方向
+## 给出方向
 
 为 LLM 提供独特的答案提供了独特的上下文，这允许 LLM 生成更丰富、更细腻的回复，确保你的文章提供新颖且深入的视角。
 
 `InterviewChain`的所有代码都在*[expert_interview_chain.py](https://oreil.ly/0d5Hi)*中。它有两个显著组件：
 
-一个定制的`System`消息
+### 一个定制的`System`消息
 
 这个提示包括角色提示、之前生成的摘要、主题和格式说明（用于输出解析器）：
 
@@ -233,7 +218,7 @@ You must follow the following rules:
 """
 ```
 
-输出解析器
+### 输出解析器
 
 深入了解该类，你会遇到`PydanticOutputParser`。这个解析器将 LLM 的回复主动结构化为可解析的、Pydantic 的`InterviewQuestions`对象：
 
@@ -246,7 +231,7 @@ parser = PydanticOutputParser(pydantic_object=InterviewQuestions)
 
 事实上，你正在与 AI 进行对话，并指导它构思出能够增强内容洞察力的强大问题，同时使定制变得轻而易举。
 
-# 生成大纲
+## 生成大纲
 
 包括之前的访谈和研究，你可以使用`BlogOutlineGenerator`生成文章的大纲。将`TOPIC`、`question_answers`和 Google 的`summaries`传递进去，以提供额外的上下文：
 
@@ -261,6 +246,13 @@ outline_result = blog_outline_generator.generate_outline(summaries)
 ```
 
 让我们详细探索`BlogOutlineGenerator`类：
+
+
+
+
+# 代码示例：`BlogOutlineGenerator` 类
+
+以下代码定义了一个用于生成博客大纲的 `BlogOutlineGenerator` 类，它结合了 Pydantic 数据模型和 LangChain 库。
 
 ```py
 from typing import List, Any
@@ -338,15 +330,15 @@ self.outline_chain = self.chat_prompt | ChatOpenAI() | self.parser
 
 在获得摘要、访谈问题和博客文章大纲后，是时候开始生成文本了。`ContentGenerator`类将 SEO 专业知识与几种 LLM 技术相结合，包括以下内容：
 
-嵌入和检索
+**嵌入和检索**
 
 这有效地将原始网页分割和矢量化，存储在 Chroma 数据库中，并在撰写每个部分时检索相关网页文本。
 
-定制记忆
+**定制记忆**
 
 在撰写每个博客部分时，它使用记忆来避免重复相同的信息，同时如果对话变得过长，还会总结对话。
 
-定制上下文
+**定制上下文**
 
 LLM 包含混合信息，包括你之前的访谈洞察、之前所说的话以及来自 Google 的相关网页文本片段：
 
@@ -490,19 +482,19 @@ Rewrite the article in the following style:
 
 在优化提示时，您可以多次运行相同的提示并检查其对评估指标的总体表现。例如，以下是测试五种不同的提示方法对嵌入距离评估指标的结果。分数越低，响应的嵌入与参考答案（手动重写的文本，风格正确）的嵌入越接近。测试的提示如下：
 
-A
+**A**
 
 控制——如前例中详细说明的标准提示。
 
-B
+**B**
 
 一份写作样本——我们提供了一份文本样本，并要求 GPT-4 描述其写作风格。
 
-C
+**C**
 
 三份重写示例——我们向 GPT-4 提供了三个输入文本样本及其重写版本，并要求它描述写作风格。
 
-D
+**D**
 
 三份写作样本——与之前相同，只是没有输入文本，只有迈克写作的最终样本。
 
@@ -511,6 +503,8 @@ D
 ![pega 1001](img/pega_1001.png)
 
 ###### 图 10-1\. 提示优化测试结果
+
+
 
 如您从图 10-1 的结果中可以看到，一些提示的效果比其他提示好，有些案例对 AI 来说更容易实现。进行多案例测试，每个案例 10 次或更多，以获得每个提示的实际情况。否则，响应的非确定性可能意味着您在扩大提示使用时，对性能的期望可能比实际更好或更差。以下是表现最佳的最终结果提示：
 
@@ -548,13 +542,13 @@ analysis with practical, actionable advice, written in a clear and
 conversational tone.
 ```
 
-# 评估质量
+## 评估质量
 
 不测试写作风格，很难猜测哪种提示策略会获胜。通过少量测试，你可以更有信心这是正确的方法。测试不需要高度组织或系统化，许多成功 AI 产品的构建者，如[GitHub Copilot](https://oreil.ly/vu0IU)，承认他们的评估过程是杂乱无章的（但完成了工作！）。
 
 在这个项目中，我们将使用这个经过良好测试的示例，但你也可以利用这个机会尝试提高这个分数。包含参考文本和代码的仓库在 GitHub 上[公开可用](https://oreil.ly/O6RdB)，如果你发现了一个更好的方法，请随时向仓库贡献。一个可以尝试的潜在路径是微调，如果你有足够的样本（[OpenAI 建议至少 50 个](https://oreil.ly/OMMKi)），这可能会在匹配写作风格时得到更好的结果。即使你不对这个提示进行 A/B 测试（比较两个提示版本以查看哪个表现更好），这些结果也应该让你相信测试你的提示在一般情况下是有价值的。
 
-# 标题优化
+## 标题优化
 
 你可以通过生成各种选项，通过 A/B 提示测试它们，并使用点赞/踩不点赞的评分系统来衡量它们的有效性来优化内容的标题，如图 10-2 所示。
 
@@ -570,7 +564,7 @@ conversational tone.
 
 如果你仍然从这个提示或整个链中得不到你需要的质量水平，这是一个尝试使用像[DSPy](https://oreil.ly/dspy)这样的提示优化框架的好时机。在定义一个评估指标后，DSPy 会在你的提示中测试不同的指令和少量示例的不同组合，自动选择表现最佳的组合。[查看他们的文档中的示例](https://oreil.ly/vercel)。
 
-# AI 博客图片
+## AI 博客图片
 
 你可以采取的一个让你的博客看起来更专业的做法是，给你的博客文章添加具有一致风格的定制插图。在最极端的情况下，这可能意味着训练一个如第九章所述的 Dreambooth 模型，用于你的品牌风格指南或一系列具有特定视觉一致性或你珍视的美学质量的图片板。然而，在许多情况下，训练一个定制模型并不是必要的，因为可以通过简单的提示很好地复制这种风格。
 
@@ -590,7 +584,7 @@ white background, professional, clean lines, warm pastel colors
 
 ###### 图 10-4. Corporate Memphis：“网站相互链接”
 
-# 给出指示
+## 给出指示
 
 Stable Diffusion 在许多不同的风格上进行了训练，包括像 Corporate Memphis 这样的不为人知或小众风格。如果你知道一个风格的名字，通常这就是引导模型向期望的图像迈进所需的所有。你可以在这个[视觉提示构建器](https://oreil.ly/nxEzu)中找到各种艺术风格。
 
@@ -690,6 +684,12 @@ image = create_image(outline_result.title)
 
 `[image_generation_chain.py](https://oreil.ly/cWpXH)`中的`create_image`函数利用 Stable Diffusion 根据 GPT-4 生成的标题创建图像：
 
+
+
+# 图像生成链
+
+以下代码展示了如何使用 `ChatOpenAI` 生成图像提示，并通过 Stability AI API 创建图像：
+
 ```py
 import base64
 from langchain_openai.chat_models import ChatOpenAI
@@ -758,13 +758,11 @@ def create_image(title) -> str:
     return image_paths
 ```
 
-这里是高级流程：
+## 高级流程
 
-1.  使用`ChatOpenAI`模型，你将为给定的`title`制作一个图像提示。
-
-1.  使用 Stability AI API，你将发送这个提示以生成具有精确风格说明的图像。
-
-1.  然后你将使用一个唯一的文件名解码并保存此图像到本地，并返回其路径。
+1. 使用`ChatOpenAI`模型，你将为给定的`title`制作一个图像提示。
+2. 使用 Stability AI API，你将发送这个提示以生成具有精确风格说明的图像。
+3. 然后你将使用一个唯一的文件名解码并保存此图像到本地，并返回其路径。
 
 通过这些步骤，您不仅是在提示 AI 创建文本内容，而且是在指导它将您的提示以视觉形式呈现出来。
 
@@ -782,7 +780,7 @@ def create_image(title) -> str:
 
 我们创建了一个界面，允许您在两步内自动化整个流程。您可以通过[这里](https://oreil.ly/HNqVX)获取 gradio 源代码。
 
-然后在您的终端中进入[chapter_10 文件夹](https://oreil.ly/chapter10)，并运行 `python3 gradio_code_example.py` 来运行 gradio 应用程序。脚本会要求您在终端中输入 `SERPAPI_API_KEY` 和 `STABILITY_API_KEY`。
+然后在您的终端中进入[chapter_10 文件夹](https://oreil.ly/chapter10)，并运行`python3 gradio_code_example.py`来运行 gradio 应用程序。脚本会要求您在终端中输入`SERPAPI_API_KEY`和`STABILITY_API_KEY`。
 
 然后，您可以访问如图 10-6 所示的 gradio 界面。
 
@@ -790,7 +788,7 @@ def create_image(title) -> str:
 
 ###### 图 10-6\. Gradio 用户界面
 
-当你运行 gradio 时，你会得到一个可以直接使用的内联界面，或者一个你可以点击以在浏览器中打开网页界面的 URL。例如，如果你使用 `share=True` 参数运行 gradio，比如 `demo.launch(share=True)`，你将获得一个公开可访问的链接，可以与朋友、同事或早期用户分享，以获取对您原型的反馈。
+当你运行 gradio 时，你会得到一个可以直接使用的内联界面，或者一个你可以点击以在浏览器中打开网页界面的 URL。例如，如果你使用`share=True`参数运行 gradio，比如`demo.launch(share=True)`，你将获得一个公开可访问的链接，可以与朋友、同事或早期用户分享，以获取对您原型的反馈。
 
 初始化界面后，通过点击“总结和生成问题”按钮输入一个主题。这将收集并总结 Google 结果，并生成面试问题。
 

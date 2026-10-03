@@ -1,3 +1,4 @@
+
 # 第七章：唤醒词检测：构建一个应用程序
 
 TinyML 可能是一个新现象，但它最广泛的应用可能已经在你的家中、你的汽车中，甚至在你的口袋里工作。你能猜到它是什么吗？
@@ -18,7 +19,7 @@ TinyML 可能是一个新现象，但它最广泛的应用可能已经在你的�
 
 在本章中，我们将探讨如何使用预训练的语音检测模型，利用微型微控制器提供始终开启的唤醒词检测。在第八章中，我们将探讨模型是如何训练的，以及如何创建我们自己的模型。
 
-# 我们要构建什么
+## 我们要构建什么
 
 我们将构建一个嵌入式应用程序，使用一个 18 KB 的模型，该模型在语音命令数据集上进行训练，用于分类口头音频。该模型经过训练，可以识别“是”和“否”这两个词，还能够区分未知词和沉默或背景噪音。
 
@@ -33,9 +34,7 @@ TinyML 可能是一个新现象，但它最广泛的应用可能已经在你的�
 我们提供了将应用程序部署到以下设备的说明：
 
 +   [Arduino Nano 33 BLE Sense](https://oreil.ly/6qlMD)
-
 +   [SparkFun Edge](https://oreil.ly/-hoL-)
-
 +   [ST Microelectronics STM32F746G Discovery kit](https://oreil.ly/cvm4J)
 
 ###### 注意
@@ -44,35 +43,28 @@ TensorFlow Lite 定期添加对新设备的支持，所以如果您想要使用�
 
 这是一个比“hello world”示例复杂得多的应用程序，所以让我们从浏览其结构开始。
 
-# 应用程序架构
+## 应用程序架构
 
 在前几章中，您已经了解到机器学习应用程序执行以下一系列操作：
 
 1.  获取输入
-
-1.  预处理输入以提取适合输入模型的特征
-
-1.  对处理后的输入进行推断运行
-
-1.  后处理模型的输出以理解它
-
-1.  使用生成的信息来实现一些事情
+2.  预处理输入以提取适合输入模型的特征
+3.  对处理后的输入进行推断运行
+4.  后处理模型的输出以理解它
+5.  使用生成的信息来实现一些事情
 
 “hello world”示例以非常直接的方式遵循了这些步骤。它接受一个由简单计数器生成的单个浮点数作为输入。其输出是另一个浮点数，我们直接用来控制可视输出。
 
 由于以下原因，我们的唤醒词应用程序将更加复杂：
 
 +   它将音频数据作为输入。正如您将看到的，这需要在输入模型之前进行大量处理。
-
 +   其模型是一个分类器，输出类别概率。我们需要解析并理解这个输出。
-
 +   它旨在持续进行推断，对实时数据进行处理。我们需要编写代码来理解一系列推断。
-
 +   该模型更大更复杂。我们将推动我们的硬件极限。
 
 因为很多复杂性是由我们将要使用的模型造成的，让我们多了解一些关于它的信息。
 
-## 介绍我们的模型
+### 介绍我们的模型
 
 正如我们之前提到的，本章中使用的模型经过训练，可以识别“yes”和“no”这两个词，同时也能够区分未知词和沉默或背景噪音。
 
@@ -108,7 +100,7 @@ TensorFlow Lite 定期添加对新设备的支持，所以如果您想要使用�
 
 在第八章中，我们将看看这个模型是如何训练的。在那之前，让我们回到讨论我们应用程序的架构。
 
-## 所有的组件
+### 所有的组件
 
 如前所述，我们的唤醒词应用程序比“hello world”示例更复杂。图 7-3 显示了组成它的组件。
 
@@ -118,37 +110,37 @@ TensorFlow Lite 定期添加对新设备的支持，所以如果您想要使用�
 
 让我们来研究每个部分的功能：
 
-主循环
+**主循环**
 
 与“hello world”示例一样，我们的应用程序在一个连续循环中运行。所有后续的过程都包含在其中，并且它们会持续执行，尽可能快地运行，即每秒多次。
 
-音频提供者
+**音频提供者**
 
 音频提供者从麦克风捕获原始音频数据。由于不同设备捕获音频的方法各不相同，这个组件可以被覆盖和定制。
 
-特征提供者
+**特征提供者**
 
 特征提供者将原始音频数据转换为我们模型所需的频谱图格式。它作为主循环的一部分以滚动方式提供，为解释器提供一系列重叠的一秒窗口。
 
-TF Lite 解释器
+**TF Lite 解释器**
 
 解释器运行 TensorFlow Lite 模型，将输入的频谱图转换为一组概率。
 
-模型
+**模型**
 
 模型包含在数据数组中，并由解释器运行。该数组位于[*tiny_conv_micro_features_model_data.cc*](https://oreil.ly/XIUz9)中。
 
-命令识别器
+**命令识别器**
 
 由于推断每秒运行多次，`RecognizeCommands`类聚合结果并确定是否平均听到了一个已知的单词。
 
-命令响应器
+**命令响应器**
 
 如果听到了一个命令，命令响应器将使用设备的输出功能让用户知道。根据设备的不同，这可能意味着闪烁 LED 或在 LCD 显示器上显示数据。它可以被覆盖以适应不同的设备类型。
 
 GitHub 上的示例文件包含了每个组件的测试。我们将逐步学习它们是如何工作的。
 
-# 测试过程
+## 测试过程
 
 就像第五章中一样，我们可以使用测试来了解应用程序的工作原理。我们已经涵盖了很多 C++和 TensorFlow Lite 的基础知识，因此不需要解释每一行代码。相反，让我们专注于每个测试的最重要部分，并解释发生了什么。
 
@@ -176,7 +168,7 @@ GitHub 上的示例文件包含了每个组件的测试。我们将逐步学习�
 
 示例中还有许多其他测试，但是探索这些测试将使我们了解关键的移动部分。
 
-## 基本流程
+### 基本流程
 
 测试*micro_speech_test.cc*遵循我们从“hello world”示例中熟悉的基本流程：加载模型，设置解释器并分配张量。
 
@@ -266,6 +258,8 @@ TF_LITE_MICRO_EXPECT_EQ(kTfLiteUInt8, input->type);
 因为我们的输入是频谱图，所以输入张量具有更多维度——总共四个。第一维只是包含单个元素的包装器。第二和第三代表我们的频谱图的“行”和“列”，恰好有 49 行和 40 列。输入张量的第四个、最内部的维度，大小为 1，保存频谱图的每个单独的“像素”。我们稍后将更详细地查看频谱图的结构。
 
 接下来，我们获取一个“yes”样本频谱图，存储在常量`g_yes_micro_f2e59fea_nohash_1_data`中。该常量在文件[*micro_features/yes_micro_features_data.cc*](https://oreil.ly/rVn8O)中定义，该文件被此测试包含。频谱图存在为 1D 数组，我们只需迭代它将其复制到输入张量中：
+
+
 
 ```cpp
 // Copy a spectrogram created from a .wav audio file of someone saying "Yes"
@@ -506,6 +500,8 @@ TfLiteStatus populate_status = feature_provider.PopulateFeatureData(
       &how_many_new_slices);
 ```
 
+
+
 我们提供一个`ErrorReporter`实例，一个表示上次调用此方法的时间的整数（`last_time_in_ms`），当前时间（`time_in_ms`）以及一个指向整数的指针，该指针将更新为我们接收到多少个新的*特征切片*（`how_many_new_slices`）。切片只是频谱图的一行，代表一段时间。
 
 因为我们总是想要最后一秒钟的音频，特征提供者将比较上次调用时的时间（`last_time_in_ms`）和当前时间（`time_in_ms`），从那段时间内捕获的音频创建频谱数据，然后更新`feature_data`数组以添加任何额外的切片并删除超过一秒钟的旧切片。
@@ -723,6 +719,12 @@ class RecognizeCommands {
 
 首先，我们确保输入张量的形状和类型是正确的：
 
+
+
+# 识别命令
+
+`RecognizeCommands::ProcessLatestResults()`函数处理最新的推理结果，并确定是否检测到命令。以下是其实现细节：
+
 ```cpp
 TfLiteStatus RecognizeCommands::ProcessLatestResults(
     const TfLiteTensor* latest_results, const int32_t current_time_ms,
@@ -771,7 +773,7 @@ while ((!previous_results_.empty()) &&
   previous_results_.pop_front();
 ```
 
-如果我们的平均窗口中的结果少于最小数量（由`minimum_count_`定义，默认为`3`），我们无法提供有效的平均值。在这种情况下，我们将输出指针设置为指示`found_command`是最近的顶级命令，分数为 0，并且该命令不是新的：
+如果我们的平均窗口中的结果少于最小数量（由`minimum_count_`定义，默认为`3`），我们无法提供有效的平均值。在这种情况下，我们将输出指针设置为指示`found_command`是最近的顶级命令，分数为`0`，并且该命令不是新的：
 
 ```cpp
 // If there are too few results, assume the result will be unreliable and
@@ -825,7 +827,7 @@ for (int i = 0; i < kCategoryCount; ++i) {
 const char* current_top_label = kCategoryLabels[current_top_index];
 ```
 
-最后一部分逻辑确定结果是否是有效检测。为了做到这一点，它确保其分数高于检测阈值（默认为 200），并且它没有在上次有效检测之后发生得太快，这可能是一个错误结果的指示：
+最后一部分逻辑确定结果是否是有效检测。为了做到这一点，它确保其分数高于检测阈值（默认为`200`），并且它没有在上次有效检测之后发生得太快，这可能是一个错误结果的指示：
 
 ```cpp
 // If we've recently had another label trigger, assume one that occurs too
@@ -966,6 +968,8 @@ TfLiteRegistration* Register_SOFTMAX();
 ```
 
 接下来，我们设置全局变量：
+
+
 
 ```cpp
 namespace {
@@ -1225,6 +1229,14 @@ Arduino 的替代命令响应器位于[*arduino/command_responder.cc*](https://o
 
 接下来，我们开始实现我们的函数：
 
+
+
+## 命令响应器实现
+
+### Arduino 实现
+
+以下代码展示了 `RespondToCommand()` 函数的实现，该函数用于切换 LED 状态，并在检测到 "yes" 时保持 LED 亮起 3 秒：
+
 ```cpp
 // Toggles the LED every inference, and keeps it on for 3 seconds if a "yes"
 // was heard
@@ -1233,7 +1245,7 @@ void RespondToCommand(tflite::ErrorReporter* error_reporter,
                       uint8_t score, bool is_new_command) {
 ```
 
-我们的下一步是将内置 LED 的引脚设置为输出模式，以便我们可以打开和关闭它。我们在一个`if`语句中执行此操作，该语句仅运行一次，这要归功于名为`is_initialized`的`static bool`。请记住，`static`变量在函数调用之间保留其状态：
+我们的下一步是将内置 LED 的引脚设置为输出模式，以便我们可以打开和关闭它。我们在一个 `if` 语句中执行此操作，该语句仅运行一次，这要归功于名为 `is_initialized` 的 `static bool`。请记住，`static` 变量在函数调用之间保留其状态：
 
 ```cpp
 static bool is_initialized = false;
@@ -1243,14 +1255,14 @@ if (!is_initialized) {
 }
 ```
 
-接下来，我们设置另外两个`static`变量来跟踪上次检测到“yes”的时间以及已执行的推理次数：
+接下来，我们设置另外两个 `static` 变量来跟踪上次检测到 "yes" 的时间以及已执行的推理次数：
 
 ```cpp
 static int32_t last_yes_time = 0;
 static int count = 0;
 ```
 
-现在是有趣的部分。如果`is_new_command`参数为`true`，我们知道我们听到了什么，因此我们使用`ErrorReporter`实例记录它。但是如果我们听到的是“yes”——我们通过检查`found_command`字符数组的第一个字符来确定——我们存储当前时间并打开 LED：
+现在是有趣的部分。如果 `is_new_command` 参数为 `true`，我们知道我们听到了什么，因此我们使用 `ErrorReporter` 实例记录它。但是如果我们听到的是 "yes"——我们通过检查 `found_command` 字符数组的第一个字符来确定——我们存储当前时间并打开 LED：
 
 ```cpp
 if (is_new_command) {
@@ -1279,9 +1291,9 @@ if (last_yes_time != 0) {
 }
 ```
 
-当 LED 关闭时，我们还将`last_yet_time`设置为`0`，这样我们在下次听到“yes”之前不会进入这个`if`语句。`return`语句很重要：如果我们最近听到“yes”，它会阻止任何进一步的输出代码运行，因此 LED 会保持亮起状态。
+当 LED 关闭时，我们还将 `last_yes_time` 设置为 `0`，这样我们在下次听到 "yes" 之前不会进入这个 `if` 语句。`return` 语句很重要：如果我们最近听到 "yes"，它会阻止任何进一步的输出代码运行，因此 LED 会保持亮起状态。
 
-到目前为止，我们的实现将在听到“yes”时打开 LED 约三秒钟。接下来的部分将通过每次推理切换 LED 的开关状态，除了在“yes”模式下，我们通过前面提到的`return`语句阻止到达这一点。
+到目前为止，我们的实现将在听到 "yes" 时打开 LED 约三秒钟。接下来的部分将通过每次推理切换 LED 的开关状态，除了在 "yes" 模式下，我们通过前面提到的 `return` 语句阻止到达这一点。
 
 以下是最终的代码块：
 
@@ -1295,11 +1307,11 @@ if (count & 1) {
 }
 ```
 
-通过为每次推理增加`count`变量，我们跟踪我们执行的总推理次数。在`if`条件中，我们使用`&`运算符对`count`变量和数字`1`进行二进制 AND 运算。
+通过为每次推理增加 `count` 变量，我们跟踪我们执行的总推理次数。在 `if` 条件中，我们使用 `&` 运算符对 `count` 变量和数字 `1` 进行二进制 AND 运算。
 
-通过对`count`和`1`进行 AND 运算，我们过滤掉`count`的所有位，除了最小的位。如果最小位是`0`，表示`count`是一个奇数，结果将是`0`。在 C++ 的`if 语句`中，这将评估为`false`。
+通过对 `count` 和 `1` 进行 AND 运算，我们过滤掉 `count` 的所有位，除了最小的位。如果最小位是 `0`，表示 `count` 是一个奇数，结果将是 `0`。在 C++ 的 `if` 语句中，这将评估为 `false`。
 
-否则，结果将是`1`，表示一个偶数。因为`1`被评估为`true`，我们的 LED 将在偶数值时打开，并在奇数值时关闭。这就是它的切换功能。
+否则，结果将是 `1`，表示一个偶数。因为 `1` 被评估为 `true`，我们的 LED 将在偶数值时打开，并在奇数值时关闭。这就是它的切换功能。
 
 就是这样！我们现在已经为 Arduino 实现了命令响应器。让我们运行它，以便看到它的运行情况。
 
@@ -1307,69 +1319,67 @@ if (count & 1) {
 
 要部署此示例，我们需要：
 
-+   一个 Arduino Nano 33 BLE Sense 开发板
++ 一个 Arduino Nano 33 BLE Sense 开发板
++ 一个 micro-USB 电缆
++ Arduino IDE
 
-+   一个 micro-USB 电缆
+**提示**
 
-+   Arduino IDE
-
-###### 提示
-
-由于这本书编写时可能已经发生了变化，因此请查看[*README.md*](https://oreil.ly/7VozJ)获取最新的说明。
+由于这本书编写时可能已经发生了变化，因此请查看 [*README.md*](https://oreil.ly/7VozJ) 获取最新的说明。
 
 本书中的项目作为 TensorFlow Lite Arduino 库中的示例代码可用。如果您尚未安装该库，请打开 Arduino IDE 并从工具菜单中选择管理库。在出现的窗口中，搜索并安装名为 *Arduino_TensorFlowLite* 的库。您应该能够使用最新版本，但如果遇到问题，本书测试过的版本是 1.14-ALPHA。
 
-###### 注意
+**注意**
 
-您还可以从*.zip*文件安装库，您可以从 TensorFlow Lite 团队[下载](https://oreil.ly/blgB8)，或者使用 TensorFlow Lite for Microcontrollers Makefile 自动生成。如果您更喜欢后者，请参阅附录 A。
+您还可以从 *.zip* 文件安装库，您可以从 TensorFlow Lite 团队 [下载](https://oreil.ly/blgB8)，或者使用 TensorFlow Lite for Microcontrollers Makefile 自动生成。如果您更喜欢后者，请参阅附录 A。
 
-安装完库后，`micro_speech`示例将显示在文件菜单下的示例→Arduino_TensorFlowLite 中，如图 7-8 所示。
+安装完库后，`micro_speech` 示例将显示在文件菜单下的示例 → Arduino_TensorFlowLite 中，如图 7-8 所示。
 
-单击“micro_speech”加载示例。它将显示为一个新窗口，每个源文件都有一个选项卡。第一个选项卡中的文件*micro_speech*相当于我们之前讨论过的*main_functions.cc*。
+单击 "micro_speech" 加载示例。它将显示为一个新窗口，每个源文件都有一个选项卡。第一个选项卡中的文件 *micro_speech* 相当于我们之前讨论过的 *main_functions.cc*。
 
 ![“示例”菜单的屏幕截图](img/timl_0604.png)
 
-###### 图 7-8。示例菜单
+**图 7-8。示例菜单**
 
-###### 注意
+**注意**
 
-“运行示例”已经解释了 Arduino 示例的结构，所以我们不会在这里再次涉及。
+"运行示例" 已经解释了 Arduino 示例的结构，所以我们不会在这里再次涉及。
 
-要运行示例，请通过 USB 连接您的 Arduino 设备。确保从“工具”菜单中的板下拉列表中选择了正确的设备类型，如图 7-9 所示。
+要运行示例，请通过 USB 连接您的 Arduino 设备。确保从 "工具" 菜单中的板下拉列表中选择了正确的设备类型，如图 7-9 所示。
 
 ![“板”下拉列表的屏幕截图](img/timl_0605.png)
 
-###### 图 7-9。板下拉列表
+**图 7-9。板下拉列表**
 
-如果您的设备名称未出现在列表中，则需要安装其支持包。要执行此操作，请单击“Boards Manager”。在弹出的窗口中，搜索您的设备，然后安装相应支持包的最新版本。接下来，请确保设备的端口已在“工具”菜单中的端口下拉列表中选择，如图 7-10 所示。
+如果您的设备名称未出现在列表中，则需要安装其支持包。要执行此操作，请单击 "Boards Manager"。在弹出的窗口中，搜索您的设备，然后安装相应支持包的最新版本。接下来，请确保设备的端口已在 "工具" 菜单中的端口下拉列表中选择，如图 7-10 所示。
 
 ![“端口”下拉列表的屏幕截图](img/timl_0606.png)
 
-###### 图 7-10。端口下拉列表
+**图 7-10。端口下拉列表**
 
 最后，在 Arduino 窗口中，单击上传按钮（在图 7-11 中用白色突出显示）来编译和上传代码到您的 Arduino 设备。
 
 ![具有箭头图标的上传按钮的屏幕截图](img/timl_0607.png)
 
-###### 图 7-11。上传按钮，一个向右的箭头
+**图 7-11。上传按钮，一个向右的箭头**
 
 上传成功后，您应该看到 Arduino 板上的 LED 开始闪烁。
 
-要测试程序，请尝试说“yes”。当它检测到“yes”时，LED 将保持稳定点亮约三秒钟。
+要测试程序，请尝试说 "yes"。当它检测到 "yes" 时，LED 将保持稳定点亮约三秒钟。
 
-###### 提示
+**提示**
 
-如果程序无法识别您的“yes”，请尝试连续说几次。
+如果程序无法识别您的 "yes"，请尝试连续说几次。
 
-您还可以通过 Arduino 串行监视器查看推断结果。要执行此操作，请从“工具”菜单中打开串行监视器。现在，请尝试说“yes”、“no”和其他单词。您应该看到类似图 7-12 的内容。
+您还可以通过 Arduino 串行监视器查看推断结果。要执行此操作，请从 "工具" 菜单中打开串行监视器。现在，请尝试说 "yes"、"no" 和其他单词。您应该看到类似图 7-12 的内容。
 
 ![Arduino IDE 串行监视器的屏幕截图](img/timl_0712.png)
 
-###### 图 7-12。串行监视器显示一些匹配项
+**图 7-12。串行监视器显示一些匹配项**
 
-###### 注意
+**注意**
 
-我们使用的模型很小且不完美，您可能会注意到它在检测“yes”方面比“no”更好。这是优化微小模型大小可能导致准确性问题的一个例子。我们在第八章中涵盖了这个主题。
+我们使用的模型很小且不完美，您可能会注意到它在检测 "yes" 方面比 "no" 更好。这是优化微小模型大小可能导致准确性问题的一个例子。我们在第八章中涵盖了这个主题。
 
 ### 进行您自己的更改
 
@@ -1377,32 +1387,30 @@ if (count & 1) {
 
 以下是您可以尝试的一些想法：
 
-+   将示例切换为在说“no”时点亮 LED，而不是“yes”时，
-
-+   使应用程序响应特定的“yes”和“no”命令序列，如秘密代码短语。
-
-+   使用“yes”和“no”命令来控制其他组件，如额外的 LED 或伺服。
++ 将示例切换为在说 "no" 时点亮 LED，而不是 "yes" 时
++ 使应用程序响应特定的 "yes" 和 "no" 命令序列，如秘密代码短语
++ 使用 "yes" 和 "no" 命令来控制其他组件，如额外的 LED 或伺服
 
 ## SparkFun Edge
 
-SparkFun Edge 既有麦克风，又有一排四个彩色 LED 灯—红色、蓝色、绿色和黄色—这将使显示结果变得容易。图 7-13 显示了高亮显示了 SparkFun Edge 的 LED 灯。
+SparkFun Edge 既有麦克风，又有一排四个彩色 LED 灯——红色、蓝色、绿色和黄色——这将使显示结果变得容易。图 7-13 显示了高亮显示了 SparkFun Edge 的 LED 灯。
 
 ![突出显示四个 LED 的 SparkFun Edge 的照片](img/timl_0611.png)
 
-###### 图 7-13。SparkFun Edge 的四个 LED
+**图 7-13。SparkFun Edge 的四个 LED**
 
 ### 响应 SparkFun Edge 上的命令
 
-为了清楚地表明我们的程序正在运行，让我们在每次推理时切换蓝色 LED 的开关。当听到“是”时，我们将打开黄色 LED，当听到“否”时，我们将打开红色 LED，当听到未知命令时，我们将打开绿色 LED。
+为了清楚地表明我们的程序正在运行，让我们在每次推理时切换蓝色 LED 的开关。当听到 "是" 时，我们将打开黄色 LED，当听到 "否" 时，我们将打开红色 LED，当听到未知命令时，我们将打开绿色 LED。
 
-SparkFun Edge 的命令响应器实现在[*sparkfun_edge/command_responder.cc*](https://oreil.ly/i-3eJ)中。该文件以一些包含开始：
+SparkFun Edge 的命令响应器实现在 [*sparkfun_edge/command_responder.cc*](https://oreil.ly/i-3eJ) 中。该文件以一些包含开始：
 
 ```cpp
 #include "tensorflow/lite/micro/examples/micro_speech/command_responder.h"
 #include "am_bsp.h"
 ```
 
-*command_responder.h*包含了这个文件对应的头文件。*am_bsp.h*是 Ambiq Apollo3 SDK，在上一章中已经看到。
+*command_responder.h* 包含了这个文件对应的头文件。*am_bsp.h* 是 Ambiq Apollo3 SDK，在上一章中已经看到。
 
 在函数定义内部，我们首先将连接到 LED 的引脚设置为输出：
 
@@ -1422,9 +1430,9 @@ void RespondToCommand(tflite::ErrorReporter* error_reporter,
   }
 ```
 
-我们从 Apollo3 SDK 中调用`am_hal_gpio_pinconfig()`函数，将所有四个 LED 引脚设置为输出模式，表示为常量`g_AM_HAL_GPIO_OUTPUT_12`。我们使用`is_initialized` `static`变量确保我们只执行一次！
+我们从 Apollo3 SDK 中调用 `am_hal_gpio_pinconfig()` 函数，将所有四个 LED 引脚设置为输出模式，表示为常量 `g_AM_HAL_GPIO_OUTPUT_12`。我们使用 `is_initialized` `static` 变量确保我们只执行一次！
 
-接下来是将切换蓝色 LED 打开和关闭的代码。我们使用一个`count`变量来执行此操作，方式与 Arduino 实现相同：
+接下来是将切换蓝色 LED 打开和关闭的代码。我们使用一个 `count` 变量来执行此操作，方式与 Arduino 实现相同：
 
 ```cpp
 static int count = 0;
@@ -1437,13 +1445,13 @@ if (count & 1) {
 }
 ```
 
-此代码使用`am_hal_gpio_output_set()`和`am_hal_gpio_output_clear()`函数来切换蓝色 LED 的引脚开关。
+此代码使用 `am_hal_gpio_output_set()` 和 `am_hal_gpio_output_clear()` 函数来切换蓝色 LED 的引脚开关。
 
-通过在每次推理时递增`count`变量，我们可以跟踪我们执行的推理总数。在`if`条件内部，我们使用`&`运算符对`count`变量和数字`1`进行二进制 AND 操作。
+通过在每次推理时递增 `count` 变量，我们可以跟踪我们执行的推理总数。在 `if` 条件内部，我们使用 `&` 运算符对 `count` 变量和数字 `1` 进行二进制 AND 操作。
 
-通过对`count`和`1`进行 AND 运算，我们过滤掉`count`的所有位，除了最小的位。如果最小位是`0`，表示`count`是奇数，结果将是`0`。在 C++的`if 语句`中，这将评估为`false`。
+通过对 `count` 和 `1` 进行 AND 运算，我们过滤掉 `count` 的所有位，除了最小的位。如果最小位是 `0`，表示 `count` 是奇数，结果将是 `0`。在 C++ 的 `if` 语句中，这将评估为 `false`。
 
-否则，结果将是`1`，表示偶数。因为`1`评估为`true`，所以我们的 LED 将在偶数值时打开，并在奇数值时关闭。这就是它的切换原理。
+否则，结果将是 `1`，表示偶数。因为 `1` 评估为 `true`，所以我们的 LED 将在偶数值时打开，并在奇数值时关闭。这就是它的切换原理。
 
 接下来，根据刚刚听到的单词点亮适当的 LED。默认情况下，我们清除所有 LED，因此如果最近没有听到单词，则所有 LED 将熄灭：
 
@@ -1453,7 +1461,7 @@ am_hal_gpio_output_clear(AM_BSP_GPIO_LED_YELLOW);
 am_hal_gpio_output_clear(AM_BSP_GPIO_LED_GREEN);
 ```
 
-然后，我们使用一些简单的`if`语句根据听到的命令点亮适当的 LED：
+然后，我们使用一些简单的 `if` 语句根据听到的命令点亮适当的 LED：
 
 ```cpp
 if (is_new_command) {
@@ -1471,29 +1479,26 @@ if (is_new_command) {
 }
 ```
 
-正如我们之前看到的，只有当`RespondToCommand()`被调用时传入了一个真正的新命令，`is_new_command`才为`true`，因此如果没有听到新命令，LED 将保持关闭。否则，我们使用`am_hal_gpio_output_set()`函数打开适当的 LED。
+正如我们之前看到的，只有当 `RespondToCommand()` 被调用时传入了一个真正的新命令，`is_new_command` 才为 `true`，因此如果没有听到新命令，LED 将保持关闭。否则，我们使用 `am_hal_gpio_output_set()` 函数打开适当的 LED。
 
 ### 运行示例
 
 我们已经详细介绍了如何在 SparkFun Edge 上点亮 LED 的示例代码。接下来，让我们启动并运行示例。
 
-###### 提示
+**提示**
 
-建议查看[*README.md*](https://oreil.ly/U3Cgo)以获取最新指令，因为构建过程可能会有变化。
+建议查看 [*README.md*](https://oreil.ly/U3Cgo) 以获取最新指令，因为构建过程可能会有变化。
 
 要构建和部署我们的代码，我们需要以下内容：
 
-+   一个 SparkFun Edge 板
++ 一个 SparkFun Edge 板
++ 一个 USB 编程器（我们推荐 SparkFun Serial Basic Breakout，可在 [micro-B USB](https://oreil.ly/2GMNf) 和 [USB-C](https://oreil.ly/lp39T) 变体中获得）
++ 匹配的 USB 电缆
++ Python 3 和一些依赖项
 
-+   一个 USB 编程器（我们推荐 SparkFun Serial Basic Breakout，可在[micro-B USB](https://oreil.ly/2GMNf)和[USB-C](https://oreil.ly/lp39T)变体中获得）
+**接下来**
 
-+   匹配的 USB 电缆
-
-+   Python 3 和一些依赖项
-
-###### 接下来
-
-第六章展示了如何确认您是否安装了正确版本的 Python。如果您已经这样做了，太好了。如果没有，请翻回到“运行示例”查看一下。
+第六章展示了如何确认您是否安装了正确版本的 Python。如果您已经这样做了，太好了。如果没有，请翻回到 "运行示例" 查看一下。
 
 在您的终端中，克隆 TensorFlow 存储库，然后切换到其目录：
 
@@ -1502,7 +1507,7 @@ git clone https://github.com/tensorflow/tensorflow.git
 cd tensorflow
 ```
 
-接下来，我们将构建二进制文件并运行一些命令，使其准备好下载到设备中。为了避免一些打字，您可以从[*README.md*](https://oreil.ly/xY-Rj)中复制并粘贴这些命令。
+接下来，我们将构建二进制文件并运行一些命令，使其准备好下载到设备中。为了避免一些打字，您可以从 [*README.md*](https://oreil.ly/xY-Rj) 中复制并粘贴这些命令。
 
 #### 构建二进制文件
 
@@ -1513,7 +1518,7 @@ make -f tensorflow/lite/micro/tools/make/Makefile \
   TARGET=sparkfun_edge TAGS=cmsis-nn micro_speech_bin
 ```
 
-二进制文件被创建为*.bin*文件，在以下位置：
+二进制文件被创建为 *.bin* 文件，在以下位置：
 
 ```cpp
 tensorflow/lite/micro/tools/make/gen/ \
@@ -1521,6 +1526,8 @@ tensorflow/lite/micro/tools/make/gen/ \
 ```
 
 要检查文件是否存在，可以使用以下命令：
+
+
 
 ```cpp
 test -f tensorflow/lite/micro/tools/make/gen/ \
@@ -1530,7 +1537,7 @@ test -f tensorflow/lite/micro/tools/make/gen/ \
 
 如果运行该命令，您应该看到`二进制文件已成功创建`打印到控制台。如果看到`二进制文件丢失`，则构建过程中出现问题。如果是这样，`make`命令的输出中可能有一些指示出了问题的线索。
 
-#### 签署二进制文件
+## 签署二进制文件
 
 必须使用加密密钥对二进制文件进行签名，以部署到设备。现在让我们运行一些命令来对二进制文件进行签名，以便将其刷写到 SparkFun Edge。这里使用的脚本来自 Ambiq SDK，在运行 Makefile 时下载。
 
@@ -1555,7 +1562,7 @@ python3 tensorflow/lite/micro/tools/make/downloads/ \
   --version 0x0
 ```
 
-这将创建文件*main_nonsecure_ota.bin*。现在运行此命令以创建文件的最终版本，该文件可用于使用下一步中将使用的脚本刷写设备：
+这将创建文件`main_nonsecure_ota.bin`。现在运行此命令以创建文件的最终版本，该文件可用于使用下一步中将使用的脚本刷写设备：
 
 ```cpp
 python3 tensorflow/lite/micro/tools/make/downloads/ \
@@ -1566,31 +1573,30 @@ python3 tensorflow/lite/micro/tools/make/downloads/ \
   --options 0x1
 ```
 
-现在应该在运行命令的目录中有一个名为*main_nonsecure_wire.bin*的文件。这是您将要刷写到设备的文件。
+现在应该在运行命令的目录中有一个名为`main_nonsecure_wire.bin`的文件。这是您将要刷写到设备的文件。
 
-#### 刷写二进制文件
+## 刷写二进制文件
 
 SparkFun Edge 将当前运行的程序存储在其 1 兆字节的闪存中。如果要让板运行新程序，需要将其发送到板上，板将将其存储在闪存中，覆盖以前保存的任何程序。
 
-#### 将编程器连接到板上
+### 将编程器连接到板上
 
 要将新程序下载到板上，您将使用 SparkFun USB-C 串行基础串行编程器。此设备允许计算机通过 USB 与微控制器通信。
 
 要将此设备连接到板上，请执行以下步骤：
 
-1.  在 SparkFun Edge 的侧面，找到六针排针。
-
-1.  将 SparkFun USB-C 串行基础插入这些引脚，确保每个设备上标有 BLK 和 GRN 的引脚正确对齐，如图 7-14 所示。
+1. 在 SparkFun Edge 的侧面，找到六针排针。
+2. 将 SparkFun USB-C 串行基础插入这些引脚，确保每个设备上标有 BLK 和 GRN 的引脚正确对齐，如图 7-14 所示。
 
 ![显示 SparkFun Edge 和 USB-C 串行基础如何连接的照片](img/timl_0613.png)
 
-###### 图 7-14\. 连接 SparkFun Edge 和 USB-C 串行基础（由 SparkFun 提供）
+**图 7-14.** 连接 SparkFun Edge 和 USB-C 串行基础（由 SparkFun 提供）
 
-#### 将编程器连接到计算机
+### 将编程器连接到计算机
 
 通过 USB 将板连接到计算机。要对板进行编程，您需要找出计算机分配给设备的名称。最佳方法是在连接之前和之后列出所有计算机设备，然后查看哪个设备是新的。
 
-###### 警告
+**警告**
 
 一些人报告了他们操作系统的默认驱动程序与编程器存在问题，因此我们强烈建议在继续之前安装[驱动程序](https://oreil.ly/kohTX)。
 
@@ -1633,7 +1639,7 @@ ls /dev/tty*
 
 此名称将用于引用设备。但是，它可能会根据编程器连接到的 USB 端口而更改，因此如果您从计算机断开板然后重新连接，可能需要再次查找其名称。
 
-###### 提示
+**提示**
 
 一些用户报告说列表中出现了两个设备。如果看到两个设备，则应使用以“wch”开头的正确设备；例如，“/dev/wchusbserial-14410”。
 
@@ -1641,12 +1647,11 @@ ls /dev/tty*
 
 ```cpp
 export DEVICENAME=<*your device name here*>
-
 ```
 
 这是在后续过程中运行需要设备名称的命令时可以使用的变量。
 
-#### 运行脚本刷写板
+### 运行脚本刷写板
 
 要刷写板，必须将其置于特殊的“引导加载程序”状态，以准备接收新的二进制文件。然后运行一个脚本将二进制文件发送到板上。
 
@@ -1668,13 +1673,10 @@ python3 tensorflow/lite/micro/tools/make/downloads/ \
 
 接下来，你将重置板子到引导加载程序状态并刷写板子。在板子上，找到标有`RST`和`14`的按钮，如图 7-15 所示。执行以下步骤：
 
-1.  确保你的板子连接到编程器，并且整个东西通过 USB 连接到你的计算机。
-
-1.  在板子上，按住标有`14`的按钮。*继续按住*。
-
-1.  在继续按住标有`14`的按钮的同时，按下标有`RST`的按钮来重置板子。
-
-1.  按下计算机上的回车键来运行脚本。*继续按住按钮`14`。*
+1. 确保你的板子连接到编程器，并且整个东西通过 USB 连接到你的计算机。
+2. 在板子上，按住标有`14`的按钮。*继续按住*。
+3. 在继续按住标有`14`的按钮的同时，按下标有`RST`的按钮来重置板子。
+4. 按下计算机上的回车键来运行脚本。*继续按住按钮`14`。*
 
 现在你应该在屏幕上看到类似以下内容的东西：
 
@@ -1707,7 +1709,7 @@ Sending Data Packet of length  8180
 
 ![显示 SparkFun Edge 按钮的照片](img/timl_0614.png)
 
-###### 图 7-15。SparkFun Edge 的按钮
+**图 7-15.** SparkFun Edge 的按钮
 
 继续按住按钮`14`直到看到`发送数据包长度为 8180`。在看到这个之后你可以释放按钮（但如果继续按住也没关系）。程序将继续在终端上打印行。最终，你会看到类似以下内容的东西：
 
@@ -1721,11 +1723,11 @@ Done.
 
 这表示刷写成功。
 
-###### 提示
+**提示**
 
 如果程序输出以错误结束，请检查是否打印了`发送重置命令。`。如果是这样，尽管有错误，刷写可能是成功的。否则，刷写可能失败了。尝试再次运行这些步骤（你可以跳过设置环境变量）。
 
-### 测试程序
+## 测试程序
 
 为了确保程序正在运行，按下`RST`按钮。现在你应该看到蓝色 LED 在闪烁。
 
@@ -1735,7 +1737,7 @@ Done.
 
 我们正在使用的模型很小且不完美，你可能会注意到它在检测“yes”方面比“no”更好，而“no”经常被识别为“unknown”。这是一个优化微小模型大小可能导致准确性问题的例子。我们在第八章中涵盖了这个主题。
 
-### 查看调试数据
+## 查看调试数据
 
 程序还将成功识别记录到串行端口。要查看这些数据，我们可以使用波特率为 115200 监视板子的串行端口输出。在 macOS 和 Linux 上，以下命令应该有效：
 
@@ -1759,37 +1761,32 @@ Heard yes (202) @65536ms
 
 要停止使用`screen`查看调试输出，按下 Ctrl-A，然后立即按 K 键，然后按 Y 键。
 
-### 制作你自己的更改
+## 制作你自己的更改
 
-现在你已经部署了基本应用程序，尝试玩耍并做一些更改。你可以在*tensorflow/lite/micro/examples/micro_speech*文件夹中找到应用程序的代码。只需编辑并保存，然后重复前面的说明来将修改后的代码部署到设备上。
+现在你已经部署了基本应用程序，尝试玩耍并做一些更改。你可以在`tensorflow/lite/micro/examples/micro_speech`文件夹中找到应用程序的代码。只需编辑并保存，然后重复前面的说明来将修改后的代码部署到设备上。
 
 以下是一些你可以尝试的事情：
 
-+   `RespondToCommand()`的`score`参数显示了预测分数。使用 LED 作为一个表明匹配强度的仪表。
+- `RespondToCommand()`的`score`参数显示了预测分数。使用 LED 作为一个表明匹配强度的仪表。
+- 使应用程序响应特定的“yes”和“no”命令序列，就像一个秘密代码短语一样。
+- 使用“yes”和“no”命令来控制其他组件，比如额外的 LED 或伺服。
 
-+   使应用程序响应特定的“yes”和“no”命令序列，就像一个秘密代码短语一样。
-
-+   使用“yes”和“no”命令来控制其他组件，比如额外的 LED 或伺服。
-
-## ST 微电子 STM32F746G Discovery Kit
+# ST 微电子 STM32F746G Discovery Kit
 
 因为 STM32F746G 配备了一个漂亮的 LCD 显示屏，我们可以用它来展示检测到的唤醒词，如图 7-16 所示。
 
 ![STM32F746G 显示“否”](img/timl_0716.png)
 
-###### 图 7-16\. STM32F746G 显示“否”
+**图 7-16.** STM32F746G 显示“否”
 
-### 响应 STM32F746G 上的命令
+## 响应 STM32F746G 上的命令
 
 STM32F746G 的 LCD 驱动程序提供了一些方法，我们可以使用这些方法将文本写入显示器。在这个练习中，我们将使用这些方法显示以下消息之一，具体取决于听到的命令：
 
-+   “听到了是！”
-
-+   “听到了否 :(”
-
-+   “听到了未知”
-
-+   “听到了沉默”
+- “听到了是！”
+- “听到了否 :(”
+- “听到了未知”
+- “听到了沉默”
 
 我们还将根据听到的命令设置不同的背景颜色。
 
@@ -1800,7 +1797,7 @@ STM32F746G 的 LCD 驱动程序提供了一些方法，我们可以使用这些�
 #include "LCD_DISCO_F746NG.h"
 ```
 
-第一个是*command_responder.h*，只是声明了此文件的接口。第二个是*LCD_DISCO_F74NG.h*，为我们提供了控制设备 LCD 显示的接口。您可以在[Mbed 网站](https://oreil.ly/6oirs)上阅读更多信息。
+第一个是`command_responder.h`，只是声明了此文件的接口。第二个是`LCD_DISCO_F74NG.h`，为我们提供了控制设备 LCD 显示的接口。您可以在[Mbed 网站](https://oreil.ly/6oirs)上阅读更多信息。
 
 接下来，我们实例化一个`LCD_DISCO_F746NG`对象，其中包含我们用来控制 LCD 的方法：
 
@@ -1854,65 +1851,64 @@ if (*found_command == 'y') {
 
 就是这样！因为 LCD 库为我们提供了如此简单的高级控制显示的方法，所以不需要太多代码来输出我们的结果。让我们部署示例以查看所有这些操作。
 
-### 运行示例
+## 运行示例
 
 现在我们可以使用 Mbed 工具链将我们的应用程序部署到设备上。
 
-###### 提示
+**提示**
 
-建议检查[*README.md*](https://oreil.ly/1INIO)以获取最新说明，因为构建过程可能会在编写本书时发生变化。
+建议检查[`README.md`](https://oreil.ly/1INIO)以获取最新说明，因为构建过程可能会在编写本书时发生变化。
 
 在开始之前，我们需要以下内容：
 
-+   一个 STM32F746G Discovery kit 开发板
+- 一个 STM32F746G Discovery kit 开发板
+- 一个迷你 USB 电缆
+- 使用 Arm Mbed CLI（请参考[Mbed 设置指南](https://oreil.ly/tR57j)）
+- Python 3 和`pip`
 
-+   一个迷你 USB 电缆
 
-+   使用 Arm Mbed CLI（请参考[Mbed 设置指南](https://oreil.ly/tR57j)）
 
-+   Python 3 和`pip`
-
-与 Arduino IDE 类似，Mbed 要求源文件以特定方式结构化。TensorFlow Lite for Microcontrollers Makefile 知道如何为我们做这个，并可以生成适合 Mbed 构建的目录。
+与 Arduino IDE 类似，`Mbed`要求源文件以特定方式结构化。`TensorFlow Lite for Microcontrollers Makefile`知道如何为我们做这个，并可以生成适合 `Mbed` 构建的目录。
 
 为此，请运行以下命令：
 
-```cpp
+```
 make -f tensorflow/lite/micro/tools/make/Makefile \
   TARGET=mbed TAGS="cmsis-nn disco_f746ng" generate_micro_speech_mbed_project
 ```
 
 这将创建一个新目录：
 
-```cpp
+```
 tensorflow/lite/micro/tools/make/gen/mbed_cortex-m4/prj/ \
   micro_speech/mbed
 ```
 
-该目录包含了所有示例的依赖项，以 Mbed 能够构建它的正确方式结构化。
+该目录包含了所有示例的依赖项，以 `Mbed` 能够构建它的正确方式结构化。
 
 首先，切换到目录，以便您可以在其中运行一些命令：
 
-```cpp
+```
 cd tensorflow/lite/micro/tools/make/gen/mbed_cortex-m4/prj/micro_speech/mbed
 ```
 
-接下来，您将使用 Mbed 下载依赖项并构建项目。
+接下来，您将使用 `Mbed` 下载依赖项并构建项目。
 
-首先，使用以下命令告诉 Mbed 当前目录是 Mbed 项目的根目录：
+首先，使用以下命令告诉 `Mbed` 当前目录是 `Mbed` 项目的根目录：
 
-```cpp
+```
 mbed config root .
 ```
 
-接下来，指示 Mbed 下载依赖项并准备构建：
+接下来，指示 `Mbed` 下载依赖项并准备构建：
 
-```cpp
+```
 mbed deploy
 ```
 
-默认情况下，Mbed 使用 C++98 构建项目。然而，TensorFlow Lite 需要 C++11。运行以下 Python 片段修改 Mbed 配置文件，以便使用 C++11。您可以直接在命令行中键入或粘贴：
+默认情况下，`Mbed` 使用 C++98 构建项目。然而，`TensorFlow Lite` 需要 C++11。运行以下 Python 片段修改 `Mbed` 配置文件，以便使用 C++11。您可以直接在命令行中键入或粘贴：
 
-```cpp
+```
 python -c 'import fileinput, glob;
 for filename in glob.glob("mbed-os/tools/profiles/*.json"):
   for line in fileinput.input(filename, inplace=True):
@@ -1921,19 +1917,19 @@ for filename in glob.glob("mbed-os/tools/profiles/*.json"):
 
 最后，运行以下命令进行编译：
 
-```cpp
+```
 mbed compile -m DISCO_F746NG -t GCC_ARM
 ```
 
 这应该会在以下路径生成一个二进制文件：
 
-```cpp
+```
 ./BUILD/DISCO_F746NG/GCC_ARM/mbed.bin
 ```
 
-STM32F746G 开发板的一个好处是部署非常容易。要部署，只需将 STM 板插入并将文件复制到其中。在 macOS 上，您可以使用以下命令来执行此操作：
+`STM32F746G` 开发板的一个好处是部署非常容易。要部署，只需将 `STM` 板插入并将文件复制到其中。在 macOS 上，您可以使用以下命令来执行此操作：
 
-```cpp
+```
 cp ./BUILD/DISCO_F746NG/GCC_ARM/mbed.bin /Volumes/DIS_F746NG/
 ```
 
@@ -1955,26 +1951,25 @@ cp ./BUILD/DISCO_F746NG/GCC_ARM/mbed.bin /Volumes/DIS_F746NG/
 
 在 macOS 和 Linux 上，当您发出以下命令时，设备应该会列出：
 
-```cpp
+```
 ls /dev/tty*
 ```
 
 它看起来会像下面这样：
 
-```cpp
+```
 /dev/tty.usbmodem1454203
 ```
 
-在识别设备后，使用以下命令连接到设备，将<`*/dev/tty.devicename*`>替换为设备在*/dev*中显示的名称：
+在识别设备后，使用以下命令连接到设备，将`/dev/tty.devicename`替换为设备在`/dev`中显示的名称：
 
-```cpp
-screen /dev/<*tty.devicename 9600*>
-
+```
+screen /dev/tty.devicename 9600
 ```
 
 尝试通过说“yes”或“no”来发出一些命令。您应该看到板子为每个命令打印调试信息：
 
-```cpp
+```
 Heard yes (202) @65536ms
 ```
 
@@ -1982,11 +1977,11 @@ Heard yes (202) @65536ms
 
 ###### 注意
 
-如果您不确定如何在您的平台上建立串行连接，您可以尝试[CoolTerm](https://oreil.ly/FP7gK)，它适用于 Windows、macOS 和 Linux。该板应该会出现在 CoolTerm 的端口下拉列表中。确保将波特率设置为 9600。
+如果您不确定如何在您的平台上建立串行连接，您可以尝试[CoolTerm](https://oreil.ly/FP7gK)，它适用于 Windows、macOS 和 Linux。该板应该会出现在 `CoolTerm` 的端口下拉列表中。确保将波特率设置为 9600。
 
 ### 进行自己的更改
 
-现在您已经部署了应用程序，可以尝试玩耍并进行一些更改。您可以在*tensorflow/lite/micro/tools/make/gen/mbed_cortex-m4/prj/micro_speech/mbed*文件夹中找到应用程序的代码。只需编辑、保存，然后重复前面的说明，将修改后的代码部署到设备上。
+现在您已经部署了应用程序，可以尝试玩耍并进行一些更改。您可以在`tensorflow/lite/micro/tools/make/gen/mbed_cortex-m4/prj/micro_speech/mbed`文件夹中找到应用程序的代码。只需编辑、保存，然后重复前面的说明，将修改后的代码部署到设备上。
 
 以下是您可以尝试的一些事项：
 
@@ -2000,6 +1995,6 @@ Heard yes (202) @65536ms
 
 我们已经讨论过的应用程序代码主要涉及从硬件捕获数据，然后提取适合推理的特征。实际上将数据提供给模型并运行推理的部分相对较小，并且与第六章中涵盖的示例非常相似。
 
-这在机器学习项目中是相当典型的。模型已经训练好了，因此我们的工作只是不断为其提供适当类型的数据。作为一个使用 TensorFlow Lite 的嵌入式开发人员，您将花费大部分编程时间捕获传感器数据，将其处理为特征，并响应模型的输出。推理部分本身快速且简单。
+这在机器学习项目中是相当典型的。模型已经训练好了，因此我们的工作只是不断为其提供适当类型的数据。作为一个使用 `TensorFlow Lite` 的嵌入式开发人员，您将花费大部分编程时间捕获传感器数据，将其处理为特征，并响应模型的输出。推理部分本身快速且简单。
 
 但嵌入式应用程序只是整个包的一部分，真正有趣的部分是模型。在第八章中，您将学习如何训练自己的语音模型以侦听不同的单词。您还将了解更多关于它是如何工作的。

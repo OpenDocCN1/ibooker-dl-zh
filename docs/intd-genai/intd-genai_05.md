@@ -1,14 +1,12 @@
+
 # 第六章：加速生产力：机器增强工作
 
 本章涵盖
 
-+   在专业和个人环境中使用 LLMs
-
-+   讨论在教育中使用和误用生成式 AI 工具的情况
-
-+   探索检测机器生成内容的方法
-
-+   检查生成式 AI 工具的整体经济影响
++ 在专业和个人环境中使用 LLMs
++ 讨论在教育中使用和误用生成式 AI 工具的情况
++ 探索检测机器生成内容的方法
++ 检查生成式 AI 工具的整体经济影响
 
 每个人在其一生中的某个时刻都经历过在积极心理学中被称为“心流”的概念：你深深地沉浸在你正在从事的工作中，可能因为太过专注而失去了时间感。而且，很可能是你经历了突然的干扰，比如需要查找某物或处理其他事情，这打破了心流。这种挫败感是当时 GitHub 首席执行官 Nat Friedman 在宣布 GitHub 的编码助手 Copilot 发布时最关心的问题。“它可以帮助你快速发现解决问题的替代方法、编写测试和探索新的 API，而不必在互联网上繁琐地搜索答案，”Friedman 写道 [[1]](https://github.blog/2021-06-29-introducing-github-copilot-ai-pair-programmer/)。集成到微软的代码编辑器 Visual Studio Code 是一个关键组成部分：Copilot 将直接连接到编码者的现有工作流程。
 
@@ -84,6 +82,8 @@ LLMs 最适合生成性任务，因为它们的输出具有概率性质——它
 
 也许并不令人意外，最早采用大型语言模型（LLM）的许多用户是技术专家和程序员。LLM 最常见的一个实际应用是作为编写代码的辅助工具。我们之前已经强调 GitHub Copilot 是这个领域的领先产品；Copilot 基于 OpenAI 的 Codex 模型，该模型经过微调，适用于在数百万个 GitHub 仓库中编写代码[[13]](https://ghdocs-prod.azurewebsites.net/en/copilot)。其他代码生成模型包括亚马逊的 CodeWhisperer（见[`mng.bz/QPAe`](http://mng.bz/QPAe)）、Replit 的 Ghostwriter（见[`mng.bz/XNvM`](http://mng.bz/XNvM)）和开源模型 StarCoder（见[`mng.bz/yQlE`](http://mng.bz/yQlE)）。在某种程度上，对于模型来说，编写代码比其他类型的生成任务更容易，因为代码有很多结构和重复的模式。在散文中，人们很少会重复使用相同的短语，但我们期望在代码中看到多次调用的函数。这些模型被设计成搭档程序员，并在你编写代码时提供“自动完成式建议”。你可以指定语言并写一个自然语言描述，作为注释或文档字符串（用于记录代码的特定段），说明你希望函数执行的操作。然后模型将尝试实现该函数。虽然确实存在失败模式，尤其是对于复杂的函数，但它通常能做出合理的初次尝试，这使得迭代过程变得更快。
 
+
+
 生成模型已经被训练来解释代码，这使得可以使用一些 LLM 作为计算机终端或命令行提示符，或者作为玩具数据库。由 Eraser 公司（一家脑力激荡和图表工具的开发者）创建的、由 GPT-4 驱动的 DiagramGPT 是 LLM 新能力的例子之一（见[`mng.bz/MBNm`](http://mng.bz/MBNm)）。它接受一个模式、基础设施定义或代码片段作为输入，并为所描述的系统生成一个图表，以便不熟悉代码或模式的人可以轻松地可视化正在发生的事情。
 
 与使用 LLM 承担重复性任务的主题保持一致，这些模型在编写文档方面的另一个应用是它们在这方面表现出色。通常的隐私问题同样适用——将专有代码粘贴到外部应用程序编程接口（API）中是不明智的——但对于不敏感的函数，你可以提示 Copilot 或另一个 LLM 使用代码，并要求模型生成解释函数的注释，添加文档字符串和类型提示，以及进行其他改进，使已编写的代码更易于阅读。图 6.4 展示了由 AI 生成的文档字符串示例。
@@ -92,7 +92,7 @@ LLMs 最适合生成性任务，因为它们的输出具有概率性质——它
 
 图 6.4 ChatGPT 生成的文档字符串正确地描述了给定的函数及其每个输入。
 
-一些并非专门为配对编程设计的 LLM 也可以作为编码资源。例如，正则表达式（regexes）在编程中是著名的既复杂又强大的范式。正则表达式定义了一些文本字符串的准则，然后提供快速高效搜索匹配这些准则的文本片段的功能。不同的字符可以表示要查找的字符，预期的字符数量，以及要忽略的字符串部分。正则表达式通常用于解析诸如电子邮件地址或电话号码之类的信息。为了说明，提取电子邮件地址的正则表达式看起来像这样：/^([a-z0-9_\.-]+)@([\da-z\.-]+)\.([a-z\.]{2,63})$/. 最近，我们中的一人需要一个相当混乱的正则表达式，并请求 GPT-4 为我们编写它。GPT-4 不仅生成了正确的正则表达式，而且模型还能解释自己的答案，以及正则表达式中的每个符号代表什么。ChatGPT 生成的一个更简单的正则表达式如图 6.5 所示；其他人也报告说使用 ChatGPT 以类似方式编写 Excel 宏 [[14]](https://www.adventuresincre.com/openai-gpt-3-excel-macro-real-estate-model/)。
+一些并非专门为配对编程设计的 LLM 也可以作为编码资源。例如，正则表达式（regexes）在编程中是著名的既复杂又强大的范式。正则表达式定义了一些文本字符串的准则，然后提供快速高效搜索匹配这些准则的文本片段的功能。不同的字符可以表示要查找的字符，预期的字符数量，以及要忽略的字符串部分。正则表达式通常用于解析诸如电子邮件地址或电话号码之类的信息。为了说明，提取电子邮件地址的正则表达式看起来像这样：`/^([a-z0-9_\.-]+)@([\da-z\.-]+)\.([a-z\.]{2,63})$/`。最近，我们中的一人需要一个相当混乱的正则表达式，并请求 GPT-4 为我们编写它。GPT-4 不仅生成了正确的正则表达式，而且模型还能解释自己的答案，以及正则表达式中的每个符号代表什么。ChatGPT 生成的一个更简单的正则表达式如图 6.5 所示；其他人也报告说使用 ChatGPT 以类似方式编写 Excel 宏 [[14]](https://www.adventuresincre.com/openai-gpt-3-excel-macro-real-estate-model/)。
 
 ![图片](img/CH06_F05_Dhamani.png)
 
@@ -106,7 +106,7 @@ LLMs 最适合生成性任务，因为它们的输出具有概率性质——它
 
 尽管我们已经详细讨论了生成模型的潜在用途，但揭示应用的最佳方法还是通过实验。除了使用大型语言模型（LLM）来加速或替代部分专业工作流程之外，人们还找到了各种方法来利用这些模型进行爱好、项目、自我提升、教育和娱乐。我们预计，随着用户对这些工具的熟悉和经验的分享，随着生成模型的设计和能力持续发展，新的用例将会出现。在本节中，我们将探讨人们如何在日常生活中使用生成模型。
 
-共享提示
+### 共享提示
 
 在线资源丰富，用于分享对 LLM 有趣或特别有成效的提示。将提示结构化和细化以从 LLM 中获得特定类型响应的实践被称为*提示工程*。PromptHero 自称是“#1 提示工程网站”，展示了数百万由 AI 生成的图像和文本及其产生的提示（见[`prompthero.com/`](https://prompthero.com/））。PromptHero 和其他类似网站解决了实际需求：提供给 LLM 和图像生成模型的提示会相当大地影响输出，有时甚至以不可预测的方式。用户社区分享他们最好的提示，使得这些用户能够更快地迭代并获得更好的结果，尤其是在提示仍然强大但理解不足的情况下。
 
@@ -136,7 +136,9 @@ LLMs（大型语言模型）最有可能受到影响的一个领域是教育，�
 
 对于我们中那些更注重生产力的人来说，聊天机器人可能提供了一种实现目标的结构化计划，例如坚持锻炼计划或完成每周的家务。纽约时报的主要消费技术作家 Bryan X. Chen 解释说，为了获得最佳效果，你应该参考一本与任务相关的特定自助书籍的建议，以引导聊天机器人走向正确的方向 [[19]](https://www.nytimes.com/2023/06/23/technology/ai-chatbot-life-coach.xhtml)。Chen 以目标为跑马拉松为例。他建议的提示如下：
 
+```
 我想让你扮演一个生活教练的角色。我会提供一些关于我当前情况和目标的具体细节，而你的任务是提出可以帮助我做出更好决策并实现这些目标的策略。这可能包括在各个主题上提供建议，例如制定实现成功的计划或处理困难情绪。我的第一个请求是：今年秋天我的目标是跑一场马拉松。请根据《Slow AF Run Club》一书的原理制定一个三个月的计划。
+```
 
 这个提示是描述性的，依赖于可信的来源，并提供了陈所寻求的响应类型的示例。一个更简单的提示，例如“为我写一个马拉松训练计划”，在 ChatGPT 上也会产生结果，但它们可能不会与陈所寻找的结果完全一致。由于该计划是由 LLM 生成而不是在网站上发布的，用户也可以要求进行尽可能多的调整，直到他们对结果满意。从理论上讲，这可以用来实现任何类型的目标。
 
@@ -152,9 +154,11 @@ LLMs（大型语言模型）最有可能受到影响的一个领域是教育，�
 
 对于一些教育工作者来说，作弊是一个实际的担忧——学生们正在使用 ChatGPT 来撰写论文和研究报告，以及解决数学和科学词汇问题，剽窃 AI 生成的作品。教师和学校管理者对聊天机器人的能力感到措手不及，他们不仅忙于捕捉使用该工具作弊的学生，还要相应地修改课程计划。一些教师担心学生将永远不需要学习写作，或者无法从头开始撰写论文。更令他们担忧的是，ChatGPT 和类似工具生成的答案并不总是准确的（参见第五章，幻觉部分）。聊天机器人倾向于编造引文，包含不准确的事实，或者反复引用同一来源——但信息往往非常具体且听起来合理，这可能会让教师额外的一步是仔细验证和核实引文和事实。
 
-虽然一些教师禁止使用 ChatGPT，但其他人却拥抱了这个工具。一方面，这个聊天机器人几乎算不上一个 A+学生——它是一个出色的综合者，但不是一个批判性思考者 [[26]](http://www.brookings.edu/blog/education-plus-development/2023/01/09/ChatGPT-educational-friend-or-foe/). 另一方面，无论是否有 ChatGPT，完全停止作弊可能是一项不可能完成的任务。ChatGPT 只是帮助作弊的另一个工具，类似于从肯尼亚工人那里在线订购论文 [[27]](https://www.bbc.com/news/blogs-trending-58465189) 或者在 Chegg（一家提供家庭作业帮助和其他学生服务的教育科技公司）的在线考试中抄袭答案 [[28]](https://www.cnbc.com/2021/03/21/how-college-students-learned-new-ways-to-cheat-during-covid-.xhtml). 最后，禁止使用 ChatGPT 将*根本不起作用*。学生可以轻易地通过在课外、在他们的个人设备上，或者在学校网络上使用虚拟私人网络（VPN）来绕过系统作弊。当然，禁止使用像 ChatGPT 这样的工具的教师和学校管理者会预期一些学生仍然会使用它们，因此他们需要迅速找到方法来检测机器生成的内容，正如我们之前所讨论的（我们将在下一节进一步讨论），这是一个*非常*困难的问题。将文本分类为机器生成的工具，如 OpenAI 的分类器和 GPTZero（见[`gptzero.me/`](https://gptzero.me/)），是不可靠的，并且本质上有限。如果学生编辑了机器生成的文本，那么这些工具也可以轻易地被规避。另一方面，如果教师仅仅依赖这些工具来捕捉作弊，那么他们可能会错误地将文本识别为机器生成的，从而危及学生的学术生涯。
 
-在 ChatGPT 公开亮相不久之后，斯坦福大学的一项调查表明，学生已经开始使用这个工具来完成作业和考试 [[29]](https://stanforddaily.com/2023/01/22/scores-of-stanford-students-used-ChatGPT-on-final-exams-survey-suggests/)。随着一些大学在与 ChatGPT 的出现作斗争，许多大学已经将生成式 AI 工具的使用纳入其学术诚信政策中，并为教师提供了在课堂上融入 AI 工具的指导 [[30]](https://www.uvm.edu/wid/artificial-intelligence) [[31]](https://ctl.wustl.edu/resources/ChatGPT-and-ai-composition-tools/)。同样，许多在学术界倡导 ChatGPT 的教育工作者认为，如果使用得当，它可以成为一个有效的教学工具。Ditch That Textbook 教学博客列出了 ChatGPT（或类似工具）可以用来增强教师和学生学习体验的多种方式，其中一些在图 6.8 中展示（见[`ditchthattextbook.com/ai/`](https://ditchthattextbook.com/ai/))）。教师可以使用它来协助编写课程计划，甚至根据每个学生的需求和能力创建个性化的学习体验，或者甚至要求对学生的作业提供反馈。学生可以用它作为作业的起点，评估工具的初始响应，然后批判性地思考如何进一步修改以改进。它可以用来补充课堂上的面对面教学，为学生提供课堂外的资源，例如在课后辅导中解释概念或帮助英语学习者提高写作技能。ChatGPT 还可以创造性地融入课程计划中，例如用作磨练辩论技能的工具，或者要求学生评估聊天机器人的输出。类似地，教育技术（EdTech）初创公司也使用了 LLMs 进行教学和学习目的——一些例子包括人工智能辅导老师（见[`riiid.com/`](https://riiid.com/))）、个性化学习平台（见[www.alefeducation.com/](https://www.alefeducation.com/))和用于学习科学的对话式虚拟助手（见[www.cognii.com/](https://www.cognii.com/))。
+
+虽然一些教师禁止使用 ChatGPT，但其他人却拥抱了这个工具。一方面，这个聊天机器人几乎算不上一个 A+ 学生——它是一个出色的综合者，但不是一个批判性思考者 [[26]](http://www.brookings.edu/blog/education-plus-development/2023/01/09/ChatGPT-educational-friend-or-foe/)。另一方面，无论是否有 ChatGPT，完全停止作弊可能是一项不可能完成的任务。ChatGPT 只是帮助作弊的另一个工具，类似于从肯尼亚工人那里在线订购论文 [[27]](https://www.bbc.com/news/blogs-trending-58465189) 或者在 Chegg（一家提供家庭作业帮助和其他学生服务的教育科技公司）的在线考试中抄袭答案 [[28]](https://www.cnbc.com/2021/03/21/how-college-students-learned-new-ways-to-cheat-during-covid-.xhtml)。最后，禁止使用 ChatGPT 将*根本不起作用*。学生可以轻易地通过在课外、在他们的个人设备上，或者在学校网络上使用虚拟私人网络（VPN）来绕过系统作弊。当然，禁止使用像 ChatGPT 这样的工具的教师和学校管理者会预期一些学生仍然会使用它们，因此他们需要迅速找到方法来检测机器生成的内容，正如我们之前所讨论的（我们将在下一节进一步讨论），这是一个*非常*困难的问题。将文本分类为机器生成的工具，如 OpenAI 的分类器和 GPTZero（见[`gptzero.me/`](https://gptzero.me/)），是不可靠的，并且本质上有限。如果学生编辑了机器生成的文本，那么这些工具也可以轻易地被规避。另一方面，如果教师仅仅依赖这些工具来捕捉作弊，那么他们可能会错误地将文本识别为机器生成的，从而危及学生的学术生涯。
+
+在 ChatGPT 公开亮相不久之后，斯坦福大学的一项调查表明，学生已经开始使用这个工具来完成作业和考试 [[29]](https://stanforddaily.com/2023/01/22/scores-of-stanford-students-used-ChatGPT-on-final-exams-survey-suggests/)。随着一些大学在与 ChatGPT 的出现作斗争，许多大学已经将生成式 AI 工具的使用纳入其学术诚信政策中，并为教师提供了在课堂上融入 AI 工具的指导 [[30]](https://www.uvm.edu/wid/artificial-intelligence) [[31]](https://ctl.wustl.edu/resources/ChatGPT-and-ai-composition-tools/)。同样，许多在学术界倡导 ChatGPT 的教育工作者认为，如果使用得当，它可以成为一个有效的教学工具。Ditch That Textbook 教学博客列出了 ChatGPT（或类似工具）可以用来增强教师和学生学习体验的多种方式，其中一些在图 6.8 中展示（见[`ditchthattextbook.com/ai/`](https://ditchthattextbook.com/ai/)）。教师可以使用它来协助编写课程计划，甚至根据每个学生的需求和能力创建个性化的学习体验，或者甚至要求对学生的作业提供反馈。学生可以用它作为作业的起点，评估工具的初始响应，然后批判性地思考如何进一步修改以改进。它可以用来补充课堂上的面对面教学，为学生提供课堂外的资源，例如在课后辅导中解释概念或帮助英语学习者提高写作技能。ChatGPT 还可以创造性地融入课程计划中，例如用作磨练辩论技能的工具，或者要求学生评估聊天机器人的输出。类似地，教育技术（EdTech）初创公司也使用了 LLMs 进行教学和学习目的——一些例子包括人工智能辅导老师（见[`riiid.com/`](https://riiid.com/)）、个性化学习平台（见[www.alefeducation.com/](https://www.alefeducation.com/)）和用于学习科学的对话式虚拟助手（见[www.cognii.com/](https://www.cognii.com/)）。
 
 ![图片](img/CH06_F08_Dhamani.png)
 
@@ -162,11 +166,11 @@ LLMs（大型语言模型）最有可能受到影响的一个领域是教育，�
 
 当然，像 ChatGPT 这样的工具对课堂环境确实具有颠覆性，但这个工具并不需要成为教育工作者害怕或感到威胁的东西。生成式 AI 工具可以用于更深入、更投入的学习，尤其是因为我们现在生活在这个世界中。颠覆性技术总是伴随着兴奋和恐惧——电话的批评者担心电话会干扰面对面的交流；电视的发明让一些人担心会创造出一个沙发土豆社会。OpenAI 的联合创始人山姆·奥特曼（Sam Altman）通过将生成文本与计算器进行比较来回应教育工作者对学校作弊的担忧：
 
-我们适应了计算器，并改变了数学课上我们测试的内容，我想是这样的。这无疑是一个更极端的版本，但它的好处也同样极端。[32](https://gizmodo.com/ChatGPT-openai-ceo-sam-altman-schools-cheating-1850011314)
+> 我们适应了计算器，并改变了数学课上我们测试的内容，我想是这样的。这无疑是一个更极端的版本，但它的好处也同样极端。[32](https://gizmodo.com/ChatGPT-openai-ceo-sam-altman-schools-cheating-1850011314)
 
 虽然奥特曼淡化了对工具滥用和局限性的合法担忧，但教育工作者确实需要找到一种方法来适应这些工具，而不是直接禁止它们。
 
-适应新技术通常并不容易，尽管像 ChatGPT 这样的工具可能会改变我们的教学和学习方式，但这并不意味着正规教育的终结。在*VentureBeat*的一篇文章中，全球公认的 AI 领导者安德鲁·吴（Andrew Ng）和 Kira Learning 的首席执行官安德烈亚·帕斯纳尼（Andrea Passerini）敦促学校教授 AI 和编程，以帮助学生为 AI 驱动的世界做好准备[33](https://venturebeat.com/ai/schools-should-teach-ai-to-every-child-according-to-andrew-ng-and-andrea-pasinetti/)。同样，哈佛大学发布了 AI 教学法项目，以帮助教育工作者让学生参与关于 AI 系统能力和局限性的讨论（见[`aipedagogy.org/`](https://aipedagogy.org/)）。无论我们喜欢它们还是害怕它们，我们都生活在一个拥有生成式 AI 工具的世界中，学生需要了解如何与它们并肩工作。我们需要教他们它们的优点和缺点——它们如何用于生产力和创造力，但同时也可能被滥用及其风险。当适当使用时，ChatGPT 和类似工具可以增强学习体验，帮助学生在一个 AI 与人类共同工作的世界中导航。
+适应新技术通常并不容易，尽管像 ChatGPT 这样的工具可能会改变我们的教学和学习方式，但这并不意味着正规教育的终结。在*VentureBeat*的一篇文章中，全球公认的 AI 领导者安德鲁·吴（Andrew Ng）和 Kira Learning 的首席执行官安德烈亚·帕斯纳尼（Andrea Passerini）敦促学校教授 AI 和编程，以帮助学生为 AI 驱动的世界做好准备[33](https://venturebeat.com/ai/schools-should-teach-ai-to-every-child-according-to-andrew-ng-and-andrea-pasinetti/)。同样，哈佛大学发布了 AI 教学法项目，以帮助教育工作者让学生参与关于 AI 系统能力和局限性的讨论（见[`aipedagogy.org/`](https://aipedagogy.org/)）。无论我们喜欢它们还是害怕它们，我们都生活在一个拥有生成式 AI 工具的世界中，学生需要了解如何与它们并肩工作。我们需要教它们它们的优点和缺点——它们如何用于生产力和创造力，但同时也可能被滥用及其风险。当适当使用时，ChatGPT 和类似工具可以增强学习体验，帮助学生在一个 AI 与人类共同工作的世界中导航。
 
 ## 检测 AI 生成的文本
 
@@ -198,21 +202,23 @@ ChatGPT 和类似工具无疑会变得越来越难以检测，因为数十亿美
 
 首先，让我们讨论乐观的观点——生成式人工智能工具预计将使许多工人更加高效，提高生产力，同时提振整体经济。作为经济增长的关键部分，过去二十年中的生产力已经放缓。布鲁金斯学会的报告《心智之机：人工智能驱动生产力繁荣的案例》认为，生成式语言模型将为生产力提供急需的提振 [[39](https://www.brookings.edu/research/machines-of-mind-the-case-for-an-ai-powered-productivity-boom/)]。虽然我们已经讨论了 LLMs 的几个局限性，包括偏见和幻觉，这些都需要在工作场所进行人工监督，但 AI 驱动生产力增长的倡导者声称，“它们的经济价值不在于它们是否完美，而在于它们是否能够被有效地使用” [[39](https://www.brookings.edu/research/machines-of-mind-the-case-for-an-ai-powered-productivity-boom/)]。在一个情景中，布鲁金斯的分析展示了十年生产力增长的提升，使经济规模扩大 5%，此后每年都在增长。高盛的另一份报告建议，生成式人工智能可以将全球国内生产总值（GDP）提高 7%，或 7000 亿美元 [[40](https://www.ft.com/content/50b15701-855a-4788-9a4b-5a0a9ee10561)]。这对于一项技术对决定我们国家长期繁荣和财富的指标产生的影响来说是一个重大影响。
 
-在 2023 年 OpenAI、OpenResearch 和宾夕法尼亚大学的一份报告中，作者指出，大型语言模型（LLMs）可能会以某种形式影响美国 80%的劳动力 [[41](https://arxiv.org/pdf/2303.10130.pdf)]。其他报告称，GitHub CoPilot 可以帮助软件工程师将编码速度提高一倍 [[42](https://github.blog/2022-09-07-research-quantifying-github-copilots-impact-on-developer-productivity-and-happiness/)]，写作任务也可以完成得快一倍 [[43](https://economics.mit.edu/sites/default/files/inline-files/Noy_Zhang_1.pdf)]，经济学家可以提高 10%–20%的生产率 [[44](https://doi.org/10.3386/w30957)]，客户服务人员可以提高 14%的生产率 [[45](https://www.bloomberg.com/news/articles/2023-04-24/generative-ai-boosts-worker-productivity-14-new-study-finds)]。更有意义的是，生成式模型可以帮助大量技能较低的工人提升技能，使他们能够与拥有更多证书或经验的人竞争。在一项关于在专业写作任务中使用 ChatGPT 的生产力研究中，例如市场营销和人力资源，作者展示了工人之间不平等性的减少——也就是说，技能较低的工人会得到量化的提升，而经验较多的工人则会稍微快一点 [[46](https://economics.mit.edu/sites/default/files/inline-files/Noy_Zhang_1.pdf)]。
+在 2023 年 OpenAI、OpenResearch 和宾夕法尼亚大学的一份报告中，作者指出，大型语言模型（LLMs）可能会以某种形式影响美国 80% 的劳动力 [[41](https://arxiv.org/pdf/2303.10130.pdf)]。其他报告称，GitHub CoPilot 可以帮助软件工程师将编码速度提高一倍 [[42](https://github.blog/2022-09-07-research-quantifying-github-copilots-impact-on-developer-productivity-and-happiness/)]，写作任务也可以完成得快一倍 [[43](https://economics.mit.edu/sites/default/files/inline-files/Noy_Zhang_1.pdf)]，经济学家可以提高 10%–20% 的生产率 [[44](https://doi.org/10.3386/w30957)]，客户服务人员可以提高 14% 的生产率 [[45](https://www.bloomberg.com/news/articles/2023-04-24/generative-ai-boosts-worker-productivity-14-new-study-finds)]。更有意义的是，生成式模型可以帮助大量技能较低的工人提升技能，使他们能够与拥有更多证书或经验的人竞争。在一项关于在专业写作任务中使用 ChatGPT 的生产力研究中，例如市场营销和人力资源，作者展示了工人之间不平等性的减少——也就是说，技能较低的工人会得到量化的提升，而经验较多的工人则会稍微快一点 [[46](https://economics.mit.edu/sites/default/files/inline-files/Noy_Zhang_1.pdf)]。
 
-另一方面，生成式 AI 工具可能对整体经济增长的贡献甚微。更为悲观的是，它们可能被用来用机器取代人类，降低工资，并加剧财富与收入之间的不平等。在《图灵陷阱：类人人工智能的承诺与危险》一书中，埃里克·布林约尔森认为，AI 开发者过于专注于模仿人类智能，而不是创造技术来赋予人们新的能力[[47]](https://www.amacad.org/publication/turing-trap-promise-peril-human-artificial-intelligence)。他相信，这种模仿人类类似能力的追求，即用机器取代人类，是财富不平等“单一最大的解释”[[48]](https://www.technologyreview.com/2023/03/25/1070275/ChatGPT-revolutionize-economy-decide-what-looks-like/)。在这方面，设计和开发这些 AI 工具的公司可能潜在地影响其对经济的影响。正如第一章所讨论的，构建和运行大型语言模型（LLMs）所需的计算成本为想要在这个领域竞争的任何人设置了一道门槛，使得权力仍然掌握在那些已经控制了大部分科技世界的同一些大公司手中。然而，开源社区在开发 LLMs、BLOOM、Falcon、Stable LM、MPT-7B、Dolly、RedPajama 和 OpenLLaMa 等方面已经取得了进展。还值得注意的是，Meta 公司开源的 LLaMa 和 Llama 2 大大加速了这些模型的发展。这些努力有助于分散集中在少数大科技公司手中的权力，并有助于在未来打破他们对这种技术的控制。
 
-现在，让我们回到本节开头的问题：这对我们所有人意味着什么？对于一些人来说，生成式 AI 工具的出现引起了恐慌和担忧，他们担心自己很快就会失业。高盛预测，将有 3 亿个全职工作因 AI 而消失[[49]](https://www.forbes.com/sites/jackkelly/2023/03/31/goldman-sachs-predicts-300-million-jobs-will-be-lost-or-degraded-by-artificial-intelligence/)。但重要的是要记住更大的图景——这不是技术第一次颠覆我们的生活。许多专家认为，这种颠覆可能会创造出比它取代的更多新的工作机会。2021 年的一份报告指出，60%的工作在 1940 年并不存在[[50]](https://www.bbc.com/worklife/article/20230515-workplace-ai-how-artificial-intelligence-will-transform-the-workday)。换句话说，过去 80 年来的技术创造了新的产业和就业机会，我们可能期待看到生成式 AI 带来类似的变革。经济学家也对生产力激增和净收益以及工作可能受到的影响感到不确定。普林斯顿大学荣誉退休教授保罗·克鲁格曼说：“关于技术对经济影响的预测历来是不可靠的，”他坚称，大型语言模型（LLMs）不应影响未来几年甚至十年内的经济预测。他进一步说，“历史表明，人工智能带来的重大经济影响将比许多人目前似乎预期的要长[[51]](https://fortune.com/2023/04/03/nobel-laureate-paul-krugman-ai-ChatGPT-economy/)。无论何时发生，我们都应该期待生成式 AI 带来的是一种演变，而不是革命。
+
+另一方面，生成式 AI 工具可能对整体经济增长的贡献甚微。更为悲观的是，它们可能被用来用机器取代人类，降低工资，并加剧财富与收入之间的不平等。在《图灵陷阱：类人人工智能的承诺与危险》一书中，埃里克·布林约尔森认为，AI 开发者过于专注于模仿人类智能，而不是创造技术来赋予人们新的能力[[47]](https://www.amacad.org/publication/turing-trap-promise-peril-human-artificial-intelligence)。他相信，这种模仿人类类似能力的追求，即用机器取代人类，是财富不平等“单一最大的解释”[[48]](https://www.technologyreview.com/2023/03/25/1070275/ChatGPT-revolutionize-economy-decide-what-looks-like/)。在这方面，设计和开发这些 AI 工具的公司可能潜在地影响其对经济的影响。正如第一章所讨论的，构建和运行大型语言模型（`LLMs`）所需的计算成本为想要在这个领域竞争的任何人设置了一道门槛，使得权力仍然掌握在那些已经控制了大部分科技世界的同一些大公司手中。然而，开源社区在开发 `LLMs`、`BLOOM`、`Falcon`、`Stable LM`、`MPT-7B`、`Dolly`、`RedPajama` 和 `OpenLLaMa` 等方面已经取得了进展。还值得注意的是，Meta 公司开源的 `LLaMa` 和 `Llama 2` 大大加速了这些模型的发展。这些努力有助于分散集中在少数大科技公司手中的权力，并有助于在未来打破他们对这种技术的控制。
+
+现在，让我们回到本节开头的问题：这对我们所有人意味着什么？对于一些人来说，生成式 AI 工具的出现引起了恐慌和担忧，他们担心自己很快就会失业。高盛预测，将有 3 亿个全职工作因 AI 而消失[[49]](https://www.forbes.com/sites/jackkelly/2023/03/31/goldman-sachs-predicts-300-million-jobs-will-be-lost-or-degraded-by-artificial-intelligence/)。但重要的是要记住更大的图景——这不是技术第一次颠覆我们的生活。许多专家认为，这种颠覆可能会创造出比它取代的更多新的工作机会。2021 年的一份报告指出，60%的工作在 1940 年并不存在[[50]](https://www.bbc.com/worklife/article/20230515-workplace-ai-how-artificial-intelligence-will-transform-the-workday)。换句话说，过去 80 年来的技术创造了新的产业和就业机会，我们可能期待看到生成式 AI 带来类似的变革。经济学家也对生产力激增和净收益以及工作可能受到的影响感到不确定。普林斯顿大学荣誉退休教授保罗·克鲁格曼说：“关于技术对经济影响的预测历来是不可靠的，”他坚称，大型语言模型（`LLMs`）不应影响未来几年甚至十年内的经济预测。他进一步说，“历史表明，人工智能带来的重大经济影响将比许多人目前似乎预期的要长[[51]](https://fortune.com/2023/04/03/nobel-laureate-paul-krugman-ai-ChatGPT-economy/)。无论何时发生，我们都应该期待生成式 AI 带来的是一种演变，而不是革命。
 
 ## 摘要
 
 +   人们已经开始使用生成式 AI 工具来协助个人和职业任务，特别是卸载更多行政和重复性工作。
 
-+   如 Copilot、CodeWhisperer 和 Ghostwriter 之类的编码助手可以在整个软件工程工作流程中提供帮助：从思考架构到编写代码，再到生成文档和图表。
++   如 `Copilot`、`CodeWhisperer` 和 `Ghostwriter` 之类的编码助手可以在整个软件工程工作流程中提供帮助：从思考架构到编写代码，再到生成文档和图表。
 
 +   提示、后续问题和反馈会影响模型结果，而最佳结果似乎是由详细、指导性且包含参考或例子的提示产生的。
 
-+   一些更强大的 LLM 应用建议需要模型成为代理，这意味着它们将能够与环境互动并相应地适应。
++   一些更强大的 `LLM` 应用建议需要模型成为代理，这意味着它们将能够与环境互动并相应地适应。
 
 +   教育工作者需要适应一个存在生成式 AI 工具的世界，通过在课堂上与他们一起工作，以及帮助学生了解和导航一个由 AI 驱动的世界。
 

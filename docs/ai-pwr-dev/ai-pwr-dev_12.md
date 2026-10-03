@@ -1,12 +1,11 @@
+
 # 第九章：在路上 GPT-ing
 
 本章涵盖
 
-+   在本地运行大型语言模型
-
-+   比较两个本地托管的大型语言模型的输出结果与 ChatGPT 的输出结果
-
-+   确定何时使用离线模型是合适的
++ 在本地运行大型语言模型
++ 比较两个本地托管的大型语言模型的输出结果与 ChatGPT 的输出结果
++ 确定何时使用离线模型是合适的
 
 想象一下，你正在前往世界另一端的人工智能会议的路上。你正在飞机上，飞行在离地面 35,000 英尺的高度，你想要为你的应用程序原型设计一个新功能。飞机的 Wi-Fi 既慢又贵。如果你不是为那个破旧的、几乎无法使用的 GPT 支付所有这些钱，而是在你的笔记本电脑上有一个离线的运行，那会怎么样？本章将回顾开发者运行本地大型语言模型（LLM）的选项。
 
@@ -28,11 +27,7 @@
 
 在本章中，我们将使用一个新颖的问题（至少在这本书中是这样）：计算整数列表的标准差。标准差衡量一组值的变异。在整个章节中，我们将使用相同的提示并将其呈现给每个模型：
 
-|
-
-![](img/logo-NC.png)
-
-| 作为一名数学家，您正在尝试使用纯 Python 计算列表的标准差。请向我展示您将使用的代码，并一步一步地引导我。 |
+| ![](img/logo-NC.png) | 作为一名数学家，您正在尝试使用纯 Python 计算列表的标准差。请向我展示您将使用的代码，并一步一步地引导我。 |
 | --- |
 
 ChatGPT 提供了以下关于涉及步骤和方法的解释。
@@ -96,11 +91,7 @@ docker exec -it ollama ollama run llama2
 
 在安装并运行 Ollama 之后，我们现在可以要求 Llama 2 自我介绍：
 
-|
-
-![](img/logo-NC.png)
-
-| 假设你是《生成式 AI》一书的作者。你正在编写一个关于在本地机器上运行 LLM 的章节。你将如何描述 Llama？ |
+| ![](img/logo-NC.png) | 假设你是《生成式 AI》一书的作者。你正在编写一个关于在本地机器上运行 LLM 的章节。你将如何描述 Llama？ |
 | --- |
 
 列表 9.4 Llama 2 对自己的一些背景介绍
@@ -121,11 +112,7 @@ Overall, Llama is an invaluable tool for anyone interested in working with LLMs 
 
 在介绍完毕之后，我们可以开始评估 Llama 2 的输出，将其与 ChatGPT 产生的输出进行比较。我们有一个已知是正确的基线答案，因此我们可以准确地评估 Llama 2 提供的代码的正确性。让我们用之前的提示让 Llama 2 计算一个数字列表的标准差：
 
-|
-
-![](img/logo-NC.png)
-
-| 作为一名数学家，你正在尝试使用纯 Python 计算一个列表的标准差。请向我展示你会使用的代码，并一步一步地引导我。 |
+| ![](img/logo-NC.png) | 作为一名数学家，你正在尝试使用纯 Python 计算一个列表的标准差。请向我展示你会使用的代码，并一步一步地引导我。 |
 | --- |
 
 列表 9.5 Llama 2 第一次尝试计算标准差
@@ -161,20 +148,20 @@ That's it! With these four lines of code, you can compute the standard deviation
 
 虽然这可能是我们在现实世界中会这样做的方式（恭喜，Llama 2），但它并没有提供给我们一个苹果对苹果的比较。让我们重新构建并细化问题：
 
-|
-
-![](img/logo-NC.png)
-
-| 不要使用任何库，内置的 Python 函数。 |
+| ![](img/logo-NC.png) | 不要使用任何库，内置的 Python 函数。 |
 | --- |
 
 好的，技术上这并不是一个问题，但希望它能完成这项任务。
 
 列表 9.6 Llama 2 第二次尝试计算标准差
 
-```py
-Of course! Here's how you can compute the standard deviation of a list of numbers using only built-in Python functions:
-'''python
+
+
+# 使用内置 Python 函数计算标准差
+
+以下是如何仅使用 Python 内置函数计算数字列表标准差的示例：
+
+```python
 def stdev(numbers):
     n = len(numbers)
     sum = 0
@@ -185,38 +172,28 @@ def stdev(numbers):
 numbers = [1, 2, 3, 4, 5]
 std_dev = stdev(numbers)
 print("Standard deviation of {0}: {1}".format(numbers, std_dev))
-'''
-Let me explain how the code works:
-
-1\.   'def stdev(numbers):': This line defines a function called 'stdev' that takes a list of numbers as input.
-
-2\.   'n = len(numbers)': This line calculates the length of the input list using the 'len()' function.
-
-3\.   'sum = 0': This line initializes a variable 'sum' to 0.
-
-4\.   'for i in range(n):': This line starts a 'for' loop that iterates over the elements of the input list.
-
-5\.   'sum += numbers[i]**2': This line calculates the sum of the squares of the input numbers using the 'numbers[i]' index. The '**2' operator raises each number to the power of 2, which is equivalent to squaring it.
-
-6\. 'return math.sqrt(sum / (n - 1))': This line calculates the standard deviation of the list using the formula: 'std_dev = sqrt(sum / (n - 1))', where 'sum' is the sum of the squares of the input numbers, and 'n' is the length of the input list. The 'math.sqrt()' function computes the square root of the result.
-
-7\. 'print("Standard deviation of {0}: {1}".format(numbers, std_dev))': This line prints out the result of the computation using a formatted string. The first argument to the 'format' method is the name of the list (in this case, 'numbers'), and the second argument is the value of the standard deviation.
-
-That's it! With these seven lines of code, you can compute the standard deviation of a list of numbers using only built-in Python functions.
 ```
+
+## 代码逐行解释
+
+1. `def stdev(numbers):`：此行定义了一个名为`stdev`的函数，该函数接受一个数字列表作为输入。
+2. `n = len(numbers)`：此行使用`len()`函数计算输入列表的长度。
+3. `sum = 0`：此行将变量`sum`初始化为 0。
+4. `for i in range(n):`：此行启动一个`for`循环，遍历输入列表中的元素。
+5. `sum += numbers[i]**2`：此行使用索引`numbers[i]`计算输入数字的平方和。运算符`**2`将每个数字提升到 2 次幂，相当于对其求平方。
+6. `return math.sqrt(sum / (n - 1))`：此行使用公式`std_dev = sqrt(sum / (n - 1))`计算列表的标准差，其中`sum`是输入数字的平方和，`n`是输入列表的长度。`math.sqrt()`函数计算结果平方根。
+7. `print("Standard deviation of {0}: {1}".format(numbers, std_dev))`：此行使用格式化字符串打印计算结果。`format`方法的第一个参数是列表的名称（本例中为`numbers`），第二个参数是标准差的值。
+
+## 关于公式的讨论
 
 仔细的读者（如果你一开始错过了这个，不要担心）可能会注意到 Llama 2 从列表中的项目数量中减去了一个。这很奇怪。它与 ChatGPT 的响应不匹配。让我们看看我们能否弄清楚原因。让我们询问它：
 
-|
+| ![](img/logo-NC.png) | 标准差的公式是什么？ |
+| --- | --- |
 
-![](img/logo-NC.png)
+**列表 9.7 Llama 2 对标准差公式的理解**
 
-| 标准差的公式是什么？ |
-| --- |
-
-列表 9.7 Llama 2 对标准差公式的理解
-
-```py
+```python
 The formula for the standard deviation (SD) of a set of data is:
 
 SD = √(Σ(xi - μ)² / (n - 1))
@@ -234,51 +211,45 @@ In other words, the standard deviation is a measure of how spread out the data i
 
 这与 Llama 2 生成的代码一致，所以这是好的。然而，它并没有解释为什么这个输出和 ChatGPT 的输出之间有明显的差异。让我们直接询问它为什么减去了一个：
 
-|
-
-![](img/logo-NC.png)
-
-| 当你从列表中的数字数量减去 1 时，这是否意味着增加一个自由度？如果是，为什么？ |
-| --- |
+| ![](img/logo-NC.png) | 当你从列表中的数字数量减去 1 时，这是否意味着增加一个自由度？如果是，为什么？ |
+| --- | --- |
 
 如果你以前学过统计学，你可能已经看到了接下来会发生什么。如果没有，Llama 2 将提供一个有用的解释，说明*自由度*的含义以及为什么它被使用。
 
-列表 9.8 Llama 2 对自由度的解释
+**列表 9.8 Llama 2 对自由度的解释**
 
-```py
+```python
 Yes, when you subtract 1 from the number of numbers in the list, it is because you are adding a degree of freedom. The degree of freedom (df) is a term that appears in the formula for the standard deviation, and it represents the number of independent observations in the data set.
 
-In our case, we have a list of 5 numbers, so the degree of freedom (df) is 4\. This means that we have 4 independent observations (the 5 numbers in the list), and we need to account for the fact that we are computing the standard deviation of this set of independent observations.
+In our case, we have a list of 5 numbers, so the degree of freedom (df) is 4. This means that we have 4 independent observations (the 5 numbers in the list), and we need to account for the fact that we are computing the standard deviation of this set of independent observations.
 
 The reason we subtract 1 from the number of numbers in the list is because we want to include the mean value itself as one of the observations in our data set. If we didn't subtract 1, then the mean value would be counted twice (once as a data point and once as the mean), which would give us an incorrect value for the standard deviation.
 
 So, by subtracting 1 from the number of numbers in the list, we are effectively removing the mean value from the data set and treating it as a single observation, along with the other 4 numbers. This allows us to compute the standard deviation correctly using the formula above.
 ```
 
+## 样本标准差与总体标准差
+
 让我们快速绕道回答这个问题：标准差的公式是什么？答案是，哪一个？实际上有两个：样本和总体。样本标准差是指从更大的总体中抽取的子集或*样本*中的数据点计算出的标准差。这个公式在图 9.1 中展示并解释了。这用于处理有限信息时，不能应用于整个数据集（总体）。这与*总体*标准差形成对比，总体标准差是指个别数据点与总体平均值偏离的程度。这个公式在图 9.2 中展示。
 
 ![](img/CH09_F01_Crocker2.png)
 
-图 9.1 样本标准差的公式
+**图 9.1 样本标准差的公式**
 
 这两个公式都涉及将每个数据点与平均值的差值平方，然后将这些平方值相加，最后取和的平方根。这提供了围绕平均值值分布的度量。
 
 ![](img/CH09_F02_Crocker2.png)
 
-图 9.2 总体标准差的公式
+**图 9.2 总体标准差的公式**
 
-因此，我们可以得出结论，Llama 2 生成了一个用于计算样本标准差的函数，而不是总体标准差（基准）。鉴于这属于特定于统计学的领域，我们可以问，
+因此，我们可以得出结论，Llama 2 生成了一个用于计算样本标准差的函数，而不是总体标准差（基准）。鉴于这属于特定于统计学的领域，我们可以问：
 
-|
+| ![](img/logo-NC.png) | 如果我要求你扮演统计学家角色而不是数学家角色，你会如何改变你的回答？ |
+| --- | --- |
 
-![](img/logo-NC.png)
+**列表 9.9 Llama 2 扮演统计学家角色的回答**
 
-| 如果我要求你扮演统计学家角色而不是数学家角色，你会如何改变你的回答？ |
-| --- |
-
-列表 9.9 Llama 2 扮演统计学家角色的回答
-
-```py
+```python
 Ah, an excellent question! As a statistician, I would use the following code to compute the standard deviation of a list of numbers using only built-in Python functions:
 import math
 
@@ -300,26 +271,22 @@ As a statistician, I would argue that the population standard deviation is the m
 Of course, as a mathematician, you may have a different perspective on this matter, and that's perfectly fine! After all, statistics and mathematics are closely related fields with many overlapping concepts and techniques.
 ```
 
-如果我们要求 Llama 2 扮演统计学家角色，它会改变其回答。不幸的是，它没有将结果除以数字列表的长度。一旦这个问题得到解决，我们将得到正确的总体标准差。让我们记住，LLMs 可以自信地产生错误的答案。始终将结果与您的知识或专家的知识进行双重检查。现在，键入 **`/bye`** 以结束您的会话。（在 Llama 2 中键入 `/bye` 表示您希望终止会话。）
+如果我们要求 Llama 2 扮演统计学家角色，它会改变其回答。不幸的是，它没有将结果除以数字列表的长度。一旦这个问题得到解决，我们将得到正确的总体标准差。让我们记住，LLMs 可以自信地产生错误的答案。始终将结果与您的知识或专家的知识进行双重检查。现在，键入`/bye`以结束您的会话。（在 Llama 2 中键入`/bye`表示您希望终止会话。）
 
 让我们关注另一个我们可以在本地运行的 LLM：GPT-4All。
 
-### 9.2.3 使用 GPT-4All 民主化答案
+## 使用 GPT-4All 民主化答案
 
 GPT-4All 是由 Anthropic 开发的一款开源软件，它允许用户训练和操作他们自己的大型语言模型（LLMs）。它基于 GPT-3，因此可能不如基于 GPT-4 的模型有效；然而，它可以在没有互联网连接的个人电脑上直接运行。尽管名称相似，但它与 GPT-4 完全无关。
 
 在我们深入使用它之前，让我们让 GPT4-All 自我介绍，使用以下提示：
 
-|
+| ![](img/logo-NC.png) | 假设你是《生成式人工智能》一书的作者。你正在编写关于在本地运行 LLM 的章节。你将如何描述 GPT-4All？ |
+| --- | --- |
 
-![](img/logo-NC.png)
+**列表 9.10 GPT-4All 对自身的描述**
 
-| 假设你是《生成式人工智能》一书的作者。你正在编写关于在本地运行 LLM 的章节。你将如何描述 GPT-4All？ |
-| --- |
-
-列表 9.10 GPT-4All 对自身的描述
-
-```py
+```python
 GPT-4All is an open-source implementation of the Generative Pretrained Transformer (GPT) model architecture that allows users to run a Large Language Model (LLM) locally on their machines. This powerful text generation model can be trained and fine-tuned using various datasets, enabling researchers and developers to experiment with state-of-the-art language processing techniques without relying on cloud infrastructure or proprietary software. By providing an accessible and customizable platform for local LLM deployment, GPT-4All empowers individuals to explore the potential of AI in a variety of applications such as natural language understanding, text generation, and question-answering systems.
 ```
 
@@ -327,7 +294,7 @@ GPT-4All is an open-source implementation of the Generative Pretrained Transform
 
 ![](img/CH09_F03_Crocker2.png)
 
-图 9.3 GPT-4All 要求您下载模型才能运行。
+**图 9.3 GPT-4All 要求您下载模型才能运行。**
 
 我下载并使用了 Mistral OpenOrca，这是一个高性能的并行和分布式编程框架，旨在简化在高性能计算集群或云环境中开发大规模、数据密集型应用程序的过程。它特别适合处理大数据处理任务、科学模拟、机器学习算法以及其他需要高效资源利用和跨多个节点可扩展性的计算密集型工作负载。Mistral OpenOrca 提供了一套工具和库来管理分布式环境中的作业调度、通信、容错和负载均衡，使其成为开发复杂项目、需要高性能和并行性的开发者的理想选择。GPT-4All 的介绍和本段的大部分内容都是由 Mistral OpenOrca 生成的。
 
@@ -335,22 +302,20 @@ GPT-4All is an open-source implementation of the Generative Pretrained Transform
 
 ![CH09_F04_Crocker2](img/CH09_F04_Crocker2.png)
 
-图 9.4 GPT-4All 中下载的模型
+**图 9.4 GPT-4All 中下载的模型**
 
 ![CH09_F05_Crocker2](img/CH09_F05_Crocker2.png)
 
-图 9.5 与所选 GPT-4All 模型进行的聊天列表
+**图 9.5 与所选 GPT-4All 模型进行的聊天列表**
 
 让我们通过以下提示来消除一些疑虑：
 
-|
+| ![logo-NC](img/logo-NC.png) | 生成输出是否需要活跃的互联网连接？ |
+| --- | --- |
 
-![logo-NC](img/logo-NC.png)
+**列表 9.11 GPT-4All 保证不需要互联网**
 
-| 生成输出是否需要活跃的互联网连接？ |
-| --- |
 
-列表 9.11 GPT-4All 保证不需要互联网
 
 ```py
 No, an active internet connection is not required to generate output using GPT-4All. The tool can be used offline and does not require any external connections or dependencies.
@@ -358,12 +323,9 @@ No, an active internet connection is not required to generate output using GPT-4
 
 现在我们可以继续比较 GPT4-All/Mistral OpenOrca（以下简称为 GPT-4All）与以下提示：
 
-|
-
 ![logo-NC](img/logo-NC.png)
 
-| 作为一名数学家，你正在尝试使用纯 Python 计算列表的标准差。请向我展示你会使用的代码。 |
-| --- |
+> 作为一名数学家，你正在尝试使用纯 Python 计算列表的标准差。请向我展示你会使用的代码。
 
 列表 9.12 GPT-4All 尝试计算标准差
 
@@ -409,6 +371,6 @@ def std_dev(numbers):
 
 +   除了离线可用性之外，还有各种情况，使用像 Llama 2 或 GPT-4All 这样的 LLM 的离线版本是有意义的：
 
-    +   *隐私和安全问题—*离线模型消除了在互联网上传输敏感数据的需要，降低了隐私风险和潜在的网络安全威胁。
+    +   *隐私和安全问题*—离线模型消除了在互联网上传输敏感数据的需要，降低了隐私风险和潜在的网络安全威胁。
 
-    +   *成本节约—*在自己的硬件上运行本地模型可能会降低使用 ChatGPT 或 OpenAI API 等在线服务相关的云计算成本。
+    +   *成本节约*—在自己的硬件上运行本地模型可能会降低使用 ChatGPT 或 OpenAI API 等在线服务相关的云计算成本。

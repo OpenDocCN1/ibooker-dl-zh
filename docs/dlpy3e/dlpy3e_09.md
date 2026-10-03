@@ -1,3 +1,5 @@
+
+
 # 第九章：ConvNet 架构模式
 
 > 原文：[`deeplearningwithpython.io/chapters/chapter09_convnet-architecture-patterns`](https://deeplearningwithpython.io/chapters/chapter09_convnet-architecture-patterns)
@@ -151,6 +153,9 @@ model = keras.Model(inputs=inputs, outputs=outputs)
 
 让我们来看看模型摘要：
 
+
+
+
 ```py
 >>> model.summary()
 Model: "functional"
@@ -217,7 +222,7 @@ normalized_data = (data - np.mean(data, axis=...)) / np.std(data, axis=...)
 
 你在这本书中看到的先前示例在将数据输入模型之前对数据进行归一化。但是，数据归一化可能是网络执行的每个转换之后的一个问题：即使进入`Dense`或`Conv2D`网络的数据具有 0 均值和单位方差，也没有理由事先期望输出数据也会是这样。对中间激活进行归一化能有所帮助吗？
 
-批量归一化正是如此。这是一种层（在 Keras 中为`BatchNormalization`），由 Ioffe 和 Szegedy 于 2015 年引入；^([[2]](#footnote-2))它可以在训练过程中，即使均值和方差随时间变化，也能自适应地归一化数据。在训练期间，它使用当前数据批次的均值和方差来归一化样本，在推理期间（当可能没有足够大的代表性数据批次时），它使用训练期间看到的批处理均值和方差的指数移动平均值。 
+批量归一化正是如此。这是一种层（在 Keras 中为`BatchNormalization`），由 Ioffe 和 Szegedy 于 2015 年引入；^([[2]](#footnote-2))它可以在训练过程中，即使均值和方差随时间变化，也能自适应地归一化数据。在训练期间，它使用当前数据批次的均值和方差来归一化样本，在推理期间（当可能没有足够大的代表性数据批次时），它使用训练期间看到的批处理均值和方差的指数移动平均值。
 
 虽然 Ioffe 和 Szegedy 的原始论文建议批归一化是通过“减少内部协变量偏移”来操作的，但没有人真正知道为什么批归一化有帮助。有各种假设但没有确定性。你会发现这在深度学习中很常见——深度学习不是一门精确的科学，而是一套不断变化、基于经验得出的工程最佳实践，由不可靠的叙述编织在一起。你有时会感觉你手中的书告诉你 *如何* 做某事，但并没有很好地解释 *为什么* 它有效：这是因为我们知道如何做，但不知道为什么。每当有可靠的解释时，我们都会确保提及它。批归一化不是那种情况。
 
@@ -290,6 +295,8 @@ x = layers.Activation("relu")(x)
 
 让我们将所有这些想法整合成一个单一模型。其架构类似于 Xception 的一个更小版本。我们将将其应用于上一章中的狗与猫的任务。对于数据加载和模型训练，只需重复使用与第八章第 8.2 节中完全相同的设置——但将模型定义替换为以下 ConvNet：
 
+
+
 ```py
 import keras
 
@@ -332,7 +339,7 @@ x = layers.GlobalAveragePooling2D()(x)
 # regularization.
 x = layers.Dropout(0.5)(x)
 outputs = layers.Dense(1, activation="sigmoid")(x)
-model = keras.Model(inputs=inputs, outputs=outputs) 
+model = keras.Model(inputs=inputs, outputs=outputs)
 ```
 
 该 ConvNet 的可训练参数数量为 721,857，显著低于上一章模型中 1,569,089 个可训练参数，但取得了更好的结果。图 9.5 显示了训练和验证曲线。
@@ -373,6 +380,6 @@ model = keras.Model(inputs=inputs, outputs=outputs)
 
 1.  Kaiming He 等人，“用于图像识别的深度残差学习”，计算机视觉与模式识别会议（2015 年），[`arxiv.org/abs/1512.03385`](https://arxiv.org/abs/1512.03385)。[[↩]](#footnote-link-1)
 
-1.  Sergey Ioffe 和 Christian Szegedy，“通过减少内部协变量偏移加速深度网络训练：批归一化”，*第 32 届国际机器学习会议论文集*（2015 年），[`arxiv.org/abs/1502.03167`](https://arxiv.org/abs/1502.03167)。[[↩]](#footnote-link-2)
+2.  Sergey Ioffe 和 Christian Szegedy，“通过减少内部协变量偏移加速深度网络训练：批归一化”，*第 32 届国际机器学习会议论文集*（2015 年），[`arxiv.org/abs/1502.03167`](https://arxiv.org/abs/1502.03167)。[[↩]](#footnote-link-2)
 
-1.  François Chollet，“Xception：使用深度可分离卷积的深度学习”，计算机视觉与模式识别会议（2017 年），[`arxiv.org/abs/1610.02357`](https://arxiv.org/abs/1610.02357)。[[↩]](#footnote-link-3)
+3.  François Chollet，“Xception：使用深度可分离卷积的深度学习”，计算机视觉与模式识别会议（2017 年），[`arxiv.org/abs/1610.02357`](https://arxiv.org/abs/1610.02357)。[[↩]](#footnote-link-3)

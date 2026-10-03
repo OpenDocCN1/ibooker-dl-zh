@@ -1,3 +1,4 @@
+
 # 第一章：使用 LangChain 的 LLM 基础
 
 前言让你领略了 LLM 提示的强大功能，我们亲眼见证了不同的提示技术如何影响从 LLM 中获得的结果，尤其是在谨慎结合时。实际上，构建好的 LLM 应用的挑战在于如何有效地构建发送给模型的提示，并处理模型的预测以返回准确的结果（参见图 1-1）。
@@ -8,7 +9,7 @@
 
 如果你能够解决这个问题，那么你已经在构建 LLM 应用的道路上走得很远了，无论是简单还是复杂的 LLM 应用。在本章中，你将了解 LangChain 的构建块如何映射到 LLM 概念，以及当它们有效结合时，如何帮助你构建 LLM 应用。但首先，侧边栏“为什么使用 LangChain？”是一个关于为什么我们认为使用 LangChain 构建 LLM 应用有用的简要介绍。
 
-# 使用 LangChain 进行设置
+## 使用 LangChain 进行设置
 
 为了跟随本章的其余部分以及后续章节，我们建议首先在你的计算机上设置 LangChain。
 
@@ -22,61 +23,55 @@
 
 首先，为使用 Python 的读者提供一些设置说明：
 
-1.  确保你已经安装了 Python。请参阅[针对你操作系统的说明](https://oreil.ly/20K9l)。
+1. 确保你已经安装了 Python。请参阅[针对你操作系统的说明](https://oreil.ly/20K9l)。
+2. 如果你想在笔记本环境中运行示例，请安装 Jupyter。你可以在终端中运行`pip install notebook`来完成此操作。
+3. 通过在终端运行以下命令安装 LangChain 库：
 
-1.  如果你想在笔记本环境中运行示例，请安装 Jupyter。你可以在终端中运行`pip install notebook`来完成此操作。
+```py
+pip install langchain langchain-openai langchain-community 
+pip install langchain-text-splitters langchain-postgres
+```
 
-1.  通过在终端运行以下命令安装 LangChain 库：
+4. 将本节开头生成的 OpenAI API 密钥在终端环境中可用。你可以通过运行以下命令来完成此操作：
 
-    ```py
-    pip install langchain langchain-openai langchain-community 
-    pip install langchain-text-splitters langchain-postgres
-    ```
+```py
+export OPENAI_API_KEY=your-key
+```
 
-1.  将本节开头生成的 OpenAI API 密钥在终端环境中可用。你可以通过运行以下命令来完成此操作：
+5. 不要忘记将`your-key`替换为你之前生成的 API 密钥。
+6. 通过运行以下命令打开 Jupyter 笔记本：
 
-    ```py
-    export OPENAI_API_KEY=your-key
-    ```
-
-1.  不要忘记将`your-key`替换为你之前生成的 API 密钥。
-
-1.  通过运行以下命令打开 Jupyter 笔记本：
-
-    ```py
-    jupyter notebook
-    ```
+```py
+jupyter notebook
+```
 
 现在，你准备好跟随 Python 代码示例了。
 
 这里是为使用 JavaScript 的读者提供的说明：
 
-1.  将本节开头生成的 OpenAI API 密钥在终端环境中可用。你可以通过运行以下命令来完成此操作：
+1. 将本节开头生成的 OpenAI API 密钥在终端环境中可用。你可以通过运行以下命令来完成此操作：
 
-    ```py
-    export OPENAI_API_KEY=your-key
-    ```
+```py
+export OPENAI_API_KEY=your-key
+```
 
-1.  不要忘记将`your-key`替换为您之前生成的 API 密钥。
+2. 不要忘记将`your-key`替换为您之前生成的 API 密钥。
+3. 如果您想将示例作为 Node.js 脚本运行，请按照[说明](https://oreil.ly/5gjiO)安装 Node。
+4. 通过在您的终端中运行以下命令安装 LangChain 库：
 
-1.  如果您想将示例作为 Node.js 脚本运行，请按照[说明](https://oreil.ly/5gjiO)安装 Node。
+```py
+npm install langchain @langchain/openai @langchain/community
+npm install @langchain/core pg
+```
 
-1.  通过在您的终端中运行以下命令安装 LangChain 库：
+5. 将每个示例保存为*.js*文件，并使用`node ./file.js`运行它。
 
-    ```py
-    npm install langchain @langchain/openai @langchain/community
-    npm install @langchain/core pg
-    ```
-
-1.  将每个示例保存为*.js*文件，并使用`node ./file.js`运行它。
-
-# 在 LangChain 中使用 LLM
+## 在 LangChain 中使用 LLM
 
 回顾一下，LLM 是大多数生成式 AI 应用的驱动引擎。LangChain 提供了两个简单的接口来与任何 LLM API 提供商交互：
 
-+   聊天模型
-
-+   LLMs
++ 聊天模型
++ LLMs
 
 LLM 接口简单地接受一个字符串提示作为输入，将输入发送给模型提供商，然后返回模型预测作为输出。
 
@@ -232,7 +227,7 @@ AIMessage('Paris!!!')
 
 如你所见，模型遵循了`SystemMessage`中提供的指令，即使它没有出现在用户的问题中。这使你可以根据用户的输入预先配置你的 AI 应用程序以相对可预测的方式响应。
 
-# 使 LLM 提示可重用
+## 使 LLM 提示可重用
 
 前一节展示了`prompt`指令如何显著影响模型的输出。提示有助于模型理解上下文并生成针对查询的相关答案。
 
@@ -285,7 +280,7 @@ template.invoke({
 })
 ```
 
-*JavaS**cript*
+*JavaScript*
 
 ```py
 import { PromptTemplate } from '@langchain/core/prompts'
@@ -314,17 +309,7 @@ await template.invoke({
 
 *输出：*
 
-```py
-StringPromptValue(text='Answer the question based on the context below. If the 
-    question cannot be answered using the information provided, answer with "I
-    don\'t know".\n\nContext: The most recent advancements in NLP are being 
-    driven by Large Language Models (LLMs). These models outperform their 
-    smaller counterparts and have become invaluable for developers who are 
-    creating applications with NLP capabilities. Developers can tap into these 
-    models through Hugging Face\'s `transformers` library, or by utilizing 
-    OpenAI and Cohere\'s offerings through the `openai` and `cohere` libraries, 
-    respectively.\n\nQuestion: Which model providers offer LLMs?\n\nAnswer: ')
-```
+
 
 这个例子将之前块中的静态提示变为动态。`template`包含最终提示的结构以及动态输入插入的定义。
 
@@ -512,39 +497,7 @@ model.invoke(prompt)
 
 *JavaScript*
 
-```py
-import { ChatPromptTemplate } from '@langchain/core/prompts'
-import { ChatOpenAI } from '@langchain/openai'
 
-const model = new ChatOpenAI()
-const template = ChatPromptTemplate.fromMessages([
-  ['system', `Answer the question based on the context below. If the question 
- cannot be answered using the information provided, answer with "I 
- don\'t know".`],
-  ['human', 'Context: {context}'],
-  ['human', 'Question: {question}'],
-])
-
-const prompt = await template.invoke({
-  context: `The most recent advancements in NLP are being driven by Large 
- Language Models (LLMs). These models outperform their smaller 
- counterparts and have become invaluable for developers who are creating 
- applications with NLP capabilities. Developers can tap into these models 
- through Hugging Face's \`transformers\` library, or by utilizing OpenAI 
- and Cohere's offerings through the \`openai\` and \`cohere\` libraries, 
- respectively.`,
-  question: "Which model providers offer LLMs?"
-})
-
-await model.invoke(prompt)
-```
-
-*输出：*
-
-```py
-AIMessage(content="Hugging Face's `transformers` library, OpenAI using the 
-    `openai` library, and Cohere using the `cohere` library offer LLMs.")
-```
 
 # 从 LLM 获取特定格式
 
@@ -742,7 +695,7 @@ for await (const token of await model.stream('Bye!')) {
 
 表 1-1\. 命令式和声明式组合的主要区别。
 
-|   | 命令式 | 声明式 |
+| | 命令式 | 声明式 |
 | --- | --- | --- |
 | 语法 | Python 或 JavaScript 的全部 | LCEL |
 | 并行执行 | Python：使用线程或协程 JavaScript：使用 `Promise.all` | 自动 |
@@ -865,7 +818,9 @@ AIMessageChunk(content=" `transformers`")
 ...
 ```
 
-因此，无论是使用 JS 还是 Python，你都可以通过返回你想要流式的值并使用 `stream` 来调用它来为你的自定义函数启用流式传输。
+
+
+因此，无论是使用 JS 还是 Python，你都可以通过返回你想要流式的值并使用`stream`来调用它来为你的自定义函数启用流式传输。
 
 对于异步执行，你需要这样重写你的函数：
 

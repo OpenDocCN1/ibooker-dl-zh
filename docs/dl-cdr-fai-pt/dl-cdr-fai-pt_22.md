@@ -1,3 +1,4 @@
+
 # 第十七章：基础神经网络
 
 > 原文：[`www.bookstack.cn/read/th-fastai-book/f6eef03cb69f6500.md`](https://www.bookstack.cn/read/th-fastai-book/f6eef03cb69f6500.md)
@@ -6,16 +7,15 @@
 >
 > 协议：[CC BY-NC-SA 4.0](http://creativecommons.org/licenses/by-nc-sa/4.0/)
 
-
 本章开始了一段旅程，我们将深入研究我们在前几章中使用的模型的内部。我们将涵盖许多我们以前见过的相同内容，但这一次我们将更加密切地关注实现细节，而不那么密切地关注事物为什么是这样的实际问题。
 
 我们将从头开始构建一切，仅使用对张量的基本索引。我们将从头开始编写一个神经网络，然后手动实现反向传播，以便我们在调用`loss.backward`时确切地知道 PyTorch 中发生了什么。我们还将看到如何使用自定义*autograd*函数扩展 PyTorch，允许我们指定自己的前向和后向计算。
 
-# 从头开始构建神经网络层
+## 从头开始构建神经网络层
 
 让我们首先刷新一下我们对基本神经网络中如何使用矩阵乘法的理解。由于我们正在从头开始构建一切，所以最初我们将仅使用纯 Python（除了对 PyTorch 张量的索引），然后在看到如何创建后，将纯 Python 替换为 PyTorch 功能。
 
-## 建模神经元
+### 建模神经元
 
 神经元接收一定数量的输入，并为每个输入设置内部权重。它对这些加权输入求和以产生输出，并添加内部偏置。在数学上，这可以写成
 
@@ -65,7 +65,7 @@ sum([a * b for a,b in zip(m[i,:],n[:,j])])
 
 所以我们需要的非常基本的操作是矩阵乘法，因为这是神经网络核心中隐藏的内容。
 
-## 从头开始的矩阵乘法
+### 从头开始的矩阵乘法
 
 让我们编写一个函数，计算两个张量的矩阵乘积，然后再允许我们使用 PyTorch 版本。我们只会在 PyTorch 张量中使用索引：
 
@@ -120,7 +120,7 @@ Wall time: 1.15 s
 
 这种差异是从哪里来的？PyTorch 没有在 Python 中编写矩阵乘法，而是使用 C++来加快速度。通常，当我们在张量上进行计算时，我们需要*向量化*它们，以便利用 PyTorch 的速度，通常使用两种技术：逐元素算术和广播。
 
-## 逐元素算术
+### 逐元素算术
 
 所有基本运算符（`+`、`-`、`*`、`/`、`>`、`<`、`==`）都可以逐元素应用。这意味着如果我们为两个具有相同形状的张量`a`和`b`写`a+b`，我们将得到一个由`a`和`b`元素之和组成的张量：
 
@@ -216,13 +216,13 @@ def matmul(a,b):
 
 我们已经快了约 700 倍，只是通过删除那个内部的`for`循环！这只是开始——通过广播，我们可以删除另一个循环并获得更重要的加速。
 
-## 广播
+### 广播
 
 正如我们在第四章中讨论的那样，*广播*是由[Numpy 库](https://oreil.ly/nlV7Q)引入的一个术语，用于描述在算术操作期间如何处理不同秩的张量。例如，显然无法将 3×3 矩阵与 4×5 矩阵相加，但如果我们想将一个标量（可以表示为 1×1 张量）与矩阵相加呢？或者大小为 3 的向量与 3×4 矩阵？在这两种情况下，我们可以找到一种方法来理解这个操作。
 
 广播为编码规则提供了特定的规则，用于在尝试进行逐元素操作时确定形状是否兼容，以及如何扩展较小形状的张量以匹配较大形状的张量。如果您想要能够编写快速执行的代码，掌握这些规则是至关重要的。在本节中，我们将扩展我们之前对广播的处理，以了解这些规则。
 
-### 使用标量进行广播
+#### 使用标量进行广播
 
 使用标量进行广播是最简单的广播类型。当我们有一个张量`a`和一个标量时，我们只需想象一个与`a`形状相同且填充有该标量的张量，并执行操作：
 
@@ -252,7 +252,7 @@ tensor([[-1.4652, -1.0989, -0.7326],
 
 如果矩阵的每行有不同的均值怎么办？在这种情况下，您需要将一个向量广播到一个矩阵。
 
-### 将向量广播到矩阵
+#### 将向量广播到矩阵
 
 我们可以将一个向量广播到一个矩阵中：
 
@@ -325,6 +325,8 @@ tensor([[11., 22., 33.],
 ```
 
 实际上，只有通过`n`，我们才能将大小为`n`的向量广播到大小为`m`的矩阵中：
+
+
 
 ```py
 c = tensor([10.,20,30])
@@ -718,15 +720,9 @@ for i in range(50): x = relu(x @ (torch.randn(100,100) * 0.1))
 x[0:5,0:5]
 ```
 
-```py
-tensor([[0.0000e+00, 1.9689e-08, 4.2820e-08, 0.0000e+00, 0.0000e+00],
-        [0.0000e+00, 1.6701e-08, 4.3501e-08, 0.0000e+00, 0.0000e+00],
-        [0.0000e+00, 1.0976e-08, 3.0411e-08, 0.0000e+00, 0.0000e+00],
-        [0.0000e+00, 1.8457e-08, 4.9469e-08, 0.0000e+00, 0.0000e+00],
-        [0.0000e+00, 1.9949e-08, 4.1643e-08, 0.0000e+00, 0.0000e+00]])
-```
 
-这意味着我们的初始化不正确。为什么？在 Glorot 和 Bengio 撰写他们的文章时，神经网络中最流行的激活函数是双曲正切（tanh，他们使用的那个），而该初始化并没有考虑到我们的 ReLU。幸运的是，有人已经为我们计算出了正确的 scale 供我们使用。在[“深入研究整流器：超越人类水平的性能”](https://oreil.ly/-_quA)（我们之前见过的文章，介绍了 ResNet），Kaiming He 等人表明我们应该使用以下 scale 代替：<math alttext="StartRoot 2 slash n Subscript i n Baseline EndRoot"><msqrt><mrow><mn>2</mn> <mo>/</mo> <msub><mi>n</mi> <mrow><mi>i</mi><mi>n</mi></mrow></msub></mrow></msqrt></math>，其中<math alttext="n Subscript i n"><msub><mi>n</mi> <mrow><mi>i</mi><mi>n</mi></mrow></msub></math>是我们模型的输入数量。让我们看看这给我们带来了什么：
+
+这意味着我们的初始化不正确。为什么？在 Glorot 和 Bengio 撰写他们的文章时，神经网络中最流行的激活函数是双曲正切（`tanh`，他们使用的那个），而该初始化并没有考虑到我们的 ReLU。幸运的是，有人已经为我们计算出了正确的 scale 供我们使用。在[“深入研究整流器：超越人类水平的性能”](https://oreil.ly/-_quA)（我们之前见过的文章，介绍了 ResNet），Kaiming He 等人表明我们应该使用以下 scale 代替：`sqrt(2 / n_in)`，其中`n_in`是我们模型的输入数量。让我们看看这给我们带来了什么：
 
 ```py
 x = torch.randn(200, 100)
@@ -811,7 +807,7 @@ loss = mse(out, y)
 
 现在我们需要计算损失相对于模型中所有权重的梯度，即`w1`、`b1`、`w2`和`b2`中的所有浮点数。为此，我们需要一点数学，具体来说是*链式法则*。这是指导我们如何计算复合函数导数的微积分规则：
 
-<math alttext="left-parenthesis g ring f right-parenthesis prime left-parenthesis x right-parenthesis equals g prime left-parenthesis f left-parenthesis x right-parenthesis right-parenthesis f prime left-parenthesis x right-parenthesis" display="block"><mrow><msup><mrow><mo>(</mo><mi>g</mi><mo>∘</mo><mi>f</mi><mo>)</mo></mrow> <mo>'</mo></msup> <mrow><mo>(</mo> <mi>x</mi> <mo>)</mo></mrow> <mo>=</mo> <msup><mi>g</mi> <mo>'</mo></msup> <mrow><mo>(</mo> <mi>f</mi> <mrow><mo>(</mo> <mi>x</mi> <mo>)</mo></mrow> <mo>)</mo></mrow> <msup><mi>f</mi> <mo>'</mo></msup> <mrow><mo>(</mo> <mi>x</mi> <mo>)</mo></mrow></mrow></math>
+`(g ∘ f)'(x) = g'(f(x)) f'(x)`
 
 # Jeremy 说
 
@@ -825,15 +821,15 @@ loss = mse(out,y) = mse(lin(l2, w2, b2), y)
 
 链式法则告诉我们我们有这个：
 
-<math alttext="StartFraction d l o s s Over d b 2 EndFraction equals StartFraction d l o s s Over d o u t EndFraction times StartFraction d o u t Over d b 2 EndFraction equals StartFraction d Over d o u t EndFraction m s e left-parenthesis o u t comma y right-parenthesis times StartFraction d Over d b 2 EndFraction l i n left-parenthesis l 2 comma w 2 comma b 2 right-parenthesis" display="block"><mrow><mfrac><mrow><mtext>d</mtext><mi>l</mi><mi>o</mi><mi>s</mi><mi>s</mi></mrow> <mrow><mtext>d</mtext><msub><mi>b</mi> <mn>2</mn></msub></mrow></mfrac> <mo>=</mo> <mfrac><mrow><mtext>d</mtext><mi>l</mi><mi>o</mi><mi>s</mi><mi>s</mi></mrow> <mrow><mtext>d</mtext><mi>o</mi><mi>u</mi><mi>t</mi></mrow></mfrac> <mo>×</mo> <mfrac><mrow><mtext>d</mtext><mi>o</mi><mi>u</mi><mi>t</mi></mrow> <mrow><mtext>d</mtext><msub><mi>b</mi> <mn>2</mn></msub></mrow></mfrac> <mo>=</mo> <mfrac><mtext>d</mtext> <mrow><mtext>d</mtext><mi>o</mi><mi>u</mi><mi>t</mi></mrow></mfrac> <mi>m</mi> <mi>s</mi> <mi>e</mi> <mrow><mo>(</mo> <mi>o</mi> <mi>u</mi> <mi>t</mi> <mo>,</mo> <mi>y</mi> <mo>)</mo></mrow> <mo>×</mo> <mfrac><mtext>d</mtext> <mrow><mtext>d</mtext><msub><mi>b</mi> <mn>2</mn></msub></mrow></mfrac> <mi>l</mi> <mi>i</mi> <mi>n</mi> <mrow><mo>(</mo> <msub><mi>l</mi> <mn>2</mn></msub> <mo>,</mo> <msub><mi>w</mi> <mn>2</mn></msub> <mo>,</mo> <msub><mi>b</mi> <mn>2</mn></msub> <mo>)</mo></mrow></mrow></math>
+`d loss / d b2 = d loss / d out × d out / d b2 = d/d out mse(out, y) × d/d b2 lin(l2, w2, b2)`
 
-要计算损失相对于 <math alttext="b 2"><msub><mi>b</mi> <mn>2</mn></msub></math> 的梯度，我们首先需要损失相对于我们的输出 <math alttext="o u t"><mrow><mi>o</mi> <mi>u</mi> <mi>t</mi></mrow></math> 的梯度。如果我们想要损失相对于 <math alttext="w 2"><msub><mi>w</mi> <mn>2</mn></msub></math> 的梯度也是一样的。然后，要得到损失相对于 <math alttext="b 1"><msub><mi>b</mi> <mn>1</mn></msub></math> 或 <math alttext="w 1"><msub><mi>w</mi> <mn>1</mn></msub></math> 的梯度，我们将需要损失相对于 <math alttext="l 1"><msub><mi>l</mi> <mn>1</mn></msub></math> 的梯度，这又需要损失相对于 <math alttext="l 2"><msub><mi>l</mi> <mn>2</mn></msub></math> 的梯度，这将需要损失相对于 <math alttext="o u t"><mrow><mi>o</mi> <mi>u</mi> <mi>t</mi></mrow></math> 的梯度。
+要计算损失相对于 `b2` 的梯度，我们首先需要损失相对于我们的输出 `out` 的梯度。如果我们想要损失相对于 `w2` 的梯度也是一样的。然后，要得到损失相对于 `b1` 或 `w1` 的梯度，我们将需要损失相对于 `l1` 的梯度，这又需要损失相对于 `l2` 的梯度，这将需要损失相对于 `out` 的梯度。
 
 因此，为了计算更新所需的所有梯度，我们需要从模型的输出开始，逐层向后工作，一层接一层地——这就是为什么这一步被称为*反向传播*。我们可以通过让我们实现的每个函数（`relu`、`mse`、`lin`）提供其反向步骤来自动化它：也就是说，如何从损失相对于输出的梯度推导出损失相对于输入的梯度。
 
 在这里，我们将这些梯度填充到每个张量的属性中，有点像 PyTorch 在`.grad`中所做的那样。
 
-首先是我们模型输出（损失函数的输入）相对于损失的梯度。我们撤消了`mse`中的`squeeze`，然后我们使用给出<math alttext="x squared"><msup><mi>x</mi> <mn>2</mn></msup></math>的导数的公式：<math alttext="2 x"><mrow><mn>2</mn> <mi>x</mi></mrow></math>。均值的导数只是 1/*n*，其中*n*是我们输入中的元素数：
+首先是我们模型输出（损失函数的输入）相对于损失的梯度。我们撤消了`mse`中的`squeeze`，然后我们使用给出`x^2`的导数的公式：`2x`。均值的导数只是 1/*n*，其中*n*是我们输入中的元素数：
 
 ```py
 def mse_grad(inp, targ):
@@ -911,6 +907,10 @@ class Lin():
         self.w.g = self.inp.t() @ self.out.g
         self.b.g = self.out.g.sum(0)
 ```
+
+
+
+# 构建一个神经网络
 
 ```py
 class Mse():
@@ -1027,11 +1027,9 @@ class MyRelu(Function):
 
 要实现一个`nn.Module`，你只需要做以下几步：
 
-1.  确保在初始化时首先调用超类`__init__`。
-
-1.  将模型的任何参数定义为具有`nn.Parameter`属性。
-
-1.  定义一个`forward`函数，返回模型的输出。
+1. 确保在初始化时首先调用超类`__init__`。
+2. 将模型的任何参数定义为具有`nn.Parameter`属性。
+3. 定义一个`forward`函数，返回模型的输出。
 
 这里是一个从头开始的线性层的例子：
 
@@ -1096,114 +1094,69 @@ class Model(Module):
 
 以下是一些需要记住的事项：
 
-+   神经网络基本上是一堆矩阵乘法，中间夹杂着非线性。
-
-+   Python 很慢，所以为了编写快速代码，我们必须对其进行向量化，并利用诸如逐元素算术和广播等技术。
-
-+   如果从末尾开始向后匹配的维度相同（如果它们相同，或者其中一个是 1），则两个张量是可广播的。为了使张量可广播，我们可能需要使用`unsqueeze`或`None`索引添加大小为 1 的维度。
-
-+   正确初始化神经网络对于开始训练至关重要。当我们有 ReLU 非线性时，应使用 Kaiming 初始化。
-
-+   反向传递是应用链式法则多次计算，从我们模型的输出开始，逐层向后计算梯度。
-
-+   在子类化`nn.Module`时（如果不使用 fastai 的`Module`），我们必须在我们的`__init__`方法中调用超类`__init__`方法，并且我们必须定义一个接受输入并返回所需结果的`forward`函数。
++ 神经网络基本上是一堆矩阵乘法，中间夹杂着非线性。
++ Python 很慢，所以为了编写快速代码，我们必须对其进行向量化，并利用诸如逐元素算术和广播等技术。
++ 如果从末尾开始向后匹配的维度相同（如果它们相同，或者其中一个是 1），则两个张量是可广播的。为了使张量可广播，我们可能需要使用`unsqueeze`或`None`索引添加大小为 1 的维度。
++ 正确初始化神经网络对于开始训练至关重要。当我们有 ReLU 非线性时，应使用 Kaiming 初始化。
++ 反向传递是应用链式法则多次计算，从我们模型的输出开始，逐层向后计算梯度。
++ 在子类化`nn.Module`时（如果不使用 fastai 的`Module`），我们必须在我们的`__init__`方法中调用超类`__init__`方法，并且我们必须定义一个接受输入并返回所需结果的`forward`函数。
 
 # 问卷
 
-1.  编写 Python 代码来实现一个单个神经元。
-
-1.  编写实现 ReLU 的 Python 代码。
-
-1.  用矩阵乘法的术语编写一个密集层的 Python 代码。
-
-1.  用纯 Python 编写一个密集层的 Python 代码（即使用列表推导和内置到 Python 中的功能）。
-
-1.  一个层的“隐藏大小”是什么？
-
-1.  在 PyTorch 中，`t`方法是做什么的？
-
-1.  为什么在纯 Python 中编写矩阵乘法非常慢？
-
-1.  在`matmul`中，为什么`ac==br`？
-
-1.  在 Jupyter Notebook 中，如何测量执行单个单元格所需的时间？
-
-1.  什么是逐元素算术？
-
-1.  编写 PyTorch 代码来测试 `a` 的每个元素是否大于 `b` 的对应元素。
-
-1.  什么是秩为 0 的张量？如何将其转换为普通的 Python 数据类型？
-
-1.  这返回什么，为什么？
+1. 编写 Python 代码来实现一个单个神经元。
+2. 编写实现 ReLU 的 Python 代码。
+3. 用矩阵乘法的术语编写一个密集层的 Python 代码。
+4. 用纯 Python 编写一个密集层的 Python 代码（即使用列表推导和内置到 Python 中的功能）。
+5. 一个层的“隐藏大小”是什么？
+6. 在 PyTorch 中，`t`方法是做什么的？
+7. 为什么在纯 Python 中编写矩阵乘法非常慢？
+8. 在`matmul`中，为什么`ac==br`？
+9. 在 Jupyter Notebook 中，如何测量执行单个单元格所需的时间？
+10. 什么是逐元素算术？
+11. 编写 PyTorch 代码来测试 `a` 的每个元素是否大于 `b` 的对应元素。
+12. 什么是秩为 0 的张量？如何将其转换为普通的 Python 数据类型？
+13. 这返回什么，为什么？
 
     ```py
     tensor([1,2]) + tensor([1])
     ```
 
-1.  这返回什么，为什么？
+14. 这返回什么，为什么？
 
     ```py
     tensor([1,2]) + tensor([1,2,3])
     ```
 
-1.  逐元素算术如何帮助我们加速 `matmul`？
-
-1.  广播规则是什么？
-
-1.  `expand_as` 是什么？展示一个如何使用它来匹配广播结果的示例。
-
-1.  `unsqueeze` 如何帮助我们解决某些广播问题？
-
-1.  我们如何使用索引来执行与 `unsqueeze` 相同的操作？
-
-1.  我们如何显示张量使用的内存的实际内容？
-
-1.  将大小为 3 的向量添加到大小为 3×3 的矩阵时，向量的元素是添加到矩阵的每一行还是每一列？（确保通过在笔记本中运行此代码来检查您的答案。）
-
-1.  广播和 `expand_as` 会导致内存使用增加吗？为什么或为什么不？
-
-1.  使用爱因斯坦求和实现 `matmul`。
-
-1.  在 `einsum` 的左侧重复索引字母代表什么？
-
-1.  爱因斯坦求和符号的三条规则是什么？为什么？
-
-1.  神经网络的前向传播和反向传播是什么？
-
-1.  为什么我们需要在前向传播中存储一些计算出的中间层的激活？
-
-1.  具有标准差远离 1 的激活的缺点是什么？
-
-1.  权重初始化如何帮助避免这个问题？
-
-1.  初始化权重的公式是什么，以便在普通线性层和 ReLU 后跟线性层中获得标准差为 1？
-
-1.  为什么有时我们必须在损失函数中使用 `squeeze` 方法？
-
-1.  `squeeze` 方法的参数是做什么的？为什么可能很重要包含这个参数，尽管 PyTorch 不需要它？
-
-1.  链式法则是什么？展示本章中提出的两种形式中的任意一种方程。
-
-1.  展示如何使用链式法则计算 `mse(lin(l2, w2, b2), y)` 的梯度。
-
-1.  ReLU 的梯度是什么？用数学或代码展示它。（您不应该需要记住这个—尝试使用您对函数形状的知识来弄清楚它。）
-
-1.  在反向传播中，我们需要以什么顺序调用 `*_grad` 函数？为什么？
-
-1.  `__call__` 是什么？
-
-1.  编写 `torch.autograd.Function` 时我们必须实现哪些方法？
-
-1.  从头开始编写 `nn.Linear` 并测试其是否有效。
-
-1.  `nn.Module` 和 fastai 的 `Module` 之间有什么区别？
+15. 逐元素算术如何帮助我们加速 `matmul`？
+16. 广播规则是什么？
+17. `expand_as` 是什么？展示一个如何使用它来匹配广播结果的示例。
+18. `unsqueeze` 如何帮助我们解决某些广播问题？
+19. 我们如何使用索引来执行与 `unsqueeze` 相同的操作？
+20. 我们如何显示张量使用的内存的实际内容？
+21. 将大小为 3 的向量添加到大小为 3×3 的矩阵时，向量的元素是添加到矩阵的每一行还是每一列？（确保通过在笔记本中运行此代码来检查您的答案。）
+22. 广播和 `expand_as` 会导致内存使用增加吗？为什么或为什么不？
+23. 使用爱因斯坦求和实现 `matmul`。
+24. 在 `einsum` 的左侧重复索引字母代表什么？
+25. 爱因斯坦求和符号的三条规则是什么？为什么？
+26. 神经网络的前向传播和反向传播是什么？
+27. 为什么我们需要在前向传播中存储一些计算出的中间层的激活？
+28. 具有标准差远离 1 的激活的缺点是什么？
+29. 权重初始化如何帮助避免这个问题？
+30. 初始化权重的公式是什么，以便在普通线性层和 ReLU 后跟线性层中获得标准差为 1？
+31. 为什么有时我们必须在损失函数中使用 `squeeze` 方法？
+32. `squeeze` 方法的参数是做什么的？为什么可能很重要包含这个参数，尽管 PyTorch 不需要它？
+33. 链式法则是什么？展示本章中提出的两种形式中的任意一种方程。
+34. 展示如何使用链式法则计算 `mse(lin(l2, w2, b2), y)` 的梯度。
+35. ReLU 的梯度是什么？用数学或代码展示它。（您不应该需要记住这个—尝试使用您对函数形状的知识来弄清楚它。）
+36. 在反向传播中，我们需要以什么顺序调用 `*_grad` 函数？为什么？
+37. `__call__` 是什么？
+38. 编写 `torch.autograd.Function` 时我们必须实现哪些方法？
+39. 从头开始编写 `nn.Linear` 并测试其是否有效。
+40. `nn.Module` 和 fastai 的 `Module` 之间有什么区别？
 
 ## 进一步研究
 
-1.  将 ReLU 实现为 `torch.autograd.Function` 并用它训练模型。
-
-1.  如果您对数学感兴趣，请确定数学符号中线性层的梯度。将其映射到本章中的实现。
-
-1.  了解 PyTorch 中的 `unfold` 方法，并结合矩阵乘法实现自己的二维卷积函数。然后训练一个使用它的 CNN。
-
-1.  使用 NumPy 而不是 PyTorch 在本章中实现所有内容。
+1. 将 ReLU 实现为 `torch.autograd.Function` 并用它训练模型。
+2. 如果您对数学感兴趣，请确定数学符号中线性层的梯度。将其映射到本章中的实现。
+3. 了解 PyTorch 中的 `unfold` 方法，并结合矩阵乘法实现自己的二维卷积函数。然后训练一个使用它的 CNN。
+4. 使用 NumPy 而不是 PyTorch 在本章中实现所有内容。

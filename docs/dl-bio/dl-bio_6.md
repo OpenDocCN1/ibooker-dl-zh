@@ -1,3 +1,4 @@
+
 # 第六章\. 在细胞内学习空间组织模式
 
 在本章中，我们将重点从分类高级细胞状态（例如区分癌组织与正常组织）转移到更基础和低级的内容：理解单个细胞内的*空间组织*。具体来说，我们将训练一个深度学习模型来分析显微镜图像，并学习蛋白质在细胞中的确切位置，这项任务被称为*蛋白质定位*。
@@ -116,7 +117,7 @@
 
 更好的治疗靶向
 
-另一种方法是引导药物、蛋白质或纳米颗粒到特定的亚细胞器，如溶酶体或线粒体，以最大化其效果并最小化副作用。这种策略在新兴的纳米医学平台上被使用。^([6)]
+另一种方法是引导药物、蛋白质或纳米颗粒到特定的亚细胞器，如溶酶体或线粒体，以最大化其效果并最小化副作用。这种策略在新兴的纳米医学平台上被使用。^([6])
 
 想象一下，你不仅能说出蛋白质做什么，还能说出它在哪里做——以及它的旅程如何随着细胞的分裂、分化或开始疾病分解而改变。
 
@@ -240,109 +241,90 @@ VAEs 通过明确 *塑造潜在空间* 来解决这个问题。它们使用概�
 
 ## 向量量化变分自编码器（VQ-VAEs）
 
-在 *VQ-VAE* 中的 *VQ* 代表 *向量量化*，这是一种从信号处理和数据压缩中借用的经典技术。其核心是，向量量化意味着将连续的输入，例如浮点向量，捕捉到一组允许的向量中的最近匹配项。这个集合被称为 *码本*。
+
+
+# VQ-VAE 中的向量量化
+
+在`VQ-VAE`中的`VQ`代表*向量量化*，这是一种从信号处理和数据压缩中借用的经典技术。其核心是，向量量化意味着将连续的输入，例如浮点向量，捕捉到一组允许的向量中的最近匹配项。这个集合被称为*码本*。
 
 为了使这一点具体化：
 
-+   假设我们的码本中只包含两个向量：`[2, 0.5]` 和 `[1, -3]`。
++ 假设我们的码本中只包含两个向量：`[2, 0.5]`和`[1, -3]`。
++ 现在假设编码器输出`[1.8, 0.3]`。
++ `VQ-VAE`不将这个连续向量传递给解码器，而是找到最近的码本条目——在这种情况下，`[2, 0.5]`——并用该向量*替换*编码器的输出。
 
-+   现在假设编码器输出 `[1.8, 0.3]`。
+这个“捕捉”过程被称为*量化*。你可以将其想象为将连续输入四舍五入到最近的可用选项。解码器从未看到原始编码器的输出，只看到捕捉到的码本向量。
 
-+   VQ-VAE 不将这个连续向量传递给解码器，而是找到最近的码本条目——在这种情况下，`[2, 0.5]` ——并用该向量 *替换* 编码器的输出。
+这使得`VQ-VAE`与变分自编码器或标准自编码器不同：而不是学习一个连续的潜在空间，该模型学习一个*离散的嵌入词汇表*并使用它来表示它所看到的一切。通过将编码器的输出压缩到一组有限的离散向量中，模型鼓励其在表示中的鲁棒性、可解释性和可重用性，这些都特别有助于下游任务，如聚类或生物发现。
 
-这个“捕捉”过程被称为 *量化*。你可以将其想象为将连续输入四舍五入到最近的可用选项。解码器从未看到原始编码器的输出，只看到捕捉到的码本向量。
+## 码本从哪里来？
 
-这使得 VQ-VAEs 与变分自编码器或标准自编码器不同：而不是学习一个连续的潜在空间，该模型学习一个 *离散的嵌入词汇表* 并使用它来表示它所看到的一切。通过将编码器的输出压缩到一组有限的离散向量中，模型鼓励其在表示中的鲁棒性、可解释性和可重用性，这些都特别有助于下游任务，如聚类或生物发现。
+`VQ-VAE`中的码本是在训练过程中*学习到的*。就像编码器和解码器中的权重一样，码本中的向量最初是随机的，并通过反向传播逐渐细化。随着时间的推移，向量适应以表示数据中的重复和有意义模式，因此模型在将编码器输出捕捉到有用的表示方面变得更好。
 
-### 码本从哪里来？
-
-VQ-VAE 中的码本是在训练过程中 *学习到的*。就像编码器和解码器中的权重一样，码本中的向量最初是随机的，并通过反向传播逐渐细化。随着时间的推移，向量适应以表示数据中的重复和有意义模式，因此模型在将编码器输出捕捉到有用的表示方面变得更好。
-
-### 码本应该有多大？
+## 码本应该有多大？
 
 没有一种适合所有情况的答案：最优的向量数量取决于你的数据和目标。一个*更大的代码簿*（例如，1,024+条条目）允许在输入之间进行更精细的区分。一个*较小的代码簿*（例如，64–128）迫使模型更频繁地重用模式，这有助于泛化和可解释性。
 
-在像蛋白质定位这样的生物成像任务中，代码簿的大小通常在 128 到 512 之间，这取决于蛋白质的数量、定位模式的分辨率以及表达性和可解释性之间所期望的平衡。例如，Cytoself 使用两个包含 2,048 个条目的代码簿，每个由 64D 向量组成——一个用于全局表示，一个用于局部——使模型具有丰富的能力来表示复杂的空间模式。
+在像蛋白质定位这样的生物成像任务中，代码簿的大小通常在128到512之间，这取决于蛋白质的数量、定位模式的分辨率以及表达性和可解释性之间所期望的平衡。例如，`Cytoself`使用两个包含2,048个条目的代码簿，每个由64D向量组成——一个用于全局表示，一个用于局部——使模型具有丰富的能力来表示复杂的空间模式。
 
-## 解构 VQ-VAE 图表
+# 解构 VQ-VAE 图表
 
-现在我们已经涵盖了关键构建块——自动编码器、变分推理和向量量化——我们准备解释原始的 VQ-VAE 图表，如图图 6-4^(9)所示。
+现在我们已经涵盖了关键构建块——自动编码器、变分推理和向量量化——我们准备解释原始的`VQ-VAE`图表，如图图6-4^(9)所示。
 
 ![](img/dlfb_0604.png)
 
-###### 图 6-4\. 基于 van den Oord 等人（2017）的 VQ-VAE 主要组件的示意图。
+###### 图6-4。基于van den Oord等人（2017）的`VQ-VAE`主要组件的示意图。
 
-下面是对上述 VQ-VAE 图表中发生的事情的逐步分解：
+下面是对上述`VQ-VAE`图表中发生的事情的逐步分解：
 
-1. 输入图像（最左边是狗的照片）
+1. **输入图像（最左边是狗的照片）**
 
-该过程从原始输入图像开始；这里，输入是一张狗的照片。在我们的案例中，这将是一张显示蛋白质定位的显微镜图像。图像被传递到一个 CNN 编码器，它提取有意义的特征并将图像转换成一个压缩的潜在表示。
+该过程从原始输入图像开始；这里，输入是一张狗的照片。在我们的案例中，这将是一张显示蛋白质定位的显微镜图像。图像被传递到一个`CNN`编码器，它提取有意义的特征并将图像转换成一个压缩的潜在表示。
 
-这种表示形式显示为*标记为`ze`的立方体*（变量`z`通常用来表示嵌入）。它是一个 3D 张量，因为 CNN 将图像处理成伪图像，称为特征图，这些特征图突出了输入的特定部分。这个立方体包含了输入的蒸馏、连续版本，它将是接下来使用代码簿进行量化的内容。
+这种表示形式显示为*标记为`ze`的立方体*（变量`z`通常用来表示嵌入）。它是一个3D张量，因为`CNN`将图像处理成伪图像，称为特征图，这些特征图突出了输入的特定部分。这个立方体包含了输入的蒸馏、连续版本，它将是接下来使用代码簿进行量化的内容。
 
-2. 量化步骤（左立方体右侧的点）
+2. **量化步骤（左立方体右侧的点）**
 
-立方体`ze`中的每个向量——连续编码器的输出——都被传递到*向量量化步骤*。这一步骤将网格中的每个 D 维向量（D = 64 对于 cytoself）与学习到的*代码簿*（`e[1]`，`e[2]`，…，`e[k]`）中的每个条目进行比较，如图表顶部所示。
+立方体`ze`中的每个向量——连续编码器的输出——都被传递到*向量量化步骤*。这一步骤将网格中的每个D维向量（`D = 64`对于`cytoself`）与学习到的*代码簿*（`e[1]`，`e[2]`，…，`e[k]`）中的每个条目进行比较，如图表顶部所示。
 
 模型然后将该向量替换为最近的代码簿向量，将其固定到最接近的匹配项。这创建了一个新的张量`zq`，它是编码器输出的量化版本，其中每个原始向量都被代码簿中的一个离散向量所替换。
 
-3. 解码器（右边的立方体）
+3. **解码器（右边的立方体）**
 
-一旦量化，解码器输入 `zq`（右侧立方体）被传递到**解码器**（“CNN”箭头），它也是一个 CNN。其任务是尽可能精确地重建原始图像。在这个图中，解码器输出显示为狗的第二幅图像，视觉上与输入相似。对于我们这一章来说，这将是一个重建的显微镜图像。
+一旦量化，解码器输入`zq`（右侧立方体）被传递到**解码器**（“CNN”箭头），它也是一个`CNN`。其任务是尽可能精确地重建原始图像。在这个图中，解码器输出显示为狗的第二幅图像，视觉上与输入相似。对于我们这一章来说，这将是一个重建的显微镜图像。
 
 重构与原始输入越接近（即，重构损失越低），则模型在量化表示中编码有意义信息的程度就越好。
 
-4. 代码簿嵌入空间（最右侧）
+4. **代码簿嵌入空间（最右侧）**
 
-最右侧的图面板显示了嵌入空间的**放大视图**，即代码簿中的向量集。中心点（带有边框和箭头）代表编码器的原始输出向量 `ze`，它位于连续空间中的某个位置。模型将其映射到最近的代码簿向量，这里显示为 `e[2]`。这个映射值成为量化输出 `zq`。
+最右侧的图面板显示了嵌入空间的**放大视图**，即代码簿中的向量集。中心点（带有边框和箭头）代表编码器的原始输出向量`ze`，它位于连续空间中的某个位置。模型将其映射到最近的代码簿向量，这里显示为`e[2]`。这个映射值成为量化输出`zq`。
 
 箭头表示**训练信号**：在学习过程中，编码器被微调以产生更接近它们映射到的代码簿条目的输出。这随着时间的推移提高了量化的效率，并确保代码簿条目实际上被使用。
 
-这开始涉及到 VQ-VAE 的训练策略，因此现在让我们明确地讨论这个主题。
+这开始涉及到`VQ-VAE`的训练策略，因此现在让我们明确地讨论这个主题。
 
-## 训练 VQ-VAE
+# 训练 VQ-VAE
 
-现在我们已经大致了解了 VQ-VAE 的结构，让我们看看它是如何被训练的。
+现在我们已经大致了解了`VQ-VAE`的结构，让我们看看它是如何被训练的。
 
-训练 VQ-VAE 涉及到优化不仅仅是**重构损失**，即输出图像与原始输入的匹配程度。模型还需要随着时间的推移**细化代码簿向量**，并确保编码器学习到的表示能够干净利落地映射到这些向量上。这在这三个组件之间创造了一个有趣的平衡：
+训练`VQ-VAE`涉及到优化不仅仅是**重构损失**，即输出图像与原始输入的匹配程度。模型还需要随着时间的推移**细化代码簿向量**，并确保编码器学习到的表示能够干净利落地映射到这些向量上。这在这三个组件之间创造了一个有趣的平衡：
 
-编码器表示的质量
+- **编码器表示的质量**：编码器如何有效地捕捉输入数据中的有意义信号？
+- **代码簿的有用性和覆盖率**：代码簿是否提供了足够的多样性来表示广泛的输入，并且所有条目是否都被有效地使用？
+- **解码器从量化码中重建的能力**：解码器仅使用压缩的离散表示，能有多准确地恢复原始输入？
 
-编码器如何有效地捕捉输入数据中的有意义信号？
+在训练`VQ-VAE`时存在一些独特的挑战需要我们注意：
 
-代码簿的有用性和覆盖率
+- **量化误差**：如果最近的代码簿向量匹配不佳，则在量化过程中会丢失一些细节，导致重构受损。关键是确保你的代码簿足够大，并且你的编码器足够灵活，能够产生接近有用条目的嵌入。
+- **代码簿坍缩**：如果在训练过程中只重复使用少数代码簿向量，而忽略其他向量，则模型会浪费容量。防止这种情况需要训练过程中的额外关注：
+  - **承诺损失**：这个损失项鼓励编码器通过惩罚编码器输出与其最近的代码簿条目之间的大差异来坚持选择一个代码簿向量。它防止编码器偏离代码簿太远。
+  - **熵惩罚**：这鼓励模型更均匀地使用更广泛的代码簿条目，增加了表示的多样性并减少了崩溃。
 
-代码簿是否提供了足够的多样性来表示广泛的输入，并且所有条目是否都被有效地使用？
-
-解码器从量化码中重建的能力
-
-解码器仅使用压缩的离散表示，能有多准确地恢复原始输入？
-
-在训练 VQ-VAEs 时存在一些独特的挑战需要我们注意：
-
-量化误差
-
-如果最近的代码簿向量匹配不佳，则在量化过程中会丢失一些细节，导致重构受损。
-
-关键是确保你的代码簿足够大，并且你的编码器足够灵活，能够产生接近有用条目的嵌入。
-
-代码簿坍缩
-
-如果在训练过程中只重复使用少数代码簿向量，而忽略其他向量，则模型会浪费容量。防止这种情况需要训练过程中的额外关注：
-
-承诺损失
-
-这个损失项鼓励编码器通过惩罚编码器输出与其最近的代码簿条目之间的大差异来坚持选择一个代码簿向量。它防止编码器偏离代码簿太远。
-
-熵惩罚
-
-这鼓励模型更均匀地使用更广泛的代码簿条目，增加了表示的多样性并减少了崩溃。
-
-尽管存在这些挑战，VQ-VAE 仍然是一个强大的架构，尤其是在你需要一个能够产生离散、可解释的表示同时还能直接从数据中学习的模型时。
+尽管存在这些挑战，`VQ-VAE`仍然是一个强大的架构，尤其是在你需要一个能够产生离散、可解释的表示同时还能直接从数据中学习的模型时。
 
 ###### 注意
 
-如果这感觉有点复杂，你并不孤单——最初与现代深度学习模型打交道可能会很有挑战性。但动手实践是建立直觉和流畅性的最佳方式。在下一节中，你将开始自己构建和训练一个 VQ-VAE，应用我们迄今为止所涵盖的所有内容。
+如果这感觉有点复杂，你并不孤单——最初与现代深度学习模型打交道可能会很有挑战性。但动手实践是建立直觉和流畅性的最佳方式。在下一节中，你将开始自己构建和训练一个`VQ-VAE`，应用我们迄今为止所涵盖的所有内容。
 
 # 构建数据集
 
@@ -350,43 +332,40 @@ VQ-VAE 中的码本是在训练过程中 *学习到的*。就像编码器和解�
 
 ## 数据要求
 
-一个高质量的数据集对于成功应用深度学习至关重要。幸运的是，有几种出色的蛋白质定位资源可用。其中之一是 [OpenCell](https://oreil.ly/km_v9)，它提供了标准化、高分辨率的细胞内人类蛋白质图像，如图 图 6-5 所示。
+一个高质量的数据集对于成功应用深度学习至关重要。幸运的是，有几种出色的蛋白质定位资源可用。其中之一是[OpenCell](https://oreil.ly/km_v9)，它提供了标准化、高分辨率的细胞内人类蛋白质图像，如图图6-5所示。
 
 由于所有图像都是使用单个、一致的成像流程拍摄的，因此它们特别适合机器学习。这种一致性确保模型专注于学习蛋白质定位中的生物变异，而不是被无关的成像条件或处理流程的差异所分散。
 
 ###### 注意
 
-想要自己探索数据集吗？请访问 [OpenCell](https://opencell.sf.czbiohub.org)，它拥有一个设计精美的界面，使得浏览数据变得快速直观。
+想要自己探索数据集吗？请访问[OpenCell](https://opencell.sf.czbiohub.org)，它拥有一个设计精美的界面，使得浏览数据变得快速直观。
 
-本章我们将构建的模型完全依赖于成像数据；在训练过程中不使用任何标签或注释。这是一个主要优势：它直接从原始显微镜图像中学习定位模式，而不需要任何人工监督。虽然 OpenCell 提供了定位注释，但我们只会在最后使用它们来验证我们的结果。过度依赖精心制作的标签可能会引入偏差并限制可扩展性，因为人工标注既昂贵又主观。这正是自监督学习发光的地方——它使模型能够在不需要预定义标签的情况下发现有意义的模式。
+本章我们将构建的模型完全依赖于成像数据；在训练过程中不使用任何标签或注释。这是一个主要优势：它直接从原始显微镜图像中学习定位模式，而不需要任何人工监督。虽然`OpenCell`提供了定位注释，但我们只会在最后使用它们来验证我们的结果。过度依赖精心制作的标签可能会引入偏差并限制可扩展性，因为人工标注既昂贵又主观。这正是自监督学习发光的地方——它使模型能够在不需要预定义标签的情况下发现有意义的模式。
 
 ![图片](img/dlfb_0605.png)
 
-###### 图 6-5。OpenCell 数据库中蛋白质 ACTB（β-肌动蛋白）的示例条目。每个蛋白质都有一个详细的摘要页面，包括其标识符（例如，UniProt ID）、序列信息、表达水平（细胞中基因和蛋白质的拷贝数）和亚细胞定位注释。在右侧，你可以看到显示 ACTB 定位（灰色）和核染色（蓝色）的荧光显微镜图像。这些多通道图像与蛋白质特定的元数据一起，构成了本章所使用的数据集的基础。
+###### 图6-5。`OpenCell`数据库中蛋白质`ACTB`（β-肌动蛋白）的示例条目。每个蛋白质都有一个详细的摘要页面，包括其标识符（例如，`UniProt ID`）、序列信息、表达水平（细胞中基因和蛋白质的拷贝数）和亚细胞定位注释。在右侧，你可以看到显示`ACTB`定位（灰色）和核染色（蓝色）的荧光显微镜图像。这些多通道图像与蛋白质特定的元数据一起，构成了本章所使用的数据集的基础。
 
 ## 数据来源
 
-为深度学习准备图像本身可能就是一个挑战，尤其是在格式、一致性和规模方面。我们之前在第五章中看到这一点，其中仔细的预处理是必不可少的。幸运的是，cytoself 的作者已经发布了他们在论文中使用的数据集的预处理版本，因此我们在这里不必从头开始。
+为深度学习准备图像本身可能就是一个挑战，尤其是在格式、一致性和规模方面。我们之前在第五章中看到这一点，其中仔细的预处理是必不可少的。幸运的是，`cytoself`的作者已经发布了他们在论文中使用的数据集的预处理版本，因此我们在这里不必从头开始。
 
-数据集中包含 1,311 种荧光标记的蛋白质，每种蛋白质在大约 18 个不同的视野中进行成像。从每个视野中，提取大约 45 个单独的裁剪图像，每个裁剪图像通常包含大约三个细胞。这为每个蛋白质产生了大约 800 个图像裁剪，整个数据集总共有超过 1,048,800 个图像。每个图像包括两个通道：
+数据集中包含1,311种荧光标记的蛋白质，每种蛋白质在大约18个不同的视野中进行成像。从每个视野中，提取大约45个单独的裁剪图像，每个裁剪图像通常包含大约三个细胞。这为每个蛋白质产生了大约800个图像裁剪，整个数据集总共有超过1,048,800个图像。每个图像包括两个通道：
 
-+   绿色的**蛋白质通道**，显示感兴趣荧光标记蛋白质的位置。这是本章训练中使用的唯一通道。
++ 绿色的**蛋白质通道**，显示感兴趣荧光标记蛋白质的位置。这是本章训练中使用的唯一通道。
++ 使用`Hoechst`的**核染色**，这是一种强烈结合`DNA`的蓝色荧光染料。这突出了细胞的核，提供了空间背景，例如，有助于确定蛋白质是否位于核内、细胞质或膜结合。
 
-+   使用 Hoechst 的**核染色**，这是一种强烈结合 DNA 的蓝色荧光染料。这突出了细胞的核，提供了空间背景，例如，有助于确定蛋白质是否位于核内、细胞质或膜结合。
+从核染色中，计算第三个表示：**到核距离图**。这不是一个单独的成像通道，而是从`Hoechst`信号派生出的空间图，为模型提供了更多关于相对位置的信息：
 
-从核染色中，计算第三个表示：**到核距离图**。这不是一个单独的成像通道，而是从 Hoechst 信号派生出的空间图，为模型提供了更多关于相对位置的信息：
++ 核内的像素被分配正值，代表到核边界的最短距离。
++ 核外的像素被分配负值，同样基于到核边缘的最短距离。
 
-+   核内的像素被分配正值，代表到核边界的最短距离。
-
-+   核外的像素被分配负值，同样基于到核边缘的最短距离。
-
-为了简化任务，我们将仅使用标记的蛋白质通道进行模型训练。其他通道（Hoechst）和派生的距离图提供了有用的空间背景，但对于这个自监督学习设置不是必需的。
+为了简化任务，我们将仅使用标记的蛋白质通道进行模型训练。其他通道（`Hoechst`）和派生的距离图提供了有用的空间背景，但对于这个自监督学习设置不是必需的。
 
 除了图像数据外，数据集还包括：
 
-+   蛋白质注释：例如基因名称和唯一 ID
-
-+   精心定位的标签：手动分配的细胞器或区室类别
++ 蛋白质注释：例如基因名称和唯一ID
++ 精心定位的标签：手动分配的细胞器或区室类别
 
 这些精心挑选的标签在训练过程中**不**被使用。相反，它们仅在之后用于评估模型是否已经自行学习了具有生物学意义的表示。
 
@@ -394,13 +373,13 @@ VQ-VAE 中的码本是在训练过程中 *学习到的*。就像编码器和解�
 
 与前几章中使用的数据集相比，这个数据集显著更大，在内存使用、数据加载速度和训练效率方面引入了新的挑战。
 
-确保你有足够的磁盘空间，并且能够访问一个强大的 GPU。例如，使用 Colab Pro+提供的 A100，或者准备缩小模型或批量大小以使训练可行。
+确保你有足够的磁盘空间，并且能够访问一个强大的`GPU`。例如，使用`Colab Pro+`提供的`A100`，或者准备缩小模型或批量大小以使训练可行。
 
 ## 概览数据集
 
-对于更复杂的数据集，通常会将数据加载和预处理逻辑封装在一个自定义的 `Dataset` 类中，正如我们在本书的前几章中所做的那样。这有助于使数据更容易探索并在训练中使用。
+对于更复杂的数据集，通常会将数据加载和预处理逻辑封装在一个自定义的`Dataset`类中，正如我们在本书的前几章中所做的那样。这有助于使数据更容易探索和在训练中使用。
 
-首先，让我们使用实用函数 `get_dataset` 来检查数据集中的一些图像帧；参见图 6-6。随机抽取几个帧可以快速揭示数据集中模式和强度变化的多样性：
+首先，让我们使用实用函数`get_dataset`来检查数据集中的一些图像帧；参见图6-6。随机抽取几个帧可以快速揭示数据集中模式和强度变化的多样性：
 
 ```py
 import jax
@@ -413,7 +392,6 @@ rng, rng_frames = jax.random.split(rng, 2)
 dataset = get_dataset(data_path=assets("localization/datasets"))
 n_frames = 16
 dataset.plot_random_frames(n=n_frames, rng=rng_frames);
-
 ```
 
 这种多样性是预期的：每张图像对应不同的标记蛋白质，许多蛋白质并不局限于单个细胞器。相反，它们定位到细胞的不同区域，通常具有不同的丰度。这给学习任务增加了另一层复杂性。
@@ -422,36 +400,42 @@ dataset.plot_random_frames(n=n_frames, rng=rng_frames);
 
 ![图片](img/dlfb_0606.png)
 
-###### 图 6-6\. 随机子集帧的图。每个帧给出了蛋白质符号及其主要定位（数字表示测量的额外次级定位）。
+###### 图6-6。随机子集帧的图。每个帧给出了蛋白质符号及其主要定位（数字表示测量的额外次级定位）。
 
-为了说明这一点，我们将加载包含单个蛋白质 ACTB（β-肌动蛋白）所有图像帧的数据集，并绘制几个随机样本。在图 6-7 中，你会看到即使是这种单一蛋白质，由于生物变异性的本质，信号强度、形状和定位也存在相当大的变化——记住，所有帧都是在相同的实验条件下捕获的。
+为了说明这一点，我们将加载包含单个蛋白质`ACTB`（β-肌动蛋白）所有图像帧的数据集，并绘制几个随机样本。在图6-7中，你会看到即使是这种单一蛋白质，由于生物变异性的本质，信号强度、形状和定位也存在相当大的变化——记住，所有帧都是在相同的实验条件下捕获的。
 
 ```py
 selected_protein = "ACTB"
 dataset.plot_random_frames(
   n=n_frames, with_labels=False, rng=rng_frames, gene_symbols=[selected_protein]
 );
-
 ```
 
 ![图片](img/dlfb_0607.png)
 
-###### 图 6-7\. 显示蛋白质 ACTB（β-肌动蛋白）定位的 16 个图像帧的随机子集，该蛋白质被标注为定位于*膜*、*细胞骨架*和*细胞质*。尽管这些帧都代表在相同实验条件下相同的蛋白质，但它们在形状、亮度和定位模式上显示出相当大的变化，突显了细胞间的固有生物变异性。
+###### 图6-7。显示蛋白质`ACTB`（β-肌动蛋白）定位的16个图像帧的随机子集，该蛋白质被标注为定位于*膜*、*细胞骨架*和*细胞质*。尽管这些帧都代表在相同实验条件下相同的蛋白质，但它们在形状、亮度和定位模式上显示出相当大的变化，突显了细胞间的固有生物变异性。
 
-让我们现在更仔细地看看图 6-8 中的单个帧，这将让我们更好地了解模型在训练过程中将处理什么。该图故意放大，以便您可以清楚地看到单个像素。试着不要只把图像看作是一幅画，而要把它看作是一个数字矩阵：白色像素的值接近 255，黑色像素接近 0，所有灰度值介于两者之间：
+让我们现在更仔细地看看图6-8中的单个帧，这将让我们更好地了解模型在训练过程中将处理什么。该图故意放大，以便您可以清楚地看到单个像素。试着不要只把图像看作是一幅画，而要把它看作是一个数字矩阵：白色像素的值接近255，黑色像素接近0，所有灰度值介于两者之间：
 
 ```py
 dataset.plot_random_frames(n=1, with_labels=False, rng=rng_frames);
-
 ```
 
 ![图片](img/dlfb_0608.png)
 
-###### 图 6-8. 蛋白质 ACTB 的单个图像帧的特写视图。像素化的外观反映了模型将看到的原始输入：一个强度值的二维矩阵。明亮区域对应于高荧光信号（值接近 255），而暗区域对应于低信号（值接近 0）。这是用于学习空间定位模式的实际数值输入。尽管图像在人类眼中可能看起来嘈杂或不清晰，但模型必须学会从中提取一致的模式。
+###### 图6-8。蛋白质`ACTB`的单个图像帧的特写视图。像素化的外观反映了模型将看到的原始输入：一个强度值的二维矩阵。明亮区域对应于高荧光信号（值接近255），而暗区域对应于低信号（值接近0）。这是用于学习空间定位模式的实际数值输入。尽管图像在人类眼中可能看起来嘈杂或不清晰，但模型必须学会从中提取一致的模式。
 
-## 实现 DatasetBuilder 类
+# 实现 DatasetBuilder 类
 
 在这里，我们实现了一个名为`DatasetBuilder`的辅助类，它在幕后处理数据集设置和缓存：
+
+
+
+# 构建数据集
+
+## 定义 `DatasetBuilder` 类
+
+以下代码定义了 `DatasetBuilder` 类，用于构建带有学习分割的数据集：
 
 ```py
 class DatasetBuilder:
@@ -535,7 +519,6 @@ class DatasetBuilder:
     return lookup.merge(mapping, how="left", on="protein_id").set_index(
       "frame_id", drop=False
     )
-
 ```
 
 在初始化过程中，我们提供数据存储的路径。这允许`DatasetBuilder`创建`Images`和`Labels`的链接实例。您还可以看到`DatasetBuilder`有一个公共方法`.build`，它返回一个`dict[str, Dataset]`，其中每个键是数据集分割，值对应于数据集。此方法允许您将数据集子集化到随机选择的有限数量的蛋白质（`n_proteins`）和/或最大帧数（`max_frames`）。
@@ -560,7 +543,6 @@ dataset: dict[str, Dataset] = builder.build(
   exclusive_by="fov_id",
   n_proteins=50,
 )
-
 ```
 
 现在我们有了数据集。拥有数据集构建器提供了灵活性，这使得在扩展到完整训练集之前，探索、调试和用数据集的小部分进行原型设计变得容易。
@@ -636,40 +618,35 @@ class LocalizationModel(nn.Module):
     ze = self.encoder(x)
     encoding_indices = self.vector_quantizer.get_closest_codebook_indices(ze)
     return encoding_indices
-
 ```
 
 这个模型是用我们之前介绍的主要组件定义的：
 
-编码器
+- **编码器**：将输入图像映射到潜在空间
+- **向量化量化器**：使用学习到的代码簿将这个潜在空间离散化
+- **解码器**：从量化表示中重建输入图像
 
-将输入图像映射到潜在空间
+这些都在模型的`setup`方法中连接在一起。你还会注意到一个额外的组件，即`ClassificationHead`，我们稍后会回到这个话题。现在，只需知道它用于缓解之前提到的代码簿崩溃问题，这是一种模型只使用代码簿中一小部分条目，从而降低潜在空间表示能力的失败模式。
 
-向量化量化器
-
-使用学习到的代码簿将这个潜在空间离散化
-
-解码器
-
-从量化表示中重建输入图像
-
-这些都在模型的 `setup` 方法中连接在一起。你还会注意到一个额外的组件，即 `ClassificationHead`，我们稍后会回到这个话题。现在，只需知道它用于缓解之前提到的代码簿崩溃问题，这是一种模型只使用代码簿中一小部分条目，从而降低潜在空间表示能力的失败模式。
-
-在接下来的章节中，我们将逐一介绍模型的各个部分，从 `Encoder` 开始，它负责从输入显微镜图像中提取潜在特征。
+在接下来的章节中，我们将逐一介绍模型的各个部分，从`Encoder`开始，它负责从输入显微镜图像中提取潜在特征。
 
 ## 编码器：处理输入图像
 
-`编码器` 是我们模型的第一部分，负责将原始输入图像转换为连续的潜在表示。其主要任务是处理输入，使其成为 `VectorQuantizer` 可以处理的形式——每个像素都有丰富、表达性强的空间特征图。这种潜在表示将随后被 `VectorQuantizer` 离散化，因此它需要具有正确的形状和维度。
+`编码器`是我们模型的第一部分，负责将原始输入图像转换为连续的潜在表示。其主要任务是处理输入，使其成为`VectorQuantizer`可以处理的形式——每个像素都有丰富、表达性强的空间特征图。这种潜在表示将随后被`VectorQuantizer`离散化，因此它需要具有正确的形状和维度。
 
 编码器由三个卷积层和两个残差块组成：
 
-+   前两个卷积层将图像整体下采样为 4 倍（每个的步长为 2），降低空间分辨率同时增加特征维度性。
+- 前两个卷积层将图像整体下采样为 4 倍（每个的步长为 2），降低空间分辨率同时增加特征维度性。
+- 第三个卷积层保持空间分辨率，但加深了特征图。
+- 两个`ResnetBlock`通过归一化、非线性跳过连接进一步细化特征。
 
-+   第三个卷积层保持空间分辨率，但加深了特征图。
+一起，这形成了一个管道，将 100 × 100 的灰度图像转换为`latent_dim`维度的特征向量的小网格，为量化做好准备。
 
-+   两个 `ResnetBlock` 通过归一化、非线性跳过连接进一步细化特征。
 
-一起，这形成了一个管道，将 100 × 100 的灰度图像转换为 `latent_dim` 维度的特征向量的小网格，为量化做好准备：
+
+# 编码器与向量量化器
+
+## 编码器（Encoder）
 
 ```py
 class Encoder(nn.Module):
@@ -725,26 +702,25 @@ class ResnetBlock(nn.Module):
     h = nn.swish(self.norm2(h))
     h = self.conv2(h)
     return x + h
-
 ```
 
 如您所见，我们传递给 `Encoder` 的唯一参数是 `latent_dim`。这控制着网络将输出多少通道；换句话说，潜在空间中每个空间位置的表达性如何。在我们的完整模型中，这被设置为 `embedding_dim`，以确保编码器的输出与 `VectorQuantizer` 预期的维度相匹配。
 
 在 `LocalizationModel` 模型实例化的上下文中，它被设置为 `self.embedding_dim`，因为 `Encoder` 必须将原始输入图像编码成与量化步骤兼容的形式；换句话说，它需要具有兼容的形状。在 VQ-VAE 的上下文中，这与量化潜在空间维度直接相关，因为它需要返回正确形状的编码图像，以便进行量化过程。
 
-`ResnetBlock` 使用 *分组归一化* 和 *swish* 激活函数，这是一个受到更近期的扩散模型（如 *stable diffusion*）启发的选择。快速提醒一下，残差块的关键思想是输出通过残差学习进行细化：而不是从头开始尝试学习输入的完整变换，网络学习在输入之上进行校正。这通常有助于梯度流和泛化。
+`ResnetBlock` 使用*分组归一化*和*swish*激活函数，这是一个受到更近期的扩散模型（如*stable diffusion*）启发的选择。快速提醒一下，残差块的关键思想是输出通过残差学习进行细化：而不是从头开始尝试学习输入的完整变换，网络学习在输入之上进行校正。这通常有助于梯度流和泛化。
 
 在编码器结束时，我们得到一个形状为 `[batch_size, height, width, latent_dim]` 的空间特征图，然后将其传递到 `VectorQuantizer`。这完成了 VQ-VAE 架构的编码阶段。
 
-###### 注意
+### 注意
 
-你可以更改此编码器的各个部分——卷积核、层数、激活函数、步长等。为了简单起见，我们在这里不将这些作为参数暴露给`Encoder`，但这些都是你可以尝试调整以优化性能的超参数。
+你可以更改此编码器的各个部分——卷积核、层数、激活函数、步长等。为了简单起见，我们在这里不将这些作为参数暴露给 `Encoder`，但这些都是你可以尝试调整以优化性能的超参数。
 
 ## 向量量化器：将嵌入离散化
 
-`VectorQuantizer`是 VQ-VAE 的核心——这是我们连续嵌入转换为离散代码的地方。这一步迫使模型承诺于一个有限的学习特征向量词汇表，提高压缩并鼓励有意义的、可重用的表示。
+`VectorQuantizer` 是 VQ-VAE 的核心——这是我们连续嵌入转换为离散代码的地方。这一步迫使模型承诺于一个有限的学习特征向量词汇表，提高压缩并鼓励有意义的、可重用的表示。
 
-让我们分解`VectorQuantizer`模块的关键组件：
+让我们分解 `VectorQuantizer` 模块的关键组件：
 
 ```py
 class VectorQuantizer(nn.Module):
@@ -822,52 +798,41 @@ class VectorQuantizer(nn.Module):
 
     ste = inputs + lax.stop_gradient(quantized - inputs)
     return ste
-
 ```
 
-下面是`VectorQuantizer`类的关键部分：
+下面是 `VectorQuantizer` 类的关键部分：
 
-代码簿
+### 代码簿
 
-一个形状为`(embedding_dim, num_embeddings)`的可学习矩阵，使用`lecun_uniform`初始化。每一列是一个代码簿向量——本质上，是一个模型可以与之匹配的原型。这个矩阵定义了离散潜在空间。
+一个形状为 `(embedding_dim, num_embeddings)` 的可学习矩阵，使用 `lecun_uniform` 初始化。每一列是一个代码簿向量——本质上，是一个模型可以与之匹配的原型。这个矩阵定义了离散潜在空间。
 
-量化
+### 量化
 
-`quantize()`函数根据欧几里得距离将每个编码输入向量替换为最近的代码簿向量。这迫使模型使用固定的学习视觉模式词汇表来表达对每个输入帧的理解。
+`quantize()` 函数根据欧几里得距离将每个编码输入向量替换为最近的代码簿向量。这迫使模型使用固定的学习视觉模式词汇表来表达对每个输入帧的理解。
 
-损失
+### 损失
 
-`codebook_loss`
+`codebook_loss` 鼓励代码簿向量向编码器输出移动。这更新了代码簿。
 
-鼓励代码簿向量向编码器输出移动。这更新了代码簿。
+`commitment_loss` 鼓励编码器输出承诺于所选的代码簿向量而不是波动。这更新了编码器。两个损失结合以保持编码器稳定性和代码簿使用之间的平衡。
 
-`commitment_loss`
-
-鼓励编码器输出承诺于所选的代码簿向量而不是波动。这更新了编码器。两个损失结合以保持编码器稳定性和代码簿使用之间的平衡。
-
-直通估计器（STE）
+### 直通估计器（STE）
 
 量化是非可微的：你不能通过硬查找操作进行反向传播。STE 通过复制用于前向传播的量化向量来解决此问题，但传递梯度时仿佛量化从未发生。这是一个标准的技巧，允许通过近似梯度进行训练。
 
-困惑度
+### 困惑度
 
-一个指标，告诉我们模型使用了多少代码簿向量。高困惑度（接近`num_embeddings`）意味着模型在其许多条目之间分散其注意力。低困惑度意味着崩溃——只使用少数几个向量，这限制了模型的能力。
+一个指标，告诉我们模型使用了多少代码簿向量。高困惑度（接近 `num_embeddings`）意味着模型在其许多条目之间分散其注意力。低困惑度意味着崩溃——只使用少数几个向量，这限制了模型的能力。
 
-你可以看到，此模块的参数是`num_embeddings`、`embedding_dim`和`commitment_cost`，它们定义了离散潜在空间的结构：
+你可以看到，此模块的参数是 `num_embeddings`、`embedding_dim` 和 `commitment_cost`，它们定义了离散潜在空间的结构：
 
-嵌入数量
+- **嵌入数量**：确定模型必须从多少个离散向量中选择。更高的数量允许更精细和多样化的表示。
+- **嵌入维度（也称为潜在维度）**：定义了每个向量的丰富性。例如，如果它是 64，则每个代码簿条目有 64 个值。更高维度的嵌入可以捕捉更细微的模式，但需要更多数据和计算来有效地训练。
+- **承诺成本**：在损失函数中使用的加权因子，用于惩罚偏离其选定码本向量的编码器输出。如果这个值太低，编码器可能会忽略码本。如果太高，编码器可能会过度约束，学习到的表示能力会降低。
 
-确定模型必须从多少个离散向量中选择。更高的数量允许更精细和多样化的表示。
+## 正向传播过程
 
-嵌入维度（也称为潜在维度）
-
-定义了每个向量的丰富性。例如，如果它是 64，则每个代码簿条目有 64 个值。更高维度的嵌入可以捕捉更细微的模式，但需要更多数据和计算来有效地训练。
-
-承诺成本
-
-在损失函数中使用的加权因子，用于惩罚偏离其选定码本向量的编码器输出。如果这个值太低，编码器可能会忽略码本。如果太高，编码器可能会过度约束，学习到的表示能力会降低。
-
-这里是`VectorQuantizer`在正向传播过程中通过其`__call__`方法执行的主要工作：
+这里是 `VectorQuantizer` 在正向传播过程中通过其 `__call__` 方法执行的主要工作：
 
 ```py
   def __call__(self, inputs: jax.Array):
@@ -877,18 +842,16 @@ class VectorQuantizer(nn.Module):
     perplexity = self.calculate_perplexity(encoding_indices)
     ste = self.get_straight_through_estimator(quantized, inputs)
     return ste, perplexity, codebook_loss, commitment_loss
-
 ```
 
 此函数执行四个关键操作：
 
-+   量化：它通过用码本中最接近的条目替换每个编码向量来量化输入。
+- **量化**：它通过用码本中最接近的条目替换每个编码向量来量化输入。
+- **损失计算**：它计算两个损失项：一个将码本条目拉向编码器输出（`codebook_loss`），另一个鼓励编码器保持在码本条目附近（`commitment_loss`）。
+- **混淆度**：它计算码本混淆度以评估模型如何充分利用码本条目的全部范围。
+- **STE**：它通过非可微量化步骤启用反向传播。
 
-+   损失计算：它计算两个损失项：一个将码本条目拉向编码器输出（`codebook_loss`），另一个鼓励编码器保持在码本条目附近（`commitment_loss`）。
-
-+   混淆度：它计算码本混淆度以评估模型如何充分利用码本条目的全部范围。
-
-+   STE：它通过非可微量化步骤启用反向传播。
+## 量化步骤详解
 
 让我们更详细地了解一下量化步骤：
 
@@ -911,22 +874,19 @@ class VectorQuantizer(nn.Module):
       + jnp.sum(jnp.square(self.codebook), 0, keepdims=True)
     )
     return distances
-
 ```
 
-在`quantize`中，目标是替换每个输入向量为其在码本中的最近邻。这是通过几个步骤完成的：
+在 `quantize` 中，目标是替换每个输入向量为其在码本中的最近邻。这是通过几个步骤完成的：
 
-+   展平输入，以便我们可以将所有空间位置作为向量列表处理。
+- 展平输入，以便我们可以将所有空间位置作为向量列表处理。
+- 使用欧几里得距离计算每个输入向量与所有码本向量之间的距离。
+- 为每个输入位置找到最近的码本向量（在距离上 `argmin`）。
+- 使用索引收集相应的码本条目。
+- 将量化结果重塑回原始输入形状。
 
-+   使用欧几里得距离计算每个输入向量与所有码本向量之间的距离。
+距离是通过 `calculate_distances` 计算的，它实现了展平输入向量 `x` 和码本向量 `y` 之间的平方欧几里得距离。这是基于以下恒等式：
 
-+   为每个输入位置找到最近的码本向量（在距离上`argmin`）。
 
-+   使用索引收集相应的码本条目。
-
-+   将量化结果重塑回原始输入形状。
-
-距离是通过`calculate_distances`计算的，它实现了展平输入向量`x`和码本向量`y`之间的平方欧几里得距离。这是基于以下恒等式：
 
 `<mrow><msup><mrow><mo>∥</mo><mi>x</mi><mo>-</mo><mi>y</mi><mo>∥</mo></mrow> <mn>2</mn></msup> <mo>=</mo> <msup><mrow><mo>∥</mo><mi>x</mi><mo>∥</mo></mrow> <mn>2</mn></msup> <mo>-</mo> <mn>2</mn> <mrow><mo>〈</mo> <mi>x</mi> <mo lspace="0%" rspace="0%">,</mo> <mi>y</mi> <mo>〉</mo></mrow> <mo>+</mo> <msup><mrow><mo>∥</mo><mi>y</mi><mo>∥</mo></mrow> <mn>2</mn></msup></mrow>`
 
@@ -939,23 +899,22 @@ class VectorQuantizer(nn.Module):
 在手头有了量化嵌入之后，大部分艰苦的工作已经完成。但我们仍然需要评估原始输入被捕捉得有多好。换句话说，我们需要计算*VQ-VAE 特定的*损失：
 
 ```py
-  def compute_losses(self, inputs: jax.Array, quantized: jax.Array):
+def compute_losses(self, inputs: jax.Array, quantized: jax.Array):
     """Computes codebook and commitment losses."""
     codebook_loss = jnp.mean(jnp.square(quantized - lax.stop_gradient(inputs)))
     commitment_loss = self.commitment_cost * jnp.mean(
       jnp.square(lax.stop_gradient(quantized) - inputs)
     )
     return codebook_loss, commitment_loss
-
 ```
 
 这里有两个组成部分：
 
-码本损失
+**码本损失**
 
 这个项衡量了量化向量与原始编码器输出之间的距离。我们希望这个差异很小。理想情况下，量化版本应该几乎与编码器最初产生的输出相同。关键细节是 `inputs` 被包裹在 `lax.stop_gradient` 中。这防止了梯度流向编码器，以便只有代码簿被更新以更好地匹配编码器输出。
 
-承诺损失
+**承诺损失**
 
 这鼓励编码器产生接近代码簿中某个条目的输出。这有助于避免偏离量化值太远。
 
@@ -968,7 +927,7 @@ class VectorQuantizer(nn.Module):
 量化之后，我们想了解模型使用其代码簿的效果如何。它是依赖于几个条目，还是将其注意力分散在许多条目上？这正是 *困惑度* 指标所捕捉的：
 
 ```py
-  def calculate_perplexity(self, encoding_indices: jax.Array) -> jax.Array:
+def calculate_perplexity(self, encoding_indices: jax.Array) -> jax.Array:
     """Computes codebook usage perplexity."""
     encodings = jax.nn.one_hot(
       encoding_indices,
@@ -977,17 +936,13 @@ class VectorQuantizer(nn.Module):
     avg_probs = jnp.mean(encodings, 0)
     perplexity = jnp.exp(-jnp.sum(avg_probs * jnp.log(avg_probs + 1e-10)))
     return perplexity
-
 ```
 
 让我们分解一下：
 
 +   `encoding_indices` 提供了每个输入所选代码簿条目的索引。
-
 +   我们将这些索引进行 one-hot 编码，以统计每个代码簿向量被使用的频率。
-
 +   将这个 one-hot 矩阵的平均值给出代码簿条目的频率分布。
-
 +   我们然后计算这个分布的熵，并将其指数化以获得困惑度。
 
 结果是一个介于 1 和 `num_embeddings` 之间的数字，表示有多少代码簿条目实际上在使用。
@@ -997,27 +952,24 @@ class VectorQuantizer(nn.Module):
 `VectorQuantizer` 的 `__call__` 方法中的最终操作是计算 STE：
 
 ```py
-  @staticmethod
-  def get_straight_through_estimator(
+@staticmethod
+def get_straight_through_estimator(
     quantized: jax.Array, inputs: jax.Array
-  ) -> jax.Array:
-    """Applies straight-through estimator to pass gradients through
- quantization.
- """
+) -> jax.Array:
+    """Applies straight-through estimator to pass gradients through quantization."""
     ste = inputs + lax.stop_gradient(quantized - inputs)
     return ste
-
 ```
 
 在典型的神经网络中，梯度是通过一系列可微操作的反向传播来计算的。然而，*量化是不可微分的*。它涉及将连续值捕捉到最近的离散代码簿条目，而你不能通过那个步骤来计算梯度。这给基于梯度的优化带来了挑战。
 
 为了解决这个问题，我们使用 STE 技巧。它的工作原理如下：
 
-前向传递
+**前向传递**
 
 这个表达式的输出是量化的，因此解码器接收离散的代码簿条目。
 
-反向传递
+**反向传递**
 
 因为 `quantized - inputs` 被包裹在 `stop_gradient` 中，它 *对梯度没有影响*。在反向传播过程中，只有 `inputs` 贡献于梯度。换句话说，STE 输出相对于编码器输入的梯度被视为量化步骤从未发生。
 
@@ -1033,68 +985,64 @@ class VectorQuantizer(nn.Module):
 
 ```py
 class Decoder(nn.Module):
-  """Decoder module for reconstructing input from quantized representations."""
+    """Decoder module for reconstructing input from quantized representations."""
 
-  latent_dim: int
+    latent_dim: int
 
-  def setup(self) -> None:
-    """Initializes residual blocks and upsampling layers."""
-    self.res_block1 = ResnetBlock(self.latent_dim)
-    self.res_block2 = ResnetBlock(self.latent_dim)
-    self.upsample1 = Upsample(latent_dim=self.latent_dim // 2, upfactor=2)
-    self.upsample2 = Upsample(latent_dim=1, upfactor=2)
+    def setup(self) -> None:
+        """Initializes residual blocks and upsampling layers."""
+        self.res_block1 = ResnetBlock(self.latent_dim)
+        self.res_block2 = ResnetBlock(self.latent_dim)
+        self.upsample1 = Upsample(latent_dim=self.latent_dim // 2, upfactor=2)
+        self.upsample2 = Upsample(latent_dim=1, upfactor=2)
 
-  def __call__(self, x: jax.Array) -> jax.Array:
-    """Applies the decoder to input and returns the reconstructed output."""
-    x = self.res_block1(x)
-    x = self.res_block2(x)
-    x = self.upsample1(x)
-    x = nn.relu(x)
-    x = self.upsample2(x)
-    return x
+    def __call__(self, x: jax.Array) -> jax.Array:
+        """Applies the decoder to input and returns the reconstructed output."""
+        x = self.res_block1(x)
+        x = self.res_block2(x)
+        x = self.upsample1(x)
+        x = nn.relu(x)
+        x = self.upsample2(x)
+        return x
 
 class Upsample(nn.Module):
-  """Upsampling block using bilinear interpolation followed by convolution."""
+    """Upsampling block using bilinear interpolation followed by convolution."""
 
-  latent_dim: int
-  upfactor: int
+    latent_dim: int
+    upfactor: int
 
-  def setup(self) -> None:
-    """Initializes the convolutional layer for post-interpolation refinement."""
-    self.conv = nn.Conv(
-      self.latent_dim, kernel_size=(3, 3), strides=(1, 1), padding=1
-    )
+    def setup(self) -> None:
+        """Initializes the convolutional layer for post-interpolation refinement."""
+        self.conv = nn.Conv(
+            self.latent_dim, kernel_size=(3, 3), strides=(1, 1), padding=1
+        )
 
-  def __call__(self, x: jax.Array) -> jax.Array:
-    """Upsamples input using bilinear interpolation and applies convolution."""
-    batch, height, width, channels = x.shape
-    hidden_states = jax.image.resize(
-      x,
-      shape=(
-        batch,
-        height * self.upfactor,
-        width * self.upfactor,
-        channels,
-      ),
-      method="bilinear",
-    )
-    x = self.conv(hidden_states)
-    return x
-
+    def __call__(self, x: jax.Array) -> jax.Array:
+        """Upsamples input using bilinear interpolation and applies convolution."""
+        batch, height, width, channels = x.shape
+        hidden_states = jax.image.resize(
+            x,
+            shape=(
+                batch,
+                height * self.upfactor,
+                width * self.upfactor,
+                channels,
+            ),
+            method="bilinear",
+        )
+        x = self.conv(hidden_states)
+        return x
 ```
 
 下面是这个结构的说明：
 
 +   两个 `ResnetBlock` 精炼潜在表示。
-
 +   接着两个 `Upsample` 层逐步增加空间分辨率。
-
 +   最终输出具有形状 `[batch_size, height, width, 1]`，即单通道图像。
 
 `Upsample` 模块的工作方式如下：
 
 +   它使用双线性插值将特征图调整到更大的空间尺寸（例如，宽度和高度加倍）。
-
 +   然后，它应用一个 3 × 3 卷积来学习上采样特征的变化。
 
 作为提醒，**双线性插值**通过估计四个最近邻的新像素值来调整图像大小。它执行两次线性插值：首先沿着一个轴（例如，从左到右）然后沿着另一个轴（从上到下）。例如，当将 2 × 2 的图像上采样到 3 × 3 时，新的中心像素被计算为四个角值的加权平均值，从而创建平滑的过渡。这避免了最近邻调整大小的块状外观，后者简单地将每个新像素的值分配为单个最接近的原始像素，导致边缘尖锐、锯齿状。
@@ -1107,31 +1055,28 @@ class Upsample(nn.Module):
 
 ```py
 class ClassificationHead(nn.Module):
-  """Fully connected MLP head with optional dropout."""
+    """Fully connected MLP head with optional dropout."""
 
-  num_classes: int
-  dropout_rate: float
-  layers: int
+    num_classes: int
+    dropout_rate: float
+    layers: int
 
-  @nn.compact
-  def __call__(self, x: jax.Array, is_training: bool) -> jax.Array:
-    for i in range(self.layers - 1):
-      x = nn.Dense(features=1000)(x)
-      x = nn.relu(x)
-      x = nn.Dropout(rate=self.dropout_rate)(x, deterministic=not is_training)
+    @nn.compact
+    def __call__(self, x: jax.Array, is_training: bool) -> jax.Array:
+        for i in range(self.layers - 1):
+            x = nn.Dense(features=1000)(x)
+            x = nn.relu(x)
+            x = nn.Dropout(rate=self.dropout_rate)(x, deterministic=not is_training)
 
-    x = nn.Dense(features=self.num_classes)(x)
-    return x
-
+        x = nn.Dense(features=self.num_classes)(x)
+        return x
 ```
 
 参数包括：
 
 +   `num_classes`：数据集中蛋白质 ID 的数量
-
-+   `dropout_rate`: 帮助正则化模型并防止过拟合
-
-+   `layers`: 是否使用单层或双层分类器
++   `dropout_rate`：帮助正则化模型并防止过拟合
++   `layers`：是否使用单层或双层分类器
 
 尽管它很简单，但这个块在原始的 cytoself 论文中对性能的影响最大。它作为一种辅助任务：模型被明确要求从其嵌入中预测蛋白质身份；只有当嵌入编码有用的空间特征时，这个任务才可能完成。
 
@@ -1141,63 +1086,64 @@ class ClassificationHead(nn.Module):
 
 有趣的是，这个辅助蛋白质分类任务对模型来说很难——这从直觉上讲是合理的。许多蛋白质是同一复杂体的一部分，并且具有相同的定位，这使得它们的图像帧在视觉上难以区分。但这就是重点：通过尝试这个困难的任务，模型被推动提取与定位相关的微妙、可泛化的线索，即使它没有达到完美的分类。
 
-在本章的后面部分，您将看到当移除此组件时的差异。这也展示了一个更广泛的教训：*添加正确的辅助任务可以改变模型的学习能力*。您可以通过`classification_weight`参数来控制这个辅助任务对训练的影响程度。
+在本章的后面部分，您将看到当移除此组件时的差异。这也展示了一个更广泛的教训：*添加正确的辅助任务可以改变模型的学习能力*。您可以通过 `classification_weight` 参数来控制这个辅助任务对训练的影响程度。
 
 我们现在有一个模型。让我们开始训练它。
 
 ## 设置模型训练
 
-我们现在将训练我们构建的`LocalizationModel`模型。首先，我们将使用较少的图像帧数量，以便进行更快的迭代和调试。
+我们现在将训练我们构建的 `LocalizationModel` 模型。首先，我们将使用较少的图像帧数量，以便进行更快的迭代和调试。
 
-主训练循环在`train`函数中定义。它设置训练状态，将数据分成批次，并在多个 epoch 上迭代数据集：
+主训练循环在 `train` 函数中定义。它设置训练状态，将数据分成批次，并在多个 epoch 上迭代数据集：
 
 ```py
 @restorable
 def train(
-  state: TrainState,
-  rng: jax.Array,
-  dataset_splits: dict[str, Dataset],
-  num_epochs: int,
-  batch_size: int,
-  classification_weight: float,
-  eval_every: int = 10,
+    state: TrainState,
+    rng: jax.Array,
+    dataset_splits: dict[str, Dataset],
+    num_epochs: int,
+    batch_size: int,
+    classification_weight: float,
+    eval_every: int = 10,
 ) -> tuple[TrainState, dict[str, dict[str, list[dict[str, float]]]]]:
-  """Train the VQ-VAE model with optional classification."""
-  # Setup metrics logging
-  metrics = MetricsLogger()
+    """Train the VQ-VAE model with optional classification."""
+    # Setup metrics logging
+    metrics = MetricsLogger()
 
-  epochs = tqdm(range(num_epochs))
-  for epoch in epochs:
-    epochs.set_description(f"Epoch {epoch + 1}")
-    rng, rng_batch = jax.random.split(rng, 2)
+    epochs = tqdm(range(num_epochs))
+    for epoch in epochs:
+        epochs.set_description(f"Epoch {epoch + 1}")
+        rng, rng_batch = jax.random.split(rng, 2)
 
-    # Perform a training step on a batch of train data and log metrics.
-    for batch in dataset_splits["train"].get_batches(
-      rng_batch, batch_size=batch_size
-    ):
-      rng, rng_dropout = jax.random.split(rng, 2)
-      state, batch_metrics = train_step(
-        state, batch, rng_dropout, classification_weight
-      )
-      metrics.log_step(split="train", **batch_metrics)
+        # Perform a training step on a batch of train data and log metrics.
+        for batch in dataset_splits["train"].get_batches(
+            rng_batch, batch_size=batch_size
+        ):
+            rng, rng_dropout = jax.random.split(rng, 2)
+            state, batch_metrics = train_step(
+                state, batch, rng_dropout, classification_weight
+            )
+            metrics.log_step(split="train", **batch_metrics)
 
-    # Evaluate on the validation split
-    if epoch % eval_every == 0:
-      rng, rng_batch = jax.random.split(rng, 2)
-      for batch in dataset_splits["valid"].get_batches(
-        rng_batch, batch_size=batch_size
-      ):
-        batch_metrics = eval_step(state, batch, classification_weight)
-        metrics.log_step(split="valid", **batch_metrics)
+        # Evaluate on the validation split
+        if epoch % eval_every == 0:
+            rng, rng_batch = jax.random.split(rng, 2)
+            for batch in dataset_splits["valid"].get_batches(
+                rng_batch, batch_size=batch_size
+            ):
+                batch_metrics = eval_step(state, batch, classification_weight)
+                metrics.log_step(split="valid", **batch_metrics)
 
-    metrics.flush(epoch=epoch)
-    epochs.set_postfix_str(metrics.latest(["total_loss"]))
+        metrics.flush(epoch=epoch)
+        epochs.set_postfix_str(metrics.latest(["total_loss"]))
 
-  return state, metrics.export()
-
+    return state, metrics.export()
 ```
 
-首先要注意的是，训练是在 epoch 中进行的，这些 epoch 形成了主循环。提醒一下，一个*epoch*是对整个训练集的一次完整遍历；每个训练示例只被看到一次。在我们第一次进入循环之前，我们初始化训练状态，以便有一个起点。然后，训练从第一个 epoch 开始。
+首先要注意的是，训练是在 epoch 中进行的，这些 epoch 形成了主循环。提醒一下，一个 *epoch* 是对整个训练集的一次完整遍历；每个训练示例只被看到一次。在我们第一次进入循环之前，我们初始化训练状态，以便有一个起点。然后，训练从第一个 epoch 开始。
+
+
 
 在深入训练逻辑之前，让我们简要地看看数据集是如何输入到模型中的。这其中的关键部分是`Dataset.get_batches`方法，它处理了在训练期间如何提供图像示例：
 
@@ -1229,7 +1175,6 @@ def get_batches(
         "images": self.images.frames[frame_id_set],
         "labels": all_labels.loc[frame_id_set]["code"].to_numpy(dtype=int),
       }
-
 ```
 
 您可以看到我们首先选择图像帧的*训练集*或*测试集*，将它们分成预设大小的批次，并打乱它们的索引。然后，每个帧的蛋白质标签被编码为整数，以便可以使用`optax.softmax_cross_entropy_with_integer_labels`损失函数。最后，每个批次产生图像数据、整数编码的蛋白质标签和相应的帧 ID（这可能对分析或可视化很有用）。
@@ -1286,7 +1231,6 @@ def train_step(
   (_, metrics), grads = grad_fn(state.params)
   state = state.apply_gradients(grads=grads)
   return state, metrics
-
 ```
 
 在`train_step`函数内部，内部的`calculate_loss`定义了模型损失的计算方式。这个函数是训练步骤的核心。它决定了模型的性能如何，并指导权重更新以最小化损失。
@@ -1296,7 +1240,6 @@ def train_step(
 然后，我们计算两个额外的损失：
 
 +   `recon_loss`: 重构图像与原始图像之间的差异，使用平方误差
-
 +   `classification_loss`：模型使用交叉熵从图像嵌入中预测蛋白质 ID 的有效性
 
 这些损失被组装成`loss_components`，然后它们被组合成一个`total_loss`，驱动训练。值得注意的是，分类损失乘以一个`classification_weight`，允许我们控制它对学习的贡献程度。将其设置为零*消除*（移除）分类任务，我们将在本章后面进行测试。
@@ -1304,7 +1247,6 @@ def train_step(
 最后，我们计算评估指标以跟踪训练进度。这些包括：
 
 +   `perplexity`：模型使用代码簿的有效性
-
 +   `accuracy`：模型预测蛋白质 ID 的有效性
 
 所有这些都被用来通过`jax.value_and_grad`计算梯度，然后使用`state.apply_gradients`更新模型。这种设计清晰地分离了不同的目标（重构、量化、分类），并允许你通过调整损失权重来实验不同的权衡。
@@ -1334,7 +1276,6 @@ model = LocalizationModel(
   dropout_rate=0.45,
   classification_head_layers=2,
 )
-
 ```
 
 现在我们可以开始训练了：
@@ -1356,7 +1297,6 @@ state, metrics = train(
   eval_every=1,
   store_path=assets("localization/models/small"),
 )
-
 ```
 
 训练完成后，我们现在有一个`LocalizationModel`模型，它已经学会了压缩、量化和重建蛋白质定位模式，同时执行辅助分类。但它实际上学得怎么样呢？让我们找出答案。我们将从检查其重建开始。
@@ -1371,7 +1311,6 @@ state, metrics = train(
 from dlfb.localization.inspect.reconstruction import show_reconstruction
 
 show_reconstruction(dataset["valid"], state, n=8, rng=rng_frames);
-
 ```
 
 ![](img/dlfb_0609.png)
@@ -1386,7 +1325,6 @@ show_reconstruction(dataset["valid"], state, n=8, rng=rng_frames);
 from dlfb.localization.inspect.metrics import plot_losses
 
 plot_losses(metrics);
-
 ```
 
 ![](img/dlfb_0610.png)
@@ -1403,7 +1341,6 @@ plot_losses(metrics);
 from dlfb.localization.inspect.metrics import plot_perplexity
 
 plot_perplexity(metrics);
-
 ```
 
 ![](img/dlfb_0611.png)
@@ -1437,14 +1374,12 @@ state_alt, metrics_alt = train(
   eval_every=1,
   store_path=assets("localization/models/small_alt"),
 )
-
 ```
 
 这次，模型的性能大幅下降，其困惑度崩溃（下降到约 30，之前约为 350），如图 6-12 所示。
 
 ```py
 plot_perplexity(metrics_alt);
-
 ```
 
 ![](img/dlfb_0612.png)
@@ -1455,7 +1390,6 @@ plot_perplexity(metrics_alt);
 
 ```py
 show_reconstruction(dataset["valid"], state_alt, n=8, rng=rng_frames);
-
 ```
 
 乍一看，这似乎是一个改进，但实际上它揭示了模型目标中的一个关键权衡。
@@ -1464,7 +1398,9 @@ show_reconstruction(dataset["valid"], state_alt, n=8, rng=rng_frames);
 
 但 VQ-VAEs 不仅仅是关于漂亮的重建。它们是关于学习输入的离散、结构化表示。当启用分类任务时，模型被迫以对预测蛋白质身份有用的方式组织其内部表示。这鼓励它捕捉高级生物特征，如定位模式，但以略微模糊的重建为代价。
 
-原始的 cytoself 论文中也强调了同样的观察：添加分类似的目标通过推动模型编码有意义的、可区分的特征来提高潜在空间的质量。事实上，cytoself 表明，仅训练用于重建图像的模型在聚类定位或识别复合体方面远不如有效，即使它们的重建在视觉上看起来很好。
+
+
+原始的`cytoself`论文中也强调了同样的观察：添加分类似的目标通过推动模型编码有意义的、可区分的特征来提高潜在空间的质量。事实上，`cytoself`表明，仅训练用于重建图像的模型在聚类定位或识别复合体方面远不如有效，即使它们的重建在视觉上看起来很好。
 
 ![图片](img/dlfb_0613.png)
 
@@ -1476,15 +1412,15 @@ show_reconstruction(dataset["valid"], state_alt, n=8, rng=rng_frames);
 
 ## 理解定位聚类
 
-一个自然的问题是模型是否可以区分不同的亚细胞区室。测试这一点的 一种方法是将均匀流形近似和投影（UMAP）降维技术应用于学习到的嵌入。UMAP 将高维数据投影到二维，同时保留局部结构，这使得可视化复杂关系更容易。
+一个自然的问题是模型是否可以区分不同的亚细胞区室。测试这一点的一种方法是将均匀流形近似和投影（`UMAP`）降维技术应用于学习到的嵌入。`UMAP`将高维数据投影到二维，同时保留局部结构，这使得可视化复杂关系更容易。
 
 ###### 小贴士
 
-还有其他降维技术，如*t-SNE*和*PCA*，但*UMAP*特别适合这项任务。与 PCA 不同，它能够捕捉复杂的非线性关系。UMAP 在许多方面与 t-SNE 相似，但有一个关键优势：它更有效地保留了局部和全局结构。这使得它在可视化像这样多样化的数据集的图案时特别有用。
+还有其他降维技术，如*t-SNE*和*PCA*，但*UMAP*特别适合这项任务。与`PCA`不同，它能够捕捉复杂的非线性关系。`UMAP`在许多方面与*t-SNE*相似，但有一个关键优势：它更有效地保留了局部和全局结构。这使得它在可视化像这样多样化的数据集的图案时特别有用。
 
-UMAP 已成为蛋白质组学和基因组学等领域的一个首选工具——不仅因为其性能，还因为它开箱即用，超参数调整最小。
+`UMAP`已成为蛋白质组学和基因组学等领域的一个首选工具——不仅因为其性能，还因为它开箱即用，超参数调整最小。
 
-如果模型已经学习到了有意义的空间特征，我们预计来自相似细胞区室的图像帧——如线粒体、细胞核或内质网——将在 UMAP 空间中聚集在一起。为了可视化这一点，我们需要提取模型对每张图像的内部表示。
+如果模型已经学习到了有意义的空间特征，我们预计来自相似细胞区室的图像帧——如线粒体、细胞核或内质网——将在`UMAP`空间中聚集在一起。为了可视化这一点，我们需要提取模型对每张图像的内部表示。
 
 函数`get_frame_encoding_index_histogram`通过为每个帧计算代码簿使用直方图来完成这项工作：
 
@@ -1516,12 +1452,11 @@ def get_frame_embeddings(
     "frame_ids": np.concatenate(frame_ids),
     "frame_histograms": np.concatenate(frame_histograms, axis=0),
   }
-
 ```
 
 对于每个图像批次，我们使用模型来获取编码索引：每个帧中每个空间块选择的离散代码簿条目。这些由`pluck_encodings`辅助函数返回。然后，每个帧的输出被展平并传递给`np.histogram`，该函数计算每个代码簿条目被使用的频率。
 
-每一帧的结果是一个直方图向量——每个代码簿条目一个值——描述该条目被激活的频率。这些向量可以被视为每张图像的离散指纹，然后我们可以通过 UMAP 将其降低到二维以进行可视化。
+每一帧的结果是一个直方图向量——每个代码簿条目一个值——描述该条目被激活的频率。这些向量可以被视为每张图像的离散指纹，然后我们可以通过`UMAP`将其降低到二维以进行可视化。
 
 ###### 注意
 
@@ -1546,34 +1481,31 @@ plot_projection(
   dataset_splits["valid"],
   titles=["No ClassificationHead", "With ClassificationHead"],
 );
-
 ```
 
 ![图片](img/dlfb_0614.png)
 
-###### 图 6-14。带有（左）和没有（右）`ClassificationHead`的模型的 UMAP 投影。左侧的模型学习到更清晰、更有意义的结构——来自相同亚细胞区室的帧（例如，囊泡、染色质、核仁）形成更紧密的簇。没有`ClassificationHead`，结构不太明显，区室更难分离。大约 1%的具有单一主要定位的帧用较大的标记突出显示，以直观地注释簇。
+###### 图 6-14. 带有（左）和没有（右）`ClassificationHead`的模型的`UMAP`投影。左侧的模型学习到更清晰、更有意义的结构——来自相同亚细胞区室的帧（例如，囊泡、染色质、核仁）形成更紧密的簇。没有`ClassificationHead`，结构不太明显，区室更难分离。大约 1%的具有单一主要定位的帧用较大的标记突出显示，以直观地注释簇。
 
-你可以看到，一旦嵌入被标记为地面真实定位类别，模型已经清楚地学会了根据原始像素模式区分不同的亚细胞室。在左边的 UMAP 图（带有`ClassificationHead`）中，染色质、线粒体和核仁等室形成相当紧密、独特的簇——表明模型已经学会了这些结构的持续视觉特征。囊泡有时形成一个单独的组，但通常与 ER 和细胞质框架重叠，这很可能反映了它们在原始图像中更分散和多变的外观。
+你可以看到，一旦嵌入被标记为地面真实定位类别，模型已经清楚地学会了根据原始像素模式区分不同的亚细胞室。在左边的`UMAP`图（带有`ClassificationHead`）中，染色质、线粒体和核仁等室形成相当紧密、独特的簇——表明模型已经学会了这些结构的持续视觉特征。囊泡有时形成一个单独的组，但通常与`ER`和细胞质框架重叠，这很可能反映了它们在原始图像中更分散和多变的外观。
 
-移除`ClassificationHead`有明显的视觉影响。在右边的 UMAP 中，模型仍然产生结构化的嵌入，但簇的区分度较低。细胞质、ER 和囊泡等定位更加混合，这表明在没有辅助分类任务的情况下，模型学习到的亚细胞身份表示较弱或更纠缠。这种比较突出了架构选择——甚至辅助目标——如何有意义地塑造学习到的表示结构。
+移除`ClassificationHead`有明显的视觉影响。在右边的`UMAP`中，模型仍然产生结构化的嵌入，但簇的区分度较低。细胞质、`ER`和囊泡等定位更加混合，这表明在没有辅助分类任务的情况下，模型学习到的亚细胞身份表示较弱或更纠缠。这种比较突出了架构选择——甚至辅助目标——如何有意义地塑造学习到的表示结构。
 
 ###### 小贴士
 
-由于我们想要比较`ClassificationHead`的存在或缺失如何影响学习到的嵌入，因此确保两个 UMAP 可视化直接可比较非常重要。默认情况下，像 UMAP 这样的技术涉及初始化和优化中的某些随机性，这可能导致运行之间的视觉布局不一致。为了解决这个问题，我们使用了一种*对齐 UMAP*，这是 UMAP 的一种变体，它跟踪嵌入中的共享数据点以确保一致的校准并使视觉比较有意义。
+由于我们想要比较`ClassificationHead`的存在或缺失如何影响学习到的嵌入，因此确保两个`UMAP`可视化直接可比较非常重要。默认情况下，像`UMAP`这样的技术涉及初始化和优化中的某些随机性，这可能导致运行之间的视觉布局不一致。为了解决这个问题，我们使用了一种*对齐 UMAP*，这是`UMAP`的一种变体，它跟踪嵌入中的共享数据点以确保一致的校准并使视觉比较有意义。
 
-虽然这些 UMAP 图对于定性解释很有用，但也可以更正式地量化聚类质量；例如，通过比较来自*相同*定位的嵌入之间的平均距离与来自*不同*定位的嵌入之间的平均距离。如果模型已经学习到一个有意义的嵌入空间，我们预计类内距离（在定位类别内）会很小，而类间距离会更大。这种基本直觉是几个聚类质量指标的基础，并被 Kobayashi 等人用于定量评估他们的模型。在本章中，我们将专注于视觉探索，但如果你愿意，你总是可以扩展代码以包括此类指标。
+虽然这些`UMAP`图对于定性解释很有用，但也可以更正式地量化聚类质量；例如，通过比较来自*相同*定位的嵌入之间的平均距离与来自*不同*定位的嵌入之间的平均距离。如果模型已经学习到一个有意义的嵌入空间，我们预计类内距离（在定位类别内）会很小，而类间距离会更大。这种基本直觉是几个聚类质量指标的基础，并被`Kobayashi`等人用于定量评估他们的模型。在本章中，我们将专注于视觉探索，但如果你愿意，你总是可以扩展代码以包括此类指标。
 
 ## 检查特征谱
 
 为了更好地理解我们的模型学到了什么，我们可以分析它在不同的蛋白质上如何使用其代码簿。记住，每个图像都是使用从学习到的代码向量集（代码簿）中的条目进行编码的。随着时间的推移，某些条目可能变得专业化，例如，对于线粒体蛋白或核定位蛋白的一致激活。
 
-*特征谱* 是一种简单但强大的方法来总结这种行为。对于每种蛋白质，我们：
+*特征谱*是一种简单但强大的方法来总结这种行为。对于每种蛋白质，我们：
 
-+   收集所有其图像帧。
-
-+   计算每个代码簿条目在这些帧中使用的频率。
-
-+   将这些计数汇总成直方图。这是蛋白质的特征光谱。
++ 收集所有其图像帧。
++ 计算每个代码簿条目在这些帧中使用的频率。
++ 将这些计数汇总成直方图。这是蛋白质的特征光谱。
 
 每个特征光谱本质上就像一个“指纹”，表示模型如何编码该蛋白质的空间模式。
 
@@ -1595,7 +1527,6 @@ def cluster_feature_spectrums(
   )
   encoding_clusters = fcluster(tree, n_clusters, criterion="maxclust")
   return corr_idx_idx, tree, encoding_clusters
-
 ```
 
 我们首先使用皮尔逊相关系数计算所有蛋白质之间的光谱相关性。然后，我们从这个相关矩阵构建一棵树（树状图），并将其聚类以根据蛋白质如何使用代码簿找到相关蛋白质的组。这些簇通常反映了共享的定位模式或功能关系。
@@ -1615,12 +1546,11 @@ corr_idx_idx, tree, encoding_clusters = cluster_feature_spectrums(
   protein_histograms, n_clusters=8
 )
 plot_encoding_corr_heatmap(corr_idx_idx, tree, encoding_clusters);
-
 ```
 
 ![图片](img/dlfb_0615.png)
 
-###### 图 6-15. 基于蛋白质之间共现频率的代码簿条目之间的相关性热图。每个轴显示向量量化（vq）代码簿条目的索引（由于空间限制，并非所有 512 个索引都被写出）。阴影表示蛋白质之间代码使用模式的皮尔逊相关系数：较亮表示强正相关，较暗表示强负相关。这里的树状图将代码簿条目聚类成代表模型学习到的共享空间特征的组。
+###### 图 6-15. 基于蛋白质之间共现频率的代码簿条目之间的相关性热图。每个轴显示向量量化（`vq`）代码簿条目的索引（由于空间限制，并非所有 512 个索引都被写出）。阴影表示蛋白质之间代码使用模式的皮尔逊相关系数：较亮表示强正相关，较暗表示强负相关。这里的树状图将代码簿条目聚类成代表模型学习到的共享空间特征的组。
 
 现在，我们可以深入探讨模型的特征光谱实际上代表了什么。回想一下，对于每个蛋白质，我们计算了每个代码簿条目被使用的频率直方图——这实际上是模型学习到的定位模式的一个指纹。然后，我们计算了这些指纹在蛋白质之间的皮尔逊相关系数，以查看哪些代码簿条目倾向于一起使用。
 
@@ -1660,7 +1590,6 @@ localizations, localization_histograms = aggregate_localizations(
 plot_stacked_histrograms(
   localizations, localization_histograms, tree, encoding_clusters
 );
-
 ```
 
 尽管这是一个基于蛋白质小子集的相对简单的初始模型，但我们已经看到一些证据表明它正在学习有意义的生物结构。图中的每一行代表给定定位类别的平均代码簿使用（特征谱）。例如，`核仁`（第一行）在第八组主要显示峰值，表明只有少数特定的代码簿条目被持续用来表示该部分。这种狭窄、高信号的谱是高度结构化和易于区分的部分的典型特征。
@@ -1669,7 +1598,7 @@ plot_stacked_histrograms(
 
 ![图片](img/dlfb_0616.png)
 
-###### 图 6-16\. 不同蛋白质定位类别的代码簿使用堆叠直方图。每一行显示特定亚细胞室（例如，内质网、核质）的平均特征谱。垂直分组（I–VIII）反映了之前显示的相关代码簿条目聚类。尽管从未使用定位标签进行训练，但该模型已经学会了将某些代码簿向量与特定的生物结构相关联，揭示了有意义的可解释特征。
+###### 图 6-16. 不同蛋白质定位类别的代码簿使用堆叠直方图。每一行显示特定亚细胞室（例如，内质网、核质）的平均特征谱。垂直分组（I–VIII）反映了之前显示的相关代码簿条目聚类。尽管从未使用定位标签进行训练，但该模型已经学会了将某些代码簿向量与特定的生物结构相关联，揭示了有意义的可解释特征。
 
 我们只使用小数据集和简单架构刚刚触及了表面。在下一节中，我们将扩大模型和数据规模，看看这种方法能走多远。
 
@@ -1679,7 +1608,9 @@ plot_stacked_histrograms(
 
 ## 扩大数据规模
 
-我们现在显著增加了蛋白质的数量及其相应的成像帧（从 50 增加到 500）。这带来了新的挑战，尤其是在训练时间和资源管理方面。为了使这个过程更容易管理，我们将保存最终的训练状态，以便可以重新加载以进行进一步的检查和评估：
+我们现在显著增加了蛋白质的数量及其相应的成像帧（从 50 增加到 500）。这带来了新的挑战，尤其是在训练时间和资源管理方面。为了使这个过程更容易管理，我们将保存最终的训练状态，以便可以重新加载以进行进一步的检查和评估。
+
+
 
 ```py
 dataset_splits = DatasetBuilder(
@@ -1713,7 +1644,6 @@ state, metrics = train(
   eval_every=1,
   store_path=assets("localization/models/large"),
 )
-
 ```
 
 这个模型的训练时间明显更长，但回报是更具有表现力和结构化的表示空间。图 6-17 显示了不同定位类别的代码簿使用（特征谱）的汇总，显示了更广泛的蛋白质范围内的更清晰的定位特征（此图还包括作为行的扩展位置类别数量）：
@@ -1742,7 +1672,6 @@ localizations, localization_histograms = aggregate_localizations(
 plot_stacked_histrograms(
   localizations, localization_histograms, tree, encoding_clusters
 );
-
 ```
 
 ![图片](img/dlfb_0617.png)
@@ -1755,7 +1684,7 @@ plot_stacked_histrograms(
 
 ###### 小贴士
 
-这些光谱的改进纯粹来自于数据集的扩展；没有对模型架构进行任何更改。接下来尝试探索模型方面的事情：通过调整`num_embeddings`、`embedding_dim`或`classification_``head_layers`来增加容量，或者尝试你自己的架构更改。这里有很多空间可以发挥创意。
+这些光谱的改进纯粹来自于数据集的扩展；没有对模型架构进行任何更改。接下来尝试探索模型方面的事情：通过调整`num_embeddings`、`embedding_dim`或`classification_head_layers`来增加容量，或者尝试你自己的架构更改。这里有很多空间可以发挥创意。
 
 接下来，我们可以重新绘制一个 UMAP 投影来可视化模型学习到的表示空间（见图 6-18）：
 
@@ -1772,7 +1701,6 @@ plot_projection(
   subset_mode="single",  # Only show frames with single localization
   titles=["Localization UMAP Projection"],
 );
-
 ```
 
 ![](img/dlfb_0618.png)
@@ -1787,29 +1715,28 @@ plot_projection(
 
 这就是我们在这个章节中要讲的内容，但你可以从这里探索更多。原始的 cytoself 论文介绍了几个架构创新，这些创新既提高了性能，也提高了生物洞察力：
 
-分割量化
+**分割量化**
 
 与量化完整的特征向量不同，cytoself 将它们分割成更小的块，并独立量化每个块。这提高了代码簿的使用效率和学习的表示的丰富性。
 
-全局和局部表示
+**全局和局部表示**
 
 模型以两个空间尺度处理每个图像：
 
 +   一种*粗略*（4 × 4 × 576）的表示，能够捕捉高级定位模式。
-
 +   一种*精细*（25 × 25 × 64）的表示，能够保留详细的空間特征。每个表示都使用单独的代码簿进行量化。
 
 这些新增功能使 cytoself 能够在无监督设置中实现几个令人印象深刻的结果：
 
-预测先前未表征的蛋白质的定位
+**预测先前未表征的蛋白质的定位**
 
 例如，它正确地推断出 FAM241A 定位于内质网——这是一个后来通过共定位实验和质谱学确认的预测。
 
-区分微妙的亚细胞差异
+**区分微妙的亚细胞差异**
 
 模型学会了区分视觉上相似的隔室，如溶酶体和内体。尽管用肉眼难以区分，但这些隔室在功能上有所不同：溶酶体降解细胞物质，而内体作为运输囊泡，通往溶酶体。
 
-发现蛋白质复合物
+**发现蛋白质复合物**
 
 最令人印象深刻的是，cytoself 通过嵌入相似性将属于同一复合物的蛋白质（如核糖体或蛋白酶体）分组。通过比较蛋白质级别的嵌入，作者展示了已知的复合物成员紧密聚类，即使没有任何标签或先验知识。在某些情况下，这甚至超过了之前的监督方法，甚至暗示了之前未表征的复合物成员。
 

@@ -1,3 +1,5 @@
+
+
 # 第七章：问答
 
 无论您是研究人员、分析师还是数据科学家，都有可能在某个时候需要浏览大量文档以找到您正在寻找的信息。更糟糕的是，您不断地被谷歌和必应提醒，存在更好的搜索方式！例如，如果我们在谷歌上搜索“玛丽·居里何时获得她的第一个诺贝尔奖？”我们立即得到了“1903”这个正确答案，如图 7-1 所示。
@@ -168,9 +170,7 @@ Is it a wireless keyboard?
 我们的问答系统首先需要找到一种方法来识别客户评论中的潜在答案作为文本跨度。例如，如果我们有一个问题“它防水吗？”和评论段落是“这个手表在 30 米深处防水”，那么模型应该输出“在 30 米处防水”。为了做到这一点，我们需要了解如何：
 
 +   构建监督学习问题。
-
 +   为问答任务对文本进行标记和编码。
-
 +   处理超出模型最大上下文大小的长段落。
 
 让我们从如何构建问题开始。
@@ -230,6 +230,9 @@ inputs = tokenizer(question, context, return_tensors="pt")
 | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
 | token_type_ids | 0 | 0 | 0 | 0 | 0 | 0 | ... | 1 | 1 | 1 | 1 | 1 | 1 |
 | attention_mask | 1 | 1 | 1 | 1 | 1 | 1 | ... | 1 | 1 | 1 | 1 | 1 | 1 |
+
+
+
 
 我们可以看到熟悉的`input_ids`和`attention_mask`张量，而`token_type_ids`张量指示了输入的哪个部分对应于问题和上下文（0 表示问题标记，1 表示上下文标记）。⁹
 
@@ -464,15 +467,22 @@ comes close. for $ 32, you cannot go wrong. [SEP]
 表 7-3。Haystack 检索器和文档存储的兼容性
 
 |  | 内存 | Elasticsearch | FAISS | Milvus |
+
 | --- | --- | --- | --- | --- |
+
 | TF-IDF | 是 | 是 | 否 | 否 |
+
 | BM25 | 否 | 是 | 否 | 否 |
+
 | 嵌入 | 是 | 是 | 是 | 是 |
+
 | DPR | 是 | 是 | 是 | 是 |
 
 由于本章将探讨稀疏和密集检索器，我们将使用与两种检索器类型兼容的`ElasticsearchDocumentStore`。Elasticsearch 是一种能够处理各种数据类型的搜索引擎，包括文本、数字、地理空间、结构化和非结构化数据。它存储大量数据并能够快速进行全文搜索过滤，因此特别适用于开发问答系统。它还具有成为基础设施分析行业标准的优势，因此您的公司很有可能已经有一个集群可以使用。
 
-要初始化文档存储，我们首先需要下载并安装 Elasticsearch。通过按照 Elasticsearch 的[指南](https://oreil.ly/bgmKq)¹² ，我们可以使用`wget`获取 Linux 的最新版本，并使用`tar` shell 命令解压缩它：
+
+
+要初始化文档存储，我们首先需要下载并安装 Elasticsearch。通过按照 Elasticsearch 的[指南](https://oreil.ly/bgmKq)¹²，我们可以使用`wget`获取 Linux 的最新版本，并使用`tar` shell 命令解压缩它：
 
 ```py
 url = """https://artifacts.elastic.co/downloads/elasticsearch/\
@@ -669,6 +679,8 @@ pipe = ExtractiveQAPipeline(reader, es_retriever)
 ```
 
 每个`Pipeline`都有一个`run()`方法，指定查询流程应如何执行。对于`ExtractiveQAPipeline`，我们只需要传递`query`，用`top_k_retriever`指定要检索的文档数量，用`top_k_reader`指定要从这些文档中提取的答案数量。在我们的案例中，我们还需要使用`filters`参数指定对项目 ID 的过滤器，就像我们之前对检索器所做的那样。让我们再次运行一个关于亚马逊 Fire 平板电脑的简单示例，但这次返回提取的答案：
+
+
 
 ```py
 n_answers = 3
@@ -904,7 +916,9 @@ plot_retriever_eval([es_topk_df], ["BM25"])
 
 ### 密集通道检索
 
-我们已经看到，当我们的稀疏检索器返回<math alttext="k equals 10"><mrow><mi>k</mi> <mo>=</mo> <mn>10</mn></mrow></math>个文档时，我们几乎可以完美地召回，但在较小的*k*值上我们能做得更好吗？这样做的优势在于我们可以向读者传递更少的文档，从而减少我们问答流程的总体延迟。像 BM25 这样的稀疏检索器的一个众所周知的局限性是，如果用户查询包含与评论完全不匹配的术语，它们可能无法捕获相关文档。一个有前途的替代方案是使用密集嵌入来表示问题和文档，当前的技术水平是一种被称为*密集通道检索*（DPR）的架构。¹⁴ DPR 背后的主要思想是使用两个 BERT 模型作为问题和段落的编码器。如图 7-10 所示，这些编码器将输入文本映射到`[CLS]`标记的*d*维向量表示。
+
+
+我们已经看到，当我们的稀疏检索器返回`k = 10`个文档时，我们几乎可以完美地召回，但在较小的`k`值上我们能做得更好吗？这样做的优势在于我们可以向读者传递更少的文档，从而减少我们问答流程的总体延迟。像 BM25 这样的稀疏检索器的一个众所周知的局限性是，如果用户查询包含与评论完全不匹配的术语，它们可能无法捕获相关文档。一个有前途的替代方案是使用密集嵌入来表示问题和文档，当前的技术水平是一种被称为*密集通道检索*（DPR）的架构。¹⁴ DPR 背后的主要思想是使用两个 BERT 模型作为问题和段落的编码器。如图 7-10 所示，这些编码器将输入文本映射到`[CLS]`标记的`d`维向量表示。
 
 ![DPR 架构](img/nlpt_0710.png)
 
@@ -927,7 +941,7 @@ dpr_retriever = DensePassageRetriever(document_store=document_store,
 document_store.update_embeddings(retriever=dpr_retriever)
 ```
 
-我们现在准备好了！我们可以像为 BM25 那样评估密集检索器，并比较前*k*个召回率：
+我们现在准备好了！我们可以像为 BM25 那样评估密集检索器，并比较前`k`个召回率：
 
 ```py
 dpr_topk_df = evaluate_retriever(dpr_retriever)
@@ -936,7 +950,7 @@ plot_retriever_eval([es_topk_df, dpr_topk_df], ["BM25", "DPR"])
 
 ![](img/nlpt_07in03.png)
 
-在这里我们可以看到，DPR 在召回率上并没有比 BM25 提供提升，并且在<math alttext="k equals 3"><mrow><mi>k</mi> <mo>=</mo> <mn>3</mn></mrow></math>左右饱和。
+在这里我们可以看到，DPR 在召回率上并没有比 BM25 提供提升，并且在`k = 3`左右饱和。
 
 ###### 提示
 
@@ -1128,6 +1142,8 @@ reader.train(data_dir=".", use_gpu=True, n_epochs=1, batch_size=16,
              train_filename=train_filename, dev_filename=dev_filename)
 ```
 
+
+
 阅读器微调后，让我们现在将其在测试集上的性能与我们的基线模型进行比较：
 
 ```py
@@ -1164,13 +1180,13 @@ plot_reader_eval(reader_eval)
 
 我们可以看到，直接在 SubjQA 上对语言模型进行微调的结果比在 SQuAD 和 SubjQA 上进行微调的性能要差得多。
 
-###### 警告
+## 警告
 
 处理小数据集时，最佳做法是在评估 Transformer 时使用交叉验证，因为它们可能容易过拟合。您可以在[FARM 存储库](https://oreil.ly/K3nK8)中找到如何使用 SQuAD 格式的数据集执行交叉验证的示例。
 
 ## 评估整个 QA 管道
 
-现在我们已经了解了如何分别评估阅读器和检索器组件，让我们将它们联系在一起，以衡量我们管道的整体性能。为此，我们需要为我们的检索器管道增加阅读器及其评估的节点。我们已经看到，在<math alttext="k equals 10"><mrow><mi>k</mi> <mo>=</mo> <mn>10</mn></mrow></math>时，我们几乎可以完美地召回，因此我们可以固定这个值，并评估这对阅读器性能的影响（因为现在它将收到每个查询的多个上下文，而不是 SQuAD 风格的评估）：
+现在我们已经了解了如何分别评估阅读器和检索器组件，让我们将它们联系在一起，以衡量我们管道的整体性能。为此，我们需要为我们的检索器管道增加阅读器及其评估的节点。我们已经看到，在`k = 10`时，我们几乎可以完美地召回，因此我们可以固定这个值，并评估这对阅读器性能的影响（因为现在它将收到每个查询的多个上下文，而不是 SQuAD 风格的评估）：
 
 ```py
 # Initialize retriever pipeline
@@ -1193,7 +1209,7 @@ reader_eval["QA Pipeline (top-1)"] = {
 
 ![](img/nlpt_0712.png)
 
-###### 图 7-12。EM 和*F*[1]分数的阅读器与整个 QA 管道的比较
+**图 7-12。** EM 和*F*[1]分数的阅读器与整个 QA 管道的比较
 
 从这个图中，我们可以看到检索器对整体性能的影响。特别是，与匹配问题-上下文对相比，整体性能有所下降，这是在 SQuAD 风格的评估中所做的。这可以通过增加阅读器被允许预测的可能答案数量来避免。
 
@@ -1207,7 +1223,7 @@ RAG 通过将读者替换为*生成器*并使用 DPR 作为检索器来扩展了
 
 ![RAG Architecture](img/nlpt_0713.png)
 
-###### 图 7-13。RAG 架构用于对检索器和生成器进行端到端微调（由 Ethan Perez 提供）
+**图 7-13。** RAG 架构用于对检索器和生成器进行端到端微调（由 Ethan Perez 提供）
 
 为了展示 RAG 的工作原理，我们将使用之前的`DPRetriever`，因此我们只需要实例化一个生成器。有两种类型的 RAG 模型可供选择：
 
@@ -1238,7 +1254,7 @@ from haystack.pipeline import GenerativeQAPipeline
 pipe = GenerativeQAPipeline(generator=generator, retriever=dpr_retriever)
 ```
 
-###### 注意
+**注意**
 
 在 RAG 中，查询编码器和生成器都是端到端训练的，而上下文编码器是冻结的。在 Haystack 中，`GenerativeQAPipeline`使用`RAGenerator`的查询编码器和`DensePassageRetriever`的上下文编码器。
 
@@ -1291,7 +1307,7 @@ Answer 3:  the cost
 
 ![QA 金字塔](img/nlpt_0714.png)
 
-###### 图 7-14. QA 需求层次结构
+**图 7-14。** QA 需求层次结构
 
 展望未来，一个令人兴奋的研究领域是*多模态 QA*，它涉及对文本、表格和图像等多种模态进行 QA。正如 MultiModalQA 基准所描述的那样，¹⁷这样的系统可以使用户回答跨越不同模态的信息的复杂问题，比如“著名的两根手指的画是什么时候完成的？”另一个具有实际业务应用的领域是在*知识图谱*上进行 QA，其中图的节点对应于现实世界的实体，它们的关系由边定义。通过将事实编码为（*主语*，*谓语*，*宾语*）三元组，可以使用图来回答关于缺失元素的问题。有一个将 Transformer 与知识图谱相结合的例子，请参见[Haystack 教程](https://oreil.ly/n7lZb)。另一个有前途的方向是*自动生成问题*，作为一种使用未标记数据或数据增强进行无监督/弱监督训练的方式。最近的两个例子包括 Probably Answered Questions（PAQ）基准和跨语言设置的合成数据增强的论文。¹⁸
 

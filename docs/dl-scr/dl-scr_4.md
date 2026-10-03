@@ -1,3 +1,4 @@
+
 # 第四章：扩展
 
 在上一章中，经过两章的推理，我们从第一原则出发，探讨了深度学习模型是什么以及它们应该如何工作，最终构建了我们的第一个深度学习模型，并训练它解决了相对简单的问题，即根据房屋的数值特征预测房价。然而，在大多数实际问题中，成功训练深度学习模型并不那么容易：虽然这些模型可以理论上找到任何可以被定义为监督学习问题的问题的最优解，但在实践中它们经常失败，而且确实很少有理论保证表明给定的模型架构实际上会找到一个好的解决方案。尽管如此，还是有一些被充分理解的技术可以使神经网络训练更有可能成功；这将是本章的重点。
@@ -6,7 +7,7 @@
 
 在第一章中，我们遵循了“图表-数学-代码”模型来介绍每个概念。在这里，每个技术并没有明显的图表，因此我们将从每个技术的“直觉”开始，然后跟随数学（通常比第一章简单得多），最后以代码结束，这实际上将包括将技术整合到我们构建的框架中，并精确描述它如何与我们在上一章中形式化的构建块互动。在这种精神下，我们将从神经网络试图做什么的“整体”直觉开始：找到一个函数的最小值。
 
-# 关于神经网络的一些直觉
+## 关于神经网络的一些直觉
 
 神经网络包含一堆权重；给定这些权重，以及一些输入数据 `X` 和 `y`，我们可以计算出一个结果的“损失”。图 4-1 展示了神经网络的这种极高级别（但仍然正确）的视图。
 
@@ -24,29 +25,29 @@
 
 ![神经网络图](img/dlfs_0403.png)
 
-###### 图 4-3。根据梯度和学习率更新神经网络权重的几何表示
+###### 图 4-3. 根据梯度和学习率更新神经网络权重的几何表示
 
 训练深度学习模型的目标是将每个权重移动到使损失最小化的“全局”值。正如我们从图 4-3 中看到的，如果我们采取的步骤太小，我们可能会陷入“局部”最小值，这比全局最小值不太理想（遵循这种情况的权重路径由蓝色箭头表示）。如果步骤太大，我们可能会“反复跳过”全局最小值，即使我们接近它（这种情况由红色箭头表示）。这是调整学习率的基本权衡：如果学习率太小，我们可能会陷入局部最小值；如果学习率太大，它们可能会跳过全局最小值。
 
-实际上，情况比这复杂得多。一个原因是神经网络中有成千上万，甚至数百万个权重，因此我们在一个具有成千上万维或数百万维的空间中寻找全局最小值。此外，由于我们在每次迭代中更新权重，并传入不同的`X`和`y`，*我们试图找到最小值的曲线不断变化！*后者是神经网络多年来受到怀疑的主要原因之一；看起来迭代地以这种方式更新权重实际上无法找到全局理想的解决方案。Yann LeCun 等人在 2015 年的一篇[*自然*文章](https://www.nature.com/articles/nature14539)中最好地表达了这一点：
+实际上，情况比这复杂得多。一个原因是神经网络中有成千上万，甚至数百万个权重，因此我们在一个具有成千上万维或数百万维的空间中寻找全局最小值。此外，由于我们在每次迭代中更新权重，并传入不同的 `X` 和 `y`，*我们试图找到最小值的曲线不断变化！*后者是神经网络多年来受到怀疑的主要原因之一；看起来迭代地以这种方式更新权重实际上无法找到全局理想的解决方案。Yann LeCun 等人在 2015 年的一篇[*自然*文章](https://www.nature.com/articles/nature14539)中最好地表达了这一点：
 
 > 特别是，人们普遍认为简单的梯度下降会陷入糟糕的局部最小值，即权重配置，对于这些配置，任何微小的变化都不会减少平均误差。实际上，对于大型网络，糟糕的局部最小值很少是一个问题。无论初始条件如何，系统几乎总是达到非常相似质量的解决方案。最近的理论和实证结果强烈表明，局部最小值通常不是一个严重的问题。
 
-因此，在实践中，图 4-3 不仅提供了一个很好的心智模型，解释了为什么学习率不应该太大或太小，还提供了为什么我们将在本章学习的许多技巧实际上有效的直觉。具备了对神经网络试图做什么的直觉，让我们开始研究这些技巧。我们将从一个损失函数开始，即*softmax 交叉熵*损失函数，这个损失函数在很大程度上有效，因为它能够为权重提供比我们在上一章看到的均方误差损失函数更陡的梯度。
+因此，在实践中，图 4-3 不仅提供了一个很好的心智模型，解释了为什么学习率不应该太大或太小，还提供了为什么我们将在本章学习的许多技巧实际上有效的直觉。具备了对神经网络试图做什么的直觉，让我们开始研究这些技巧。我们将从一个损失函数开始，即 *softmax 交叉熵* 损失函数，这个损失函数在很大程度上有效，因为它能够为权重提供比我们在上一章看到的均方误差损失函数更陡的梯度。
 
-# Softmax 交叉熵损失函数
+## Softmax 交叉熵损失函数
 
-在第三章中，我们使用均方误差（MSE）作为我们的损失函数。这个函数有一个很好的性质，即它是凸的，这意味着预测与目标之间的距离越远，`Loss`向后发送到网络`Layer`的初始梯度就越陡峭，因此参数接收到的所有梯度也会更大。然而，在分类问题中，我们可以做得更好，因为在这种问题中*我们知道网络输出的值应该被解释为概率*；因此，每个值不仅应该在 0 到 1 之间，而且对于我们通过网络传递的每个观察值，概率向量应该总和为 1。Softmax 交叉熵损失函数利用这一点，为相同的输入产生比均方误差损失更陡的梯度。这个函数有两个组件：第一个是*softmax*函数，第二个组件是“交叉熵”损失；我们将依次介绍每个组件。
+在第三章中，我们使用均方误差（MSE）作为我们的损失函数。这个函数有一个很好的性质，即它是凸的，这意味着预测与目标之间的距离越远，`Loss` 向后发送到网络 `Layer` 的初始梯度就越陡峭，因此参数接收到的所有梯度也会更大。然而，在分类问题中，我们可以做得更好，因为在这种问题中*我们知道网络输出的值应该被解释为概率*；因此，每个值不仅应该在 0 到 1 之间，而且对于我们通过网络传递的每个观察值，概率向量应该总和为 1。Softmax 交叉熵损失函数利用这一点，为相同的输入产生比均方误差损失更陡的梯度。这个函数有两个组件：第一个是 *softmax* 函数，第二个组件是“交叉熵”损失；我们将依次介绍每个组件。
 
-## 组件＃1：Softmax 函数
+### 组件 #1：Softmax 函数
 
-对于一个具有`N`个可能类别的分类问题，我们将使我们的神经网络为每个观察输出一个包含`N`个值的向量。对于一个有三个类别的问题，这些值可以是：
+对于一个具有 `N` 个可能类别的分类问题，我们将使我们的神经网络为每个观察输出一个包含 `N` 个值的向量。对于一个有三个类别的问题，这些值可以是：
 
 ```py
 [5, 3, 2]
 ```
 
-### 数学
+#### 数学
 
 再次，由于这是一个分类问题，我们知道这*应该*被解释为概率向量（这个观察属于类别 1、2 或 3 的概率）。将这些值转换为概率向量的一种方法是简单地对它们进行标准化，求和并除以总和：
 
@@ -56,7 +57,7 @@
 
 <math display="block"><mrow><mtext>Softmax</mtext> <mrow><mo>(</mo> <mfenced close="]" open="["><mtable><mtr><mtd><msub><mi>x</mi> <mn>1</mn></msub></mtd></mtr> <mtr><mtd><msub><mi>x</mi> <mn>2</mn></msub></mtd></mtr> <mtr><mtd><msub><mi>x</mi> <mn>3</mn></msub></mtd></mtr></mtable></mfenced> <mo>)</mo></mrow> <mo>=</mo> <mfenced close="]" open="["><mtable><mtr><mtd><mfrac><msup><mi>e</mi> <msub><mi>x</mi> <mn>1</mn></msub></msup> <mrow><msup><mi>e</mi> <msub><mi>x</mi> <mn>1</mn></msub></msup> <mo>+</mo><msup><mi>e</mi> <msub><mi>x</mi> <mn>2</mn></msub></msup> <mo>+</mo><msup><mi>e</mi> <msub><mi>x</mi> <mn>3</mn></msub></msup></mrow></mfrac></mtd></mtr> <mtr><mtd><mfrac><msup><mi>e</mi> <msub><mi>x</mi> <mn>2</mn></msub></msup> <mrow><msup><mi>e</mi> <msub><mi>x</mi> <mn>1</mn></msub></msup> <mo>+</mo><msup><mi>e</mi> <msub><mi>x</mi> <mn>2</mn></msub></msup> <mo>+</mo><msup><mi>e</mi> <msub><mi>x</mi> <mn>3</mn></msub></msup></mrow></mfrac></mtd></mtr> <mtr><mtd><mfrac><msup><mi>e</mi> <msub><mi>x</mi> <mn>3</mn></msub></msup> <mrow><msup><mi>e</mi> <msub><mi>x</mi> <mn>1</mn></msub></msup> <mo>+</mo><msup><mi>e</mi> <msub><mi>x</mi> <mn>2</mn></msub></msup> <mo>+</mo><msup><mi>e</mi> <msub><mi>x</mi> <mn>3</mn></msub></msup></mrow></mfrac></mtd></mtr></mtable></mfenced></mrow></math>
 
-### 直觉
+#### 直觉
 
 Softmax 函数背后的直觉是，它相对于其他值更强烈地放大最大值，迫使神经网络在分类问题的背景下对其认为是正确的预测更“不中立”。让我们比较这两个函数，标准化和 softmax，对我们前面的概率向量会产生什么影响：
 
@@ -76,45 +77,53 @@ softmax(np.array([5,3,2]))
 array([0.84, 0.11, 0.04])
 ```
 
-我们可以看到原始的最大值—5—比简单标准化数据时具有显着更高的值，而另外两个值比从`normalize`函数输出时更低。因此，`softmax`函数在标准化值和实际应用`max`函数之间（在这种情况下将导致输出为`array([1.0, 0.0, 0.0])`）的部分路径上，因此得名`softmax`。
+我们可以看到原始的最大值—5—比简单标准化数据时具有显着更高的值，而另外两个值比从 `normalize` 函数输出时更低。因此，`softmax` 函数在标准化值和实际应用 `max` 函数之间（在这种情况下将导致输出为 `array([1.0, 0.0, 0.0])`）的部分路径上，因此得名 `softmax`。
 
-## 组件＃2：交叉熵损失
+### 组件 #2：交叉熵损失
 
 请记住，任何损失函数都将接受一个概率向量<math><mfenced close="]" open="["><mtable><mtr><mtd><msub><mi>p</mi> <mn>1</mn></msub></mtd></mtr> <mtr><mtd><mo>⋮</mo></mtd></mtr> <mtr><mtd><msub><mi>p</mi> <mi>n</mi></msub></mtd></mtr></mtable></mfenced></math>和一个实际值向量<math><mfenced close="]" open=""><mtable><mtr><mtd><msub><mi>y</mi> <mn>1</mn></msub></mtd></mtr> <mtr><mtd><mo>⋮</mo></mtd></mtr> <mtr><mtd><msub><mi>y</mi> <mi>n</mi></msub></mtd></mtr></mtable></mfenced></math>。
 
-### 数学
+#### 数学
 
-对于这些向量中的每个索引`i`，交叉熵损失函数为：
+对于这些向量中的每个索引 `i`，交叉熵损失函数为：
 
 <math display="block"><mrow><mtext>CE</mtext> <mrow><mo>(</mo> <msub><mi>p</mi> <mi>i</mi></msub> <mo>,</mo> <msub><mi>y</mi> <mi>i</mi></msub> <mo>)</mo></mrow> <mo>=</mo> <mo>-</mo> <msub><mi>y</mi> <mi>i</mi></msub> <mo>×</mo> <mtext>log</mtext> <mrow><mo>(</mo> <msub><mi>p</mi> <mi>i</mi></msub> <mo>)</mo></mrow> <mo>-</mo> <mrow><mo>(</mo> <mn>1</mn> <mo>-</mo> <msub><mi>y</mi> <mi>i</mi></msub> <mo>)</mo></mrow> <mo>×</mo> <mtext>log</mtext> <mrow><mo>(</mo> <mn>1</mn> <mo>-</mo> <msub><mi>p</mi> <mi>i</mi></msub> <mo>)</mo></mrow></mrow></math>
 
-### 直觉
+#### 直觉
 
-要看到这作为损失函数是有道理的原因，考虑到由于*y*的每个元素都是 0 或 1，前述方程简化为：
+要看到这作为损失函数是有道理的原因，考虑到由于 *y* 的每个元素都是 0 或 1，前述方程简化为：
 
 <math display="block"><mrow><mtext>CE</mtext> <mrow><mo>(</mo> <msub><mi>p</mi> <mi>i</mi></msub> <mo>,</mo> <msub><mi>y</mi> <mi>i</mi></msub> <mo>)</mo></mrow> <mo>=</mo> <mfenced close="" open="{" separators=""><mtable><mtr><mtd columnalign="left"><mrow><mo>-</mo> <mi>l</mi> <mi>o</mi> <mi>g</mi> <mo>(</mo> <mn>1</mn> <mo>-</mo> <msub><mi>p</mi> <mi>i</mi></msub> <mo>)</mo></mrow></mtd> <mtd columnalign="left"><mrow><mtext>if</mtext> <msub><mi>y</mi> <mi>i</mi></msub> <mo>=</mo> <mn>0</mn></mrow></mtd></mtr> <mtr><mtd columnalign="left"><mrow><mo>-</mo> <mi>l</mi> <mi>o</mi> <mi>g</mi> <mo>(</mo> <msub><mi>p</mi> <mi>i</mi></msub> <mo>)</mo></mrow></mtd> <mtd columnalign="left"><mrow><mtext>if</mtext> <msub><mi>y</mi> <mi>i</mi></msub> <mo>=</mo> <mn>1</mn></mrow></mtd></mtr></mtable></mfenced></mrow></math>
 
-现在我们可以更容易地将其分解。如果*y*=0，那么在区间 0 到 1 上的这个损失值与均方误差损失值的图像如图 4-4 所示。
+现在我们可以更容易地将其分解。如果 *y* = 0，那么在区间 0 到 1 上的这个损失值与均方误差损失值的图像如图 4-4 所示。
 
-![dlfs 0404
+![dlfs 0404](img/dlfs_0404.png)
 
-###### 图 4-4。当<math><mrow><mi>y</mi> <mo>=</mo> <mn>0</mn></mrow></math>时的交叉熵损失与 MSE
+###### 图 4-4. 当 <math><mrow><mi>y</mi> <mo>=</mo> <mn>0</mn></mrow></math> 时的交叉熵损失与 MSE
 
-不仅在这个区间内交叉熵损失的惩罚要高得多，²而且它们的增长速度更快；事实上，当我们的预测与目标之间的差距接近 1 时，交叉熵损失的值会趋近于无穷！当*y* = 1 时的图形类似，只是“翻转”了（即，它围绕*x* = 0.5 的线旋转了 180 度）。
+不仅在这个区间内交叉熵损失的惩罚要高得多，² 而且它们的增长速度更快；事实上，当我们的预测与目标之间的差距接近 1 时，交叉熵损失的值会趋近于无穷！当 *y* = 1 时的图形类似，只是“翻转”了（即，它围绕 *x* = 0.5 的线旋转了 180 度）。
+
+
 
 因此，对于我们知道输出将在 0 和 1 之间的问题，交叉熵损失产生的梯度比均方误差更陡。真正的魔力发生在我们将这种损失与 softmax 函数结合时——首先将神经网络输出通过 softmax 函数进行归一化，使值相加为 1，然后将得到的概率输入到交叉熵损失函数中。
 
-让我们看看这在我们迄今为止一直使用的三类情况下是什么样子；从*i* = 1 开始的损失向量的分量的表达式，即给定观察值的损失的第一个分量，我们将表示为*SCE*[1]：
+让我们看看这在我们迄今为止一直使用的三类情况下是什么样子；从`i` = 1 开始的损失向量的分量的表达式，即给定观察值的损失的第一个分量，我们将表示为`SCE[1]`：
 
-<math display="block"><mrow><msub><mrow><mi>S</mi><mi>C</mi><mi>E</mi></mrow> <mn>1</mn></msub> <mo>=</mo> <mo>-</mo> <msub><mi>y</mi> <mn>1</mn></msub> <mo>×</mo> <mi>l</mi> <mi>o</mi> <mi>g</mi> <mrow><mo>(</mo> <mfrac><msup><mi>e</mi> <msub><mi>x</mi> <mn>1</mn></msub></msup> <mrow><msup><mi>e</mi> <msub><mi>x</mi> <mn>1</mn></msub></msup> <mo>+</mo><msup><mi>e</mi> <msub><mi>x</mi> <mn>2</mn></msub></msup> <mo>+</mo><msup><mi>e</mi> <msub><mi>x</mi> <mn>3</mn></msub></msup></mrow></mfrac> <mo>)</mo></mrow> <mo>-</mo> <mrow><mo>(</mo> <mn>1</mn> <mo>-</mo> <msub><mi>y</mi> <mn>1</mn></msub> <mo>)</mo></mrow> <mo>×</mo> <mi>l</mi> <mi>o</mi> <mi>g</mi> <mrow><mo>(</mo> <mn>1</mn> <mo>-</mo> <mfrac><msup><mi>e</mi> <msub><mi>x</mi> <mn>1</mn></msub></msup> <mrow><msup><mi>e</mi> <msub><mi>x</mi> <mn>1</mn></msub></msup> <mo>+</mo><msup><mi>e</mi> <msub><mi>x</mi> <mn>2</mn></msub></msup> <mo>+</mo><msup><mi>e</mi> <msub><mi>x</mi> <mn>3</mn></msub></msup></mrow></mfrac> <mo>)</mo></mrow></mrow></math>
+```
+SCE₁ = -y₁ × log(eˣ¹ / (eˣ¹ + eˣ² + eˣ³)) - (1 - y₁) × log(1 - eˣ¹ / (eˣ¹ + eˣ² + eˣ³))
+```
 
 根据这个表达式，这种损失的梯度似乎对这种损失有点棘手。然而，有一个优雅的表达式，既易于数学书写，又易于实现：
 
-<math display="block"><mrow><mfrac><mrow><mi>∂</mi><msub><mrow><mi>S</mi><mi>C</mi><mi>E</mi></mrow> <mn>1</mn></msub></mrow> <mrow><mi>∂</mi><msub><mi>x</mi> <mn>1</mn></msub></mrow></mfrac> <mo>=</mo> <mfrac><msup><mi>e</mi> <msub><mi>x</mi> <mn>1</mn></msub></msup> <mrow><msup><mi>e</mi> <msub><mi>x</mi> <mn>1</mn></msub></msup> <mo>+</mo><msup><mi>e</mi> <msub><mi>x</mi> <mn>2</mn></msub></msup> <mo>+</mo><msup><mi>e</mi> <msub><mi>x</mi> <mn>3</mn></msub></msup></mrow></mfrac> <mo>-</mo> <msub><mi>y</mi> <mn>1</mn></msub></mrow></math>
+```
+∂SCE₁ / ∂x₁ = eˣ¹ / (eˣ¹ + eˣ² + eˣ³) - y₁
+```
 
 这意味着 softmax 交叉熵的*总*梯度是：
 
-<math display="block"><mrow><mtext>softmax</mtext> <mrow><mo>(</mo> <mfenced close="]" open="["><mtable><mtr><mtd><msub><mi>x</mi> <mn>1</mn></msub></mtd></mtr> <mtr><mtd><msub><mi>x</mi> <mn>2</mn></msub></mtd></mtr> <mtr><mtd><msub><mi>x</mi> <mn>3</mn></msub></mtd></mtr></mtable></mfenced> <mo>)</mo></mrow> <mo>-</mo> <mfenced close="]" open=""><mtable><mtr><mtd><msub><mi>y</mi> <mn>1</mn></msub></mtd></mtr> <mtr><mtd><msub><mi>y</mi> <mn>2</mn></msub></mtd></mtr> <mtr><mtd><msub><mi>y</mi> <mn>3</mn></msub></mtd></mtr></mtable></mfenced></mrow></math>
+```
+softmax([x₁, x₂, x₃]) - [y₁, y₂, y₃]
+```
 
 就是这样！正如承诺的那样，最终的实现也很简单：
 
@@ -127,7 +136,7 @@ loss_grad = softmax_x - y
 
 ### 代码
 
-回顾第三章，任何`Loss`类都应该接收两个 2D 数组，一个是网络的预测，另一个是目标。每个数组中的行数是批量大小，列数是分类问题中的类别数`n`；每个数组中的一行代表数据集中的一个观察值，行中的`n`个值代表神经网络对该观察值属于每个`n`类的概率的最佳猜测。因此，我们将需要对`prediction`数组中的*每一行*应用`softmax`。这会导致一个潜在的问题：接下来我们将把结果数值输入`log`函数来计算损失。这应该让你担心，因为*log*(*x*)当*x*趋近于 0 时会趋向于负无穷，同样地，1 - *x*当*x*趋近于 1 时会趋向于无穷。为了防止可能导致数值不稳定的极大损失值，我们将裁剪 softmax 函数的输出，使其不小于 10^(–7)且不大于 10⁷。
+回顾第三章，任何`Loss`类都应该接收两个 2D 数组，一个是网络的预测，另一个是目标。每个数组中的行数是批量大小，列数是分类问题中的类别数`n`；每个数组中的一行代表数据集中的一个观察值，行中的`n`个值代表神经网络对该观察值属于每个`n`类的概率的最佳猜测。因此，我们将需要对`prediction`数组中的*每一行*应用`softmax`。这会导致一个潜在的问题：接下来我们将把结果数值输入`log`函数来计算损失。这应该让你担心，因为`log(x)`当`x`趋近于 0 时会趋向于负无穷，同样地，`1 - x`当`x`趋近于 1 时会趋向于无穷。为了防止可能导致数值不稳定的极大损失值，我们将裁剪 softmax 函数的输出，使其不小于 10⁻⁷且不大于 10⁷。
 
 最后，我们可以把所有东西放在一起！
 
@@ -166,18 +175,27 @@ softmax_cross_entropy_loss = (
 我们在第二章中争论说 sigmoid 是一个很好的激活函数，因为它：
 
 +   是一个非线性和单调函数
-
 +   对模型产生了“正则化”效果，将中间特征强制限制在一个有限范围内，具体在 0 和 1 之间
 
-然而，Sigmoid 也有一个缺点，类似于均方误差损失的缺点：*在反向传播过程中产生相对平坦的梯度*。在反向传播过程中传递给 Sigmoid 函数（或任何函数）的梯度表示函数的*输出*最终对损失的影响有多大；因为 Sigmoid 函数的最大斜率为 0.25，这些梯度在向后传递到模型中的前一个操作时将*最多*被除以 4。更糟糕的是，当 Sigmoid 函数的输入小于-2 或大于 2 时，这些输入接收到的梯度几乎为 0，因为在*x* = -2 或*x* = 2 时，*Sigmoid*(*x*)几乎是平的。这意味着影响这些输入的任何参数将接收到较小的梯度，结果我们的网络可能学习速度较慢。³此外，如果在神经网络的连续层中使用多个 Sigmoid 激活函数，这个问题将会加剧，进一步减少神经网络中较早的权重可能接收到的梯度。
+然而，Sigmoid 也有一个缺点，类似于均方误差损失的缺点：*在反向传播过程中产生相对平坦的梯度*。在反向传播过程中传递给 Sigmoid 函数（或任何函数）的梯度表示函数的*输出*最终对损失的影响有多大；因为 Sigmoid 函数的最大斜率为 0.25，这些梯度在向后传递到模型中的前一个操作时将*最多*被除以 4。更糟糕的是，当 Sigmoid 函数的输入小于-2 或大于 2 时，这些输入接收到的梯度几乎为 0，因为在`x` = -2 或`x` = 2 时，`Sigmoid(x)`几乎是平的。这意味着影响这些输入的任何参数将接收到较小的梯度，结果我们的网络可能学习速度较慢。³此外，如果在神经网络的连续层中使用多个 Sigmoid 激活函数，这个问题将会加剧，进一步减少神经网络中较早的权重可能接收到的梯度。
 
 “另一个极端”的激活函数会是什么样子？
 
 ### 另一个极端：修正线性单元
 
-修正线性单元（ReLU）激活是一种常用的激活函数，具有与 Sigmoid 相反的优缺点。如果*x*小于 0，则简单地定义 ReLU 为 0，否则为*x*。这在图 4-5 中有所展示。
+修正线性单元（ReLU）激活是一种常用的激活函数，具有与 Sigmoid 相反的优缺点。如果`x`小于 0，则简单地定义 ReLU 为 0，否则为`x`。这在图 4-5 中有所展示。
 
-![dlfs 0405###### 图 4-5。ReLU 激活这是一个“有效”的激活函数，因为它是单调的和非线性的。它产生比 Sigmoid 大得多的梯度——如果函数的输入大于 0，则为 1，否则为 0，平均为 0.5——而 Sigmoid 能产生的*最大*梯度为 0.25。ReLU 激活在深度神经网络架构中非常受欢迎，因为它的缺点（在小于或大于 0 的值之间绘制了一个尖锐的、有些任意的区别）可以通过其他技术来解决，包括本章将介绍的一些技术，而它的好处（产生大梯度）对于训练深度神经网络架构中的权重至关重要。然而，有一种激活函数介于这两者之间，我们将在本章的演示中使用：Tanh。### 一个中庸之道：TanhTanh 函数的形状与 Sigmoid 函数类似，但将输入映射到-1 到 1 之间的值。图 4-6 展示了这个函数。![dlfs 0406](img/dlfs_0406.png)
+![dlfs 0405](img/dlfs_0405.png)
+
+###### 图 4-5。ReLU 激活
+
+这是一个“有效”的激活函数，因为它是单调的和非线性的。它产生比 Sigmoid 大得多的梯度——如果函数的输入大于 0，则为 1，否则为 0，平均为 0.5——而 Sigmoid 能产生的*最大*梯度为 0.25。ReLU 激活在深度神经网络架构中非常受欢迎，因为它的缺点（在小于或大于 0 的值之间绘制了一个尖锐的、有些任意的区别）可以通过其他技术来解决，包括本章将介绍的一些技术，而它的好处（产生大梯度）对于训练深度神经网络架构中的权重至关重要。然而，有一种激活函数介于这两者之间，我们将在本章的演示中使用：Tanh。
+
+### 一个中庸之道：Tanh
+
+Tanh 函数的形状与 Sigmoid 函数类似，但将输入映射到-1 到 1 之间的值。图 4-6 展示了这个函数。
+
+![dlfs 0406](img/dlfs_0406.png)
 
 ###### 图 4-6。Tanh 激活
 
@@ -187,7 +205,7 @@ softmax_cross_entropy_loss = (
 
 ###### 图 4-7。Sigmoid 导数与 Tanh 导数
 
-此外，就像<math><mrow><mi>f</mi> <mo>(</mo> <mi>x</mi> <mo>)</mo> <mo>=</mo> <mi>s</mi> <mi>i</mi> <mi>g</mi> <mi>m</mi> <mi>o</mi> <mi>i</mi> <mi>d</mi> <mo>(</mo> <mi>x</mi> <mo>)</mo></mrow></math>有易于表达的导数<math><mrow><msup><mi>f</mi> <mo>'</mo></msup> <mrow><mo>(</mo> <mi>x</mi> <mo>)</mo></mrow> <mo>=</mo> <mi>s</mi> <mi>i</mi> <mi>g</mi> <mi>m</mi> <mi>o</mi> <mi>i</mi> <mi>d</mi> <mrow><mo>(</mo> <mi>x</mi> <mo>)</mo></mrow> <mo>×</mo> <mrow><mo>(</mo> <mn>1</mn> <mo>-</mo> <mi>s</mi> <mi>i</mi> <mi>g</mi> <mi>m</mi> <mi>o</mi> <mi>i</mi> <mi>d</mi> <mrow><mo>(</mo> <mi>x</mi> <mo>)</mo></mrow> <mo>)</mo></mrow></mrow></math>，<math><mrow><mi>f</mi> <mo>(</mo> <mi>x</mi> <mo>)</mo> <mo>=</mo> <mi>t</mi> <mi>a</mi> <mi>n</mi> <mi>h</mi> <mo>(</mo> <mi>x</mi> <mo>)</mo></mrow></math>也有易于表达的导数<math><mrow><msup><mi>f</mi> <mo>'</mo></msup> <msup><mrow><mrow><mo>(</mo><mi>x</mi><mo>)</mo></mrow><mo>=</mo><mo>(</mo><mn>1</mn><mo>-</mo><mi>t</mi><mi>a</mi><mi>n</mi><mi>h</mi><mrow><mo>(</mo><mi>x</mi><mo>)</mo></mrow></mrow> <mn>2</mn></msup></mrow></math>。
+此外，就像`f(x) = sigmoid(x)`有易于表达的导数`f'(x) = sigmoid(x) × (1 - sigmoid(x))`，`f(x) = tanh(x)`也有易于表达的导数`f'(x) = (1 - tanh(x))²`。
 
 这里的重点是，无论架构如何，选择激活函数都涉及权衡：我们希望一个激活函数能够让我们的网络学习输入和输出之间的非线性关系，同时不会增加不必要的复杂性，使网络更难找到一个好的解决方案。例如，“Leaky ReLU”激活函数在输入到 ReLU 函数小于 0 时允许一个轻微的负斜率，增强了 ReLU 发送梯度向后的能力，“ReLU6”激活函数将 ReLU 的正端限制在 6，进一步引入了更多的非线性到网络中。然而，这两种激活函数都比 ReLU 更复杂；如果我们处理的问题相对简单，那么这些更复杂的激活函数可能会使网络学习变得更加困难。因此，在本书的其余部分中我们演示的模型中，我们将简单地使用 Tanh 激活函数，它很好地平衡了这些考虑。
 
@@ -207,7 +225,11 @@ X_train, y_train, X_test, y_test = mnist.load()
 
 对于分类，我们必须执行*one-hot 编码*，将表示标签的向量转换为与预测相同形状的`ndarray`：具体来说，我们将标签“0”映射到一个向量，第一个位置（索引 0）为 1，其他位置为 0，“1”映射到第二个位置（索引 1），[以此类推](https://oreil.ly/2KTRm3z)：
 
-<math display="block"><mrow><mrow><mo>[</mo> <mn>0</mn> <mo>,</mo> <mn>2</mn> <mo>,</mo> <mn>1</mn> <mo>]</mo></mrow> <mo>⇒</mo> <mfenced close="]" open="["><mtable><mtr><mtd><mn>1</mn></mtd> <mtd><mn>0</mn></mtd> <mtd><mn>0</mn></mtd> <mtd><mo>...</mo></mtd> <mtd><mn>0</mn></mtd></mtr> <mtr><mtd><mn>0</mn></mtd> <mtd><mn>0</mn></mtd> <mtd><mn>1</mn></mtd> <mtd><mo>...</mo></mtd> <mtd><mn>0</mn></mtd></mtr> <mtr><mtd><mn>0</mn></mtd> <mtd><mn>1</mn></mtd> <mtd><mn>0</mn></mtd> <mtd><mo>...</mo></mtd> <mtd><mn>0</mn></mtd></mtr></mtable></mfenced></mrow></math>
+```
+[0, 2, 1] ⇒ [[1, 0, 0, ..., 0],
+              [0, 0, 1, ..., 0],
+              [0, 1, 0, ..., 0]]
+```
 
 最后，将数据缩放到均值为 0，方差为 1 总是有帮助的，就像我们在之前章节中对“真实世界”数据集所做的那样。然而，在这里，由于每个数据点都是一幅图像，我们不会将每个*特征*缩放为均值为 0，方差为 1，因为这样会导致相邻像素的值被不同的量改变，从而可能扭曲图像！相反，我们将为我们的数据集提供一个全局缩放，减去整体均值并除以整体方差（请注意，我们使用训练集的统计数据来缩放测试集）：
 
@@ -217,6 +239,8 @@ X_train, X_test = X_train / np.std(X_train), X_test / np.std(X_train)
 ```
 
 ## 模型
+
+
 
 我们将定义我们的模型对每个输入有 10 个输出：一个输出对应于模型属于 10 个类别中的每一个的概率。由于我们知道每个输出都将是一个概率，我们将在最后一层给我们的模型一个`sigmoid`激活。在本章中，为了说明我们描述的“训练技巧”是否真的增强了我们模型的学习能力，我们将使用一个一致的模型架构，即一个具有隐藏层神经元数量接近我们输入数量（784）和输出数量（10）几何平均值的两层神经网络：<math><mrow><mn>89</mn> <mo>≈</mo> <msqrt><mrow><mn>784</mn> <mo>×</mo> <mn>10</mn></mrow></msqrt></mrow></math>。
 
@@ -271,9 +295,9 @@ model = NeuralNetwork(
 seed=20190119)
 ```
 
-###### 注意
-
-由于我们现在将模型输出通过 softmax 函数作为损失的一部分，我们不再需要通过 sigmoid 激活函数。
+> **注意**
+> 
+> 由于我们现在将模型输出通过 softmax 函数作为损失的一部分，我们不再需要通过 sigmoid 激活函数。
 
 然后我们对模型运行 50 个 epochs，得到以下结果：
 
@@ -328,16 +352,13 @@ kwargs['param'] -= update
 我们应该如何更新速度？原来我们可以使用以下步骤：
 
 1.  将其乘以动量参数。
-
-1.  添加梯度。
+2.  添加梯度。
 
 这导致速度在每个时间步取以下值，从*t* = 1 开始：
 
 1.  <math><msub><mi>∇</mi> <mn>1</mn></msub></math>
-
-1.  <math><mrow><msub><mi>∇</mi> <mn>2</mn></msub> <mo>+</mo> <mi>μ</mi> <mo>×</mo> <msub><mi>∇</mi> <mn>1</mn></msub></mrow></math>
-
-1.  <math><mrow><msub><mi>∇</mi> <mn>3</mn></msub> <mo>+</mo> <mi>μ</mi> <mo>×</mo> <mrow><mo>(</mo> <msub><mi>∇</mi> <mn>2</mn></msub> <mo>+</mo> <mi>μ</mi> <mo>×</mo> <msub><mi>∇</mi> <mn>1</mn></msub> <mo>)</mo></mrow> <mo>=</mo> <mi>μ</mi> <mo>×</mo> <msub><mi>∇</mi> <mn>2</mn></msub> <mo>+</mo> <msup><mi>μ</mi> <mn>2</mn></msup> <mo>×</mo> <msub><mi>∇</mi> <mn>1</mn></msub> <mrow><mo>)</mo></mrow></mrow></math>
+2.  <math><mrow><msub><mi>∇</mi> <mn>2</mn></msub> <mo>+</mo> <mi>μ</mi> <mo>×</mo> <msub><mi>∇</mi> <mn>1</mn></msub></mrow></math>
+3.  <math><mrow><msub><mi>∇</mi> <mn>3</mn></msub> <mo>+</mo> <mi>μ</mi> <mo>×</mo> <mrow><mo>(</mo> <msub><mi>∇</mi> <mn>2</mn></msub> <mo>+</mo> <mi>μ</mi> <mo>×</mo> <msub><mi>∇</mi> <mn>1</mn></msub> <mo>)</mo></mrow> <mo>=</mo> <mi>μ</mi> <mo>×</mo> <msub><mi>∇</mi> <mn>2</mn></msub> <mo>+</mo> <msup><mi>μ</mi> <mn>2</mn></msup> <mo>×</mo> <msub><mi>∇</mi> <mn>1</mn></msub> <mrow><mo>)</mo></mrow></mrow></math>
 
 有了这个，我们可以使用速度作为参数更新！然后我们可以将其合并到一个名为`SGDMomentum`的新的`Optimizer`子类中；这个类将有`step`和`_update_rule`函数，如下所示：
 
@@ -435,7 +456,9 @@ def __init__(self,
 self.optim._setup_decay()
 ```
 
-这些计算将实现我们刚刚看到的线性和指数学习率衰减公式：
+这些计算将实现我们刚刚看到的线性和指数学习率衰减公式。
+
+
 
 ```py
 def _setup_decay(self) -> None:
@@ -646,28 +669,34 @@ class Dropout(Operation):
 
 1.  `Layer`和`NeuralNetwork`的`forward`方法将接受`inference`作为参数（默认为`False`），并将该标志传递到每个`Operation`中，以便每个`Operation`在训练模式和推理模式下表现不同。
 
-1.  回想一下，在`Trainer`中，我们每`eval_every`个周期在测试集上评估训练好的模型。现在，每次我们这样做时，我们将使用`inference`标志等于`True`进行评估：
 
-    ```py
-    test_preds = self.net.forward(X_test, inference=True)
-    ```
 
-1.  最后，我们在`Layer`类中添加了一个`dropout`关键字；`Layer`类的`__init__`函数的完整签名现在如下所示：
+# 添加 Dropout 到神经网络
 
-    ```py
-    def __init__(self,
-                 neurons: int,
-                 activation: Operation = Linear(),
-                 dropout: float = 1.0,
-                 weight_init: str = "standard")
-    ```
+## 回顾：评估与层定义
 
-    我们通过将以下内容添加到类的`_setup_layer`函数中来附加`dropout`操作：
+回想一下，在`Trainer`中，我们每`eval_every`个周期在测试集上评估训练好的模型。现在，每次我们这样做时，我们将使用`inference`标志等于`True`进行评估：
 
-    ```py
-    if self.dropout < 1.0:
-        self.operations.append(Dropout(self.dropout))
-    ```
+```py
+test_preds = self.net.forward(X_test, inference=True)
+```
+
+最后，我们在`Layer`类中添加了一个`dropout`关键字；`Layer`类的`__init__`函数的完整签名现在如下所示：
+
+```py
+def __init__(self,
+             neurons: int,
+             activation: Operation = Linear(),
+             dropout: float = 1.0,
+             weight_init: str = "standard")
+```
+
+我们通过将以下内容添加到类的`_setup_layer`函数中来附加`dropout`操作：
+
+```py
+if self.dropout < 1.0:
+    self.operations.append(Dropout(self.dropout))
+```
 
 就是这样！让我们看看 dropout 是否有效。
 
@@ -765,15 +794,17 @@ The model validation accuracy is: 96.52%
 
 接下来，我们将讨论针对特定领域专门设计的高级架构，从卷积神经网络开始，这些网络专门用于理解图像数据。继续！
 
+---
+
 ¹ 此外，正如我们在第三章中看到的，我们将这些梯度乘以学习率，以便更精细地控制权重的变化。
 
-² 我们可以更具体一些：在区间 0 到 1 上，<math><mrow><mo>-</mo> <mi>l</mi> <mi>o</mi> <mi>g</mi> <mo>(</mo> <mn>1</mn> <mo>-</mo> <mi>x</mi> <mo>)</mo></mrow></math> 的平均值是 1，而在相同区间上，*x*²的平均值只是<math><mfrac><mn>1</mn> <mn>3</mn></mfrac></math>。
+² 我们可以更具体一些：在区间 0 到 1 上，`-log(1 - x)` 的平均值是 1，而在相同区间上，*x*²的平均值只是`1/3`。
 
-³ 要直观地理解为什么会发生这种情况：想象一下一个权重*w*正在为一个特征*f*做出贡献（使得<math><mrow><mi>f</mi> <mo>=</mo> <mi>w</mi> <mo>×</mo> <msub><mi>x</mi> <mn>1</mn></msub> <mo>+</mo> <mo>...</mo></mrow></math>），在我们的神经网络的前向传播过程中，对于某个观察值，*f* = -10。因为在*x* = -10 时，*sigmoid*(*x*)非常平坦，改变*w*的值几乎不会对模型预测产生影响，因此也不会对损失产生影响。
+³ 要直观地理解为什么会发生这种情况：想象一下一个权重`w`正在为一个特征`f`做出贡献（使得`f = w × x1 + ...`），在我们的神经网络的前向传播过程中，对于某个观察值，`f = -10`。因为在`x = -10`时，`sigmoid(x)`非常平坦，改变`w`的值几乎不会对模型预测产生影响，因此也不会对损失产生影响。
 
 ⁴ 例如，TensorFlow 的 MNIST 分类教程使用`softmax_cross_entropy_with_logits`函数，而 PyTorch 的`nn.CrossEntropyLoss`实际上在其中计算 softmax 函数。
 
-⁵ 您可能会认为 softmax 交叉熵损失在这里获得了“不公平的优势”，因为 softmax 函数对其接收到的值进行了归一化，使它们相加为 1，而均方误差损失只是得到了通过`sigmoid`函数传递的 10 个输入，并没有被归一化为 1。然而，在[书的网站](https://oreil.ly/2H7rJvf)上，我展示了即使将输入归一化为均方误差损失，使其对每个观察值求和为 1，均方误差仍然比 softmax 交叉熵损失表现更差。
+⁵ 您可能会认为 softmax 交叉熵损失在这里获得了"不公平的优势"，因为 softmax 函数对其接收到的值进行了归一化，使它们相加为 1，而均方误差损失只是得到了通过`sigmoid`函数传递的 10 个输入，并没有被归一化为 1。然而，在[书的网站](https://oreil.ly/2H7rJvf)上，我展示了即使将输入归一化为均方误差损失，使其对每个观察值求和为 1，均方误差仍然比 softmax 交叉熵损失表现更差。
 
 ⁶ 此外，动量只是我们可以利用当前数据批次之外的梯度信息来更新参数的一种方式；我们在附录 A 中简要介绍了其他更新规则，您可以在[书的 GitHub 存储库](https://oreil.ly/2MhdQ1B)中看到这些更新规则的实现。
 

@@ -1,12 +1,11 @@
+
 # 7 更有效地实现目标
 
 在本章中
 
-+   你将学习如何使强化学习代理在与具有挑战性的环境交互时更有效地达到最佳性能。
-
-+   你将学习如何通过充分利用经验来使强化学习代理更有效地实现目标。
-
-+   你将改进上一章中展示的代理，使它们能够充分利用收集到的数据，从而更快地优化其性能。
++ 你将学习如何使强化学习代理在与具有挑战性的环境交互时更有效地达到最佳性能。
++ 你将学习如何通过充分利用经验来使强化学习代理更有效地实现目标。
++ 你将改进上一章中展示的代理，使它们能够充分利用收集到的数据，从而更快地优化其性能。
 
 效率是正确地做事；有效性是做正确的事。
 
@@ -34,7 +33,7 @@
 
 ### SARSA(λ)：根据多步估计在每一步改进策略
 
-*sARSA***(***λ***)**是对原始 SARSA 代理的一个简单改进。SARSA 和 SARSA(*λ*)之间的主要区别在于，在 SARSA(*λ*)中，我们使用*λ*-回报，而不是像在 SARSA 中那样使用一步引导目标——*TD*目标。就是这样；你就有 SARSA(*λ*)了。真的！你看到学习基础知识是如何让更复杂的概念变得容易了吗？
+*SARSA*(*λ*)是对原始 SARSA 代理的一个简单改进。SARSA 和 SARSA(*λ*)之间的主要区别在于，在 SARSA(*λ*)中，我们使用*λ*-回报，而不是像在 SARSA 中那样使用一步引导目标——*TD*目标。就是这样；你就有 SARSA(*λ*)了。真的！你看到学习基础知识是如何让更复杂的概念变得容易了吗？
 
 现在，我想深入探讨一下你最初在第五章中读到的资格迹的概念。我在第五章中介绍的资格迹类型被称为*累积迹*。然而，在现实中，有多种方式来追踪导致奖励的状态或状态-动作对。
 
@@ -66,7 +65,7 @@ SWS 环境中的替换痕迹
 
 | ![图标](img/icons_Python.png) | 我会说 PythonSARSA(λ)智能体 |
 | --- | --- |
-|  |
+|  | |
 
 ```
 def sarsa_lambda(env, ①
@@ -129,15 +128,30 @@ def sarsa_lambda(env, ①
 
 ### Watkins 的 *Q*(*λ*)：再次将行为与学习分离
 
-当然，还有*λ*算法的离策略控制版本。*Q*(*λ*)是 Q 学习的扩展，它使用*λ*-回报来满足广义策略迭代模式的策略评估需求。记住，我们在这里做的唯一改变是将离策略控制的*TD*目标（使用下一个状态中动作的最大值）替换为*λ*-回报。将 Q 学习扩展到资格迹有两种不同的方法，但我只介绍原始版本，通常被称为*Watkins 的 Q(**λ**)。
+当然，还有*λ*算法的离策略控制版本。*Q*(*λ*)是 Q 学习的扩展，它使用*λ*-回报来满足广义策略迭代模式的策略评估需求。记住，我们在这里做的唯一改变是将离策略控制的*TD*目标（使用下一个状态中动作的最大值）替换为*λ*-回报。将 Q 学习扩展到资格迹有两种不同的方法，但我只介绍原始版本，通常被称为*Watkins 的 Q(*λ*)*。
 
 | 0001 | 历史简介：Q 学习与*Q*(*λ*)代理介绍 |
 | --- | --- |
-|  | 1989 年，Chris Watkins 在他的博士论文《从延迟奖励中学习》中介绍了 Q 学习与*Q*(*λ*)方法，这篇论文是当前强化学习理论的基石。Q 学习仍然是最受欢迎的强化学习算法之一，可能是因为它简单且效果良好。*Q*(*λ*)现在被称为 Watkins 的*Q*(*λ*)，因为有一个稍微不同的*Q*(*λ*)版本——由 Jing Peng 和 Ronald Williams 在 1993 年至 1996 年之间工作（这个版本被称为 Peng 的*Q*(*λ*)。）1992 年，Chris 与 Peter Dayan 一起发表了一篇题为“技术笔记 Q 学习”的论文，其中他们证明了 Q 学习的收敛定理。他们证明了在所有状态-动作对反复采样并离散表示的假设下，Q 学习以概率 1 收敛到最优动作值函数。不幸的是，Chris 在那之后几乎停止了 RL 研究。他继续在伦敦的避险基金工作，然后访问研究实验室，包括由 Yann LeCun 领导的一个小组，一直从事与 AI 相关的问题，但不是那么多的 RL。在过去的 22+年里，Chris 一直是伦敦大学的人工智能讲师。在完成他的 1991 年博士论文《强化连接主义：以统计方式学习》后（是的，那时候他们把神经网络称为连接主义——“深度强化学习”吗？是的！）Peter 继续进行了一两个博士后研究，包括在多伦多大学的 Geoff Hinton 那里。Peter 是 DeepMind 的共同创始人 Demis Hassabis 的博士后导师。Peter 在研究实验室担任了许多董事职位，最新的职位是马克斯·普朗克研究所。自 2018 年以来，他一直是英国皇家学会的院士，这是在英国授予的最高奖项之一。 |
-| ![Python 图标](img/icons_Python.png) | 我会说 Python：Watkins 的*Q*(*λ*)代理 1/3 |
-|  |
 
-```
+
+
+# 强化学习算法：Q(λ) 与 Dyna-Q
+
+## 历史背景与理论基础
+
+1989 年，Chris Watkins 在他的博士论文《从延迟奖励中学习》中介绍了 Q 学习与 `Q(λ)` 方法，这篇论文是当前强化学习理论的基石。Q 学习仍然是最受欢迎的强化学习算法之一，可能是因为它简单且效果良好。`Q(λ)` 现在被称为 Watkins 的 `Q(λ)`，因为有一个稍微不同的 `Q(λ)` 版本——由 Jing Peng 和 Ronald Williams 在 1993 年至 1996 年之间工作（这个版本被称为 Peng 的 `Q(λ)`）。1992 年，Chris 与 Peter Dayan 一起发表了一篇题为“技术笔记 Q 学习”的论文，其中他们证明了 Q 学习的收敛定理。他们证明了在所有状态-动作对反复采样并离散表示的假设下，Q 学习以概率 1 收敛到最优动作值函数。
+
+不幸的是，Chris 在那之后几乎停止了 RL 研究。他继续在伦敦的避险基金工作，然后访问研究实验室，包括由 Yann LeCun 领导的一个小组，一直从事与 AI 相关的问题，但不是那么多的 RL。在过去的 22+ 年里，Chris 一直是伦敦大学的人工智能讲师。
+
+在完成他的 1991 年博士论文《强化连接主义：以统计方式学习》后（是的，那时候他们把神经网络称为连接主义——“深度强化学习”吗？是的！），Peter 继续进行了一两个博士后研究，包括在多伦多大学的 Geoff Hinton 那里。Peter 是 DeepMind 的共同创始人 Demis Hassabis 的博士后导师。Peter 在研究实验室担任了许多董事职位，最新的职位是马克斯·普朗克研究所。自 2018 年以来，他一直是英国皇家学会的院士，这是在英国授予的最高奖项之一。
+
+## Watkins 的 Q(λ) 代理实现
+
+### 代理 1/3
+
+我会说 Python：Watkins 的 `Q(λ)` 代理 1/3
+
+```python
 def q_lambda(env, ①
              gamma=1.0,
              init_alpha=0.5,
@@ -167,13 +181,19 @@ def q_lambda(env, ①
     for e in tqdm(range(n_episodes), leave=False): ⑦
 ```
 
-① Q lambda 代理是 Q 学习和*TD* lambda 方法的混合体。② 这里是 lambda_ 和 replacing_traces 超参数。③ 有用的变量④ Q 表⑤ 所有状态-动作对的资格迹矩阵⑥ 常见的问题⑦ 待续... |
+① Q lambda 代理是 Q 学习和 `TD(λ)` 方法的混合体。
+② 这里是 `lambda_` 和 `replacing_traces` 超参数。
+③ 有用的变量。
+④ Q 表。
+⑤ 所有状态-动作对的资格迹矩阵。
+⑥ 常见的问题。
+⑦ 待续...
 
-| ![Python 图标](img/icons_Python.png) | 我会说 Python：Watkins 的*Q*(*λ*)代理 2/3 |
-| --- | --- |
-|  |
+### 代理 2/3
 
-```
+我会说 Python：Watkins 的 `Q(λ)` 代理 2/3
+
+```python
     for e in tqdm(range(n_episodes), leave=False): ⑧
         E.fill(0) ⑨
         state, done = env.reset(), False ⑩
@@ -192,13 +212,23 @@ def q_lambda(env, ①
             td_error = td_target - Q[state][action]           ⑰⑱
 ```
 
-⑧ 在场景循环中继续⑨ 好的。因为 Q lambda 是一种离策略方法，我们必须谨慎地使用 E。我们正在学习贪婪策略，但遵循探索性策略。首先，我们像之前一样用零填充 E。⑩ 重置环境并完成。⑪ 但是，注意我们是如何像 SARSA 那样预先选择动作的，但在 Q-learning 中我们没有这样做。这是因为我们需要检查我们的下一个动作是否是贪婪的！⑫ 进入交互循环。⑬ 步进环境并获得经验。⑭ 我们以 SARSA 风格选择下一个动作！⑮ 并用它来验证在下一步中采取的动作仍然来自贪婪策略。⑯ 在这一步，我们仍然像常规 Q-learning 那样计算*TD*目标，使用最大值。⑰ 并使用*TD*目标来计算*TD*误差。⑱ 我们从下一页的这条线继续。 |
+⑧ 在场景循环中继续。
+⑨ 好的。因为 Q lambda 是一种离策略方法，我们必须谨慎地使用 E。我们正在学习贪婪策略，但遵循探索性策略。首先，我们像之前一样用零填充 E。
+⑩ 重置环境并完成。
+⑪ 但是，注意我们是如何像 SARSA 那样预先选择动作的，但在 Q-learning 中我们没有这样做。这是因为我们需要检查我们的下一个动作是否是贪婪的！
+⑫ 进入交互循环。
+⑬ 步进环境并获得经验。
+⑭ 我们以 SARSA 风格选择下一个动作！
+⑮ 并用它来验证在下一步中采取的动作仍然来自贪婪策略。
+⑯ 在这一步，我们仍然像常规 Q-learning 那样计算 `TD` 目标，使用最大值。
+⑰ 并使用 `TD` 目标来计算 `TD` 误差。
+⑱ 我们从下一页的这条线继续。
 
-| ![](img/icons_Python.png) | 我会说 PythonWatkins 的*Q*(*λ*)智能体 3/3 |
-| --- | --- |
-|  |
+### 代理 3/3
 
-```
+我会说 Python：Watkins 的 `Q(λ)` 智能体 3/3
+
+```python
             td_error = td_target - Q[state][action] ⑲
            if replacing_traces: E[state].fill(0) ⑳
             E[state][action] = E[state][action] + 1 ㉑
@@ -216,39 +246,52 @@ def q_lambda(env, ①
     return Q, V, pi, Q_track, pi_track                  ㉗
 ```
 
-⑲ 再次，使用目标和当前状态-动作对的当前估计来计算*TD*误差。注意，这不是下一个状态，这是状态！！！⑳ 替换迹控制方法的另一种方法是清除当前状态的所有动作值，然后增加当前动作。㉑ 我们将当前状态-动作对的资格增量增加 1。㉒ 并且像之前一样，我们将整个资格迹矩阵乘以错误和对应于该段落的错误率，然后将整个 Q 移动到那个错误。通过这样做，我们实际上是将信号降低到所有访问状态的各种程度。㉓ 注意这一点。如果我们将在下一个状态采取的动作（我们已选择）是贪婪动作，那么我们像往常一样衰减资格矩阵，否则，我们必须将资格矩阵重置为零，因为我们不再学习关于贪婪策略。㉔ 步骤结束时，我们更新状态和动作，使它们成为下一个状态和动作。㉕ 我们保存 Q 和 pi。㉖ 并且在训练结束时，我们也保存 V 和最终的 pi。㉗ 最后，我们返回所有这些。 |
+⑲ 再次，使用目标和当前状态-动作对的当前估计来计算 `TD` 误差。注意，这不是下一个状态，这是状态！！！
+⑳ 替换迹控制方法的另一种方法是清除当前状态的所有动作值，然后增加当前动作。
+㉑ 我们将当前状态-动作对的资格增量增加 1。
+㉒ 并且像之前一样，我们将整个资格迹矩阵乘以错误和对应于该段落的错误率，然后将整个 Q 移动到那个错误。通过这样做，我们实际上是将信号降低到所有访问状态的各种程度。
+㉓ 注意这一点。如果我们将在下一个状态采取的动作（我们已选择）是贪婪动作，那么我们像往常一样衰减资格矩阵，否则，我们必须将资格矩阵重置为零，因为我们不再学习关于贪婪策略。
+㉔ 步骤结束时，我们更新状态和动作，使它们成为下一个状态和动作。
+㉕ 我们保存 Q 和 pi。
+㉖ 并且在训练结束时，我们也保存 V 和最终的 pi。
+㉗ 最后，我们返回所有这些。
 
 ## 交互、学习和规划智能体
 
 在第三章中，我们讨论了如值迭代（VI）和政策迭代（PI）之类的规划算法。这些是规划算法，因为它们需要一个环境模型，一个 MDP。规划方法在离线计算最优策略。另一方面，在上一章中，我介绍了无模型的强化学习方法，也许甚至暗示它们是规划方法的改进。但它们是吗？
 
-无模型 RL 相对于规划方法的优点是，前者不需要 MDP。通常，MDP 在事先很难获得；有时 MDP 甚至无法创建。想象一下用*10*¹⁷⁰可能的状态来表示围棋或用*10*¹⁶⁸⁵状态来表示星际争霸 II。这些是很大的数字，而且这还不包括动作空间或转换函数，想象一下！事先不需要 MDP 是一个实际的好处。
+无模型 RL 相对于规划方法的优点是，前者不需要 MDP。通常，MDP 在事先很难获得；有时 MDP 甚至无法创建。想象一下用 `10¹⁷⁰` 可能的状态来表示围棋或用 `10¹⁶⁸⁵` 状态来表示星际争霸 II。这些是很大的数字，而且这还不包括动作空间或转换函数，想象一下！事先不需要 MDP 是一个实际的好处。
 
 但是，让我们稍微思考一下：如果我们事先不需要 MDP，而是在与环境交互的过程中学习一个 MDP 会怎样呢？想想看：当你在一个新区域散步时，你开始在脑海中构建地图。你走了会儿，找到了一家咖啡馆，喝了咖啡，然后你知道怎么回去。学习地图的技能对你来说应该是直观的。强化学习代理能否做类似的事情？
 
-在本节中，我们探索与环境交互的代理，如无模型方法，但它们也通过这些交互学习环境的模型，MDP。通过学习地图，代理通常需要更少的经验样本来学习最优策略。这些方法被称为*基于模型的强化学习*。请注意，在文献中，你经常看到 VI 和 PI 被引用为规划方法，但你也可能看到它们被引用为基于模型的方法。我更喜欢划清界限，将它们称为规划方法，因为它们需要 MDP 才能做任何有用的事情。SARSA 和 Q-learning 算法是无模型的，因为它们不需要也不学习 MDP。在本节中你将学习的方法是基于模型的，因为它们不需要，但学习并使用 MDP（或者至少是 MDP 的近似）。|
+在本节中，我们探索与环境交互的代理，如无模型方法，但它们也通过这些交互学习环境的模型，MDP。通过学习地图，代理通常需要更少的经验样本来学习最优策略。这些方法被称为*基于模型的强化学习*。请注意，在文献中，你经常看到 VI 和 PI 被引用为规划方法，但你也可能看到它们被引用为基于模型的方法。我更喜欢划清界限，将它们称为规划方法，因为它们需要 MDP 才能做任何有用的事情。SARSA 和 Q-learning 算法是无模型的，因为它们不需要也不学习 MDP。在本节中你将学习的方法是基于模型的，因为它们不需要，但学习并使用 MDP（或者至少是 MDP 的近似）。
 
-| ŘŁ | 带有 RL 口音的采样模型与分布模型 |
-| --- | --- |
-|  | **采样模型**：指的是环境模型，它根据某些概率产生环境如何转移的单个样本；你从模型中采样一个转移。**分布模型**：指的是环境模型，它产生转移和奖励函数的概率分布。 |
+### 采样模型与分布模型
+
+**采样模型**：指的是环境模型，它根据某些概率产生环境如何转移的单个样本；你从模型中采样一个转移。
+**分布模型**：指的是环境模型，它产生转移和奖励函数的概率分布。
 
 ### Dyna-Q：学习样本模型
 
-将规划和无模型方法统一的最著名的架构之一被称为*dyna-Q*。Dyna-Q 由交替使用无模型 RL 方法，如 Q-learning，和类似于价值迭代的规划方法组成，使用从环境中采样的经验和从学习模型中采样的经验来改进动作值函数。
+将规划和无模型方法统一的最著名的架构之一被称为 *dyna-Q*。Dyna-Q 由交替使用无模型 RL 方法，如 Q-learning，和类似于价值迭代的规划方法组成，使用从环境中采样的经验和从学习模型中采样的经验来改进动作值函数。
 
-在 Dyna-Q 中，我们跟踪状态、动作和下一个状态的三维张量，作为转移和奖励函数。转移张量记录了看到三元组*(s, a, s')*的次数，表示在执行动作*a*时从状态*s*到达状态*s'*的次数。奖励张量持有我们在三元组*(s, a, s')*上获得的平均奖励，表示当我们选择动作*a*在状态*s*并转移到状态*s'*时的预期奖励。
+在 Dyna-Q 中，我们跟踪状态、动作和下一个状态的三维张量，作为转移和奖励函数。转移张量记录了看到三元组 `(s, a, s')` 的次数，表示在执行动作 `a` 时从状态 `s` 到达状态 `s'` 的次数。奖励张量持有我们在三元组 `(s, a, s')` 上获得的平均奖励，表示当我们选择动作 `a` 在状态 `s` 并转移到状态 `s'` 时的预期奖励。
 
 ![图片](img/07_04.png)
 
 基于模型的强化学习架构
 
-| 0001 | 一点历史介绍 Dyna-Q 代理 |
-| --- | --- |
-|  | 与基于模型的强化学习方法相关的想法可以追溯到很多年，归功于几位研究人员，但有三篇主要论文为 Dyna 架构奠定了基础。第一篇是 1981 年由理查德·萨顿和安德鲁·巴特罗撰写的论文“An Adaptive Network that Constructs and Uses an Internal Model of Its World”，然后是 1990 年由理查德·萨顿撰写的论文“Integrated Architectures for Learning, Planning, and Reacting Based on Approximating Dynamic Programming”，最后是 1991 年由理查德·萨顿撰写的论文“Dyna, an Integrated Architecture for Learning, Planning, and Reacting”，其中介绍了导致特定 Dyna-Q 代理的通用架构。 |
-| ![](img/icons_Python.png) | 我会说 PythonDyna-Q 代理 1/3 |
-|  |
+#### 一点历史介绍 Dyna-Q 代理
 
-```
+与基于模型的强化学习方法相关的想法可以追溯到很多年，归功于几位研究人员，但有三篇主要论文为 Dyna 架构奠定了基础。第一篇是 1981 年由理查德·萨顿和安德鲁·巴特罗撰写的论文“An Adaptive Network that Constructs and Uses an Internal Model of Its World”，然后是 1990 年由理查德·萨顿撰写的论文“Integrated Architectures for Learning, Planning, and Reacting Based on Approximating Dynamic Programming”，最后是 1991 年由理查德·萨顿撰写的论文“Dyna, an Integrated Architecture for Learning, Planning, and Reacting”，其中介绍了导致特定 Dyna-Q 代理的通用架构。
+
+### Dyna-Q 代理实现
+
+#### 代理 1/3
+
+我会说 Python：Dyna-Q 代理 1/3
+
+```python
 def dyna_q(env, ①
            gamma=1.0,
            init_alpha=0.5,
@@ -278,71 +321,81 @@ def dyna_q(env, ①
     for e in tqdm(range(n_episodes), leave=False): ⑧
 ```
 
-① Dyna-Q 与 Q-learning 代理类似，但它还学习环境模型，并使用该模型来改进估计。② 这个 n_planning 超参数是运行从学习模型中得到的估计更新的次数。③ 算法的前大部分是相同的。④ 我们将 Q 函数初始化为零，等等。⑤ 但然后，我们创建一个函数来跟踪转移函数。⑥ 另一个来跟踪奖励信号。⑦ 然后初始化探索策略 select_action，以及 alpha 和 epsilon 向量，就像往常一样。⑧ 待续 ... |
+① Dyna-Q 与 Q-learning 代理类似，但它还学习环境模型，并使用该模型来改进估计。
+② 这个 `n_planning` 超参数是运行从学习模型中得到的估计更新的次数。
+③ 算法的前大部分是相同的。
+④ 我们将 Q 函数初始化为零，等等。
+⑤ 但然后，我们创建一个函数来跟踪转移函数。
+⑥ 另一个来跟踪奖励信号。
+⑦ 然后初始化探索策略 `select_action`，以及 `alpha` 和 `epsilon` 向量，就像往常一样。
+⑧ 待续...
 
-| ![](img/icons_Python.png) | 我会说 PythonDyna-Q 代理 2/3 |
+
+
+# Dyna-Q 与轨迹采样
+
+## Dyna-Q 代理
+
+```
+for e in tqdm(range(n_episodes), leave=False): ⑨
+    state, done = env.reset(), False ⑩
+    while not done:
+        action = select_action(state, Q, epsilons[e]) ⑪
+        next_state, reward, done, _ = env.step(action) ⑫
+        T_count[state][action][next_state] += 1 ⑬
+        r_diff = reward - \                               ⑭
+                         R_model[state][action][next_state]
+        R_model[state][action][next_state] += \           ⑮
+              (r_diff / T_count[state][action][next_state])
+        td_target = reward + gamma * \                    ⑯
+                           Q[next_state].max() * (not done)
+        td_error = td_target - Q[state][action] ⑰
+        Q[state][action] = Q[state][action] + \           ⑱
+                                       alphas[e] * td_error
+        backup_next_state = next_state                    ⑲
+        for _ in range(n_planning): ⑳
+```
+
+⑨ 在情节循环中继续。⑩ 对于每个新的情节，我们首先重置环境并获得初始状态。我们还将“完成”标志设置为 `False` 并进入步骤交互循环。⑪ 我们选择动作，就像原始 Q-learning（只在循环内）一样。⑫ 我们对环境进行步骤操作并获得经验元组。⑬ 然后，开始学习模型！我们增加状态-动作-下一个状态三元组的转移计数，表示完整的转移再次发生。⑭ 我们还尝试计算奖励信号的增量平均值。获取差异。⑮ 然后使用该差异和转移计数来学习奖励信号。⑯ 我们像通常的 Q-learning 风格一样计算 *TD* 目标（离线策略，使用最大值）...⑰ ... 以及 *TD* 误差，也使用 *TD* 目标和当前估计。⑱ 最后，更新 Q 函数。⑲ 在我们进入规划步骤之前，我们备份下一个状态变量。⑳ 待续 ...
+
+| ![](img/icons_Python.png) | 我会说 Python Dyna-Q 代理 3/3 |
 | --- | --- |
-|  |
 
 ```
-    for e in tqdm(range(n_episodes), leave=False): ⑨
-        state, done = env.reset(), False ⑩
-        while not done:
-            action = select_action(state, Q, epsilons[e]) ⑪
-            next_state, reward, done, _ = env.step(action) ⑫
-            T_count[state][action][next_state] += 1 ⑬
-            r_diff = reward - \                               ⑭
-                             R_model[state][action][next_state]
-            R_model[state][action][next_state] += \           ⑮
-                  (r_diff / T_count[state][action][next_state])
-            td_target = reward + gamma * \                    ⑯
-                               Q[next_state].max() * (not done)
-            td_error = td_target - Q[state][action] ⑰
-            Q[state][action] = Q[state][action] + \           ⑱
-                                           alphas[e] * td_error
-            backup_next_state = next_state                    ⑲
-            for _ in range(n_planning): ⑳
+for _ in range(n_planning): ㉑
+    if Q.sum() == 0: break ㉒
+    visited_states = np.where( \                  ㉓
+               np.sum(T_count, axis=(1, 2)) > 0)[0]
+    state = np.random.choice(visited_states) ㉓
+    actions_taken = np.where( \                   ㉔
+             np.sum(T_count[state], axis=1) > 0)[0]
+    action = np.random.choice(actions_taken) ㉔
+    probs = T_count[state][action] / \
+                     T_count[state][action].sum() ㉕
+    next_state = np.random.choice( \
+                 np.arange(nS), size=1, p=probs)[0]
+    reward = R_model[state][action][next_state] ㉖
+    td_target = reward + gamma * \
+                                Q[next_state].max()
+    td_error = td_target - Q[state][action]
+    Q[state][action] = Q[state][action] + \       ㉗
+                               alphas[e] * td_error
+    state = backup_next_state                         ㉘
+Q_track[e] = Q                                        ㉙
+pi_track.append(np.argmax(Q, axis=1))
+V = np.max(Q, axis=1)
+pi = lambda s: {s:a for s, a in enumerate( \
+                                  np.argmax(Q, axis=1))}[s]
+return Q, V, pi, Q_track, pi_track
 ```
 
-⑨ 在情节循环中继续⑩ 对于每个新的情节，我们首先重置环境并获得初始状态。我们还将“完成”标志设置为 False 并进入步骤交互循环。⑪ 我们选择动作，就像原始 Q-learning（只在循环内）一样。⑫ 我们对环境进行步骤操作并获得经验元组。⑬ 然后，开始学习模型！我们增加状态-动作-下一个状态三元组的转移计数，表示完整的转移再次发生。⑭ 我们还尝试计算奖励信号的增量平均值。获取差异。⑮ 然后使用该差异和转移计数来学习奖励信号。⑯ 我们像通常的 Q-learning 风格一样计算*TD*目标（离线策略，使用最大值）...⑰ ... 以及*TD*误差，也使用*TD*目标和当前估计。⑱ 最后，更新 Q 函数。⑲ 在我们进入规划步骤之前，我们备份下一个状态变量。⑳ 待续 ... |
-
-| ![](img/icons_Python.png) | 我会说 PythonDyna-Q 代理 3/3 |
-| --- | --- |
-|  |
-
-```
-            for _ in range(n_planning): ㉑
-                if Q.sum() == 0: break ㉒
-                visited_states = np.where( \                  ㉓
-                           np.sum(T_count, axis=(1, 2)) > 0)[0]
-                state = np.random.choice(visited_states) ㉓
-                actions_taken = np.where( \                   ㉔
-                         np.sum(T_count[state], axis=1) > 0)[0]
-                action = np.random.choice(actions_taken) ㉔
-                probs = T_count[state][action] / \
-                                 T_count[state][action].sum() ㉕
-                next_state = np.random.choice( \
-                             np.arange(nS), size=1, p=probs)[0]
-                reward = R_model[state][action][next_state] ㉖
-                td_target = reward + gamma * \
-                                            Q[next_state].max()
-                td_error = td_target - Q[state][action]
-                Q[state][action] = Q[state][action] + \       ㉗
-                                           alphas[e] * td_error
-            state = backup_next_state                         ㉘
-        Q_track[e] = Q                                        ㉙
-        pi_track.append(np.argmax(Q, axis=1))
-    V = np.max(Q, axis=1)
-    pi = lambda s: {s:a for s, a in enumerate( \
-                                      np.argmax(Q, axis=1))}[s]
-    return Q, V, pi, Q_track, pi_track
-```
-
-㉑ 我们从规划循环继续。㉒ 首先，我们想要确保 Q 函数之前已经进行了更新，否则，就没有太多可以规划的。㉓ 然后我们从智能体在经验中已经访问过的状态列表中选择一个状态。㉔ 我们然后选择在该状态下已经采取的动作。㉕ 我们使用计数矩阵来计算下一个状态的概率，然后是下一个状态。㉖ 使用奖励模型作为奖励。㉗ 然后使用那个模拟经验来更新 Q 函数！㉘ 在规划步骤结束时，我们将状态设置为下一个状态。㉙ 其余的都是一样的。 |
+㉑ 我们从规划循环继续。㉒ 首先，我们想要确保 Q 函数之前已经进行了更新，否则，就没有太多可以规划的。㉓ 然后我们从智能体在经验中已经访问过的状态列表中选择一个状态。㉔ 我们然后选择在该状态下已经采取的动作。㉕ 我们使用计数矩阵来计算下一个状态的概率，然后是下一个状态。㉖ 使用奖励模型作为奖励。㉗ 然后使用那个模拟经验来更新 Q 函数！㉘ 在规划步骤结束时，我们将状态设置为下一个状态。㉙ 其余的都是一样的。
 
 | ![](img/icons_Tally.png) | 总结结果模型方法学习转移和奖励函数（转移见下文） |
 | --- | --- |
+
 |  | ![](img/07_04_Sidebar17.png) |
+| --- | --- |
 
 ### 轨迹采样：为立即未来制定计划
 
@@ -354,9 +407,12 @@ def dyna_q(env, ①
 
 | ![](img/icons_Boil.png) | 简化问题轨迹采样 |
 | --- | --- |
+
 |  | 当 Dyna-Q 随机均匀地采样学习到的 MDP 时，轨迹采样收集轨迹，即未来可能遇到的转换和奖励。你正在规划你的周计划，而不是你生活中的某个随机时间。这样做更有意义。传统的轨迹采样方法是从初始状态开始，使用在线策略轨迹采样直到达到终端状态，换句话说，在给定的时间步中从相同的行为策略中采样动作。然而，你不应该局限于这种方法；你应该尝试。例如，我的实现是从当前状态开始采样，而不是从初始状态开始，到预设步数内的终端状态，采样一个相对于当前估计的贪婪策略。但你可以尝试其他方法。只要你在采样轨迹，你就可以称之为轨迹采样。 |
+| --- | --- |
+
 | ![](img/icons_Python.png) | 我会说 Python 轨迹采样代理 1/3 |
-|  |
+| --- | --- |
 
 ```
 def trajectory_sampling(env, ①
@@ -388,65 +444,65 @@ def trajectory_sampling(env, ①
     for e in tqdm(range(n_episodes), leave=False): ⑧
 ```
 
-① 轨迹采样在大多数情况下与 Dyna-Q 相同，但有几点例外。② 我们使用 max_trajectory_depth 来限制轨迹长度，而不是 n_planning。③ 算法的大部分与 Dyna-Q 相同。④ Q 函数，等等⑤ 我们创建相同的变量来模拟转换函数...⑥ ...以及另一个用于奖励信号。⑦ select_action 函数、alphas 向量和 epsilons 向量都是相同的。⑧ 待续... |
+① 轨迹采样在大多数情况下与 Dyna-Q 相同，但有几点例外。② 我们使用 `max_trajectory_depth` 来限制轨迹长度，而不是 `n_planning`。③ 算法的大部分与 Dyna-Q 相同。④ Q 函数，等等。⑤ 我们创建相同的变量来模拟转换函数...⑥ ...以及另一个用于奖励信号。⑦ `select_action` 函数、`alphas` 向量和 `epsilons` 向量都是相同的。⑧ 待续...
 
 | ![](img/icons_Python.png) | 我会说 Python 轨迹采样代理 2/3 |
 | --- | --- |
-|  |
 
 ```
-    for e in tqdm(range(n_episodes), leave=False): ⑨
-        state, done = env.reset(), False ⑩
-        while not done:
-            action = select_action(state, Q, epsilons[e]) ⑪
-            next_state, reward, done, _ = env.step(action) ⑫
-            T_count[state][action][next_state] += 1 ⑬
-            r_diff = reward - \                               ⑭
-                             R_model[state][action][next_state]
-            R_model[state][action][next_state] += \           ⑮
-                  (r_diff / T_count[state][action][next_state])
-            td_target = reward + gamma * \                    ⑯
-                               Q[next_state].max() * (not done)
-            td_error = td_target - Q[state][action] ⑰
-            Q[state][action] = Q[state][action] + \           ⑱
-                                           alphas[e] * td_error
-            backup_next_state = next_state                    ⑲
-            for _ in range(max_trajectory_depth): ⑳
+for e in tqdm(range(n_episodes), leave=False): ⑨
+    state, done = env.reset(), False ⑩
+    while not done:
+        action = select_action(state, Q, epsilons[e]) ⑪
+        next_state, reward, done, _ = env.step(action) ⑫
+        T_count[state][action][next_state] += 1 ⑬
+        r_diff = reward - \                               ⑭
+                         R_model[state][action][next_state]
+        R_model[state][action][next_state] += \           ⑮
+              (r_diff / T_count[state][action][next_state])
+        td_target = reward + gamma * \                    ⑯
+                           Q[next_state].max() * (not done)
+        td_error = td_target - Q[state][action] ⑰
+        Q[state][action] = Q[state][action] + \           ⑱
+                                       alphas[e] * td_error
+        backup_next_state = next_state                    ⑲
+        for _ in range(max_trajectory_depth): ⑳
 ```
 
-⑨ 继续在剧集循环中⑩ 再次，每个新的剧集，我们首先重置环境并获得初始状态。我们还将 done 标志设置为 False 并进入步骤交互循环。⑪ 我们选择动作。⑫ 我们对环境进行步骤操作并获得经验元组。⑬ 我们像在 Dyna-Q 中一样学习模型：增加状态-动作-下一个状态三元组的转换计数，表示完整转换发生。⑭ 然后，再次计算奖励信号的增量平均值；首先，获取差异。⑮ 然后，使用该差异和转换计数来学习奖励信号。⑯ 我们像往常一样计算*TD*目标。⑰ 使用*TD*目标和当前估计的*TD*误差⑱ 然后，更新 Q 函数。⑲ 在我们进入规划步骤之前，我们备份下一个状态变量。⑳ 待续... |
+⑨ 继续在剧集循环中。⑩ 再次，每个新的剧集，我们首先重置环境并获得初始状态。我们还将 `done` 标志设置为 `False` 并进入步骤交互循环。⑪ 我们选择动作。⑫ 我们对环境进行步骤操作并获得经验元组。⑬ 我们像在 Dyna-Q 中一样学习模型：增加状态-动作-下一个状态三元组的转换计数，表示完整转换发生。⑭ 然后，再次计算奖励信号的增量平均值；首先，获取差异。⑮ 然后，使用该差异和转换计数来学习奖励信号。⑯ 我们像往常一样计算 *TD* 目标。⑰ 使用 *TD* 目标和当前估计的 *TD* 误差。⑱ 然后，更新 Q 函数。⑲ 在我们进入规划步骤之前，我们备份下一个状态变量。⑳ 待续...
 
 | ![](img/icons_Python.png) | 我会说 Python 轨迹采样代理 3/3 |
 | --- | --- |
-|  |
+
+
 
 ```
-            for _ in range(max_trajectory_depth): ㉑
-                if Q.sum() == 0: break ㉒
-                # action = select_action(state, Q, epsilons[e])
-                action = Q[state].argmax() ㉓
-                if not T_count[state][action].sum(): break ㉔
-                probs = T_count[state][action] / \
-                                 T_count[state][action].sum() ㉕
-                next_state = np.random.choice( \ 
-                             np.arange(nS), size=1, p=probs)[0]
-                reward = R_model[state][action][next_state] ㉖
-                td_target = reward + gamma * \                ㉗
-                                            Q[next_state].max()
-                td_error = td_target - Q[state][action]
-                Q[state][action] = Q[state][action] + \ 
-                                           alphas[e] * td_error
-                state = next_state                            ㉘
-            state = backup_next_state                         ㉙
-        Q_track[e] = Q                                        ㉚
-        pi_track.append(np.argmax(Q, axis=1))
-    V = np.max(Q, axis=1)
-    pi = lambda s: {s:a for s, a in enumerate( \
-                                      np.argmax(Q, axis=1))}[s]
-    return Q, V, pi, Q_track, pi_track
+for _ in range(max_trajectory_depth):
+    if Q.sum() == 0: break
+    # action = select_action(state, Q, epsilons[e])
+    action = Q[state].argmax()
+    if not T_count[state][action].sum(): break
+    probs = T_count[state][action] / \
+                     T_count[state][action].sum()
+    next_state = np.random.choice( \ 
+                 np.arange(nS), size=1, p=probs)[0]
+    reward = R_model[state][action][next_state]
+    td_target = reward + gamma * \
+                                Q[next_state].max()
+    td_error = td_target - Q[state][action]
+    Q[state][action] = Q[state][action] + \ 
+                               alphas[e] * td_error
+    state = next_state
+state = backup_next_state
+Q_track[e] = Q
+pi_track.append(np.argmax(Q, axis=1))
+V = np.max(Q, axis=1)
+pi = lambda s: {s:a for s, a in enumerate( \
+                          np.argmax(Q, axis=1))}[s]
+return Q, V, pi, Q_track, pi_track
 ```
 
-㉑ 注意我们现在正在使用 max_trajectory_depth 变量，但我们仍在规划。㉒ 我们仍然检查 Q 函数是否有任何差异，所以它值得我们的计算。㉓ 选择动作要么在策略内，要么在策略外（使用贪婪策略）。㉔ 如果我们没有经历过转换，规划将会一团糟，所以退出。㉕ 否则，我们得到 next_state 的概率并相应地采样模型。㉖ 然后，根据奖励信号模型获得奖励。㉗ 并且继续像真实经验一样更新 Q 函数。㉘ 注意在这里我们在循环之前更新状态变量，并继续策略内规划步骤。㉙ 在规划循环之外，我们恢复状态，并继续真实的交互步骤。㉚ 其他一切照旧 |
+㉑ 注意我们现在正在使用`max_trajectory_depth`变量，但我们仍在规划。㉒ 我们仍然检查`Q`函数是否有任何差异，所以它值得我们的计算。㉓ 选择动作要么在策略内，要么在策略外（使用贪婪策略）。㉔ 如果我们没有经历过转换，规划将会一团糟，所以退出。㉕ 否则，我们得到`next_state`的概率并相应地采样模型。㉖ 然后，根据奖励信号模型获得奖励。㉗ 并且继续像真实经验一样更新`Q`函数。㉘ 注意在这里我们在循环之前更新状态变量，并继续策略内规划步骤。㉙ 在规划循环之外，我们恢复状态，并继续真实的交互步骤。㉚ 其他一切照旧。
 
 | ![图片](img/icons_Tally.png) | 计数器增加 Dyna-Q 和轨迹采样以不同的方式采样学习模型 |
 | --- | --- |
@@ -454,15 +510,15 @@ def trajectory_sampling(env, ①
 | ![图片](img/icons_Concrete.png) | 具体示例冻结湖环境 |
 |  | 在第二章中，我们为称为冻结湖（FL）的环境开发了 MDP。正如你所记得的，FL 是一个简单的网格世界（GW）环境。它具有离散的状态和动作空间，有 16 个状态和四个动作。代理的目标是从起始位置移动到目标位置，同时避免掉入坑中。在这个特定的冻结湖环境实例中，目标是从状态 0 移动到状态 15。挑战在于湖面被冰封，因此非常滑。![图片](img/07_05_Sidebar23.png)冻结湖环境 FL 环境是一个 4×4 的网格，有 16 个单元格，状态 0-15，从左上角到底部右侧。状态 0 是初始状态分布中的唯一状态，这意味着在每次新的一集中，代理都会出现在那个起始状态。状态 5、7、11、12 和 15 是终端状态：一旦代理落在这些状态中的任何一个，集会就结束了。状态 5、7、11 和 12 是坑，状态 15 是“目标”。使“坑”和“目标”不同的因素是奖励函数。所有落在目标状态，即状态 15 的转换都提供+1 的奖励，而整个网格世界中其他所有的转换都提供 0 奖励，没有奖励。代理自然会尝试到达那个+1 的转换，这涉及到避开坑。环境的挑战在于动作具有随机效果，因此代理只有三分之一的动作是按照预期移动的。其他三分之二均匀地分布在正交方向上。如果代理试图离开网格世界，它将弹回到它试图移动的单元格。 |
 | ![图片](img/icons_Details.png) | 细节之处 Hyperparameter values for the frozen lake environment |
-|  | 冰湖（FL）环境比例如滑行七（SWS）环境更具挑战性。因此，我们需要做出的最重要的改变之一是增加智能体与环境交互的回合数。在 SWS 环境中，我们允许智能体仅交互 3,000 回合；在 FL 环境中，我们让智能体积累 10,000 回合的经验。这个简单的改变也自动调整了 alpha 和 epsilon 的衰减计划。将 n_episodes 参数的值从 3,000 改为 10,000 会自动改变智能体的探索和学习量。Alpha 现在在总回合数的 50%后（即 5,000 回合）从初始值 0.5 衰减到最小值 0.01，而 epsilon 在总回合数的 90%后（即 9,000 回合）从初始值 1.0 衰减到最小值 0.1。![alpha-epsilon-fl](img/07_05_Sidebar24_alpha-epsilon-fl.png)最后，重要的是要提到，我使用的是 gamma 值为 0.99，并且当使用 OpenAI Gym 时，冰湖环境会自动用时间限制 Gym Wrapper 包装。这个“时间包装器”实例确保智能体在不超过 100 步的情况下结束回合。从技术上来说，这两个决定（gamma 和时间包装器）改变了智能体学习的最优策略和值函数，不应轻视。我建议在第七章的笔记本中尝试 FL 环境，并将 gamma 值改为不同的值（1，0.5，0），并且通过获取环境实例属性“unwrapped”，例如，“env = env.unwrapped”，来移除时间包装器。尝试理解这两者如何影响找到的策略和值函数。 |
+|  | 冰湖（FL）环境比例如滑行七（SWS）环境更具挑战性。因此，我们需要做出的最重要的改变之一是增加智能体与环境交互的回合数。在 SWS 环境中，我们允许智能体仅交互 3,000 回合；在 FL 环境中，我们让智能体积累 10,000 回合的经验。这个简单的改变也自动调整了`alpha`和`epsilon`的衰减计划。将`n_episodes`参数的值从 3,000 改为 10,000 会自动改变智能体的探索和学习量。`Alpha`现在在总回合数的 50%后（即 5,000 回合）从初始值 0.5 衰减到最小值 0.01，而`epsilon`在总回合数的 90%后（即 9,000 回合）从初始值 1.0 衰减到最小值 0.1。![alpha-epsilon-fl](img/07_05_Sidebar24_alpha-epsilon-fl.png)最后，重要的是要提到，我使用的是`gamma`值为 0.99，并且当使用 OpenAI Gym 时，冰湖环境会自动用时间限制 Gym Wrapper 包装。这个“时间包装器”实例确保智能体在不超过 100 步的情况下结束回合。从技术上来说，这两个决定（`gamma`和时间包装器）改变了智能体学习的最优策略和值函数，不应轻视。我建议在第七章的笔记本中尝试 FL 环境，并将`gamma`值改为不同的值（1，0.5，0），并且通过获取环境实例属性“unwrapped”，例如，`env = env.unwrapped`，来移除时间包装器。尝试理解这两者如何影响找到的策略和值函数。 |
 | ![图标 _ 总计](img/icons_Tally.png) | 总结一下：基于模型的 RL 方法在更少的回合中获得更接近实际的估计 |
 |  | ![示例图片](img/07_05_Sidebar25.png) |
 | ![图标 _ 总计](img/icons_Tally.png) | 总结一下：轨迹和基于模型的方法都有效地处理经验 |
 |  | ![示例图片](img/07_05_Sidebar26.png) |
 | ![图标 _ 混凝土](img/icons_Concrete.png) | 一个具体的例子：8 x 8 的冰湖环境 |
-|  | 我们要不要提高难度，尝试在这些具有挑战性的环境中应用这些算法呢？这个环境被称为 8×8 冰湖（FL8×8）。正如你所预期的那样，这是一个 8×8 的网格世界，其属性与 FL 相似。初始状态是状态 0，位于左上角；终止和目标状态是状态 63，位于右下角。动作效果的不确定性是相同的：代理以仅仅 33.33%的概率移动到目标单元格，其余的以均匀的方式分布在正交方向上。![图片](img/07_06_Sidebar27.png)正如你所见，这个环境的主要区别在于有很多更多的洞，而且显然它们位于不同的位置。状态 19、29、35、41、42、46、49、52、54 和 59 是洞；总共有 10 个洞！与原始 FL 环境相似，在 FL8×8 中，正确的策略允许代理在 100%的回合中达到终止状态。然而，在 OpenAI Gym 的实现中，学习到最优策略的代理并没有找到这些特定的策略，这是由于我们讨论过的 gamma 和时间包装器。想想看：考虑到这些环境的不确定性，一个安全的策略可能会因为时间包装器而在这个回合中获得零奖励。此外，给定一个小于一的 gamma 值，代理采取的步骤越多，奖励对回报的影响就越低。因此，安全的策略不一定是最优策略；因此，代理没有学习到它们。记住，目标不仅仅是找到一个 100%达到目标的策略，而是在 FL 中在 100 步内，在 FL8×8 中在 200 步内达到目标。代理可能需要冒险才能实现这个目标。 |
+|  | 我们要不要提高难度，尝试在这些具有挑战性的环境中应用这些算法呢？这个环境被称为 8×8 冰湖（FL8×8）。正如你所预期的那样，这是一个 8×8 的网格世界，其属性与 FL 相似。初始状态是状态 0，位于左上角；终止和目标状态是状态 63，位于右下角。动作效果的不确定性是相同的：代理以仅仅 33.33%的概率移动到目标单元格，其余的以均匀的方式分布在正交方向上。![图片](img/07_06_Sidebar27.png)正如你所见，这个环境的主要区别在于有很多更多的洞，而且显然它们位于不同的位置。状态 19、29、35、41、42、46、49、52、54 和 59 是洞；总共有 10 个洞！与原始 FL 环境相似，在 FL8×8 中，正确的策略允许代理在 100%的回合中达到终止状态。然而，在 OpenAI Gym 的实现中，学习到最优策略的代理并没有找到这些特定的策略，这是由于我们讨论过的`gamma`和时间包装器。想想看：考虑到这些环境的不确定性，一个安全的策略可能会因为时间包装器而在这个回合中获得零奖励。此外，给定一个小于一的`gamma`值，代理采取的步骤越多，奖励对回报的影响就越低。因此，安全的策略不一定是最优策略；因此，代理没有学习到它们。记住，目标不仅仅是找到一个 100%达到目标的策略，而是在 FL 中在 100 步内，在 FL8×8 中在 200 步内达到目标。代理可能需要冒险才能实现这个目标。 |
 | ![](img/icons_Details.png) | 它在于细节冰湖 8×8 环境的超参数值 |
-|  | 冰冻湖 8×8（FL8×8）环境是我们在这本书中讨论的最具挑战性的离散状态空间和动作空间环境。这个环境之所以具有挑战性，有以下几个原因：首先，64 个状态是我们处理过的状态数量最多的情况，但更重要的是，只有一个非零奖励使得这个环境特别具有挑战性。这实际上意味着智能体只有在第一次达到终端状态时才会知道他们已经做对了。记住，这是随机的！在他们找到非零奖励的转换之后，像 SARSA 和 Q-learning（不是 lambda 版本，而是原始版本）这样的智能体只会更新智能体转换到目标状态的那些状态的价值。这比奖励退回了一步。然后，为了使那个价值函数再退回一步，猜猜看，智能体需要随机地击中那个倒数第二个状态。但是，这是对于非 lambda 版本的情况。对于 SARSA(λ)和 Q(λ)，价值的传播取决于 lambda 的值。在本章的所有实验中，我使用了一个 lambda 值为 0.5，这大致告诉智能体传播价值占轨迹的一半（也取决于所使用的痕迹类型，但作为一个大致估计）。令人惊讶的是，我们对这些智能体所做的唯一改变是允许它们与环境交互的次数。在 SWS 环境中，我们只允许智能体进行 3,000 次交互，在 FL 环境中，我们让智能体积累 10,000 次经验；在 FL8×8 中，我们让这些智能体积累 30,000 次经验。这意味着 alpha 现在从初始值 0.5 衰减到最小值 0.01，这是总交互次数的 50%，现在是 15,000 次，而 epsilon 在总交互次数的 90%后衰减到最小值 0.1，现在是 27,000 次。![alpha-epsilon-fl-8x8](img/07_06_Sidebar28_alpha-epsilon-fl-8x8.png) |
+|  | 冰冻湖 8×8（FL8×8）环境是我们在这本书中讨论的最具挑战性的离散状态空间和动作空间环境。这个环境之所以具有挑战性，有以下几个原因：首先，64 个状态是我们处理过的状态数量最多的情况，但更重要的是，只有一个非零奖励使得这个环境特别具有挑战性。这实际上意味着智能体只有在第一次达到终端状态时才会知道他们已经做对了。记住，这是随机的！在他们找到非零奖励的转换之后，像 SARSA 和 Q-learning（不是 lambda 版本，而是原始版本）这样的智能体只会更新智能体转换到目标状态的那些状态的价值。这比奖励退回了一步。然后，为了使那个价值函数再退回一步，猜猜看，智能体需要随机地击中那个倒数第二个状态。但是，这是对于非 lambda 版本的情况。对于 SARSA(λ)和 Q(λ)，价值的传播取决于`lambda`的值。在本章的所有实验中，我使用了一个`lambda`值为 0.5，这大致告诉智能体传播价值占轨迹的一半（也取决于所使用的痕迹类型，但作为一个大致估计）。令人惊讶的是，我们对这些智能体所做的唯一改变是允许它们与环境交互的次数。在 SWS 环境中，我们只允许智能体进行 3,000 次交互，在 FL 环境中，我们让智能体积累 10,000 次经验；在 FL8×8 中，我们让这些智能体积累 30,000 次经验。这意味着`alpha`现在从初始值 0.5 衰减到最小值 0.01，这是总交互次数的 50%，现在是 15,000 次，而`epsilon`在总交互次数的 90%后衰减到最小值 0.1，现在是 27,000 次。![alpha-epsilon-fl-8x8](img/07_06_Sidebar28_alpha-epsilon-fl-8x8.png) |
 | ![计数图标](img/icons_Tally.png) | 总结一下，基于策略的方法不再跟上，基于痕迹的离策略和基于模型的方法可以 |
 |  | ![侧边栏 29](img/07_06_Sidebar29.png) |
 | ![计数图标](img/icons_Tally.png) | 总结一下，一些基于模型的方法会显示出大的误差峰值以引起注意 |
@@ -472,7 +528,7 @@ def trajectory_sampling(env, ①
 
 在本章中，你学习了如何使强化学习（RL）更加有效和高效。这里的“有效”指的是本章中提到的智能体能够在有限的交互次数内解决环境问题。其他智能体，如原始的 SARSA、Q-learning，甚至是蒙特卡洛控制，在有限的步骤内解决这些挑战会有困难；至少，对于 FL8x8 环境来说，它们在只有 30,000 次交互的情况下会遇到困难。这就是本章中“有效”的含义；智能体能够成功产生预期的结果。
 
-我们还探讨了更高效的算法。在这里，我指的是数据效率；我的意思是，我们在这章中引入的代理可以用相同的数据做更多的事情，比其他代理。例如，SARSA(λ)和 Q(λ)可以比它们的原始版本 SARSA 和 Q-learning 更快地将奖励传播到价值函数估计中。通过调整λ超参数，你甚至可以将信用分配给一个场景中访问过的所有状态。λ的值为 1 并不总是最好的，但至少在使用 SARSA(λ)和 Q(λ)时你有这个选项。
+我们还探讨了更高效的算法。在这里，我指的是数据效率；我的意思是，我们在这章中引入的代理可以用相同的数据做更多的事情，比其他代理。例如，SARSA(λ)和 Q(λ)可以比它们的原始版本 SARSA 和 Q-learning 更快地将奖励传播到价值函数估计中。通过调整`λ`超参数，你甚至可以将信用分配给一个场景中访问过的所有状态。`λ`的值为 1 并不总是最好的，但至少在使用 SARSA(λ)和 Q(λ)时你有这个选项。
 
 你还学习了基于模型的方法，例如 Dyna-Q 和轨迹采样。这些方法以不同的方式提高样本效率。它们使用样本来学习环境模型；如果你的代理在状态`s`中采取行动`a`时，将 100%的 100 万个样本落在状态`s'`上，为什么不利用这些信息来改进价值函数和政策呢？高级基于模型的深度强化学习方法通常用于收集经验样本成本高昂的环境：例如机器人领域，或者没有高速模拟的问题，或者硬件需要大量资金资源。
 
@@ -488,7 +544,6 @@ def trajectory_sampling(env, ①
 
 | ![推文图标](img/icons_Tweet.png) | 在自己的工作上努力，并分享你的发现 |
 | --- | --- |
-
 |  | 这里有一些想法，如何将你所学的知识提升到下一个层次。如果你愿意，可以与世界分享你的成果，并确保查看其他人所做的事情。这是一个双赢的局面，希望你能充分利用它。
 
 +   **#gdrl_ch07_tf01:** 我只测试了本章中提出的算法在冻结的 8 × 8 湖环境中的效果，但你好奇上一章的算法如何吗？好吧，那就这么做！去书中的 Notebooks，将上一章的算法复制到这一章的 Notebook 中，然后运行并收集信息来比较所有算法。
@@ -503,4 +558,4 @@ def trajectory_sampling(env, ①
 
 +   **#gdrl_ch07_tf06:** 在每一章中，我都使用最后一个标签作为通用的标签。请随意使用这个标签来讨论与本章相关的任何其他工作。没有比你自己创造的任务更令人兴奋的作业了。确保分享你设定要调查的内容和你的结果。
 
-用你的发现写一条推文，@mimoralea（我会转发），并使用列表中的特定标签来帮助感兴趣的人找到你的结果。没有正确或错误的结果；你分享你的发现并检查别人的发现。利用这个机会社交，做出贡献，让自己脱颖而出！我们正在等待你！以下是一条推文示例：“嘿，@mimoralea。我创建了一个包含资源列表的博客文章，用于研究深度强化学习。查看它在这里<链接>。#gdrl_ch01_tf01”我会确保转发并帮助其他人找到你的作品。|
+用你的发现写一条推文，@mimoralea（我会转发），并使用列表中的特定标签来帮助感兴趣的人找到你的结果。没有正确或错误的结果；你分享你的发现并检查别人的发现。利用这个机会社交，做出贡献，让自己脱颖而出！我们正在等待你！以下是一条推文示例：“嘿，@mimoralea。我创建了一个包含资源列表的博客文章，用于研究深度强化学习。查看它在这里<链接>。#gdrl_ch01_tf01”我会确保转发并帮助其他人找到你的作品。 |

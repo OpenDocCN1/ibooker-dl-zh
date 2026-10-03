@@ -1,16 +1,13 @@
+
 # 第五章：图自动编码器
 
-### 本章涵盖
+## 本章涵盖
 
-+   区分区分性和生成性模型
-
-+   将自动编码器和变分自动编码器应用于图
-
-+   使用 PyTorch Geometric 构建图自动编码器
-
-+   过度压缩和图神经网络
-
-+   链接预测和图生成
++ 区分区分性和生成性模型
++ 将自动编码器和变分自动编码器应用于图
++ 使用 PyTorch Geometric 构建图自动编码器
++ 过度压缩和图神经网络
++ 链接预测和图生成
 
 到目前为止，我们已经介绍了如何将经典深度学习架构扩展到图结构数据。在第三章中，我们考虑了卷积图神经网络（GNNs），它们将卷积算子应用于数据中识别模式。在第四章中，我们探讨了注意力机制以及如何将其用于改进图学习任务（如节点分类）的性能。
 
@@ -32,9 +29,9 @@
 
 ### 5.1.1 生成模型和判别模型
 
-如前几章所述，我们用来训练模型的原始数据集被称为我们的*训练数据*，我们试图预测的标签被称为我们的*训练目标*。未见过的数据是我们的*测试数据*，我们希望学习*目标标签*（从训练中）以对测试数据进行分类。另一种描述方式是使用条件概率。我们希望我们的模型返回给定数据实例 X 时某些目标 Y 的概率。我们可以将其写为 P(Y|X)，其中竖线表示 Y 是“条件”于 X 的。
+如前几章所述，我们用来训练模型的原始数据集被称为我们的*训练数据*，我们试图预测的标签被称为我们的*训练目标*。未见过的数据是我们的*测试数据*，我们希望学习*目标标签*（从训练中）以对测试数据进行分类。另一种描述方式是使用条件概率。我们希望我们的模型返回给定数据实例 `X` 时某些目标 `Y` 的概率。我们可以将其写为 `P(Y|X)`，其中竖线表示 `Y` 是“条件”于 `X` 的。
 
-正如我们所说的，判别性模型学习区分**之间**的类别。这相当于在数据空间中学习数据的分离边界。相比之下，生成性模型学习建模数据空间本身。它们捕捉数据空间中数据的整个分布，并且当面对一个新的示例时，它们会告诉我们新示例的可能性有多大。使用概率语言，我们说它们建模了数据与目标之间的**联合概率**，P(X,Y)。一个典型的生成性模型可能是一个用于预测句子中下一个单词的模型（例如，许多现代智能手机中的自动完成功能）。生成性模型为每个可能的下一个单词分配一个概率，并返回那些概率最高的单词。判别性模型可以告诉你一个单词具有某种特定情感的可能性有多大，而生成性模型将建议使用哪个单词。
+正如我们所说的，判别性模型学习区分**之间**的类别。这相当于在数据空间中学习数据的分离边界。相比之下，生成性模型学习建模数据空间本身。它们捕捉数据空间中数据的整个分布，并且当面对一个新的示例时，它们会告诉我们新示例的可能性有多大。使用概率语言，我们说它们建模了数据与目标之间的**联合概率**，`P(X,Y)`。一个典型的生成性模型可能是一个用于预测句子中下一个单词的模型（例如，许多现代智能手机中的自动完成功能）。生成性模型为每个可能的下一个单词分配一个概率，并返回那些概率最高的单词。判别性模型可以告诉你一个单词具有某种特定情感的可能性有多大，而生成性模型将建议使用哪个单词。
 
 回到我们的图像示例，生成性模型近似图像的整体分布。这可以在图 5.1 中看到，其中生成性模型已经学会了数据空间中点的位置（而不是它们是如何被区分的）。这意味着生成性模型必须比它们的判别性对应物学习数据中的更复杂的相关性。例如，生成性模型学习到“飞机有翅膀”和“船只出现在水中”。另一方面，判别性模型只需要学习“船”与“非船”之间的区别。它们可以通过寻找图像中的明显标志，如桅杆、龙骨或吊杆来实现。然后它们可以很大程度上忽略图像的其余部分。因此，生成性模型在训练时可能更耗费计算资源，可能需要更大的网络架构。（在第 5.5 节中，我们将描述过度压缩问题，这是大型 GNN 的一个特定问题。）
 
@@ -60,19 +57,13 @@
 
 然而，在将自动编码器应用于基于图的数据时，我们需要小心。在重建我们的数据时，我们也必须重建我们的邻接矩阵。在本节中，我们将探讨使用第三章中的亚马逊产品数据集实现 GAE 的方法[2]。我们将构建一个用于链接预测任务的 GAE，这是处理图时常见的问题。这允许我们重建邻接矩阵，并且在我们处理有缺失数据的数据集时特别有用。我们将遵循以下过程：
 
-1.  定义模型：
-
-    1.  创建一个编码器和解码器。
-
-    1.  使用编码器创建一个潜在空间进行采样。
-
-1.  定义训练和测试循环，包括适合构建生成模型的损失函数。
-
-1.  将数据准备为图，包括边列表和节点特征。
-
-1.  训练模型，传递边数据以计算损失。
-
-1.  使用测试数据集测试模型。
+1. 定义模型：
+   1. 创建一个编码器和解码器。
+   1. 使用编码器创建一个潜在空间进行采样。
+1. 定义训练和测试循环，包括适合构建生成模型的损失函数。
+1. 将数据准备为图，包括边列表和节点特征。
+1. 训练模型，传递边数据以计算损失。
+1. 使用测试数据集测试模型。
 
 ### 5.2.1 对第三章中亚马逊产品数据集的回顾
 
@@ -211,9 +202,11 @@ class GCNEncoder(torch.nn.Module):                         #2
 
 #4 使用边缘数据的编码器前向传递
 
+
+
 注意，我们还需要确保我们的前向传递可以从我们的图中返回边缘数据，因为我们将使用我们的自动编码器从潜在空间重建图。换句话说，自动编码器将学习如何从特征空间的一个低维表示中重建邻接矩阵。这意味着它也在学习如何从新数据中预测边缘。为了做到这一点，我们需要让自动编码器结构学习重建边缘，特别是通过改变解码器。在这里，我们将使用内积从潜在空间预测边缘。这如列表 5.5 中所示。（要了解为什么我们使用内积，请参阅第 5.5 节的技术细节。）
 
-##### 列表 5.5 图解码器
+#### 列表 5.5 图解码器
 
 ```py
 class InnerProductDecoder(torch.nn.Module):     #1
@@ -232,9 +225,9 @@ z[edge_index[1]]).sum(dim=1)   #3
 
 #3 解码器的前向传递
 
-现在我们已经准备好在 GAE 类中将编码器和解码器结合起来，该类包含两个子模型（见列表 5.6）。请注意，我们现在没有用任何输入或输出大小初始化解码器，因为这只是在将编码器的输出与边缘数据应用内积。
+现在我们已经准备好在`GAE`类中将编码器和解码器结合起来，该类包含两个子模型（见列表 5.6）。请注意，我们现在没有用任何输入或输出大小初始化解码器，因为这只是在将编码器的输出与边缘数据应用内积。
 
-##### 列表 5.6 图自动编码器
+#### 列表 5.6 图自动编码器
 
 ```py
    class GraphAutoEncoder(torch.nn.Module):
@@ -253,19 +246,19 @@ z[edge_index[1]]).sum(dim=1)   #3
 
 #2 定义解码器
 
-在 PyTorch Geometric (PyG) 中，通过仅导入 GAE 类，GAE 模型可以变得更加简单，该类在传递给编码器后自动构建解码器和自动编码器。当我们在本章后面构建 VGAE 时，我们将使用此功能。
+在 PyTorch Geometric (PyG) 中，通过仅导入`GAE`类，`GAE`模型可以变得更加简单，该类在传递给编码器后自动构建解码器和自动编码器。当我们在本章后面构建`VGAE`时，我们将使用此功能。
 
 ### 5.2.3 训练图自动编码器进行链接预测
 
-在构建了我们的 GAE 之后，我们可以继续使用它来对 Amazon Products 数据集的子模型进行边缘预测。整体框架将遵循典型的深度学习问题格式，我们首先加载数据，准备数据，并将这些数据分成训练、测试和验证数据集；定义我们的训练参数；然后训练和测试我们的模型。这些步骤在图 5.6 中显示。
+在构建了我们的`GAE`之后，我们可以继续使用它来对 Amazon Products 数据集的子模型进行边缘预测。整体框架将遵循典型的深度学习问题格式，我们首先加载数据，准备数据，并将这些数据分成训练、测试和验证数据集；定义我们的训练参数；然后训练和测试我们的模型。这些步骤在图 5.6 中显示。
 
 ![图](img/5-6.png)
 
-##### 图 5.6 训练我们的模型进行链接预测的总体步骤
+#### 图 5.6 训练我们的模型进行链接预测的总体步骤
 
-我们首先加载数据集并为其学习算法做准备，这已经在列表 5.1 中完成。为了使用 PyG 模型进行 GAE 和 VGAE，我们需要从邻接矩阵中构建一个边缘索引，这可以通过使用 PyG 的一个实用函数 `to_edge_index` 轻松完成，正如我们在以下列表中描述的那样。
+我们首先加载数据集并为其学习算法做准备，这已经在列表 5.1 中完成。为了使用 PyG 模型进行`GAE`和`VGAE`，我们需要从邻接矩阵中构建一个边缘索引，这可以通过使用 PyG 的一个实用函数`to_edge_index`轻松完成，正如我们在以下列表中描述的那样。
 
-##### 列表 5.7 构建边索引
+#### 列表 5.7 构建边索引
 
 ```py
 from torch_geometrics.utils import to_edge_index   #1
@@ -274,13 +267,13 @@ edge_index, edge_attr = to_edge_index(adj_matrix)   #2
 num_nodes = adj_matrix.size(0)
 ```
 
-#1 从 PyG 实用库中加载 to_edge_index
+#1 从 PyG 实用库中加载`to_edge_index`
 
 #2 将邻接矩阵转换为边索引和边属性向量
 
 然后我们加载 PyG 库并将我们的数据转换为 PyG 数据对象。我们还可以对我们的数据集应用转换，其中特征和邻接矩阵的加载方式与第三章中描述的相同。首先，我们对特征进行归一化，然后根据图的边或链接将我们的数据集划分为训练集、测试集和验证集，如列表 5.8 所示。这是进行链接预测时的一个关键步骤，以确保我们正确地分割了数据。在代码中，我们使用了 5%的数据用于验证，10%的数据用于测试数据，注意我们的图是无向的。在这里，我们没有添加任何负样本训练数据。
 
-##### 列表 5.8 转换为 PyG 对象
+#### 列表 5.8 转换为 PyG 对象
 
 ```py
 data = Data(x=feature_matrix,         #1
@@ -303,9 +296,9 @@ train_data, val_data, test_data = transform(data)
 
 #2 对我们的数据进行转换并将链接划分为训练、测试和验证集
 
-一切准备就绪后，我们现在可以将 GAE 应用于 Amazon Products 数据集。首先，我们定义我们的模型、优化器和损失函数。我们将二元交叉熵损失应用于解码器的预测值，并将其与我们的真实边索引进行比较，以查看我们的模型是否正确地重建了邻接矩阵，如以下列表所示。
+一切准备就绪后，我们现在可以将`GAE`应用于 Amazon Products 数据集。首先，我们定义我们的模型、优化器和损失函数。我们将二元交叉熵损失应用于解码器的预测值，并将其与我们的真实边索引进行比较，以查看我们的模型是否正确地重建了邻接矩阵，如以下列表所示。
 
-##### 列表 5.9 定义模型
+#### 列表 5.9 定义模型
 
 ```py
 input_size, latent_dims = feature_matrix.shape[1], 16   #1
@@ -325,7 +318,7 @@ criterion = torch.nn.BCEWithLogitsLoss()   #3
 
 使用二元交叉熵损失是很重要的，因为我们想计算每个边是真实边的概率，其中真实边对应于未被隐藏且不需要预测的边（即正样本）。编码器学习压缩边数据但不会改变边的数量，而解码器学习预测边。从某种意义上说，我们在这里结合了判别性和生成性步骤。因此，二元交叉熵给出了在这些节点之间可能存在边的概率。它是二元的，因为边要么应该存在（标签 1），要么不应该存在（标签 0）。我们可以将所有二元交叉熵概率大于 0.5 的边与训练循环每个 epoch 中的实际真实边进行比较，如以下列表所示。
 
-##### 列表 5.10 训练函数
+#### 列表 5.10 训练函数
 
 ```py
 def train(model, criterion, optimizer):
@@ -376,7 +369,7 @@ train_data.edge_label.new_zeros\
 
 我们在列表 5.11 中展示的测试函数比我们的训练函数简单得多，因为它不需要执行任何负采样。相反，我们只需使用真实和预测的边缘，并返回一个接收者操作特征（ROC）/曲线下面积（AUC）分数来衡量我们模型的准确率。回想一下，ROC/AUC 曲线将在 0 和 1 之间变化，一个完美的模型，其预测 100%正确，将有一个 AUC 为 1。
 
-##### 列表 5.11 测试函数
+#### 列表 5.11 测试函数
 
 ```py
 from sklearn.metrics import roc_auc_score
@@ -400,7 +393,7 @@ def test(data):
 
 在每个时间步，我们将使用我们验证数据中的所有边缘数据来计算一个模型的整体成功率。训练完成后，我们使用测试数据来计算最终的测试准确率，如下所示。
 
-##### 列表 5.12 训练循环
+#### 列表 5.12 训练循环
 
 ```py
 best_val_auc = final_test_auc = 0 
@@ -426,7 +419,7 @@ test_auc = test(test_data)   #3
 
 ![figure](img/5-7.png)
 
-##### 图 5.7 常规空间是连续和紧致的，但数据区域可能会变得不那么分离。或者，高重建损失通常意味着数据分离良好，但潜在空间可能覆盖不足，导致生成样本较差。在这里，KL 散度指的是 Kullback-Liebler 散度。
+#### 图 5.7 常规空间是连续和紧致的，但数据区域可能会变得不那么分离。或者，高重建损失通常意味着数据分离良好，但潜在空间可能覆盖不足，导致生成样本较差。在这里，KL 散度指的是 Kullback-Liebler 散度。
 
 KL 散度是衡量一个概率分布与另一个概率分布差异的度量。它计算将一个分布（原始数据分布）中的值编码到另一个分布（潜在空间）中所需的“额外信息”量。在左侧，数据组（*x*[*i*]）重叠不多，这意味着 KL 散度较高。在右侧，不同数据组之间存在更多重叠（相似性），这意味着 KL 散度较低。当构建具有高 KL 散度的更常规的潜在空间时，我们可以获得非常好的重建效果，但插值效果较差，而对于低 KL 散度，情况则相反。更多细节请参阅第 5.5 节。
 
@@ -434,17 +427,19 @@ KL 散度是衡量一个概率分布与另一个概率分布差异的度量。�
 
 当我们对潜在空间进行正则化时，我们使用变分方法，这些方法通过概率分布（或密度）来建模整个数据空间。正如我们将看到的，使用变分方法的主要好处是潜在空间结构良好。然而，变分方法并不一定保证更高的性能，因此在使用这些类型的模型时，通常很重要的一点是要测试自动编码器和变分对应物。这可以通过查看测试数据集上的重建分数（例如，均方误差）、对潜在编码应用一些降维方法（例如，t-SNE 或均匀流形近似和投影[UMAP]），或使用特定任务的度量（例如，图像的 Inception Score 或文本生成的 ROUGE/METEOR）来实现。对于图而言，最大均值差异（MMD）、图统计或图核方法都可以用来比较不同合成的图副本。
 
-在接下来的几节中，我们将更详细地介绍将数据空间建模为概率密度意味着什么，以及我们如何仅用几行代码将我们的图自动编码器转换为 VGAE。这些依赖于一些关键的概率机器学习概念，如 KL 散度和重参数化技巧，我们将在第 5.5 节中概述这些概念。对于对这些概念进行更深入的了解，我们推荐阅读《概率深度学习》（Manning，2020）。让我们构建一个 VGAE 架构，并将其应用于之前相同的 Amazon Products 数据集。
+在接下来的几节中，我们将更详细地介绍将数据空间建模为概率密度意味着什么，以及我们如何仅用几行代码将我们的图自动编码器转换为`VGAE`。这些依赖于一些关键的概率机器学习概念，如 KL 散度和重参数化技巧，我们将在第 5.5 节中概述这些概念。对于对这些概念进行更深入的了解，我们推荐阅读《概率深度学习》（Manning，2020）。让我们构建一个`VGAE`架构，并将其应用于之前相同的 Amazon Products 数据集。
 
 ### 5.3.1 构建变分图自动编码器
 
-VGAE 架构与 GAE 模型类似。主要区别在于，*变分*图编码器的输出是通过从概率密度中采样生成的。我们可以用其均值和方差来表征密度。因此，编码器的输出现在将是之前空间每个维度的均值和方差。然后，解码器将这个采样的潜在表示解码，使其看起来像输入数据。这可以在图 5.8 中看到，其中高级模型是我们现在将之前的自动编码器扩展到输出均值和方差，而不是从潜在空间中输出点估计。这允许我们的模型从潜在空间中进行概率采样。
+`VGAE`架构与`GAE`模型类似。主要区别在于，*变分*图编码器的输出是通过从概率密度中采样生成的。我们可以用其均值和方差来表征密度。因此，编码器的输出现在将是之前空间每个维度的均值和方差。然后，解码器将这个采样的潜在表示解码，使其看起来像输入数据。这可以在图 5.8 中看到，其中高级模型是我们现在将之前的自动编码器扩展到输出均值和方差，而不是从潜在空间中输出点估计。这允许我们的模型从潜在空间中进行概率采样。
 
 ![figure](img/5-8.png)
 
-##### 图 5.8 展示了通用 VAE 的结构，我们现在从潜在空间中的概率密度中采样，而不是像典型自动编码器那样从点估计中采样。VGAE 扩展了 VAE 架构，使其适用于图结构数据。
+#### 图 5.8 展示了通用 VAE 的结构，我们现在从潜在空间中的概率密度中采样，而不是像典型自动编码器那样从点估计中采样。VGAE 扩展了 VAE 架构，使其适用于图结构数据。
 
-我们必须调整我们的架构，并更改我们的损失以包括一个额外的项来正则化潜在空间。列表 5.13 提供了一个 VGAE 的代码片段。列表 5.4 和列表 5.13 中的`VariationalGCNEncoder`层之间的相似之处在于，我们已经将潜在空间的维度加倍，并在前向传递的末尾从编码器返回均值和对数方差。
+我们必须调整我们的架构，并更改我们的损失以包括一个额外的项来正则化潜在空间。列表 5.13 提供了一个`VGAE`的代码片段。列表 5.4 和列表 5.13 中的`VariationalGCNEncoder`层之间的相似之处在于，我们已经将潜在空间的维度加倍，并在前向传递的末尾从编码器返回均值和对数方差。
+
+
 
 ##### 列表 5.13 `VariationalGCNEncoder`
 
@@ -544,11 +539,11 @@ GNN 对影响最大的领域之一是药物发现，特别是对新分子或潜�
 
 我们将考虑那些在 ZINC 数据集中已筛选过的药物的小分子，该数据集大约有 250,000 个单独的分子。这个数据集中的每个分子都有额外的数据，包括以下内容：
 
-+   **简化分子输入行系统（SMILES）* —分子结构或分子 *图* 的 ASCII 格式描述。*
++ **简化分子输入行系统（SMILES）** —分子结构或分子 *图* 的 ASCII 格式描述。
 
-**重要属性* —合成可及性分数（SAS）、水-辛醇分配系数（`logP`），最重要的是，定量估计药物相似度（QED）的度量，这突出了该分子作为潜在药物的可能性。*
+**重要属性** —合成可及性分数（SAS）、水-辛醇分配系数（`logP`），最重要的是，定量估计药物相似度（QED）的度量，这突出了该分子作为潜在药物的可能性。
 
-*为了使这个数据集能够被我们的 GNN 模型使用，我们需要将其转换为合适的图结构。在这里，我们将使用 PyG 来定义我们的模型并运行我们的深度学习流程。因此，我们首先下载数据，然后使用 NetworkX 将数据集转换为图对象。我们在列表 5.16 中下载数据集，生成了以下输出：
+为了使这个数据集能够被我们的 GNN 模型使用，我们需要将其转换为合适的图结构。在这里，我们将使用 PyG 来定义我们的模型并运行我们的深度学习流程。因此，我们首先下载数据，然后使用 NetworkX 将数据集转换为图对象。我们在列表 5.16 中下载数据集，生成了以下输出：
 
 ```py
      smiles     logP     qed     SAS
@@ -649,20 +644,14 @@ num_heavy_atoms=num_heavy_atoms)
 
 ##### 列表 5.18：分子图生成的损失
 
+
+
 ```py
-        def calculate_loss(self, pred_adj, \
-   true_adj, qed_pred, qed_true, mu, logvar):
-             adj_loss = F.binary_cross_entropy\
-   (pred_adj, true_adj)   #1
-
-             qed_loss = F.mse_loss\
-(qed_pred.view(-1), qed_true.view(-1))     #2
-
-             kl_loss = -0.5 * torch.mean\
-(torch.sum(1 + logvar - mu.pow(2)\     #3
- - logvar.exp(), dim=1))
-
-             return adj_loss + qed_loss + kl_loss
+def calculate_loss(self, pred_adj, true_adj, qed_pred, qed_true, mu, logvar):
+    adj_loss = F.binary_cross_entropy(pred_adj, true_adj)   #1
+    qed_loss = F.mse_loss(qed_pred.view(-1), qed_true.view(-1))     #2
+    kl_loss = -0.5 * torch.mean(torch.sum(1 + logvar - mu.pow(2) - logvar.exp(), dim=1))     #3
+    return adj_loss + qed_loss + kl_loss
 ```
 
 #1 重构损失
@@ -675,11 +664,9 @@ num_heavy_atoms=num_heavy_atoms)
 
 现在我们已经有了训练数据和损失，我们可以开始考虑模型。总体而言，这个模型将与本章 earlier 讨论过的模型相似，即 GAE 和 VGAE。然而，我们需要对我们的模型进行一些细微的调整，以确保它能很好地应用于当前的问题：
 
-+   使用异构图神经网络（GCN）来考虑不同的边类型。
-
-+   训练解码器以生成整个图。
-
-+   引入一个属性预测层。
++ 使用异构图神经网络（GCN）来考虑不同的边类型。
++ 训练解码器以生成整个图。
++ 引入一个属性预测层。
 
 让我们逐一看看这些。
 
@@ -697,46 +684,38 @@ num_heavy_atoms=num_heavy_atoms)
 from torch.nn import Parameter
 from torch_geometric.nn import MessagePassing
 
-   class HeterogeneousGraphConv(MessagePassing):
-def __init__(self, in_channels, out_channels, num_relations, bias=True):
-        super(HeterogeneousGraphConv, self).\
-__init__(aggr='add')       #1
+class HeterogeneousGraphConv(MessagePassing):
+    def __init__(self, in_channels, out_channels, num_relations, bias=True):
+        super(HeterogeneousGraphConv, self).__init__(aggr='add')       #1
         self.in_channels = in_channels
         self.out_channels = out_channels
         self.num_relations = num_relations
 
-        self.weight = Parameter(torch.\
-Tensor(num_relations, in_channels, \
-out_channels))  #2
+        self.weight = Parameter(torch.Tensor(num_relations, in_channels, out_channels))  #2
         if bias:
-             self.bias = Parameter(torch.Tensor(out_channels))
+            self.bias = Parameter(torch.Tensor(out_channels))
         else:
-             self.register_parameter('bias', None)
+            self.register_parameter('bias', None)
 
         self.reset_parameters()
 
-        def reset_parameters(self):
-             torch.nn.init.xavier_uniform_(self.weight)
-             if self.bias is not None:
-                  torch.nn.init.zeros_(self.bias)
+    def reset_parameters(self):
+        torch.nn.init.xavier_uniform_(self.weight)
+        if self.bias is not None:
+            torch.nn.init.zeros_(self.bias)
 
-        def forward(self, x, edge_index, edge_type):
+    def forward(self, x, edge_index, edge_type):
+        return self.propagate(edge_index, size=(x.size(0), x.size(0)), x=x, edge_type=edge_type)  #3
 
-       return self.propagate\
-(edge_index, size=(x.size(0), 
-x.size(0)), x=x, edge_type=edge_type)  #3
+    def message(self, x_j, edge_type, index, size):   #4
+        W = self.weight[edge_type]    #5
+        x_j = torch.matmul(x_j.unsqueeze(1), W).squeeze(1)
+        return x_j
 
-       def message(self, x_j, edge_type, index, size):   #4
-
-            W = self.weight[edge_type]    #5
-            x_j = torch.matmul(x_j.unsqueeze(1), W).squeeze(1)
-
-            return x_j
-
-       def update(self, aggr_out):
-            if self.bias is not None:
-                 aggr_out += self.bias
-            return aggr_out
+    def update(self, aggr_out):
+        if self.bias is not None:
+            aggr_out += self.bias
+        return aggr_out
 ```
 
 #1 "添加"聚合
@@ -754,24 +733,19 @@ x.size(0)), x=x, edge_type=edge_type)  #3
 ##### 列表 5.20 小图编码器
 
 ```py
-   class VariationalGCEncoder(torch.nn.Module):
-        def __init__(self, input_size, layers, latent_dims, num_relations):
-             super().__init__()
-             self.layer0 = HeterogeneousGraphConv(input_size, 
-   layers[0], num_relations)                                     #1
-             self.layer1 = HeterogeneousGraphConv(layers[0], 
-   layers[1], num_relations)                                    
-             self.layer2 = HeterogeneousGraphConv(layers[1], 
-   latent_dims, num_relations)                                  
+class VariationalGCEncoder(torch.nn.Module):
+    def __init__(self, input_size, layers, latent_dims, num_relations):
+        super().__init__()
+        self.layer0 = HeterogeneousGraphConv(input_size, layers[0], num_relations)                                     #1
+        self.layer1 = HeterogeneousGraphConv(layers[0], layers[1], num_relations)                                    
+        self.layer2 = HeterogeneousGraphConv(layers[1], latent_dims, num_relations)                                  
 
-        def forward(self, x, edge_index, edge_type):
-             x = F.relu(self.layer0\
-(x, edge_index, edge_type))              #2
-             x = F.relu(self.layer1\
-(x, edge_index, edge_type))             
-             mu = self.mu(x, edge_index) 
-             logvar = self.logvar(x, edge_index)
-             return mu, logvar
+    def forward(self, x, edge_index, edge_type):
+        x = F.relu(self.layer0(x, edge_index, edge_type))              #2
+        x = F.relu(self.layer1(x, edge_index, edge_type))             
+        mu = self.mu(x, edge_index) 
+        logvar = self.logvar(x, edge_index)
+        return mu, logvar
 ```
 
 #1 异构 GCNs
@@ -786,7 +760,7 @@ x.size(0)), x=x, edge_type=edge_type)  #3
 
 ```py
 class GraphDecoder(nn.Module):
-        def __init__(self, latent_dim, adjacency_shape, feature_shape):
+    def __init__(self, latent_dim, adjacency_shape, feature_shape):
         super(GraphDecoder, self).__init__()
 
         self.dense1 = nn.Linear(latent_dim, 128)
@@ -801,26 +775,24 @@ class GraphDecoder(nn.Module):
         self.relu3 = nn.ReLU()
         self.dropout3 = nn.Dropout(0.1)
 
-        self.adjacency_output = nn.Linear(512,\
-torch.prod(torch.tensor(adjacency_shape)).item())
-        self.feature_output = nn.Linear(512,\
-torch.prod(torch.tensor(feature_shape)).item())
+        self.adjacency_output = nn.Linear(512, torch.prod(torch.tensor(adjacency_shape)).item())
+        self.feature_output = nn.Linear(512, torch.prod(torch.tensor(feature_shape)).item())
 
-        def forward(self, z):
-             x = self.dropout1(self.relu1(self.dense1(z)))
-             x = self.dropout2(self.relu2(self.dense2(x)))
-             x = self.dropout3(self.relu3(self.dense3(x)))
+    def forward(self, z):
+        x = self.dropout1(self.relu1(self.dense1(z)))
+        x = self.dropout2(self.relu2(self.dense2(x)))
+        x = self.dropout3(self.relu3(self.dense3(x)))
 
-             adj = self.adjacency_output(x)   #1
-             adj = adj.view(-1, *self.adjacency_shape)
-             adj = (adj + adj.transpose(-1, -2)) / 2    #2
-             adj = F.softmax(adj, dim=-1)                     #3
+        adj = self.adjacency_output(x)   #1
+        adj = adj.view(-1, *self.adjacency_shape)
+        adj = (adj + adj.transpose(-1, -2)) / 2    #2
+        adj = F.softmax(adj, dim=-1)                     #3
 
-             features = self.feature_output(x)   #4
-             features = features.view(-1, *self.feature_shape)
-             features = F.softmax(features, dim=-1)    #5
+        features = self.feature_output(x)   #4
+        features = features.view(-1, *self.feature_shape)
+        features = F.softmax(features, dim=-1)    #5
 
-             return adj, features
+        return adj, features
 ```
 
 #1 生成邻接矩阵
@@ -842,30 +814,29 @@ torch.prod(torch.tensor(feature_shape)).item())
 ##### 列表 5.22 用于分子图生成的 VGAE
 
 ```py
-   import torch
-   import torch.nn as nn
-   import torch.nn.functional as F
-   from torch_geometric.nn import MessagePassing
+import torch
+import torch.nn as nn
+import torch.nn.functional as F
+from torch_geometric.nn import MessagePassing
 
-   class VGAEWithPropertyPrediction(nn.Module):
-        def __init__(self, encoder, decoder, latent_dim):
-             super(VGAEWithPropertyPrediction, self).__init__()
-             self.encoder = encoder
-             self.decoder = decoder
-             self.property_prediction_layer = nn.Linear(latent_dim, 1)
+class VGAEWithPropertyPrediction(nn.Module):
+    def __init__(self, encoder, decoder, latent_dim):
+        super(VGAEWithPropertyPrediction, self).__init__()
+        self.encoder = encoder
+        self.decoder = decoder
+        self.property_prediction_layer = nn.Linear(latent_dim, 1)
 
-        def reparameterize(self, mu, logvar):
-             std = torch.exp(logvar / 2)
-             eps = torch.randn_like(std)
-             return eps.mul(std).add_(mu)
+    def reparameterize(self, mu, logvar):
+        std = torch.exp(logvar / 2)
+        eps = torch.randn_like(std)
+        return eps.mul(std).add_(mu)
 
-        def forward(self, data):
-             mu, logvar = self.encoder(data.x, \
-data.edge_index, data.edge_attr)
-             z = self.reparameterize(mu, logvar)
-             adj_recon, x_recon = self.decoder(z)
-             qed_pred = self.property_prediction_layer(z)
-             return adj_recon, x_recon, qed_pred, mu, logvar, z
+    def forward(self, data):
+        mu, logvar = self.encoder(data.x, data.edge_index, data.edge_attr)
+        z = self.reparameterize(mu, logvar)
+        adj_recon, x_recon = self.decoder(z)
+        qed_pred = self.property_prediction_layer(z)
+        return adj_recon, x_recon, qed_pred, mu, logvar, z
 ```
 
 模型的输出包括均值和对数方差，这些被传递到 KL 散度中；重构的邻接矩阵和特征矩阵，传递到重构损失中；以及预测的 QED 值，这些用于预测损失。使用这些，我们就可以计算我们网络的损失，并通过网络权重反向传播损失来细化生成的图，使其具有特定的、较高的 QED 值。接下来，我们将展示如何在我们的训练和测试循环中实现这一点。
@@ -884,29 +855,27 @@ data.edge_index, data.edge_attr)
 
 ##### 列表 5.23 分子图生成训练函数
 
+
+
 ```py
-   def train(model, optimizer, data, test=False):
-        model.train()
-        optimizer.zero_grad()
+def train(model, optimizer, data, test=False):
+    model.train()
+    optimizer.zero_grad()
 
-        pred_adj, pred_feat, pred_qed, mu, logvar, _ = model(data)
+    pred_adj, pred_feat, pred_qed, mu, logvar, _ = model(data)
 
-        real_adj = create_adjacency_matrix\
-(data.edge_index, data.edge_attr, \
-num_nodes=NUM_ATOMS)
-        real_x = data.x
-        real_qed = data.qed
+    real_adj = create_adjacency_matrix(data.edge_index, data.edge_attr, num_nodes=NUM_ATOMS)
+    real_x = data.x
+    real_qed = data.qed
 
-        loss = calculate_loss\
-(pred_adj[0], real_adj, pred_qed, \
-real_qed, mu, logvar)   #1
+    loss = calculate_loss(pred_adj[0], real_adj, pred_qed, real_qed, mu, logvar)   #1
 
-        total_loss = loss
+    total_loss = loss
 
-        if not test:
-             total_loss.backward()
-        optimizer.step()
-        return total_loss.item()
+    if not test:
+        total_loss.backward()
+    optimizer.step()
+    return total_loss.item()
 ```
 
 #1 计算损失
@@ -929,7 +898,7 @@ real_qed, mu, logvar)   #1
 
 ## 5.5 内部结构
 
-深度生成模型使用人工神经网络来建模数据空间。深度生成模型的经典例子之一是自动编码器。自动编码器包含两个关键组件，编码器和解码器，都由神经网络表示。它们学习如何将数据编码（压缩）成低维表示，以及如何解码（解压缩）它。图 5.15 显示了一个基本的自动编码器，它以图像作为输入并压缩它（步骤 1）。这导致低维表示，或潜在空间（步骤 2）。然后自动编码器重建图像（步骤 3），这个过程会重复进行，直到输入图像（x）和输出图像（x*）之间的重建误差尽可能小。自动编码器是 GAEs 和 VGAEs 背后的基本思想。
+深度生成模型使用人工神经网络来建模数据空间。深度生成模型的经典例子之一是自动编码器。自动编码器包含两个关键组件，编码器和解码器，都由神经网络表示。它们学习如何将数据编码（压缩）成低维表示，以及如何解码（解压缩）它。图 5.15 显示了一个基本的自动编码器，它以图像作为输入并压缩它（步骤 1）。这导致低维表示，或潜在空间（步骤 2）。然后自动编码器重建图像（步骤 3），这个过程会重复进行，直到输入图像（`x`）和输出图像（`x*`）之间的重建误差尽可能小。自动编码器是 GAEs 和 VGAEs 背后的基本思想。
 
 ![图](img/5-15.png)
 
@@ -957,7 +926,7 @@ real_qed, mu, logvar)   #1
 
 #### 正则化潜在空间
 
-简单来说，KL 散度告诉我们，如果我们使用错误的概率密度来估计某物的概率，我们会做得有多糟糕。假设我们有两个硬币，并想要猜测一个硬币（我们知道它是公平的）与另一个硬币（我们不知道它是否公平）匹配得有多好。我们试图使用具有已知概率的硬币来预测具有未知概率的硬币的概率。如果它是一个好的预测器（未知的硬币实际上是公平的），那么 KL 散度将为零。两个硬币的概率密度相同；然而，如果我们发现这个硬币是一个坏的预测器，那么 KL 散度将很大。这是因为两个概率密度将相距甚远。在图 5.18 中，我们可以明确地看到这一点。我们试图使用条件概率密度 P(Z|X)来建模未知的概率密度 Q(z)。随着密度的重叠，这里的 KL 散度将很低。
+简单来说，KL 散度告诉我们，如果我们使用错误的概率密度来估计某物的概率，我们会做得有多糟糕。假设我们有两个硬币，并想要猜测一个硬币（我们知道它是公平的）与另一个硬币（我们不知道它是否公平）匹配得有多好。我们试图使用具有已知概率的硬币来预测具有未知概率的硬币的概率。如果它是一个好的预测器（未知的硬币实际上是公平的），那么 KL 散度将为零。两个硬币的概率密度相同；然而，如果我们发现这个硬币是一个坏的预测器，那么 KL 散度将很大。这是因为两个概率密度将相距甚远。在图 5.18 中，我们可以明确地看到这一点。我们试图使用条件概率密度 `P(Z|X)` 来建模未知的概率密度 `Q(z)`。随着密度的重叠，这里的 KL 散度将很低。
 
 ![图](img/5-18.png)
 
@@ -969,7 +938,7 @@ real_qed, mu, logvar)   #1
 
 ![figure](img/2.png)
 
-其中 (*p*||*q*) 表示概率 *p* 相对于概率 *q* 的散度。术语 *m* 是潜在特征的均值，log(var) 是方差的对数。我们在构建 VGAE 时，在损失函数中使用这个值，确保正向传递返回均值和方差给我们的解码器。
+其中 (`*p*||*q*`) 表示概率 `*p*` 相对于概率 `*q*` 的散度。术语 `*m*` 是潜在特征的均值，`log(var)` 是方差的对数。我们在构建 VGAE 时，在损失函数中使用这个值，确保正向传递返回均值和方差给我们的解码器。
 
 #### 过度压缩
 

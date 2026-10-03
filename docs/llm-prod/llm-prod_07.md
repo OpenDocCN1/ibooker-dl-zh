@@ -1,11 +1,10 @@
+
 # 第八章：大型语言模型应用程序：构建交互式体验
 
-### 本章涵盖
+## 本章涵盖
 
 +   构建使用 LLM 服务的交互式应用程序
-
 +   在边缘设备上运行没有 GPU 的 LLMs
-
 +   构建能够解决多步问题的 LLM 代理
 
 > 除非他们知道你有多在乎，否则没有人会在乎你懂得多少。——美国总统西奥多·罗斯福
@@ -177,6 +176,8 @@ Streamlit 是一个开源的 Python 库，它使得创建机器学习、数据�
 
 ##### 列表 8.2 使用聊天历史来改善结果的一个示例应用
 
+
+
 ```py
 import streamlit as st
 import requests
@@ -232,7 +233,7 @@ if user_input := st.chat_input("Your question here"):     #4
 
 #3 Δ显示历史聊天
 
-#4 对用户做出响应。注意：我们使用 walrus 操作符（:=）在同时确保用户输入不为 None 的情况下分配用户输入。
+#4 对用户做出响应。注意：我们使用 walrus 操作符（`:=`）在同时确保用户输入不为 `None` 的情况下分配用户输入。
 
 #5 Δ显示用户输入
 
@@ -337,7 +338,7 @@ gr.ChatInterface(generate, theme="soft").queue().launch()
 
 计算标记数也使我们能够更好地提示工程和改进结果。例如，在一个问答机器人中，如果用户的提问特别短，我们可以通过扩展我们的检索增强生成（RAG）系统将返回的搜索结果数量来添加更多上下文。如果他们的提问很长，我们则希望限制它，并确保我们有足够的空间来附加我们的上下文。
 
-Tiktoken 就是这样的一个库，用于帮助完成这项任务。它是一个专为 OpenAI 模型构建的极快 BPE 分词器。该包已移植到多种语言，包括用于 Golang 的 tiktoken-go、用于 Rust 的 tiktoken-rs 以及几个其他语言。在下一节中，我们将展示如何使用它的基本示例。它已经针对速度进行了优化，这使得我们能够快速编码和计数 token，这正是我们所需要的。
+Tiktoken 就是这样的一个库，用于帮助完成这项任务。它是一个专为 OpenAI 模型构建的极快 BPE 分词器。该包已移植到多种语言，包括用于 Golang 的 `tiktoken-go`、用于 Rust 的 `tiktoken-rs` 以及几个其他语言。在下一节中，我们将展示如何使用它的基本示例。它已经针对速度进行了优化，这使得我们能够快速编码和计数 token，这正是我们所需要的。
 
 ##### 列表 8.4 使用 tiktoken 计数 token
 
@@ -371,6 +372,8 @@ RAG 更常在前端设置，因为这样做允许开发者将任何通用的 LLM
 在 6.1.8 节中，我们向您展示了如何设置一个 RAG 系统；现在我们将向您展示如何利用它进行高效的查询增强。在列表 8.5 中，我们向您展示如何访问和使用我们之前设置的向量存储。我们将继续使用 OpenAI 和 Pinecone，这是我们上一个例子中的内容。我们还将使用 LangChain，这是一个 Python 框架，我们在上一章中发现了它，以帮助创建 LLM 应用。
 
 ##### 列表 8.5 前端 RAG
+
+
 
 ```py
 import os
@@ -435,11 +438,11 @@ qa_with_sources(query)
 
 到目前为止，我们讨论了构建 LLM 应用，假设我们只是简单地使用一个 API——我们部署的 API，但毕竟是一个 API。然而，有许多情况您可能希望在应用程序内部本地设备上运行模型。这样做会带来几个挑战：主要，我们需要得到一个足够小的模型以便在边缘设备上传输和运行。我们还需要能够在本地环境中运行它，这很可能没有加速器或 GPU，甚至可能不支持 Python——例如，在用户的 Web 浏览器中用 JavaScript 运行应用程序，在手机上的 Android 应用程序中使用 Java，或者在像树莓派这样的有限硬件上。
 
-在第六章中，我们开始讨论您需要与边缘设备一起工作的构建块。我们向您展示了如何编译模型，给出了使用 TensorRT 或 ONNX Runtime 的示例。TensorRT 来自 NVIDIA，如果您有一个配备昂贵 NVIDIA 硬件的服务器，它将为您服务得更好，因此对于边缘开发来说不太有用。ONNX Runtime 更加灵活，但在与边缘设备一起工作时，llama.cpp 通常是 LLM 的一个更好的解决方案，并且遵循相同的流程：将模型编译成正确的格式，将该模型移动到边缘设备，下载并安装您语言的 SDK，然后运行模型。让我们更详细地看看这些步骤对于 llama.cpp。
+在第六章中，我们开始讨论您需要与边缘设备一起工作的构建块。我们向您展示了如何编译模型，给出了使用 TensorRT 或 ONNX Runtime 的示例。TensorRT 来自 NVIDIA，如果您有一个配备昂贵 NVIDIA 硬件的服务器，它将为您服务得更好，因此对于边缘开发来说不太有用。ONNX Runtime 更加灵活，但在与边缘设备一起工作时，`llama.cpp` 通常是 LLM 的一个更好的解决方案，并且遵循相同的流程：将模型编译成正确的格式，将该模型移动到边缘设备，下载并安装您语言的 SDK，然后运行模型。让我们更详细地看看这些步骤对于 `llama.cpp`。
 
-llama.cpp 项目始于将一个大型语言模型（LLM）转换为可以在没有 GPU 的 MacBook 上运行的目标，因为苹果硅芯片在许多项目中以兼容性差而闻名。最初，该项目致力于量化 LLaMA 模型并将其存储在 C++ 语言可以使用的二进制格式中，但随着项目的发展，它已经支持了数十种 LLM 架构和所有主要操作系统平台，并为十几种语言以及 CUDA、metal 和 OpenCL GPU 后端提供了支持。Llama.cpp 创建了两种不同的格式来存储量化后的 LLM：第一种是 GPT-Generated Model Language（GGML），后来因为更好的 GPT-Generated Unified Format（GGUF）而被放弃。
+`llama.cpp` 项目始于将一个大型语言模型（LLM）转换为可以在没有 GPU 的 MacBook 上运行的目标，因为苹果硅芯片在许多项目中以兼容性差而闻名。最初，该项目致力于量化 LLaMA 模型并将其存储在 C++ 语言可以使用的二进制格式中，但随着项目的发展，它已经支持了数十种 LLM 架构和所有主要操作系统平台，并为十几种语言以及 CUDA、metal 和 OpenCL GPU 后端提供了支持。`Llama.cpp` 创建了两种不同的格式来存储量化后的 LLM：第一种是 GPT-Generated Model Language（GGML），后来因为更好的 GPT-Generated Unified Format（GGUF）而被放弃。
 
-要使用 llama.cpp，我们首先需要的是一个存储在 GGUF 格式的模型。要将您自己的模型转换，您需要克隆 llama.cpp 项目，安装依赖项，然后运行项目附带的可转换脚本。这些步骤已经频繁更改，您可能需要查阅仓库中的最新信息，但目前看起来是这样的
+要使用 `llama.cpp`，我们首先需要的是一个存储在 GGUF 格式的模型。要将您自己的模型转换，您需要克隆 `llama.cpp` 项目，安装依赖项，然后运行项目附带的可转换脚本。这些步骤已经频繁更改，您可能需要查阅仓库中的最新信息，但目前看起来是这样的：
 
 ```py
 $ git clone https://github.com/ggerganov/llama.cpp.git
@@ -456,11 +459,11 @@ $ huggingface-cli download TheBloke/WizardCoder-Python-7B-V1.0-GGUF --
 ↪ local-dir ./models --local-dir-use-symlinks False --include='*Q2_K*gguf'
 ```
 
-在这里，我们正在下载已经被 TheBloke 转换为 GGUF 格式的 WizardCoder-7B 模型。我们将将其保存在本地 models 目录中。我们不会使用符号链接（symlinks），这意味着模型实际上将存在于我们选择的文件夹中。通常，`huggingface-cli` 会将其下载到缓存目录并创建一个符号链接以节省空间并避免在多个项目中多次下载模型。最后，Hugging Face 仓库包含多个版本的模型，它们处于不同的量化状态；在这里，我们将使用 `include` 标志选择 2 位量化版本。这种极端的量化将降低模型输出质量的表现，但它是仓库中最小的模型（只有 2.82 GB），这使得它非常适合演示目的。
+在这里，我们正在下载已经被 TheBloke 转换为 GGUF 格式的 WizardCoder-7B 模型。我们将将其保存在本地 `models` 目录中。我们不会使用符号链接（symlinks），这意味着模型实际上将存在于我们选择的文件夹中。通常，`huggingface-cli` 会将其下载到缓存目录并创建一个符号链接以节省空间并避免在多个项目中多次下载模型。最后，Hugging Face 仓库包含多个版本的模型，它们处于不同的量化状态；在这里，我们将使用 `include` 标志选择 2 位量化版本。这种极端的量化将降低模型输出质量的表现，但它是仓库中最小的模型（只有 2.82 GB），这使得它非常适合演示目的。
 
-现在我们有了我们的模型，我们需要下载并安装我们选择的语言的绑定，并运行它。对于 Python，这意味着通过`pip`安装`llama-cpp-python`。在列表 8.6 中，我们展示了如何使用库来运行 GGUF 模型。这相当直接，只需两步：加载模型并运行。在一个作者的 CPU 上，它的运行速度略慢于每秒约一个标记，这并不快，但对于一个没有加速器的 70 亿参数模型来说已经足够令人印象深刻了。
+现在我们有了我们的模型，我们需要下载并安装我们选择的语言的绑定，并运行它。对于 Python，这意味着通过 `pip` 安装 `llama-cpp-python`。在列表 8.6 中，我们展示了如何使用库来运行 GGUF 模型。这相当直接，只需两步：加载模型并运行。在一个作者的 CPU 上，它的运行速度略慢于每秒约一个标记，这并不快，但对于一个没有加速器的 70 亿参数模型来说已经足够令人印象深刻了。
 
-##### 列表 8.6 使用 llama.cpp 在 CPU 上运行量化模型
+##### 列表 8.6 使用 `llama.cpp` 在 CPU 上运行量化模型
 
 ```py
 import time
@@ -480,7 +483,7 @@ end_time = time.time()
 print(output["choices"])
 ```
 
-结果是
+结果是：
 
 ```py
 # [
@@ -519,7 +522,7 @@ print(f"Elapsed time: {end_time - start_time:.3f} seconds")
 # Elapsed time: 239.457 seconds
 ```
 
-虽然这个例子是用 Python 编写的，但还有 Go、Rust、Node.js、Java、React Native 等语言的绑定。Llama.cpp 为我们提供了在通常不可能的环境中运行 LLM 所需的所有工具。
+虽然这个例子是用 Python 编写的，但还有 Go、Rust、Node.js、Java、React Native 等语言的绑定。`Llama.cpp` 为我们提供了在通常不可能的环境中运行 LLM 所需的所有工具。
 
 ## 8.3 LLM 代理
 
@@ -563,6 +566,10 @@ print(hot_topic, fun_channel)
 
 生成的文本是
 
+
+
+# 关于 Fruit of the Loom 标志的曼德拉效应
+
 ```py
 # Rating: False About this rating If asked to describe underwear
 # manufacturer Fruit of the Loom's logo from memory, some will invariably
@@ -584,10 +591,12 @@ print(hot_topic, fun_channel)
 # Fruit of the Loom having a cornucopia on its logo despite the logo never
 # having the item on it.
 # ['https://www.youtube.com/watch?v=x81gguSPGcQ&pp=ygUHamF1YnJleQ%3D%3D',
-#'https://www.youtube.com/watch?v=bEvxuG6mevQ&pp=ygUHamF1YnJleQ%3D%3D']
+# 'https://www.youtube.com/watch?v=bEvxuG6mevQ&pp=ygUHamF1YnJleQ%3D%3D']
 ```
 
-接下来，我们将演示在本地运行代理。在这些示例中，我们再次使用 llama.cpp；然而，这次我们将使用基于指令的模型，4 位量化 Mistral 7B Instruct 模型——一个优秀的开源模型。您可以通过运行以下命令获取我们使用的模型。注意这与我们在第 8.2 节中拉取 WizardCoder 模型时的相似之处：
+# 在本地运行代理
+
+接下来，我们将演示在本地运行代理。在这些示例中，我们再次使用 `llama.cpp`；然而，这次我们将使用基于指令的模型，4 位量化 Mistral 7B Instruct 模型——一个优秀的开源模型。您可以通过运行以下命令获取我们使用的模型。注意这与我们在第 8.2 节中拉取 WizardCoder 模型时的相似之处：
 
 ```py
 $ huggingface-cli download TheBloke/Mistral-7B-Instruct-v0.1-GGUF --local-
@@ -596,7 +605,7 @@ $ huggingface-cli download TheBloke/Mistral-7B-Instruct-v0.1-GGUF --local-
 
 在列表 8.8 中，我们展示了运行两种不同类型的代理，这些代理您可能会觉得很有用。第一个代理生成一些 Python 代码，运行它，并尝试调试它遇到的问题。第二个代理读取并分析 CSV 文件。对于这个代理，我们将使用我们在第四章中拉取的 Slack 数据集。请注意响应，并下注它们是否做得很好。
 
-##### 列表 8.8 LangChain Python 和 CSV 代理
+## 列表 8.8 LangChain Python 和 CSV 代理
 
 ```py
 from langchain.llms import LlamaCpp
@@ -670,7 +679,7 @@ agent.run(
 
 # ```pyPython REPL can execute arbitrary code. Use with caution.
 # Observation: ImportError("cannot import name 'make_classification' from
-#'torchvision.datasets'
+# 'torchvision.datasets'
 # Thought: It seems like the code is trying to use a function that does not
 # exist, I will check the import statement.
 # Action: Python_REPL
@@ -685,7 +694,7 @@ agent.run(
 
 # ```py
 # Observation: ImportError("cannot import name 'make_classification' from
-#'torchvision.datasets'
+# 'torchvision.datasets'
 # Thought: It still seems like the code is trying to use a function that
 # does not exist, I will make sure that the function name matches the
 # correct import statement.
@@ -707,7 +716,7 @@ agent.run(
 
 # ```py
 # Observation: ImportError("cannot import name 'MakeClassification' from
-#'torchvision.datasets'
+# 'torchvision.datasets'
 # Thought:
 # > Finished chain.
 ```
@@ -759,7 +768,13 @@ agent.run(
 
 接下来，在列表 8.9 中，我们构建自己的代理。我们将定义代理可以访问的工具，为代理设置一个记忆空间，然后初始化它。接下来，我们将定义一个系统提示，让代理知道它应该如何表现，确保向它解释它有什么工具可用以及如何使用它们。我们还将利用少量提示和指令来给我们最好的机会看到好的结果。最后，我们将运行代理。让我们看看。
 
-##### 列表 8.9 代理及其行为
+## 列表 8.9 代理及其行为
+
+
+
+# 使用 LangChain 和 LlamaCpp 构建自定义智能代理
+
+## 导入必要的库
 
 ```py
 from langchain.llms import LlamaCpp
@@ -769,6 +784,11 @@ from langchain.chains.conversation.memory import (
 from langchain.agents import load_tools, initialize_agent, Tool
 from langchain_experimental.tools import PythonREPLTool
 from langchain.tools import DuckDuckGoSearchRun, YouTubeSearchTool
+```
+
+## 初始化 LLM 模型
+
+```py
 llm = LlamaCpp(
     model_path="./models/mistral-7b-instruct-v0.1.Q4_0.gguf",
     n_gpu_layers=0,        #1
@@ -776,7 +796,11 @@ llm = LlamaCpp(
     n_ctx=32768,          #2
     verbose=False,
 )
+```
 
+## 定义自定义工具
+
+```py
 search = DuckDuckGoSearchRun()     #3
 duckduckgo_tool = Tool(
     name="DuckDuckGo Search",
@@ -788,14 +812,22 @@ coding_tool = PythonREPLTool()
 
 tools = load_tools(["llm-math"], llm=llm)
 tools += [duckduckgo_tool, youtube_tool, coding_tool]
+```
 
+## 配置对话记忆
+
+```py
 memory = ConversationBufferWindowMemory(     #4
     memory_key="chat_history",
     k=5,
     return_messages=True,
     output_key="output",
 )
+```
 
+## 初始化智能代理
+
+```py
 agent = initialize_agent(     #5
     tools=tools,
     llm=llm,
@@ -804,7 +836,11 @@ agent = initialize_agent(     #5
     memory=memory,
     handle_parsing_errors=True,
 )
+```
 
+## 构建系统提示词
+
+```py
 B_INST, E_INST = "[INST]", "[/INST]"        #6
 B_SYS, E_SYS = "<<SYS>>\n", "\n<</SYS>>\n\n"
 
@@ -896,7 +932,11 @@ available to Assistant are:
     + E_SYS
 
 )
+```
 
+## 更新代理提示词
+
+```py
 new_prompt = agent.agent.create_prompt(system_message=sys_msg, tools=tools) #8
 
 agent.agent.llm_chain.prompt = new_prompt
@@ -916,7 +956,11 @@ instruction = (      #9
 human_msg = instruction + "\n 用户：{输入}"
 
 agent.agent.llm_chain.prompt.messages[2].prompt.template = human_msg
+```
 
+## 运行代理
+
+```py
 agent.run(             #10
 
     "告诉我当爱国者队最后一次赢得超级碗时贾斯汀·比伯多大了"
@@ -924,9 +968,11 @@ agent.run(             #10
     "超级碗。"
 
 )
+```
+
+## 代码注释说明
 
 ```py
-
 #1 1 if NEON, any number if CUBLAS, else 0
 #2 Context window for the model
 #3 Δefines our own agent tools
@@ -937,11 +983,11 @@ agent.run(             #10
 #8 Adds system prompt to agent
 #9 Adds instruction to agent
 #10 Runs with user input
-
-Remember that for this, we asked the model to respond in JSON:
-
 ```
 
+## 运行结果示例
+
+```
 #> 正在进入新的 AgentExecutor 链…
 
 #助手：{
@@ -963,10 +1009,11 @@ Remember that for this, we asked the model to respond in JSON:
 # 最后一次在 2018 年 2 月赢得了超级碗。
 
 #}
-
 ```
 
-还不错！它没有回答问题，但已经很接近了；只是需要做一些数学计算。如果你运行了示例，你可能已经注意到它比使用 llama.cpp Python 解释器慢一些。不幸的是，由于某些原因，LangChain 的包装器增加了计算时间，所以请注意：如果你需要非常快，LangChain 可能不是你的选择。至少目前还不是。无论如何，LangChain 已经围绕流行的 Python 库创建了一些易于使用的包装器，使它们可以作为 LLM 工具使用。在这些列表中，我们只使用了其中的一小部分，还有更多可供选择。
+## 性能与局限性分析
+
+还不错！它没有回答问题，但已经很接近了；只是需要做一些数学计算。如果你运行了示例，你可能已经注意到它比使用 `llama.cpp` Python 解释器慢一些。不幸的是，由于某些原因，`LangChain` 的包装器增加了计算时间，所以请注意：如果你需要非常快，`LangChain` 可能不是你的选择。至少目前还不是。无论如何，`LangChain` 已经围绕流行的 Python 库创建了一些易于使用的包装器，使它们可以作为 LLM 工具使用。在这些列表中，我们只使用了其中的一小部分，还有更多可供选择。
 
 总体来说，你可以看到我们能够使 LLM 在一些非平凡任务上表现相当不错（我们使用的是 4 位量化模型，我们可能会添加）。然而，它远远没有达到完美。代理之所以神奇，是因为它们能够工作，但它们在执行的任务和级别上通常令人失望——包括顶级付费代理。你与 LLMs 一起制作更多不同的提示时，会发现 LLMs 非常不可靠，就像人类一样，这对习惯于与世界上任何东西一样一致的机器工作的软件工程师来说可能会相当令人烦恼。让 LLMs 在单一任务上表现良好就已经足够困难，但在代理内部链接多个任务则更加困难。我们仍然处于代理开发的早期阶段，我们很期待看到它的发展方向。
 
@@ -986,7 +1033,7 @@ Remember that for this, we asked the model to respond in JSON:
 
     +   前端上的 RAG 允许我们根据 LLM 后端定制应用程序。
 
-+   Llama.cpp 是一个强大的开源工具，用于编译 LLMs 并在资源受限的边缘设备上运行。
++   `Llama.cpp` 是一个强大的开源工具，用于编译 LLMs 并在资源受限的边缘设备上运行。
 
 +   代理是构建来解决多步骤问题的 LLM 应用程序，并承诺自动化机器目前难以处理的任务。
 

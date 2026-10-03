@@ -1,3 +1,5 @@
+
+
 # 第二十章：结论
 
 > 原文：[`deeplearningwithpython.io/chapters/chapter20_conclusion`](https://deeplearningwithpython.io/chapters/chapter20_conclusion)
@@ -72,7 +74,7 @@
 
 +   *开发一个能够击败平凡常识基线的第一个模型，从而证明机器学习可以在你的问题上工作。* 这可能并不总是如此！
 
-+   *通过调整超参数和添加正则化来逐步细化你的模型架构。仅基于验证数据上的性能进行更改，而不是测试数据或训练数据。记住，你应该让你的模型过度拟合（从而确定一个比所需更大的模型容量级别），然后才开始添加正则化或缩小模型。在调整超参数时要警惕验证集过度拟合——你的超参数可能最终会过度专门化到验证集。避免这一点正是保留单独测试集的目的！
++   *通过调整超参数和添加正则化来逐步细化你的模型架构。仅基于验证数据上的性能进行更改，而不是测试数据或训练数据。记住，你应该让你的模型过度拟合（从而确定一个比所需更大的模型容量级别），然后才开始添加正则化或缩小模型。在调整超参数时要警惕验证集过度拟合——你的超参数可能最终会过度专门化到验证集。避免这一点正是保留单独测试集的目的！*
 
 +   *在生产环境中部署你的最终模型——作为一个 Web API，作为 JavaScript 或 C++应用程序的一部分，在嵌入式设备上等。持续监控其在真实世界数据上的性能，并使用你的发现来改进模型的下一版本！*
 
@@ -112,10 +114,10 @@ x = layers.Dense(32, activation="relu")(inputs)
 x = layers.Dense(32, activation="relu")(x)
 outputs = layers.Dense(1, activation="sigmoid")(x)
 model = keras.Model(inputs, outputs)
-model.compile(optimizer="rmsprop", loss="binary_crossentropy") 
+model.compile(optimizer="rmsprop", loss="binary_crossentropy")
 ```
 
-要执行**单标签分类分类**（其中每个样本恰好有一个类别，没有更多），请在您的层堆栈中添加一个具有与类别数量相等的单元数的`Dense`层，并使用`softmax`激活。如果您的目标是 one-hot 编码，请使用`categorical_crossentropy`作为损失；如果它们是整数，请使用`sparse_categorical_crossentropy`：
+要执行**单标签分类**（其中每个样本恰好有一个类别，没有更多），请在您的层堆栈中添加一个具有与类别数量相等的单元数的`Dense`层，并使用`softmax`激活。如果您的目标是 one-hot 编码，请使用`categorical_crossentropy`作为损失；如果它们是整数，请使用`sparse_categorical_crossentropy`：
 
 ```py
 inputs = keras.Input(shape=(num_input_features,))
@@ -123,10 +125,10 @@ x = layers.Dense(32, activation="relu")(inputs)
 x = layers.Dense(32, activation="relu")(x)
 outputs = layers.Dense(num_classes, activation="softmax")(x)
 model = keras.Model(inputs, outputs)
-model.compile(optimizer="rmsprop", loss="categorical_crossentropy") 
+model.compile(optimizer="rmsprop", loss="categorical_crossentropy")
 ```
 
-要执行**多标签分类分类**（其中每个样本可以有多个类别），请在您的层堆栈中添加一个具有与类别数量相等的单元数和`sigmoid`激活的`Dense`层，并使用`binary_crossentropy`作为损失。您的目标应该是 k-hot 编码：
+要执行**多标签分类**（其中每个样本可以有多个类别），请在您的层堆栈中添加一个具有与类别数量相等的单元数和`sigmoid`激活的`Dense`层，并使用`binary_crossentropy`作为损失。您的目标应该是 k-hot 编码：
 
 ```py
 inputs = keras.Input(shape=(num_input_features,))
@@ -134,7 +136,7 @@ x = layers.Dense(32, activation="relu")(inputs)
 x = layers.Dense(32, activation="relu")(x)
 outputs = layers.Dense(num_classes, activation="sigmoid")(x)
 model = keras.Model(inputs, outputs)
-model.compile(optimizer="rmsprop", loss="binary_crossentropy") 
+model.compile(optimizer="rmsprop", loss="binary_crossentropy")
 ```
 
 要执行对连续值向量的**回归**，请在您的层堆栈中添加一个具有与您试图预测的值数量相等的单元数的`Dense`层，并且没有激活。可以用于回归的损失函数有很多种——最常见的是`mean_squared_error`（均方误差）：
@@ -145,7 +147,7 @@ x = layers.Dense(32, activation="relu")(inputs)
 x = layers.Dense(32, activation="relu")(x)
 outputs = layers.Dense(num_values)(x)
 model = keras.Model(inputs, outputs)
-model.compile(optimizer="rmsprop", loss="mse") 
+model.compile(optimizer="rmsprop", loss="mse")
 ```
 
 #### 卷积神经网络
@@ -155,6 +157,9 @@ model.compile(optimizer="rmsprop", loss="mse")
 *卷积神经网络*，或称*卷积网络*，由一系列卷积和最大池化层组成。池化层允许您在空间上对数据进行下采样，这对于在特征数量增加时保持特征图的大小合理，并允许后续卷积层“看到”更大的输入空间范围是必要的。卷积神经网络通常以`Flatten`操作或全局池化层结束，将空间特征图转换为向量，然后通过`Dense`层实现分类或回归。
 
 这是一个典型的图像分类网络（在这种情况下是分类分类）使用`SeparableConv2D`层：
+
+
+
 
 ```py
 inputs = keras.Input(shape=(height, width, channels))
@@ -175,7 +180,7 @@ model.compile(optimizer="rmsprop", loss="categorical_crossentropy")
 
 当构建一个非常深的卷积神经网络时，通常还会添加*批归一化*层以及*残差连接*——两种有助于梯度信息在网络中平滑流动的架构模式。
 
-#### Transformers
+## Transformers
 
 Transformer 查看一组向量（如词向量）并使用*神经注意力*将每个向量转换为一个表示，该表示了解集合中其他向量提供的*上下文*。当所涉及的集合是一个有序序列时，你也可以使用*位置编码*来创建能够同时考虑全局上下文和词序的 Transformer，这些 Transformer 可以比 RNN 或 1D 卷积神经网络更有效地处理长文本段落。
 
@@ -225,7 +230,7 @@ model = keras.Model(inputs, outputs)
 model.compile(optimizer="adamw", loss="binary_crossentropy") 
 ```
 
-#### 循环神经网络
+## 循环神经网络
 
 *循环神经网络*（RNNs）通过逐个时间步处理输入序列并在整个过程中保持状态（状态通常是向量或向量集）来工作。在感兴趣的模式不是通过时间平移不变的序列（例如，近期过去比遥远过去更重要的时间序列数据）的情况下，应优先使用 1D 卷积神经网络。
 

@@ -1,8 +1,10 @@
+
+
 # 第六章. 使用生成模型进行实时通信
 
 本章将探讨 AI 流式工作负载，如聊天机器人，详细介绍了实时通信技术如 SSE 和 WebSocket 的使用。你将了解这些技术的区别以及如何通过构建实时文本到文本交互的端点来实现模型流。
 
-# 网络通信机制
+## 网络通信机制
 
 在上一章中，你学习了通过利用异步编程、后台任务和连续批处理来实现 AI 工作流程的并发性。通过并发，你的服务在多个用户同时访问应用程序时能够更好地应对增加的需求。并发解决了允许同时用户访问服务的问题，并有助于减少等待时间，但 AI 数据生成仍然是一个资源密集和时间消耗的任务。
 
@@ -12,7 +14,7 @@
 
 ![bgai 0601](img/bgai_0601.png)
 
-###### 图 6-1. 客户端-服务器架构（来源：[scaleyourapp.com](https://scaleyourapp.com))
+###### 图 6-1. 客户端-服务器架构（来源：[scaleyourapp.com](https://scaleyourapp.com)）
 
 由于 HTTP 协议是无状态的，服务器将每个传入请求视为完全独立且与其他请求无关。这意味着来自不同客户端的多个传入请求不会影响服务器对每个请求的响应方式。例如，在一个不使用数据库的对话式 AI 服务中，每个请求可能提供完整的对话历史并从服务器接收正确的响应。
 
@@ -36,25 +38,22 @@
 
 如果你的用例确实从实时功能中获益，那么你可以实施以下几种架构设计模式：
 
-+   定期/短轮询
-
-+   长轮询
-
-+   SSE
-
-+   WS
+- 定期/短轮询
+- 长轮询
+- SSE
+- WS
 
 选择取决于你对用户体验、可扩展性、延迟、开发成本和可维护性的要求。
 
 让我们更详细地探讨每个选项。
 
-## 定期/短轮询
+### 定期/短轮询
 
 要从半实时更新中获益的一种方法是使用*定期/短轮询*，如图 6-2 所示。在这种轮询机制中，客户端定期向服务器发送 HTTP 请求，以检查预配置间隔内的更新。间隔越短，你越接近实时更新，但同时也需要管理更高的流量。
 
 ![bgai 0602](img/bgai_0602.png)
 
-###### 图 6-2\. 定期/短轮询
+###### 图 6-2. 定期/短轮询
 
 如果你正在构建一个用于批量生成数据（如图像）的服务，你可以使用这种技术。客户端只需提交一个请求以启动批处理作业，并得到一个唯一的作业/请求标识符。然后客户端定期与服务器联系，以确认请求作业的状态和输出。如果输出尚未计算，服务器则响应新数据或提供空响应（可能还有状态更新）。
 
@@ -64,13 +63,13 @@
 
 另一个选择是利用长轮询。
 
-## 长轮询
+### 长轮询
 
 如果你想在继续利用实时轮询机制的同时减轻服务器的负担，你可以实现*长轮询*（见图 6-3），这是常规/短轮询的改进版本。
 
 ![bgai 0603](img/bgai_0603.png)
 
-###### 图 6-3\. 长轮询
+###### 图 6-3. 长轮询
 
 在长轮询中，服务器和客户端都被配置为防止（如果可能的话）当客户端或服务器放弃长时间请求时发生的*超时*。
 
@@ -88,7 +87,7 @@
 
 如果你没有使用轮询机制的具体要求，那么对于实时通信，一个更现代的轮询机制替代方案是通过事件源接口的 SSE（单播服务器发送事件）。
 
-## 服务器发送事件
+### 服务器发送事件
 
 *服务器发送事件*（SSE）是一种基于 HTTP 的机制，用于从服务器到客户端建立持久和单向的连接。在连接打开期间，服务器可以在数据可用时持续向客户端推送更新。
 
@@ -96,7 +95,7 @@
 
 当你提供 GenAI（生成式人工智能）模型时，与长轮询相比，SSE 将是一个更适合实时通信的机制。SSE 专门设计用于处理实时事件，比长轮询更高效。由于反复打开和关闭连接，长轮询变得资源密集，导致更高的延迟和开销。另一方面，SSE 支持自动重连和事件 ID 以恢复中断的流，这是长轮询所缺乏的。
 
-在 SSE 中，客户端通过带有`Accept:text/event-stream`头的标准 HTTP `GET`请求，服务器响应状态码为`200`和带有`Content-Type: text/event-stream`头的响应。在此握手之后，服务器可以通过相同的连接向客户端发送事件。
+在 SSE 中，客户端通过带有 `Accept: text/event-stream` 头的标准 HTTP `GET` 请求，服务器响应状态码为 `200` 和带有 `Content-Type: text/event-stream` 头的响应。在此握手之后，服务器可以通过相同的连接向客户端发送事件。
 
 虽然 SSE 应该是实时应用程序的首选，但你仍然可以选择一个更简单的长轮询机制，其中更新不频繁或如果你的环境不支持持久连接。
 
@@ -106,13 +105,13 @@
 
 ###### 注意
 
-ChatGPT 在底层利用 SSE（单播服务器发送事件）来启用对用户查询的实时响应。
+ChatGPT 在底层利用 SSE（服务器发送事件）来启用对用户查询的实时响应。
 
 图 6-4 展示了 SSE 通信机制的工作方式。
 
 ![bgai 0604](img/bgai_0604.png)
 
-###### 图 6-4\. SSE
+###### 图 6-4. SSE
 
 为了巩固您的理解，我们将在本章中构建两个小型项目，使用 SSE。一个是从模拟数据生成器中流式传输数据，另一个是流式传输 LLM 响应。
 
@@ -120,7 +119,7 @@ ChatGPT 在底层利用 SSE（单播服务器发送事件）来启用对用户�
 
 总结来说，SSE 非常适合建立持久的单向连接，但如果你需要在持久连接期间发送和接收消息呢？这就是 WebSocket 发挥作用的地方。
 
-## WebSocket
+### WebSocket
 
 最后要介绍的是实时通信机制——WebSocket。
 
@@ -174,7 +173,7 @@ Upgrade: websocket ![2](img/2.png) Sec-WebSocket-Key: 8WnhvZTK66EVvhDG++RD0w== !
 
 与 `https://` 类似的 `wss://` 协议不仅加密，而且更可靠。这是因为 `ws://` 数据未加密且对任何中间代理可见。旧的代理服务器不了解 WebSocket。它们可能看到“奇怪”的头部并终止连接。
 
-另一方面，`wss://` 是 WebSocket 的安全版本，通过传输层安全性 (TLS) 运行，它对发送方的数据进行加密，并在接收方进行解密。因此数据包通过代理加密传输。代理无法看到里面的内容，并允许其通过。
+另一方面，`wss://` 是 WebSocket 的安全版本，通过传输层安全性（TLS）运行，它对发送方的数据进行加密，并在接收方进行解密。因此数据包通过代理加密传输。代理无法看到里面的内容，并允许其通过。
 
 一旦 WebSocket 连接建立，文本或二进制消息可以以*消息帧*的形式在两个方向上传输。连接生命周期现在处于*打开*状态。
 
@@ -182,55 +181,31 @@ Upgrade: websocket ![2](img/2.png) Sec-WebSocket-Key: 8WnhvZTK66EVvhDG++RD0w== !
 
 ![bgai 0605](img/bgai_0605.png)
 
-###### 图 6-5\. WS 通信
+###### 图 6-5. WS 通信
 
 *消息帧*是客户端和服务器之间打包和传输数据的方式。它们不是 WebSocket 独有的，因为它们适用于所有基于 HTTP 的 TCP 协议连接。然而，WebSocket 消息帧由几个组件组成：
 
-固定头部
-
-描述消息的基本信息
-
-扩展有效载荷长度（可选）
-
-当有效载荷长度超过 125 字节时，提供实际有效载荷的长度
-
-遮蔽密钥
-
-在客户端发送到服务器的帧中屏蔽有效载荷数据，防止某些类型的网络安全漏洞，尤其是*缓存中毒*^(1)和*跨协议*^(2)攻击
-
-有效载荷
-
-包含实际的消息内容
+- 固定头部：描述消息的基本信息
+- 扩展有效载荷长度（可选）：当有效载荷长度超过 125 字节时，提供实际有效载荷的长度
+- 遮蔽密钥：在客户端发送到服务器的帧中屏蔽有效载荷数据，防止某些类型的网络安全漏洞，尤其是*缓存中毒*^(1)和*跨协议*^(2)攻击
+- 有效载荷：包含实际的消息内容
 
 与 HTTP 请求中冗长的头部不同，WebSocket 帧具有最小头部，包括以下内容：
 
-文本帧
-
-用于 UTF-8 编码的文本数据
-
-二进制帧
-
-用于二进制数据
-
-分片
-
-用于将消息分割成多个帧，由接收方重新组装
+- 文本帧：用于 UTF-8 编码的文本数据
+- 二进制帧：用于二进制数据
+- 分片：用于将消息分割成多个帧，由接收方重新组装
 
 WebSocket 协议的美丽之处也在于其通过*控制帧*保持持久连接的能力。
 
 *控制帧*是用于管理连接的特殊帧：
 
-Ping/pong 帧
-
-用于检查连接的状态
-
-关闭帧
-
-用于优雅地终止连接
+- Ping/pong 帧：用于检查连接的状态
+- 关闭帧：用于优雅地终止连接
 
 当需要关闭 WebSocket 连接时，客户端或服务器会发送一个关闭帧。关闭帧可以可选地指定状态码和/或关闭连接的原因。此时，WebSocket 连接进入*关闭中*状态。
 
-当另一方响应另一个关闭帧时，*关闭*状态结束。这标志着 WebSocket 连接生命周期在*关闭*状态下的完整结束，如图图 6-6 所示。
+当另一方响应另一个关闭帧时，*关闭*状态结束。这标志着 WebSocket 连接生命周期在*关闭*状态下的完整结束，如图 6-6 所示。
 
 ![bgai 0606](img/bgai_0606.png)
 
@@ -242,7 +217,7 @@ Ping/pong 帧
 
 现在你已经了解了几个独特的实时应用网络通信机制，让我们快速总结一下它们之间的比较。
 
-## 比较通信机制
+### 比较通信机制
 
 图 6-7 概述了在 Web 开发中使用的上述五种通信机制。
 
@@ -258,7 +233,7 @@ Ping/pong 帧
 
 *长轮询*通过保持连接打开直到服务器上有数据可用，对于实时更新来说更有效率。然而，它仍然可能会耗尽服务器资源，使其对于近实时功能，如通知，非常理想。
 
-*SSE*维护一个单一的持久连接，仅从服务器到客户端，使用 HTTP 协议。它设置简单，利用浏览器的`EventSource` API，并带有内置功能，如自动重连。这些因素使 SSE 适用于需要实时流、聊天功能和实时仪表板的应用程序。
+*SSE*维护一个单一的持久连接，仅从服务器到客户端，使用 HTTP 协议。它设置简单，利用浏览器的 `EventSource` API，并带有内置功能，如自动重连。这些因素使 SSE 适用于需要实时流、聊天功能和实时仪表板的应用程序。
 
 *WebSocket*提供全双工（双向）通信，低延迟和二进制数据支持，但实现起来比较复杂。它在需要高交互性和实时数据交换的应用程序中广泛使用，例如多人游戏、聊天应用、协作工具和实时转录服务。
 
@@ -266,29 +241,42 @@ Ping/pong 帧
 
 表 6-1 详细比较了每种机制的特点、挑战和应用。
 
-表 6-1\. 网络通信机制比较
+表 6-1. 网络通信机制比较
 
 | 通信机制 | 特点 | 挑战 | 应用 |
 | --- | --- | --- | --- |
+| HTTP 请求-响应 | 简单、广泛支持 | 无实时更新 | RESTful API、传统 Web 服务 |
+| 短/定期轮询 | 简单、易于实现 | 高流量、资源消耗大 | 不频繁更新的应用，如分析仪表板 |
+| 长轮询 | 近实时、减少请求频率 | 服务器资源消耗、消息顺序问题 | 通知、近实时功能 |
+| SSE | 单向、持久连接、自动重连 | 仅支持服务器到客户端 | 实时流、聊天、实时仪表板 |
+| WebSocket | 全双工、低延迟、二进制支持 | 实现复杂、服务器有状态 | 多人游戏、聊天、协作工具、实时转录 |
+
+
+
+
 | HTTP 请求-响应 | 简单的请求-响应模型，无状态协议，所有网络客户端和服务器都支持 | 实时更新延迟高，频繁服务器到客户端数据传输效率低 | RESTful API，实时更新不是关键点的网络服务 |
+
 | 短/定期轮询 | 客户端定期以间隔请求数据，易于实现 | 当没有新数据时，资源浪费，延迟取决于轮询间隔 | 需要更新不频繁的应用，简单的近实时仪表板，提交作业的状态更新 |
+
 | 长轮询 | 对于实时更新比短轮询更高效，保持开放连接直到有数据可用 | 服务器端可能资源密集，管理多个连接复杂 | 实时通知，较老的聊天应用 |
+
 | 服务器发送事件 | 单个持久连接用于更新，内置重连和事件 ID 支持 | 仅从服务器到客户端的单向通信 | 实时流，聊天应用，实时分析仪表板 |
+
 | WebSocket | 全双工通信，低延迟，支持二进制数据 | 实现和管理更复杂，服务器需要 WebSocket 支持 | 多玩家游戏，聊天应用，协作编辑工具，视频会议和网络研讨会应用，实时转录和翻译应用 |
 
 在详细审查了实时通信机制之后，让我们通过使用这两种机制实现自己的流式端点来更深入地了解 SSE 和 WebSocket。在下一节中，你将学习如何实现与这两种技术一起工作的流式端点。
 
 # 实现 SSE 端点
 
-在 第三章 中，你学习了关于 LLMs 的内容，它们是 *自回归* 模型，根据先前输入预测下一个标记。在每个生成步骤之后，输出标记被附加到输入中并通过模型再次传递，直到生成 `<stop>` 标记以中断循环。你不必等待循环完成，可以将生成的输出标记作为数据流直接转发给用户。
+在第三章中，你学习了关于 LLMs 的内容，它们是*自回归*模型，根据先前输入预测下一个标记。在每个生成步骤之后，输出标记被附加到输入中并通过模型再次传递，直到生成`<stop>`标记以中断循环。你不必等待循环完成，可以将生成的输出标记作为数据流直接转发给用户。
 
-模型提供者通常会提供一个选项，允许你使用 `stream=True` 将输出模式设置为数据流。设置此选项后，模型提供者可以返回一个数据生成器而不是最终输出给你，你可以直接将其传递到你的 FastAPI 服务器进行流式传输。
+模型提供者通常会提供一个选项，允许你使用`stream=True`将输出模式设置为数据流。设置此选项后，模型提供者可以返回一个数据生成器而不是最终输出给你，你可以直接将其传递到你的 FastAPI 服务器进行流式传输。
 
-要演示这一功能，请参考示例 6-2，它使用 `openai` 库实现了一个异步数据生成器。
+要演示这一功能，请参考示例 6-2，它使用`openai`库实现了一个异步数据生成器。
 
 ###### 小贴士
 
-要运行示例 6-2，你需要在 Azure 门户上创建 Azure OpenAI 的实例并创建一个模型部署。注意 API 端点、密钥和模型部署名称。对于示例 6-2，你可以使用 `2023-05-15` api 版本。
+要运行示例 6-2，你需要在 Azure 门户上创建 Azure OpenAI 的实例并创建一个模型部署。注意 API 端点、密钥和模型部署名称。对于示例 6-2，你可以使用`2023-05-15` api 版本。
 
 ##### 示例 6-2\. 实现用于流式响应的 Azure OpenAI 异步聊天客户端
 
@@ -334,27 +322,27 @@ azure_chat_client = AzureOpenAIChatClient()
 
 ![1](img/1.png)[#co_real_time_communication___span_class__keep_together__with_generative_models__span__CO2-1]
 
-创建一个异步的 `AzureOpenAIChatClient` 以与 Azure OpenAI API 进行交互。聊天客户端需要 API 端点、部署名称、密钥和版本才能运行。
+创建一个异步的`AzureOpenAIChatClient`以与 Azure OpenAI API 进行交互。聊天客户端需要 API 端点、部署名称、密钥和版本才能运行。
 
 ![2](img/2.png)[#co_real_time_communication___span_class__keep_together__with_generative_models__span__CO2-2]
 
-定义一个 `chat_stream` 异步生成器方法，用于从 API `yield` 每个输出令牌。
+定义一个`chat_stream`异步生成器方法，用于从 API `yield`每个输出令牌。
 
 ![3](img/3.png)[#co_real_time_communication___span_class__keep_together__with_generative_models__span__CO2-3]
 
-设置 `stream=True` 以从 API 接收输出流，而不是一次性接收完整响应。
+设置`stream=True`以从 API 接收输出流，而不是一次性接收完整响应。
 
 ![4](img/4.png)[#co_real_time_communication___span_class__keep_together__with_generative_models__span__CO2-4]
 
-遍历流，`yield` 每个输出令牌，如果 `delta.content` 为空，则返回一个空字符串。每个令牌应带有 `data:` 子串前缀，以便浏览器可以使用 `EventSource` API 正确解析内容。
+遍历流，`yield`每个输出令牌，如果`delta.content`为空，则返回一个空字符串。每个令牌应带有`data:`子串前缀，以便浏览器可以使用`EventSource` API 正确解析内容。
 
 ![5](img/5.png)[#co_real_time_communication___span_class__keep_together__with_generative_models__span__CO2-5]
 
 减慢流速率以减少对客户端的背压。
 
-在示例 6-2 中，你创建了一个 `AsyncAzureOpenAI` 的实例，这允许你通过你的私有 Azure 环境中的 API 与 Azure OpenAI 模型进行聊天。
+在示例 6-2 中，你创建了一个`AsyncAzureOpenAI`的实例，这允许你通过你的私有 Azure 环境中的 API 与 Azure OpenAI 模型进行聊天。
 
-通过设置 `stream=True`，`AsyncAzureOpenAI` 返回一个数据流（一个异步生成器函数），而不是完整的模型响应。你可以遍历数据流，并使用 `data:` 前缀 `yield` 令牌，以符合 SSE 规范。这将允许浏览器使用广泛可用的 `EventSource` 网络 API 自动解析流内容。^([3)]
+通过设置`stream=True`，`AsyncAzureOpenAI`返回一个数据流（一个异步生成器函数），而不是完整的模型响应。你可以遍历数据流，并使用`data:`前缀`yield`令牌，以符合 SSE 规范。这将允许浏览器使用广泛可用的`EventSource`网络 API 自动解析流内容。^([3])
 
 ###### 警告
 
@@ -362,9 +350,9 @@ azure_chat_client = AzureOpenAIChatClient()
 
 ## 使用 GET 请求的 SSE
 
-你现在可以通过将聊天流传递给 FastAPI 的 `StreamingResponse` 作为 `GET` 端点来实现 SSE 端点，如示例 6-3 所示。
+你现在可以通过将聊天流传递给 FastAPI 的`StreamingResponse`作为`GET`端点来实现 SSE 端点，如示例 6-3 所示。
 
-##### 示例 6-3\. 使用 FastAPI 的 `StreamingResponse` 实现一个 SSE 端点
+##### 示例 6-3\. 使用 FastAPI 的`StreamingResponse`实现一个 SSE 端点
 
 ```py
 # main.py
@@ -385,19 +373,19 @@ async def serve_text_to_text_stream_controller(
 
 ![1](img/#co_real_time_communication___span_class__keep_together__with_generative_models__span__CO3-1)
 
-使用 `GET` 方法实现一个 SSE 端点，以便在浏览器中使用 `EventSource` API。
+使用`GET`方法实现一个 SSE 端点，以便在浏览器中使用`EventSource` API。
 
 ![2](img/#co_real_time_communication___span_class__keep_together__with_generative_models__span__CO3-2)
 
-将聊天流生成器传递给 `StreamingResponse`，以便将生成的输出流直接转发给客户端。根据 SSE 规范设置 `media_type=text/event-stream`，以便浏览器可以正确处理响应。
+将聊天流生成器传递给`StreamingResponse`，以便将生成的输出流直接转发给客户端。根据 SSE 规范设置`media_type=text/event-stream`，以便浏览器可以正确处理响应。
 
-在服务器上设置了 `GET` 端点后，你可以在客户端创建一个简单的 HTML 表单，通过 `EventSource` 接口消费 SSE 流，如 示例 6-4 所示。
+在服务器上设置了`GET`端点后，你可以在客户端创建一个简单的 HTML 表单，通过`EventSource`接口消费 SSE 流，如示例 6-4 所示。
 
 ###### 小贴士
 
-示例 6-4 不使用任何 JavaScript 库或 Web 框架。然而，有一些库可以帮助你在你选择的任何框架（如 React、Vue 或 SvelteKit）中实现 `EventSource` 连接。
+示例 6-4 不使用任何 JavaScript 库或 Web 框架。然而，有一些库可以帮助你在你选择的任何框架（如 React、Vue 或 SvelteKit）中实现`EventSource`连接。
 
-##### 示例 6-4\. 使用浏览器 `EventSource` API 在客户端实现 SSE
+##### 示例 6-4\. 使用浏览器`EventSource` API 在客户端实现 SSE
 
 ```py
 {# pages/client-sse.html #} <!DOCTYPE html>
@@ -466,7 +454,7 @@ async def serve_text_to_text_stream_controller(
 
 ![3](img/#co_real_time_communication___span_class__keep_together__with_generative_models__span__CO4-3)
 
-监听按钮 `clicks` 并运行 SSE 回调。
+监听按钮`clicks`并运行 SSE 回调。
 
 ![4](img/#co_real_time_communication___span_class__keep_together__with_generative_models__span__CO4-4)
 
@@ -474,13 +462,13 @@ async def serve_text_to_text_stream_controller(
 
 ![5](img/#co_real_time_communication___span_class__keep_together__with_generative_models__span__CO4-5)
 
-创建一个新的 `EventSource` 对象并监听连接状态变化以处理事件。
+创建一个新的`EventSource`对象并监听连接状态变化以处理事件。
 
 ![6](img/#co_real_time_communication___span_class__keep_together__with_generative_models__span__CO4-6)
 
-当 SSE 连接打开时记录到控制台。通过将消息内容渲染到响应容器中处理每个消息，直到接收到 `[DONE]` 消息，这表示连接现在应该关闭。此外，如果发生任何错误，关闭连接并将错误记录到浏览器的控制台。
+当 SSE 连接打开时记录到控制台。通过将消息内容渲染到响应容器中处理每个消息，直到接收到`[DONE]`消息，这表示连接现在应该关闭。此外，如果发生任何错误，关闭连接并将错误记录到浏览器的控制台。
 
-在 示例 6-4 中实现了 SSE 客户端后，你现在可以使用它来测试你的 SSE 端点。然而，你需要首先提供 HTML 服务。
+在示例 6-4 中实现了 SSE 客户端后，你现在可以使用它来测试你的 SSE 端点。然而，你需要首先提供 HTML 服务。
 
 创建一个`pages`目录，然后将 HTML 文件放入其中。然后*挂载*该目录到你的 FastAPI 服务器上，以将其内容作为静态文件提供服务，如示例 6-5 所示。通过挂载，FastAPI 负责将 API 路径映射到每个文件，这样你就可以从与服务器相同的源通过浏览器访问它们。
 
@@ -508,13 +496,15 @@ app.mount("/pages", StaticFiles(directory="pages"), name="pages") ![1](img/1.png
 
 经过一些调查，你应该会注意到你的浏览器已经阻止了对服务器的出站请求，因为它的预检**跨源资源共享**（CORS）检查与你的服务器失败了。
 
+
+
 CORS 是浏览器中实现的一种安全机制，用于控制网页上的资源如何从另一个域请求，并且仅在直接从浏览器而不是服务器发送请求时相关。浏览器使用 CORS 来检查它们是否被允许从与服务器不同的源（即域）发送请求。
 
 例如，如果你的客户端托管在`https://example.com`，并且它需要从托管在`https://api.example.com`的 API 获取数据，浏览器将阻止此请求，除非 API 服务器启用了 CORS。
 
 目前，你可以在服务器上添加一个 CORS 中间件来绕过这些 CORS 错误，如示例 6-6 所示，以允许来自浏览器的任何入站请求。
 
-##### 示例 6-6\. 应用 CORS 设置
+### 示例 6-6\. 应用 CORS 设置
 
 ```py
 # main.py
@@ -538,29 +528,29 @@ Streamlit 通过在其内部服务器上发送请求来避免触发 CORS 机制�
 
 另一方面，FastAPI 文档页面从与服务器相同的源（即`http://localhost:8000`）发送请求，因此默认情况下不会触发 CORS 安全机制。
 
-###### 警告
+#### 警告
 
-在 示例 6-6 中，您配置了 CORS 中间件来处理任何传入的请求，有效地绕过了 CORS 安全机制以简化开发。在生产环境中，您应该只允许服务器处理少量来源、方法和头信息。
+在示例 6-6 中，您配置了 CORS 中间件来处理任何传入的请求，有效地绕过了 CORS 安全机制以简化开发。在生产环境中，您应该只允许服务器处理少量来源、方法和头信息。
 
-如果您遵循了示例 6-5 或 6-6，现在您应该能够查看来自您的 SSE 端点的传入流（参见 图 6-8）。
+如果您遵循了示例 6-5 或 6-6，现在您应该能够查看来自您的 SSE 端点的传入流（参见图 6-8）。
 
 ![bgai 0608](img/bgai_0608.png)
 
-###### 图 6-8\. 从 SSE 端点传入的流
+#### 图 6-8\. 从 SSE 端点传入的流
 
 恭喜！您现在拥有了一个完整的解决方案，其中模型响应会在生成数据一可用就直接流式传输到您的客户端。通过实现此功能，您的用户在与聊天机器人交互时将获得更愉快的体验，因为他们可以实时收到对查询的响应。
 
 您的解决方案还通过使用异步客户端与 Azure OpenAI API 交互来实现并发，以便更快地向用户流式传输响应。您可以尝试使用同步客户端来比较生成速度的差异。使用异步客户端时，生成速度可以非常快，以至于您会一次性接收到一大块文本，尽管实际上这些文本正在被流式传输到浏览器。
 
-### 从 Hugging Face 模型流式传输 LLM 输出
+## 从 Hugging Face 模型流式传输 LLM 输出
 
 现在您已经学会了如何使用 Azure OpenAI 等模型提供者实现 SSE 端点，您可能会想知道是否可以从您之前从 Hugging Face 下载的开源模型中流式传输模型输出。
 
-尽管 Hugging Face 的 `transformers` 库实现了一个 `TextStreamer` 组件，您可以将它传递到您的模型管道中，但最简单的解决方案是运行一个单独的推理服务器，如 HF Inference Server，以实现模型流式传输。
+尽管 Hugging Face 的`transformers`库实现了一个`TextStreamer`组件，您可以将它传递到您的模型管道中，但最简单的解决方案是运行一个单独的推理服务器，如 HF Inference Server，以实现模型流式传输。
 
-示例 6-7 展示了如何通过提供 `model-id` 使用 Docker 设置简单的模型推理服务器。
+示例 6-7 展示了如何通过提供`model-id`使用 Docker 设置简单的模型推理服务器。
 
-##### 示例 6-7\. 通过 HF Inference Server 提供 HF LLM 模型
+### 示例 6-7\. 通过 HF Inference Server 提供 HF LLM 模型
 
 ```py
 $ docker run --runtime nvidia --gpus all \ ![1](img/1.png)
@@ -574,7 +564,7 @@ $ docker run --runtime nvidia --gpus all \ ![1](img/1.png)
 
 ![1](img/1.png) (#co_real_time_communication___span_class__keep_together__with_generative_models__span__CO7-1)
 
-使用 Docker 在所有可用的 NVIDIA GPU 上下载并运行最新的 `vllm/vllm-openai` 容器。
+使用 Docker 在所有可用的 NVIDIA GPU 上下载并运行最新的`vllm/vllm-openai`容器。
 
 ![2](img/2.png) (#co_real_time_communication___span_class__keep_together__with_generative_models__span__CO7-2)
 
@@ -582,11 +572,11 @@ $ docker run --runtime nvidia --gpus all \ ![1](img/1.png)
 
 ![3](img/3.png) (#co_real_time_communication___span_class__keep_together__with_generative_models__span__CO7-3)
 
-设置秘密环境变量以访问受保护的模型，例如 `mistralai/Mistral-7B-v0.1`。^(4)
+设置秘密环境变量以访问受保护的模型，例如`mistralai/Mistral-7B-v0.1`。^(4)
 
 ![4](img/4.png) (#co_real_time_communication___span_class__keep_together__with_generative_models__span__CO7-4)
 
-在本地主机端口 `8080` 上运行推理服务器，通过将主机端口 `8080` 映射到暴露的 Docker 容器端口 `8000`。
+在本地主机端口`8080`上运行推理服务器，通过将主机端口`8080`映射到暴露的 Docker 容器端口`8000`。
 
 ![5](img/5.png) (#co_real_time_communication___span_class__keep_together__with_generative_models__span__CO7-5)
 
@@ -598,11 +588,11 @@ vLLM 推理服务器使用 OpenAI API 规范进行 LLM 服务。
 
 ![7](img/7.png)[#co_real_time_communication___span_class__keep_together__with_generative_models__span__CO7-8]
 
-从 Hugging Face Hub 下载并使用受控的 `mistralai/Mistral-7B-v0.1`。
+从 Hugging Face Hub 下载并使用受控的`mistralai/Mistral-7B-v0.1`。
 
-当模型服务器运行时，你现在可以使用 `AsyncInferenceClient` 以流格式生成输出，如 示例 6-8 所示。
+当模型服务器运行时，你现在可以使用`AsyncInferenceClient`以流格式生成输出，如示例 6-8 所示。
 
-##### 示例 6-8\. 从 HF 推理流消费 LLM 输出流
+### 示例 6-8\. 从 HF 推理流消费 LLM 输出流
 
 ```py
 import asyncio
@@ -618,21 +608,21 @@ async def chat_stream(prompt: str) -> AsyncGenerator[str, None]:
         await asyncio.sleep(0.05)
 ```
 
-虽然 示例 6-8 展示了如何使用 Hugging Face 推理服务器，但你仍然可以使用支持流式模型响应的其他模型服务框架，如 [vLLM](https://oreil.ly/LQAzF)。
+虽然示例 6-8 展示了如何使用 Hugging Face 推理服务器，但你仍然可以使用支持流式模型响应的其他模型服务框架，如 [vLLM](https://oreil.ly/LQAzF)。
 
-在我们继续讨论 WebSocket 之前，让我们看看如何使用 `POST` 方法消费 SSE 端点的另一种变体。
+在我们继续讨论 WebSocket 之前，让我们看看如何使用`POST`方法消费 SSE 端点的另一种变体。
 
 ## 使用 POST 请求的 SSE
 
-[`EventSource` 规范](https://oreil.ly/61ovi) 预期服务器上的 `GET` 端点能够正确消费传入的 SSE 流。这使得使用 SSE 实现实时应用变得简单，因为 `EventSource` 接口可以处理诸如连接中断和自动重连等问题。
+[`EventSource` 规范](https://oreil.ly/61ovi) 预期服务器上的`GET`端点能够正确消费传入的 SSE 流。这使得使用 SSE 实现实时应用变得简单，因为`EventSource`接口可以处理诸如连接中断和自动重连等问题。
 
-然而，使用 HTTP `GET` 请求有其自身的局限性。`GET` 请求通常比其他请求方法的安全性更低，更容易受到 *XSS* 攻击。5 此外，由于 `GET` 请求不能有任何请求体，你只能将数据作为 URL 的查询参数发送到服务器。问题是存在 URL 长度限制，你必须考虑，并且任何查询参数都必须正确编码到请求 URL 中。因此，你不能简单地将整个对话历史作为参数附加到 URL 上。你的服务器必须处理维护对话历史和跟踪对话上下文，使用 `GET` SSE 端点。
+然而，使用 HTTP `GET`请求有其自身的局限性。`GET`请求通常比其他请求方法的安全性更低，更容易受到 *XSS* 攻击。5 此外，由于`GET`请求不能有任何请求体，你只能将数据作为 URL 的查询参数发送到服务器。问题是存在 URL 长度限制，你必须考虑，并且任何查询参数都必须正确编码到请求 URL 中。因此，你不能简单地将整个对话历史作为参数附加到 URL 上。你的服务器必须处理维护对话历史和跟踪对话上下文，使用`GET` SSE 端点。
 
-解决上述限制的一个常见方法是即使 SSE 规范不支持，也实现一个 `POST` SSE 端点。因此，实现将更加复杂。
+解决上述限制的一个常见方法是即使 SSE 规范不支持，也实现一个`POST` SSE 端点。因此，实现将更加复杂。
 
-首先，让我们在 示例 6-9 中实现服务器上的 `POST` 端点。
+首先，让我们在示例 6-9 中实现服务器上的`POST`端点。
 
-##### 示例 6-9\. 在服务器上实现 SSE 端点
+### 示例 6-9\. 在服务器上实现 SSE 端点
 
 ```py
 # main.py
@@ -651,11 +641,11 @@ async def serve_text_to_text_stream_controller(
     )
 ```
 
-在实现了流式聊天输出的 `POST` 端点后，你现在可以开发客户端逻辑来处理 SSE 流。
+在实现了流式聊天输出的`POST`端点后，你现在可以开发客户端逻辑来处理 SSE 流。
 
-你将不得不手动使用浏览器 `fetch` 网络接口处理传入的流，如 示例 6-10 所示。
+你将不得不手动使用浏览器`fetch`网络接口处理传入的流，如示例 6-10 所示。
 
-##### 示例 6-10\. 使用浏览器 `EventSource` API 在客户端实现 SSE
+### 示例 6-10\. 使用浏览器`EventSource` API 在客户端实现 SSE
 
 ```py
 {# pages/client-sse-post.html #} <!DOCTYPE html>
@@ -716,11 +706,11 @@ async def serve_text_to_text_stream_controller(
 
 ![1](img/1.png)[#co_real_time_communication___span_class__keep_together__with_generative_models__span__CO8-1]
 
-使用浏览器的 `fetch` 接口向后端发送 `POST` 请求。将正文作为 JSON 字符串作为请求的一部分准备。添加标头以指定要发送的请求正文和从服务器期望的响应。
+使用浏览器的`fetch`接口向后端发送`POST`请求。将正文作为 JSON 字符串作为请求的一部分准备。添加标头以指定要发送的请求正文和从服务器期望的响应。
 
 ![2](img/2.png)(#co_real_time_communication___span_class__keep_together__with_generative_models__span__CO8-2)
 
-从响应体流中访问流的 `reader`。
+从响应体流中访问流的`reader`。
 
 ![3](img/3.png)(#co_real_time_communication___span_class__keep_together__with_generative_models__span__CO8-3)
 
@@ -728,25 +718,27 @@ async def serve_text_to_text_stream_controller(
 
 ![4](img/4.png)(#co_real_time_communication___span_class__keep_together__with_generative_models__span__CO8-4)
 
-运行一个无限循环，并使用 `reader` 读取流中的下一条消息。如果流已结束，则 `done=true`，因此退出循环；否则，使用文本解码器解码消息并将其追加到响应容器的 `textContent` 以进行渲染。
+运行一个无限循环，并使用`reader`读取流中的下一条消息。如果流已结束，则`done=true`，因此退出循环；否则，使用文本解码器解码消息并将其追加到响应容器的`textContent`以进行渲染。
 
 ![5](img/5.png)(#co_real_time_communication___span_class__keep_together__with_generative_models__span__CO8-5)
 
-监听按钮 `click` 事件以运行回调，重置表单状态，并使用提示与后端端点建立 SSE 连接。
+监听按钮`click`事件以运行回调，重置表单状态，并使用提示与后端端点建立 SSE 连接。
 
-如 示例 6-10 所示，在没有 `EventSource` 的情况下消费 SSE 流可能会变得复杂。
+如示例 6-10 所示，在没有`EventSource`的情况下消费 SSE 流可能会变得复杂。
 
-###### 小贴士
+#### 小贴士
 
-示例 6-10 的另一种方法是使用 `GET` SSE 端点，但在此之前使用 `POST` 请求将大量有效负载发送到服务器。服务器存储数据，并在建立 SSE 连接时使用它。
+示例 6-10 的另一种方法是使用`GET` SSE 端点，但在此之前使用`POST`请求将大量有效负载发送到服务器。服务器存储数据，并在建立 SSE 连接时使用它。
 
-SSE 还支持 cookies，因此您可以在 `GET` SSE 端点中依赖 cookies 来交换大量有效负载。
+SSE 还支持 cookies，因此您可以在`GET` SSE 端点中依赖 cookies 来交换大量有效负载。
 
 如果您想在生产中消费 SSE 端点，您的解决方案还应支持重试功能、错误处理，甚至能够断开连接的能力。
 
 示例 6-11 展示了如何在 JavaScript 中实现具有 *指数退避延迟* 的客户端重试功能.^(6)
 
-##### 示例 6-11\. 使用指数退避实现客户端重试功能
+### 示例 6-11\. 使用指数退避实现客户端重试功能
+
+
 
 ```py
 // pages/client-sse-post.html within <script> tag 
@@ -803,7 +795,7 @@ async function stream(
 
 ![6](img/#co_real_time_communication___span_class__keep_together__with_generative_models__span__CO9-6)
 
-如果达到`maxRetries`，则重新抛出`error`。
+如果达到 `maxRetries`，则重新抛出 `error`。
 
 您现在应该更舒适地实现自己的 SSE 端点以流式传输模型响应。SSE 是 ChatGPT 等应用程序用于与模型进行实时对话的首选通信机制。由于 SSE 主要支持基于文本的流，它非常适合 LLM 输出流场景。
 
@@ -815,7 +807,7 @@ async function stream(
 
 ## 使用 WebSocket 进行 LLM 输出流
 
-FastAPI 通过使用 Starlette web 框架的`WebSocket`接口支持 WebSocket。由于 WebSocket 连接需要管理，让我们首先实现一个连接管理器来跟踪活动连接并管理它们的状态。
+FastAPI 通过使用 Starlette web 框架的 `WebSocket` 接口支持 WebSocket。由于 WebSocket 连接需要管理，让我们首先实现一个连接管理器来跟踪活动连接并管理它们的状态。
 
 您可以通过遵循示例 6-12 来实现 WebSocket 连接管理器。
 
@@ -858,15 +850,15 @@ ws_manager = WSConnectionManager() ![6](img/6.png)
 
 ![1](img/#co_real_time_communication___span_class__keep_together__with_generative_models__span__CO10-1)
 
-创建一个`WSConnectionManager`来跟踪和处理活动 WS 连接。
+创建一个 `WSConnectionManager` 来跟踪和处理活动 WS 连接。
 
 ![2](img/#co_real_time_communication___span_class__keep_together__with_generative_models__span__CO10-2)
 
-使用`accept()`方法打开 WebSocket 连接。将新连接添加到活动连接列表中。
+使用 `accept()` 方法打开 WebSocket 连接。将新连接添加到活动连接列表中。
 
 ![3](img/#co_real_time_communication___span_class__keep_together__with_generative_models__span__CO10-3)
 
-断开连接时，关闭连接并从活动连接列表中移除`websocket`实例。
+断开连接时，关闭连接并从活动连接列表中移除 `websocket` 实例。
 
 ![4](img/#co_real_time_communication___span_class__keep_together__with_generative_models__span__CO10-4)
 
@@ -878,7 +870,7 @@ ws_manager = WSConnectionManager() ![6](img/6.png)
 
 ![6](img/#co_real_time_communication___span_class__keep_together__with_generative_models__span__CO10-6)
 
-创建一个`WSConnectionManager`的单例实例，以便在整个应用程序中重用。
+创建一个 `WSConnectionManager` 的单例实例，以便在整个应用程序中重用。
 
 你还可以扩展连接管理器，如示例 6-12 所示，以**广播**消息（例如，实时系统警报、通知或更新）给所有已连接的客户端。这在群聊或协作白板/文档编辑工具等应用中非常有用。
 
@@ -991,6 +983,8 @@ async def websocket_endpoint(websocket: WebSocket) -> None:
 ![6](img/#co_real_time_communication___span_class__keep_together__with_generative_models__span__CO12-6)
 
 异步遍历生成的聊天流，并将每个块发送到客户端。
+
+
 
 ![7](img/7.png)[#co_real_time_communication___span_class__keep_together__with_generative_models__span__CO12-7]
 
@@ -1132,7 +1126,7 @@ async def websocket_endpoint(websocket: WebSocket) -> None:
 
 为关闭连接按钮添加事件监听器，以便在按钮被点击时关闭连接。
 
-现在，您可以访问[*http://localhost:8000/pages/client-ws.html*](http://localhost:8000/pages/client-ws.html)来测试您的 WebSocket 流式传输端点（见图 6-9）。
+现在，您可以访问 [*http://localhost:8000/pages/client-ws.html*](http://localhost:8000/pages/client-ws.html) 来测试您的 WebSocket 流式传输端点（见图 6-9）。
 
 ![bgai 0609](img/bgai_0609.png)
 
@@ -1146,15 +1140,15 @@ WebSocket 连接为您的流机制提供了更多控制，并允许在同一连�
 
 ## 处理 WebSocket 异常
 
-处理 WebSocket 异常与传统 HTTP 连接不同。如果您参考示例 6-15，您会注意到您不再返回带有状态码的响应或`HTTPExceptions`给客户端，而是在连接接受后保持连接开启。
+处理 WebSocket 异常与传统 HTTP 连接不同。如果您参考示例 6-15，您会注意到您不再返回带有状态码的响应或 `HTTPExceptions` 给客户端，而是在连接接受后保持连接开启。
 
-只要连接保持开启状态，您就会发送和接收消息。然而，一旦发生异常，您应该通过优雅地关闭连接和/或向客户端发送错误消息来处理它，以替代`HTTPException`响应。
+只要连接保持开启状态，您就会发送和接收消息。然而，一旦发生异常，您应该通过优雅地关闭连接和/或向客户端发送错误消息来处理它，以替代 `HTTPException` 响应。
 
-由于 WebSocket 协议不支持常规的 HTTP 状态码（`4xx`或`5xx`），您不能使用状态码来通知客户端服务器端的问题。相反，您应该在关闭任何从服务器发出的活动连接之前，向客户端发送 WebSocket 消息来通知他们问题。
+由于 WebSocket 协议不支持常规的 HTTP 状态码（`4xx` 或 `5xx`），您不能使用状态码来通知客户端服务器端的问题。相反，您应该在关闭任何从服务器发出的活动连接之前，向客户端发送 WebSocket 消息来通知他们问题。
 
 在连接关闭期间，您可以使用几个与 WebSocket 相关的状态码来指定关闭原因。使用这些关闭原因，您可以在服务器或客户端上实现任何自定义关闭行为。
 
-表 6-2 显示了可以与`CLOSE`帧一起发送的一些常见状态码。
+表 6-2 显示了可以与 `CLOSE` 帧一起发送的一些常见状态码。
 
 表 6-2\. WebSocket 协议常见状态码
 
@@ -1168,7 +1162,7 @@ WebSocket 连接为您的流机制提供了更多控制，并允许在同一连�
 | 1008 | 端点接收到的消息违反了其策略；可以用于出于安全原因隐藏关闭细节 |
 | 1011 | 内部服务器错误 |
 
-你可以在 WebSocket 协议[RFC 6455—第 7.4 节](https://oreil.ly/1L_HH)中了解更多关于其他 WebSocket 状态码的信息。
+你可以在 WebSocket 协议 [RFC 6455—第 7.4 节](https://oreil.ly/1L_HH) 中了解更多关于其他 WebSocket 状态码的信息。
 
 ## 设计流式 API
 
@@ -1194,7 +1188,7 @@ WebSocket 连接为您的流机制提供了更多控制，并允许在同一连�
 
 ^(3) 更多关于 `EventSource` 接口的信息，请参阅 MDN 资源。[`EventSource` 接口](https://oreil.ly/0yuKA)。
 
-^(4) 按照指南[“访问私有/受保护模型”](https://oreil.ly/a7KeV)生成 Hugging Face 用户访问令牌。
+^(4) 按照指南 [“访问私有/受保护模型”](https://oreil.ly/a7KeV) 生成 Hugging Face 用户访问令牌。
 
 ^(5) 攻击者利用 XSS 漏洞将有害脚本插入网页，然后由其他用户的浏览器执行。
 

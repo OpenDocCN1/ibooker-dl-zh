@@ -1,3 +1,4 @@
+
 # 附录 B. PyTorch
 
 ## B.1 什么是 PyTorch？
@@ -139,7 +140,7 @@ Out: tensor([[1., 0.],
 
 ### B.3.2 CPU 和 GPU 张量
 
-PyTorch 中的张量默认加载在 CPU 上。您可以通过检查张量所在的设备来查看这一点。我们将使用之前初始化的随机张量（`tensor _rand`）：
+PyTorch 中的张量默认加载在 CPU 上。您可以通过检查张量所在的设备来查看这一点。我们将使用之前初始化的随机张量（`tensor_rand`）：
 
 ```
 In: tensor_rand.device 
@@ -157,7 +158,7 @@ Out: True
 
 ```
 if torch.cuda.is_available():                           ①
-    device = torch.device(“cuda”)                       ②
+    device = torch.device("cuda")                       ②
     tensor_rand_gpu = torch.rand(3, 2, device=device)   ③
 ```
 
@@ -171,7 +172,7 @@ if torch.cuda.is_available():                           ①
 
 ```
 if torch.cuda.is_available():
-    device = torch.device(“cuda”)
+    device = torch.device("cuda")
     tensor_rand = tensor_rand.to(device)
 ```
 
@@ -314,6 +315,8 @@ Out: tensor([-0.4307,  0.6729, -0.7243, -0.5396, -0.6516],
 
 一些常见的图像变换函数，如裁剪、翻转、旋转和调整大小，也被 PyTorch 作为`torchvision`包的一部分实现。完整的变换列表可以在[`pytorch.org/vision/stable/transforms.html`](https://pytorch.org/vision/stable/transforms.html)找到。我们将在第五章中使用它们。
 
+
+
 另一个值得了解的有用数据实用类是`DataLoader`。这个类接受一个从`Dataset`类继承的对象，以及一些可选参数，允许您遍历您的数据。`DataLoader`类提供了数据批处理、打乱和并行加载数据的功能，使用多进程工作进程。以下代码片段展示了如何初始化一个`DataLoader`对象并遍历之前创建的自定义数据集：
 
 ```
@@ -328,9 +331,9 @@ for i_batch, sample_batched in enumerate(dataloader):        ⑥
     ➥ {len(sample_batched[0])}")                            ⑦
 ```
 
-① 导入 PyTorch 提供的 DataLoader 类
+① 导入 PyTorch 提供的`DataLoader`类
 
-② 初始化 DataLoader 并传递之前初始化的 transformed_dataset
+② 初始化`DataLoader`并传递之前初始化的`transformed_dataset`
 
 ③ 将数据分批为每批四个
 
@@ -368,7 +371,7 @@ for i_batch, sample_batched in enumerate(dataloader):        ⑥
 
 ![](img/B_EQ_04.png)
 
-对于更复杂的数学函数，这些梯度的计算可能很复杂。PyTorch 通过使用 `autograd` 包使这变得更容易。`autograd` 包实现了自动微分，并允许您数值评估函数的导数。通过应用前面显示的链式法则，`autograd` 允许您自动计算任意阶函数的梯度。让我们通过使用张量实现前面的数学操作来观察这一过程。我们首先初始化一个大小为 2 × 3 的输入张量 x，其中包含所有 1。请注意，当初始化张量时，将一个名为 `requires_grad` 的参数设置为 `True`。此参数让 `autograd` 知道要记录对它们的操作以进行自动微分：
+对于更复杂的数学函数，这些梯度的计算可能很复杂。PyTorch 通过使用 `autograd` 包使这变得更容易。`autograd` 包实现了自动微分，并允许您数值评估函数的导数。通过应用前面显示的链式法则，`autograd` 允许您自动计算任意阶函数的梯度。让我们通过使用张量实现前面的数学操作来观察这一过程。我们首先初始化一个大小为 2 × 3 的输入张量 `x`，其中包含所有 1。请注意，当初始化张量时，将一个名为 `requires_grad` 的参数设置为 `True`。此参数让 `autograd` 知道要记录对它们的操作以进行自动微分：
 
 ```
 In: x = torch.ones(2, 3, 
@@ -556,6 +559,8 @@ criterion = torch.nn.BCELoss()
 optimizer = torch.optim.Adam(bc_model.parameters())
 ```
 
+
+
 我们可以如下实现训练循环。注意，我们正在训练 10 个 epoch。在每个 epoch 中，我们使用在 A.4 节中初始化的`DataLoader`对象批量加载数据和标签。对于每个数据小批量，我们首先需要将梯度重置为零，然后计算该小批量的梯度。然后我们通过模型的前向方向运行以获得输出。然后我们使用这些输出来计算 BCE 损失。通过调用`backward`函数，使用自动微分计算损失函数相对于输入的梯度。然后我们调用优化器中的`step`函数，根据计算出的梯度更新权重或模型参数：
 
 ```
@@ -584,7 +589,7 @@ for epoch in range(num_epochs):                             ②
 
 ⑦ 执行反向传播来计算损失函数相对于输入的梯度
 
-⑧ 通过调用 step 更新模型中的参数
+⑧ 通过调用`step`更新模型中的参数
 
 一旦我们训练好了模型，我们就可以对数据点进行如下预测。注意，我们将以下代码片段的格式转换为模仿 Jupyter 笔记本或 iPython 环境：
 

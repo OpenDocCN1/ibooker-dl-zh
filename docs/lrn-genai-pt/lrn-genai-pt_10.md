@@ -1,16 +1,13 @@
+
 # 第八章：使用循环神经网络进行文本生成
 
 本章涵盖
 
-+   RNN 背后的理念以及为什么它们可以处理序列数据
-
-+   字符标记化、单词标记化和子词标记化
-
-+   词嵌入的工作原理
-
-+   构建和训练 RNN 以生成文本
-
-+   使用温度和 top-K 采样来控制文本生成的创造性
++ RNN 背后的理念以及为什么它们可以处理序列数据
++ 字符标记化、单词标记化和子词标记化
++ 词嵌入的工作原理
++ 构建和训练 RNN 以生成文本
++ 使用温度和 top-K 采样来控制文本生成的创造性
 
 到目前为止，在这本书中，我们已经讨论了如何生成形状、数字和图像。从本章开始，我们将主要关注文本生成。生成文本通常被认为是生成式 AI 的圣杯，有以下几个令人信服的原因。人类语言极其复杂和微妙。它不仅涉及理解语法和词汇，还包括上下文、语气和文化参考。成功生成连贯且上下文适当的文本是一个重大的挑战，需要深入理解和处理语言。
 
@@ -58,9 +55,9 @@ RNNs 的一个关键特性是所谓的隐藏状态，它捕捉了序列中所有
 
 ![图片](img/CH08_F01_Liu.png)
 
-图 8.1 展示了通过时间展开的循环神经元层。当一个循环神经网络对序列数据进行预测时，它从上一个时间步的隐藏状态 h(t – 1)以及当前时间步的输入 x(t)中获取信息，并生成输出 y(t)以及更新的隐藏状态 h(t)。时间步 t 的隐藏状态捕捉了所有先前时间步的信息，x(0)，x(1)，…，x(t)。
+图 8.1 展示了通过时间展开的循环神经元层。当一个循环神经网络对序列数据进行预测时，它从上一个时间步的隐藏状态`h(t – 1)`以及当前时间步的输入`x(t)`中获取信息，并生成输出`y(t)`以及更新的隐藏状态`h(t)`。时间步`t`的隐藏状态捕捉了所有先前时间步的信息，`x(0)`，`x(1)`，…，`x(t)`。
 
-RNNs 中的隐藏状态在捕捉所有时间步的信息方面发挥着关键作用。这使得 RNNs 能够做出不仅由当前输入 x(t)而且由所有先前输入的累积知识 x(0)，x(1)，…，x(t – 1)所指导的预测。这一属性使 RNNs 能够理解时间依赖关系。它们能够从输入序列中把握上下文，这对于语言建模等任务至关重要，在这些任务中，句子中的前一个单词为预测下一个单词设定了场景。
+RNNs 中的隐藏状态在捕捉所有时间步的信息方面发挥着关键作用。这使得 RNNs 能够做出不仅由当前输入`x(t)`而且由所有先前输入的累积知识`x(0)`，`x(1)`，…，`x(t – 1)`所指导的预测。这一属性使 RNNs 能够理解时间依赖关系。它们能够从输入序列中把握上下文，这对于语言建模等任务至关重要，在这些任务中，句子中的前一个单词为预测下一个单词设定了场景。
 
 然而，RNNs 并非没有缺点。尽管标准 RNNs 能够处理短期依赖关系，但在文本中的长距离依赖关系上却显得力不从心。这种困难源于梯度消失问题，在长序列中，梯度（对于训练网络至关重要）会减小，阻碍模型学习长距离关系的能力。为了减轻这一问题，已经开发出了 RNNs 的高级版本，例如 LSTM 网络。
 
@@ -84,7 +81,7 @@ LSTM 网络是由 Hochreiter 和 Schmidhuber 在 1997 年提出的.^(1) LSTM 网
 
 图 8.2 展示了如何训练 LSTM 模型的一个示例。我们首先将训练文本分解为标记，并为每个标记分配一个唯一的整数，从而将文本作为索引序列的数值表示。然后，我们将这个长序列划分为长度相等的更短序列。这些序列构成了我们模型的特征（即 x 变量）。然后，我们通过将输入序列向右移动一个标记来生成输出 y。这种设置使得 LSTM 模型能够根据序列中的先前标记预测下一个标记。
 
-在第一个时间步，模型使用单词“a”来预测单词“frog”。由于“a”没有前面的单词，我们用零初始化隐藏状态。LSTM 模型接收“a”的索引和这个初始隐藏状态作为输入，并输出预测的下一个单词以及更新的隐藏状态 h0。在随后的时间步，使用单词“frog”和更新的状态 h0 来预测“has”并生成新的隐藏状态 h1。预测下一个单词和更新隐藏状态的这一序列持续进行，直到模型预测出句子中的最后一个单词，“legs”。
+在第一个时间步，模型使用单词“a”来预测单词“frog”。由于“a”没有前面的单词，我们用零初始化隐藏状态。LSTM 模型接收“a”的索引和这个初始隐藏状态作为输入，并输出预测的下一个单词以及更新的隐藏状态`h0`。在随后的时间步，使用单词“frog”和更新的状态`h0`来预测“has”并生成新的隐藏状态`h1`。预测下一个单词和更新隐藏状态的这一序列持续进行，直到模型预测出句子中的最后一个单词，“legs”。
 
 然后，将预测结果与句子中的实际下一个单词进行比较。由于模型实际上是在预测词汇表中所有可能的标记中的下一个标记，因此存在一个多类别分类问题。我们在每次迭代中调整模型参数，以最小化交叉熵损失，从而使模型在下一个迭代中的预测结果更接近训练数据中的实际输出。
 
@@ -124,13 +121,15 @@ NLP 任务中的下一个关键步骤是将这些标记转换为数值表示。�
 
 词嵌入是一种将标记转换为紧凑的向量表示的方法，捕捉它们的语义信息和相互关系。这项技术在 NLP 中至关重要，尤其是在深度神经网络，包括 LSTM 和 Transformer 等模型，需要数值输入的情况下。
 
+
+
 Traditionally, tokens are converted into numbers using one-hot encoding before being fed into NLP models. In one-hot encoding, each token is represented by a vector where only one element is ‘1’, and the rest are ‘0’s. For example, in this chapter, there are 12,778 unique word-based tokens in the text for the novel *Anna Karenina*. Each token is represented by a vector of 12,778 dimensions. Consequently, a phrase like “happy families are all alike” is represented as a 5 × 12,778 matrix, where 5 represents the number of tokens. This representation, however, is highly inefficient due to its large dimensionality, leading to an increased number of parameters, which can hinder training speed and efficiency.
 
 LSTMs, Transformers, and other advanced NLP models address this inefficiency through word embedding. Instead of bulky one-hot vectors, word embedding uses continuous, lower-dimensional vectors (e.g., 128-value vectors we use in this chapter). As a result, the phrase “happy families are all alike” is represented by a more compact 5 × 128 matrix after word embedding. This streamlined representation drastically reduces the model’s complexity and enhances training efficiency.
 
 Word embedding not only reduces word complexity by condensing it into a lower-dimensional space but also effectively captures the context and the nuanced semantic relationships between words, a feature that simpler representations like one-hot encoding lack, for the following reasons. In one-hot encoding, all tokens have the same distance from each other in vector space. However, in word embeddings, tokens with similar meanings are represented by vectors close to each other in the embedding space. Word embeddings are learned from the text in the training data; the resulting vectors capture contextual information. Tokens that appear in similar contexts will have similar embeddings, even if they are not explicitly related.
 
-Word embedding in NLP
+## Word embedding in NLP
 
 Word embeddings are a powerful method for representing tokens in NLP that offer significant advantages over traditional one-hot encoding in capturing context and semantic relationships between words.
 
@@ -152,7 +151,7 @@ One-hot encoding represents tokens as sparse vectors with a dimension equal to t
 
 ### 8.3.1 下载和清理文本
 
-我们将使用小说《安娜·卡列尼娜》的文本来训练我们的模型。请访问[`mng.bz/znmX`](https://mng.bz/znmX)下载文本文件，并将其保存为电脑上文件夹/files/中的 anna.txt。之后，打开文件并删除第 39888 行之后的所有内容，该行内容为`"END OF THIS PROJECT GUTENBERG EBOOK ANNA KARENINA`.`"`。或者，您可以直接从书籍的 GitHub 仓库下载 anna.txt 文件：[`github.com/markhliu/DGAI`](https://github.com/markhliu/DGAI)。
+我们将使用小说《安娜·卡列尼娜》的文本来训练我们的模型。请访问[`mng.bz/znmX`](https://mng.bz/znmX)下载文本文件，并将其保存为电脑上文件夹`/files/`中的`anna.txt`。之后，打开文件并删除第 39888 行之后的所有内容，该行内容为`"END OF THIS PROJECT GUTENBERG EBOOK ANNA KARENINA`。"`。或者，您可以直接从书籍的 GitHub 仓库下载`anna.txt`文件：[`github.com/markhliu/DGAI`](https://github.com/markhliu/DGAI)。
 
 首先，我们加载数据并打印出一些段落，以了解数据集：
 
@@ -172,7 +171,7 @@ print(words[:20])
 "Oblonskys'"]
 ```
 
-如您所见，行断（用\n 表示）被视为文本的一部分。因此，我们应该将这些行断替换为空格，这样它们就不会出现在词汇表中。此外，将所有单词转换为小写在我们的设置中很有帮助，因为它确保像“The”和“the”这样的单词被视为相同的标记。这一步对于减少独特标记的多样性至关重要，从而使得训练过程更加高效。此外，标点符号应与它们后面的单词保持一定的距离。如果没有这种分隔，像“way.”和“way”这样的组合会被错误地视为不同的标记。为了解决这些问题，我们将清理文本：
+如您所见，行断（用`\n`表示）被视为文本的一部分。因此，我们应该将这些行断替换为空格，这样它们就不会出现在词汇表中。此外，将所有单词转换为小写在我们的设置中很有帮助，因为它确保像“The”和“the”这样的单词被视为相同的标记。这一步对于减少独特标记的多样性至关重要，从而使得训练过程更加高效。此外，标点符号应与它们后面的单词保持一定的距离。如果没有这种分隔，像“way.”和“way”这样的组合会被错误地视为不同的标记。为了解决这些问题，我们将清理文本：
 
 ```py
 clean_text=text.lower().replace("\n", " ")               ①
@@ -209,7 +208,7 @@ print(words[:10])
 
 现在，我们创建两个字典：一个将标记映射到索引，另一个将索引映射到标记。
 
-列表 8.1 将标记映射到索引和索引映射到标记的字典
+**列表 8.1 将标记映射到索引和索引映射到标记的字典**
 
 ```py
 text_length=len(text)                                      ①
@@ -263,7 +262,7 @@ print([word_to_int[w] for w in text[0:20]])
 
 我们将文本中的所有标记转换为相应的索引，并将它们保存在列表`wordidx`中。前一个输出显示了文本中的前 20 个标记以及相应的索引。例如，文本中的第一个标记是`chapter`，其索引值为 208。
 
-练习 8.3
+**练习 8.3**
 
 查找字典`word_to_int`中标记`anna`的索引值。
 
@@ -271,7 +270,7 @@ print([word_to_int[w] for w in text[0:20]])
 
 接下来，我们创建用于训练的(x, y)对。每个 x 是一个包含 100 个索引的序列。100 这个数字并没有什么神奇之处，你可以轻松地将其更改为 90 或 110，并得到相似的结果。设置数字太大可能会减慢训练速度，而设置数字太小可能会导致模型无法捕捉到长距离依赖关系。然后我们将窗口向右滑动一个标记，并将其用作目标 y。在序列生成期间，将序列向右移动一个标记并用作输出是训练语言模型（包括 Transformers）中的常见技术。以下列表中的代码块创建了训练数据。
 
-列表 8.2 创建训练数据
+**列表 8.2 创建训练数据**
 
 ```py
 import torch
@@ -307,6 +306,8 @@ loader = DataLoader(xys, batch_size=batch_size, shuffle=True)
 
 ## 8.4 构建和训练 LSTM 模型
 
+
+
 在本节中，你将开始使用 PyTorch 的内置 LSTM 层构建一个 LSTM 模型。这个模型将从词嵌入层开始，将每个索引转换为一个 128 维的密集向量。你的训练数据将通过这个嵌入层，然后输入到 LSTM 层。这个 LSTM 层被设计成按顺序处理序列的元素。在 LSTM 层之后，数据将进入一个线性层，其输出大小与你的词汇表大小相匹配。LSTM 模型生成的输出本质上是 logits，作为 softmax 函数的输入来计算概率。
 
 一旦你构建了 LSTM 模型，下一步将涉及使用你的训练数据来训练这个模型。这个训练阶段对于提高模型理解和生成与提供的数据一致的模式的能力至关重要。
@@ -315,7 +316,7 @@ loader = DataLoader(xys, batch_size=batch_size, shuffle=True)
 
 在列表 8.3 中，我们定义了一个`WordLSTM()`类，作为我们的 LSTM 模型，用于训练以生成《安娜·卡列尼娜》风格的文本。该类定义如下所示。
 
-列表 8.3 定义`WordLSTM()`类
+**列表 8.3 定义`WordLSTM()`类**
 
 ```py
 from torch import nn
@@ -352,7 +353,7 @@ class WordLSTM(nn.Module):
 
 ① 训练数据首先通过嵌入层。
 
-② 使用 PyTorch LSTM() 类创建一个 LSTM 层
+② 使用 PyTorch `LSTM()` 类创建一个 LSTM 层
 
 ③ 在每个时间步中，LSTM 层使用前一个标记和隐藏状态来预测下一个标记和下一个隐藏状态。
 
@@ -360,13 +361,13 @@ class WordLSTM(nn.Module):
 
 之前定义的 `WordLSTM()` 类有三个层：词嵌入层、LSTM 层和最终的线性层。我们将 `n_layers` 参数的值设置为 3，这意味着 LSTM 层将三个 LSTM 堆叠在一起形成一个堆叠的 LSTM，最后两个 LSTM 将前一个 LSTM 的输出作为输入。`init_hidden()` 方法在模型使用序列的第一个元素进行预测时将隐藏状态填充为零。在每个时间步中，输入是当前标记和前一个隐藏状态，输出是下一个标记和下一个隐藏状态。
 
-`torch.nn.Embedding()` 类的工作原理
+**`torch.nn.Embedding()` 类的工作原理**
 
 PyTorch 中的 `torch.nn.Embedding()` 类用于在神经网络中创建嵌入层。嵌入层是一个可训练的查找表，它将整数索引映射到密集的、连续的向量表示（嵌入）。
 
-当你创建 `torch.nn.Embedding()` 的实例时，你需要指定两个主要参数：num_embeddings，词汇表的大小（唯一标记的总数），以及 embedding_dim，每个嵌入向量的大小（输出嵌入的维度性）。
+当你创建 `torch.nn.Embedding()` 的实例时，你需要指定两个主要参数：`num_embeddings`，词汇表的大小（唯一标记的总数），以及 `embedding_dim`，每个嵌入向量的大小（输出嵌入的维度性）。
 
-在内部，该类创建一个形状为 (num_embeddings, embedding_dim) 的矩阵（或查找表），其中每一行对应于特定索引的嵌入向量。最初，这些嵌入是随机初始化的，但在训练过程中通过反向传播进行学习和更新。
+在内部，该类创建一个形状为 `(num_embeddings, embedding_dim)` 的矩阵（或查找表），其中每一行对应于特定索引的嵌入向量。最初，这些嵌入是随机初始化的，但在训练过程中通过反向传播进行学习和更新。
 
 当你将索引张量传递给嵌入层（在网络的前向传递过程中）时，它会在查找表中查找相应的嵌入向量并返回它们。关于该类的更多信息可在 PyTorch [`mng.bz/n0Zd`](https://mng.bz/n0Zd) 获取。
 
@@ -376,7 +377,7 @@ PyTorch 中的 `torch.nn.Embedding()` 类用于在神经网络中创建嵌入层
 model=WordLSTM().to(device)
 ```
 
-当创建 LSTM 模型时，权重是随机初始化的。当我们使用 (x, y) 对来训练模型时，LSTM 通过调整模型参数学习根据序列中的所有先前标记预测下一个标记。正如我们在图 8.2 中所展示的，LSTM 学习根据当前标记和当前隐藏状态预测下一个标记和下一个隐藏状态，这是所有先前标记信息的总结。
+当创建 LSTM 模型时，权重是随机初始化的。当我们使用 `(x, y)` 对来训练模型时，LSTM 通过调整模型参数学习根据序列中的所有先前标记预测下一个标记。正如我们在图 8.2 中所展示的，LSTM 学习根据当前标记和当前隐藏状态预测下一个标记和下一个隐藏状态，这是所有先前标记信息的总结。
 
 我们使用学习率为 0.0001 的 Adam 优化器。损失函数是交叉熵损失，因为这是一个多类别分类问题：模型试图从包含 12,778 个选择的字典中预测下一个标记：
 
@@ -390,11 +391,11 @@ loss_func = nn.CrossEntropyLoss()
 
 ### 8.4.2 训练 LSTM 模型
 
-在每个训练周期中，我们遍历训练集中的所有数据批次(x, y)。LSTM 模型接收输入序列 x，并生成一个预测输出序列 *ŷ*。这个预测与实际输出序列 y 进行比较，以计算交叉熵损失，因为我们实际上在这里进行多类别分类。然后我们调整模型的参数以减少这个损失，就像我们在第二章中分类服装物品时做的那样。
+在每个训练周期中，我们遍历训练集中的所有数据批次`(x, y)`。LSTM 模型接收输入序列 `x`，并生成一个预测输出序列 *ŷ*。这个预测与实际输出序列 `y` 进行比较，以计算交叉熵损失，因为我们实际上在这里进行多类别分类。然后我们调整模型的参数以减少这个损失，就像我们在第二章中分类服装物品时做的那样。
 
 虽然我们可以将我们的数据分为训练集和验证集，直到在验证集上不再看到进一步的改进（就像我们在第二章中所做的那样）来训练模型，但我们的主要目标是掌握 LSTM 模型的工作原理，而不一定是实现最佳参数调整。因此，我们将模型训练 50 个周期。
 
-列表 8.4 训练 LSTM 模型以生成文本
+**列表 8.4 训练 LSTM 模型以生成文本**
 
 ```py
 model.train()
@@ -418,7 +419,7 @@ for epoch in range(50):
             average loss = {tloss/(i+1)}")
 ```
 
-① 遍历训练数据中的所有(x,y)批次
+① 遍历训练数据中的所有`(x,y)`批次
 
 ② 使用模型来预测输出序列
 
@@ -466,7 +467,7 @@ int_to_word={v:k for k,v in word_to_int.items()}
 
 下面的列表定义了一个`sample()`函数，用于根据提示生成文本。
 
-列表 8.5：用于生成文本的`sample()`函数
+**列表 8.5：用于生成文本的`sample()`函数**
 
 ```py
 import numpy as np
@@ -511,7 +512,7 @@ in text[-seq_len:]]])                                        ②
 
 在函数内部，我们首先从总期望长度中减去提示中的标记数量，以确定需要生成的标记数量。在生成下一个标记时，我们考虑当前序列的长度。如果它少于 100 个标记，我们将整个序列输入到模型中；如果它超过 100 个标记，则只使用序列的最后 100 个标记作为输入。然后将这个输入送入训练好的 LSTM 模型来预测下一个标记，我们将这个预测的标记添加到当前序列中。我们继续这个过程，直到序列达到所需长度。
 
-当生成下一个标记时，模型使用 NumPy 中的 random.choice(len(logits), p = p)方法。在这里，该方法的第一参数表示选择范围，在这个例子中是 len(logits) = 12778。这意味着模型将随机选择一个从 0 到 12,777 的整数，每个整数对应词汇表中的一个不同标记。第二个参数 p 是一个包含 12,778 个元素的数组，其中每个元素表示从词汇表中选择相应标记的概率。在这个数组中，概率较高的标记更有可能被选中。
+当生成下一个标记时，模型使用 NumPy 中的 `random.choice(len(logits), p = p)` 方法。在这里，该方法的第一参数表示选择范围，在这个例子中是 `len(logits) = 12778`。这意味着模型将随机选择一个从 0 到 12,777 的整数，每个整数对应词汇表中的一个不同标记。第二个参数 `p` 是一个包含 12,778 个元素的数组，其中每个元素表示从词汇表中选择相应标记的概率。在这个数组中，概率较高的标记更有可能被选中。
 
 让我们使用“Anna and the prince”作为提示（确保在使用自己的提示时在标点符号前加上空格）来生成一段文本：
 
@@ -523,15 +524,17 @@ print(sample(model, prompt='Anna and the prince'))
 
 在这里，我将 PyTorch 和 NumPy 中的随机种子数固定为 42，以防你想要重现结果。生成的段落是
 
-```py
-anna and the prince did not forget what he had not spoken. when the softening barrier was not so long as he had talked to his brother,  all the hopelessness of the impression. "official tail,  a man who had tried him,  though he had been able to get across his charge and locked close,  and the light round the snow was in the light of the altar villa. the article in law levin was first more precious than it was to him so that if it was most easy as it would be as the same. this was now perfectly interested. when he had got up close out into the sledge,  but it was locked in the light window with their one grass,  and in the band of the leaves of his projects,  and all the same stupid woman,  and really,  and i swung his arms round that thinking of bed. a little box with the two boys were with the point of a gleam of filling the boy,  noiselessly signed the bottom of his mouth,  and answering them took the red
-```
+
+
+# 文本生成中的温度和 top-K 采样
+
+## 引言
 
 你可能已经注意到生成的文本完全是小写的。这是因为，在文本处理阶段，我们将所有大写字母转换为小写，以最小化唯一标记的数量。
 
 经过 6 小时的训练生成的文本相当令人印象深刻！大多数句子都遵循语法规范。虽然它可能无法与 ChatGPT 等高级系统生成的文本的复杂程度相媲美，但这仍然是一个重大的成就。通过在这个练习中获得的能力，你将准备好在后面的章节中训练更高级的文本生成模型。
 
-### 8.5.2 文本生成中的温度和 top-K 采样
+## 8.5.2 文本生成中的温度和 top-K 采样
 
 可以通过使用温度和 top-K 采样等技术来控制生成文本的创造力。
 
@@ -543,7 +546,7 @@ Top-K 采样是另一种影响输出的方法。这种方法涉及从模型预�
 
 接下来，我们介绍一个新的函数`generate()`，用于文本生成。这个函数与`sample()`函数类似，但包括两个额外的参数：`temperature`和`top_k`，允许对生成文本的创造性和随机性有更多的控制。`generate()`函数的定义如下所示。
 
-列表 8.6 使用温度和 top-K 采样生成文本
+### 列表 8.6 使用温度和 top-K 采样生成文本
 
 ```py
 def generate(model, prompt , top_k=None, 
@@ -588,6 +591,8 @@ def generate(model, prompt , top_k=None,
 
 与`sample()`函数相比，新的函数`generate()`有两个额外的可选参数：`top_k`和`temperature`。默认情况下，`top_k`设置为`None`，而`temperature`设置为 1。因此，如果你在调用`generate()`函数时没有指定这两个参数，输出将与从`sample()`函数获得的输出相同。
 
+## 默认参数下的文本生成
+
 让我们通过关注单个标记的创建来展示生成文本的变化。为此，我们将使用“我不打算去看”作为提示（注意撇号前的空格，就像我们在本章中之前所做的那样）。我们调用`generate()`函数 10 次，将其长度参数设置为比提示长度多一个。这种方法确保函数只向提示添加一个额外的标记：
 
 ```py
@@ -615,6 +620,8 @@ i'm not going to see me
 ```
 
 在默认的`top_k = None`和`temperature = 1`设置下，输出中存在一定程度的重复。例如，“you”这个词重复了三次。总共有六个独特的标记。
+
+## 低温度和低 top-K 值的效果
 
 然而，当你调整这两个参数时，`generate()`函数的功能会扩展。例如，设置一个低的温度，如 0.5，以及一个小的`top_k`值，例如 3，会导致生成的文本更可预测且更缺乏创意。
 
@@ -662,9 +669,11 @@ print(generate(model, prompt='Anna and the prince',
 anna and the prince had no milk. but,  "answered levin,  and he stopped. "i've been skating to look at you all the harrows,  and i'm glad. . .  ""no,  i'm going to the country. ""no,  it's not a nice fellow. ""yes,  sir. ""well,  what do you think about it? ""why,  what's the matter? ""yes,  yes,  "answered levin,  smiling,  and he went into the hall. "yes,  i'll come for him and go away,  "he said,  looking at the crumpled front of his shirt. "i have not come to see him,  "she said,  and she went out. "i'm very glad,  "she said,  with a slight bow to the ambassador's hand. "i'll go to the door. "she looked at her watch,  and she did not know what to say 
 ```
 
-练习 8.4
+### 练习 8.4
 
 通过设置温度为 0.6 和`top_k`为 10，并使用“安娜和护士”作为起始提示来生成文本。在 PyTorch 和 NumPy 中都设置随机种子数为 0。
+
+## 高温度和高 top-K 值的效果
 
 相反，选择一个更高的`温度`值，例如 1.5，以及一个更高的`top_k`值，例如`None`（允许从 12,778 个标记的全集中进行选择），会导致更富有创造性和更不可预测的输出。这将在下面的单个标记示例中演示。这次，我们将温度设置为 2，`top_k`值设置为`None`：
 
@@ -712,9 +721,11 @@ anna and the prince took sheaves covered suddenly people. "pyotr marya borissovn
 
 生成的文本没有重复，尽管在许多地方缺乏连贯性。
 
-练习 8.5
+### 练习 8.5
 
 通过设置温度为 2 和`top_k`为 10000，并使用“安娜和护士”作为起始提示来生成文本。在 PyTorch 和 NumPy 中都设置随机种子数为 0。
+
+
 
 在本章中，你已经掌握了 NLP 的基础技能，包括词级分词、词嵌入和序列预测。通过这些练习，你学会了基于词级分词构建语言模型，并使用 LSTM 进行文本生成训练。接下来，接下来的几章将向你介绍训练 Transformers，这是 ChatGPT 等系统中使用的模型类型。这将为你提供更深入的高级文本生成技术理解。
 
@@ -732,4 +743,4 @@ anna and the prince took sheaves covered suddenly people. "pyotr marya borissovn
 
 * * *
 
-^(1)  Sepp Hochreiter 和 Jurgen Schmidhuber，1997 年，“长短期记忆”，*神经计算* 9(8)：1735-1780。
+^(1) Sepp Hochreiter 和 Jurgen Schmidhuber，1997 年，“长短期记忆”，*神经计算* 9(8)：1735-1780。

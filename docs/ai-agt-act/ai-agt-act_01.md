@@ -1,16 +1,13 @@
+
 # 第二章：利用大型语言模型的力量
 
-### 本章涵盖
+## 本章涵盖
 
-+   理解 LLMs 的基本知识
-
-+   连接到并使用 OpenAI API
-
-+   使用 LM Studio 探索和使用开源 LLMs
-
-+   使用提示工程提示 LLMs
-
-+   选择适合您特定需求的最佳 LLM
++ 理解 LLMs 的基本知识
++ 连接到并使用 OpenAI API
++ 使用 LM Studio 探索和使用开源 LLMs
++ 使用提示工程提示 LLMs
++ 选择适合您特定需求的最佳 LLM
 
 “大型语言模型”（LLMs）这一术语现在已成为一种 AI 形式的普遍描述。这些 LLMs 是使用生成预训练的 transformers（GPTs）开发的。虽然其他架构也能驱动 LLMs，但 GPT 形式目前是最成功的。
 
@@ -56,7 +53,7 @@ GPTs 的 transformer 架构，作为 LLMs 的一种特定架构，使得模型�
 pip install openai python-dotenv
 ```
 
-接下来，在 VS Code 中打开 `connecting.py` 文件，检查列表 2.2 中显示的代码。确保将模型的名称设置为合适的名称——例如，gpt-4。在撰写本文时，使用 `gpt-4-1106-preview` 来表示 GPT-4 Turbo。
+接下来，在 VS Code 中打开 `connecting.py` 文件，检查列表 2.2 中显示的代码。确保将模型的名称设置为合适的名称——例如，`gpt-4`。在撰写本文时，使用 `gpt-4-1106-preview` 来表示 GPT-4 Turbo。
 
 ##### 列表 2.2 `connecting.py`
 
@@ -86,13 +83,13 @@ response = ask_chatgpt(user)                #6
 print(response)
 ```
 
-#1 加载 .env 文件中存储的秘密
+#1 加载 `.env` 文件中存储的秘密
 
 #2 检查是否设置了密钥
 
 #3 使用密钥创建客户端
 
-#4 使用 create 函数生成响应
+#4 使用 `create` 函数生成响应
 
 #5 仅返回响应的内容
 
@@ -140,11 +137,9 @@ response = client.chat.completions.create(
 
 在请求中，`messages` 块描述了一组用于请求的消息和角色。聊天完成模型的消息可以定义在三个角色中：
 
-+   *系统角色* — 描述请求的规则和指南的消息。它通常用于描述 LLM 在请求中的角色。
-
-+   *用户角色* — 代表并包含用户的消息。
-
-+   *助手角色* — 可以用来捕获 LLM 之前响应的消息历史。它还可以在可能没有消息历史的情况下注入消息历史。
++ *系统角色* — 描述请求的规则和指南的消息。它通常用于描述 LLM 在请求中的角色。
++ *用户角色* — 代表并包含用户的消息。
++ *助手角色* — 可以用来捕获 LLM 之前响应的消息历史。它还可以在可能没有消息历史的情况下注入消息历史。
 
 单个请求中发送的消息可以封装整个对话，如下一个列表中的 JSON 所示。
 
@@ -231,11 +226,9 @@ response = client.chat.completions.create(
 
 LM Studio 是一个免费下载的软件，支持在 Windows、Mac 和 Linux 上本地下载和托管 LLM 和其他模型。该软件易于使用，并提供了一些有助于快速入门的有用功能。以下是下载和设置 LM Studio 的步骤快速总结：
 
-1.  从[`lmstudio.ai/`](https://lmstudio.ai/)下载 LM Studio。
-
-1.  下载后，根据您的操作系统安装软件。请注意，LM Studio 的一些版本可能处于测试版，需要安装额外的工具或库。
-
-1.  启动软件。
+1. 从[`lmstudio.ai/`](https://lmstudio.ai/)下载 LM Studio。
+2. 下载后，根据您的操作系统安装软件。请注意，LM Studio 的一些版本可能处于测试版，需要安装额外的工具或库。
+3. 启动软件。
 
 图 2.3 显示了正在运行的 LM Studio 窗口。从那里，您可以查看当前的热门模型列表，搜索其他模型，甚至下载。主页内容对于了解顶级模型的详细信息和规格非常有用。
 
@@ -275,9 +268,11 @@ LM Studio 还允许在服务器上运行模型，并使用 OpenAI 包使其可�
 
 ##### 图 2.6 LM Studio 服务器页面和运行 LLM 的服务器
 
-你可以通过在 VS Code 中打开`chapter_2/lmstudio_server.py`来查看 Python 代码的示例。代码也在这里列出为列表 2.7。然后，在 VS Code 调试器中运行代码（按 F5）。
+你可以通过在 VS Code 中打开 `chapter_2/lmstudio_server.py` 来查看 Python 代码的示例。代码也在这里列出为列表 2.7。然后，在 VS Code 调试器中运行代码（按 F5）。
 
 ##### 列表 2.7 `lmstudio_server.py`
+
+
 
 ```py
 from openai import OpenAI
@@ -579,6 +574,8 @@ Step 2 - Translate the Answer from Step 1 into a dad joke,
 提供示例是引导 LLM 期望输出的绝佳方式。有无数种方法可以向 LLM 展示示例。系统消息/提示可以是一种强调一般输出的有用方式。在下面的列表中，示例被添加为最后一个 LLM 助手回复，提示为“教我关于 Python。”
 
 ##### 列表 2.13 `providing_examples.jsonl`
+
+
 
 ```py
 [

@@ -1,20 +1,18 @@
-## 第十四章。学习像莎士比亚一样写作：长短期记忆
+
+
+## 第十四章 学习像莎士比亚一样写作：长短期记忆
 
 **本章**
 
-+   字符语言模型
-
-+   截断反向传播
-
-+   梯度消失和梯度爆炸
-
-+   RNN 反向传播的一个玩具示例
-
-+   长短期记忆（LSTM）单元
++ 字符语言模型
++ 截断反向传播
++ 梯度消失和梯度爆炸
++ RNN 反向传播的一个玩具示例
++ 长短期记忆（LSTM）单元
 
 > “主啊，这些凡人多么愚蠢！”
 > 
-> *莎士比亚 *仲夏夜之梦**
+> *莎士比亚《仲夏夜之梦》*
 
 ### 字符语言模型
 
@@ -43,7 +41,7 @@ for i,word in enumerate(vocab):
 indices = np.array(list(map(lambda x:word2index[x], raw)))
 ```
 
-+   ***1* 来自 [`karpathy.github.io/2015/05/21/rnn-effectiveness/`](http://karpathy.github.io/2015/05/21/rnn-effectiveness/)**
++ ***1* 来自 [`karpathy.github.io/2015/05/21/rnn-effectiveness/`](http://karpathy.github.io/2015/05/21/rnn-effectiveness/)**
 
 与第十二章和第十三章的词汇表由数据集中的单词组成不同，现在词汇表由数据集中的字符组成。因此，数据集也被转换为一个索引列表，这些索引对应于字符而不是单词。之上是`indices` NumPy 数组：
 
@@ -128,35 +126,21 @@ target_batches = target_batches.reshape(n_bptt, bptt, batch_size)
 
 这里有很多事情在进行中。最上面一行使得数据集成为`batch_size`和`n_batches`之间的一个偶数倍。这样做是为了当你将其分组为张量时，它是平方的（或者你也可以用 0 填充数据集以使其成为平方）。第二行和第三行重新塑形数据集，使得每一列是初始`indices`数组的一个部分。我将展示这部分，就像`batch_size`被设置为 8（为了可读性）：
 
-|
-
 ```
 print(raw[0:5])
 print(indices[0:5])
 ```
-
-|
-
-|
 
 ```
 'That,'
 array([ 9, 14, 2, 10, 57])
 ```
 
-|
-
 这些是莎士比亚数据集中的前五个字符。它们拼写出字符串“That，”。接下来是`batched_indices`中变换后的前五行的输出：
-
-|
 
 ```
 print(batched_indices[0:5])
 ```
-
-|
-
-|
 
 ```
 array([[ 9, 43, 21, 10, 10, 23, 57, 46],
@@ -165,8 +149,6 @@ array([[ 9, 43, 21, 10, 10, 23, 57, 46],
        [10, 39, 57, 48, 21, 54, 38, 43],
        [57, 39, 43, 1, 10, 21, 21, 33]])
 ```
-
-|
 
 我已经用粗体突出显示了第一列。看看短语“That，”的索引是否在左边的第一列？这是一个标准构造。有八个列的原因是`batch_size`是 8。这个张量随后被用来构建一个更小的数据集列表，每个数据集的长度为`bptt`。
 
@@ -268,11 +250,12 @@ def generate_sample(n=30, init_char=' '):
 print(generate_sample(n=2000, init_char='\n'))
 ```
 
-+   ***1* 样本采样的温度；越高 = 越贪婪**
++ ***1* 样本采样的温度；越高 = 越贪婪**
++ ***2* 预测样本**
 
-+   ***2* 预测样本**
 
-```
+
+
 I war ded abdons would.
 
 CHENRO:
@@ -298,7 +281,6 @@ ANG VINE PAET:
 There was courter hower how, my goth Plish lo res
 Toures
 ever wo formall, have abon, with a good lorges ever word.
-```
 
 ### 消失和爆炸梯度
 
@@ -310,7 +292,7 @@ ever wo formall, have abon, with a good lorges ever word.
 
 但正如你所知，隐藏状态生成过程中添加了一个额外的非线性项。因此，前向传播变成了一个三步过程：将前一个隐藏状态通过权重矩阵进行矩阵乘法，加入下一个单词的嵌入，并应用非线性函数。
 
-注意，这种非线性在网络稳定性中起着重要作用。无论单词序列有多长，隐藏状态（理论上可能随时间增长而增长）都被迫保持在非线性函数的值之间（在 sigmoid 的情况下是 0 到 1）。但是，反向传播发生的方式与正向传播略有不同，不具有这种良好的性质。反向传播往往会引起极端大或极端小的值。大值可能导致发散（许多非数字 [NaN]），而极端小的值则使网络无法学习。让我们更仔细地看看 RNN 反向传播。
+注意，这种非线性在网络稳定性中起着重要作用。无论单词序列有多长，隐藏状态（理论上可能随时间增长而增长）都被迫保持在非线性函数的值之间（在 `sigmoid` 的情况下是 0 到 1）。但是，反向传播发生的方式与正向传播略有不同，不具有这种良好的性质。反向传播往往会引起极端大或极端小的值。大值可能导致发散（许多非数字 [NaN]），而极端小的值则使网络无法学习。让我们更仔细地看看 RNN 反向传播。
 
 ![](img/f0272-02.jpg)
 
@@ -352,9 +334,9 @@ for activation in reversed(activations):
     print(gradient)
 ```
 
-+   ***1* sigmoid 的导数在激活值非常接近 0 或 1（尾部）时会导致非常小的梯度。**
++   ***1* `sigmoid` 的导数在激活值非常接近 0 或 1（尾部）时会导致非常小的梯度。**
 
-+   ***2* 矩阵乘法会导致梯度爆炸，而非线性函数（如 sigmoid）无法将其压缩。**
++   ***2* 矩阵乘法会导致梯度爆炸，而非线性函数（如 `sigmoid`）无法将其压缩。**
 
 ```
 Sigmoid Activations                  Relu Activations
@@ -378,15 +360,9 @@ Sigmoid Gradients                    Relu Gradients
 
 前一节解释了梯度消失/爆炸是如何由 RNN 中隐藏状态的更新方式引起的。问题是矩阵乘法和非线性函数的组合用于形成下一个隐藏状态。LSTM 提供的解决方案出人意料地简单。
 
-| |
-| --- |
-
 **门控复制技巧**
 
 LSTM 通过复制前一个隐藏状态并在必要时添加或删除信息来创建下一个隐藏状态。LSTM 用于添加和删除信息的机制被称为 *门*。
-
-| |
-| --- |
 
 ```
 def forward(self, input, hidden):
@@ -498,7 +474,9 @@ class LSTMCell(Layer):
 
 在本章的早期，您训练了一个字符语言模型来预测莎士比亚。现在让我们训练一个基于 LSTM 的模型来做同样的事情。幸运的是，上一章的框架使得这变得很容易实现（书中的完整代码可在[www.manning.com/books/grokking-deep-learning](http://www.manning.com/books/grokking-deep-learning)；或在 GitHub 上[`github.com/iamtrask/grokking-deep-learning`](https://github.com/iamtrask/grokking-deep-learning)找到）。以下是新的设置代码。所有从原始 RNN 代码的编辑都在粗体中。注意，您设置神经网络的方式几乎没有变化：
 
-```
+
+
+```python
 import sys,random,math
 from collections import Counter
 import numpy as np
@@ -545,13 +523,13 @@ min_loss = 1000
 
 +   ***1* 这似乎有助于训练。**
 
-### 训练 LSTM 字符语言模型
+## 训练 LSTM 字符语言模型
 
-#### 训练逻辑也没有发生太多变化
+### 训练逻辑也没有发生太多变化
 
 从标准的 RNN 逻辑中，你唯一需要做的真正改变是截断反向传播逻辑，因为每个时间步长有两个隐藏向量而不是一个。但这只是一个相对较小的修复（粗体）。我还增加了一些使训练更简单的功能（`alpha` 随时间缓慢减少，并且有更多的日志记录）：
 
-```
+```python
 for iter in range(iterations):
     total_loss, n_loss = (0, 0)
      hidden = model.init_hidden(batch_size=batch_size)
@@ -597,13 +575,13 @@ for iter in range(iterations):
      optim.alpha *= 0.99
 ```
 
-### 调整 LSTM 字符语言模型
+## 调整 LSTM 字符语言模型
 
-#### 我花费了大约两天的时间调整这个模型，并且它是在夜间训练完成的
+### 我花费了大约两天的时间调整这个模型，并且它是在夜间训练完成的
 
 这里是此模型的某些训练输出。请注意，训练这个模型花费了非常长的时间（有很多参数）。我还不得不多次训练它，以找到这个任务的良好调整（学习率、批量大小等），并且最终的模型是在夜间（8 小时）训练完成的。一般来说，你训练的时间越长，你的结果就会越好。
 
-```
+```text
 I:0 - Alpha:0.05 - Batch 1/249 - Min Loss:62.00 - Loss:62.00 - eeeeeeeeee
                                    ...
 I:7 - Alpha:0.04 - Batch 140/249 - Min Loss:10.5 - Loss:10.7 - heres, and
@@ -611,7 +589,7 @@ I:7 - Alpha:0.04 - Batch 140/249 - Min Loss:10.5 - Loss:10.7 - heres, and
 I:91 - Alpha:0.016 - Batch 176/249 - Min Loss:9.900 - Loss:11.9757225699
 ```
 
-```
+```python
 def generate_sample(n=30, init_char=' '):
     s = ""
     hidden = model.init_hidden(batch_size=1)
@@ -633,7 +611,7 @@ print(generate_sample(n=500, init_char='\n'))
 
 +   ***1* 取最大预测**
 
-```
+```text
 Intestay thee.
 
 SIR:
@@ -652,8 +630,8 @@ I sentlentony my thent:
 I the sentastar thamy this not thame.
 ```
 
-### 摘要
+## 摘要
 
-#### LSTM 是极其强大的模型
+### LSTM 是极其强大的模型
 
 LSTM 学习生成莎士比亚语言的分布不容小觑。语言是一个极其复杂的统计分布，学习起来非常困难，而 LSTM 能够做得如此出色（在撰写本文时，它们是广泛领先的最佳方法）仍然让我（以及其他一些人）感到困惑。这个模型的小型变体要么是，要么最近一直是各种任务中的最佳状态，并且与词嵌入和卷积层一起，无疑将是我们长期以来的首选工具。

@@ -1,3 +1,4 @@
+
 # 附录 B Python pandas DataFrame
 
 本附录描述了 pandas DataFrame 的概述以及本书中使用的方法。
@@ -121,8 +122,11 @@ df_grouped = df.groupby(by='Grade').mean().reset_index()
 ##### 表 B.1 列表 B.4 中`groupby()`的结果
 
 | **成绩** | **数学成绩** | **物理成绩** | **化学成绩** |
+
 | --- | --- | --- | --- |
+
 | A  | 90.0  | 88.0  | 91.0  |
+
 | B  | 85.0  | 92.0  |  |
 
 ## B.4 isnull()
@@ -154,9 +158,13 @@ df_isnull = df.isnull()
 ##### 表 B.2 列表 B.5 中 `isnull()` 的结果
 
 | **姓名** | **出生日期** | **MathsScore** | **PhysicsScore** | **ChemistryScore** | **Grade** |
+
 | --- | --- | --- | --- | --- | --- |
+
 | False | False | False | False | False | False |
+
 | False | False | False | False | True | False |
+
 | False | False | True | False | False | False |
 
 ## B.5 melt()
@@ -193,14 +201,23 @@ df_melted = df.melt(id_vars='Name',
 ##### 表 B.3 列表 B.6 中描述的熔化操作的结果
 
 | **姓名** | **科目** | **分数** |
+
 | --- | --- | --- |
+
 | 爱丽丝 | `MathsScore` | 90.0 |
+
 | 鲍勃 | `MathsScore` | 85.0 |
+
 | 查理 | `MathsScore` | Null |
+
 | 爱丽丝 | `PhysicsScore` | 87.0 |
+
 | 鲍勃 | `PhysicsScore` | 92.0 |
+
 | 查理 | `PhysicsScore` | 89.0 |
+
 | 爱丽丝 | `ChemistryScore` | 92.0 |
+
 | 鲍勃 | `ChemistryScore` | Null |
 
 ## B.6 unique()

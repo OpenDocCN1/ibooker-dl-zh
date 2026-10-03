@@ -1,14 +1,13 @@
+
 # 第四章：创建内容的演变
 
 本章涵盖
 
-+   创建和检测合成媒体
++ 创建和检测合成媒体
++ 使用生成式 AI 进行内容创作
++ 介绍关于使用版权内容的持续辩论
 
-+   使用生成式 AI 进行内容创作
-
-+   介绍关于使用版权内容的持续辩论
-
-在推特上广泛传播的一张图片中，教皇方济各正在街道上行走，脖子上挂着十字架，戴着典型的白色罗马式便帽。更不寻常的是，这位八旬老人穿着一件引人注目的白色羽绒服，与设计师品牌巴尔曼加亚（Balenciaga）出售的款式非常相似（零售价 3350 美元）。教皇的“风格”，或者说造型，成为了互联网上的热门话题。唯一的问题是？这张图片并不是真实的——它是由一位在芝加哥的建筑工人创造的，他在使用 AI 图像生成工具 Midjourney 时吸食了蘑菇，并认为看到教皇方济各“风格化”出来会很有趣 [[1]](https://www.buzzfeednews.com/article/chrisstokelwalker/pope-puffy-jacket-ai-midjourney-image-creator-interview)。
+在推特上广泛传播的一张图片中，教皇方济各正在街道上行走，脖子上挂着十字架，戴着典型的白色罗马式便帽。更不寻常的是，这位八旬老人穿着一件引人注目的白色羽绒服，与设计师品牌巴尔曼加亚（Balenciaga）出售的款式非常相似（零售价 3350 美元）。教皇的“风格”，或者说造型，成为了互联网上的热门话题。唯一的问题是？这张图片并不是真实的——它是由一位在芝加哥的建筑工人创造的，他在使用 AI 图像生成工具`Midjourney`时吸食了蘑菇，并认为看到教皇方济各“风格化”出来会很有趣 [[1]](https://www.buzzfeednews.com/article/chrisstokelwalker/pope-puffy-jacket-ai-midjourney-image-creator-interview)。
 
 尽管所谓的“巴尔曼加亚教皇”梗是无害的乐趣，但它欺骗了许多用户。模特和作者克里斯蒂·泰根（Chrissy Teigen）在推特上写道，“我以为教皇的羽绒服是真的，没有多想。我无法想象我会如何适应未来的技术” [[2]](https://twitter.com/chrissyteigen/status/1639802312632975360)。但技术的未来已经到来，AI 生成的媒体正迅速变得与它模仿的形式难以区分。在本章中，我们将讨论合成媒体的方法、风险、机遇和法律环境，这是 LLM 和其他类型生成式 AI 的主要应用之一。
 
@@ -82,29 +81,31 @@
 
 图 4.4 从左到右，对 DALL-E 2 的提示：一瓶番茄酱的印象派画作、一个五岁孩子画的番茄酱瓶，以及一个在太空中手持番茄酱瓶的宇航员
 
-雀巢公司使用了 DALL-E 的 Outpainting 功能，该功能可以帮助用户通过添加相同风格的视觉元素来扩展图像超出其原始边界（参见[`mng.bz/z0JX`](http://mng.bz/z0JX)）。他们宣传了一幅由 DALL-E 的 Outpainting 功能生成的扩展版本的名画《牛奶女》，这幅画被用来帮助销售雀巢的酸奶和甜品品牌 La Laitière。该广告由 Ogilvy Paris（参见[`mng.bz/G98R`](http://mng.bz/G98R)）创意传播机构制作，将原画的世界扩展到展示厨房女工准备受 La Laitière 启发的美食 [[23]](https://www.adweek.com/creativity/nestle-brand-is-latest-to-venture-into-brave-new-world-of-ai-art-direction/)。回到之前提到的宇航员手持番茄酱瓶的例子，我们要求 DALL-E Outpainting 扩展图像，如图 4.5 所示。
+
+
+雀巢公司使用了`DALL-E`的`Outpainting`功能，该功能可以帮助用户通过添加相同风格的视觉元素来扩展图像超出其原始边界（参见[`mng.bz/z0JX`](http://mng.bz/z0JX)）。他们宣传了一幅由`DALL-E`的`Outpainting`功能生成的扩展版本的名画《牛奶女》，这幅画被用来帮助销售雀巢的酸奶和甜品品牌`La Laitière`。该广告由`Ogilvy Paris`（参见[`mng.bz/G98R`](http://mng.bz/G98R)）创意传播机构制作，将原画的世界扩展到展示厨房女工准备受`La Laitière`启发的美食 [[23]](https://www.adweek.com/creativity/nestle-brand-is-latest-to-venture-into-brave-new-world-of-ai-art-direction/)。回到之前提到的宇航员手持番茄酱瓶的例子，我们要求`DALL-E Outpainting`扩展图像，如图 4.5 所示。
 
 ![](img/CH04_F05_Dhamani.png)
 
-图 4.5 根据提示“外太空的汉堡没有番茄酱”使用 DALL-E 的 Outpainting 功能的结果
+图 4.5 根据提示“外太空的汉堡没有番茄酱”使用`DALL-E`的`Outpainting`功能的结果
 
-创意机构并非唯一使用生成式 AI 进行营销应用的——加拿大美国演员莱恩·雷诺兹要求 ChatGPT 用他的声音写一个 Mint Mobile 的商业广告，其中包含一个笑话、一个脏话和一个对 Mint 假日促销活动的呼吁 [[24]](https://www.fastcompany.com/90833253/ryan-reynolds-used-ChatGPT-to-make-a-mint-mobile-ad-and-the-results-were-mildly-terrifying)。
+创意机构并非唯一使用生成式 AI 进行营销应用的——加拿大美国演员莱恩·雷诺兹要求`ChatGPT`用他的声音写一个`Mint Mobile`的商业广告，其中包含一个笑话、一个脏话和一个对`Mint`假日促销活动的呼吁 [[24]](https://www.fastcompany.com/90833253/ryan-reynolds-used-ChatGPT-to-make-a-mint-mobile-ad-and-the-results-were-mildly-terrifying)。
 
-截至 2023 年 5 月，19 岁的米奎拉·索萨在 Instagram 上有 280 万粉丝，在 TikTok 上有 360 万粉丝。更为人所知的是，她被称为 Lil Miquela，是《时代》杂志评选的互联网上 25 位最具影响力人物之一，并且她支持黑人的命也是命、生育权利和 LGBTQ+事业。她还出现在了 Calvin Klein 的广告中，与美国模特贝拉·哈迪德一起 [[25]](https://www.elle.com/uk/fashion/a27492073/bella-hadid-calvin-klein-lil-miquela/)。但 Lil Miquela 并非真人——她是虚拟网红中最著名的例子，由洛杉矶初创公司 Brud 创建。Lil Miquela 的创造者在 2019 年完成了一轮 1.25 亿美元的 B 轮融资，押注虚拟网红将成为广告、时尚和商业的未来 [[26]](https://techcrunch.com/2019/01/14/more-investors-are-betting-on-virtual-influencers-like-lil-miquela/)。生成式 AI 增加了虚拟网红的创造，迅速被纳入其内容生产流程的工作流程中。瑞典虚拟网红 Esther Olofsson 使用四种 AI 工具，包括 Stable Diffusion（一种文本到图像的模型）来生成 Esther 的 3D 图像，以及 ChatGPT 来生成她在 Instagram 上的标题。虚拟网红的创造者认为，合成媒体可以扩大他们的创意产出和盈利能力，能够生成无限量的内容，而不受真人网红现实世界限制。然而，虚拟网红也引发了其创造者的伦理问题，特别是关于文化挪用和代表问题，对于创建具有与其自身不同人口特征的虚拟网红的创造者来说尤其如此。虚拟深色皮肤网红 Shudu Gram 被社会理论家帕特里夏·希尔·柯林斯批评为“由一个注意到深色皮肤女性‘运动’的白人男性所策划” [[27]](https://journals.sagepub.com/doi/full/10.1177/1527476420983745) [[28]](https://www.newyorker.com/culture/culture-desk/shudu-gram-is-a-white-mans-digital-projection-of-real-life-black-womanhood)。
+截至 2023 年 5 月，19 岁的米奎拉·索萨在`Instagram`上有 280 万粉丝，在`TikTok`上有 360 万粉丝。更为人所知的是，她被称为`Lil Miquela`，是《时代》杂志评选的互联网上 25 位最具影响力人物之一，并且她支持黑人的命也是命、生育权利和`LGBTQ+`事业。她还出现在了`Calvin Klein`的广告中，与美国模特贝拉·哈迪德一起 [[25]](https://www.elle.com/uk/fashion/a27492073/bella-hadid-calvin-klein-lil-miquela/)。但`Lil Miquela`并非真人——她是虚拟网红中最著名的例子，由洛杉矶初创公司`Brud`创建。`Lil Miquela`的创造者在 2019 年完成了一轮 1.25 亿美元的 B 轮融资，押注虚拟网红将成为广告、时尚和商业的未来 [[26]](https://techcrunch.com/2019/01/14/more-investors-are-betting-on-virtual-influencers-like-lil-miquela/)。生成式 AI 增加了虚拟网红的创造，迅速被纳入其内容生产流程的工作流程中。瑞典虚拟网红`Esther Olofsson`使用四种 AI 工具，包括`Stable Diffusion`（一种文本到图像的模型）来生成`Esther`的 3D 图像，以及`ChatGPT`来生成她在`Instagram`上的标题。虚拟网红的创造者认为，合成媒体可以扩大他们的创意产出和盈利能力，能够生成无限量的内容，而不受真人网红现实世界限制。然而，虚拟网红也引发了其创造者的伦理问题，特别是关于文化挪用和代表问题，对于创建具有与其自身不同人口特征的虚拟网红的创造者来说尤其如此。虚拟深色皮肤网红`Shudu Gram`被社会理论家帕特里夏·希尔·柯林斯批评为“由一个注意到深色皮肤女性‘运动’的白人男性所策划” [[27]](https://journals.sagepub.com/doi/full/10.1177/1527476420983745) [[28]](https://www.newyorker.com/culture/culture-desk/shudu-gram-is-a-white-mans-digital-projection-of-real-life-black-womanhood)。
 
-### 艺术作品创作
+## 艺术作品创作
 
-艺术创作是另一个被生成式 AI 颠覆的领域。2018 年，*埃德蒙·贝拉米的肖像*是首个广泛报道的 AI 生成艺术品的销售。由巴黎集体 Obvious 创作的虚构肖像以惊人的 43.25 万美元的价格售出 [[29]](https://news.artnet.com/market/first-ever-artificial-intelligence-portrait-painting-sells-at-christies-1379902)。
+艺术创作是另一个被生成式 AI 颠覆的领域。2018 年，*埃德蒙·贝拉米的肖像*是首个广泛报道的 AI 生成艺术品的销售。由巴黎集体`Obvious`创作的虚构肖像以惊人的 43.25 万美元的价格售出 [[29]](https://news.artnet.com/market/first-ever-artificial-intelligence-portrait-painting-sells-at-christies-1379902)。
 
-自从 20 世纪 60 年代以来，算法已经被用来生成艺术 [[30](https://www.researchgate.net/publication/311104742_Algorithmic_Art_and_Its_Art-Historical_Relationships)]，但 AI 生成的艺术可以产生艺术（图像、电影/视频和音乐），而不需要人类艺术家提供的明确编程指令。DALL-E 2、Stable Diffusion、Midjourney 和 WOMBO Dream 等 AI 工具可以用于根据任何描述性文本输入快速创建艺术品。尽管一些艺术家对这些工具的版权问题表示了担忧（将在第 4.3 节中探讨），但它们也为许多艺术家提供了创意灵感。创作者们使用 DALL-E 来创作粉丝艺术、漫画和设计运动鞋（有人为 OpenAI 的联合创始人山姆·奥尔特曼制作了一双，在他推文后 [[31](https://twitter.com/sama/status/1539670012536844289)]）。纹身艺术家正在使用 DALL-E 与客户一起生成纹身设计，而动画工作室则使用 DALL-E 来设计角色和环境 [[32](https://www.technologyreview.com/2022/12/16/1065005/generative-ai-revolution-art/)]。
+自从 20 世纪 60 年代以来，算法已经被用来生成艺术 [[30](https://www.researchgate.net/publication/311104742_Algorithmic_Art_and_Its_Art-Historical_Relationships)]，但 AI 生成的艺术可以产生艺术（图像、电影/视频和音乐），而不需要人类艺术家提供的明确编程指令。`DALL-E 2`、`Stable Diffusion`、`Midjourney`和`WOMBO Dream`等 AI 工具可以用于根据任何描述性文本输入快速创建艺术品。尽管一些艺术家对这些工具的版权问题表示了担忧（将在第 4.3 节中探讨），但它们也为许多艺术家提供了创意灵感。创作者们使用`DALL-E`来创作粉丝艺术、漫画和设计运动鞋（有人为`OpenAI`的联合创始人山姆·奥尔特曼制作了一双，在他推文后 [[31](https://twitter.com/sama/status/1539670012536844289)]）。纹身艺术家正在使用`DALL-E`与客户一起生成纹身设计，而动画工作室则使用`DALL-E`来设计角色和环境 [[32](https://www.technologyreview.com/2022/12/16/1065005/generative-ai-revolution-art/)]。
 
-另一个知名的 AI 艺术生成工具是谷歌的 DeepDream，它将图像作为输入，输出抽象、迷幻的艺术作品。生成这些迷幻图像的核心思想是向网络提问：“无论你在那里看到什么，我都想要更多！”（见[`mng.bz/0lYl`](http://mng.bz/0lYl)）。在实践中，这意味着模型放大了它在图像中看到的任何模式。图 4.6 通过使用 DALL-E Outpainting 的示例图像（参见图 4.5）作为 DeepDream 的基础图像来说明这一思想。
+另一个知名的 AI 艺术生成工具是谷歌的`DeepDream`，它将图像作为输入，输出抽象、迷幻的艺术作品。生成这些迷幻图像的核心思想是向网络提问：“无论你在那里看到什么，我都想要更多！”（见[`mng.bz/0lYl`](http://mng.bz/0lYl)）。在实践中，这意味着模型放大了它在图像中看到的任何模式。图 4.6 通过使用`DALL-E Outpainting`的示例图像（参见图 4.5）作为`DeepDream`的基础图像来说明这一思想。
 
 ![图片](img/CH04_F06_Dhamani.png)
 
-图 4.6 将 DeepDream 应用于图 4.5，输入提示为“一位穿着银色盔甲、细节复杂的金色装饰的美丽女骑士的肖像”
+图 4.6 将`DeepDream`应用于图 4.5，输入提示为“一位穿着银色盔甲、细节复杂的金色装饰的美丽女骑士的肖像”
 
-电影制作者们也获得了新的工具来拓展创意可能性。生成式 AI 正在改变电影的概念化、开发和制作方式。美国编剧工会（WGA）是第一个承担生成式 AI 挑战的劳工组织——“我们的挑战是确保这些技术是作家使用的工具，而不是用来取代作家的工具，”美国编剧工会 2023 年谈判委员会成员约翰·奥古斯特说 [[33](https://www.hollywoodreporter.com/business/business-news/writers-strike-ai-ChatGPT-1235478681/)]。电影制作者可以生成剧本、分镜脚本和场景——正如之前所讨论的，独立电影制作者可以使用生成式 AI 来创作引人入胜的故事和视觉元素，而无需大量预算，而电影制片厂则可以从这些工具中汲取灵感，并利用它们来简化内容。生成式 AI 还可以通过创建增强的角色和环境来提高视觉效果，而不需要繁琐的手动劳动过程。
+电影制作者们也获得了新的工具来拓展创意可能性。生成式 AI 正在改变电影的概念化、开发和制作方式。美国编剧工会（`WGA`）是第一个承担生成式 AI 挑战的劳工组织——“我们的挑战是确保这些技术是作家使用的工具，而不是用来取代作家的工具，”美国编剧工会 2023 年谈判委员会成员约翰·奥古斯特说 [[33](https://www.hollywoodreporter.com/business/business-news/writers-strike-ai-ChatGPT-1235478681/)]。电影制作者可以生成剧本、分镜脚本和场景——正如之前所讨论的，独立电影制作者可以使用生成式 AI 来创作引人入胜的故事和视觉元素，而无需大量预算，而电影制片厂则可以从这些工具中汲取灵感，并利用它们来简化内容。生成式 AI 还可以通过创建增强的角色和环境来提高视觉效果，而不需要繁琐的手动劳动过程。
 
 一个有争议的应用是能够以数字方式重现死者。在 2016 年的电影《侠盗一号：星球大战外传》中，电影制作者们使用了面部交换技术来数字重现已故演员彼得·库欣扮演的角色，他于 1994 年去世 [[34]](https://www.polygon.com/2016/12/27/14092060/rogue-one-star-wars-grand-moff-tarkin-princess-leia)。至于数字复活已故演员的伦理问题，电影《侠盗一号：星球大战外传》的视觉效果总监约翰·诺尔表示：“我们并没有做任何我认为彼得·库欣会反对的事情。我认为这项工作是在极大的关爱和细致的关怀下完成的。我们知道彼得·库欣非常自豪地参与了《星球大战》，并且说过这样的话，他后悔自己从未有机会在另一部《星球大战》电影中出演，因为乔治·卢卡斯杀死了他的角色” [[35]](https://www.theguardian.com/film/2017/jan/16/rogue-one-vfx-jon-knoll-peter-cushing-ethics-of-digital-resurrections)。电影制作者们还在使用生成式 AI 来加速后期制作工作流程，包括剪辑素材、应用视觉效果、音效设计等。最后，正如每个行业一样，电影制作者们可以利用生成式 AI 进行创意灵感激发。
 
@@ -112,9 +113,9 @@
 
 在类似的方向上，音乐家们也在探索人类和机器如何协作，而不是竞争。钢琴家大卫·多兰在斯德哥尔摩艺术大学与一个半自动 AI 系统合作演出，展示了生成式 AI 如何创造性地补充音乐 [[37]](https://www.youtube.com/watch?v=sIFbvgmYBA0)。该 AI 系统由金斯顿大学研究员奥德·本-塔尔设计和监督，他表示，音乐家们可以使用 AI 与钢琴家一起即兴创作超出他们技能范围的作品，或者从 AI 创作的作品中获得灵感，目前是这样的 [[38]](https://www.wired.co.uk/article/generative-ai-music)。
 
-音乐家霍莉·赫尔登也使用了 AI 克隆她的声音，命名为 Holly+，她用它来演唱她无法使用的语言和风格。[39](https://www.youtube.com/watch?v=5cbCYwgQkTE)。Holly+对任何人都是免费的，赫尔登及其团队开发了工具，使任何人都能使用她的形象和声音进行艺术创作（见[`holly.plus/`](https://holly.plus/))。2023 年 11 月，保罗·麦卡特尼和披头士乐队通过使用生成 AI 复活了乐队成员约翰·列侬的声音，发布了一首新歌“Now and Then”。[40](https://www.cnn.com/2023/06/13/entertainment/paul-mccartney-ai-beatles-song/index.xhtml)。虽然这些工具为音乐家提供了机会，但一些人担心 AI 生成的音乐会充斥流媒体平台，与真正的音乐家竞争。当然，也存在版权问题，我们将在下一节中讨论。支持泰勒·斯威夫特和妮琪·米娜等超级巨星的环球媒体集团敦促 Spotify 和 Apple Music 禁止 AI 工具抓取受版权保护的歌曲。[41](https://www.ft.com/content/aec1679b-5a34-4dad-9fc9-f4d8cdd124b9)。
+音乐家霍莉·赫尔登也使用了 AI 克隆她的声音，命名为`Holly+`，她用它来演唱她无法使用的语言和风格。[39](https://www.youtube.com/watch?v=5cbCYwgQkTE)。`Holly+`对任何人都是免费的，赫尔登及其团队开发了工具，使任何人都能使用她的形象和声音进行艺术创作（见[`holly.plus/`](https://holly.plus/))。2023 年 11 月，保罗·麦卡特尼和披头士乐队通过使用生成 AI 复活了乐队成员约翰·列侬的声音，发布了一首新歌“Now and Then”。[40](https://www.cnn.com/2023/06/13/entertainment/paul-mccartney-ai-beatles-song/index.xhtml)。虽然这些工具为音乐家提供了机会，但一些人担心 AI 生成的音乐会充斥流媒体平台，与真正的音乐家竞争。当然，也存在版权问题，我们将在下一节中讨论。支持泰勒·斯威夫特和妮琪·米娜等超级巨星的环球媒体集团敦促`Spotify`和`Apple Music`禁止 AI 工具抓取受版权保护的歌曲。[41](https://www.ft.com/content/aec1679b-5a34-4dad-9fc9-f4d8cdd124b9)。
 
-关于 AI 生成的艺术是否应该像人类生成的艺术一样被视为艺术，艺术家是否会被取代，以及更广泛地说，这对创造力意味着什么，目前存在持续的争论。为了捍卫 AI 生成的艺术，艺术家们认为 AI 工具是传达人类心中所蕴含的意义或重要性的媒介，类似于画笔和调色板或相机。GANs 艺术家安娜·里德勒认为，取代艺术家的想法源于对艺术过程的贬低——她说：
+关于 AI 生成的艺术是否应该像人类生成的艺术一样被视为艺术，艺术家是否会被取代，以及更广泛地说，这对创造力意味着什么，目前存在持续的争论。为了捍卫 AI 生成的艺术，艺术家们认为 AI 工具是传达人类心中所蕴含的意义或重要性的媒介，类似于画笔和调色板或相机。`GANs`艺术家安娜·里德勒认为，取代艺术家的想法源于对艺术过程的贬低——她说：
 
 AI 无法处理概念：时间、记忆、思维、情感等所有这些都是真正的人类技能，它们使艺术品成为不仅仅是视觉上看起来漂亮的东西。[42](https://www.theguardian.com/technology/2022/nov/12/when-ai-can-make-art-what-does-it-mean-for-creativity-dall-e-midjourney)
 
@@ -126,7 +127,7 @@ AI 生成的艺术不是取代艺术家，而可以理解为人类与机器之�
 
 ### 著作权法和合理使用
 
-20 世纪最著名的画家之一巴勃罗·毕加索据说曾说过，“好艺术家模仿；伟大的艺术家窃取” [[43]](https://www.bbc.com/culture/article/20141112-great-artists-steal)。在文学和美术领域，模仿他人的风格是一种常见的做法，并且通常被视为创造性成功的先决条件。当然，这种模仿有其界限，这些界限被编码进法律中，作为知识产权（IP）。知识产权作为一种可以主张法律所有权的财产的概念，可以追溯到 17 世纪的英国 [[44]](https://www.eff.org/issues/intellectual-property/the-term)。在美国，宪法第一篇第八节规定，国会应拥有权力
+20 世纪最著名的画家之一巴勃罗·毕加索据说曾说过，“好艺术家模仿；伟大的艺术家窃取” [[43]](https://www.bbc.com/culture/article/20141112-great-artists-steal)。在文学和美术领域，模仿他人的风格是一种常见的做法，并且通常被视为创造性成功的先决条件。当然，这种模仿有其界限，这些界限被编码进法律中，作为知识产权（`IP`）。知识产权作为一种可以主张法律所有权的财产的概念，可以追溯到 17 世纪的英国 [[44]](https://www.eff.org/issues/intellectual-property/the-term)。在美国，宪法第一篇第八节规定，国会应拥有权力
 
 为了促进科学和实用艺术的进步，通过为作者和发明家在一定时间内对其各自的作品和发现享有专有权利来确保。[[45]](https://www.archives.gov/founding-docs/constitution-transcript)
 
@@ -150,6 +151,8 @@ AI 生成的艺术不是取代艺术家，而可以理解为人类与机器之�
 
 第四个也是最后一个因素是关于版权材料的使用是否以及如何影响该作品的市场。例如，如果未经授权的卖家在网上分发新电影，这将对该电影的数字销售或流媒体收入构成严重威胁。那些损害原创作品市场的使用不太可能被认为是合理的 [[48]](https://www.copyright.gov/fair-use/)。
 
+
+
 如果这一切看起来有些模糊，那是因为它确实是——如果提起版权诉讼，这些单一因素都不是铁的规则，它们都会被权衡。在转向已经对 LLMs 开发者提起的诉讼之前，让我们首先考察一个类似地基于使用大量互联网版权文本的案例：*Authors Guild v. Google* [[51]](https://www.copyright.gov/fair-use/summaries/authorsguild-google-2dcir2015.pdf)。
 
 2015 年，谷歌与几家主要研究图书馆合作，将他们的藏书数字化——大约有 2000 万卷。这家科技巨头通过合作伙伴关系访问这些书籍，扫描它们，并允许人们搜索文本片段，所有这些都是在没有版权所有者许可的情况下，也没有支付版税。这个案件上诉到了第二巡回上诉法院，该法院同意了下级法院的意见，即谷歌的数字化努力构成了合理使用，因为搜索功能使公众能够访问他们否则无法获得的书本信息，并且尽管谷歌使用了书籍的全文，但他们只返回了匹配文本的片段，而不是使整本书可用。这种使用全部源材料为基本不同的工具的概念与 LLMs 的训练类似。
@@ -158,9 +161,9 @@ AI 生成的艺术不是取代艺术家，而可以理解为人类与机器之�
 
 大型语言模型（LLMs）并不是唯一在版权方面引起轰动的生成模型——如前所述，还有令人印象深刻的生成模型能够创建所有类型的合成媒体，包括图像、音频和视频。其中一些最受欢迎的模型，包括 Midjourney 和 Stable Diffusion，是文本到图像的模型：用户可以描述他们想要的图片外观，模型将为他们生成。
 
-就像大型语言模型（LLMs）一样，生成式图像模型在从互联网收集的大量数据上进行训练。与像 Common Crawl 这样的文本数据集一样，也存在常见的图像数据集，例如由非营利组织大规模人工智能开放网络（LAION）编纂的包含 58 亿张图像的 LAION-5B 数据集。LAION-5B 被 Stability AI（Stable Diffusion 的开发者）和其他公司使用；它由公开在线可用的图像组成，包括股票照片和编辑摄影。一位德国摄影师在发现他的部分股票照片被用于 LAION-5B 后，要求将其删除；LAION 回应称，满足此类请求是不可能的，因为数据库中只包含图像链接，没有存储任何内容，他们无法轻易识别出哪些图像来自他的作品集。德国版权法——像许多国家一样——允许在数据“合法可访问”且之后删除的情况下进行数据挖掘，但生成模型的兴起使得这个问题受到了更多的审查[[52](https://www.vice.com/en/article/pkapb7/a-photographer-tried-to-get-his-photos-removed-from-an-ai-dataset-he-got-an-invoice-instead)]。Stability AI 后来宣布，他们将尊重包括在 LAION 数据集中的艺术家的工作中的退出请求[[53](https://arstechnica.com/information-technology/2022/12/stability-ai-plans-to-let-artists-opt-out-of-stable-diffusion-3-image-training/)]。
+就像大型语言模型（LLMs）一样，生成式图像模型在从互联网收集的大量数据上进行训练。与像 Common Crawl 这样的文本数据集一样，也存在常见的图像数据集，例如由非营利组织大规模人工智能开放网络（LAION）编纂的包含 58 亿张图像的 LAION-5B 数据集。LAION-5B 被 Stability AI（Stable Diffusion 的开发者）和其他公司使用；它由公开在线可用的图像组成，包括股票照片和编辑摄影。一位德国摄影师在发现他的部分股票照片被用于 LAION-5B 后，要求将其删除；LAION 回应称，满足此类请求是不可能的，因为数据库中只包含图像链接，没有存储任何内容，他们无法轻易识别出哪些图像来自他的作品集。德国版权法——像许多国家一样——允许在数据“合法可访问”且之后删除的情况下进行数据挖掘，但生成模型的兴起使得这个问题受到了更多的审查[[52]](https://www.vice.com/en/article/pkapb7/a-photographer-tried-to-get-his-photos-removed-from-an-ai-dataset-he-got-an-invoice-instead)]。Stability AI 后来宣布，他们将尊重包括在 LAION 数据集中的艺术家的工作中的退出请求[[53]](https://arstechnica.com/information-technology/2022/12/stability-ai-plans-to-let-artists-opt-out-of-stable-diffusion-3-image-training/)]。
 
-Stability AI 目前正在因使用 Getty 收藏中的超过 1200 万张照片而受到 Getty Images 的起诉[[52](https://www.vice.com/en/article/pkapb7/a-photographer-tried-to-get-his-photos-removed-from-an-ai-dataset-he-got-an-invoice-instead)]，[[54](https://fingfx.thomsonreuters.com/gfx/legaldocs/byvrlkmwnve/GETTY%20IMAGES%20AI%20LAWSUIT%20complaint.pdf)]。在诉状中，原告写道：
+Stability AI 目前正在因使用 Getty 收藏中的超过 1200 万张照片而受到 Getty Images 的起诉[[52]](https://www.vice.com/en/article/pkapb7/a-photographer-tried-to-get-his-photos-removed-from-an-ai-dataset-he-got-an-invoice-instead)]，[[54](https://fingfx.thomsonreuters.com/gfx/legaldocs/byvrlkmwnve/GETTY%20IMAGES%20AI%20LAWSUIT%20complaint.pdf)]。在诉状中，原告写道：
 
 Getty Images 在近三十年的时间里，以巨大的成本精心挑选了数亿个高质量的视觉资产……其中许多图像是由 Getty Images 的摄影师作为雇佣作品创作的，其他则是由 Getty Images 从第三方获得，并转让了其相关的版权，剩余的则是由 Getty Images 的数百个内容合作伙伴或数十万贡献摄影师许可的，他们依赖 Getty Images 为他们产生的许可收入。[55](https://fingfx.thomsonreuters.com/gfx/legaldocs/byvrlkmwnve/GETTY%20IMAGES%20AI%20LAWSUIT%20complaint.pdf)
 
@@ -172,9 +175,9 @@ Getty Images 在近三十年的时间里，以巨大的成本精心挑选了数�
 
 如果图像上出现 Getty Images 的水印，那么 Stable Diffusion 或其用户可能会被发现在侵犯商标权，尽管 Stability AI 无疑会迅速采取措施解决这个问题。总的来说，这是一个相对未经验证的法律法规领域。
 
-当一个模型不仅学会了人类艺术家捕捉的图像，而且还编码了该艺术家的风格时，事情变得更加复杂。除了生成逼真的渲染效果外，像 Midjourney 和 Stable Diffusion 这样的生成模型还能够以特定风格创作艺术品，如第“生成 AI 在创意工作流程”节所述。风格通常不受版权保护，但很容易理解艺术家们可能会认为这种模仿会贬低或削弱他们的作品。Sarah Andersen 是一位著名的漫画家，她在“Sarah’s Scribbles”系列中发布网络漫画，她写了一篇关于她经历另类右翼网络暴民通过编辑文字和帧来改变其意义的《纽约时报》观点文章。图 4.8 展示了由 AI 工具以她的艺术风格生成的艺术品示例——文字明显混乱，但 Andersen 的一些视觉元素仍然存在。“当我检查了[`haveibeentrained.com`](https://haveibeentrained.com)网站时，这是一个允许人们搜索 LAION 数据集的网站，我的许多作品都在那里，以至于填满了我的整个桌面屏幕，”Andersen 证实，并担心 AI 工具会被用来再次扭曲她的创作[[56](https://www.nytimes.com/2022/12/31/opinion/sarah-andersen-how-algorithim-took-my-work.xhtml)]。
+当一个模型不仅学会了人类艺术家捕捉的图像，而且还编码了该艺术家的风格时，事情变得更加复杂。除了生成逼真的渲染效果外，像 Midjourney 和 Stable Diffusion 这样的生成模型还能够以特定风格创作艺术品，如第“生成 AI 在创意工作流程”节所述。风格通常不受版权保护，但很容易理解艺术家们可能会认为这种模仿会贬低或削弱他们的作品。Sarah Andersen 是一位著名的漫画家，她在“Sarah’s Scribbles”系列中发布网络漫画，她写了一篇关于她经历另类右翼网络暴民通过编辑文字和帧来改变其意义的《纽约时报》观点文章。图 4.8 展示了由 AI 工具以她的艺术风格生成的艺术品示例——文字明显混乱，但 Andersen 的一些视觉元素仍然存在。“当我检查了[`haveibeentrained.com`](https://haveibeentrained.com)网站时，这是一个允许人们搜索 LAION 数据集的网站，我的许多作品都在那里，以至于填满了我的整个桌面屏幕，”Andersen 证实，并担心 AI 工具会被用来再次扭曲她的创作[[56]](https://www.nytimes.com/2022/12/31/opinion/sarah-andersen-how-algorithim-took-my-work.xhtml)]。
 
-Andersen 是三位原告之一，与 Karla Ortiz 和 Kelly McKernan 一起，对 Midjourney、Stability AI 和 DeviantArt 提起了集体诉讼。像 Andersen 一样，Ortiz 和 McKernan 同样发现这些工具能够以令人感到个人侵犯的方式生成他们风格的图像。“他们用我们的作品训练了这些模型。他们剥夺了我们决定是否想成为其中一部分的权利，”Ortiz 说[[56](https://www.nytimes.com/2022/12/31/opinion/sarah-andersen-how-algorithim-took-my-work.xhtml)] [[57](https://www.buzzfeednews.com/article/pranavdixit/ai-art-generators-lawsuit-stable-diffusion-midjourney)]。
+Andersen 是三位原告之一，与 Karla Ortiz 和 Kelly McKernan 一起，对 Midjourney、Stability AI 和 DeviantArt 提起了集体诉讼。像 Andersen 一样，Ortiz 和 McKernan 同样发现这些工具能够以令人感到个人侵犯的方式生成他们风格的图像。“他们用我们的作品训练了这些模型。他们剥夺了我们决定是否想成为其中一部分的权利，”Ortiz 说[[56]](https://www.nytimes.com/2022/12/31/opinion/sarah-andersen-how-algorithim-took-my-work.xhtml)] [[57](https://www.buzzfeednews.com/article/pranavdixit/ai-art-generators-lawsuit-stable-diffusion-midjourney)]。
 
 ![图片](img/CH04_F08_Dhamani.png)
 
@@ -182,7 +185,7 @@ Andersen 是三位原告之一，与 Karla Ortiz 和 Kelly McKernan 一起，对
 
 虽然 Andersen、Ortiz 和 McKernen 的诉讼结果尚待观察，但这些工具仍在世界各地被用来生成和实验新的艺术形式。公平使用的宽容结构意味着，对现状的任何重大改变都需要为在训练 AI 模型中使用树立新的先例。然而，与此同时，我们谈论的许多数据集和模型已经是开源的，这意味着任何人都可以训练自己的模型或创建现有模型的新版本。无论任何特定公司是否改变其数据集构建程序，或者最终支付损害赔偿金或许可费，从漫画到音乐到诗歌，AI 生成的艺术都将持续存在。
 
-### 开源和许可
+## 开源和许可
 
 我们已经提到，由于生产 LLMs 需要巨大的数据和计算规模，这项工作到目前为止主要留给了一些主要的技术公司和一些资金充足的初创公司。然而，由于开源社区的出现，这种情况正在改变。“开源”指的是软件的源代码对公众开放并可重用和修改。更重要的是，开源是一种运动，其倡导者认为开源软件是公共产品，通过更多的协作和参与以及降低进入门槛，可以产生更好的软件。同样，开放数据运动的倡导者建议，当数据广泛可访问时，公众将更加知情，因此政府和非营利组织、科学研究以及其他实体收集或产生的数据应该可以自由使用和构建。
 
@@ -192,7 +195,7 @@ Andersen 是三位原告之一，与 Karla Ortiz 和 Kelly McKernan 一起，对
 
 因此，从自然语言到图像和视频等各个问题领域，对数据的贪婪是有益的。像后来的数据集一样，ImageNet 是由互联网上的图片组成的，然后由 Amazon Mechanical Turk（一个众包平台）上的工人进行标注。通过编写少量代码，人们可以通过程序访问网页并复制其内容来编译文本和图像数据。这种做法被称为*网络爬虫*，只要数据是公开可用的，就被反复发现是合法的[[59](https://techcrunch.com/2022/04/18/web-scraping-legal-court/)]——因此几乎任何你在网上浏览到的内容都可以。例如，任何被搜索引擎索引的网站都会被爬虫抓取。一些运营网站的公司，包括 Reddit、Twitter 和 Stack Overflow，这些网站是大型语言模型（LLM）频繁的数据来源，已经公开表示计划向 AI 开发者收费以使用这些数据，尽管在实践中的具体形式尚不清楚——最有可能的是，他们会出售无需爬取的数据集[[60](https://www.zdnet.com/article/stack-overflow-joins-reddit-and-twitter-in-charging-ai-companies-for-training-data/)]。维护网站的人可以添加一个 robots.txt 文件，这本质上是一组针对爬虫的指令，告诉爬虫它可以抓取哪些页面以及哪些页面不应该抓取。在实践中，robots.txt 文件只是建议性的，恶意程序可以轻易地忽略它们。
 
-尽管公开可用的网络内容法律限制不多，但代码和数据都有相应的许可。一些开源许可明确允许所有类型的衍生使用。例如，麻省理工学院许可证（MIT License）是一种宽松的软件许可证——实际上，这是 GitHub 上最受欢迎的许可证之一——允许在专有软件中重用[[61](https://github.blog/2015-03-09-open-source-license-usage-on-github-com/)]。其他许可证仅允许非商业用途的重用；还有一些许可证可能允许在注明出处的情况下重用，或者满足其他条件。代码和数据许可证在法律上是可执行的[[62](https://www.nytimes.com/2008/08/14/technology/14commons.xhtml)]。
+尽管公开可用的网络内容法律限制不多，但代码和数据都有相应的许可。一些开源许可明确允许所有类型的衍生使用。例如，麻省理工学院许可证（MIT License）是一种宽松的软件许可证——实际上，这是 GitHub 上最受欢迎的许可证之一——允许在专有软件中重用[[61]](https://github.blog/2015-03-09-open-source-license-usage-on-github-com/)]。其他许可证仅允许非商业用途的重用；还有一些许可证可能允许在注明出处的情况下重用，或者满足其他条件。代码和数据许可证在法律上是可执行的[[62]](https://www.nytimes.com/2008/08/14/technology/14commons.xhtml)]。
 
 代码许可证是软件开发商对微软、GitHub 和 OpenAI 提起的集体诉讼中的核心问题，该诉讼涉及 LLM 工具 Copilot。Copilot 基于 OpenAI 的 GPT-3 模型的变体，特别适用于编写代码，并且是在数千个 GitHub 仓库上训练的。与版权问题一样，关于使用此代码进行 LLM 训练的诉讼正在进行中；不清楚依赖许可而不是合理使用将如何运作。该案的原告认为这种使用相当于“前所未有的软件盗版”，而被告则表示，原告通过要求“禁令和数十亿美元的意外之财”来“分享他们自愿分享的软件”，正在破坏开源的原则。[63](https://www.theverge.com/2023/1/28/23575919/microsoft-openai-github-dismiss-copilot-ai-copyright-lawsuit)
 
@@ -220,14 +223,16 @@ Andersen 是三位原告之一，与 Karla Ortiz 和 Kelly McKernan 一起，对
 
 +   为了对抗深度伪造，采用一种综合方法来检测 AI 生成媒体，包括技术解决方案、媒体素养和教育，以及适当的立法来规范技术的使用是至关重要的。
 
-+   生成式 AI 工具通过消除单调的任务、提高生产力和效率，以及使人们能够以前所未有的方式表达他们的创造力，从而改变了创意工作。
 
-+   开发大型语言模型的公司被指控在训练过程中侵犯了他人的知识产权，特别是版权。
 
-+   在美国，未经许可即可允许公平使用受版权保护的材料，公平使用由 1976 年版权法确立的四个因素确定。
+生成式 AI 工具通过消除单调的任务、提高生产力和效率，以及使人们能够以前所未有的方式表达他们的创造力，从而改变了创意工作。
 
-+   虽然有悬而未决的诉讼，但似乎在生成式 AI 领域的多数活动在当前先例下会被认为是公平使用。
+开发大型语言模型的公司被指控在训练过程中侵犯了他人的知识产权，特别是版权。
 
-+   *开源*是指使软件源代码可供公众修改和重用的实践。
+在美国，未经许可即可允许公平使用受版权保护的材料，公平使用由 1976 年版权法确立的四个因素确定。
 
-+   开源和开放数据运动加速了发展，并持续推动人工智能的进步。
+虽然有悬而未决的诉讼，但似乎在生成式 AI 领域的多数活动在当前先例下会被认为是公平使用。
+
+开源是指使软件源代码可供公众修改和重用的实践。
+
+开源和开放数据运动加速了发展，并持续推动人工智能的进步。

@@ -1,44 +1,31 @@
-# 第十章。在数据管道中使用 API
+
+# 第十章 在数据管道中使用 API
 
 > 在最简单的情况下，管道可能只从单个源（如 REST API）提取数据，并将其加载到目的地（如数据仓库中的 SQL 表）。然而，在实践中，管道通常由多个步骤组成...在将数据交付到最终目的地之前。
-> 
-> James Densmore *数据管道口袋参考* (O’Reilly, 2021)
+>
+> James Densmore *数据管道口袋参考* (O'Reilly, 2021)
 
 在第九章中，您使用 Jupyter Notebook 查询 API 并创建数据分析。在笔记本中直接查询对于探索性数据分析很有用，但它要求您反复查询 API。当数据团队为生产创建分析产品时，他们实施计划流程以保持源数据的最新副本，并按所需格式准备和存储。这些结构化流程被称为*数据管道*，因为源数据流入管道并准备和存储以创建数据产品。这些流程的其他常见术语是*提取、转换、加载(ETL)*或*提取、加载、转换(ELT)*，具体取决于它们实施的详细技术。*数据工程师*是专注于数据管道开发和运营的专门角色，但在许多组织中，数据科学家、数据分析师和基础设施工程师也执行这项工作。
 
 在本章中，您将使用 Apache Airflow 创建一个数据管道来读取 SportsWorldCentral 梦幻足球球员数据，Apache Airflow 是一个流行的开源工具，用于使用 Python 管理数据管道。
 
-# 数据管道的数据源类型
+## 数据管道的数据源类型
 
 数据管道的潜在数据源几乎是无限的。以下是一些示例：
 
-API
-
-REST API 是本书的重点，它们是数据管道的重要数据源。与全量加载相比，它们更适合增量更新，因为发送数据源的全部内容可能需要许多网络调用。其他 API 样式，如 GraphQL 和 SOAP，也很常见。
-
-批量文件
-
-大型数据集通常以某种批量文件的形式共享，可以下载和处理。这是一种处理非常大的数据源的高效方式。这些文件的格式可能不同，但 CSV 和 Parquet 是数据科学应用中流行的格式。
-
-流数据和信息队列
-
-对于近实时数据更新，Apache Kafka 或 AWS Kinesis 等流式源提供连续的更新流。
-
-消息队列
-
-消息队列软件，如 RabbitMQ 或 AWS SQS，提供异步消息传递，允许事务在暂存位置发布，并由订阅者稍后拾取。
-
-直接数据库连接
-
-与源数据库的连接允许消费者以原始格式获取数据。这些在组织内部共享数据比对外部消费者更常见。
+- **API**：REST API 是本书的重点，它们是数据管道的重要数据源。与全量加载相比，它们更适合增量更新，因为发送数据源的全部内容可能需要许多网络调用。其他 API 样式，如 GraphQL 和 SOAP，也很常见。
+- **批量文件**：大型数据集通常以某种批量文件的形式共享，可以下载和处理。这是一种处理非常大的数据源的高效方式。这些文件的格式可能不同，但 CSV 和 Parquet 是数据科学应用中流行的格式。
+- **流数据和信息队列**：对于近实时数据更新，Apache Kafka 或 AWS Kinesis 等流式源提供连续的更新流。
+- **消息队列**：消息队列软件，如 RabbitMQ 或 AWS SQS，提供异步消息传递，允许事务在暂存位置发布，并由订阅者稍后拾取。
+- **直接数据库连接**：与源数据库的连接允许消费者以原始格式获取数据。这些在组织内部共享数据比对外部消费者更常见。
 
 您将在本章中创建一个使用 REST API 和批量文件的管道。
 
-# 规划您的数据管道
+## 规划您的数据管道
 
 你的目标是读取 SportsWorldCentral 数据并将其存储在你可以保持更新的本地数据库中。这允许你创建分析产品，如报告和仪表板。对于这个场景，你将假设 API 不允许完整下载数据，因此你需要使用批量文件进行初始加载。
 
-在初始加载之后，你希望获取任何新记录或已更新记录的每日更新。这些更改记录通常被称为 *delta* 或 *deltas*，使用数学术语“变化”来表示。通过仅处理更改记录，更新过程将运行得更快，并使用更少的资源（并节省更多资金）。
+在初始加载之后，你希望获取任何新记录或已更新记录的每日更新。这些更改记录通常被称为 *delta* 或 *deltas*，使用数学术语"变化"来表示。通过仅处理更改记录，更新过程将运行得更快，并使用更少的资源（并节省更多资金）。
 
 图 10-1 显示了你计划中的数据管道。
 
@@ -48,10 +35,10 @@ REST API 是本书的重点，它们是数据管道的重要数据源。与全�
 
 管道包括两个来源：批量数据文件和 API。圆形框代表两个 ETL 流程，它们都将更新分析数据库，这是一个用于创建分析产品（如仪表板和报告）的本地数据库。
 
-# 使用 Apache Airflow 编排数据管道
+## 使用 Apache Airflow 编排数据管道
 
 > Airflow 最好被看作是一个网络中的蜘蛛：它位于你的数据处理过程中间，协调跨不同（分布式）系统的工作。
-> 
+>
 > Julian de Ruiter 和 Bas Harenslak 著，*Apache Airflow 数据管道*（Manning，2021）
 
 在生产环境中运行多个数据处理工作流会迅速变得复杂。调度、错误处理和重启失败进程需要大量的规划和设计。这些任务被称为 *编排*，这正是 Apache Airflow 的用途。随着数据管道数量的增加，使用编排软件而不是自己编写所有这些任务将为你带来好处。Airflow 是一个功能齐全的开源引擎，它使用 Python 进行配置，并处理数据管道中涉及到的许多重复性任务。
@@ -72,7 +59,7 @@ Airflow 使用来自数学图论的专业术语。在图论中，一个 *节点*
 
 你将要学习的最后一件事情是使用 *XCom*，它代表 *跨通信*。XCom 用于在任务之间传递信息和数据。
 
-# 在 GitHub Codespaces 中安装 Apache Airflow
+## 在 GitHub Codespaces 中安装 Apache Airflow
 
 图 10-3 展示了本章将创建的项目的高级架构。
 
@@ -80,13 +67,13 @@ Airflow 使用来自数学图论的专业术语。在图论中，一个 *节点*
 
 ###### 图 10-3\. Airflow 项目的架构
 
-你将使用在 “开始使用您的 GitHub Codespace” 中创建的 Part II GitHub Codespace。如果你还没有创建你的 Part II Codespace，你现在可以完成该部分。
+你将使用在 "开始使用您的 GitHub Codespace" 中创建的 Part II GitHub Codespace。如果你还没有创建你的 Part II Codespace，你现在可以完成该部分。
 
-在启动 Codespace 之前，通过点击 Codespace 旁边的省略号并点击“更改机器类型”将机器类型更改为四核机器。这是必要的，因为 Airflow 同时运行多个服务。
+在启动 Codespace 之前，通过点击 Codespace 旁边的省略号并点击"更改机器类型"将机器类型更改为四核机器。这是必要的，因为 Airflow 同时运行多个服务。
 
 你将在 Codespace 中安装 Airflow 并执行基本配置，这将允许你从图中创建数据管道。（这将是一个用于演示的非生产环境设置。在生产环境中使用 Airflow 之前，需要额外的设置。）
 
-Airflow 可以使用 Docker 或 `pip` 安装。你将使用 Docker 版本。你将遵循 [“在 Docker 中运行 Airflow”](https://oreil.ly/ORZKy) 中的说明，并进行一些自定义。
+Airflow 可以使用 Docker 或 `pip` 安装。你将使用 Docker 版本。你将遵循 ["在 Docker 中运行 Airflow"](https://oreil.ly/ORZKy) 中的说明，并进行一些自定义。
 
 首先，在 Codespace 的 *chapter10* 文件夹中创建一个 *airflow* 目录，并切换到该目录：
 
@@ -183,7 +170,7 @@ airflow-init-1  | 2.10.0
 airflow-init-1 exited with code 0
 ```
 
-此命令将运行几分钟，执行许多命令。如果输出以“exited with code 0”结束，则表示成功。你的环境已初始化，你不需要再次执行此命令。
+此命令将运行几分钟，执行许多命令。如果输出以"exited with code 0"结束，则表示成功。你的环境已初始化，你不需要再次执行此命令。
 
 你现在可以运行 Airflow。要启动 Airflow Web 界面，执行以下命令：
 
@@ -199,19 +186,19 @@ airflow-init-1 exited with code 0
  ✔ Container airflow-airflow-worker-1     Started
 ```
 
-虽然你会看到一个弹出窗口来启动 Web UI，但我发现有时 Web UI 需要几分钟的准备时间，所以不要点击“确定”。相反，等待几分钟，然后选择你的 Codespace 中的“端口”选项卡。你将看到 Web 界面的转发地址。点击地球图标在浏览器中打开 UI，如图 图 10-4 所示。
+虽然你会看到一个弹出窗口来启动 Web UI，但我发现有时 Web UI 需要几分钟的准备时间，所以不要点击"确定"。相反，等待几分钟，然后选择你的 Codespace 中的"端口"选项卡。你将看到 Web 界面的转发地址。点击地球图标在浏览器中打开 UI，如图 10-4 所示。
 
 ![打开 Airflow Web 界面](img/haad_1004.png)
 
 ###### 图 10-4\. 打开 Airflow Web 界面
 
-您将看到登录页面。输入用户名**`airflow`**和密码**`airflow`**，然后点击“登录”。（这些初始凭据仅用于演示。）您将看到在您的 Codespace 中运行的 Airflow 应用程序的 Web 界面，如图图 10-5 所示。当您开始时，列表中没有 DAG。您将在创建 DAG 以完成您的数据管道需求时了解更多关于 Airflow 的功能。
+您将看到登录页面。输入用户名`airflow`和密码`airflow`，然后点击"登录"。（这些初始凭据仅用于演示。）您将看到在您的 Codespace 中运行的 Airflow 应用程序的 Web 界面，如图 10-5 所示。当您开始时，列表中没有 DAG。您将在创建 DAG 以完成您的数据管道需求时了解更多关于 Airflow 的功能。
 
 ![Airflow 主页](img/haad_1005.png)
 
 ###### 图 10-5\. Airflow 主页
 
-# 创建您的本地分析数据库
+## 创建您的本地分析数据库
 
 您的数据管道将用于将球员记录插入和更新到本地数据库中。这是一个常见的数据科学模式：从源数据更新数据库，然后从数据库创建模型、指标和报告。将目录更改为*dags*并创建数据库和`player`表，如下所示：
 
@@ -231,37 +218,36 @@ sqlite> CREATE TABLE player (
 sqlite> .exit
 ```
 
-# 在 Codespaces 中启动您的 API
+## 在 Codespaces 中启动您的 API
 
-您的 Airflow 管道需要一个 SportsWorldCentral API 的运行副本来收集更新。按照“在本地运行 SportsWorldCentral (SWC) API”中的说明，在 Codespaces 的另一个终端窗口中运行您的 API，并从浏览器栏中复制基本 URL。您将在下一节中将配置 Airflow 以引用该 API 的基本 URL。
+您的 Airflow 管道需要一个 SportsWorldCentral API 的运行副本来收集更新。按照"在本地运行 SportsWorldCentral (SWC) API"中的说明，在 Codespaces 的另一个终端窗口中运行您的 API，并从浏览器栏中复制基本 URL。您将在下一节中将配置 Airflow 以引用该 API 的基本 URL。
 
-# 配置 Airflow 连接
+## 配置 Airflow 连接
 
 Airflow *连接*允许您在服务器中而不是在代码中存储有关数据源和目标的信息。这对于维护用于开发、测试和生产的不同 Airflow 环境非常有用。您将为您的 API 和分析数据库创建连接。
 
 在 Airflow UI 中，选择 Admin > Connections。点击加号以添加新的连接记录。现在您将使用之前在*docker-compose.yaml*文件中查看的*volume*映射。使用以下值：
 
-+   *连接 ID*：**`analytics_database`**
+- *连接 ID*：`analytics_database`
+- *连接类型*：Sqlite
+- *描述*：`用于存储本地分析数据的数据库。`
 
-+   *连接类型*：Sqlite
 
-+   *描述*：**`用于存储本地分析数据的数据库。`**
 
-+   *模式*：**`/opt/airflow/dags/analytics_database.db`**
+# 配置 Airflow 连接
+
++ *模式*：`/opt/airflow/dags/analytics_database.db`
 
 其余值留空，然后点击保存。
 
 接下来，添加 API 连接的连接：
 
-+   *连接 ID*：**`sportsworldcentral_url`**
++ *连接 ID*：`sportsworldcentral_url`
++ *连接类型*：HTTP
++ *描述*：调用 SportsWorldCentral API 的 URL。
++ *主机*：输入运行在 Codespaces 中的 API 的基本 URL。
 
-+   *连接类型*：HTTP
-
-+   *描述*：**`调用 SportsWorldCentral API 的 URL。`**
-
-+   *主机*：输入运行在 Codespaces 中的 API 的基本 URL。
-
-其余值留空，然后点击保存。您应该看到列出两个连接，如图图 10-6 所示。
+其余值留空，然后点击保存。您应该看到列出两个连接，如图 10-6 所示。
 
 ![配置的 Airflow 连接](img/haad_1006.png)
 
@@ -269,20 +255,20 @@ Airflow *连接*允许您在服务器中而不是在代码中存储有关数据�
 
 # 创建您的第一个 DAG
 
-![Figure 10-7](img/#date_pipeline_airflow_ch10)显示了使用 Airflow 实现您的管道的示例，使用两个 DAG。*bulk_player_file_load.py* DAG 将执行从提供的批量文件到分析数据库的初始加载，该文件在本书的第一部分中提供。该文件位于您的存储库的*chapter10/complete*文件夹中，但由于篇幅限制，本章没有介绍它。
+图 10-7 显示了使用 Airflow 实现您的管道的示例，使用两个 DAG。`bulk_player_file_load.py` DAG 将执行从提供的批量文件到分析数据库的初始加载，该文件在本书的第一部分中提供。该文件位于您的存储库的 `chapter10/complete` 文件夹中，但由于篇幅限制，本章没有介绍它。
 
 ![Airflow components of your data pipeline](img/haad_1007.png)
 
 ###### 图 10-7\. 您的数据管道的 Airflow 组件
 
-创建使用 API 数据的 DAG，*recurring_player_api_insert_update_dag.py*。此 DAG 使用 SportsWorldCentral API 执行数据库的增量更新。将目录更改为*dags*并创建*recurring_player_api_insert_update_dag.py*文件：
+创建使用 API 数据的 DAG，`recurring_player_api_insert_update_dag.py`。此 DAG 使用 SportsWorldCentral API 执行数据库的增量更新。将目录更改为 `dags` 并创建 `recurring_player_api_insert_update_dag.py` 文件：
 
 ```py
 .../airflow (main) $ cd dags
 .../dags (main) $  touch recurring_player_api_insert_update_dag.py
 ```
 
-将以下内容添加到*recurring_player_api_insert_update_dag.py*文件中：
+将以下内容添加到 `recurring_player_api_insert_update_dag.py` 文件中：
 
 ```py
 import datetime
@@ -348,7 +334,7 @@ dag_instance = recurring_player_api_insert_update_dag() ![14](img/14.png)
 
 ![1](img/1.png)(#co_using_apis_in_data_pipelines_CO2-1)
 
-此导入允许您使用`@dag`装饰器定义 DAG。
+此导入允许您使用 `@dag` 装饰器定义 DAG。
 
 ![2](img/2.png)(#co_using_apis_in_data_pipelines_CO2-2)
 
@@ -360,7 +346,7 @@ dag_instance = recurring_player_api_insert_update_dag() ![14](img/14.png)
 
 ![4](img/4.png)(#co_using_apis_in_data_pipelines_CO2-4)
 
-这是验证以下定义的`api_health_check_task`响应的代码。这是第一个任务，它允许 DAG 在执行其他任务之前验证 API 的状态。
+这是验证以下定义的 `api_health_check_task` 响应的代码。这是第一个任务，它允许 DAG 在执行其他任务之前验证 API 的状态。
 
 ![5](img/5.png)(#co_using_apis_in_data_pipelines_CO2-5)
 
@@ -372,23 +358,23 @@ dag_instance = recurring_player_api_insert_update_dag() ![14](img/14.png)
 
 ![7](img/7.png)(#co_using_apis_in_data_pipelines_CO2-7)
 
-这里它将数据从 XCom 传递到共享的`upsert_player_data`函数，该函数定义在单独的文件中。
+这里它将数据从 XCom 传递到共享的 `upsert_player_data` 函数，该函数定义在单独的文件中。
 
 ![8](img/8.png)(#co_using_apis_in_data_pipelines_CO2-8)
 
-这是主 DAG 定义。它使用`@dag`装饰器将 Python 函数定义为 DAG。任务定义在此方法内。
+这是主 DAG 定义。它使用 `@dag` 装饰器将 Python 函数定义为 DAG。任务定义在此方法内。
 
 ![9](img/9.png)(#co_using_apis_in_data_pipelines_CO2-9)
 
-第一个任务使用`HttpOperator`模板调用 API 的健康检查端点。它在继续之前添加了一个`response_check`方法来检查 API 的状态。
+第一个任务使用 `HttpOperator` 模板调用 API 的健康检查端点。它在继续之前添加了一个 `response_check` 方法来检查 API 的状态。
 
 ![10](img/10.png)(#co_using_apis_in_data_pipelines_CO2-10)
 
-在此示例中，最小最后更改日期是硬编码的。在生产中，可以使用[Airflow 模板变量](https://oreil.ly/pFHaG)来获取最后一天的更新。
+在此示例中，最小最后更改日期是硬编码的。在生产中，可以使用 [Airflow 模板变量](https://oreil.ly/pFHaG) 来获取最后一天的更新。
 
 ![11](img/11.png)(#co_using_apis_in_data_pipelines_CO2-11)
 
-第二个任务使用`HttpOperator`调用 API 的玩家端点，并使用查询参数来限制返回的记录。
+第二个任务使用 `HttpOperator` 调用 API 的玩家端点，并使用查询参数来限制返回的记录。
 
 ![12](img/12.png)(#co_using_apis_in_data_pipelines_CO2-12)
 
@@ -402,19 +388,19 @@ dag_instance = recurring_player_api_insert_update_dag() ![14](img/14.png)
 
 最后一条语句是必需的，用于实例化由 `@dag` 装饰器定义的 DAG。
 
-抽空比较一下这段代码与 图 10-7。DAG 文件的关键部分位于文件底部：`@dag` 装饰器定义了主要的 DAG 包装器。在 DAG 内部有三个任务：两个使用 `HttpOperator` 连接到 API，一个使用 `PythonOperator` 连接到 SQLite 数据库。
+抽空比较一下这段代码与图 10-7。DAG 文件的关键部分位于文件底部：`@dag` 装饰器定义了主要的 DAG 包装器。在 DAG 内部有三个任务：两个使用 `HttpOperator` 连接到 API，一个使用 `PythonOperator` 连接到 SQLite 数据库。
 
 语句 `api_health_check_task >> api_player_query_task >> player_sqlite_upsert_task` 使用右移运算符 `>>` 设置任务之间的依赖关系。这些任务具有非常简单的顺序依赖关系，但 Airflow 能够实现任务之间非常复杂的依赖关系。有关此功能的更多信息，请参阅 Astronomer 的 [“在 Airflow 中管理任务和任务组依赖”](https://oreil.ly/PTa4M)。
 
 # 编写共享函数
 
-尽管两个 DAG 的来源不同，但它们都在分析数据库上执行 *upsert* 操作，这意味着如果源记录已存在于数据库中，则代码会更新它，否则会插入一条新记录。因为此任务在两个 DAG 之间是共享的，所以你需要创建一个包含共享函数的单独 Python 文件。创建 *shared_functions.py* 文件：
+尽管两个 DAG 的来源不同，但它们都在分析数据库上执行 *upsert* 操作，这意味着如果源记录已存在于数据库中，则代码会更新它，否则会插入一条新记录。因为此任务在两个 DAG 之间是共享的，所以你需要创建一个包含共享函数的单独 Python 文件。创建 `shared_functions.py` 文件：
 
 ```py
 .../dags (main) $ touch shared_functions.py
 ```
 
-将以下内容添加到 *shared_functions.py* 文件中：
+将以下内容添加到 `shared_functions.py` 文件中：
 
 ```py
 import logging
@@ -496,6 +482,8 @@ def upsert_player_data(player_json):
 此函数接收 API 的数据作为参数，然后使用你在用户界面中定义的 Airflow 连接将数据加载到 SQLite 数据库中。这是一个参数化 SQL 查询，其中输入数据通过 `VALUES (?, ?, ?, ?, ?, ?)` 引用。这是一项重要的措施，可以防止 SQL 注入攻击，如果恶意行为者将代码插入到源数据字段中，而你的进程期望数据，则可能会发生此类攻击。
 
 # 运行你的 DAG
+
+
 
 在运行 DAG 之前，请确保你的 API 正在运行。导航回 Airflow UI，你将看到你的 DAG 列出，如图 图 10-8 所示。用户界面功能众多，本章无法全部涵盖，但你可以在 [“UI / Screenshots”](https://oreil.ly/DfOSC) 中了解用户界面。
 

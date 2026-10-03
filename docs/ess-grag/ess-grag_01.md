@@ -1,14 +1,13 @@
+
+
 # 第二章：向量相似度搜索和混合搜索
 
-### 本章涵盖
+## 本章涵盖
 
-+   嵌入、嵌入模型、向量空间和向量相似度搜索简介
-
-+   向量相似度在 RAG 应用中的位置
-
-+   使用向量相似度搜索的 RAG 应用的实用操作指南
-
-+   向 RAG 应用中添加全文搜索以查看启用混合搜索方法如何提高结果
++ 嵌入、嵌入模型、向量空间和向量相似度搜索简介
++ 向量相似度在 RAG 应用中的位置
++ 使用向量相似度搜索的 RAG 应用的实用操作指南
++ 向 RAG 应用中添加全文搜索以查看启用混合搜索方法如何提高结果
 
 创建知识图谱可能是一个迭代过程，你从非结构化数据开始，然后向其添加结构。当你拥有大量非结构化数据并希望开始使用它来回答问题时，这通常是这种情况。
 
@@ -74,9 +73,8 @@
 
 我们需要将应用程序分为两个阶段：
 
-+   数据设置
-
-+   查询时间
++ 数据设置
++ 查询时间
 
 我们将首先查看数据设置，然后我们将查看在查询时间应用程序将执行的操作。
 
@@ -84,13 +82,10 @@
 
 从前面的章节中，我们知道我们需要对数据进行一些处理，以便能够在运行时将其放置在嵌入模型向量空间中执行向量相似度搜索。所需的部分包括
 
-+   文本语料库
-
-+   文本分块函数
-
-+   嵌入模型
-
-+   具有向量相似度搜索能力的数据库
++ 文本语料库
++ 文本分块函数
++ 嵌入模型
++ 具有向量相似度搜索能力的数据库
 
 我们将逐一介绍这些组件，并展示它们如何有助于应用程序数据设置。
 
@@ -149,9 +144,7 @@ print(len(chunks)) # 89 chunks in total    #3
 ```
 
 #1 定义分割文本的功能
-
 #2 调用函数并获取块
-
 #3 打印块列表的长度。函数的大部分只是为了确保我们不分割单个单词，而只是在空格上分割。
 
 ### 2.2.4 嵌入模型
@@ -177,11 +170,8 @@ print(len(embeddings[0])) # 1536 dimensions    #4
 ```
 
 #1 定义嵌入块的功能
-
 #2 调用函数并获取嵌入向量
-
 #3 打印嵌入向量列表的长度
-
 #4 打印第一个嵌入向量的长度
 
 ### 2.2.5 带有向量相似度搜索功能的数据库
@@ -267,37 +257,14 @@ similar_records, _, _ = driver.execute_query(query, question_embedding=question_
 
 ##### 列表 2.8 打印结果
 
+
+
+
 ```py
 for record in similar_records:
     print(record["text"])
     print(record["score"], record["index"])
     print("======")
-
-upbringing, his interest in inventions and patents was not unusual.
-Being a manufacturer’s son, Einstein grew upon in an environment of↪
-↪ machines and instruments.
-When his father’s company obtained the contract to illuminate Munich city↪
-↪ during beer festival, he
-was actively engaged in execution of the contract. In his ETH days↪
-↪ Einstein was genuinely interested
-in experimental works. He wrote to his friend, “most of the time I worked↪
-↪ in the physical laboratory,
-fascinated by the direct contact with observation.” Einstein's
-0.8185358047485352 42
-======
-instruments. However, it must also be
-emphasized that his main occupation was theoretical physics. The↪
-↪ inventions he worked upon were
-his diversions. In his unproductive times he used to work upon on solving↪
-↪ mathematical problems (not
-related to his ongoing theoretical investigations) or took upon some↪
-↪ practical problem. As shown in
-Table. 2, Einstein was involved in three major inventions; (i)↪
-↪ refrigeration system with Leo Szilard, (ii)
-Sound reproduction system with Rudolf Goldschmidt and (iii) automatic↪
-↪ camera
-0.7906564474105835 44
-======
 ```
 
 从打印结果中，我们可以看到匹配的块、它们的相似度得分和它们的索引。下一步是使用这些块通过 LLM 生成一个答案。
@@ -374,7 +341,7 @@ driver.execute_query("CREATE FULLTEXT INDEX PdfChunkFulltext FOR (c:Chunk)
 ↪ ON EACH [c.text]")
 ```
 
-在这里，我们在 `:Chunk` 节点的 `text` 属性上创建一个名为 `PdfChunkFulltext` 的全文索引。
+在这里，我们在`:Chunk`节点的`text`属性上创建一个名为`PdfChunkFulltext`的全文索引。
 
 ### 2.3.2 执行混合搜索
 
@@ -407,7 +374,7 @@ RETURN node, score
 '''
 ```
 
-我们编写了一个联合 Cypher 查询，首先执行向量相似度搜索，然后执行全文搜索。然后我们去重结果并返回前 `k` 个结果。
+我们编写了一个联合 Cypher 查询，首先执行向量相似度搜索，然后执行全文搜索。然后我们去重结果并返回前`k`个结果。
 
 ##### 列表 2.14 在 Neo4j 中调用混合搜索
 

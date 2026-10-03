@@ -1,18 +1,14 @@
+
 # 第七章：微调以遵循指令
 
 ### 本章涵盖
 
-+   LLM 的指令微调过程
-
-+   准备用于监督指令微调的数据集
-
-+   组织训练批次中的指令数据
-
-+   加载预训练的 LLM 并将其微调以遵循人类指令
-
-+   提取用于评估的 LLM 生成的指令响应
-
-+   评估指令微调的 LLM
++ LLM 的指令微调过程
++ 准备用于监督指令微调的数据集
++ 组织训练批次中的指令数据
++ 加载预训练的 LLM 并将其微调以遵循人类指令
++ 提取用于评估的 LLM 生成的指令响应
++ 评估指令微调的 LLM
 
 之前，我们实现了 LLM 架构，进行了预训练，并将外部来源的预训练权重导入到我们的模型中。然后，我们专注于对 LLM 进行微调，以完成特定的分类任务：区分垃圾邮件和非垃圾邮件短信。现在，我们将实现微调 LLM 以遵循人类指令的过程，如图 7.1 所示。指令微调是开发用于聊天机器人应用、个人助理和其他对话任务 LLM 的主要技术之一。
 
@@ -283,6 +279,8 @@ print(tokenizer.encode("<|endoftext|>", allowed_special={"<|endoftext|>"}))
 
 我们可以使用自定义的 collate 函数来实现填充过程：
 
+
+
 ```py
 def custom_collate_draft_1(
     batch,
@@ -315,7 +313,7 @@ def custom_collate_draft_1(
 
 #4 将输入列表转换为张量并将其传输到目标设备
 
-我们实现的 `custom_collate_draft_1` 被设计成可以集成到 PyTorch `DataLoader` 中，但它也可以作为一个独立的工具使用。在这里，我们独立使用它来测试和验证它是否按预期运行。让我们尝试将以下三个不同的输入组装成一个批次，其中每个示例都被填充到相同的长度：
+我们实现的`custom_collate_draft_1`被设计成可以集成到 PyTorch `DataLoader`中，但它也可以作为一个独立的工具使用。在这里，我们独立使用它来测试和验证它是否按预期运行。让我们尝试将以下三个不同的输入组装成一个批次，其中每个示例都被填充到相同的长度：
 
 ```py
 inputs_1 = [0, 1, 2, 3, 4]
@@ -337,7 +335,7 @@ tensor([[    0,     1,     2,     3,     4],
         [    7,     8,     9, 50256, 50256]])
 ```
 
-这个输出显示所有输入都已填充到最长输入列表 `inputs_1` 的长度，包含五个标记 ID。
+这个输出显示所有输入都已填充到最长输入列表`inputs_1`的长度，包含五个标记 ID。
 
 我们刚刚实现了我们的第一个自定义 collate 函数，用于从输入列表创建批处理。然而，正如我们之前学到的，我们还需要创建与输入 ID 批处理相对应的目标标记 ID 批处理。这些目标 ID，如图 7.9 所示，至关重要，因为它们代表我们希望模型生成的以及我们在训练中需要用于计算权重更新的损失。也就是说，我们修改了我们的自定义 collate 函数，使其除了返回输入标记 ID 外，还返回目标标记 ID。
 
@@ -568,6 +566,8 @@ loss_1 == loss_3: tensor(True)
 
 ##### 图 7.14 指示 LLM 微调的三阶段过程。到目前为止，我们已经准备好了数据集并实现了一个自定义的 collate 函数来批量处理指令数据集。现在，我们可以创建并应用数据加载器到 LLM 指令微调和评估所需的训练、验证和测试集。
 
+
+
 在实现数据加载器创建步骤之前，我们必须简要谈谈`custom_collate_fn`的`device`设置。`custom_collate_fn`包括将输入和目标张量（例如，`torch.stack(inputs_lst).to(device)`）移动到指定设备的代码，这可以是`"cpu"`或`"cuda"`（用于 NVIDIA GPU）或可选的`"mps"`（用于配备 Apple Silicon 芯片的 Mac）。
 
 注意：使用`"mps"`设备可能与本章内容中的内容产生数值差异，因为 PyTorch 对 Apple Silicon 的支持仍然是实验性的。
@@ -601,7 +601,7 @@ customized_collate_fn = partial(
 
 接下来，我们可以像之前一样设置数据加载器，但这次，我们将使用我们的自定义 collate 函数进行批处理过程。
 
-##### 列表 7.6 初始化数据加载器
+### 列表 7.6 初始化数据加载器
 
 ```py
 from torch.utils.data import DataLoader
@@ -674,13 +674,13 @@ torch.Size([8, 69]) torch.Size([8, 69])
 
 ![图](img/7-15.png)
 
-##### 图 7.15 指令微调 LLM 的三个阶段过程。在数据集准备之后，指令遵循的 LLM 微调过程开始于加载一个预训练 LLM，这作为后续训练的基础。
+#### 图 7.15 指令微调 LLM 的三个阶段过程。在数据集准备之后，指令遵循的 LLM 微调过程开始于加载一个预训练 LLM，这作为后续训练的基础。
 
-加载我们的预训练模型需要与我们在第 5.5 节中预训练数据时相同的代码，以及在第 6.4 节中对其进行分类微调时的代码，只是我们现在指定 `"gpt2-medium` `(355M)"` 而不是 `"gpt2-small` `(124M)"`。
+加载我们的预训练模型需要与我们在第 5.5 节中预训练数据时相同的代码，以及在第 6.4 节中对其进行分类微调时的代码，只是我们现在指定 `"gpt2-medium (355M)"` 而不是 `"gpt2-small (124M)"`。
 
-注意：执行此代码将启动下载中等大小的 GPT 模型，该模型的存储需求约为 1.42 吉字节。这大约是小型模型所需存储空间的 三倍。
+注意：执行此代码将启动下载中等大小的 GPT 模型，该模型的存储需求约为 1.42 吉字节。这大约是小型模型所需存储空间的三倍。
 
-##### 列表 7.7 加载预训练模型
+### 列表 7.7 加载预训练模型
 
 ```py
 from gpt_download import download_and_load_gpt2
@@ -747,7 +747,7 @@ appropriately completes the request.
 Convert the active sentence to passive: 'The chef cooks the meal every day.'
 ```
 
-接下来，我们使用与第五章中预训练模型相同的 `generate` 函数来生成模型的响应：
+接下来，我们使用与第五章中预训练模型相同的`generate`函数来生成模型的响应：
 
 ```py
 from chapter05 import generate, text_to_token_ids, token_ids_to_text
@@ -762,16 +762,16 @@ token_ids = generate(
 generated_text = token_ids_to_text(token_ids, tokenizer)
 ```
 
-`generate` 函数返回组合的输入和输出文本。这种行为之前很方便，因为预训练 LLM 主要被设计为文本补全模型，其中输入和输出被连接起来以创建连贯且易于阅读的文本。然而，当评估模型在特定任务上的性能时，我们通常只想关注模型生成的响应。
+`generate`函数返回组合的输入和输出文本。这种行为之前很方便，因为预训练 LLM 主要被设计为文本补全模型，其中输入和输出被连接起来以创建连贯且易于阅读的文本。然而，当评估模型在特定任务上的性能时，我们通常只想关注模型生成的响应。
 
-为了隔离模型的响应文本，我们需要从 `generated_text` 的开始减去输入指令的长度：
+为了隔离模型的响应文本，我们需要从`generated_text`的开始减去输入指令的长度：
 
 ```py
 response_text = generated_text[len(input_text):].strip()
 print(response_text)
 ```
 
-此代码从`generated_text`的开头移除输入文本，只留下模型的生成响应。然后应用`strip()`函数来移除任何前导或尾随空白字符。输出如下
+此代码从`generated_text`的开头移除输入文本，只留下模型的生成响应。然后应用`strip()`函数来移除任何前导或尾随空白字符。输出如下：
 
 ```py
 ### Response:
@@ -791,7 +791,7 @@ Convert the active sentence to passive: 'The chef cooks the
 
 ![figure](img/7-16.png)
 
-##### 图 7.16 对 LLM 指令微调的三阶段过程。在第 5 步中，我们在之前准备好的指令数据集上训练之前加载的预训练模型。
+#### 图 7.16 对 LLM 指令微调的三阶段过程。在第 5 步中，我们在之前准备好的指令数据集上训练之前加载的预训练模型。
 
 ```py
 from chapter05 import (
@@ -825,24 +825,30 @@ Training loss: 3.825908660888672
 Validation loss: 3.7619335651397705
 ```
 
-##### 处理硬件限制
+### 处理硬件限制
 
-使用和训练一个更大的模型，如 GPT-2 中等（355 百万参数），比较小的 GPT-2 模型（124 百万参数）计算量更大。如果您因硬件限制而遇到问题，可以通过将`CHOOSE_MODEL` `=` `"gpt2-medium` `(355M)"`更改为`CHOOSE_MODEL` `=` `"gpt2-small` `(124M)"`（见第 7.5 节）来切换到较小的模型。或者，为了加快模型训练，考虑使用 GPU。本书代码库中的以下补充部分列出了使用云 GPU 的几种选项：[`mng.bz/EOEq`](https://mng.bz/EOEq)。
+使用和训练一个更大的模型，如 GPT-2 中等（355 百万参数），比较小的 GPT-2 模型（124 百万参数）计算量更大。如果您因硬件限制而遇到问题，可以通过将`CHOOSE_MODEL = "gpt2-medium (355M)"`更改为`CHOOSE_MODEL = "gpt2-small (124M)"`（见第 7.5 节）来切换到较小的模型。或者，为了加快模型训练，考虑使用 GPU。本书代码库中的以下补充部分列出了使用云 GPU 的几种选项：[`mng.bz/EOEq`](https://mng.bz/EOEq)。
 
 下表提供了在包括 CPU 和 GPU 在内的各种设备上训练每个模型的参考运行时间，对于 GPT-2。在兼容的 GPU 上运行此代码无需代码更改，并且可以显著加快训练速度。对于本章中显示的结果，我使用了 GPT-2 中等模型，并在 A100 GPU 上对其进行训练。
 
 | 模型名称 | 设备 | 两个 epoch 的运行时间 |
 | --- | --- | --- |
-| gpt2-medium (355M)  | CPU (M3 MacBook Air)  | 15.78 分钟  |
-| gpt2-medium (355M)  | GPU (NVIDIA L4)  | 1.83 分钟  |
-| gpt2-medium (355M)  | GPU (NVIDIA A100)  | 0.86 分钟  |
-| gpt2-small (124M)  | CPU (M3 MacBook Air)  | 5.74 分钟  |
-| gpt2-small (124M)  | GPU (NVIDIA L4)  | 0.69 分钟  |
-| gpt2-small (124M)  | GPU (NVIDIA A100)  | 0.39 分钟  |
+| gpt2-medium (355M) | CPU (M3 MacBook Air) | 15.78 分钟 |
+| gpt2-medium (355M) | GPU (NVIDIA L4) | 1.83 分钟 |
+| gpt2-medium (355M) | GPU (NVIDIA A100) | 0.86 分钟 |
+| gpt2-small (124M) | CPU (M3 MacBook Air) | 5.74 分钟 |
+| gpt2-small (124M) | GPU (NVIDIA L4) | 0.69 分钟 |
+| gpt2-small (124M) | GPU (NVIDIA A100) | 0.39 分钟 |
 
 模型和数据加载器准备就绪后，我们现在可以开始训练模型。列表 7.8 中的代码设置了训练过程，包括初始化优化器、设置 epoch 数量以及定义评估频率和起始上下文，以便在训练期间根据我们在 7.5 节中查看的第一个验证集指令（`val_data[0]`）评估生成的 LLM 响应。
 
-##### 列表 7.8 指令微调预训练的 LLM
+### 列表 7.8 指令微调预训练的 LLM
+
+
+
+## 微调过程与训练输出
+
+以下代码展示了在指令数据集上微调模型的训练脚本：
 
 ```py
 import time
@@ -899,7 +905,7 @@ Training completed in 0.87 minutes.
 
 训练输出显示模型正在有效地学习，我们可以根据两个 epoch 中训练和验证损失值的持续下降来判断。这一结果表明，模型正在逐渐提高其理解和遵循提供指令的能力。（由于模型在这两个 epoch 内展示了有效的学习，因此将训练扩展到第三个 epoch 或更多可能是不必要的，甚至可能适得其反，因为它可能导致过拟合的增加。）
 
-此外，每个 epoch 结束时生成的响应使我们能够检查模型在验证集示例中正确执行给定任务的过程。在这种情况下，模型成功地将主动句“`The` `chef` `cooks` `the` `meal` `every` `day.`”转换为它的被动语态对应句：“`The` `meal` `is` `cooked` `every` `day` `by` `the` `chef.`”
+此外，每个 epoch 结束时生成的响应使我们能够检查模型在验证集示例中正确执行给定任务的过程。在这种情况下，模型成功地将主动句“`The chef cooks the meal every day.`”转换为它的被动语态对应句：“`The meal is cooked every day by the chef.`”
 
 我们将在稍后更详细地回顾和评估模型的响应质量。现在，让我们检查训练和验证损失曲线，以获得对模型学习过程的更多见解。为此，我们使用与预训练相同的`plot_losses`函数：
 
@@ -1067,25 +1073,26 @@ print(f"Model saved as {file_name}")
 
 为了以自动化的方式评估测试集响应，我们利用由 Meta AI 开发的现有的指令微调的 80 亿参数 Llama 3 模型。此模型可以使用开源的 Ollama 应用程序([`ollama.com`](https://ollama.com))本地运行。
 
-备注：Ollama 是一个在笔记本电脑上运行 LLM 的高效应用程序。它作为开源的 llama.cpp 库的包装器([`github.com/ggerganov/llama.cpp`](https://github.com/ggerganov/llama.cpp))，该库使用纯 C/C++实现 LLM 以最大化效率。然而，Ollama 仅是一个用于使用 LLM 生成文本的工具（推理），不支持训练或微调 LLM。
 
-##### 通过 Web API 使用更大的 LLM
 
-80 亿参数的 Llama 3 模型是一个非常强大的本地运行的 LLM。然而，它并不像 OpenAI 提供的 GPT-4 这样的大型专有 LLM 那样强大。对于有兴趣探索如何通过 OpenAI API 利用 GPT-4 来评估生成模型响应的读者，本书的补充材料中提供了一个可选的代码笔记本，可在[`mng.bz/BgEv`](https://mng.bz/BgEv)找到。
+备注：`Ollama`是一个在笔记本电脑上运行`LLM`的高效应用程序。它作为开源的`llama.cpp`库的包装器（[`github.com/ggerganov/llama.cpp`](https://github.com/ggerganov/llama.cpp)），该库使用纯`C/C++`实现`LLM`以最大化效率。然而，`Ollama`仅是一个用于使用`LLM`生成文本的工具（推理），不支持训练或微调`LLM`。
 
-要执行以下代码，请访问[`ollama.com`](https://ollama.com)安装 Ollama，并按照为您的操作系统提供的说明进行操作：
+## 通过 Web API 使用更大的 LLM
 
-+   *对于 macOS 和 Windows 用户*—打开下载的 Ollama 应用程序。如果提示安装命令行使用，请选择是。
+80 亿参数的`Llama 3`模型是一个非常强大的本地运行的`LLM`。然而，它并不像`OpenAI`提供的`GPT-4`这样的大型专有`LLM`那样强大。对于有兴趣探索如何通过`OpenAI API`利用`GPT-4`来评估生成模型响应的读者，本书的补充材料中提供了一个可选的代码笔记本，可在[`mng.bz/BgEv`](https://mng.bz/BgEv)找到。
 
-+   *对于 Linux 用户*—使用 Ollama 网站上的安装命令。
+要执行以下代码，请访问[`ollama.com`](https://ollama.com)安装`Ollama`，并按照为您的操作系统提供的说明进行操作：
 
-在实现模型评估代码之前，让我们首先下载 Llama 3 模型，并通过使用命令行终端来验证 Ollama 是否正常工作。要从命令行使用 Ollama，您必须启动 Ollama 应用程序或在单独的终端中运行 `ollama` `serve`，如图 7.20 所示。
+- **对于 macOS 和 Windows 用户** — 打开下载的`Ollama`应用程序。如果提示安装命令行使用，请选择是。
+- **对于 Linux 用户** — 使用`Ollama`网站上的安装命令。
+
+在实现模型评估代码之前，让我们首先下载`Llama 3`模型，并通过使用命令行终端来验证`Ollama`是否正常工作。要从命令行使用`Ollama`，您必须启动`Ollama`应用程序或在单独的终端中运行`ollama serve`，如图 7.20 所示。
 
 ![图](img/7-20.png)
 
-##### 图 7.20 运行 Ollama 的两种选项。左侧面板说明了使用 `ollama` `serve` 启动 Ollama。右侧面板显示了 macOS 中的第二种选项，在后台运行 Ollama 应用程序而不是使用 `ollama` `serve` 命令来启动应用程序。
+**图 7.20 运行 Ollama 的两种选项。** 左侧面板说明了使用`ollama serve`启动`Ollama`。右侧面板显示了 macOS 中的第二种选项，在后台运行`Ollama`应用程序而不是使用`ollama serve`命令来启动应用程序。
 
-在不同的终端中运行 Ollama 应用程序或 `ollama` `serve` 时，请在命令行（而不是 Python 会话）中执行以下命令，以尝试 80 亿参数的 Llama 3 模型：
+在不同的终端中运行`Ollama`应用程序或`ollama serve`时，请在命令行（而不是 Python 会话）中执行以下命令，以尝试 80 亿参数的`Llama 3`模型：
 
 ```py
 ollama run llama3
@@ -1106,11 +1113,11 @@ removing any unused layers
 success
 ```
 
-##### 替代 Ollama 模型
+### 替代 Ollama 模型
 
-`ollama` `run` `llama3` 命令中的 `llama3` 指的是指令微调的 80 亿参数 Llama 3 模型。使用 Ollama 和 `llama3` 模型大约需要 16 GB 的 RAM。如果您的机器没有足够的 RAM，您可以通过 `ollama` `run` `llama3` 使用较小的模型，例如 38 亿参数的 `phi3` 模型，这只需要大约 8 GB 的 RAM。
+`ollama run llama3`命令中的`llama3`指的是指令微调的 80 亿参数`Llama 3`模型。使用`Ollama`和`llama3`模型大约需要 16 GB 的 RAM。如果您的机器没有足够的 RAM，您可以通过`ollama run llama3`使用较小的模型，例如 38 亿参数的`phi3`模型，这只需要大约 8 GB 的 RAM。
 
-对于更强大的计算机，您也可以使用更大的 70 亿参数的 Llama 3 模型，通过将 `llama3` 替换为 `llama3:70b` 来实现。然而，这个模型需要显著更多的计算资源。
+对于更强大的计算机，您也可以使用更大的 70 亿参数的`Llama 3`模型，通过将`llama3`替换为`llama3:70b`来实现。然而，这个模型需要显著更多的计算资源。
 
 模型下载完成后，我们将看到一个命令行界面，允许我们与模型交互。例如，尝试询问模型：“骆驼吃什么？”
 
@@ -1124,11 +1131,11 @@ llamas typically feed on:
 grasses, wheat, oats, and barley.
 ```
 
-注意，您看到的响应可能会有所不同，因为截至本文撰写时，Ollama 不是一个确定性的系统。
+注意，您看到的响应可能会有所不同，因为截至本文撰写时，`Ollama`不是一个确定性的系统。
 
-您可以使用输入 `/bye` 结束此 `ollama` `run` `llama3` 会话。但是，请确保在本章剩余部分保持 `ollama` `serve` 命令或 Ollama 应用程序运行。
+您可以使用输入`/bye`结束此`ollama run llama3`会话。但是，请确保在本章剩余部分保持`ollama serve`命令或`Ollama`应用程序运行。
 
-以下代码在我们在 Ollama 中评估测试集响应之前，验证 Ollama 会话是否正常运行：
+以下代码在我们在`Ollama`中评估测试集响应之前，验证`Ollama`会话是否正常运行：
 
 ```py
 import psutil
@@ -1146,15 +1153,15 @@ ollama_running = check_if_running("ollama")
 if not ollama_running:
     raise RuntimeError(
         "Ollama not running. Launch ollama before proceeding."
-)
+    )
 print("Ollama running:", check_if_running("ollama"))
 ```
 
-确保执行前面的代码后显示 `Ollama` `running:` `True`。如果显示 `False`，请验证 `ollama` `serve` 命令或 Ollama 应用程序是否正在积极运行。
+确保执行前面的代码后显示`Ollama running: True`。如果显示`False`，请验证`ollama serve`命令或`Ollama`应用程序是否正在积极运行。
 
-##### 在新的 Python 会话中运行代码
+### 在新的 Python 会话中运行代码
 
-如果您已经关闭了 Python 会话，或者您更喜欢在不同的 Python 会话中执行剩余的代码，请使用以下代码，该代码加载我们之前创建的指令和响应数据文件，并重新定义我们之前使用的 `format_input` 函数（稍后使用 `tqdm` 进度条实用程序）：
+如果您已经关闭了 Python 会话，或者您更喜欢在不同的 Python 会话中执行剩余的代码，请使用以下代码，该代码加载我们之前创建的指令和响应数据文件，并重新定义我们之前使用的`format_input`函数（稍后使用`tqdm`进度条实用程序）：
 
 ```py
 import json
@@ -1177,9 +1184,9 @@ def format_input(entry):
     return instruction_text + input_text
 ```
 
-与 `ollama` `run` 命令交互模型的另一种方法是使用 Python 通过其 REST API。以下列表中显示的 `query_model` 函数演示了如何使用该 API。
+与`ollama run`命令交互模型的另一种方法是使用 Python 通过其 REST API。以下列表中显示的`query_model`函数演示了如何使用该 API。
 
-##### 列表 7.10 查询本地 Ollama 模型
+**列表 7.10 查询本地 Ollama 模型**
 
 ```py
 import urllib.request
@@ -1223,18 +1230,14 @@ def query_model(
 ```
 
 #1 创建数据有效负载作为字典
-
 #2 确定响应的设置
-
 #3 将字典转换为 JSON 格式的字符串，并编码为字节
-
 #4 创建请求对象，设置方法为 POST 并添加必要的头信息
-
 #5 发送请求并捕获响应
 
-在运行此笔记本中的后续代码单元之前，请确保 Ollama 仍在运行。之前的代码单元应该打印 `"Ollama` `running:` `True"` 以确认模型处于活动状态并准备好接收请求。
+在运行此笔记本中的后续代码单元之前，请确保`Ollama`仍在运行。之前的代码单元应该打印`"Ollama running: True"`以确认模型处于活动状态并准备好接收请求。
 
-以下是如何使用我们刚刚实现的 `query_model` 函数的示例：
+以下是如何使用我们刚刚实现的`query_model`函数的示例：
 
 ```py
 model = "llama3"
@@ -1254,7 +1257,7 @@ short grasses, and even weeds.
 ...
 ```
 
-使用之前定义的 `query_model` 函数，我们可以评估由我们的微调模型生成的响应，该模型提示 Llama 3 模型根据给定的测试集响应作为参考，对微调模型的响应进行从 0 到 100 的评分。
+使用之前定义的`query_model`函数，我们可以评估由我们的微调模型生成的响应，该模型提示`Llama 3`模型根据给定的测试集响应作为参考，对微调模型的响应进行从 0 到 100 的评分。
 
 首先，我们将这种方法应用于我们之前检查的前三个测试集示例：
 
@@ -1275,15 +1278,15 @@ for entry in test_data[:3]:
     print("\n-------------------------")
 ```
 
-此代码打印的输出类似于以下内容（截至本文撰写时，Ollama 不是一个完全确定性的模型，因此生成的文本可能会有所不同）：
+此代码打印的输出类似于以下内容（截至本文撰写时，`Ollama`不是一个完全确定性的模型，因此生成的文本可能会有所不同）：
 
 ![figure](img/7_prompt2.png)
 
-生成的响应显示，Llama 3 模型提供了合理的评估，并且能够在模型答案不完全正确时分配部分分数。例如，如果我们考虑“积云”答案的评估，模型承认响应的部分正确性。
+生成的响应显示，`Llama 3`模型提供了合理的评估，并且能够在模型答案不完全正确时分配部分分数。例如，如果我们考虑“积云”答案的评估，模型承认响应的部分正确性。
 
-之前的提示除了得分外还返回了高度详细的分析。我们可以修改提示，只生成从 0 到 100 的整数得分，其中 100 代表最佳可能得分。这种修改使我们能够计算我们模型的平均得分，这作为对其性能的更简洁和定量的评估。以下列表中显示的 `generate_model_scores` 函数使用修改后的提示告诉模型“仅`Respond` `with` `the` `integer` `number`。”
+之前的提示除了得分外还返回了高度详细的分析。我们可以修改提示，只生成从 0 到 100 的整数得分，其中 100 代表最佳可能得分。这种修改使我们能够计算我们模型的平均得分，这作为对其性能的更简洁和定量的评估。以下列表中显示的`generate_model_scores`函数使用修改后的提示告诉模型“仅`Respond with the integer number`。”
 
-##### 列表 7.11 评估指令微调 LLM
+**列表 7.11 评估指令微调 LLM**
 
 ```py
 def generate_model_scores(json_data, json_key, model="llama3"):
@@ -1308,7 +1311,7 @@ def generate_model_scores(json_data, json_key, model="llama3"):
 
 #1 修改指令行以仅返回得分
 
-现在，让我们将 `generate_model_scores` 函数应用于整个 `test_data` 集合，这在 M3 Macbook Air 上大约需要 1 分钟：
+现在，让我们将`generate_model_scores`函数应用于整个`test_data`集合，这在 M3 Macbook Air 上大约需要 1 分钟：
 
 ```py
 scores = generate_model_scores(test_data, "model_response")
@@ -1327,21 +1330,20 @@ Average score: 50.32
 
 评估输出显示，我们的微调模型平均得分超过 50，这为与其他模型进行比较或尝试不同的训练配置以提高模型性能提供了一个有用的基准。
 
-值得注意的是，在撰写本文时，Ollama 在操作系统上并不完全确定，这意味着你获得的分数可能与之前的分数略有不同。为了获得更稳健的结果，你可以多次重复评估并平均结果分数。
+值得注意的是，在撰写本文时，`Ollama`在操作系统上并不完全确定，这意味着你获得的分数可能与之前的分数略有不同。为了获得更稳健的结果，你可以多次重复评估并平均结果分数。
 
-为了进一步提高我们模型的表现，我们可以探索各种策略，例如
+为了进一步提高我们模型的表现，我们可以探索各种策略，例如：
 
-+   在微调期间调整超参数，如学习率、批量大小或 epoch 数量
+- 在微调期间调整超参数，如学习率、批量大小或 epoch 数量
+- 增加训练数据集的大小或多样化示例以涵盖更广泛的主题和风格
+- 尝试不同的提示或指令格式来更有效地引导模型的响应
+- 使用更大的预训练模型，这可能具有更大的能力来捕捉复杂模式并生成更准确的响应
 
-+   增加训练数据集的大小或多样化示例以涵盖更广泛的主题和风格
 
-+   尝试不同的提示或指令格式来更有效地引导模型的响应
 
-+   使用更大的预训练模型，这可能具有更大的能力来捕捉复杂模式并生成更准确的响应
+备注：为了参考，当使用本文中描述的方法时，未经任何微调的 `Llama 3 8B` 基础模型在测试集上实现了平均分数 `58.51`。经过在通用指令遵循数据集上微调的 `Llama 3 8B` 指令模型，实现了令人印象深刻的平均分数 `82.6`。
 
-备注：为了参考，当使用本文中描述的方法时，未经任何微调的 Llama 3 8B 基础模型在测试集上实现了平均分数 58.51。经过在通用指令遵循数据集上微调的 Llama 3 8B 指令模型，实现了令人印象深刻的平均分数 82.6。
-
-##### 练习 7.4 使用 LoRA 进行参数高效的微调
+### 练习 7.4 使用 LoRA 进行参数高效的微调
 
 为了更有效地微调一个 LLM，修改本章中的代码以使用附录 E 中的低秩自适应方法（LoRA）。比较修改前后的训练运行时间和模型性能。
 
@@ -1361,7 +1363,7 @@ Average score: 50.32
 
 ### 7.9.2 在快速发展的领域中保持最新
 
-人工智能和 LLM 研究领域正在迅速（并且，根据您询问的人，令人兴奋）地发展。跟上最新进展的一种方式是探索 arXiv 上的最新研究论文，网址为[`arxiv.org/list/cs.LG/recent`](https://arxiv.org/list/cs.LG/recent)。此外，许多研究人员和实践者都在社交媒体平台如 X（前身为 Twitter）和 Reddit 上非常活跃地分享和讨论最新的发展。特别是，r/LocalLLaMA subreddir 是一个很好的资源，用于与社区建立联系并了解最新的工具和趋势。我还在我的博客上定期分享见解并撰写关于 LLM 研究的最新内容，博客地址为[`magazine.sebastianraschka.com`](https://magazine.sebastianraschka.com)和[`sebastianraschka.com/blog/`](https://sebastianraschka.com/blog/)。
+人工智能和 LLM 研究领域正在迅速（并且，根据您询问的人，令人兴奋）地发展。跟上最新进展的一种方式是探索 arXiv 上的最新研究论文，网址为[`arxiv.org/list/cs.LG/recent`](https://arxiv.org/list/cs.LG/recent)。此外，许多研究人员和实践者都在社交媒体平台如 X（前身为 Twitter）和 Reddit 上非常活跃地分享和讨论最新的发展。特别是，`r/LocalLLaMA` subreddir 是一个很好的资源，用于与社区建立联系并了解最新的工具和趋势。我还在我的博客上定期分享见解并撰写关于 LLM 研究的最新内容，博客地址为[`magazine.sebastianraschka.com`](https://magazine.sebastianraschka.com)和[`sebastianraschka.com/blog/`](https://sebastianraschka.com/blog/)。
 
 ### 7.9.3 最后的话
 

@@ -1,14 +1,15 @@
+
 # 附录 B 安装和配置 PyTorch Geometric
 
 ## B.1 安装 PyTorch Geometric
 
-PyTorch Geometric (PyG) 是一个基于 PyTorch 构建的库，用于处理图神经网络（GNNs）。最新版本的 pytorch geometric 可以通过以下命令安装：pip install torch_geometric。只需要 PyTorch 作为依赖项。要安装带有其扩展的 PyG，您需要确保已安装并兼容的正确版本的 Compute Unified Device Architecture (CUDA)、PyTorch 和 PyG。
+PyTorch Geometric (PyG) 是一个基于 PyTorch 构建的库，用于处理图神经网络（GNNs）。最新版本的`pytorch geometric`可以通过以下命令安装：`pip install torch_geometric`。只需要 PyTorch 作为依赖项。要安装带有其扩展的 PyG，您需要确保已安装并兼容的正确版本的 Compute Unified Device Architecture (CUDA)、PyTorch 和 PyG。
 
 ### B.1.1 在 Windows/Linux 上
 
 如果您使用的是 Windows 或 Linux 系统，请按照以下步骤操作：
 
-+   *安装 PyTorch*。首先，为您的系统安装适当的 PyTorch 版本。您可以在官方 PyTorch 网站上找到说明（[`pytorch.org/get-started/locally/`](https://pytorch.org/get-started/locally/))。如果您有 NVIDIA GPU，请确保选择正确的 CUDA 版本。
++   *安装 PyTorch*。首先，为您的系统安装适当的 PyTorch 版本。您可以在官方 PyTorch 网站上找到说明（[`pytorch.org/get-started/locally/`](https://pytorch.org/get-started/locally/)）。如果您有 NVIDIA GPU，请确保选择正确的 CUDA 版本。
 
 +   *查找 PyTorch CUDA 版本*。在安装 PyTorch 后，通过在 Python 中运行以下命令来检查其版本和构建时使用的 CUDA 版本：
 
@@ -34,7 +35,7 @@ pip install torch-scatter torch-sparse torch-cluster torch-spline-conv -f
 https://data.pyg.org/whl/torch-${PYTORCH}+${CUDA}.xhtml
 ```
 
-在此代码中，将`${PYTORCH}`替换为您的 PyTorch 版本（例如，1.13.1），将`${CUDA}`替换为上一步中的 CUDA 版本（例如，cu117）。
+在此代码中，将`${PYTORCH}`替换为您的 PyTorch 版本（例如，`1.13.1`），将`${CUDA}`替换为上一步中的 CUDA 版本（例如，`cu117`）。
 
 +   *安装 PyG*。最后，安装 PyG 库本身：
 

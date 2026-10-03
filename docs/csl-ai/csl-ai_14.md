@@ -1,22 +1,20 @@
+
 # 第十一章：构建因果推断工作流程
 
-### 本章涵盖
+## 本章涵盖
 
-+   构建因果分析工作流程
-
-+   使用 DoWhy 估计因果效应
-
-+   使用机器学习方法估计因果效应
-
-+   使用因果潜在变量模型进行因果推断
++ 构建因果分析工作流程
++ 使用 `DoWhy` 估计因果效应
++ 使用机器学习方法估计因果效应
++ 使用因果潜在变量模型进行因果推断
 
 在第十章中，我介绍了一个因果推断工作流程，在本章中，我们将专注于完整构建这个工作流程。我们将特别关注一种查询类型——因果效应，但这个工作流程可以推广到所有因果查询。
 
 我们将专注于因果效应推断，即平均处理效应（ATEs）和条件平均处理效应（CATEs）的估计，因为它们是最流行的因果查询。
 
-在第一章中，我提到了“推断的商品化”——现代软件库如何使我们能够抽象出推断算法的统计和计算细节。在本章中，你首先会看到 DoWhy 库如何“商品化”因果推断，使我们能够从高层次关注算法的因果假设以及它们是否适合我们的问题。
+在第一章中，我提到了“推断的商品化”——现代软件库如何使我们能够抽象出推断算法的统计和计算细节。在本章中，你首先会看到 `DoWhy` 库如何“商品化”因果推断，使我们能够从高层次关注算法的因果假设以及它们是否适合我们的问题。
 
-我们将在一个使用概率机器学习对具有潜在变量的因果生成模型进行因果效应推断的示例中再次看到这一现象。在这里，我们将看到使用 PyTorch 的深度学习如何提供另一种商品化推断的方法。
+我们将在一个使用概率机器学习对具有潜在变量的因果生成模型进行因果效应推断的示例中再次看到这一现象。在这里，我们将看到使用 `PyTorch` 的深度学习如何提供另一种商品化推断的方法。
 
 ## 11.1 步骤 1：选择查询
 
@@ -30,25 +28,23 @@
 
 > 旁支任务参与对游戏内购买的影响有多大？
 
-我们将感兴趣的因果关系称为“旁支任务参与”（E），即“处理”变量；“游戏内购买”（I）将是“结果”变量。我们感兴趣的查询是平均处理效应（ATE）：
+我们将感兴趣的因果关系称为“旁支任务参与”（`E`），即“处理”变量；“游戏内购买”（`I`）将是“结果”变量。我们感兴趣的查询是平均处理效应（ATE）：
 
-E(I[E][=“high”] – I[*E*][=“low”])
+`E(I[E][=“high”] – I[*E*][=“low”])`
 
 ##### 复习：为什么 ATEs 和 CATEs 占主导地位
 
 估计 ATEs 和 CATEs 是最受欢迎的因果效应推断任务，原因如下：
 
-+   当随机实验不可行、不道德或不可能时，我们可以依赖因果效应推断技术。
-
-+   我们可以使用因果效应推断技术来解决现实世界实验中的实际问题（例如，随机化后的混杂、流失、溢出、缺失数据等）。
-
-+   在公司可以在在线应用程序和商店中运行许多不同数字实验的时代，因果效应推断技术可以帮助优先处理实验，降低机会成本。
++ 当随机实验不可行、不道德或不可能时，我们可以依赖因果效应推断技术。
++ 我们可以使用因果效应推断技术来解决现实世界实验中的实际问题（例如，随机化后的混杂、流失、溢出、缺失数据等）。
++ 在公司可以在在线应用程序和商店中运行许多不同数字实验的时代，因果效应推断技术可以帮助优先处理实验，降低机会成本。
 
 此外，当我们调查我们的游戏数据时，我们发现了一些来自过去实验的数据，该实验旨在测试鼓励侧任务参与对游戏内购买的影响。在这个实验中，所有玩家都被随机分配到处理组或对照组。在处理组中，游戏机制被修改以诱使玩家参与更多侧任务，而对照组则玩未修改的游戏版本。我们将 *侧任务分组分配* (*A*) 变量定义为玩家是否在这个实验中被分配到处理组或对照组。
 
-为什么不直接采用这个实验产生的 ATE 估计值？这将是对 *E*(*I*[*A*][=“处理”] – *I*[*A*][=“控制”]) 的估计。
+为什么不直接采用这个实验产生的 ATE 估计值？这将是对 `E(I[A][=“处理”] – I[A][=“控制”])` 的估计。
 
-这是修改游戏机制对游戏内购买因果效应的体现。虽然这推动了侧任务参与，但我们知道侧任务参与也受到其他可能混杂因素的影响。因此，我们将关注 *E*(*I*[*E*][=“高”] – *I*[*E*][=“低”])。
+这是修改游戏机制对游戏内购买因果效应的体现。虽然这推动了侧任务参与，但我们知道侧任务参与也受到其他可能混杂因素的影响。因此，我们将关注 `E(I[E][=“高”] – I[E][=“低”])`。
 
 ## 11.2 步骤 2：构建模型
 
@@ -60,17 +56,12 @@ E(I[E][=“high”] – I[*E*][=“low”])
 
 扩展模型添加了一些新的变量：
 
-+   *侧任务分组分配 (A)*—如果玩家在随机实验中接触到了鼓励更多侧任务参与的游戏机制，则分配值为 1；否则为 0。
-
-+   *定制水平 (C)*—量化玩家对其角色和游戏环境的定制的得分。
-
-+   *游戏时间 (T)*—玩家玩游戏所花费的时间。
-
-+   *先前经验 (Y)*—玩家在开始玩游戏之前拥有的经验量。
-
-+   *玩家技能水平 (S)*—玩家在游戏任务中表现好坏的得分。
-
-+   *总库存 (V)*—玩家积累的游戏物品数量。
++ *侧任务分组分配* (`A`)—如果玩家在随机实验中接触到了鼓励更多侧任务参与的游戏机制，则分配值为 1；否则为 0。
++ *定制水平* (`C`)—量化玩家对其角色和游戏环境的定制的得分。
++ *游戏时间* (`T`)—玩家玩游戏所花费的时间。
++ *先前经验* (`Y`)—玩家在开始玩游戏之前拥有的经验量。
++ *玩家技能水平* (`S`)—玩家在游戏任务中表现好坏的得分。
++ *总库存* (`V`)—玩家积累的游戏物品数量。
 
 我们对 *侧任务参与* 对 *游戏内购买* 的平均处理效应 (ATE) 感兴趣，因此根据因果充分性（第三章），我们知道我们需要添加这些变量的共同原因。我们已经看到了 *公会会员资格* (*G*)，但现在我们添加额外的共同原因：*先前经验*、*游戏时间* 和 *玩家技能水平*。我们还添加 *侧任务分组分配* 和 *定制水平*，因为这些可能是有用的 *工具变量*——这些变量是感兴趣的治疗的因果，并且变量到结果的唯一因果路径是通过治疗。我将在下一节中更多地说到工具变量。
 
@@ -78,9 +69,9 @@ E(I[E][=“high”] – I[*E*][=“low”])
 
 ##### 设置你的环境
 
-以下代码是用 DoWhy 0.11 和 EconML 0.15 编写的，它期望使用版本 2.0 之前的 NumPy 版本。具体的 pandas 版本是 1.5.3。再次强调，我们使用 Graphviz 进行可视化，使用 python PyGraphviz 库版本 1.12。如果你跳过 PyGraphviz 的安装，代码应该可以工作，除了可视化之外。
+以下代码是用 `DoWhy` 0.11 和 `EconML` 0.15 编写的，它期望使用版本 2.0 之前的 `NumPy` 版本。具体的 `pandas` 版本是 1.5.3。再次强调，我们使用 `Graphviz` 进行可视化，使用 `python PyGraphviz` 库版本 1.12。如果你跳过 `PyGraphviz` 的安装，代码应该可以工作，除了可视化之外。
 
-首先，让我们构建 DAG 并使用 PyGraphviz 库可视化图形。
+首先，让我们构建 DAG 并使用 `PyGraphviz` 库可视化图形。
 
 ##### 列表 11.1 构建因果 DAG
 
@@ -112,11 +103,11 @@ G.draw('/tmp/causal_graph.png', prog='dot')    #4
 Image('/tmp/causal_graph.png')    #5
 ```
 
-#1 下载 PyGraphviz 和相关库。
+#1 下载 `PyGraphviz` 和相关库。
 
 #2 可选导入用于在 Jupyter 笔记本中可视化 DAG
 
-#3 将 DAG 指定为 DOT 语言字符串，并从字符串中加载 PyGraphviz AGraph 对象。
+#3 将 DAG 指定为 DOT 语言字符串，并从字符串中加载 `PyGraphviz` `AGraph` 对象。
 
 #4 将图形渲染为 PNG 文件。
 
@@ -126,7 +117,7 @@ Image('/tmp/causal_graph.png')    #5
 
 ![figure](img/CH11_F03_Ness.png)
 
-##### 图 11.3 使用 PyGraphviz 库可视化我们的模型
+##### 图 11.3 使用 `PyGraphviz` 库可视化我们的模型
 
 在这个阶段，我们可以使用第四章中概述的条件独立性测试技术来验证我们的模型。但请记住，我们还可以专注于因果效应估计在“反驳”（步骤 5）部分工作流程中依赖的假设子集。
 
@@ -134,11 +125,11 @@ Image('/tmp/causal_graph.png')    #5
 
 接下来，我们将运行识别。我们的因果查询是
 
-*E*(*I*[*E*][=“high”] – *I*[*E*][=“low”])
+`E(I[E][=“high”] – I[E][=“low”])`
 
 为了简单起见，让我们将“high”重新编码为 1，“low”为 0。
 
-*E*(*I*[*E*][=1] – *I*[*E*][=0])
+`E(I[E][=1] – I[E][=0])`
 
 此查询位于因果层次结构的第 2 级。我们正在进行实验；我们只有观测数据——来自第 1 级分布的样本。我们的识别任务是使用我们的第 2 级查询和因果模型来识别一个第 1 级估计量，这是一个我们可以应用于我们数据中变量分布的操作。
 
@@ -175,7 +166,7 @@ Index(['Guild Membership', 'Player Skill Level', 'Time Spent Playing',
 
 ##### 图 11.4 *先前经验*在数据中未观察到；它是我们 DAG 中的一个潜在（未观察到的）变量。
 
-我们使用 y0 的特定领域语言为概率表达式指定了估计量的基本分布：
+我们使用 `y0` 的特定领域语言为概率表达式指定了估计量的基本分布：
 
 ```py
 Identification.from_expression(
@@ -185,9 +176,9 @@ Identification.from_expression(
 )
 ```
 
-在这里，我们将使用 DoWhy。通过 DoWhy，我们只需传递 pandas DataFrame、DAG 和因果查询到`CausalModel`类的构造函数中，就可以指定观测分布。
+在这里，我们将使用 `DoWhy`。通过 `DoWhy`，我们只需传递 `pandas` DataFrame、DAG 和因果查询到`CausalModel`类的构造函数中，就可以指定观测分布。
 
-##### 列表 11.3 实例化 DoWhy 的`CausalModel`
+##### 列表 11.3 实例化 `DoWhy` 的`CausalModel`
 
 ```py
 from dowhy import CausalModel     #1
@@ -200,9 +191,9 @@ model = CausalModel(
 )
 ```
 
-#1 安装 DoWhy 并加载 CausalModel 类。
+#1 安装 `DoWhy` 并加载 `CausalModel` 类。
 
-#2 使用数据实例化 CausalModel 对象，这些数据代表我们从其中推导出估计量的第一级观察分布。
+#2 使用数据实例化 `CausalModel` 对象，这些数据代表我们从其中推导出估计量的第一级观察分布。
 
 #3 指定我们希望估计的目标因果查询，即处理对结果的影响的因果效应。
 
@@ -210,26 +201,24 @@ model = CausalModel(
 
 接下来，`identify_effect`方法将向我们展示，根据我们的因果模型和观察到的变量，我们可以针对的可能估计量。
 
-##### 列表 11.4 DoWhy 中的运行识别
+##### 列表 11.4 `DoWhy` 中的运行识别
 
 ```py
 identified_estimand = model.identify_effect()    #1
 print(identified_estimand)
 ```
 
-#1 CausalModel 类的 identify_effect 方法列出可识别的估计量。
+#1 `CausalModel` 类的 `identify_effect` 方法列出可识别的估计量。
 
 `identified_estimand`对象是`IdentifiedEstimand`类的一个对象。打印它将列出（如果有）估计量和它们所包含的假设。在我们的情况下，我们有三个可以针对的估计量：
 
-+   通过调整集*玩家技能水平*、*公会会员资格*和*游戏时间*进行后门调整估计量
++ 通过调整集*玩家技能水平*、*公会会员资格*和*游戏时间*进行后门调整估计量
++ 通过中介*赢得物品*进行前门调整估计量
++ 通过*侧任务组分配*和*定制级别*进行工具变量估计量
 
-+   通过中介*赢得物品*进行前门调整估计量
+##### `DoWhy` 中的图形识别
 
-+   通过*侧任务组分配*和*定制级别*进行工具变量估计量
-
-##### DoWhy 中的图形识别
-
-在撰写本文时，DoWhy 尚未实现 y0 等图形识别算法，但这些是实验性的，不是默认的识别方法。默认方法基于你的图结构寻找常用的估计量（例如，后门、前门、工具变量）。可能存在默认方法遗漏的可识别估计量，但这些估计量不太常用。
+在撰写本文时，`DoWhy` 尚未实现 `y0` 等图形识别算法，但这些是实验性的，不是默认的识别方法。默认方法基于你的图结构寻找常用的估计量（例如，后门、前门、工具变量）。可能存在默认方法遗漏的可识别估计量，但这些估计量不太常用。
 
 让我们更仔细地检查这些估计量。
 
@@ -253,15 +242,12 @@ Estimand assumption 1, Unconfoundedness: If U→{Side-quest Engagement} and U→
 
 这个打印输出告诉我们一些事情：
 
-+   `EstimandType.NONPARAMETRIC_ATE`—这意味着估计量可以通过图形或“非参数”方法，例如 do-calculus 来识别。
++ `EstimandType.NONPARAMETRIC_ATE`—这意味着估计量可以通过图形或“非参数”方法，例如 do-calculus 来识别。
++ `Estimand name: backdoor`—这是后门调整估计量。
++ `Estimand expression`—估计量的数学表达式。由于我们想要 ATE，我们修改后门估计量以针对 ATE。
++ `Estimand assumption 1`—估计量背后的因果假设。
 
-+   `Estimand name: backdoor`—这是后门调整估计量。
-
-+   `Estimand expression`—估计量的数学表达式。由于我们想要 ATE，我们修改后门估计量以针对 ATE。
-
-+   `Estimand assumption 1`—估计量背后的因果假设。
-
-最后一条是最重要的。对于每个估计量，DoWhy 都会列出必须成立的因果假设，以便对目标因果查询进行有效估计。在这种情况下，假设没有隐藏的（未测量的）混杂因素，DoWhy 称之为`U`。对后门调整估计量的估计假设所有混杂因素都已调整。
+最后一条是最重要的。对于每个估计量，`DoWhy` 都会列出必须成立的因果假设，以便对目标因果查询进行有效估计。在这种情况下，假设没有隐藏的（未测量的）混杂因素，`DoWhy` 称之为`U`。对后门调整估计量的估计假设所有混杂因素都已调整。
 
 注意，我们不需要观察*先前经验*来获得后门调整估计量。我们只需要观察一个调整集，该调整集可以 d-分离或“阻断”所有后门路径。
 
@@ -279,6 +265,69 @@ Estimand expression:
  ⎡                                         -1⎤
  ⎢ d ⎛ d ⎞ `⎥`
 `E``⎢``──────────(IGP)``⋅` `───────────([SQE]) ` ``````py  ````` `⎥`  `⎣``d[SQGA CL]` `⎝` `d[SQGA  CL]` `⎠` ```py` ``` `` `⎦`  估计量假设 1，假设为随机：如果 U→→IGP 则 ¬(U →→{SQGA,CL}) 估计量假设 2，排除：如果我们移除 {SQGA,CL}→{SQE} 则 ¬({SQGA,CL}→IGP) `` ```py ```` ```py`` ``````py
+
+
+
+# 工具变量有效性的定义性要求
+
+一个变量要成为有效的工具变量，需要满足两个二级定义性要求：
+
+1. **近似随机性（As-if-random）**——工具变量与结果之间的所有后门路径都可以被阻断。
+2. **排他性（Exclusion）**——工具变量仅通过处理变量间接影响结果。
+
+在我们的模型中，满足这些约束的变量是`Side-Quest Group Assignment`和`Customization Level`，如图11.5所示。
+
+![figure](img/CH11_F05_Ness.png)
+
+##### 图11.5 `Side-Quest Group Assignment`和`Customization Level`是有效的工具变量。
+
+`identified_estimand`的输出显示了这两个约束：
+
+1. **`Estimand assumption 1, As-if-random`**——DoWhy假设结果（`In-Game Purchases`）的其他原因均不是这两个工具变量的原因。换言之，工具变量与结果之间不存在后门路径。
+2. **`Estimand assumption 2, Exclusion`**——这意味着如果我们移除从工具变量到处理变量（`Side-quest Engagement`）的因果路径，那么从工具变量到结果（`In-Game Purchases`）将不存在任何因果路径。换言之，工具变量与结果之间不存在未经处理变量中介的因果路径。
+
+请注意，DoWhy的约束条件相对严格；DoWhy禁止工具变量与结果之间存在后门路径以及非处理变量中介的因果路径。在实践中，可以通过后门调整来阻断这些路径。DoWhy在此做出了偏向于更简单接口的权衡。
+
+##### 工具变量估计的参数假设
+
+二级图形假设不足以实现工具变量识别；还需要额外的参数假设。DoWhy默认采用线性假设。在线性假设下，可以将ATE推导为结果和处理变量关于工具变量的线性模型系数的简单函数。DoWhy通过拟合线性回归模型来实现这一点。
+
+接下来，我们将查看DoWhy识别出的第三个估计量——前门估计量。
+
+### 11.3.3 前门调整估计量
+
+让我们继续讨论第三个估计量（前门估计量）中的假设。DoWhy打印的摘要如下（同样，为了适应页面，我在输出中将变量名缩写为首字母缩写）：
+
+```py
+### Estimand : 3
+Estimand name: frontdoor
+Estimand expression:
+  ⎡     d                d        ⎤
+E⎢────────────(IGP)⋅───────([WI])⎥
+  ⎣d[WI]       d[SQE]             ⎦
+
+Estimand assumption 1, Full-mediation:
+     WI intercepts (blocks) all directed paths from SQE to IGP.
+Estimand assumption 2, First-stage-unconfoundedness:
+     If U→{SQE} and U→{WI}
+     then P(WI|SQE,U) = P(WI|SQE)
+Estimand assumption 3, Second-stage-unconfoundedness:
+     If U→{WI} and U→IGP
+     then P(IGP|WI, SQE, U) = P(IGP|WI, SQE)
 ```
 
-```py`` ````There are two level 2 definitional requirements for a variable to be a valid instrument:    1.  *As-if-random*—Any backdoor paths between the instrument and the outcome can be blocked. 2.  *Exclusion*—The instrument is a cause of the outcome only indirectly through the treatment.    The variables in our model that satisfy these constraints are *Side-Quest Group Assignment* and *Customization Level*, as shown in figure 11.5.  ![figure](img/CH11_F05_Ness.png)  ##### Figure 11.5 *Side-Quest Group Assignment* and *Customization Level* are valid instrumental variables.    The printout of `identified_estimand` shows the two constraints:    1.  `Estimand` `assumption` `1,` `As-if-random`—DoWhy assumes that none of the other causes of the outcome (*In-Game Purchases*) are also causes of either instrument. In other words, there are no backdoor paths between the instruments and the outcome. 2.  `Estimand assumption` `2,` `Exclusion`—This says that if we remove the causal path from the instruments to the treatment (*Side-quest Engagement*), there would be no causal paths from the instruments to the outcome (*In-Game Purchases*). In other words, there are no causal paths between the instruments and the outcome that are not mediated by the treatment.    Note that DoWhy’s constraints are relatively restrictive; DoWhy prohibits the *existence* of backdoor paths and non-treatment-mediated causal paths between the instrument and the outcome. In practice, it would be possible to block these paths with backdoor adjustment. DoWhy is making a trade-off that favors a simpler interface.    ##### Parametric assumptions for instrumental variable estimation    The level 2 graphical assumptions are not sufficient for instrumental variable identification; additional parametric assumptions are needed. DoWhy, by default, makes a linearity assumption. With a linear assumption, you can derive the ATE as a simple function of the coefficients of linear models of outcome and the treatment given the instrument. DoWhy does this by fitting linear regression models.    Next, we’ll look at the third estimand identified by DoWhy—the front-door estimand.    ### 11.3.3 The front-door adjustment estimand    Let’s move on to the assumptions in the third estimand, the front-door estimand. DoWhy’s printed summary is as follows (again, I shortened the variable names to acronyms in the printout so it fits the page):    ```py ### Estimand : 3 Estimand name: frontdoor Estimand expression:   ⎡     d                d        ⎤ E⎢────────────(IGP)⋅───────([WI])⎥  ⎣d[WI]       d[SQE]             ⎦   Estimand assumption 1, Full-mediation:      WI intercepts (blocks) all directed paths from SQE to IGP. Estimand assumption 2, First-stage-unconfoundedness:     If U→{SQE} and U→{WI}     then P(WI|SQE,U) = P(WI|SQE) Estimand assumption 3, Second-stage-unconfoundedness:     If U→{WI} and U→IGP     then P(IGP|WI, SQE, U) = P(IGP|WI, SQE) ```    As we saw in chapter 10, the front-door estimand requires a mediator on the path from the treatment to the outcome—in our DAG, this is *Won Items*. The printout for `identified_estimand` lists three key assumptions for the front-door estimand:    1.  `Full-mediation`—The mediator (*Won-Items*) intercepts all directed paths from the treatment (*Side-Quest Engagement*) to the outcome (*In-Game Purchases*). In other words, conditioning on *Won-Items* would d-separate (block) all the paths of causal influence from the treatment to the outcome. 2.  `First-stage-unconfoundedness`—There are no hidden confounders between the treatment and the mediator. 3.  `Second-stage-unconfoundedness`—There are no hidden confounders between the outcome and the mediator.    With our DAG and the variables observed in the data, DoWhy has identified three estimands for the ATE of *Side-Quest Engagement* on *In-Game Purchases*. Remember, the estimand is the thing we estimate, so which estimand should we estimate?    ### 11.3.4 Choosing estimands and reducing “DAG anxiety”    In step 2 of the causal inference workflow, we specified our causal assumptions about the domain as a DAG (or SCM or other causal model). The subsequent steps all rely on the assumptions we make in step 2\.    Errors in step 2 can lead to errors in the results of the analysis, and while we can empirically test these assumptions to some extent (e.g., using the methods in chapter 4), we cannot verify all our causal assumptions with observational data alone. This dependence on our subjective and unverified causal assumptions leads to what I call “DAG anxiety”—a fear that if one gets any part of the causal assumptions wrong, then the output of the analysis becomes wrong. Fortunately, we don’t need to get all the assumptions right; we only need to rely on the assumptions required *to identify our selected estimand*.    This is what makes DoWhy’s `identify_effect` method so powerful. By showing us the assumptions required for each estimand it lists, we can compare these assumptions and target the estimand where we
+正如我们在第10章中看到的，前门估计量要求在从处理变量到结果的路径上存在一个中介变量——在我们的DAG中，这个中介变量是`Won Items`。`identified_estimand`的输出列出了前门估计量的三个关键假设：
+
+1. **`Full-mediation`**——中介变量（`Won-Items`）截断了从处理变量（`Side-Quest Engagement`）到结果（`In-Game Purchases`）的所有有向路径。换言之，以`Won-Items`为条件将d-分离（阻断）从处理变量到结果的所有因果影响路径。
+2. **`First-stage-unconfoundedness`**——处理变量与中介变量之间不存在隐藏混杂因素。
+3. **`Second-stage-unconfoundedness`**——结果与中介变量之间不存在隐藏混杂因素。
+
+基于我们的DAG以及数据中观测到的变量，DoWhy为`Side-Quest Engagement`对`In-Game Purchases`的ATE识别出了三个估计量。请记住，估计量是我们估计的对象，那么我们应该选择哪个估计量呢？
+
+### 11.3.4 选择估计量与缓解“DAG焦虑”
+
+在因果推断工作流程的第二步中，我们将关于领域的因果假设指定为DAG（或SCM或其他因果模型）。后续所有步骤都依赖于我们在第二步中做出的假设。
+
+第二步中的错误可能导致分析结果的错误，虽然我们可以在一定程度上实证检验这些假设（例如，使用第4章中的方法），但我们无法仅凭观测数据验证所有因果假设。这种对主观且未经证实的因果假设的依赖，导致了我所称的“DAG焦虑”——担心如果因果假设的任何部分出错，分析输出就会出错。幸运的是，我们不需要把所有假设都做对；我们只需要依赖识别所选估计量所需的假设。
+
+这正是DoWhy的`identify_effect`方法如此强大的原因。通过向我们展示每个估计量所需的假设，我们可以比较这些假设，并针对我们最
