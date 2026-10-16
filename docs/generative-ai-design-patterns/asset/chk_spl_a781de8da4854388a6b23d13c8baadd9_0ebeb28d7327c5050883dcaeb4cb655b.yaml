@@ -1,0 +1,15 @@
+reviews:
+- 'no': 4093
+  overturn_probability: 0.05
+  alternative: 若不分章，这行最可能是什么
+  counter_evidence:
+  - '行内容为 ''# 第 4 章 添加知识：切分''，符合编号特征‘第 X 章’且为一级标题 #，单独成行且无句号，长度<30字'
+  - 上下文前后为第3章结尾与第4章模式9内容，具备统领性，符合章标题格式特征
+  keep_split: true
+- 'no': 5362
+  overturn_probability: 0.05
+  alternative: 若不分章，这行最可能是什么
+  counter_evidence:
+  - '行内容为 ''# 第 5 章 扩展模型能力''，符合编号特征‘第 X 章’且为一级标题 #，单独成行且无句号，长度<30字'
+  - 前后上下文为第4章总结与第5章 LLM推理局限性内容，具备全书最高层级大章划分特征，语义统领后续模式13+
+  keep_split: true

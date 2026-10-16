@@ -1,0 +1,13 @@
+chapter_starts:
+- 'no': 12065
+  confidence: 0.9
+  final_reason: 判断方认定文末索引起始，复核方虽提出标题层级较深但认可其为文末索引标志且语义独立，符合‘文末索引也划分为一章’规则，采纳分章。
+  accepted_evidence:
+  - '#### 索引 为文末索引开始的标志，后续为索引条目连续'
+  - 复核方 keep_split=true，overturn_probability 0.15
+  rejected_evidence: []
+  need_human_review: false
+rejected_lines:
+- 'no': 12045
+  reason: 复核方反证成立：'# 可组合系统的优势' 位于 '## 部署' 正文内部，属于小标题而非全书最高层级大章，后接列表项无章首概述，判断方证据不足，依上下文优先原则不分章
+  need_human_review: false

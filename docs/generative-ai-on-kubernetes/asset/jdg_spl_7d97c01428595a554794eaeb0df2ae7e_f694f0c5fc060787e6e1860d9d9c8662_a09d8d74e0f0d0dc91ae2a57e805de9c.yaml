@@ -1,0 +1,79 @@
+chapter_starts:
+- 'no': 9
+  confidence: 0.9
+  final_reason: '双方一致认定 ## 前言 为前部附属内容统一章，标题单独成行二级标题，处于正文前且后接叙述段落，符合前言统一划一章规则；复核方反证未构成推翻'
+  accepted_evidence:
+  - '标题单独成行二级标题 ## 前言'
+  - 位于作者信息之后正文前
+  - 规则要求前言等前部内容统一划分为一章
+  rejected_evidence:
+  - 与后文第37行重复出现 前言 可能为排版噪声
+  - 后接叙述段落未见子节 X.Y
+  need_human_review: false
+- 'no': 157
+  confidence: 0.85
+  final_reason: '## 引言 位于致谢之后作为正文起始，标题单独成行二级标题，语义统领后续内容，符合最高层级章节特征；复核方对上下文混杂的质疑不足以推翻'
+  accepted_evidence:
+  - '标题单独成行 ## 引言'
+  - '位于 ## 致谢 之后开启正文'
+  - 后续内容为对 AI 相变等统领性介绍
+  rejected_evidence:
+  - 出现在致谢之后上下文混杂
+  - 标题后1~3行为历史叙述缺乏概括性
+  need_human_review: false
+- 'no': 437
+  confidence: 0.92
+  final_reason: ' # 第一部分：推理 为一级标题部分级标题，书为部分-章节模式，部分标题需划分新章；后文承接第1章，层级关系清晰'
+  accepted_evidence:
+  - '一级标题 # 第一部分：推理'
+  - '后接第一部分说明段落并随后出现 ## 第 1 章'
+  - 部分-章节模式要求部分标题分章
+  rejected_evidence:
+  - '与 # 第二部分格式不一致可能为排版噪声'
+  - 标题后直接进入说明段落未见子章编号承接
+  need_human_review: false
+- 'no': 458
+  confidence: 0.95
+  final_reason: '## 第 1 章：部署模型 符合编号特征、单独成行、长度合规，为全书最高层级大章；后接三级小标题构成章节内部结构'
+  accepted_evidence:
+  - '二级标题带编号 ## 第 1 章：部署模型'
+  - 单独成行且无句号
+  - '后接 ### Transformer 架构与注意力机制 等子节'
+  rejected_evidence:
+  - 标题长度接近30字上限
+  - 前文为部分介绍缺少上一章总结
+  need_human_review: false
+- 'no': 1233
+  confidence: 0.95
+  final_reason: '## 第 2 章 模型数据 为标准大章标题，编号明确单独成行，语义统领后续模型数据内容'
+  accepted_evidence:
+  - '二级标题带编号 ## 第 2 章 模型数据'
+  - 单独成行无标点
+  - 后接模型数据存储格式等章节内容
+  rejected_evidence:
+  - 与前一章间距仅为经验教训段落
+  - 后文直接进入大段说明
+  need_human_review: false
+- 'no': 2306
+  confidence: 0.9
+  final_reason: ' # 第二部分——生产就绪 为一级标题部分级标题，按部分-章节模式需划分新章；后文立即出现 ## 第 3 章 承接'
+  accepted_evidence:
+  - '一级标题 # 第二部分——生产就绪'
+  - '后接生产就绪定义段落并随后出现 ## 第 3 章'
+  - 与第一部分同层级
+  rejected_evidence:
+  - 使用全角破折号格式不一致
+  - 标题后1~3行为定义段落未见明确承接
+  need_human_review: false
+- 'no': 2316
+  confidence: 0.95
+  final_reason: '## 第 3 章：Kubernetes 与 GPU 为部分下的标准大章标题，编号特征单独成行，符合最高层级章节划分'
+  accepted_evidence:
+  - '二级标题带编号 ## 第 3 章：Kubernetes 与 GPU'
+  - 单独成行无句号
+  - '后接 ### GPU 发现 等子节'
+  rejected_evidence:
+  - 标题后内容直接进入三级标题缺少章节概述
+  - 置信度可被子节干扰
+  need_human_review: false
+rejected_lines: []

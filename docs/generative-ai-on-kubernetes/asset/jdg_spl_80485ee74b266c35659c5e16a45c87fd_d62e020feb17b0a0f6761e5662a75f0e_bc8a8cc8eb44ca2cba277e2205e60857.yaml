@@ -1,0 +1,52 @@
+chapter_starts:
+- 'no': 3083
+  confidence: 0.88
+  final_reason: 编号特征符合第 X 章，单独成行长度<30字，后续为第4章正文概述；复核方反证关于标题层级不一致不足以推翻，上下文为新章起始
+  accepted_evidence:
+  - 标题包含“第 4 章”，单独成行，后续为本章正文介绍
+  - 复核方 keep_split=true，overturn_probability 0.1
+  rejected_evidence:
+  - '标题使用 ## 级别与前一 # 标题不一致'
+  - '紧邻 ## 经验教训 有可能为子标题'
+  need_human_review: false
+- 'no': 3800
+  confidence: 0.93
+  final_reason: '标题为 # 第 5 章：模型可观测性，编号特征、格式特征、语义统领均符合最高层级章标题，后接本章引言'
+  accepted_evidence:
+  - '标题以 # 开头含第 X 章序号，单独成行'
+  - 后文为第5章概述
+  rejected_evidence:
+  - 前一章标题层级格式不统一
+  - 后文先回顾前几章
+  need_human_review: false
+- 'no': 4369
+  confidence: 0.9
+  final_reason: '标题为 # 第 III 部分：调优，书呈现部分-章节模式，按规则部分标题亦应划分新章，单独成行且统领后续章节'
+  accepted_evidence:
+  - 部分级标题单独成行，统领后续内容
+  - 复核方 keep_split=true
+  rejected_evidence:
+  - 可能仅为目录中的部分标题
+  - 无分页符
+  need_human_review: false
+- 'no': 4380
+  confidence: 0.85
+  final_reason: 标题包含第 6 章：模型定制化，编号特征、单独成行、语义为最高层级章节，后续为第6章正文
+  accepted_evidence:
+  - 标题表述为最高层级章节，后续为第6章正文介绍
+  - 复核方 keep_split=true
+  rejected_evidence:
+  - 前文列表已提及第6章，可能为重复
+  - '使用 ## 级别'
+  need_human_review: false
+- 'no': 4987
+  confidence: 0.9
+  final_reason: '标题为 # 第 7 章：作业调度优化，含第 X 章序号，单独成行，后接本章总体说明，典型章节起始'
+  accepted_evidence:
+  - 含第 X 章序号，单独成行，后接本章总体说明
+  - 复核方 keep_split=true
+  rejected_evidence:
+  - 格式与第6章不一致
+  - 前文已预告下一章
+  need_human_review: false
+rejected_lines: []

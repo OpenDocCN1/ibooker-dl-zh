@@ -1,0 +1,232 @@
+reviews:
+- 'no': 14767
+  overturn_probability: 0.2
+  alternative: '章内的大分区标题（如“迭代优化”部分），但若全书章节确实以 # 划分，它仍可能是章'
+  counter_evidence:
+  - 该行没有序号，且前后为列表项残留，可能来自目录而非正文
+  - 它后面直接是 '## 模式 13：思维链'，更像是一组模式的分类标题，而非全书最高层级的章
+  keep_split: true
+- 'no': 15465
+  overturn_probability: 0.95
+  alternative: 索引条目（“指令微调”词条）
+  counter_evidence:
+  - 后面紧跟 '## 模式 16：Evol-Instruct' 和 '（另请参阅模式 16：Evol-Instruct）'，这是索引中的交叉引用
+  - '从该行起出现一连串并列的 # 标题（启动、长期记忆等），彼此无连续正文，符合索引结构'
+  keep_split: false
+- 'no': 15471
+  overturn_probability: 0.95
+  alternative: 索引条目（“启动”词条）
+  counter_evidence:
+  - 下一行是 '（另请参阅 RAG（检索增强生成））'，显然是索引交叉引用
+  - '位于索引区域，与前后 # 条目并列'
+  keep_split: false
+- 'no': 15475
+  overturn_probability: 0.95
+  alternative: 索引条目（“从少到多提示”词条）
+  counter_evidence:
+  - '其后没有正文，只有空行和下一个 # 标题'
+  - 处于索引段，属于词条而非章节
+  keep_split: false
+- 'no': 15477
+  overturn_probability: 0.95
+  alternative: 索引条目（“LLM 作为裁判的提示方法”词条）
+  counter_evidence:
+  - 下一行是 '选项 1：提示方法'，是索引子项，不是正文内容
+  - '与相邻 # 条目共同构成索引'
+  keep_split: false
+- 'no': 15481
+  overturn_probability: 0.95
+  alternative: 索引条目（“长期记忆”词条）
+  counter_evidence:
+  - 后面只有 '问题' 一词，与索引中常见的子标题一致
+  - 前后均为索引条目，无连续正文
+  keep_split: false
+- 'no': 15485
+  overturn_probability: 0.95
+  alternative: 索引条目（“多模态提示词”词条）
+  counter_evidence:
+  - 下一行是 '提示词与上下文'，是索引子项
+  - 符合索引词条模式
+  keep_split: false
+- 'no': 15489
+  overturn_probability: 0.95
+  alternative: 索引条目（“中和个性化电子邮件”词条）
+  counter_evidence:
+  - 下一行是 '第 1 步：中和'，是索引子项
+  - 位于索引段
+  keep_split: false
+- 'no': 15493
+  overturn_probability: 0.95
+  alternative: 索引条目（“后训练监督微调”词条）
+  counter_evidence:
+  - 下一行是 '后训练方法'，是索引子项
+  - '与相邻 # 条目形成索引列表'
+  keep_split: false
+- 'no': 15497
+  overturn_probability: 0.95
+  alternative: 索引条目（“客户端提示缓存示例”词条）
+  counter_evidence:
+  - 下一行是 '示例 - 示例'，是索引中常见的条目说明
+  - 属于索引区域
+  keep_split: false
+- 'no': 15501
+  overturn_probability: 0.95
+  alternative: 索引条目（“提示压缩”词条）
+  counter_evidence:
+  - 下一行是 '模式 26：推理优化'，是交叉引用
+  - 索引结构明确
+  keep_split: false
+- 'no': 15507
+  overturn_probability: 0.95
+  alternative: 索引条目（“推理优化”词条）
+  counter_evidence:
+  - 后面有 '选项 3：提示压缩' 等子项，是索引条目
+  - 无正文内容
+  keep_split: false
+- 'no': 15513
+  overturn_probability: 0.95
+  alternative: 索引条目（“提示工程”词条）
+  counter_evidence:
+  - 下一行是 '## 控制响应格式'，后面又有 '问题' 等索引子项
+  - 明显是索引中的大词条
+  keep_split: false
+- 'no': 15539
+  overturn_probability: 0.95
+  alternative: 索引条目（“提示优化示例”词条）
+  counter_evidence:
+  - 下一行是 '示例-少样本优化器'，是索引子项
+  - 位于索引段
+  keep_split: false
+- 'no': 15543
+  overturn_probability: 0.95
+  alternative: 索引条目（“self-RAG”词条）
+  counter_evidence:
+  - '后面没有正文，直接是下一个 # 条目'
+  - 属于索引
+  keep_split: false
+- 'no': 15545
+  overturn_probability: 0.95
+  alternative: 索引条目（“总结文档并将其前置到分块”词条）
+  counter_evidence:
+  - 下一行是 '上下文检索'，是索引子项
+  - 索引特征明显
+  keep_split: false
+- 'no': 15549
+  overturn_probability: 0.95
+  alternative: 索引条目（“同义词扩展”词条）
+  counter_evidence:
+  - 下一行是 '处理行业术语'，是交叉引用
+  - 索引结构
+  keep_split: false
+- 'no': 15553
+  overturn_probability: 0.95
+  alternative: 索引条目（“系统提示”词条）
+  counter_evidence:
+  - 下一行是 '使用模型提供商的 API'，是索引子项
+  - 无正文，属于索引
+  keep_split: false
+- 'no': 15561
+  overturn_probability: 0.95
+  alternative: 索引条目（“用户提示”词条）
+  counter_evidence:
+  - 下一行是 '使用模型提供商的 API'，是索引子项
+  - 同样处于索引段
+  keep_split: false
+- 'no': 15565
+  overturn_probability: 0.95
+  alternative: 索引条目（“Pydantic AI 框架”词条）
+  counter_evidence:
+  - 后面有 '## Agent 类调用模型' 等子标题，是索引词条下的子项
+  - 不是独立章节
+  keep_split: false
+- 'no': 15579
+  overturn_probability: 0.95
+  alternative: 索引主条目（“Python”）
+  counter_evidence:
+  - 后续全是 '## 词条' 形式的索引项，没有章节正文
+  - 位于书末索引区域，是索引词条而非章标题
+  keep_split: false
+- 'no': 15621
+  overturn_probability: 0.95
+  alternative: 索引字母分组标题（字母 Q）
+  counter_evidence:
+  - '单个字母 # Q 作为分组标识，后续都是 Q 开头的词条'
+  - 属于书末索引部分，不应分章
+  keep_split: false
+- 'no': 16229
+  overturn_probability: 0.95
+  alternative: 索引字母分组标题（字母 S）
+  counter_evidence:
+  - '单个字母 # S，后续均为 S 开头词条'
+  - 索引结构
+  keep_split: false
+- 'no': 16647
+  overturn_probability: 0.95
+  alternative: 索引字母分组标题（字母 T）
+  counter_evidence:
+  - '单个字母 # T，后续为 T 开头词条'
+  - 书末索引部分
+  keep_split: false
+- 'no': 16763
+  overturn_probability: 0.9
+  alternative: 索引条目（“分层分块”）
+  counter_evidence:
+  - 下一行是列表项 '- 分层分块（其他分块技术）'，是索引的子条目
+  - 位于 T 字母索引中
+  keep_split: false
+- 'no': 16769
+  overturn_probability: 0.9
+  alternative: 索引条目（“检索”）
+  counter_evidence:
+  - 后续为 '- TF...' 等列表项，是索引子条目
+  - 无正文，索引特征明显
+  keep_split: false
+- 'no': 16775
+  overturn_probability: 0.9
+  alternative: 索引条目（“首 token 时间（TTFT）”）
+  counter_evidence:
+  - 下一行是 '- 首 token 时间...' 列表项，是索引条目
+  - 处于索引词条集中
+  keep_split: false
+- 'no': 16779
+  overturn_probability: 0.9
+  alternative: 索引条目（“分词器”）
+  counter_evidence:
+  - 后续为列表项，是索引的子条目
+  - 无正文内容
+  keep_split: false
+- 'no': 16784
+  overturn_probability: 0.9
+  alternative: 索引条目（“Token”）
+  counter_evidence:
+  - 后面是多个列表项，引用其他词条，是典型索引格式
+  - 属于索引部分
+  keep_split: false
+- 'no': 16797
+  overturn_probability: 0.9
+  alternative: 索引条目（“每秒 token 数（TPS）”）
+  counter_evidence:
+  - 下一行是 '- 每秒 token 数...' 列表项
+  - 索引结构
+  keep_split: false
+- 'no': 16801
+  overturn_probability: 0.9
+  alternative: 索引条目（“工具调用”）
+  counter_evidence:
+  - 后续为大量列表项，是索引词条
+  - 在 T 字母索引中
+  keep_split: false
+- 'no': 16992
+  overturn_probability: 0.3
+  alternative: 书末的作者简介部分，仍可视为一章
+  counter_evidence:
+  - 该行位于索引之后，属于附加内容，按'关于作者统一划分为一章'的规则可划分
+  - 但也可以与版权页说明合为一个书末部分，不必单独成章
+  keep_split: true
+- 'no': 16998
+  overturn_probability: 0.3
+  alternative: 书末的版权说明部分，仍可视为一章
+  counter_evidence:
+  - 内容为封面动物介绍，更像出版信息而非正文
+  - 按规则可划分，但也可与作者简介合并
+  keep_split: true

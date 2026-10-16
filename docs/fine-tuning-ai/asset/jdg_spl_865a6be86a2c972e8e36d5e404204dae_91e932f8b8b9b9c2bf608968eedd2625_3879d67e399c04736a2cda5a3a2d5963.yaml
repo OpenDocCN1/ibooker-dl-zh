@@ -1,0 +1,41 @@
+chapter_starts:
+- 'no': 3
+  confidence: 0.95
+  final_reason: 双方一致认为其为最高层级章节标题，单独成行，编号连贯，语义统领后续内容。
+  accepted_evidence:
+  - 行内容为“## 第 1 章：从通才到专才”，具备最高层级章编号且单独成行
+  - 后续为“蜜月期已结束。”等概述段落，前文为上一章标题/正文衔接，符合章节上下文
+  - 序号与第 2 章、第 3 章连贯，符合全书大章划分规则
+  rejected_evidence: []
+  need_human_review: false
+- 'no': 185
+  confidence: 0.96
+  final_reason: 双方一致认定为第 2 章标题，格式、语义、序号连贯性均符合最高层级大章标准。
+  accepted_evidence:
+  - 行内容为“## 第 2 章 模型架构：AI 的 DNA”，最高层级编号且单独成行
+  - 前文为第 1 章结尾过渡句，后文为本章概述，统领性明显
+  - 与第 1 章、第 3 章序号连贯，无跳跃
+  rejected_evidence: []
+  need_human_review: false
+- 'no': 629
+  confidence: 0.95
+  final_reason: 双方一致认定为第 3 章标题，单独成行，语义概括后续内容，序号与前后章衔接自然。
+  accepted_evidence:
+  - 行内容为“# 第 3 章 微调者的工作坊”，最高层级编号且单独成行
+  - 前文为第 2 章总结段落，后文直接展开本章“为什么设置很重要”等内容，符合章节边界特征
+  - 序号与前两章连贯，属于全书大章划分
+  rejected_evidence: []
+  need_human_review: false
+- 'no': 1115
+  confidence: 0.9
+  final_reason: 双方一致认为“关于作者”为文末附属内容，按规则可独立划分为一章。
+  accepted_evidence:
+  - 行内容为“# 关于作者”，单独成行，后接作者介绍段落
+  - 位于全书末尾，符合文末作者介绍/附属信息的章节划分规则
+  - 并非段落内小标题，语义上构成一个独立板块
+  rejected_evidence: []
+  need_human_review: false
+rejected_lines:
+- 'no': 1
+  reason: 复核方证据成立：该行为全书书名/封面标题（“# AI 微调指南”），不具备正文章节的统领性；若将其单独拆为一章，会人为割裂前置内容，且规则未将书名列为章标题，故不予分章。
+  need_human_review: false

@@ -1,0 +1,20 @@
+chapter_starts:
+- 'no': 7096
+  confidence: 0.99
+  final_reason: 双方一致 + 排版语义均符合
+  accepted_evidence:
+  - 行内容为 '# 第 6 章 提高可靠性'，单独成行、‘第 X 章’最高层级编号，末尾无句号，长度<30字
+  - 前行为脚注/参考说明，后行为本章开篇概述，语义统领后续模式 17-20
+  - 复核方证据充分，无推翻理由
+  rejected_evidence: []
+  need_human_review: false
+- 'no': 8133
+  confidence: 0.99
+  final_reason: 双方一致 + 排版语义均符合
+  accepted_evidence:
+  - 行内容为 '# 第 7 章 让智能体采取行动'，单独成行、‘第 X 章’最高层级编号，末尾无句号，长度<30字
+  - 前几行为第 6 章总结表格与脚注，本行后紧跟新章引言，语义统领后续模式 21-23
+  - 复核方证据充分，无推翻理由
+  rejected_evidence: []
+  need_human_review: false
+rejected_lines: []

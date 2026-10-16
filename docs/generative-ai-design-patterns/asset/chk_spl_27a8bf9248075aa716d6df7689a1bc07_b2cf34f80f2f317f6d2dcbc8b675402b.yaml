@@ -1,0 +1,22 @@
+reviews:
+- 'no': 9282
+  overturn_probability: 0.02
+  alternative: 若不分章，这行最可能是什么
+  counter_evidence:
+  - 行内容为 '# 第 8 章 应对约束'，符合全书最高层级章标题编号特征，第 7 章在 9260 附近结束，前一行为空，上下文为新章开始
+  - 标题单独成行，长度远小于30字，末尾无句号，语义具有统领性，后续 9284 行即为本章导言段落
+  keep_split: true
+- 'no': 10863
+  overturn_probability: 0.01
+  alternative: 若不分章，这行最可能是什么
+  counter_evidence:
+  - 行内容为 '# 第 9 章 设置安全防护'，编号连贯在第 8 章之后，单独成行且无标点结尾
+  - 前文 10862 为第 8 章总结表格，10864 为本章引言，前后形成章节边界，语义统领后续安全防护内容
+  keep_split: true
+- 'no': 11644
+  overturn_probability: 0.01
+  alternative: 若不分章，这行最可能是什么
+  counter_evidence:
+  - 行内容为 '# 第 10 章 可组合的智能体工作流'，符合最高层级章标题格式，单独成行无句号
+  - 前文 11638 为第 9 章附注，11646 起为本章正文介绍，上下文明显为新章起始
+  keep_split: true

@@ -1,0 +1,100 @@
+chapter_starts:
+- 'no': 14767
+  confidence: 0.92
+  reason: '最高层级 # 标题，单独成行，长度合适，统领后续模式 13 起的内容，为新一章起始'
+- 'no': 15465
+  confidence: 0.9
+  reason: '最高层级 # 标题 # 指令微调，单独成行，语义独立，开启新主题'
+- 'no': 15471
+  confidence: 0.88
+  reason: '最高层级 # 标题 # 启动，单独成行，格式符合章标题特征'
+- 'no': 15475
+  confidence: 0.88
+  reason: '最高层级 # 标题 # 从少到多提示，独立主题，满足格式与语义'
+- 'no': 15477
+  confidence: 0.85
+  reason: '最高层级 # 标题 # LLM 作为裁判的提示方法，单独成行，统领性强'
+- 'no': 15481
+  confidence: 0.85
+  reason: '最高层级 # 标题 # 长期记忆，单独成行，符合章标题特征'
+- 'no': 15485
+  confidence: 0.85
+  reason: '最高层级 # 标题 # 多模态提示词，单独成行，语义概括'
+- 'no': 15489
+  confidence: 0.85
+  reason: '最高层级 # 标题 # 中和个性化电子邮件，单独成行'
+- 'no': 15493
+  confidence: 0.85
+  reason: '最高层级 # 标题 # 后训练监督微调，单独成行'
+- 'no': 15497
+  confidence: 0.8
+  reason: '最高层级 # 标题 # 客户端提示缓存示例，示例类独立章节'
+- 'no': 15501
+  confidence: 0.85
+  reason: '最高层级 # 标题 # 提示压缩，单独成行'
+- 'no': 15507
+  confidence: 0.85
+  reason: '最高层级 # 标题 # 推理优化，单独成行'
+- 'no': 15513
+  confidence: 0.85
+  reason: '最高层级 # 标题 # 提示工程，单独成行'
+- 'no': 15539
+  confidence: 0.8
+  reason: '最高层级 # 标题 # 提示优化示例，示例章节'
+- 'no': 15543
+  confidence: 0.8
+  reason: '最高层级 # 标题 # self-RAG，单独成行'
+- 'no': 15545
+  confidence: 0.8
+  reason: '最高层级 # 标题 # 总结文档并将其前置到分块，单独成行'
+- 'no': 15549
+  confidence: 0.8
+  reason: '最高层级 # 标题 # 同义词扩展，单独成行'
+- 'no': 15553
+  confidence: 0.8
+  reason: '最高层级 # 标题 # 系统提示，单独成行'
+- 'no': 15561
+  confidence: 0.8
+  reason: '最高层级 # 标题 # 用户提示，单独成行'
+- 'no': 15565
+  confidence: 0.8
+  reason: '最高层级 # 标题 # Pydantic AI 框架，单独成行'
+- 'no': 15579
+  confidence: 0.8
+  reason: '最高层级 # 标题 # Python，字母索引大章'
+- 'no': 15621
+  confidence: 0.9
+  reason: '最高层级 # 标题 # Q，字母索引大章起始'
+- 'no': 16229
+  confidence: 0.9
+  reason: '最高层级 # 标题 # S，字母索引大章起始'
+- 'no': 16647
+  confidence: 0.9
+  reason: '最高层级 # 标题 # T，字母索引大章起始'
+- 'no': 16763
+  confidence: 0.85
+  reason: '最高层级 # 标题 # 分层分块，单独成行'
+- 'no': 16769
+  confidence: 0.85
+  reason: '最高层级 # 标题 # 检索，单独成行'
+- 'no': 16775
+  confidence: 0.8
+  reason: '最高层级 # 标题 # 首 token 时间（TTFT），单独成行'
+- 'no': 16779
+  confidence: 0.8
+  reason: '最高层级 # 标题 # 分词器，单独成行'
+- 'no': 16784
+  confidence: 0.8
+  reason: '最高层级 # 标题 # Token，单独成行'
+- 'no': 16797
+  confidence: 0.8
+  reason: '最高层级 # 标题 # 每秒 token 数（TPS），单独成行'
+- 'no': 16801
+  confidence: 0.8
+  reason: '最高层级 # 标题 # 工具调用，单独成行'
+- 'no': 16992
+  confidence: 0.95
+  reason: '最高层级 # 标题 # 关于作者，文末作者介绍，按规则统一划分为一章'
+- 'no': 16998
+  confidence: 0.95
+  reason: '最高层级 # 标题 # 版权页说明，文末版权信息，按规则划分为一章'

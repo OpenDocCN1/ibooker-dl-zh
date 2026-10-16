@@ -1,0 +1,51 @@
+reviews:
+- 'no': 9
+  overturn_probability: 0.12
+  alternative: 若不分章，这行最可能是什么
+  counter_evidence:
+  - '标题为 ## 前言 与后文第37行重复出现 前言，可能为排版断行或目录噪声导致误判'
+  - 前言后紧跟 2022 年底... 的叙述段落，未见典型的章节概述与子节 X.Y 结构
+  keep_split: true
+- 'no': 157
+  overturn_probability: 0.18
+  alternative: 正文小标题
+  counter_evidence:
+  - '## 引言 出现在 ## 致谢 之后，上下文为作者致谢与前言内容混杂，可能为前言内部的小标题而非最高层级新章'
+  - 标题后 1~3 行为历史叙述段落，缺乏统领后续多章的概括性语义
+  keep_split: true
+- 'no': 437
+  overturn_probability: 0.08
+  alternative: 正文小标题
+  counter_evidence:
+  - '# 第一部分：推理 格式为一级标题，但后文  # 第二部分——生产就绪 亦为一级标题，层级跳跃可能为排版噪声'
+  - 标题后 1~3 行直接进入说明性段落，未出现子章编号 第 1 章 的承接关系
+  keep_split: true
+- 'no': 458
+  overturn_probability: 0.05
+  alternative: 正文小标题
+  counter_evidence:
+  - '## 第 1 章：部署模型 后紧跟  ### Transformer 架构与注意力机制 等三级标题，标题长度接近 30 字上限，可能为小标题'
+  - '标题前为 # 第一部分：推理 的部分介绍段落，缺少明显的上一章总结、习题等结束特征'
+  keep_split: true
+- 'no': 1233
+  overturn_probability: 0.06
+  alternative: 正文小标题
+  counter_evidence:
+  - '## 第 2 章 模型数据 与前一章间距仅为经验教训段落，未见目录式概述段落'
+  - 标题末尾无标点符合规则，但后文直接进入大段说明，语义统领性不足
+  keep_split: true
+- 'no': 2306
+  overturn_probability: 0.1
+  alternative: 正文小标题
+  counter_evidence:
+  - '# 第二部分——生产就绪 使用全角破折号，与 # 第一部分：推理 格式不一致，可能为排版断行噪声'
+  - 标题后 1~3 行为生产就绪定义段落，未见子章编号 第 3 章 的明确承接
+  keep_split: true
+- 'no': 2316
+  overturn_probability: 0.07
+  alternative: 正文小标题
+  counter_evidence:
+  - '## 第 3 章：Kubernetes 与 GPU 出现在 # 第二部分——生产就绪 之后，层级上为部分下的章节，符合规则但置信度可被子节 ### GPU
+    发现 等干扰'
+  - 标题后内容直接进入 GPU 发现 等三级标题，缺少章节级概述段落
+  keep_split: true

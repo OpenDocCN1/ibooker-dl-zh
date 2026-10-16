@@ -1,0 +1,15 @@
+reviews:
+- 'no': 12045
+  overturn_probability: 0.85
+  alternative: 正文小标题
+  counter_evidence:
+  - 该行是 '# 可组合系统的优势'，位于 '## 部署' 之下的正文内部，属于二级/三级结构的小标题而非全书最高层级大章，规则要求只划分全书最高层级大章
+  - 上下文中前后均为同章部署相关内容，后接 '-' 列表项，未出现章首概述段落和子节编号，格式上与正文小标题一致且缺乏章序号
+  keep_split: false
+- 'no': 12065
+  overturn_probability: 0.15
+  alternative: 正文小标题
+  counter_evidence:
+  - 该行 '#### 索引' 为四级 Markdown 标题，位于 '## 总结' 之后，确实为文末索引起始的标志，符合规则'文末索引也划分为一章'
+  - 虽标题层级较深，但语义上为独立的索引部分，与后续索引条目连续，维持分章与规则一致
+  keep_split: true

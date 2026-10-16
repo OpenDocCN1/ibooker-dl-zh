@@ -1,0 +1,16 @@
+chapter_starts:
+- 'no': 1
+  confidence: 0.9
+  reason: 标题“前言”为正文之前的内容，应划分为一章。
+- 'no': 2
+  confidence: 0.9
+  reason: 标题“致谢”属于正文之前的内容，应划分为一章。
+- 'no': 3
+  confidence: 1.0
+  reason: 标题“第 1 章 引言”带有明确的章编号，是全书最高层级的大章。
+- 'no': 4
+  confidence: 1.0
+  reason: 标题“第 2 章 控制内容风格”带有明确的章编号，是全书最高层级的大章。
+- 'no': 5
+  confidence: 1.0
+  reason: 标题“第 3 章 添加知识：Bass”带有明确的章编号，是全书最高层级的大章。

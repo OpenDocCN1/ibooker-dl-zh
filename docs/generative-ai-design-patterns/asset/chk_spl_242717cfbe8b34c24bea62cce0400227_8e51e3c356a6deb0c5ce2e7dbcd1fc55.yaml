@@ -1,0 +1,36 @@
+reviews:
+- 'no': 4
+  overturn_probability: 0.1
+  alternative: 正文小标题（前言部分的标题）
+  counter_evidence:
+  - 该行是二级标题（##），不是带编号的最高层级大章，单看格式可能被误认为普通小节标题；但书籍前置内容规则要求前言统一分章。
+  - 原文第2行已有书名级标题，前言更像前置说明而非正文章节，但规范明确将前言、序言等归为一章。
+  keep_split: true
+- 'no': 91
+  overturn_probability: 0.1
+  alternative: 正文小标题（致谢部分的标题）
+  counter_evidence:
+  - 致谢没有章编号，且以二级标题形式出现，容易被当作正文内的小标题；但根据规则，致谢属于正文之前的内容，应统一划为一章。
+  - 其上下文是感谢语段落，缺乏章标题常见的后续子节结构，但前置内容的分章条件独立于此。
+  keep_split: true
+- 'no': 99
+  overturn_probability: 0.01
+  alternative: 正文小标题（篇首引言标题）
+  counter_evidence:
+  - 尽管带有“第 1 章”编号，但标题“引言”本身在书籍中常作为章内引导小节出现，存在轻微误判空间；不过其后跟随多个二级标题，证明它是章。
+  - 该行后一行是正文而非子节标题，与典型章标题后跟概述段落的特征完全吻合，分章合理。
+  keep_split: true
+- 'no': 755
+  overturn_probability: 0.01
+  alternative: 正文小标题（控制内容风格的节标题）
+  counter_evidence:
+  - “控制内容风格”也可作为某一节的标题，但“第 2 章”前缀明确了它属于最高层级章节。
+  - 前文第1章末尾有注释和空行，第2章标题独立成行，且后面有引言段落，符合章标题的上下文特征。
+  keep_split: true
+- 'no': 2933
+  overturn_probability: 0.05
+  alternative: 正文小标题（添加知识的节标题）
+  counter_evidence:
+  - 标题中“Bass”疑似OCR噪声（可能应为“RAG”），若只看到噪声可能怀疑不是正式标题，但“第 3 章”编号无误。
+  - 该行独立成行且无句号，长度短，后接概述段落，与章标题特征一致。
+  keep_split: true

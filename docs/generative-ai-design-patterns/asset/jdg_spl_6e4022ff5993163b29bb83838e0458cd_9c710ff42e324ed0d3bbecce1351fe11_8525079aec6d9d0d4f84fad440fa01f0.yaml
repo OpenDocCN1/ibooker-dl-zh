@@ -1,0 +1,123 @@
+chapter_starts:
+- 'no': 14767
+  confidence: 0.78
+  final_reason: '判断方认为最高层级 # 标题单独成行统领后续模式；复核方提出其为章内大分区且无序号但承认若以 # 划分仍可能为章，overturn_probability
+    0.2，采纳保留。需注意前后仍有列表残留，置信度下调。'
+  accepted_evidence:
+  - '最高层级 # 标题 迭代优化，单独成行，长度合适'
+  - '后面直接跟 ## 模式 13：思维链，形成新分组'
+  rejected_evidence:
+  - 前后为列表项残留可能来自目录
+  - 无序号且更像模式分类标题
+  need_human_review: false
+- 'no': 16992
+  confidence: 0.85
+  final_reason: '最高层级 # 标题 # 关于作者，位于书末索引之后，为作者介绍，按规则文末前言类统一划分为一章。复核方 overturn_probability
+    0.3，认为仍可视为一章，采纳保留。'
+  accepted_evidence:
+  - '# 关于作者 单独成行，文末附加内容'
+  - 后接作者简介正文段落
+  rejected_evidence:
+  - 可与版权页说明合并为书末部分
+  need_human_review: false
+- 'no': 16998
+  confidence: 0.85
+  final_reason: '最高层级 # 标题 # 版权页说明，文末出版信息，按规则可划分为一章。复核方 overturn_probability 0.3，采纳保留。'
+  accepted_evidence:
+  - '# 版权页说明 单独成行，后接封面动物介绍等出版信息'
+  rejected_evidence:
+  - 内容更像出版信息而非正文，可与作者简介合并
+  need_human_review: false
+rejected_lines:
+- 'no': 15465
+  reason: '复核方指出为索引条目 指令微调，后面紧跟 ## 模式 16：Evol-Instruct 及交叉引用，一连串并列 # 标题无连续正文，符合书末索引结构，overturn_probability
+    0.95，优先采纳复核。'
+  need_human_review: false
+- 'no': 15471
+  reason: 复核方指出为索引条目 启动，下一行为另请参阅交叉引用，位于索引区域，overturn_probability 0.95。
+  need_human_review: false
+- 'no': 15475
+  reason: '复核方指出为索引条目 从少到多提示，后无正文仅空行与下一个 # 标题，overturn_probability 0.95。'
+  need_human_review: false
+- 'no': 15477
+  reason: 复核方指出为索引条目 LLM 作为裁判的提示方法，下一行选项 1：提示方法为索引子项，overturn_probability 0.95。
+  need_human_review: false
+- 'no': 15481
+  reason: 复核方指出为索引条目 长期记忆，后面只有 问题 一词，与索引子标题一致，overturn_probability 0.95。
+  need_human_review: false
+- 'no': 15485
+  reason: 复核方指出为索引条目 多模态提示词，下一行提示词与上下文为索引子项，overturn_probability 0.95。
+  need_human_review: false
+- 'no': 15489
+  reason: 复核方指出为索引条目 中和个性化电子邮件，下一行第 1 步：中和为索引子项，overturn_probability 0.95。
+  need_human_review: false
+- 'no': 15493
+  reason: 复核方指出为索引条目 后训练监督微调，下一行后训练方法为索引子项，overturn_probability 0.95。
+  need_human_review: false
+- 'no': 15497
+  reason: 复核方指出为索引条目 客户端提示缓存示例，下一行示例 - 示例为索引条目说明，overturn_probability 0.95。
+  need_human_review: false
+- 'no': 15501
+  reason: 复核方指出为索引条目 提示压缩，下一行模式 26：推理优化为交叉引用，索引结构明确，overturn_probability 0.95。
+  need_human_review: false
+- 'no': 15507
+  reason: 复核方指出为索引条目 推理优化，后有选项 3：提示压缩等子项，无正文，overturn_probability 0.95。
+  need_human_review: false
+- 'no': 15513
+  reason: 复核方指出为索引条目 提示工程，下一行## 控制响应格式及问题等为索引子项，overturn_probability 0.95。
+  need_human_review: false
+- 'no': 15539
+  reason: 复核方指出为索引条目 提示优化示例，下一行示例-少样本优化器为索引子项，overturn_probability 0.95。
+  need_human_review: false
+- 'no': 15543
+  reason: '复核方指出为索引条目 self-RAG，后无正文直接接下一个 # 条目，overturn_probability 0.95。'
+  need_human_review: false
+- 'no': 15545
+  reason: 复核方指出为索引条目 总结文档并将其前置到分块，下一行上下文检索为索引子项，overturn_probability 0.95。
+  need_human_review: false
+- 'no': 15549
+  reason: 复核方指出为索引条目 同义词扩展，下一行处理行业术语为交叉引用，overturn_probability 0.95。
+  need_human_review: false
+- 'no': 15553
+  reason: 复核方指出为索引条目 系统提示，下一行使用模型提供商的 API 为索引子项，无正文，overturn_probability 0.95。
+  need_human_review: false
+- 'no': 15561
+  reason: 复核方指出为索引条目 用户提示，下一行使用模型提供商的 API 为索引子项，overturn_probability 0.95。
+  need_human_review: false
+- 'no': 15565
+  reason: 复核方指出为索引条目 Pydantic AI 框架，后有## Agent 类调用模型等子标题为索引词条下的子项，overturn_probability
+    0.95。
+  need_human_review: false
+- 'no': 15579
+  reason: 复核方指出为索引主条目 Python，后续全是## 词条形式索引项，无章节正文，位于书末索引区，overturn_probability 0.95。
+  need_human_review: false
+- 'no': 15621
+  reason: '复核方指出为索引字母分组标题 # Q，单个字母分组，后续为 Q 开头词条，书末索引部分，overturn_probability 0.95。'
+  need_human_review: false
+- 'no': 16229
+  reason: '复核方指出为索引字母分组标题 # S，后续均为 S 开头词条，overturn_probability 0.95。'
+  need_human_review: false
+- 'no': 16647
+  reason: '复核方指出为索引字母分组标题 # T，后续为 T 开头词条，书末索引部分，overturn_probability 0.95。'
+  need_human_review: false
+- 'no': 16763
+  reason: 复核方指出为索引条目 分层分块，下一行为列表项 - 分层分块，位于 T 字母索引中，overturn_probability 0.9。
+  need_human_review: false
+- 'no': 16769
+  reason: 复核方指出为索引条目 检索，后续为 - TF... 等列表项，无正文，索引特征明显，overturn_probability 0.9。
+  need_human_review: false
+- 'no': 16775
+  reason: 复核方指出为索引条目 首 token 时间（TTFT），下一行为列表项，处于索引词条集中，overturn_probability 0.9。
+  need_human_review: false
+- 'no': 16779
+  reason: 复核方指出为索引条目 分词器，后续为列表项，无正文内容，overturn_probability 0.9。
+  need_human_review: false
+- 'no': 16784
+  reason: 复核方指出为索引条目 Token，后面为多个列表项引用其他词条，典型索引格式，overturn_probability 0.9。
+  need_human_review: false
+- 'no': 16797
+  reason: 复核方指出为索引条目 每秒 token 数（TPS），下一行为列表项，overturn_probability 0.9。
+  need_human_review: false
+- 'no': 16801
+  reason: 复核方指出为索引条目 工具调用，后续为大量列表项，在 T 字母索引中，overturn_probability 0.9。
+  need_human_review: false
