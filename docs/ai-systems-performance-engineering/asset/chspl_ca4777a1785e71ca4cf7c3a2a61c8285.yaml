@@ -1,0 +1,25 @@
+chapter_starts:
+- 'no': 3
+  confidence: 0.95
+  reason: 前言为正文前内容，按规则统一划分一章，标题单独成行且为最高层级标题
+- 'no': 23
+  confidence: 0.98
+  reason: 第 1 章 引言与 AI 系统概述，编号特征为全书最高层级大章，单独成行，语义统领后续内容
+- 'no': 269
+  confidence: 0.98
+  reason: 第 2 章 AI 系统硬件概述，标准章标题格式，单独成行，序号连贯
+- 'no': 671
+  confidence: 0.98
+  reason: 第 3 章 针对 GPU 环境的操作系统、Docker 与 Kubernetes 调优，最高层级章标题
+- 'no': 1200
+  confidence: 0.98
+  reason: 第 4 章 分布式通信与 I/O 优化，标准章标题
+- 'no': 1611
+  confidence: 0.98
+  reason: 第 5 章 AI 系统优化案例研究，标准章标题
+- 'no': 1986
+  confidence: 0.98
+  reason: 第 6 章 超大规模 AI 系统性能工程的未来趋势，标准章标题
+- 'no': 2422
+  confidence: 0.97
+  reason: 第 7 章 AI 系统性能检查清单（175+项），标准章标题

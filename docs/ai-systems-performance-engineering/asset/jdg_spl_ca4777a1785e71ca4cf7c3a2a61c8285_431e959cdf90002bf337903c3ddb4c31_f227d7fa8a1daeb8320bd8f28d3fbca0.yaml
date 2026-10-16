@@ -1,0 +1,74 @@
+chapter_starts:
+- 'no': 3
+  confidence: 0.95
+  final_reason: 前言为正文前内容，按规则统一划分一章，标题单独成行且为最高层级标题，复核方反证不足
+  accepted_evidence:
+  - '标题单独成行且为 # 级最高层级，符合前言类正文前内容划分规则'
+  - 后1~3行为作者自述的序言段落，与前言语义一致
+  - 前后无子节编号，直接承接书名后正文前内容
+  rejected_evidence: []
+  need_human_review: false
+- 'no': 23
+  confidence: 0.98
+  final_reason: 第 1 章 引言与 AI 系统概述，编号特征为全书最高层级大章，单独成行，语义统领后续内容，双方一致
+  accepted_evidence:
+  - 编号特征为全书最高层级‘第 1 章’，单独成行，末尾无句号
+  - 后1~3行为2024年底DeepSeek案例的概述段落，随后进入本章主体
+  - 序号与后续第2章、第3章等连贯
+  rejected_evidence: []
+  need_human_review: false
+- 'no': 269
+  confidence: 0.98
+  final_reason: 第 2 章 AI 系统硬件概述，标准章标题格式，单独成行，序号连贯，双方一致
+  accepted_evidence:
+  - 标准章标题格式‘# 第 2 章 AI 系统硬件概述’，单独成行
+  - 语义统领后续GPU/CPU/互连等硬件内容
+  - 前行为第1章结尾总结段落，后接独立章节开篇
+  rejected_evidence: []
+  need_human_review: false
+- 'no': 671
+  confidence: 0.98
+  final_reason: 第 3 章 针对 GPU 环境的操作系统、Docker 与 Kubernetes 调优，最高层级章标题，双方一致
+  accepted_evidence:
+  - 编号特征为‘第 3 章’最高层级，单独成行，长度<30字
+  - 后接操作系统、驱动、容器等系统级调优概述段落
+  - 序号在第2章之后连贯
+  rejected_evidence: []
+  need_human_review: false
+- 'no': 1200
+  confidence: 0.98
+  final_reason: 第 4 章 分布式通信与 I/O 优化，标准章标题，双方一致
+  accepted_evidence:
+  - ‘# 第 4 章 分布式通信与 I/O 优化’符合章标题格式特征
+  - 后文为存储/网络系统关键纽带概述，随后展开Magnum IO、RDMA等子节
+  - 与前后第3、5章序号连贯
+  rejected_evidence: []
+  need_human_review: false
+- 'no': 1611
+  confidence: 0.98
+  final_reason: 第 5 章 AI 系统优化案例研究，标准章标题，双方一致
+  accepted_evidence:
+  - ‘# 第 5 章 AI 系统优化案例研究’单独成行，编号最高层级
+  - 后文为OpenAI、DeepSeek等案例研究的统领性概述
+  - 前行为第4章结尾总结，后接新章节
+  rejected_evidence: []
+  need_human_review: false
+- 'no': 1986
+  confidence: 0.98
+  final_reason: 第 6 章 超大规模 AI 系统性能工程的未来趋势，标准章标题，双方一致
+  accepted_evidence:
+  - ‘# 第 6 章 超大规模 AI 系统性能工程的未来趋势’为标准章标题，单独成行
+  - 后文为多趋势概述段落，随后分节展开
+  - 序号在第5章之后连贯
+  rejected_evidence: []
+  need_human_review: false
+- 'no': 2422
+  confidence: 0.97
+  final_reason: 第 7 章 AI 系统性能检查清单（175+项），标准章标题，为全书最后一章，双方一致
+  accepted_evidence:
+  - ‘# 第 7 章 AI 系统性能检查清单（175+项）’编号特征明确，单独成行
+  - 后文为检查清单的引言概述，随后进入分点清单
+  - 为全书最后一章，序号连贯
+  rejected_evidence: []
+  need_human_review: false
+rejected_lines: []

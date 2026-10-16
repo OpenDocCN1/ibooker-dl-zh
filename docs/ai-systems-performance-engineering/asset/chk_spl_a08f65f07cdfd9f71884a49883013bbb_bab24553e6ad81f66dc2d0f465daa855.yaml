@@ -1,0 +1,55 @@
+reviews:
+- 'no': 2958
+  overturn_probability: 0.1
+  alternative: 可能是某个部分下的章节标题（若存在部分结构），但按当前层级它是一级标题
+  counter_evidence:
+  - '它是 # 一级标题，格式上属于全书最高层级，分章合理；但缺少紧跟的概述段落，且后面直接列出多个 ## 子标题，也可能是大型条目组的标题而非单独章节。'
+  - 若不分章，它可能是一个大节标题，但其下多个二级子标题说明它有统领性，推翻依据不足。
+  keep_split: true
+- 'no': 3002
+  overturn_probability: 0.85
+  alternative: 正文小标题（二级节标题）
+  counter_evidence:
+  - '该行是 ## 二级标题，从属于之前的一级标题 # 精度与算术优化，按 Markdown 层级不应上升为章。'
+  - '其后虽有 ### 子标题，但只是节内细分，不能证明它是最高层级大章。'
+  - 语义上“高级策略与算法技巧”是优化技巧分类下的一个子类别，与前一节“融合激活与缩放”平行，而非独立新章。
+  keep_split: false
+- 'no': 3040
+  overturn_probability: 0.8
+  alternative: 正文小标题（二级节标题）
+  counter_evidence:
+  - '该行是 ## 二级标题，层级上低于 #，不应单独分章。'
+  - '即使主题独立，但原文本未使用 # 或更高层级来标识，说明作者将其作为一级章下的节。'
+  - '后面的 ### 子节只表明该节内部有细分，不具备章级标志。'
+  keep_split: false
+- 'no': 3078
+  overturn_probability: 0.8
+  alternative: 正文小标题（二级节标题）
+  counter_evidence:
+  - '该行是 ## 二级标题，层级上低于 #，不应单独分章。'
+  - '它属于同一级标题 # 精度与算术优化 统领下的一个优化类别，而非全书最高层级大章。'
+  - '后续 ### 子节只是对该类别下的具体技巧进行展开，不足以支撑其作为新章。'
+  keep_split: false
+- 'no': 3128
+  overturn_probability: 0.8
+  alternative: 正文小标题（二级节标题）
+  counter_evidence:
+  - '该行是 ## 二级标题，层级上低于 #，不应单独分章。'
+  - '它处在 # 精度与算术优化 这一级标题之后，且后续内容结构混乱（如 3132 又出现 ## 标题），更说明此处只是节级组织。'
+  - '虽然后面有 ### 子节，但并不能改变其 Markdown 层级低于章的事实。'
+  keep_split: false
+- 'no': 3170
+  overturn_probability: 0.8
+  alternative: 正文小标题（二级节标题）
+  counter_evidence:
+  - “## 结论”是二级标题，不是全书最高层级，不应单独分章。
+  - '结论之前的内容均在同一 # 精度与算术优化 下，它只是该大章的收尾小节，而非独立章节。'
+  - 规则中只有前言、序言、致谢、关于作者和文末索引等特殊板块才强制成章，普通“结论”不具备该条件。
+  keep_split: false
+- 'no': 3182
+  overturn_probability: 0.05
+  alternative: 书末的单独板块（如作者介绍页）
+  counter_evidence:
+  - '它是 # 一级标题，符合最高层级格式。'
+  - 规则明确将“关于作者”列为应划分为一章的独立部分。
+  keep_split: true

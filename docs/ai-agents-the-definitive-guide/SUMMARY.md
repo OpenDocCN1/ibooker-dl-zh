@@ -1,2 +1,5 @@
 +   [AI智能体权威指南](README.md)
 +   [AI智能体权威指南](ai-agents-the-definitive-guide_0.md)
++   [第 1 章 从 LLM 到智能体：基础蓝图](ai-agents-the-definitive-guide_1.md)
++   [第 2 章 架构与模式：规划、反应性与多智能体系统](ai-agents-the-definitive-guide_2.md)
++   [关于作者](ai-agents-the-definitive-guide_3.md)

@@ -1,0 +1,37 @@
+chapter_starts:
+- 'no': 2958
+  confidence: 0.95
+  final_reason: 判断方与复核方均支持分章。# 一级标题独立成行，语义上开启“精度与算术优化”这一新主题，后接多个二级子标题，具备章级统领性。
+  accepted_evidence:
+  - '# 精度与算术优化 为一级标题，独立成行'
+  - '后续多个 ## 子标题均围绕精度、算术优化主题展开'
+  - 复核方 overturn_probability=0.1，保留分章
+  rejected_evidence:
+  - 缺少紧跟的概述段落
+  - 可能是大型条目组的标题而非单独章节
+  need_human_review: false
+- 'no': 3182
+  confidence: 0.97
+  final_reason: 双方一致支持分章。# 关于作者 是一级标题，且规则明确将“关于作者”部分统一划分为一章。
+  accepted_evidence:
+  - '# 关于作者 为一级标题，独立成行'
+  - 规则规定关于作者应单独划为一章
+  - 复核方 overturn_probability=0.05，保留分章
+  rejected_evidence: []
+  need_human_review: false
+rejected_lines:
+- 'no': 3002
+  reason: '复核方反方证据成立：该行为 ## 二级标题，从属于一级标题 # 精度与算术优化；虽有 ### 子节，但 Markdown 层级低于最高层，语义上也只是该章下的一类技巧，不能作为新章。'
+  need_human_review: false
+- 'no': 3040
+  reason: '复核方反方证据成立：该行为 ## 二级标题，层级低于全书最高层 #；后续 ### 子节只是节内细分，不足以证明其上升为新的章。'
+  need_human_review: false
+- 'no': 3078
+  reason: '复核方反方证据成立：该行为 ## 二级标题，仍处于 # 精度与算术优化 这一大章之下；主题虽独立，但作者未使用一级标题标识，不应单独分章。'
+  need_human_review: false
+- 'no': 3128
+  reason: '复核方反方证据成立：该行为 ## 二级标题，层级低于 #；后续结构还出现 3132 行再次以 ## 开头，更说明该处只是节级组织，不能作为新章。'
+  need_human_review: false
+- 'no': 3170
+  reason: '复核方反方证据成立：“## 结论”是二级标题，属于 # 精度与算术优化 大章末尾的收尾小节；规则中只有前言、序言、致谢、关于作者、文末索引等特殊板块才强制成章，普通“结论”不具备该条件。'
+  need_human_review: false
