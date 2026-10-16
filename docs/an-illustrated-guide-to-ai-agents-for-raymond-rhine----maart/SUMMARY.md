@@ -1,5 +1,5 @@
 +   [AI智能体图解指南](README.md)
 +   [AI智能体图解指南](an-illustrated-guide-to-ai-agents-for-raymond-rhine----maart_0.md)
 +   [第 1 章 记忆](an-illustrated-guide-to-ai-agents-for-raymond-rhine----maart_1.md)
-+   [第 2 章 工具使用、学习与协议](an-illustrated-guide-to-ai-agents-for-raymond-rhine----maart_2.md)
++   [第 2 章：工具使用、学习与协议](an-illustrated-guide-to-ai-agents-for-raymond-rhine----maart_2.md)
 +   [关于作者](an-illustrated-guide-to-ai-agents-for-raymond-rhine----maart_3.md)

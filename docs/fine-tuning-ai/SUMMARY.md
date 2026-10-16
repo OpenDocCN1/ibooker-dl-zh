@@ -2,5 +2,5 @@
 +   [AI 微调指南](fine-tuning-ai_0.md)
 +   [第 1 章：从通才到专才](fine-tuning-ai_1.md)
 +   [第 2 章 模型架构：AI 的 DNA](fine-tuning-ai_2.md)
-+   [第 3 章 微调者的工作坊](fine-tuning-ai_3.md)
++   [第 3 章：微调者的工作坊](fine-tuning-ai_3.md)
 +   [关于作者](fine-tuning-ai_4.md)

@@ -15,7 +15,7 @@
 +   [第三部分：针对复杂问题的高级深度网络](tf-ia_13.md)
 +   [第十一章：序列到序列学习：第一部分](tf-ia_14.md)
 +   [第十二章：序列到序列学习：第二部分](tf-ia_15.md)
-+   [第十三章：个 Transformer](tf-ia_16.md)
++   [第十三章：Transformer](tf-ia_16.md)
 +   [第十四章：TensorBoard：TensorFlow 的大兄弟](tf-ia_17.md)
 +   [第十五章：TFX：MLOps 和使用 TensorFlow 部署模型](tf-ia_18.md)
 +   [附录 A：设置环境](tf-ia_19.md)

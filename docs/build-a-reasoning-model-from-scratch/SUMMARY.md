@@ -1,7 +1,7 @@
 +   [推理模型构建指南（从零开始）](README.md)
 +   [推理模型构建指南（从零开始）](build-a-reasoning-model-from-scratch_00.md)
 +   [献词](build-a-reasoning-model-from-scratch_01.md)
-+   [第 1 章 理解推理模型](build-a-reasoning-model-from-scratch_02.md)
++   [第 1 章：理解推理模型](build-a-reasoning-model-from-scratch_02.md)
 +   [2 使用预训练 LLM 生成文本](build-a-reasoning-model-from-scratch_03.md)
 +   [3 评估推理模型](build-a-reasoning-model-from-scratch_04.md)
 +   [4 通过推理时扩展改进推理](build-a-reasoning-model-from-scratch_05.md)

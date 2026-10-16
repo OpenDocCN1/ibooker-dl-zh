@@ -4,7 +4,7 @@
 +   [第二章：RAG 系统和它们的设计](simgd-rag_chapter-2.md)
 +   [第三章：索引管道：为 RAG 创建知识库](simgd-rag_chapter-3.md)
 +   [第四章：生成管道：生成上下文 LLM 响应](simgd-rag_chapter-4.md)
-+   [第五章：RAG 评估：准确性、相关性和忠实度。](simgd-rag_chapter-5.md)
++   [第五章：RAG 评估：准确性、相关性和忠实度](simgd-rag_chapter-5.md)
 +   [第六章：RAG 系统进展：简单、高级和模块化 RAG](simgd-rag_chapter-6.md)
 +   [第七章：RAGOps 堆栈的演变](simgd-rag_chapter-7.md)
 +   [第八章：图、多模态、代理式和其他 RAG 变体](simgd-rag_chapter-8.md)

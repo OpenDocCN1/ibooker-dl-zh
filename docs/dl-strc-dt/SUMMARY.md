@@ -9,4 +9,4 @@
 +   [7 使用训练模型的更多实验](dl-strc-dt_07.md)
 +   [8 部署模型](dl-strc-dt_08.md)
 +   [9 建议的下一步行动](dl-strc-dt_09.md)
-+   [附录。使用 Google Colaboratory](dl-strc-dt_10.md)
++   [附录：使用 Google Colaboratory](dl-strc-dt_10.md)

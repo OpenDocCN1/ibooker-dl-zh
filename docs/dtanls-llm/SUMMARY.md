@@ -9,6 +9,6 @@
 +   [第六章：分析图像和视频](dtanls-llm_07.md)
 +   [第七章：分析音频数据](dtanls-llm_08.md)
 +   [第三部分 高级主题](dtanls-llm_09.md)
-+   [第八章：个 GPT 替代品](dtanls-llm_10.md)
++   [第八章：GPT 替代品](dtanls-llm_10.md)
 +   [第九章：优化成本和质量](dtanls-llm_11.md)
 +   [第十章：个软件框架](dtanls-llm_12.md)

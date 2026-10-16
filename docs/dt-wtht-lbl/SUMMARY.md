@@ -2,7 +2,7 @@
 +   [第一部分 基础](dt-wtht-lbl_00.md)
 +   [第一章：机器学习简介](dt-wtht-lbl_01.md)
 +   [第二章：聚类技术](dt-wtht-lbl_02.md)
-+   [第三章：. 降维](dt-wtht-lbl_03.md)
++   [第三章：降维](dt-wtht-lbl_03.md)
 +   [第二部分 中级水平](dt-wtht-lbl_04.md)
 +   [第四章：关联规则](dt-wtht-lbl_05.md)
 +   [第五章：聚类](dt-wtht-lbl_06.md)

@@ -14,7 +14,7 @@
 +   [第九章：表格建模深入探讨](dl-cdr-fai-pt_12.md)
 +   [第十章：NLP 深入探讨：RNNs](dl-cdr-fai-pt_13.md)
 +   [第十一章：使用 fastai 的中级 API 进行数据整理](dl-cdr-fai-pt_14.md)
-+   [第三部分：深度学习的基础。](dl-cdr-fai-pt_15.md)
++   [第三部分：深度学习的基础](dl-cdr-fai-pt_15.md)
 +   [第十二章：从头开始的语言模型](dl-cdr-fai-pt_16.md)
 +   [第十三章：卷积神经网络](dl-cdr-fai-pt_17.md)
 +   [第十四章：ResNets](dl-cdr-fai-pt_18.md)

@@ -1,7 +1,7 @@
 +   [AI 智能体实战](README.md)
 +   [第一章：代理及其世界的简介](ai-agt-act_00.md)
 +   [第二章：利用大型语言模型的力量](ai-agt-act_01.md)
-+   [第三章：个引人入胜的 GPT 助手](ai-agt-act_02.md)
++   [第三章：一个引人入胜的 GPT 助手](ai-agt-act_02.md)
 +   [第四章：探索多智能体系统](ai-agt-act_03.md)
 +   [第五章：赋能动作代理](ai-agt-act_04.md)
 +   [第六章：构建自主助手](ai-agt-act_05.md)

@@ -8,7 +8,7 @@
 +   [第二部分：用于无服务器机器学习的 PyTorch](mlops-engi-scl_06.md)
 +   [第五章：PyTorch 介绍：张量基础](mlops-engi-scl_07.md)
 +   [第六章：PyTorch 核心：Autograd、优化器和实用工具](mlops-engi-scl_08.md)
-+   [第七章：无服务器机器学习的扩展性。](mlops-engi-scl_09.md)
++   [第七章：无服务器机器学习的扩展性](mlops-engi-scl_09.md)
 +   [第八章：使用分布式训练进行扩展](mlops-engi-scl_10.md)
 +   [第三部分：无服务器机器学习流水线](mlops-engi-scl_11.md)
 +   [第九章：特征选择](mlops-engi-scl_12.md)

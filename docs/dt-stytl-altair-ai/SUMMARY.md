@@ -2,7 +2,7 @@
 +   [第一部分：介绍 Altair 和生成式 AI 到数据叙事](dt-stytl-altair-ai_00.md)
 +   [第一章：数据故事讲述简介](dt-stytl-altair-ai_01.md)
 +   [第二章：在 Altair 和 GitHub Copilot 中运行您的第一个数据故事](dt-stytl-altair-ai_02.md)
-+   [第三章：. 审查 Altair 的基本概念](dt-stytl-altair-ai_03.md)
++   [第三章：审查 Altair 的基本概念](dt-stytl-altair-ai_03.md)
 +   [第四章：生成式 AI 工具用于数据叙事](dt-stytl-altair-ai_04.md)
 +   [第二部分：使用 DIKW 金字塔进行数据讲故事](dt-stytl-altair-ai_05.md)
 +   [第五章：使用 DIKW 金字塔制作数据故事](dt-stytl-altair-ai_06.md)

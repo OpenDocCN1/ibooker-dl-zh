@@ -1,6 +1,6 @@
 +   [视觉系统的深度学习](README.md)
 +   [前置内容](dl-vis-sys_00.md)
-+   [第一部分\. 深度学习基础](dl-vis-sys_01.md)
++   [第一部分：深度学习基础](dl-vis-sys_01.md)
 +   [1 欢迎来到计算机视觉](dl-vis-sys_02.md)
 +   [2 深度学习和神经网络](dl-vis-sys_03.md)
 +   [3 卷积神经网络](dl-vis-sys_04.md)

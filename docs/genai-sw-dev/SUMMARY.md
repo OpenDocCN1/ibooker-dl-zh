@@ -4,7 +4,7 @@
 +   [第二章：用户界面和用户体验设计](genai-sw-dev_2.md)
 +   [第三章\. 错误检测和代码审查](genai-sw-dev_3.md)
 +   [第四章：自动化测试和质量保证](genai-sw-dev_4.md)
-+   [第五章\. 预测分析和性能优化](genai-sw-dev_5.md)
++   [第五章：预测分析和性能优化](genai-sw-dev_5.md)
 +   [第六章：文档和技术写作](genai-sw-dev_6.md)
 +   [第七章：聊天机器人和虚拟助手](genai-sw-dev_7.md)
 +   [第八章\. 实施成功案例](genai-sw-dev_8.md)

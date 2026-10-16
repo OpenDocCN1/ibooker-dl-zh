@@ -4,7 +4,7 @@
 +   [第二章：解析支付](bd-fin-sw-genai_02.md)
 +   [第二部分：通往最小可行产品的道路](bd-fin-sw-genai_03.md)
 +   [第三章：开始使用 Docker](bd-fin-sw-genai_04.md)
-+   [第四章：个 API：我们组件之间的管道](bd-fin-sw-genai_05.md)
++   [第四章：API：我们组件之间的管道](bd-fin-sw-genai_05.md)
 +   [第五章：存储我们的 ACH 文件](bd-fin-sw-genai_06.md)
 +   [第六章：使用 Next.js 迈出下一步](bd-fin-sw-genai_07.md)
 +   [第七章：我们的最小可行产品](bd-fin-sw-genai_08.md)
