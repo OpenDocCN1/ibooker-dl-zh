@@ -1,0 +1,13 @@
+chapter_starts:
+- 'no': 9369
+  confidence: 0.95
+  reason: '最高层级标题 # 附录 A 参考文献与延伸阅读，符合附录章节划分规则'
+- 'no': 9631
+  confidence: 0.95
+  reason: '最高层级标题 # 附录 B 练习解答，为新附录章起始'
+- 'no': 10829
+  confidence: 0.95
+  reason: '最高层级标题 # 附录 C Qwen3 LLM 源代码，为新附录章起始'
+- 'no': 11755
+  confidence: 0.95
+  reason: '最高层级标题 # 附录 D 使用更大的大语言模型，为新附录章起始'

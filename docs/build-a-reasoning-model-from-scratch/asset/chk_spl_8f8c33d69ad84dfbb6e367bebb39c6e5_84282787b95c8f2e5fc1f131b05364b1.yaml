@@ -1,0 +1,33 @@
+reviews:
+- 'no': 9369
+  overturn_probability: 0.05
+  alternative: 若不分章，这行最可能是什么
+  counter_evidence:
+  - '标题为最高层级 # 开头，符合全书最高层级大章划分规则'
+  - 标题语义具有统领性，覆盖后续 A.1、A.2 等子节内容
+  - 前后上下文为正文 8.10 结论后进入附录，为前言/附录起始的典型位置
+  keep_split: true
+- 'no': 9631
+  overturn_probability: 0.05
+  alternative: 若不分章，这行最可能是什么
+  counter_evidence:
+  - '标题为最高层级 # 开头，符合附录章节划分规则'
+  - 标题语义统领 B.1、B.2 等练习解答子节，具有概括性
+  - 前一章附录 A 已结束，此处为新的附录章起始
+  keep_split: true
+- 'no': 10829
+  overturn_probability: 0.05
+  alternative: 若不分章，这行最可能是什么
+  counter_evidence:
+  - '标题为最高层级 # 开头，符合全书最高层级大章划分规则'
+  - 标题后接 C.1、C.2 等子节，上下文特征符合章节标题后接概述段落
+  - 为新附录章起始，与前后附录 B、附录 D 结构一致
+  keep_split: true
+- 'no': 11755
+  overturn_probability: 0.05
+  alternative: 若不分章，这行最可能是什么
+  counter_evidence:
+  - '标题为最高层级 # 开头，符合附录章节划分规则'
+  - 标题语义统领 D.1、D.2 等内容，具有概括性
+  - 位于附录 C 之后，为新的附录章起始
+  keep_split: true

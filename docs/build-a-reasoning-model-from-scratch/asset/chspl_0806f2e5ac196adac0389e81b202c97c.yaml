@@ -1,0 +1,13 @@
+chapter_starts:
+- 'no': 3
+  confidence: 0.95
+  reason: 前置内容（献词）作为开篇章节的开始，之后的前言、致谢、关于本书等均属同一前置章节。
+- 'no': 115
+  confidence: 1.0
+  reason: 明确标有“第 1 章”，是全书最高层级章节标题，单独成行且无句号。
+- 'no': 588
+  confidence: 1.0
+  reason: 编号“2”的章节标题，单独成行，符合大章格式。
+- 'no': 1792
+  confidence: 1.0
+  reason: 编号“3”的章节标题，单独成行，符合大章格式。
