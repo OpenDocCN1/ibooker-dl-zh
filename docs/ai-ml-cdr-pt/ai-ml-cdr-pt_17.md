@@ -1,5 +1,5 @@
 
-# 第十六章. 使用自定义数据与 LLM 交互
+# 第十六章：使用自定义数据与 LLM 交互
 
 在第十五章中，我们探讨了 Transformers 以及它们的编码器、解码器和编码器-解码器架构是如何工作的。它们在革命性 NLP 方面的成果不容置疑！然后，我们探讨了 Hugging Face 的 Python 库中的 `transformers`，该库旨在使使用 Transformers 更加容易。
 

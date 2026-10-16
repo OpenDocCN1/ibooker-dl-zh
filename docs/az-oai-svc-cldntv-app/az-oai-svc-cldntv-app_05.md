@@ -1,5 +1,5 @@
 
-# 第四章 其他云和 AI 功能
+# 第四章：其他云和 AI 功能
 
 生成式 AI 应用程序远不止“只是一个大模型”。如您所见，LLMs 扮演着核心角色，但还有其他相关的组件可以补充 Azure OpenAI 服务的功能：通过 Azure OpenAI API 或沙盒进行微调、与 Azure 认知搜索和/或 Azure OpenAI 嵌入进行归一化、使用 Bing 搜索 API 的实时搜索能力等。
 
